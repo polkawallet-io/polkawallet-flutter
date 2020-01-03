@@ -7,11 +7,9 @@ class Assets extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Provider<AssetsStore>(
       create: (_) => AssetsStore('a'),
-      child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Assets'),
-          ),
-          body: Column(
-            children: <Widget>[Text('Assets')],
-          )));
+      child: new Scaffold(
+        body: Column(
+          children: <Widget>[Text('Assets')],
+        ),
+      ));
 }

@@ -58,6 +58,7 @@ flutter:
     - assets/images/public/Democracy_dark.png
     - assets/images/public/Profile_dark.png
     - assets/images/public/Staking_dark.png
+    - assets/images/assets/logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

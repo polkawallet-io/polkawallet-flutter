@@ -23,7 +23,7 @@ class WalletApp extends StatelessWidget {
               title: 'PolkaWallet',
               initialRoute: '/',
               theme: ThemeData(
-                primarySwatch: Colors.blue,
+                primarySwatch: Colors.pink,
                 brightness:
                     store.useDarkMode ? Brightness.dark : Brightness.light,
               ),
