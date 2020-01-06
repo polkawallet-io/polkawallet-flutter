@@ -22,6 +22,7 @@ dependencies:
   flutter_mobx: ^0.3.6
   mobx_codegen: ^0.3.12
   provider: ^3.1.0
+  flutter_liquidcore: ^1.1.0
   json_serializable: ^3.0.0
   flutter:
     sdk: flutter
@@ -49,6 +50,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    # js service
+    - lib/polkadot_js_service/liquid.bundle
+    # images
     - assets/images/public/logo.svg
     - assets/images/public/Assets.png
     - assets/images/public/Democracy.png

@@ -6,7 +6,7 @@ import 'package:polka_wallet/store/assets.dart';
 class Assets extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Provider<AssetsStore>(
-      create: (_) => AssetsStore('a'),
+      create: (_) => AssetsStore(),
       child: new Scaffold(
         body: Column(
           children: <Widget>[Text('Assets')],

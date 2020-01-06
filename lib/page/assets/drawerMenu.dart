@@ -4,9 +4,22 @@ import 'package:provider/provider.dart';
 import 'package:polka_wallet/store/assets.dart';
 
 class DrawerMenu extends StatelessWidget {
+  List<ListTile> _buildAccList() {
+    return [
+      ListTile(
+        leading: Icon(
+          Icons.account_circle,
+          color: Colors.white,
+        ),
+        title: Text('Address',
+            style: TextStyle(fontSize: 16, color: Colors.white)),
+      )
+    ];
+  }
+
   @override
   Widget build(BuildContext context) => Provider<AssetsStore>(
-      create: (_) => AssetsStore('a'),
+      create: (_) => AssetsStore(),
       child: Container(
         color: Colors.indigo,
         child: Column(
@@ -28,7 +41,7 @@ class DrawerMenu extends StatelessWidget {
                 ],
               ),
             ),
-            ...buildAccList(),
+            ..._buildAccList(),
             ListTile(
               leading: Icon(
                 Icons.scanner,
@@ -44,21 +57,9 @@ class DrawerMenu extends StatelessWidget {
               ),
               title: Text('Create Account',
                   style: TextStyle(fontSize: 16, color: Colors.white)),
+              onTap: () => Navigator.pushNamed(context, '/account/create'),
             )
           ],
         ),
       ));
-}
-
-List<ListTile> buildAccList() {
-  return [
-    ListTile(
-      leading: Icon(
-        Icons.account_circle,
-        color: Colors.white,
-      ),
-      title:
-          Text('Address', style: TextStyle(fontSize: 16, color: Colors.white)),
-    )
-  ];
 }

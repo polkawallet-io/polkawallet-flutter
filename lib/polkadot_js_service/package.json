@@ -1,0 +1,21 @@
+{
+  "name": "HelloWorld",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "rest-start": "node rest.js",
+    "start": "node node_modules/liquidcore-cli/lib/cli.js",
+    "server": "node node_modules/liquidcore-cli/lib/cli.js server",
+    "bundler": "node node_modules/liquidcore-cli/lib/cli.js bundle"
+  },
+  "dependencies": {
+    "@polkadot/api": "^0.99.1",
+    "@polkadot/keyring": "^1.7.1",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "bip39": "^3.0.2",
+    "koa": "^2.11.0",
+    "liquidcore-cli": "^0.4.9",
+    "react-native": "0.56.0"
+  }
+}

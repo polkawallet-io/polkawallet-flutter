@@ -7,6 +7,10 @@ android
 .packages
 .pub/
 build/
+
+.flutter-plugins
+.flutter-plugins-dependencies
+
 # If you're building an application, you may want to check-in your pubspec.lock
 pubspec.lock
 
@@ -16,3 +20,7 @@ doc/api/
 
 # misc
 .idea
+
+# nodejs service
+*.bundle
+**/node_modules/
