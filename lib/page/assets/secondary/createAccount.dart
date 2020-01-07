@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/utils/i18n.dart';
 
 class CreateAccount extends StatefulWidget {
   const CreateAccount(this.emitMsg, this.accountCreate);
@@ -38,32 +39,9 @@ class _CreateAccountState extends State<CreateAccount> {
     emitMsg('get', {'path': '/account/gen'});
   }
 
-  Widget _buildKeyField() {
-    switch (_selection) {
-      case 'Mnemonic':
-        String v = accountCreate['mnemonic'];
-        return TextFormField(
-          initialValue: v,
-          maxLines: 3,
-        );
-      case 'Raw Seed':
-        String v = accountCreate['seed'];
-        return new TextFormField(
-          initialValue: v,
-        );
-      case 'KeyStore':
-        return TextFormField(
-          maxLines: 4,
-        );
-      default:
-        return TextFormField(
-          maxLines: 4,
-        );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final Map<String, String> labels = I18n.of(context).home;
     print('build page');
     return Scaffold(
       appBar: AppBar(title: const Text('Create Account')),
@@ -72,71 +50,62 @@ class _CreateAccountState extends State<CreateAccount> {
         child: Form(
           key: _formKey,
 //            autovalidate: true,
-          child: accountCreate['address'] == ''
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    CircularProgressIndicator(),
-                    Text('Loading items...'),
-                  ],
-                )
-              : ListView(
-                  children: <Widget>[
-                    Center(
-                      child: Text(accountCreate['address']),
-                    ),
-                    Text('Create from'),
-                    DropdownButton<String>(
-                        value: _selection,
-                        onChanged: (String value) {
-                          if (value != 'KeyStore') {
-                            emitMsg('get', {'path': '/account/gen'});
-                          }
-                          setState(() {
-                            _selection = value;
-                          });
-                        },
-                        items: <String>['Mnemonic', 'Raw Seed', 'KeyStore']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList()),
-                    _buildKeyField(),
-                    Divider(),
-                    Text('Name'),
-                    TextFormField(
-                      controller: _nameCtrl,
-                      validator: (v) {
-                        return v.trim().length > 0 ? null : "用户名不能为空";
-                      },
-                    ),
-                    Divider(),
-                    Text('Password'),
-                    TextFormField(
-                      controller: _passCtrl,
-                      obscureText: true,
-                      onChanged: (v) {
-                        setState(() {
-                          _password = v;
-                        });
-                      },
-                    ),
-                    Divider(),
-                    Text('Confirm Password'),
-                    TextFormField(
-                      controller: _pass2Ctrl,
-                      obscureText: true,
-                      validator: (v) {
-                        if (_password != v) {
-                          return 'Confirm Password';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
+          child: ListView(
+            children: <Widget>[
+              TextFormField(
+                decoration: InputDecoration(
+                  icon: Icon(Icons.person),
+                  hintText: labels['name'],
+                  labelText: labels['name'],
                 ),
+                controller: _nameCtrl,
+                validator: (v) {
+                  return v.trim().length > 0 ? null : "用户名不能为空";
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  icon: Icon(Icons.lock),
+                  hintText: labels['password'],
+                  labelText: labels['password'],
+                ),
+                controller: _passCtrl,
+                obscureText: true,
+                onChanged: (v) {
+                  setState(() {
+                    _password = v;
+                  });
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  icon: Icon(Icons.lock),
+                  hintText: labels['password2'],
+                  labelText: labels['password2'],
+                ),
+                controller: _pass2Ctrl,
+                obscureText: true,
+                validator: (v) {
+                  if (_password != v) {
+                    return 'Confirm Password';
+                  }
+                  return null;
+                },
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 16),
+                child: RaisedButton(
+                  padding: EdgeInsets.all(16),
+                  color: Colors.pink,
+                  textColor: Colors.white,
+                  child: Text(I18n.of(context).home['next']),
+                  onPressed: () {
+                    print('next');
+                  },
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

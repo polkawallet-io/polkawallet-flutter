@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'package:flutter_liquidcore/liquidcore.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'utils/i18n.dart';
 
 import 'package:polka_wallet/store/assets.dart';
 
 import 'package:polka_wallet/page/home.dart';
 import 'package:polka_wallet/page/assets/secondary/createAccount.dart';
+import 'package:polka_wallet/page/assets/secondary/importAccount.dart';
 
 void main() => runApp(WalletApp());
 
@@ -64,6 +68,15 @@ class _WalletAppState extends State<WalletApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PolkaWallet',
+      localizationsDelegates: [
+        const AppLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en', ''),
+        const Locale('zh', ''),
+      ],
       initialRoute: '/',
       theme: ThemeData(
         primarySwatch: Colors.pink,
@@ -72,10 +85,15 @@ class _WalletAppState extends State<WalletApp> {
       ),
       routes: {
         '/': (_) => Home(),
-        '/account/create': (_) => Observer(builder: (_) {
+        '/account/create': (_) => Observer(builder: (BuildContext context) {
               print('route');
               print(_assetsStore.newAccount['address']);
               return CreateAccount(emitMsg, _assetsStore.newAccount);
+            }),
+        '/account/import': (_) => Observer(builder: (_) {
+              print('route');
+              print(_assetsStore.newAccount['address']);
+              return ImportAccount(emitMsg, _assetsStore.newAccount);
             }),
       },
     );

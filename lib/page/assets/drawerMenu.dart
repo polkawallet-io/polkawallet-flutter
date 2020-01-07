@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:polka_wallet/utils/i18n.dart';
 
 import 'package:polka_wallet/store/assets.dart';
 
@@ -30,7 +31,7 @@ class DrawerMenu extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    'Menu',
+                    I18n.of(context).home['menu'],
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   IconButton(
@@ -47,7 +48,7 @@ class DrawerMenu extends StatelessWidget {
                 Icons.scanner,
                 color: Colors.white,
               ),
-              title: Text('Scan',
+              title: Text(I18n.of(context).home['scan'],
                   style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
             ListTile(
@@ -55,9 +56,18 @@ class DrawerMenu extends StatelessWidget {
                 Icons.account_balance_wallet,
                 color: Colors.white,
               ),
-              title: Text('Create Account',
+              title: Text(I18n.of(context).home['create'],
                   style: TextStyle(fontSize: 16, color: Colors.white)),
               onTap: () => Navigator.pushNamed(context, '/account/create'),
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.import_contacts,
+                color: Colors.white,
+              ),
+              title: Text(I18n.of(context).home['import'],
+                  style: TextStyle(fontSize: 16, color: Colors.white)),
+              onTap: () => Navigator.pushNamed(context, '/account/import'),
             )
           ],
         ),
