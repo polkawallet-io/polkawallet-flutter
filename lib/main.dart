@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/store/assets.dart';
-import 'package:provider/provider.dart';
 
 import 'package:flutter_liquidcore/liquidcore.dart';
+
+import 'package:polka_wallet/store/assets.dart';
 
 import 'package:polka_wallet/page/home.dart';
 import 'package:polka_wallet/page/assets/secondary/createAccount.dart';
@@ -14,18 +14,18 @@ class WalletApp extends StatefulWidget {
   const WalletApp();
 
   @override
-  State<StatefulWidget> createState() => _WalletAppState();
+  _WalletAppState createState() => _WalletAppState();
 }
 
-class _WalletAppState extends State<WalletApp> with TickerProviderStateMixin {
-  final AssetsStore assetsStore = AssetsStore();
+class _WalletAppState extends State<WalletApp> {
+  final _assetsStore = AssetsStore();
 
   MicroService service;
 
   @override
   void initState() {
     Map<String, Function> msgHandlers = {
-      '/account/gen': assetsStore.setNewAccount,
+      '/account/gen': _assetsStore.setNewAccount,
     };
     _initService(msgHandlers);
 
@@ -72,7 +72,11 @@ class _WalletAppState extends State<WalletApp> with TickerProviderStateMixin {
       ),
       routes: {
         '/': (_) => Home(),
-        '/account/create': (_) => CreateAccount(emitMsg),
+        '/account/create': (_) => Observer(builder: (_) {
+              print('route');
+              print(_assetsStore.newAccount['address']);
+              return CreateAccount(emitMsg, _assetsStore.newAccount);
+            }),
       },
     );
   }
