@@ -9,7 +9,12 @@ class Assets extends StatelessWidget {
       create: (_) => AssetsStore(),
       child: new Scaffold(
         body: Column(
-          children: <Widget>[Text('Assets')],
+          children: <Widget>[
+            RaisedButton(
+              child: Text('test'),
+              onPressed: () => Navigator.pushNamed(context, '/account/backup'),
+            )
+          ],
         ),
       ));
 }

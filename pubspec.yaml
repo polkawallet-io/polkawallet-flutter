@@ -55,7 +55,6 @@ flutter:
     # js service
     - lib/polkadot_js_service/liquid.bundle
     # images
-    - assets/images/public/logo.svg
     - assets/images/public/Assets.png
     - assets/images/public/Democracy.png
     - assets/images/public/Profile.png
@@ -64,6 +63,8 @@ flutter:
     - assets/images/public/Democracy_dark.png
     - assets/images/public/Profile_dark.png
     - assets/images/public/Staking_dark.png
+    - assets/images/public/About_logo.png
+    - assets/images/public/dontscreen.png
     - assets/images/assets/logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

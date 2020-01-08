@@ -58,16 +58,10 @@ class DrawerMenu extends StatelessWidget {
               ),
               title: Text(I18n.of(context).home['create'],
                   style: TextStyle(fontSize: 16, color: Colors.white)),
-              onTap: () => Navigator.pushNamed(context, '/account/create'),
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.import_contacts,
-                color: Colors.white,
-              ),
-              title: Text(I18n.of(context).home['import'],
-                  style: TextStyle(fontSize: 16, color: Colors.white)),
-              onTap: () => Navigator.pushNamed(context, '/account/import'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/account/create');
+              },
             )
           ],
         ),

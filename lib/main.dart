@@ -5,11 +5,13 @@ import 'package:flutter_liquidcore/liquidcore.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'utils/i18n.dart';
+import 'common/theme.dart';
 
 import 'package:polka_wallet/store/assets.dart';
 
 import 'package:polka_wallet/page/home.dart';
-import 'package:polka_wallet/page/assets/secondary/createAccount.dart';
+import 'package:polka_wallet/page/assets/secondary/createAccount/createAccount.dart';
+import 'package:polka_wallet/page/assets/secondary/createAccount/backupAccount.dart';
 import 'package:polka_wallet/page/assets/secondary/importAccount.dart';
 
 void main() => runApp(WalletApp());
@@ -55,6 +57,7 @@ class _WalletAppState extends State<WalletApp> {
       });
 
       // Start the service.
+      // TODO: app crashes on ios simulator while service start
       await service.start();
     }
     return service;
@@ -78,17 +81,14 @@ class _WalletAppState extends State<WalletApp> {
         const Locale('zh', ''),
       ],
       initialRoute: '/',
-      theme: ThemeData(
-        primarySwatch: Colors.pink,
-//                brightness:
-//                    store.useDarkMode ? Brightness.dark : Brightness.light,
-      ),
+      theme: appTheme,
       routes: {
         '/': (_) => Home(),
-        '/account/create': (_) => Observer(builder: (BuildContext context) {
+        '/account/create': (_) => CreateAccount(),
+        '/account/backup': (_) => Observer(builder: (_) {
               print('route');
               print(_assetsStore.newAccount['address']);
-              return CreateAccount(emitMsg, _assetsStore.newAccount);
+              return BackupAccount(emitMsg, _assetsStore.newAccount);
             }),
         '/account/import': (_) => Observer(builder: (_) {
               print('route');
