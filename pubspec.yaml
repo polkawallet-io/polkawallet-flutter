@@ -24,6 +24,7 @@ dependencies:
   provider: ^3.1.0
   flutter_liquidcore: ^1.1.0
   json_serializable: ^3.0.0
+  shared_preferences:
   flutter:
     sdk: flutter
   flutter_localizations:

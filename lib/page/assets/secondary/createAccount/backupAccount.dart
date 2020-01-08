@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/utils/i18n.dart';
 
+import 'package:polka_wallet/utils/localStorage.dart';
+
 class BackupAccount extends StatefulWidget {
   const BackupAccount(this.emitMsg, this.accountCreate);
 
@@ -29,8 +31,8 @@ class _BackupAccountState extends State<BackupAccount> {
 
   @override
   void initState() {
-    super.initState();
     emitMsg('get', {'path': '/account/gen'});
+    super.initState();
   }
 
   List<Widget> _buildButtons() {
@@ -168,7 +170,15 @@ class _BackupAccountState extends State<BackupAccount> {
                     child: Text(I18n.of(context).home['next'],
                         style: Theme.of(context).textTheme.button),
                     onPressed: _wordsSelected.length == 12
-                        ? () => Navigator.pushNamed(context, '/')
+                        ? () async {
+                            String acc = await LocalStorage.getItem('acc');
+                            print('get from local storage: $acc');
+                            print('set to storage');
+                            print(accountCreate);
+                            LocalStorage.setItem(
+                                'acc', accountCreate.toString());
+                            Navigator.pushNamed(context, '/');
+                          }
                         : null,
                   ),
                 ),
