@@ -4,15 +4,24 @@ import 'package:polka_wallet/page/assets/drawerMenu.dart';
 import 'package:polka_wallet/page/democracy/democracy.dart';
 import 'package:polka_wallet/page/profile/profile.dart';
 import 'package:polka_wallet/page/staking/staking.dart';
+import 'package:polka_wallet/store/assets.dart';
 
 import 'package:polka_wallet/utils/i18n.dart';
 
 class Home extends StatefulWidget {
+  Home(this.assetsStore);
+
+  final AssetsStore assetsStore;
+
   @override
-  _HomePageState createState() => new _HomePageState();
+  _HomePageState createState() => new _HomePageState(assetsStore);
 }
 
 class _HomePageState extends State<Home> {
+  _HomePageState(this.assetsStore);
+
+  final AssetsStore assetsStore;
+
   int _curIndex = 0;
 
   List<BottomNavigationBarItem> _navBarItems(Map<String, String> tabs) {
@@ -63,24 +72,16 @@ class _HomePageState extends State<Home> {
   Widget _getPage(i) {
     switch (i) {
       case 0:
-        return Container(
-          child: Assets(),
-        );
+        return Assets(assetsStore);
         break;
       case 1:
-        return Container(
-          child: Staking(),
-        );
+        return Staking();
         break;
       case 2:
-        return Container(
-          child: Democracy(),
-        );
+        return Democracy();
         break;
       default:
-        return Container(
-          child: Profile(),
-        );
+        return Profile();
         break;
     }
   }
@@ -88,30 +89,61 @@ class _HomePageState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     Map<String, String> tabs = I18n.of(context).home;
-    return new Scaffold(
-      appBar: _curIndex == 0
-          ? AppBar(
-              title: Image.asset('assets/images/assets/logo.png'),
-            )
-          : null,
-      endDrawer: _curIndex == 0
-          ? Drawer(
-              child: DrawerMenu(),
-            )
-          : null,
-      bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _curIndex,
-          iconSize: 22.0,
-          onTap: (index) {
-            setState(() {
-              _curIndex = index;
-            });
-          },
-          type: BottomNavigationBarType.fixed,
-          items: _navBarItems(tabs)),
-      body: new Center(
-        child: _getPage(_curIndex),
-      ),
-    );
+    return _curIndex == 0
+        ? Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: Theme.of(context).canvasColor,
+              ),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    alignment: Alignment.topLeft,
+                    image: AssetImage("assets/images/assets/Assets_bg.png"),
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              Scaffold(
+                backgroundColor: Colors.transparent,
+                appBar: AppBar(
+                  title: Image.asset('assets/images/assets/logo.png'),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0.0,
+                ),
+                endDrawer: Drawer(
+                  child: DrawerMenu(),
+                ),
+                bottomNavigationBar: BottomNavigationBar(
+                    currentIndex: _curIndex,
+                    iconSize: 22.0,
+                    onTap: (index) {
+                      setState(() {
+                        _curIndex = index;
+                      });
+                    },
+                    type: BottomNavigationBarType.fixed,
+                    items: _navBarItems(tabs)),
+                body: _getPage(_curIndex),
+              )
+            ],
+          )
+        : Scaffold(
+            bottomNavigationBar: BottomNavigationBar(
+                currentIndex: _curIndex,
+                iconSize: 22.0,
+                onTap: (index) {
+                  setState(() {
+                    _curIndex = index;
+                  });
+                },
+                type: BottomNavigationBarType.fixed,
+                items: _navBarItems(tabs)),
+            body: _getPage(_curIndex),
+          );
   }
 }

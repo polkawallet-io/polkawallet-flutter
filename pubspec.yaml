@@ -67,6 +67,12 @@ flutter:
     - assets/images/public/About_logo.png
     - assets/images/public/dontscreen.png
     - assets/images/assets/logo.png
+    - assets/images/assets/Assets_bg.png
+    - assets/images/assets/Assets_nav_0.png
+    - assets/images/assets/Assets_nav_1.png
+    - assets/images/assets/Assets_nav_code.png
+    - assets/images/assets/Assets_nav_plus.png
+    - assets/images/assets/KSC.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

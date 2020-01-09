@@ -35,6 +35,8 @@ class _WalletAppState extends State<WalletApp> {
     };
     _initService(msgHandlers);
 
+    _assetsStore.loadAccount();
+
     super.initState();
   }
 
@@ -45,7 +47,8 @@ class _WalletAppState extends State<WalletApp> {
       service = new MicroService(uri);
       await service.addEventListener('ready', (service, event, payload) {
         // The service is ready.
-        print('js service ready');
+        print('get msg ready');
+        print(payload);
       });
       await service.addEventListener('pong', (service, event, payload) {
         print(DateTime.now());
@@ -83,12 +86,12 @@ class _WalletAppState extends State<WalletApp> {
       initialRoute: '/',
       theme: appTheme,
       routes: {
-        '/': (_) => Home(),
+        '/': (_) => Home(_assetsStore),
         '/account/create': (_) => CreateAccount(_assetsStore.setNewAccount),
         '/account/backup': (_) => Observer(builder: (_) {
               print('route');
               print(_assetsStore.newAccount['address']);
-              return BackupAccount(emitMsg, _assetsStore.newAccount);
+              return BackupAccount(emitMsg, _assetsStore);
             }),
         '/account/import': (_) => Observer(builder: (_) {
               print('route');

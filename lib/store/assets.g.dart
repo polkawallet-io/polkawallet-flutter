@@ -43,13 +43,47 @@ mixin _$AssetsStore on _AssetsStore, Store {
     }, _$newAccountAtom, name: '${_$newAccountAtom.name}_set');
   }
 
+  final _$currentAccountAtom = Atom(name: '_AssetsStore.currentAccount');
+
+  @override
+  Map<String, dynamic> get currentAccount {
+    _$currentAccountAtom.context.enforceReadPolicy(_$currentAccountAtom);
+    _$currentAccountAtom.reportObserved();
+    return super.currentAccount;
+  }
+
+  @override
+  set currentAccount(Map<String, dynamic> value) {
+    _$currentAccountAtom.context.conditionallyRunInAction(() {
+      super.currentAccount = value;
+      _$currentAccountAtom.reportChanged();
+    }, _$currentAccountAtom, name: '${_$currentAccountAtom.name}_set');
+  }
+
+  final _$loadAccountAsyncAction = AsyncAction('loadAccount');
+
+  @override
+  Future<void> loadAccount() {
+    return _$loadAccountAsyncAction.run(() => super.loadAccount());
+  }
+
   final _$_AssetsStoreActionController = ActionController(name: '_AssetsStore');
 
   @override
-  void setNewAccount(Map<String, dynamic> res) {
+  void setNewAccount(Map<String, dynamic> acc) {
     final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
-      return super.setNewAccount(res);
+      return super.setNewAccount(acc);
+    } finally {
+      _$_AssetsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setCurrentAccount(Map<String, dynamic> acc) {
+    final _$actionInfo = _$_AssetsStoreActionController.startAction();
+    try {
+      return super.setCurrentAccount(acc);
     } finally {
       _$_AssetsStoreActionController.endAction(_$actionInfo);
     }

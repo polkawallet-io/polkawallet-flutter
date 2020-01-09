@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@polkadot/api": "^0.99.1",
-    "@polkadot/keyring": "^1.7.1",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "bip39": "^3.0.2",
