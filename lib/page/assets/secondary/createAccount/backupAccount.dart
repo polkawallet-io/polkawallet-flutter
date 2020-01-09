@@ -23,25 +23,12 @@ class _BackupAccountState extends State<BackupAccount> {
 
   int _step = 0;
 
-  Map<String, dynamic> _account = {};
-  String _mnemonic, _seed, _keyStore;
-
   List<String> _wordsSelected;
-  List<String> _wordsLeft;
 
   @override
   void initState() {
     emitMsg('get', {'path': '/account/gen'});
     super.initState();
-  }
-
-  List<Widget> _buildButtons() {
-    List<String> seeds = accountCreate['mnemonic'].toString().split(' ');
-    return seeds.map((i) {
-      return RaisedButton(
-        child: Text(i),
-      );
-    }).toList();
   }
 
   Widget _buildStep0(BuildContext context) {

@@ -53,7 +53,7 @@ class _WalletAppState extends State<WalletApp> {
       await service.addEventListener('res', (service, event, payload) {
         print("received res: $payload | type: ${payload.runtimeType}");
         messageHandlers[payload['path'] as String](
-            new Map<String, dynamic>.from(payload));
+            new Map<String, dynamic>.from(payload['data']));
       });
 
       // Start the service.
@@ -84,7 +84,7 @@ class _WalletAppState extends State<WalletApp> {
       theme: appTheme,
       routes: {
         '/': (_) => Home(),
-        '/account/create': (_) => CreateAccount(),
+        '/account/create': (_) => CreateAccount(_assetsStore.setNewAccount),
         '/account/backup': (_) => Observer(builder: (_) {
               print('route');
               print(_assetsStore.newAccount['address']);

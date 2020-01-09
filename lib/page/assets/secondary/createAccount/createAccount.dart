@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:polka_wallet/utils/i18n.dart';
 
 class CreateAccount extends StatefulWidget {
-  const CreateAccount();
+  const CreateAccount(this.setNewAccount);
+
+  final Function setNewAccount;
 
   @override
-  _CreateAccountState createState() => _CreateAccountState();
+  _CreateAccountState createState() => _CreateAccountState(setNewAccount);
 }
 
 class _CreateAccountState extends State<CreateAccount> {
-  _CreateAccountState();
+  _CreateAccountState(this.setNewAccount);
+
+  final Function setNewAccount;
 
   int _step = 0;
 
@@ -71,17 +75,7 @@ class _CreateAccountState extends State<CreateAccount> {
     final Map<String, String> i18n = I18n.of(context).account;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Account'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            setState(() {
-              _step = 1;
-            });
-          },
-        ),
-      ),
+      appBar: AppBar(title: const Text('Create Account')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -256,6 +250,11 @@ class _CreateAccountState extends State<CreateAccount> {
                   child: Text(I18n.of(context).home['next']),
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
+                      setNewAccount({
+                        'name': _nameCtrl.text,
+                        'password': _passCtrl.text,
+                      });
+
                       setState(() {
                         _step = 2;
                       });

@@ -14,6 +14,8 @@ abstract class _AssetsStore with Store {
 
   @observable
   Map<String, dynamic> newAccount = ObservableMap.of(Map<String, dynamic>.from({
+    'name': '',
+    'password': '',
     'address': '',
     'seed': '',
     'isLocked': false,
@@ -21,11 +23,12 @@ abstract class _AssetsStore with Store {
   }));
 
   @action
-  void setNewAccount(Map<String, dynamic> res) {
-    Map<String, dynamic> acc = Map<String, dynamic>.from(res['data']);
-
+  void setNewAccount(Map<String, dynamic> acc) {
     for (var k in acc.keys) {
       newAccount[k] = acc[k];
     }
+
+    print('setNewAccount:');
+    print(newAccount);
   }
 }
