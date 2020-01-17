@@ -1,20 +1,30 @@
 {
-  "name": "HelloWorld",
-  "version": "0.0.1",
-  "private": true,
+  "name": "polkadot-js-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
   "scripts": {
-    "rest-start": "node rest.js",
-    "start": "node node_modules/liquidcore-cli/lib/cli.js",
-    "server": "node node_modules/liquidcore-cli/lib/cli.js server",
-    "bundler": "node node_modules/liquidcore-cli/lib/cli.js bundle"
+    "clean": "rm -rf dist/*",
+    "build": "webpack -p --mode production",
+    "build-dev": "webpack -d --mode development"
   },
   "dependencies": {
-    "@polkadot/api": "^0.99.1",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
+    "@babel/polyfill": "^7.8.3",
+    "@polkadot/api": "^1.0.0-beta.8",
     "bip39": "^3.0.2",
-    "koa": "^2.11.0",
-    "liquidcore-cli": "^0.4.9",
-    "react-native": "0.56.0"
+    "crypto-browserify": "^3.12.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@webpack-cli/info": "^0.2.0",
+    "@webpack-cli/init": "^0.3.0",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   }
 }

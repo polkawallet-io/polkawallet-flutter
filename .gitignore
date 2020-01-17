@@ -20,7 +20,9 @@ doc/api/
 
 # misc
 .idea
+.vscode
+*.DS_Store
 
-# nodejs service
-*.bundle
+# webview lib
+**/dist
 **/node_modules/

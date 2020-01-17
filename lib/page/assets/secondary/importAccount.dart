@@ -2,20 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ImportAccount extends StatefulWidget {
-  const ImportAccount(this.emitMsg, this.accountCreate);
+  const ImportAccount(this.evalJavascript, this.accountCreate);
 
-  final Function emitMsg;
+  final Function evalJavascript;
   final Map<String, dynamic> accountCreate;
 
   @override
   _ImportAccountState createState() =>
-      _ImportAccountState(emitMsg, accountCreate);
+      _ImportAccountState(evalJavascript, accountCreate);
 }
 
 class _ImportAccountState extends State<ImportAccount> {
-  _ImportAccountState(this.emitMsg, this.accountCreate);
+  _ImportAccountState(this.evalJavascript, this.accountCreate);
 
-  final Function emitMsg;
+  final Function evalJavascript;
   final Map<String, dynamic> accountCreate;
 
   String _selection = 'Mnemonic';
@@ -35,7 +35,7 @@ class _ImportAccountState extends State<ImportAccount> {
   @override
   void initState() {
     super.initState();
-    emitMsg('get', {'path': '/account/gen'});
+    evalJavascript('account.gen()');
   }
 
   Widget _buildKeyField() {
@@ -90,7 +90,7 @@ class _ImportAccountState extends State<ImportAccount> {
                         value: _selection,
                         onChanged: (String value) {
                           if (value != 'KeyStore') {
-                            emitMsg('get', {'path': '/account/gen'});
+                            evalJavascript('account.gen()');
                           }
                           setState(() {
                             _selection = value;

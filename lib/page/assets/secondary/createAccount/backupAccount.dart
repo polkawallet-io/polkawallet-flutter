@@ -9,20 +9,20 @@ import 'package:polka_wallet/utils/i18n.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
 class BackupAccount extends StatefulWidget {
-  const BackupAccount(this.emitMsg, this.assetsStore);
+  const BackupAccount(this.evalJavascript, this.assetsStore);
 
-  final Function emitMsg;
+  final Function evalJavascript;
   final AssetsStore assetsStore;
 
   @override
   _BackupAccountState createState() =>
-      _BackupAccountState(emitMsg, assetsStore);
+      _BackupAccountState(evalJavascript, assetsStore);
 }
 
 class _BackupAccountState extends State<BackupAccount> {
-  _BackupAccountState(this.emitMsg, this.assetsStore);
+  _BackupAccountState(this.evalJavascript, this.assetsStore);
 
-  final Function emitMsg;
+  final Function evalJavascript;
   final AssetsStore assetsStore;
 
   int _step = 0;
@@ -32,7 +32,7 @@ class _BackupAccountState extends State<BackupAccount> {
 
   @override
   void initState() {
-    emitMsg('msg', {'path': '/account/gen'});
+    evalJavascript('account.gen()');
     super.initState();
   }
 
