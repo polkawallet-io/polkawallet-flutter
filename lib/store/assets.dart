@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 
 import 'package:polka_wallet/utils/localStorage.dart';
@@ -17,54 +18,93 @@ abstract class _AssetsStore with Store {
   String description = '';
 
   @observable
-  Map<String, dynamic> newAccount = ObservableMap.of(Map<String, dynamic>.from({
-    'name': '',
-    'password': '',
-    'address': '',
-    'seed': '',
-    'isLocked': false,
-    'mnemonic': '',
-  }));
+  Account newAccount = Account('');
 
   @observable
-  Map<String, dynamic> currentAccount =
-      ObservableMap.of(Map<String, dynamic>.from({
-    'name': '',
-    'password': '',
-    'address': '',
-    'seed': '',
-    'isLocked': false,
-    'mnemonic': '',
-  }));
+  Account currentAccount = Account('');
+
+  @observable
+  ObservableList<Account> accountList = ObservableList<Account>();
 
   @action
   void setNewAccount(Map<String, dynamic> acc) {
+    Map<String, dynamic> newAcc = Account.toJson(newAccount);
     for (var k in acc.keys) {
-      newAccount[k] = acc[k];
+      newAcc[k] = acc[k];
     }
+    newAccount = Account.fromJson(newAcc);
 
     print('setNewAccount:');
-    print(newAccount);
+    print(Account.toJson(newAccount));
   }
 
   @action
-  void setCurrentAccount(Map<String, dynamic> acc) {
-    for (var k in acc.keys) {
-      currentAccount[k] = acc[k];
-    }
+  void setCurrentAccount(Account acc) {
+    currentAccount = acc;
 
     print('setCurrentAccount:');
-    print(currentAccount);
+    print(Account.toJson(currentAccount));
+
+    LocalStorage.setCurrentAccount(Account.toJson(acc));
+  }
+
+  @action
+  Future<void> addAccount(Account acc) async {
+    Map<String, dynamic> account = Account.toJson(acc);
+    LocalStorage.addAccount(account);
+    LocalStorage.setCurrentAccount(account);
+
+    loadAccount();
+  }
+
+  @action
+  Future<void> removeAccount(Account acc) async {
+    LocalStorage.removeAccount(acc.address);
+
+    List<Map<String, dynamic>> accounts = await LocalStorage.getAccountList();
+    if (accounts.length > 0) {
+      LocalStorage.setCurrentAccount(accounts[0]);
+    } else {
+      LocalStorage.setCurrentAccount(Map<String, dynamic>());
+    }
+
+    loadAccount();
   }
 
   @action
   Future<void> loadAccount() async {
-    String accStr = await LocalStorage.getItem('acc');
+    Map<String, dynamic> acc = await LocalStorage.getCurrentAccount();
+    currentAccount = Account.fromJson(acc);
 
-    print('load acc: $accStr');
-    if (accStr != null) {
-      Map<String, dynamic> acc = jsonDecode(accStr);
-      setCurrentAccount(acc);
-    }
+    List<Map<String, dynamic>> accList = await LocalStorage.getAccountList();
+    print('load accounts: ${jsonEncode(accList)}');
+    accList.forEach((i) => accountList.add(Account.fromJson(i)));
   }
+}
+
+@JsonSerializable()
+class Account extends _Account with _$Account {
+  Account(String name) : super(name);
+
+  static Account fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
+  static Map<String, dynamic> toJson(Account acc) => _$AccountToJson(acc);
+}
+
+abstract class _Account with Store {
+  _Account(this.name);
+
+  @observable
+  String name = '';
+
+  @observable
+  String password = '';
+
+  @observable
+  String address = '';
+
+  @observable
+  String seed = '';
+
+  @observable
+  String mnemonic = '';
 }

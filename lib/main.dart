@@ -36,7 +36,7 @@ class _WalletAppState extends State<WalletApp> {
   void initState() {
     _msgHandlers = {
       'ready': (data) {
-        String address = _assetsStore.currentAccount['address'];
+        String address = _assetsStore.currentAccount.address;
         if (address.length > 0) {
           evalJavascript('api.query.balances.freeBalance("$address")');
         }
@@ -93,14 +93,8 @@ class _WalletAppState extends State<WalletApp> {
               }),
         ].toSet(),
         withLocalUrl: true,
+        localUrlScope: 'lib/polkadot_js_service/dist/',
         hidden: true);
-  }
-
-  @override
-  void dispose() {
-    webview.dispose();
-    webview.close();
-    super.dispose();
   }
 
   @override
@@ -122,13 +116,13 @@ class _WalletAppState extends State<WalletApp> {
         '/': (_) => Home(_assetsStore),
         '/account/create': (_) => CreateAccount(_assetsStore.setNewAccount),
         '/account/backup': (_) => Observer(builder: (_) {
-              print('route');
-              print(_assetsStore.newAccount['address']);
+              print('route backup');
+              print(_assetsStore.newAccount.address);
               return BackupAccount(evalJavascript, _assetsStore);
             }),
         '/account/import': (_) => Observer(builder: (_) {
-              print('route');
-              print(_assetsStore.newAccount['address']);
+              print('route import');
+              print(_assetsStore.newAccount.address);
               return ImportAccount(evalJavascript, _assetsStore.newAccount);
             }),
       },

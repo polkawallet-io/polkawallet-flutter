@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/store/assets.dart';
 
 class ImportAccount extends StatefulWidget {
   const ImportAccount(this.evalJavascript, this.accountCreate);
 
   final Function evalJavascript;
-  final Map<String, dynamic> accountCreate;
+  final Account accountCreate;
 
   @override
   _ImportAccountState createState() =>
@@ -16,7 +17,7 @@ class _ImportAccountState extends State<ImportAccount> {
   _ImportAccountState(this.evalJavascript, this.accountCreate);
 
   final Function evalJavascript;
-  final Map<String, dynamic> accountCreate;
+  final Account accountCreate;
 
   String _selection = 'Mnemonic';
 
@@ -41,13 +42,13 @@ class _ImportAccountState extends State<ImportAccount> {
   Widget _buildKeyField() {
     switch (_selection) {
       case 'Mnemonic':
-        String v = accountCreate['mnemonic'];
+        String v = accountCreate.mnemonic;
         return TextFormField(
           initialValue: v,
           maxLines: 3,
         );
       case 'Raw Seed':
-        String v = accountCreate['seed'];
+        String v = accountCreate.seed;
         return new TextFormField(
           initialValue: v,
         );
@@ -72,7 +73,7 @@ class _ImportAccountState extends State<ImportAccount> {
         child: Form(
           key: _formKey,
 //            autovalidate: true,
-          child: accountCreate['address'] == ''
+          child: accountCreate.address == ''
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
@@ -83,7 +84,7 @@ class _ImportAccountState extends State<ImportAccount> {
               : ListView(
                   children: <Widget>[
                     Center(
-                      child: Text(accountCreate['address']),
+                      child: Text(accountCreate.address),
                     ),
                     Text('Create from'),
                     DropdownButton<String>(

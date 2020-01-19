@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/utils/i18n.dart';
-
-import 'package:polka_wallet/utils/localStorage.dart';
 
 class BackupAccount extends StatefulWidget {
   const BackupAccount(this.evalJavascript, this.assetsStore);
@@ -70,7 +66,7 @@ class _BackupAccountState extends State<BackupAccount> {
                                   BorderRadius.all(Radius.circular(4))),
                           padding: EdgeInsets.all(16),
                           child: Text(
-                            assetsStore.newAccount['mnemonic'] ?? '',
+                            assetsStore.newAccount.mnemonic ?? '',
                             style: Theme.of(context).textTheme.display3,
                           ),
                         ),
@@ -91,7 +87,7 @@ class _BackupAccountState extends State<BackupAccount> {
                               setState(() {
                                 _step = 1;
                                 _wordsSelected = <String>[];
-                                _wordsLeft = assetsStore.newAccount['mnemonic']
+                                _wordsLeft = assetsStore.newAccount.mnemonic
                                     .toString()
                                     .split(' ');
                               });
@@ -168,14 +164,7 @@ class _BackupAccountState extends State<BackupAccount> {
                         style: Theme.of(context).textTheme.button),
                     onPressed: _wordsSelected.length == 12
                         ? () async {
-//                            String acc = await LocalStorage.getItem('acc');
-//                            print('get from local storage: $acc');
-                            assetsStore
-                                .setCurrentAccount(assetsStore.newAccount);
-                            print('set to storage');
-                            print(assetsStore.newAccount);
-                            LocalStorage.setItem(
-                                'acc', jsonEncode(assetsStore.newAccount));
+                            assetsStore.addAccount(assetsStore.newAccount);
                             Navigator.popUntil(
                                 context, ModalRoute.withName('/'));
                           }
