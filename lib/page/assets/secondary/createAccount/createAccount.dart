@@ -16,7 +16,7 @@ class _CreateAccountState extends State<CreateAccount> {
 
   final Function setNewAccount;
 
-  int _step = 0;
+  int _step = 1;
 
   String _password;
 
@@ -25,50 +25,6 @@ class _CreateAccountState extends State<CreateAccount> {
   TextEditingController _pass2Ctrl = new TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-
-  Widget _buildStep0(BuildContext context) {
-    var buttonStyle = Theme.of(context).textTheme.button;
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Create Account')),
-      body: ListView(
-        padding: EdgeInsets.all(32),
-        children: <Widget>[
-          Image.asset('assets/images/public/About_logo.png'),
-          Container(
-            padding: EdgeInsets.only(top: 16),
-            child: RaisedButton(
-              padding: EdgeInsets.all(16),
-              color: Colors.pink,
-              child: Text(
-                I18n.of(context).home['create'],
-                style: buttonStyle,
-              ),
-              onPressed: () {
-                setState(() {
-                  _step = 1;
-                });
-              },
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 16),
-            child: RaisedButton(
-              padding: EdgeInsets.all(16),
-              color: Colors.pink,
-              child: Text(
-                I18n.of(context).home['import'],
-                style: buttonStyle,
-              ),
-              onPressed: () {
-                print('import');
-              },
-            ),
-          )
-        ],
-      ),
-    );
-  }
 
   Widget _buildStep2(BuildContext context) {
     var theme = Theme.of(context).textTheme;
@@ -170,24 +126,13 @@ class _CreateAccountState extends State<CreateAccount> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> i18n = I18n.of(context).account;
-    if (_step == 0) {
-      return _buildStep0(context);
-    }
+    final Map<String, String> dic = I18n.of(context).account;
     if (_step == 2) {
       return _buildStep2(context);
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Account'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            setState(() {
-              _step = 0;
-            });
-          },
-        ),
+        title: Text(I18n.of(context).home['create']),
       ),
       body: Padding(
         padding: EdgeInsets.all(16),
@@ -199,19 +144,19 @@ class _CreateAccountState extends State<CreateAccount> {
               TextFormField(
                 decoration: InputDecoration(
                   icon: Icon(Icons.person),
-                  hintText: i18n['create.name'],
-                  labelText: i18n['create.name'],
+                  hintText: dic['create.name'],
+                  labelText: dic['create.name'],
                 ),
                 controller: _nameCtrl,
                 validator: (v) {
-                  return v.trim().length > 0 ? null : i18n['create.name.error'];
+                  return v.trim().length > 0 ? null : dic['create.name.error'];
                 },
               ),
               TextFormField(
                 decoration: InputDecoration(
                   icon: Icon(Icons.lock),
-                  hintText: i18n['create.password'],
-                  labelText: i18n['create.password'],
+                  hintText: dic['create.password'],
+                  labelText: dic['create.password'],
                 ),
                 controller: _passCtrl,
                 validator: (v) {
@@ -219,7 +164,7 @@ class _CreateAccountState extends State<CreateAccount> {
                       RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$');
                   return v.trim().contains(pass)
                       ? null
-                      : i18n['create.password.error'];
+                      : dic['create.password.error'];
                 },
                 obscureText: true,
                 onChanged: (v) {
@@ -231,13 +176,13 @@ class _CreateAccountState extends State<CreateAccount> {
               TextFormField(
                 decoration: InputDecoration(
                   icon: Icon(Icons.lock),
-                  hintText: i18n['create.password2'],
-                  labelText: i18n['create.password2'],
+                  hintText: dic['create.password2'],
+                  labelText: dic['create.password2'],
                 ),
                 controller: _pass2Ctrl,
                 obscureText: true,
                 validator: (v) {
-                  return _password != v ? i18n['create.password2.error'] : null;
+                  return _password != v ? dic['create.password2.error'] : null;
                 },
               ),
               Container(

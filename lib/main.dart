@@ -5,7 +5,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:polka_wallet/page/profile/secondary/Account.dart';
 
 import 'utils/i18n/index.dart';
 import 'common/theme.dart';
@@ -15,7 +14,9 @@ import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/page/home.dart';
 import 'package:polka_wallet/page/assets/secondary/createAccount/createAccount.dart';
 import 'package:polka_wallet/page/assets/secondary/createAccount/backupAccount.dart';
-import 'package:polka_wallet/page/assets/secondary/importAccount.dart';
+import 'package:polka_wallet/page/assets/secondary/importAccount/importAccount.dart';
+import 'package:polka_wallet/page/assets/secondary/createAccountEntry.dart';
+import 'package:polka_wallet/page/profile/secondary/Account.dart';
 
 void main() => runApp(WalletApp());
 
@@ -115,13 +116,10 @@ class _WalletAppState extends State<WalletApp> {
       theme: appTheme,
       routes: {
         '/': (_) => Home(_accountStore),
+        '/account/entry': (_) => CreateAccountEntry(),
         '/account/create': (_) => CreateAccount(_accountStore.setNewAccount),
         '/account/backup': (_) => BackupAccount(evalJavascript, _accountStore),
-        '/account/import': (_) => Observer(builder: (_) {
-              print('route import');
-              print(_accountStore.newAccount.address);
-              return ImportAccount(evalJavascript, _accountStore.newAccount);
-            }),
+        '/account/import': (_) => ImportAccount(evalJavascript, _accountStore),
         '/profile/account': (_) => AccountManage(_accountStore),
       },
     );

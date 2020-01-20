@@ -21,6 +21,9 @@ const Map<String, String> enAccount = {
   'backup': 'Confirm the mnemonic',
   'backup.confirm':
       'Please click on the mnemonic in the correct order to confirm that the backup is correct',
+  'import.type': 'Source Type',
+  'import.encrypt': 'Encrypt Type',
+  'import.invalid': 'Invalid',
 };
 
 const Map<String, String> zhAccount = {
@@ -42,4 +45,7 @@ const Map<String, String> zhAccount = {
   'create.warn10': '请勿截屏分享和储存，这将可能被第三方恶意软件收集，造成资产损失',
   'backup': '确认助记词',
   'backup.confirm': '请按正确顺序点击助记词，以确认备份正确',
+  'import.type': '导入类型',
+  'import.encrypt': '加密类型',
+  'import.invalid': '无效的',
 };

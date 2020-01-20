@@ -92,7 +92,7 @@ class DrawerMenu extends StatelessWidget {
                     style: TextStyle(fontSize: 16, color: Colors.white)),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, '/account/create');
+                  Navigator.pushNamed(context, '/account/entry');
                 },
               )
             ],
