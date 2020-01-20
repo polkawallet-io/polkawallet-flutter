@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/utils/i18n.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
 class CreateAccount extends StatefulWidget {
   const CreateAccount(this.setNewAccount);
@@ -157,7 +157,6 @@ class _CreateAccountState extends State<CreateAccount> {
                               ],
                             );
                           });
-                      print('finish');
                     },
                   ),
                 ),

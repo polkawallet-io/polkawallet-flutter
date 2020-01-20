@@ -1,69 +1,102 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:polka_wallet/utils/i18n.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/utils/format.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
-import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/store/account.dart';
 
 class DrawerMenu extends StatelessWidget {
-  List<ListTile> _buildAccList() {
-    return [
-      ListTile(
-        leading: Icon(
-          Icons.account_circle,
-          color: Colors.white,
-        ),
-        title: Text('Address',
-            style: TextStyle(fontSize: 16, color: Colors.white)),
-      )
-    ];
+  DrawerMenu(this.store);
+
+  final AccountStore store;
+
+  List<ListTile> _buildAccList(BuildContext context) {
+    return store.optionalAccounts
+        .map((i) => ListTile(
+              leading: Container(
+                width: 40,
+                height: 40,
+                child: Image.asset('assets/images/assets/KSC.png'),
+              ),
+              title: Text(i.name ?? 'name',
+                  style: TextStyle(fontSize: 16, color: Colors.white)),
+              subtitle: Text(
+                Fmt.address(i.address) ?? '',
+                style: TextStyle(fontSize: 16, color: Colors.white70),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                store.setCurrentAccount(i);
+              },
+            ))
+        .toList();
   }
 
   @override
-  Widget build(BuildContext context) => Provider<AssetsStore>(
-      create: (_) => AssetsStore(),
-      child: Container(
-        color: Colors.indigo,
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.fromLTRB(16, 28, 0, 28),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    I18n.of(context).home['menu'],
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+  Widget build(BuildContext context) => Observer(
+        builder: (_) => Container(
+          color: Colors.indigoAccent,
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.fromLTRB(16, 28, 0, 28),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      I18n.of(context).home['menu'],
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.menu),
+                      color: Colors.white,
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                color: Colors.indigo,
+                child: ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    child: Image.asset('assets/images/assets/KSC.png'),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.menu),
-                    color: Colors.white,
-                    onPressed: () => Navigator.pop(context),
+                  title: Text(store.currentAccount.name ?? 'name',
+                      style: TextStyle(fontSize: 16, color: Colors.white)),
+                  subtitle: Text(
+                    Fmt.address(store.currentAccount.address) ?? '',
+                    style: TextStyle(fontSize: 16, color: Colors.white70),
                   ),
-                ],
+                ),
               ),
-            ),
-            ..._buildAccList(),
-            ListTile(
-              leading: Icon(
-                Icons.scanner,
-                color: Colors.white,
+              ..._buildAccList(context),
+              Divider(),
+              ListTile(
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  child: Image.asset('assets/images/assets/Menu_scan.png'),
+                ),
+                title: Text(I18n.of(context).home['scan'],
+                    style: TextStyle(fontSize: 16, color: Colors.white)),
               ),
-              title: Text(I18n.of(context).home['scan'],
-                  style: TextStyle(fontSize: 16, color: Colors.white)),
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.account_balance_wallet,
-                color: Colors.white,
-              ),
-              title: Text(I18n.of(context).home['create'],
-                  style: TextStyle(fontSize: 16, color: Colors.white)),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/account/create');
-              },
-            )
-          ],
+              ListTile(
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  child: Image.asset('assets/images/assets/Menu_create.png'),
+                ),
+                title: Text(I18n.of(context).home['create'],
+                    style: TextStyle(fontSize: 16, color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/account/create');
+                },
+              )
+            ],
+          ),
         ),
-      ));
+      );
 }

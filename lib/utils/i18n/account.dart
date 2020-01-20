@@ -1,65 +1,3 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show SynchronousFuture;
-
-class AppLocalizationsDelegate extends LocalizationsDelegate<I18n> {
-  const AppLocalizationsDelegate();
-
-  @override
-  bool isSupported(Locale locale) => ['en', 'zh'].contains(locale.languageCode);
-
-  @override
-  Future<I18n> load(Locale locale) {
-    // Returning a SynchronousFuture here because an async "load" operation
-    // isn't needed to produce an instance of DemoLocalizations.
-    return SynchronousFuture<I18n>(I18n(locale));
-  }
-
-  @override
-  bool shouldReload(AppLocalizationsDelegate old) => false;
-}
-
-class I18n {
-  I18n(this.locale);
-
-  final Locale locale;
-
-  static I18n of(BuildContext context) {
-    return Localizations.of<I18n>(context, I18n);
-  }
-
-  static Map<String, Map<String, Map<String, String>>> _localizedValues = {
-    'en': {'home': enHome, 'account': enAccount},
-    'zh': {'home': zhHome, 'account': zhAccount},
-  };
-
-  Map<String, String> get home {
-    return _localizedValues[locale.languageCode]['home'];
-  }
-
-  Map<String, String> get account {
-    return _localizedValues[locale.languageCode]['account'];
-  }
-}
-
-const Map<String, String> enHome = {
-  'assets': 'Assets',
-  'staking': 'Staking',
-  'democracy': 'Democracy',
-  'profile': 'Profile',
-  'account': 'Account',
-  'menu': 'Menu',
-  'scan': 'Add via Qr',
-  'create': 'Create Account',
-  'import': 'Import Account',
-  'name': 'Name',
-  'password': 'Password',
-  'password2': 'Confirm Password',
-  'next': 'Next Step',
-  'ok': 'OK',
-  'cancel': 'Cancel',
-};
-
 const Map<String, String> enAccount = {
   'create.name': 'Name',
   'create.name.error': 'Name can not be empty',
@@ -83,21 +21,6 @@ const Map<String, String> enAccount = {
   'backup': 'Confirm the mnemonic',
   'backup.confirm':
       'Please click on the mnemonic in the correct order to confirm that the backup is correct',
-};
-
-const Map<String, String> zhHome = {
-  'assets': '资产',
-  'staking': '抵押',
-  'democracy': '民主',
-  'profile': '设置',
-  'account': '账户',
-  'menu': '菜单',
-  'scan': '通过二维码导入',
-  'create': '新建账户',
-  'import': '导入账户',
-  'next': '下一步',
-  'ok': '确认',
-  'cancel': '取消',
 };
 
 const Map<String, String> zhAccount = {

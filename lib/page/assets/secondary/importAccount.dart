@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/store/account.dart';
 
 class ImportAccount extends StatefulWidget {
   const ImportAccount(this.evalJavascript, this.accountCreate);

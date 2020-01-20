@@ -4,23 +4,23 @@ import 'package:polka_wallet/page/assets/drawerMenu.dart';
 import 'package:polka_wallet/page/democracy/democracy.dart';
 import 'package:polka_wallet/page/profile/profile.dart';
 import 'package:polka_wallet/page/staking/staking.dart';
-import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/store/account.dart';
 
-import 'package:polka_wallet/utils/i18n.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Home extends StatefulWidget {
-  Home(this.assetsStore);
+  Home(this.accountStore);
 
-  final AssetsStore assetsStore;
+  final AccountStore accountStore;
 
   @override
-  _HomePageState createState() => new _HomePageState(assetsStore);
+  _HomePageState createState() => new _HomePageState(accountStore);
 }
 
 class _HomePageState extends State<Home> {
-  _HomePageState(this.assetsStore);
+  _HomePageState(this.accountStore);
 
-  final AssetsStore assetsStore;
+  final AccountStore accountStore;
 
   int _curIndex = 0;
 
@@ -72,7 +72,7 @@ class _HomePageState extends State<Home> {
   Widget _getPage(i) {
     switch (i) {
       case 0:
-        return Assets(assetsStore);
+        return Assets(accountStore);
         break;
       case 1:
         return Staking();
@@ -81,7 +81,7 @@ class _HomePageState extends State<Home> {
         return Democracy();
         break;
       default:
-        return Profile();
+        return Profile(accountStore);
         break;
     }
   }
@@ -116,7 +116,7 @@ class _HomePageState extends State<Home> {
                   elevation: 0.0,
                 ),
                 endDrawer: Drawer(
-                  child: DrawerMenu(),
+                  child: DrawerMenu(accountStore),
                 ),
                 bottomNavigationBar: BottomNavigationBar(
                     currentIndex: _curIndex,

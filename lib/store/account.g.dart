@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'assets.dart';
+part of 'account.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -30,8 +30,16 @@ Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
-mixin _$AssetsStore on _AssetsStore, Store {
-  final _$descriptionAtom = Atom(name: '_AssetsStore.description');
+mixin _$AccountStore on _AccountStore, Store {
+  Computed<ObservableList<Account>> _$optionalAccountsComputed;
+
+  @override
+  ObservableList<Account> get optionalAccounts =>
+      (_$optionalAccountsComputed ??=
+              Computed<ObservableList<Account>>(() => super.optionalAccounts))
+          .value;
+
+  final _$descriptionAtom = Atom(name: '_AccountStore.description');
 
   @override
   String get description {
@@ -48,7 +56,7 @@ mixin _$AssetsStore on _AssetsStore, Store {
     }, _$descriptionAtom, name: '${_$descriptionAtom.name}_set');
   }
 
-  final _$newAccountAtom = Atom(name: '_AssetsStore.newAccount');
+  final _$newAccountAtom = Atom(name: '_AccountStore.newAccount');
 
   @override
   Account get newAccount {
@@ -65,7 +73,7 @@ mixin _$AssetsStore on _AssetsStore, Store {
     }, _$newAccountAtom, name: '${_$newAccountAtom.name}_set');
   }
 
-  final _$currentAccountAtom = Atom(name: '_AssetsStore.currentAccount');
+  final _$currentAccountAtom = Atom(name: '_AccountStore.currentAccount');
 
   @override
   Account get currentAccount {
@@ -82,7 +90,7 @@ mixin _$AssetsStore on _AssetsStore, Store {
     }, _$currentAccountAtom, name: '${_$currentAccountAtom.name}_set');
   }
 
-  final _$accountListAtom = Atom(name: '_AssetsStore.accountList');
+  final _$accountListAtom = Atom(name: '_AccountStore.accountList');
 
   @override
   ObservableList<Account> get accountList {
@@ -120,25 +128,26 @@ mixin _$AssetsStore on _AssetsStore, Store {
     return _$loadAccountAsyncAction.run(() => super.loadAccount());
   }
 
-  final _$_AssetsStoreActionController = ActionController(name: '_AssetsStore');
+  final _$_AccountStoreActionController =
+      ActionController(name: '_AccountStore');
 
   @override
   void setNewAccount(Map<String, dynamic> acc) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction();
+    final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
       return super.setNewAccount(acc);
     } finally {
-      _$_AssetsStoreActionController.endAction(_$actionInfo);
+      _$_AccountStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void setCurrentAccount(Account acc) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction();
+    final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
       return super.setCurrentAccount(acc);
     } finally {
-      _$_AssetsStoreActionController.endAction(_$actionInfo);
+      _$_AccountStoreActionController.endAction(_$actionInfo);
     }
   }
 }

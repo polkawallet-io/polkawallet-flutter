@@ -5,14 +5,14 @@ import 'package:mobx/mobx.dart';
 
 import 'package:polka_wallet/utils/localStorage.dart';
 
-part 'assets.g.dart';
+part 'account.g.dart';
 
-class AssetsStore extends _AssetsStore with _$AssetsStore {
-  AssetsStore();
+class AccountStore extends _AccountStore with _$AccountStore {
+  AccountStore();
 }
 
-abstract class _AssetsStore with Store {
-  _AssetsStore();
+abstract class _AccountStore with Store {
+  _AccountStore();
 
   @observable
   String description = '';
@@ -25,6 +25,12 @@ abstract class _AssetsStore with Store {
 
   @observable
   ObservableList<Account> accountList = ObservableList<Account>();
+
+  @computed
+  ObservableList<Account> get optionalAccounts {
+    return ObservableList.of(
+        accountList.where((i) => i.address != currentAccount.address));
+  }
 
   @action
   void setNewAccount(Map<String, dynamic> acc) {
@@ -78,7 +84,7 @@ abstract class _AssetsStore with Store {
 
     List<Map<String, dynamic>> accList = await LocalStorage.getAccountList();
     print('load accounts: ${jsonEncode(accList)}');
-    accList.forEach((i) => accountList.add(Account.fromJson(i)));
+    accountList = ObservableList.of(accList.map((i) => Account.fromJson(i)));
   }
 }
 

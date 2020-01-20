@@ -1,0 +1,32 @@
+const Map<String, String> enHome = {
+  'assets': 'Assets',
+  'staking': 'Staking',
+  'democracy': 'Democracy',
+  'profile': 'Profile',
+  'account': 'Account',
+  'menu': 'Menu',
+  'scan': 'Add via Qr',
+  'create': 'Create Account',
+  'import': 'Import Account',
+  'name': 'Name',
+  'password': 'Password',
+  'password2': 'Confirm Password',
+  'next': 'Next Step',
+  'ok': 'OK',
+  'cancel': 'Cancel',
+};
+
+const Map<String, String> zhHome = {
+  'assets': '资产',
+  'staking': '抵押',
+  'democracy': '民主',
+  'profile': '设置',
+  'account': '账户',
+  'menu': '菜单',
+  'scan': '通过二维码导入',
+  'create': '新建账户',
+  'import': '导入账户',
+  'next': '下一步',
+  'ok': '确认',
+  'cancel': '取消',
+};

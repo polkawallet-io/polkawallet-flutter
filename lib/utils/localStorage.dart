@@ -56,13 +56,9 @@ class _LocalStorage {
   }
 
   Future<void> removeAccount(String address) async {
-    String accountsStr = await getItem(accountsKey);
-    if (accountsStr != null) {
-      List<Map<String, dynamic>> accounts = jsonDecode(accountsStr);
-      accounts.removeWhere((item) => item['address'] == address);
-
-      setItem(accountsKey, jsonEncode(accounts));
-    }
+    var accounts = await getAccountList();
+    accounts.removeWhere((item) => item['address'] == address);
+    setItem(accountsKey, jsonEncode(accounts));
   }
 
   Future<List<Map<String, dynamic>>> getAccountList() async {

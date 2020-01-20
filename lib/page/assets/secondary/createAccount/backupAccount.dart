@@ -1,25 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/store/assets.dart';
-import 'package:polka_wallet/utils/i18n.dart';
+import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
 class BackupAccount extends StatefulWidget {
-  const BackupAccount(this.evalJavascript, this.assetsStore);
+  const BackupAccount(this.evalJavascript, this.accountStore);
 
   final Function evalJavascript;
-  final AssetsStore assetsStore;
+  final AccountStore accountStore;
 
   @override
   _BackupAccountState createState() =>
-      _BackupAccountState(evalJavascript, assetsStore);
+      _BackupAccountState(evalJavascript, accountStore);
 }
 
 class _BackupAccountState extends State<BackupAccount> {
-  _BackupAccountState(this.evalJavascript, this.assetsStore);
+  _BackupAccountState(this.evalJavascript, this.accountStore);
 
   final Function evalJavascript;
-  final AssetsStore assetsStore;
+  final AccountStore accountStore;
 
   int _step = 0;
 
@@ -66,7 +66,7 @@ class _BackupAccountState extends State<BackupAccount> {
                                   BorderRadius.all(Radius.circular(4))),
                           padding: EdgeInsets.all(16),
                           child: Text(
-                            assetsStore.newAccount.mnemonic ?? '',
+                            accountStore.newAccount.mnemonic ?? '',
                             style: Theme.of(context).textTheme.display3,
                           ),
                         ),
@@ -87,7 +87,7 @@ class _BackupAccountState extends State<BackupAccount> {
                               setState(() {
                                 _step = 1;
                                 _wordsSelected = <String>[];
-                                _wordsLeft = assetsStore.newAccount.mnemonic
+                                _wordsLeft = accountStore.newAccount.mnemonic
                                     .toString()
                                     .split(' ');
                               });
@@ -164,7 +164,7 @@ class _BackupAccountState extends State<BackupAccount> {
                         style: Theme.of(context).textTheme.button),
                     onPressed: _wordsSelected.length == 12
                         ? () async {
-                            assetsStore.addAccount(assetsStore.newAccount);
+                            accountStore.addAccount(accountStore.newAccount);
                             Navigator.popUntil(
                                 context, ModalRoute.withName('/'));
                           }
