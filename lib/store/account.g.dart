@@ -90,6 +90,23 @@ mixin _$AccountStore on _AccountStore, Store {
     }, _$currentAccountAtom, name: '${_$currentAccountAtom.name}_set');
   }
 
+  final _$accountStateAtom = Atom(name: '_AccountStore.accountState');
+
+  @override
+  AccountState get accountState {
+    _$accountStateAtom.context.enforceReadPolicy(_$accountStateAtom);
+    _$accountStateAtom.reportObserved();
+    return super.accountState;
+  }
+
+  @override
+  set accountState(AccountState value) {
+    _$accountStateAtom.context.conditionallyRunInAction(() {
+      super.accountState = value;
+      _$accountStateAtom.reportChanged();
+    }, _$accountStateAtom, name: '${_$accountStateAtom.name}_set');
+  }
+
   final _$accountListAtom = Atom(name: '_AccountStore.accountList');
 
   @override
@@ -142,10 +159,30 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
+  void importAccount(Map<String, dynamic> acc) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    try {
+      return super.importAccount(acc);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setCurrentAccount(Account acc) {
     final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
       return super.setCurrentAccount(acc);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setAccountBalance(String balance) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    try {
+      return super.setAccountBalance(balance);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }
@@ -236,5 +273,41 @@ mixin _$Account on _Account, Store {
       super.mnemonic = value;
       _$mnemonicAtom.reportChanged();
     }, _$mnemonicAtom, name: '${_$mnemonicAtom.name}_set');
+  }
+}
+
+mixin _$AccountState on _AccountState, Store {
+  final _$addressAtom = Atom(name: '_AccountState.address');
+
+  @override
+  String get address {
+    _$addressAtom.context.enforceReadPolicy(_$addressAtom);
+    _$addressAtom.reportObserved();
+    return super.address;
+  }
+
+  @override
+  set address(String value) {
+    _$addressAtom.context.conditionallyRunInAction(() {
+      super.address = value;
+      _$addressAtom.reportChanged();
+    }, _$addressAtom, name: '${_$addressAtom.name}_set');
+  }
+
+  final _$balanceAtom = Atom(name: '_AccountState.balance');
+
+  @override
+  String get balance {
+    _$balanceAtom.context.enforceReadPolicy(_$balanceAtom);
+    _$balanceAtom.reportObserved();
+    return super.balance;
+  }
+
+  @override
+  set balance(String value) {
+    _$balanceAtom.context.conditionallyRunInAction(() {
+      super.balance = value;
+      _$balanceAtom.reportChanged();
+    }, _$balanceAtom, name: '${_$balanceAtom.name}_set');
   }
 }

@@ -23,16 +23,6 @@ class _ImportAccountState extends State<ImportAccount> {
   final AccountStore store;
 
   int _step = 0;
-  String _selection = 'Mnemonic';
-
-  Map<String, dynamic> _account = {};
-  String _mnemonic, _seed, _keyStore;
-
-  String _password;
-
-  TextEditingController _keyCtrl = new TextEditingController();
-
-  final _formKey = GlobalKey<FormState>();
 
   Widget _buildStep0(BuildContext context) {
     return Scaffold(
@@ -48,10 +38,11 @@ class _ImportAccountState extends State<ImportAccount> {
   Widget _buildStep1(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['import'])),
-      body: ImportAccountForm(store.setNewAccount, () {
-        setState(() {
-          _step = 2;
-        });
+      body: ImportAccountForm(store.setNewAccount, (Map<String, dynamic> data) {
+        String code =
+            'account.recover("${data['keyType']}", "${data['cryptoType']}", "${data['data']}")';
+        evalJavascript(code);
+        Navigator.popUntil(context, ModalRoute.withName('/'));
       }),
     );
   }

@@ -24,6 +24,9 @@ abstract class _AccountStore with Store {
   Account currentAccount = Account('');
 
   @observable
+  AccountState accountState = AccountState('');
+
+  @observable
   ObservableList<Account> accountList = ObservableList<Account>();
 
   @computed
@@ -45,8 +48,18 @@ abstract class _AccountStore with Store {
   }
 
   @action
+  void importAccount(Map<String, dynamic> acc) {
+    setNewAccount(acc);
+    addAccount(newAccount);
+
+    print('importNewAccount:');
+    print(Account.toJson(newAccount));
+  }
+
+  @action
   void setCurrentAccount(Account acc) {
     currentAccount = acc;
+    accountState = AccountState(currentAccount.address);
 
     print('setCurrentAccount:');
     print(Account.toJson(currentAccount));
@@ -86,6 +99,11 @@ abstract class _AccountStore with Store {
     print('load accounts: ${jsonEncode(accList)}');
     accountList = ObservableList.of(accList.map((i) => Account.fromJson(i)));
   }
+
+  @action
+  void setAccountBalance(String balance) {
+    accountState.balance = balance;
+  }
 }
 
 @JsonSerializable()
@@ -113,4 +131,18 @@ abstract class _Account with Store {
 
   @observable
   String mnemonic = '';
+}
+
+class AccountState extends _AccountState with _$AccountState {
+  AccountState(String address) : super(address);
+}
+
+abstract class _AccountState with Store {
+  _AccountState(this.address);
+
+  @observable
+  String address = '';
+
+  @observable
+  String balance = '0';
 }

@@ -5,21 +5,27 @@ import 'package:polka_wallet/page/democracy/democracy.dart';
 import 'package:polka_wallet/page/profile/profile.dart';
 import 'package:polka_wallet/page/staking/staking.dart';
 import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/settings.dart';
 
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Home extends StatefulWidget {
-  Home(this.accountStore);
+  Home(this.evalJavascript, this.settingStore, this.accountStore);
 
+  final Function evalJavascript;
+  final SettingsStore settingStore;
   final AccountStore accountStore;
 
   @override
-  _HomePageState createState() => new _HomePageState(accountStore);
+  _HomePageState createState() =>
+      new _HomePageState(evalJavascript, settingStore, accountStore);
 }
 
 class _HomePageState extends State<Home> {
-  _HomePageState(this.accountStore);
+  _HomePageState(this.evalJavascript, this.settingsStore, this.accountStore);
 
+  final Function evalJavascript;
+  final SettingsStore settingsStore;
   final AccountStore accountStore;
 
   int _curIndex = 0;
@@ -72,7 +78,7 @@ class _HomePageState extends State<Home> {
   Widget _getPage(i) {
     switch (i) {
       case 0:
-        return Assets(accountStore);
+        return Assets(settingsStore, accountStore);
         break;
       case 1:
         return Staking();
@@ -84,6 +90,17 @@ class _HomePageState extends State<Home> {
         return Profile(accountStore);
         break;
     }
+  }
+
+  void _fetchAccountBalance() {
+    evalJavascript(
+        'account.getBalance("${accountStore.currentAccount.address}")');
+  }
+
+  @override
+  void initState() {
+    _fetchAccountBalance();
+    super.initState();
   }
 
   @override
@@ -137,6 +154,9 @@ class _HomePageState extends State<Home> {
                 currentIndex: _curIndex,
                 iconSize: 22.0,
                 onTap: (index) {
+                  if (index == 0) {
+                    _fetchAccountBalance();
+                  }
                   setState(() {
                     _curIndex = index;
                   });

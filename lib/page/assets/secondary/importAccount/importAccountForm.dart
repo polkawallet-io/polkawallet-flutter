@@ -94,34 +94,6 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
               );
             },
           ),
-          ListTile(
-            title: Text(I18n.of(context).account['import.encrypt']),
-            subtitle: Text(_typeOptions[_typeSelection]),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              showCupertinoModalPopup(
-                context: context,
-                builder: (_) => Container(
-                  height: MediaQuery.of(context).copyWith().size.height / 3,
-                  child: CupertinoPicker(
-                    backgroundColor: Colors.white,
-                    itemExtent: 56,
-                    scrollController: FixedExtentScrollController(
-                        initialItem: _typeSelection),
-                    children: _typeOptions
-                        .map((i) => Padding(
-                            padding: EdgeInsets.all(16), child: Text(i)))
-                        .toList(),
-                    onSelectedItemChanged: (v) {
-                      setState(() {
-                        _typeSelection = v;
-                      });
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
           Padding(
             padding: EdgeInsets.all(16),
             child: TextFormField(
@@ -134,6 +106,37 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
               validator: validateInput,
             ),
           ),
+          _keySelection == 2
+              ? Container()
+              : ListTile(
+                  title: Text(I18n.of(context).account['import.encrypt']),
+                  subtitle: Text(_typeOptions[_typeSelection]),
+                  trailing: Icon(Icons.arrow_forward_ios),
+                  onTap: () {
+                    showCupertinoModalPopup(
+                      context: context,
+                      builder: (_) => Container(
+                        height:
+                            MediaQuery.of(context).copyWith().size.height / 3,
+                        child: CupertinoPicker(
+                          backgroundColor: Colors.white,
+                          itemExtent: 56,
+                          scrollController: FixedExtentScrollController(
+                              initialItem: _typeSelection),
+                          children: _typeOptions
+                              .map((i) => Padding(
+                                  padding: EdgeInsets.all(16), child: Text(i)))
+                              .toList(),
+                          onSelectedItemChanged: (v) {
+                            setState(() {
+                              _typeSelection = v;
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
           Row(
             children: <Widget>[
               Expanded(
@@ -146,12 +149,11 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                     child: Text(I18n.of(context).home['ok']),
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
-                        print('ok');
-//                        setNewAccount({
-//                          'name': _nameCtrl.text,
-//                          'password': _passCtrl.text,
-//                        });
-//                        onSubmit();
+                        onSubmit({
+                          'keyType': _keyOptions[_keySelection],
+                          'cryptoType': _typeOptions[_typeSelection],
+                          'data': _keyCtrl.value.text
+                        });
                       }
                     },
                   ),

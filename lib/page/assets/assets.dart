@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 import 'package:polka_wallet/store/account.dart';
 
 class Assets extends StatelessWidget {
-  Assets(this.store);
+  Assets(this.settingsStore, this.store);
 
+  final SettingsStore settingsStore;
   final AccountStore store;
 
   @override
@@ -27,10 +29,46 @@ class Assets extends StatelessWidget {
                       fontSize: 20,
                       color: Colors.black54)),
             ),
-            RaisedButton(
-              child: Text('test', style: Theme.of(context).textTheme.display2),
-              onPressed: () => Navigator.pushNamed(context, '/account/backup'),
-            )
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 16, 0, 16),
+              decoration: BoxDecoration(
+                  borderRadius:
+                      const BorderRadius.all(const Radius.circular(8)),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius:
+                          32.0, // has the effect of softening the shadow
+                      spreadRadius:
+                          2.0, // has the effect of extending the shadow
+                      offset: Offset(
+                        2.0, // horizontal, move right 10
+                        2.0, // vertical, move down 10
+                      ),
+                    )
+                  ]),
+              child: ListTile(
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  child: Image.asset('assets/images/assets/KSC.png'),
+                ),
+                title: Text(settingsStore.networkState.tokenSymbol ?? ''),
+                subtitle: Text('kusama'),
+                trailing: Text(
+                  Fmt.balance(store.accountState.balance),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.black54),
+                ),
+              ),
+            ),
+//            RaisedButton(
+//              child: Text('test', style: Theme.of(context).textTheme.display2),
+//              onPressed: () => Navigator.pushNamed(context, '/account/backup'),
+//            )
           ],
         ),
       );

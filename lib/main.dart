@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:polka_wallet/store/settings.dart';
 
 import 'utils/i18n/index.dart';
 import 'common/theme.dart';
@@ -29,6 +29,7 @@ class WalletApp extends StatefulWidget {
 
 class _WalletAppState extends State<WalletApp> {
   final _accountStore = AccountStore();
+  final _settingStore = SettingsStore();
 
   FlutterWebviewPlugin webview;
 
@@ -38,12 +39,17 @@ class _WalletAppState extends State<WalletApp> {
   void initState() {
     _msgHandlers = {
       'ready': (data) {
+        evalJavascript('api.rpc.system.properties()');
+
         String address = _accountStore.currentAccount.address;
         if (address.length > 0) {
-          evalJavascript('api.query.balances.freeBalance("$address")');
+          evalJavascript('account.getBalance("$address")');
         }
       },
-      'account.gen': _accountStore.setNewAccount
+      'api.rpc.system.properties': _settingStore.setNetworkState,
+      'account.gen': _accountStore.setNewAccount,
+      'account.recover': _accountStore.importAccount,
+      'account.getBalance': _accountStore.setAccountBalance,
     };
 
     _initWebView();
@@ -58,7 +64,7 @@ class _WalletAppState extends State<WalletApp> {
     String script = '$code.then(function(res) {'
         '  PolkaWallet.postMessage(JSON.stringify({ path: "$method", data: res }));'
         '}).catch(function(err) {'
-        '  PolkaWallet.postMessage(JSON.stringify({ path: "log", data: err }));'
+        '  PolkaWallet.postMessage(JSON.stringify({ path: "log", data: err.message }));'
         '})';
     webview.evalJavascript(script);
   }
@@ -115,7 +121,7 @@ class _WalletAppState extends State<WalletApp> {
       initialRoute: '/',
       theme: appTheme,
       routes: {
-        '/': (_) => Home(_accountStore),
+        '/': (_) => Home(evalJavascript, _settingStore, _accountStore),
         '/account/entry': (_) => CreateAccountEntry(),
         '/account/create': (_) => CreateAccount(_accountStore.setNewAccount),
         '/account/backup': (_) => BackupAccount(evalJavascript, _accountStore),
