@@ -42,27 +42,18 @@ abstract class _AccountStore with Store {
       newAcc[k] = acc[k];
     }
     newAccount = Account.fromJson(newAcc);
-
-    print('setNewAccount:');
-    print(Account.toJson(newAccount));
   }
 
   @action
   void importAccount(Map<String, dynamic> acc) {
     setNewAccount(acc);
     addAccount(newAccount);
-
-    print('importNewAccount:');
-    print(Account.toJson(newAccount));
   }
 
   @action
   void setCurrentAccount(Account acc) {
     currentAccount = acc;
     accountState = AccountState(currentAccount.address);
-
-    print('setCurrentAccount:');
-    print(Account.toJson(currentAccount));
 
     LocalStorage.setCurrentAccount(Account.toJson(acc));
   }

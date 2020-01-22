@@ -30,6 +30,23 @@ Map<String, dynamic> _$NetworkStateToJson(NetworkState instance) =>
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$SettingsStore on _SettingsStore, Store {
+  final _$networkNameAtom = Atom(name: '_SettingsStore.networkName');
+
+  @override
+  String get networkName {
+    _$networkNameAtom.context.enforceReadPolicy(_$networkNameAtom);
+    _$networkNameAtom.reportObserved();
+    return super.networkName;
+  }
+
+  @override
+  set networkName(String value) {
+    _$networkNameAtom.context.conditionallyRunInAction(() {
+      super.networkName = value;
+      _$networkNameAtom.reportChanged();
+    }, _$networkNameAtom, name: '${_$networkNameAtom.name}_set');
+  }
+
   final _$networkStateAtom = Atom(name: '_SettingsStore.networkState');
 
   @override
@@ -52,6 +69,13 @@ mixin _$SettingsStore on _SettingsStore, Store {
   @override
   Future<void> setNetworkState(Map<String, dynamic> data) {
     return _$setNetworkStateAsyncAction.run(() => super.setNetworkState(data));
+  }
+
+  final _$setNetworkNameAsyncAction = AsyncAction('setNetworkName');
+
+  @override
+  Future<void> setNetworkName(String name) {
+    return _$setNetworkNameAsyncAction.run(() => super.setNetworkName(name));
   }
 }
 

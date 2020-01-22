@@ -2,24 +2,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/page/assets/secondary/createAccount/createAccountForm.dart';
 import 'package:polka_wallet/page/assets/secondary/importAccount/importAccountForm.dart';
+import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ImportAccount extends StatefulWidget {
-  const ImportAccount(this.evalJavascript, this.store);
+  const ImportAccount(this.api, this.store);
 
-  final Function evalJavascript;
+  final Api api;
   final AccountStore store;
 
   @override
-  _ImportAccountState createState() =>
-      _ImportAccountState(evalJavascript, store);
+  _ImportAccountState createState() => _ImportAccountState(api, store);
 }
 
 class _ImportAccountState extends State<ImportAccount> {
-  _ImportAccountState(this.evalJavascript, this.store);
+  _ImportAccountState(this.api, this.store);
 
-  final Function evalJavascript;
+  final Api api;
   final AccountStore store;
 
   int _step = 0;
@@ -39,9 +39,10 @@ class _ImportAccountState extends State<ImportAccount> {
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['import'])),
       body: ImportAccountForm(store.setNewAccount, (Map<String, dynamic> data) {
-        String code =
-            'account.recover("${data['keyType']}", "${data['cryptoType']}", "${data['data']}")';
-        evalJavascript(code);
+        api.importAccount(
+            keyType: data['keyType'],
+            cryptoType: data['cryptoType'],
+            data: data['data']);
         Navigator.popUntil(context, ModalRoute.withName('/'));
       }),
     );

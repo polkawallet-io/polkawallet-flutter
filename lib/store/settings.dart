@@ -10,12 +10,19 @@ abstract class _SettingsStore with Store {
   _SettingsStore();
 
   @observable
+  String networkName = '';
+
+  @observable
   NetworkState networkState = NetworkState('');
 
   @action
   Future<void> setNetworkState(Map<String, dynamic> data) async {
-    print(data);
     networkState = NetworkState.fromJson(data);
+  }
+
+  @action
+  Future<void> setNetworkName(String name) async {
+    networkName = name;
   }
 }
 

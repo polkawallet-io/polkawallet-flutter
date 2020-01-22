@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 
 import 'utils/i18n/index.dart';
@@ -31,78 +29,20 @@ class _WalletAppState extends State<WalletApp> {
   final _accountStore = AccountStore();
   final _settingStore = SettingsStore();
 
-  FlutterWebviewPlugin webview;
-
-  Map<String, Function> _msgHandlers;
+  Api _api;
 
   @override
   void initState() {
-    _msgHandlers = {
-      'ready': (data) {
-        evalJavascript('api.rpc.system.properties()');
-
-        String address = _accountStore.currentAccount.address;
-        if (address.length > 0) {
-          evalJavascript('account.getBalance("$address")');
-        }
-      },
-      'api.rpc.system.properties': _settingStore.setNetworkState,
-      'account.gen': _accountStore.setNewAccount,
-      'account.recover': _accountStore.importAccount,
-      'account.getBalance': _accountStore.setAccountBalance,
-    };
-
-    _initWebView();
-
     _accountStore.loadAccount();
 
+    _api = Api(
+        context: context,
+        accountStore: _accountStore,
+        settingsStore: _settingStore);
+
+    _api.init();
+
     super.initState();
-  }
-
-  void evalJavascript(String code) {
-    String method = code.split('(')[0];
-    String script = '$code.then(function(res) {'
-        '  PolkaWallet.postMessage(JSON.stringify({ path: "$method", data: res }));'
-        '}).catch(function(err) {'
-        '  PolkaWallet.postMessage(JSON.stringify({ path: "log", data: err.message }));'
-        '})';
-    webview.evalJavascript(script);
-  }
-
-  void _initWebView() async {
-    webview = new FlutterWebviewPlugin();
-
-    webview.onStateChanged.listen((viewState) async {
-      if (viewState.type == WebViewState.finishLoad) {
-        print('webview loaded');
-
-        DefaultAssetBundle.of(context)
-            .loadString('lib/polkadot_js_service/dist/main.js')
-            .then((String js) {
-          print('js file loaded');
-          webview.evalJavascript(js);
-        });
-      }
-    });
-
-    webview.launch('_blank',
-        javascriptChannels: [
-          JavascriptChannel(
-              name: 'PolkaWallet',
-              onMessageReceived: (JavascriptMessage message) {
-                print('received msg: ${message.message}');
-                final msg = jsonDecode(message.message);
-                var handler = _msgHandlers[msg['path'] as String];
-                if (handler == null) {
-//                  print("no msg res handler");
-                  return;
-                }
-                handler(msg['data']);
-              }),
-        ].toSet(),
-        withLocalUrl: true,
-        localUrlScope: 'lib/polkadot_js_service/dist/',
-        hidden: true);
   }
 
   @override
@@ -121,11 +61,11 @@ class _WalletAppState extends State<WalletApp> {
       initialRoute: '/',
       theme: appTheme,
       routes: {
-        '/': (_) => Home(evalJavascript, _settingStore, _accountStore),
+        '/': (_) => Home(_api, _settingStore, _accountStore),
         '/account/entry': (_) => CreateAccountEntry(),
         '/account/create': (_) => CreateAccount(_accountStore.setNewAccount),
-        '/account/backup': (_) => BackupAccount(evalJavascript, _accountStore),
-        '/account/import': (_) => ImportAccount(evalJavascript, _accountStore),
+        '/account/backup': (_) => BackupAccount(_api, _accountStore),
+        '/account/import': (_) => ImportAccount(_api, _accountStore),
         '/profile/account': (_) => AccountManage(_accountStore),
       },
     );

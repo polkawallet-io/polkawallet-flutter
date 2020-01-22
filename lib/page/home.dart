@@ -4,75 +4,56 @@ import 'package:polka_wallet/page/assets/drawerMenu.dart';
 import 'package:polka_wallet/page/democracy/democracy.dart';
 import 'package:polka_wallet/page/profile/profile.dart';
 import 'package:polka_wallet/page/staking/staking.dart';
+import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/settings.dart';
 
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Home extends StatefulWidget {
-  Home(this.evalJavascript, this.settingStore, this.accountStore);
+  Home(this.api, this.settingStore, this.accountStore);
 
-  final Function evalJavascript;
+  final Api api;
   final SettingsStore settingStore;
   final AccountStore accountStore;
 
   @override
   _HomePageState createState() =>
-      new _HomePageState(evalJavascript, settingStore, accountStore);
+      new _HomePageState(api, settingStore, accountStore);
 }
 
 class _HomePageState extends State<Home> {
-  _HomePageState(this.evalJavascript, this.settingsStore, this.accountStore);
+  _HomePageState(this.api, this.settingsStore, this.accountStore);
 
-  final Function evalJavascript;
+  final Api api;
   final SettingsStore settingsStore;
   final AccountStore accountStore;
 
+  final List<String> _tabList = [
+    'Assets',
+    'Staking',
+    'Democracy',
+    'Profile',
+  ];
+
   int _curIndex = 0;
 
-  List<BottomNavigationBarItem> _navBarItems(Map<String, String> tabs) {
-    return [
-      BottomNavigationBarItem(
-        icon: Image.asset(_curIndex == 0
-            ? 'assets/images/public/Assets.png'
-            : 'assets/images/public/Assets_dark.png'),
-        title: Text(
-          tabs['assets'],
-          style: TextStyle(
-              fontSize: 14, color: _curIndex == 0 ? Colors.pink : Colors.grey),
-        ),
-      ),
-      BottomNavigationBarItem(
-        icon: Image.asset(_curIndex == 1
-            ? 'assets/images/public/Staking.png'
-            : 'assets/images/public/Staking_dark.png'),
-        title: Text(
-          tabs['staking'],
-          style: TextStyle(
-              fontSize: 14, color: _curIndex == 1 ? Colors.pink : Colors.grey),
-        ),
-      ),
-      BottomNavigationBarItem(
-        icon: Image.asset(_curIndex == 2
-            ? 'assets/images/public/Democracy.png'
-            : 'assets/images/public/Democracy_dark.png'),
-        title: Text(
-          tabs['democracy'],
-          style: TextStyle(
-              fontSize: 14, color: _curIndex == 2 ? Colors.pink : Colors.grey),
-        ),
-      ),
-      BottomNavigationBarItem(
-        icon: Image.asset(_curIndex == 3
-            ? 'assets/images/public/Profile.png'
-            : 'assets/images/public/Profile_dark.png'),
-        title: Text(
-          tabs['profile'],
-          style: TextStyle(
-              fontSize: 14, color: _curIndex == 3 ? Colors.pink : Colors.grey),
-        ),
-      ),
-    ];
+  List<BottomNavigationBarItem> _navBarItems() {
+    Map<String, String> tabs = I18n.of(context).home;
+    return _tabList
+        .map((i) => BottomNavigationBarItem(
+              icon: Image.asset(_tabList[_curIndex] == i
+                  ? 'assets/images/public/$i.png'
+                  : 'assets/images/public/${i}_dark.png'),
+              title: Text(
+                tabs[i.toLowerCase()],
+                style: TextStyle(
+                    fontSize: 14,
+                    color:
+                        _tabList[_curIndex] == i ? Colors.pink : Colors.grey),
+              ),
+            ))
+        .toList();
   }
 
   Widget _getPage(i) {
@@ -92,20 +73,14 @@ class _HomePageState extends State<Home> {
     }
   }
 
-  void _fetchAccountBalance() {
-    evalJavascript(
-        'account.getBalance("${accountStore.currentAccount.address}")');
-  }
-
   @override
   void initState() {
-    _fetchAccountBalance();
+    api.fetchBalance();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    Map<String, String> tabs = I18n.of(context).home;
     return _curIndex == 0
         ? Stack(
             fit: StackFit.expand,
@@ -133,7 +108,7 @@ class _HomePageState extends State<Home> {
                   elevation: 0.0,
                 ),
                 endDrawer: Drawer(
-                  child: DrawerMenu(accountStore),
+                  child: DrawerMenu(api, accountStore),
                 ),
                 bottomNavigationBar: BottomNavigationBar(
                     currentIndex: _curIndex,
@@ -144,7 +119,7 @@ class _HomePageState extends State<Home> {
                       });
                     },
                     type: BottomNavigationBarType.fixed,
-                    items: _navBarItems(tabs)),
+                    items: _navBarItems()),
                 body: _getPage(_curIndex),
               )
             ],
@@ -155,14 +130,14 @@ class _HomePageState extends State<Home> {
                 iconSize: 22.0,
                 onTap: (index) {
                   if (index == 0) {
-                    _fetchAccountBalance();
+                    api.fetchBalance();
                   }
                   setState(() {
                     _curIndex = index;
                   });
                 },
                 type: BottomNavigationBarType.fixed,
-                items: _navBarItems(tabs)),
+                items: _navBarItems()),
             body: _getPage(_curIndex),
           );
   }

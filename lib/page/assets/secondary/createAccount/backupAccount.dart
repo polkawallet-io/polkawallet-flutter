@@ -1,24 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class BackupAccount extends StatefulWidget {
-  const BackupAccount(this.evalJavascript, this.accountStore);
+  const BackupAccount(this.api, this.accountStore);
 
-  final Function evalJavascript;
+  final Api api;
   final AccountStore accountStore;
 
   @override
-  _BackupAccountState createState() =>
-      _BackupAccountState(evalJavascript, accountStore);
+  _BackupAccountState createState() => _BackupAccountState(api, accountStore);
 }
 
 class _BackupAccountState extends State<BackupAccount> {
-  _BackupAccountState(this.evalJavascript, this.accountStore);
+  _BackupAccountState(this.api, this.accountStore);
 
-  final Function evalJavascript;
+  final Api api;
   final AccountStore accountStore;
 
   int _step = 0;
@@ -28,7 +28,7 @@ class _BackupAccountState extends State<BackupAccount> {
 
   @override
   void initState() {
-    evalJavascript('account.gen()');
+    api.generateAccount();
     super.initState();
   }
 

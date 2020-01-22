@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/page/assets/secondary/createAccount/createAccountForm.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class CreateAccount extends StatefulWidget {
@@ -17,14 +18,6 @@ class _CreateAccountState extends State<CreateAccount> {
   final Function setNewAccount;
 
   int _step = 1;
-
-  String _password;
-
-  TextEditingController _nameCtrl = new TextEditingController();
-  TextEditingController _passCtrl = new TextEditingController();
-  TextEditingController _pass2Ctrl = new TextEditingController();
-
-  final _formKey = GlobalKey<FormState>();
 
   Widget _buildStep2(BuildContext context) {
     var theme = Theme.of(context).textTheme;
@@ -134,82 +127,11 @@ class _CreateAccountState extends State<CreateAccount> {
       appBar: AppBar(
         title: Text(I18n.of(context).home['create']),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-//            autovalidate: true,
-          child: ListView(
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(
-                  icon: Icon(Icons.person),
-                  hintText: dic['create.name'],
-                  labelText: dic['create.name'],
-                ),
-                controller: _nameCtrl,
-                validator: (v) {
-                  return v.trim().length > 0 ? null : dic['create.name.error'];
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  icon: Icon(Icons.lock),
-                  hintText: dic['create.password'],
-                  labelText: dic['create.password'],
-                ),
-                controller: _passCtrl,
-                validator: (v) {
-                  var pass =
-                      RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$');
-                  return v.trim().contains(pass)
-                      ? null
-                      : dic['create.password.error'];
-                },
-                obscureText: true,
-                onChanged: (v) {
-                  setState(() {
-                    _password = v;
-                  });
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  icon: Icon(Icons.lock),
-                  hintText: dic['create.password2'],
-                  labelText: dic['create.password2'],
-                ),
-                controller: _pass2Ctrl,
-                obscureText: true,
-                validator: (v) {
-                  return _password != v ? dic['create.password2.error'] : null;
-                },
-              ),
-              Container(
-                padding: EdgeInsets.only(top: 16),
-                child: RaisedButton(
-                  padding: EdgeInsets.all(16),
-                  color: Colors.pink,
-                  textColor: Colors.white,
-                  child: Text(I18n.of(context).home['next']),
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      setNewAccount({
-                        'name': _nameCtrl.text,
-                        'password': _passCtrl.text,
-                      });
-
-                      setState(() {
-                        _step = 2;
-                      });
-                    }
-                  },
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
+      body: CreateAccountForm(setNewAccount, () {
+        setState(() {
+          _step = 2;
+        });
+      }),
     );
   }
 }

@@ -55,7 +55,7 @@ class Assets extends StatelessWidget {
                   child: Image.asset('assets/images/assets/KSC.png'),
                 ),
                 title: Text(settingsStore.networkState.tokenSymbol ?? ''),
-                subtitle: Text('kusama'),
+                subtitle: Text(settingsStore.networkName ?? ''),
                 trailing: Text(
                   Fmt.balance(store.accountState.balance),
                   style: TextStyle(
