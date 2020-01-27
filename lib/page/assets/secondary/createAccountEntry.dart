@@ -8,7 +8,7 @@ class CreateAccountEntry extends StatelessWidget {
     var buttonStyle = Theme.of(context).textTheme.button;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Account')),
+      appBar: AppBar(title: Text(I18n.of(context).home['create'])),
       body: Column(
         children: <Widget>[
           Expanded(

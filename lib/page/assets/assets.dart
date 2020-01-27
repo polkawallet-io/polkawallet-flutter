@@ -63,6 +63,7 @@ class Assets extends StatelessWidget {
                       fontSize: 20,
                       color: Colors.black54),
                 ),
+                onTap: () => Navigator.pushNamed(context, '/assets/detail'),
               ),
             ),
 //            RaisedButton(

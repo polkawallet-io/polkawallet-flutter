@@ -14,6 +14,11 @@ const Map<String, String> enHome = {
   'next': 'Next Step',
   'ok': 'OK',
   'cancel': 'Cancel',
+  'submit': 'Sign and Submit',
+  'submit.tx': 'Submit Transaction',
+  'submit.from': 'You are about to sign a transaction from ',
+  'submit.call': 'Calling ',
+  'unlock': 'Unlock Account with Password',
 };
 
 const Map<String, String> zhHome = {
@@ -29,4 +34,9 @@ const Map<String, String> zhHome = {
   'next': '下一步',
   'ok': '确认',
   'cancel': '取消',
+  'submit': '签名并发送',
+  'submit.tx': '发送交易',
+  'submit.from': '你将使用以下账户发送交易：',
+  'submit.call': '调用 ',
+  'unlock': '使用密码解锁账户',
 };
