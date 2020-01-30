@@ -64,8 +64,12 @@ class Api {
       fetchBalance();
     }
 
-    void onAccountRecover(Map<String, dynamic> acc) {
-      accountStore.importAccount(acc);
+    void onAccountGen(Map<String, dynamic> acc) {
+      accountStore.setNewAccountKey(acc['mnemonic']);
+    }
+
+    void onAccountRecover(Map<String, dynamic> acc) async {
+      await accountStore.addAccount(acc);
       fetchBalance();
     }
 
@@ -73,7 +77,7 @@ class Api {
       'ready': onWebReady,
       'api.rpc.system.chain': settingsStore.setNetworkName,
       'api.rpc.system.properties': settingsStore.setNetworkState,
-      'account.gen': accountStore.setNewAccount,
+      'account.gen': onAccountGen,
       'account.recover': onAccountRecover,
       'account.getBalance': accountStore.setAccountBalance,
     };
@@ -100,8 +104,13 @@ class Api {
     evalJavascript('account.gen()');
   }
 
-  void importAccount({String keyType, String cryptoType, String data}) {
-    String code = 'account.recover("$keyType", "$cryptoType", "$data")';
+  void importAccount(
+      {String keyType = 'Mnemonic', String cryptoType = 'sr25519'}) {
+    String key = accountStore.newAccount.key;
+    String name = accountStore.newAccount.name;
+    String pass = accountStore.newAccount.password;
+    String code =
+        'account.recover("$keyType", "$cryptoType", "$key", "$name", "$pass")';
     evalJavascript(code);
   }
 }

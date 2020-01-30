@@ -38,11 +38,12 @@ class _ImportAccountState extends State<ImportAccount> {
   Widget _buildStep1(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['import'])),
-      body: ImportAccountForm(store.setNewAccount, (Map<String, dynamic> data) {
+      body: ImportAccountForm(store.setNewAccountKey,
+          (Map<String, dynamic> data) {
         api.importAccount(
-            keyType: data['keyType'],
-            cryptoType: data['cryptoType'],
-            data: data['data']);
+          keyType: data['keyType'],
+          cryptoType: data['cryptoType'],
+        );
         Navigator.popUntil(context, ModalRoute.withName('/'));
       }),
     );

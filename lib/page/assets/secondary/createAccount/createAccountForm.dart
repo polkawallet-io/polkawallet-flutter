@@ -85,10 +85,7 @@ class CreateAccountForm extends StatelessWidget {
                     child: Text(I18n.of(context).home['next']),
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
-                        setNewAccount({
-                          'name': _nameCtrl.text,
-                          'password': _passCtrl.text,
-                        });
+                        setNewAccount(_nameCtrl.text, _passCtrl.text);
                         onSubmit();
                       }
                     },

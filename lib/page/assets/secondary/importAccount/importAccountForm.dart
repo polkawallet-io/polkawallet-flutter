@@ -5,20 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ImportAccountForm extends StatefulWidget {
-  const ImportAccountForm(this.setNewAccount, this.onSubmit);
+  const ImportAccountForm(this.setNewAccountMnemonic, this.onSubmit);
 
-  final Function setNewAccount;
+  final Function setNewAccountMnemonic;
   final Function onSubmit;
 
   @override
   _ImportAccountFormState createState() =>
-      _ImportAccountFormState(setNewAccount, onSubmit);
+      _ImportAccountFormState(setNewAccountMnemonic, onSubmit);
 }
 
 class _ImportAccountFormState extends State<ImportAccountForm> {
-  _ImportAccountFormState(this.setNewAccount, this.onSubmit);
+  _ImportAccountFormState(this.setNewAccountMnemonic, this.onSubmit);
 
-  final Function setNewAccount;
+  final Function setNewAccountMnemonic;
   final Function onSubmit;
 
   final List<String> _keyOptions = ['Mnemonic', 'Raw Seed', 'KeyStore'];
@@ -149,10 +149,10 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                     child: Text(I18n.of(context).home['ok']),
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
+                        setNewAccountMnemonic(_keyCtrl.value.text);
                         onSubmit({
                           'keyType': _keyOptions[_keySelection],
                           'cryptoType': _typeOptions[_typeSelection],
-                          'data': _keyCtrl.value.text
                         });
                       }
                     },

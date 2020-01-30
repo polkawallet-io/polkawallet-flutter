@@ -17,11 +17,11 @@ class LocalStorage {
     return storage.getAccountList();
   }
 
-  static Future<void> setCurrentAccount(Map<String, dynamic> acc) async {
-    return storage.setCurrentAccount(acc);
+  static Future<void> setCurrentAccount(String address) async {
+    return storage.setCurrentAccount(address);
   }
 
-  static Future<Map<String, dynamic>> getCurrentAccount() async {
+  static Future<String> getCurrentAccount() async {
     return storage.getCurrentAccount();
   }
 }
@@ -72,15 +72,11 @@ class _LocalStorage {
     return accounts;
   }
 
-  Future<void> setCurrentAccount(Map<String, dynamic> acc) async {
-    setItem(currentAccountKey, jsonEncode(acc));
+  Future<void> setCurrentAccount(String address) async {
+    setItem(currentAccountKey, address);
   }
 
-  Future<Map<String, dynamic>> getCurrentAccount() async {
-    String accountStr = await getItem(currentAccountKey);
-    if (accountStr != null) {
-      return jsonDecode(accountStr);
-    }
-    return new Map<String, dynamic>();
+  Future<String> getCurrentAccount() async {
+    return getItem(currentAccountKey);
   }
 }

@@ -66,7 +66,7 @@ class _BackupAccountState extends State<BackupAccount> {
                                   BorderRadius.all(Radius.circular(4))),
                           padding: EdgeInsets.all(16),
                           child: Text(
-                            accountStore.newAccount.mnemonic ?? '',
+                            accountStore.newAccount.key ?? '',
                             style: Theme.of(context).textTheme.display3,
                           ),
                         ),
@@ -87,7 +87,7 @@ class _BackupAccountState extends State<BackupAccount> {
                               setState(() {
                                 _step = 1;
                                 _wordsSelected = <String>[];
-                                _wordsLeft = accountStore.newAccount.mnemonic
+                                _wordsLeft = accountStore.newAccount.key
                                     .toString()
                                     .split(' ');
                               });
@@ -164,7 +164,7 @@ class _BackupAccountState extends State<BackupAccount> {
                         style: Theme.of(context).textTheme.button),
                     onPressed: _wordsSelected.length == 12
                         ? () async {
-                            accountStore.addAccount(accountStore.newAccount);
+                            api.importAccount();
                             Navigator.popUntil(
                                 context, ModalRoute.withName('/'));
                           }

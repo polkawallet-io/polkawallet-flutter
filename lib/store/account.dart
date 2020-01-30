@@ -15,13 +15,10 @@ abstract class _AccountStore with Store {
   _AccountStore();
 
   @observable
-  String description = '';
+  AccountCreate newAccount = AccountCreate();
 
   @observable
-  Account newAccount = Account('');
-
-  @observable
-  Account currentAccount = Account('');
+  Account currentAccount = Account();
 
   @observable
   AccountState accountState = AccountState('');
@@ -36,18 +33,26 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  void setNewAccount(Map<String, dynamic> acc) {
-    Map<String, dynamic> newAcc = Account.toJson(newAccount);
-    for (var k in acc.keys) {
-      newAcc[k] = acc[k];
-    }
-    newAccount = Account.fromJson(newAcc);
+  void setNewAccount(String name, String password) {
+    AccountCreate acc = AccountCreate();
+    acc.name = name;
+    acc.password = password;
+    newAccount = acc;
   }
 
   @action
-  void importAccount(Map<String, dynamic> acc) {
-    setNewAccount(acc);
-    addAccount(newAccount);
+  void setNewAccountKey(String key) {
+    AccountCreate acc = AccountCreate();
+    acc.name = newAccount.name;
+    acc.password = newAccount.password;
+    acc.key = key;
+    newAccount = acc;
+    print(key);
+  }
+
+  @action
+  void resetNewAccount(String name, String password) {
+    newAccount = AccountCreate();
   }
 
   @action
@@ -55,16 +60,15 @@ abstract class _AccountStore with Store {
     currentAccount = acc;
     accountState = AccountState(currentAccount.address);
 
-    LocalStorage.setCurrentAccount(Account.toJson(acc));
+    LocalStorage.setCurrentAccount(acc.address);
   }
 
   @action
-  Future<void> addAccount(Account acc) async {
-    Map<String, dynamic> account = Account.toJson(acc);
-    LocalStorage.addAccount(account);
-    LocalStorage.setCurrentAccount(account);
+  Future<void> addAccount(Map<String, dynamic> acc) async {
+    await LocalStorage.addAccount(acc);
+    await LocalStorage.setCurrentAccount(acc['address']);
 
-    loadAccount();
+    await loadAccount();
   }
 
   @action
@@ -73,22 +77,26 @@ abstract class _AccountStore with Store {
 
     List<Map<String, dynamic>> accounts = await LocalStorage.getAccountList();
     if (accounts.length > 0) {
-      LocalStorage.setCurrentAccount(accounts[0]);
+      await LocalStorage.setCurrentAccount(accounts[0]['address']);
     } else {
-      LocalStorage.setCurrentAccount(Map<String, dynamic>());
+      await LocalStorage.setCurrentAccount('');
     }
 
-    loadAccount();
+    await loadAccount();
   }
 
   @action
   Future<void> loadAccount() async {
-    Map<String, dynamic> acc = await LocalStorage.getCurrentAccount();
-    currentAccount = Account.fromJson(acc);
-
     List<Map<String, dynamic>> accList = await LocalStorage.getAccountList();
-    print('load accounts: ${jsonEncode(accList)}');
     accountList = ObservableList.of(accList.map((i) => Account.fromJson(i)));
+
+    if (accountList.length > 0) {
+      String address = await LocalStorage.getCurrentAccount();
+      Map<String, dynamic> acc =
+          accList.firstWhere((i) => i['address'] == address);
+      currentAccount = Account.fromJson(acc);
+    }
+    print('load account: ${currentAccount.name}');
   }
 
   @action
@@ -97,17 +105,7 @@ abstract class _AccountStore with Store {
   }
 }
 
-@JsonSerializable()
-class Account extends _Account with _$Account {
-  Account(String name) : super(name);
-
-  static Account fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
-  static Map<String, dynamic> toJson(Account acc) => _$AccountToJson(acc);
-}
-
-abstract class _Account with Store {
-  _Account(this.name);
-
+class AccountCreate with Store {
   @observable
   String name = '';
 
@@ -115,13 +113,30 @@ abstract class _Account with Store {
   String password = '';
 
   @observable
+  String key = '';
+}
+
+@JsonSerializable()
+class Account extends _Account with _$Account {
+  static Account fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
+  static Map<String, dynamic> toJson(Account acc) => _$AccountToJson(acc);
+}
+
+abstract class _Account with Store {
+  @observable
+  String name = '';
+
+  @observable
   String address = '';
 
   @observable
-  String seed = '';
+  String encoded = '';
 
   @observable
-  String mnemonic = '';
+  Map<String, dynamic> encoding = Map<String, dynamic>();
+
+  @observable
+  Map<String, dynamic> meta = Map<String, dynamic>();
 }
 
 class AccountState extends _AccountState with _$AccountState {
