@@ -69,7 +69,7 @@ class _WalletAppState extends State<WalletApp> {
         '/account/backup': (_) => BackupAccount(_api, _accountStore),
         '/account/import': (_) => ImportAccount(_api, _accountStore),
         '/assets/detail': (_) => AssetPage(_accountStore, _settingStore),
-        '/assets/transfer': (_) => Transfer(_accountStore, _settingStore),
+        '/assets/transfer': (_) => Transfer(_api, _accountStore, _settingStore),
         '/profile/account': (_) => AccountManage(_accountStore),
       },
     );

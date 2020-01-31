@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'dart:math';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:polka_wallet/store/account.dart';
@@ -58,8 +59,13 @@ class Api {
   void _initWebMsgHandler() {
     // fetch data after polkadotjs api ready
     void onWebReady(_) {
+      evalJavascript('settings.getNetworkConst()');
       evalJavascript('api.rpc.system.chain()');
       evalJavascript('api.rpc.system.properties()');
+
+      String accounts = jsonEncode(
+          accountStore.accountList.map((i) => Account.toJson(i)).toList());
+      evalJavascript('account.initKeys($accounts)');
 
       fetchBalance();
     }
@@ -73,13 +79,19 @@ class Api {
       fetchBalance();
     }
 
+    void onTransfer(String hash) {
+      print(hash);
+    }
+
     _msgHandlers = {
       'ready': onWebReady,
+      'settings.getNetworkConst': settingsStore.setNetworkConst,
       'api.rpc.system.chain': settingsStore.setNetworkName,
       'api.rpc.system.properties': settingsStore.setNetworkState,
       'account.gen': onAccountGen,
       'account.recover': onAccountRecover,
       'account.getBalance': accountStore.setAccountBalance,
+      'account.transfer': onTransfer,
     };
   }
 
@@ -93,10 +105,16 @@ class Api {
     _web.evalJavascript(script);
   }
 
-  void fetchBalance() {
+  void fetchBalance() async {
     String address = accountStore.currentAccount.address;
     if (address.length > 0) {
       evalJavascript('account.getBalance("$address")');
+
+      String endpoint = 'https://polkascan.io/kusama-cc3/api/v1';
+      String path = '/balances/transfer';
+      http.Response res =
+          await http.get('$endpoint$path?&filter[address]=$address');
+      print(res.body);
     }
   }
 
@@ -112,5 +130,12 @@ class Api {
     String code =
         'account.recover("$keyType", "$cryptoType", "$key", "$name", "$pass")';
     evalJavascript(code);
+  }
+
+  void transfer(String to, double amount, String password) {
+    String from = accountStore.currentAccount.address;
+    double amt = amount * pow(10, settingsStore.networkState.tokenDecimals);
+    evalJavascript(
+        'account.transfer("$from", "$to", ${amt.toString()}, "$password")');
   }
 }

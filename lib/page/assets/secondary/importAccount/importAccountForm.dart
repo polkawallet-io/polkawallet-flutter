@@ -149,7 +149,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                     child: Text(I18n.of(context).home['ok']),
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
-                        setNewAccountMnemonic(_keyCtrl.value.text);
+                        setNewAccountMnemonic(_keyCtrl.text);
                         onSubmit({
                           'keyType': _keyOptions[_keySelection],
                           'cryptoType': _typeOptions[_typeSelection],

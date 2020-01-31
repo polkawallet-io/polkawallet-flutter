@@ -1,22 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Transfer extends StatefulWidget {
-  const Transfer(this.accountStore, this.settingsStore);
+  const Transfer(this.api, this.accountStore, this.settingsStore);
 
+  final Api api;
   final AccountStore accountStore;
   final SettingsStore settingsStore;
 
   @override
-  _TransferState createState() => _TransferState(accountStore, settingsStore);
+  _TransferState createState() =>
+      _TransferState(api, accountStore, settingsStore);
 }
 
 class _TransferState extends State<Transfer> {
-  _TransferState(this.accountStore, this.settingsStore);
+  _TransferState(this.api, this.accountStore, this.settingsStore);
 
+  final Api api;
   final AccountStore accountStore;
   final SettingsStore settingsStore;
 
@@ -30,6 +34,7 @@ class _TransferState extends State<Transfer> {
 
   Widget _buildStep0(BuildContext context) {
     Map<String, String> dic = I18n.of(context).assets;
+    String symbol = settingsStore.networkState.tokenSymbol;
     return ListView(
       children: <Widget>[
         Form(
@@ -62,6 +67,18 @@ class _TransferState extends State<Transfer> {
               ),
             ],
           ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(
+              'TransferFee: ${settingsStore.transferFeeView.toString()} $symbol',
+              style: TextStyle(fontSize: 16, color: Colors.black54)),
+        ),
+        Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(
+              'CreationFee: ${settingsStore.creationFeeView.toString()} $symbol',
+              style: TextStyle(fontSize: 16, color: Colors.black54)),
         ),
         Row(
           children: <Widget>[
@@ -125,6 +142,7 @@ class _TransferState extends State<Transfer> {
                     hintText: dic['unlock'],
                     labelText: dic['unlock'],
                   ),
+                  obscureText: true,
                   controller: _passCtrl,
                 ),
               ),
@@ -159,9 +177,8 @@ class _TransferState extends State<Transfer> {
                     style: TextStyle(color: Colors.white),
                   ),
                   onPressed: () {
-                    print(_passCtrl.value.text);
-                    print(_addressCtrl.value.text);
-                    print(_amountCtrl.value.text);
+                    api.transfer(_addressCtrl.text,
+                        double.parse(_amountCtrl.text), _passCtrl.text);
                   },
                 ),
               ),
@@ -175,10 +192,10 @@ class _TransferState extends State<Transfer> {
   @override
   Widget build(BuildContext context) {
     Map<String, String> dic = I18n.of(context).assets;
+    String symbol = settingsStore.networkState.tokenSymbol;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            '${dic['transfer']} ${settingsStore.networkState.tokenSymbol}'),
+        title: Text('${dic['transfer']} $symbol'),
         centerTitle: true,
       ),
       body: _step == 0 ? _buildStep0(context) : _buildStep1(context),

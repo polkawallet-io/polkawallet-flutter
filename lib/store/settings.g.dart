@@ -23,6 +23,18 @@ Map<String, dynamic> _$NetworkStateToJson(NetworkState instance) =>
       'tokenSymbol': instance.tokenSymbol,
     };
 
+NetworkConst _$NetworkConstFromJson(Map<String, dynamic> json) {
+  return NetworkConst()
+    ..creationFee = json['creationFee'] as int
+    ..transferFee = json['transferFee'] as int;
+}
+
+Map<String, dynamic> _$NetworkConstToJson(NetworkConst instance) =>
+    <String, dynamic>{
+      'creationFee': instance.creationFee,
+      'transferFee': instance.transferFee,
+    };
+
 // **************************************************************************
 // StoreGenerator
 // **************************************************************************
@@ -30,6 +42,19 @@ Map<String, dynamic> _$NetworkStateToJson(NetworkState instance) =>
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$SettingsStore on _SettingsStore, Store {
+  Computed<double> _$creationFeeViewComputed;
+
+  @override
+  double get creationFeeView => (_$creationFeeViewComputed ??=
+          Computed<double>(() => super.creationFeeView))
+      .value;
+  Computed<double> _$transferFeeViewComputed;
+
+  @override
+  double get transferFeeView => (_$transferFeeViewComputed ??=
+          Computed<double>(() => super.transferFeeView))
+      .value;
+
   final _$networkNameAtom = Atom(name: '_SettingsStore.networkName');
 
   @override
@@ -64,6 +89,23 @@ mixin _$SettingsStore on _SettingsStore, Store {
     }, _$networkStateAtom, name: '${_$networkStateAtom.name}_set');
   }
 
+  final _$networkConstAtom = Atom(name: '_SettingsStore.networkConst');
+
+  @override
+  NetworkConst get networkConst {
+    _$networkConstAtom.context.enforceReadPolicy(_$networkConstAtom);
+    _$networkConstAtom.reportObserved();
+    return super.networkConst;
+  }
+
+  @override
+  set networkConst(NetworkConst value) {
+    _$networkConstAtom.context.conditionallyRunInAction(() {
+      super.networkConst = value;
+      _$networkConstAtom.reportChanged();
+    }, _$networkConstAtom, name: '${_$networkConstAtom.name}_set');
+  }
+
   final _$setNetworkStateAsyncAction = AsyncAction('setNetworkState');
 
   @override
@@ -71,11 +113,24 @@ mixin _$SettingsStore on _SettingsStore, Store {
     return _$setNetworkStateAsyncAction.run(() => super.setNetworkState(data));
   }
 
-  final _$setNetworkNameAsyncAction = AsyncAction('setNetworkName');
+  final _$setNetworkConstAsyncAction = AsyncAction('setNetworkConst');
 
   @override
-  Future<void> setNetworkName(String name) {
-    return _$setNetworkNameAsyncAction.run(() => super.setNetworkName(name));
+  Future<void> setNetworkConst(Map<String, dynamic> data) {
+    return _$setNetworkConstAsyncAction.run(() => super.setNetworkConst(data));
+  }
+
+  final _$_SettingsStoreActionController =
+      ActionController(name: '_SettingsStore');
+
+  @override
+  void setNetworkName(String name) {
+    final _$actionInfo = _$_SettingsStoreActionController.startAction();
+    try {
+      return super.setNetworkName(name);
+    } finally {
+      _$_SettingsStoreActionController.endAction(_$actionInfo);
+    }
   }
 }
 
@@ -146,5 +201,41 @@ mixin _$NetworkState on _NetworkState, Store {
       super.tokenSymbol = value;
       _$tokenSymbolAtom.reportChanged();
     }, _$tokenSymbolAtom, name: '${_$tokenSymbolAtom.name}_set');
+  }
+}
+
+mixin _$NetworkConst on _NetworkConst, Store {
+  final _$creationFeeAtom = Atom(name: '_NetworkConst.creationFee');
+
+  @override
+  int get creationFee {
+    _$creationFeeAtom.context.enforceReadPolicy(_$creationFeeAtom);
+    _$creationFeeAtom.reportObserved();
+    return super.creationFee;
+  }
+
+  @override
+  set creationFee(int value) {
+    _$creationFeeAtom.context.conditionallyRunInAction(() {
+      super.creationFee = value;
+      _$creationFeeAtom.reportChanged();
+    }, _$creationFeeAtom, name: '${_$creationFeeAtom.name}_set');
+  }
+
+  final _$transferFeeAtom = Atom(name: '_NetworkConst.transferFee');
+
+  @override
+  int get transferFee {
+    _$transferFeeAtom.context.enforceReadPolicy(_$transferFeeAtom);
+    _$transferFeeAtom.reportObserved();
+    return super.transferFee;
+  }
+
+  @override
+  set transferFee(int value) {
+    _$transferFeeAtom.context.conditionallyRunInAction(() {
+      super.transferFee = value;
+      _$transferFeeAtom.reportChanged();
+    }, _$transferFeeAtom, name: '${_$transferFeeAtom.name}_set');
   }
 }

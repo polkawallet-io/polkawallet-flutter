@@ -66,7 +66,7 @@ class CreateAccountForm extends StatelessWidget {
               controller: _pass2Ctrl,
               obscureText: true,
               validator: (v) {
-                return _passCtrl.value.text != v
+                return _passCtrl.text != v
                     ? dic['create.password2.error']
                     : null;
               },

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
@@ -15,14 +17,32 @@ abstract class _SettingsStore with Store {
   @observable
   NetworkState networkState = NetworkState('');
 
+  @observable
+  NetworkConst networkConst = NetworkConst();
+
+  @computed
+  double get creationFeeView {
+    return networkConst.creationFee / pow(10, networkState.tokenDecimals);
+  }
+
+  @computed
+  double get transferFeeView {
+    return networkConst.transferFee / pow(10, networkState.tokenDecimals);
+  }
+
+  @action
+  void setNetworkName(String name) {
+    networkName = name;
+  }
+
   @action
   Future<void> setNetworkState(Map<String, dynamic> data) async {
     networkState = NetworkState.fromJson(data);
   }
 
   @action
-  Future<void> setNetworkName(String name) async {
-    networkName = name;
+  Future<void> setNetworkConst(Map<String, dynamic> data) async {
+    networkConst = NetworkConst.fromJson(data);
   }
 }
 
@@ -50,4 +70,20 @@ abstract class _NetworkState with Store {
 
   @observable
   String tokenSymbol = '';
+}
+
+@JsonSerializable()
+class NetworkConst extends _NetworkConst with _$NetworkConst {
+  static NetworkConst fromJson(Map<String, dynamic> json) =>
+      _$NetworkConstFromJson(json);
+  static Map<String, dynamic> toJson(NetworkConst net) =>
+      _$NetworkConstToJson(net);
+}
+
+abstract class _NetworkConst with Store {
+  @observable
+  int creationFee = 0;
+
+  @observable
+  int transferFee = 0;
 }
