@@ -2,18 +2,17 @@ import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
+import 'package:polka_wallet/service/polkascan.dart';
 
 import 'package:polka_wallet/utils/localStorage.dart';
 
+import 'package:polka_wallet/store/assets.dart';
+
 part 'account.g.dart';
 
-class AccountStore extends _AccountStore with _$AccountStore {
-  AccountStore();
-}
+class AccountStore extends _AccountStore with _$AccountStore {}
 
 abstract class _AccountStore with Store {
-  _AccountStore();
-
   @observable
   AccountCreate newAccount = AccountCreate();
 
@@ -21,7 +20,7 @@ abstract class _AccountStore with Store {
   Account currentAccount = Account();
 
   @observable
-  AccountState accountState = AccountState('');
+  AssetsState assetsState = AssetsState();
 
   @observable
   ObservableList<Account> accountList = ObservableList<Account>();
@@ -34,20 +33,13 @@ abstract class _AccountStore with Store {
 
   @action
   void setNewAccount(String name, String password) {
-    AccountCreate acc = AccountCreate();
-    acc.name = name;
-    acc.password = password;
-    newAccount = acc;
+    newAccount.name = name;
+    newAccount.password = password;
   }
 
   @action
   void setNewAccountKey(String key) {
-    AccountCreate acc = AccountCreate();
-    acc.name = newAccount.name;
-    acc.password = newAccount.password;
-    acc.key = key;
-    newAccount = acc;
-    print(key);
+    newAccount.key = key;
   }
 
   @action
@@ -58,7 +50,6 @@ abstract class _AccountStore with Store {
   @action
   void setCurrentAccount(Account acc) {
     currentAccount = acc;
-    accountState = AccountState(currentAccount.address);
 
     LocalStorage.setCurrentAccount(acc.address);
   }
@@ -101,11 +92,34 @@ abstract class _AccountStore with Store {
 
   @action
   void setAccountBalance(String balance) {
-    accountState.balance = balance;
+    assetsState.balance = balance;
+  }
+
+  @action
+  Future<void> getTxs() async {
+    assetsState.txs.clear();
+    String data = await PolkaScanApi.fetchTxs(currentAccount.address);
+    List<dynamic> txs = jsonDecode(data)['data'];
+    txs.forEach((i) {
+      TransferData tx = TransferData();
+      tx.type = i['type'];
+      tx.id = i['id'];
+      tx.value = i['attributes']['value'];
+      tx.fee = i['attributes']['fee'];
+      tx.sender = i['attributes']['sender']['attributes']['address'];
+      tx.senderId = i['attributes']['sender']['attributes']['index_address'];
+      tx.destination = i['attributes']['destination']['attributes']['address'];
+      tx.destinationId =
+          i['attributes']['destination']['attributes']['index_address'];
+      assetsState.txs.add(tx);
+    });
+    print(assetsState.txs.length);
   }
 }
 
-class AccountCreate with Store {
+class AccountCreate extends _AccountCreate with _$AccountCreate {}
+
+abstract class _AccountCreate with Store {
   @observable
   String name = '';
 
@@ -137,18 +151,4 @@ abstract class _Account with Store {
 
   @observable
   Map<String, dynamic> meta = Map<String, dynamic>();
-}
-
-class AccountState extends _AccountState with _$AccountState {
-  AccountState(String address) : super(address);
-}
-
-abstract class _AccountState with Store {
-  _AccountState(this.address);
-
-  @observable
-  String address = '';
-
-  @observable
-  String balance = '0';
 }

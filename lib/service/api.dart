@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:math';
-import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:polka_wallet/store/account.dart';
@@ -109,12 +108,6 @@ class Api {
     String address = accountStore.currentAccount.address;
     if (address.length > 0) {
       evalJavascript('account.getBalance("$address")');
-
-      String endpoint = 'https://polkascan.io/kusama-cc3/api/v1';
-      String path = '/balances/transfer';
-      http.Response res =
-          await http.get('$endpoint$path?&filter[address]=$address');
-      print(res.body);
     }
   }
 

@@ -100,8 +100,11 @@ class _CreateAccountState extends State<CreateAccount> {
                                 ),
                                 CupertinoButton(
                                   child: Text(I18n.of(context).home['ok']),
-                                  onPressed: () => Navigator.pushNamed(
-                                      context, '/account/backup'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.pushNamed(
+                                        context, '/account/backup');
+                                  },
                                 ),
                               ],
                             );

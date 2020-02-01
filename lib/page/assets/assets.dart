@@ -57,13 +57,16 @@ class Assets extends StatelessWidget {
                 title: Text(settingsStore.networkState.tokenSymbol ?? ''),
                 subtitle: Text(settingsStore.networkName ?? ''),
                 trailing: Text(
-                  Fmt.balance(store.accountState.balance),
+                  Fmt.balance(store.assetsState.balance),
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                       color: Colors.black54),
                 ),
-                onTap: () => Navigator.pushNamed(context, '/assets/detail'),
+                onTap: () {
+                  store.getTxs();
+                  Navigator.pushNamed(context, '/assets/detail');
+                },
               ),
             ),
 //            RaisedButton(

@@ -72,21 +72,21 @@ mixin _$AccountStore on _AccountStore, Store {
     }, _$currentAccountAtom, name: '${_$currentAccountAtom.name}_set');
   }
 
-  final _$accountStateAtom = Atom(name: '_AccountStore.accountState');
+  final _$assetsStateAtom = Atom(name: '_AccountStore.assetsState');
 
   @override
-  AccountState get accountState {
-    _$accountStateAtom.context.enforceReadPolicy(_$accountStateAtom);
-    _$accountStateAtom.reportObserved();
-    return super.accountState;
+  AssetsState get assetsState {
+    _$assetsStateAtom.context.enforceReadPolicy(_$assetsStateAtom);
+    _$assetsStateAtom.reportObserved();
+    return super.assetsState;
   }
 
   @override
-  set accountState(AccountState value) {
-    _$accountStateAtom.context.conditionallyRunInAction(() {
-      super.accountState = value;
-      _$accountStateAtom.reportChanged();
-    }, _$accountStateAtom, name: '${_$accountStateAtom.name}_set');
+  set assetsState(AssetsState value) {
+    _$assetsStateAtom.context.conditionallyRunInAction(() {
+      super.assetsState = value;
+      _$assetsStateAtom.reportChanged();
+    }, _$assetsStateAtom, name: '${_$assetsStateAtom.name}_set');
   }
 
   final _$accountListAtom = Atom(name: '_AccountStore.accountList');
@@ -125,6 +125,13 @@ mixin _$AccountStore on _AccountStore, Store {
   @override
   Future<void> loadAccount() {
     return _$loadAccountAsyncAction.run(() => super.loadAccount());
+  }
+
+  final _$getTxsAsyncAction = AsyncAction('getTxs');
+
+  @override
+  Future<void> getTxs() {
+    return _$getTxsAsyncAction.run(() => super.getTxs());
   }
 
   final _$_AccountStoreActionController =
@@ -178,6 +185,59 @@ mixin _$AccountStore on _AccountStore, Store {
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }
+  }
+}
+
+mixin _$AccountCreate on _AccountCreate, Store {
+  final _$nameAtom = Atom(name: '_AccountCreate.name');
+
+  @override
+  String get name {
+    _$nameAtom.context.enforceReadPolicy(_$nameAtom);
+    _$nameAtom.reportObserved();
+    return super.name;
+  }
+
+  @override
+  set name(String value) {
+    _$nameAtom.context.conditionallyRunInAction(() {
+      super.name = value;
+      _$nameAtom.reportChanged();
+    }, _$nameAtom, name: '${_$nameAtom.name}_set');
+  }
+
+  final _$passwordAtom = Atom(name: '_AccountCreate.password');
+
+  @override
+  String get password {
+    _$passwordAtom.context.enforceReadPolicy(_$passwordAtom);
+    _$passwordAtom.reportObserved();
+    return super.password;
+  }
+
+  @override
+  set password(String value) {
+    _$passwordAtom.context.conditionallyRunInAction(() {
+      super.password = value;
+      _$passwordAtom.reportChanged();
+    }, _$passwordAtom, name: '${_$passwordAtom.name}_set');
+  }
+
+  final _$keyAtom = Atom(name: '_AccountCreate.key');
+
+  @override
+  String get key {
+    _$keyAtom.context.enforceReadPolicy(_$keyAtom);
+    _$keyAtom.reportObserved();
+    return super.key;
+  }
+
+  @override
+  set key(String value) {
+    _$keyAtom.context.conditionallyRunInAction(() {
+      super.key = value;
+      _$keyAtom.reportChanged();
+    }, _$keyAtom, name: '${_$keyAtom.name}_set');
   }
 }
 
@@ -265,41 +325,5 @@ mixin _$Account on _Account, Store {
       super.meta = value;
       _$metaAtom.reportChanged();
     }, _$metaAtom, name: '${_$metaAtom.name}_set');
-  }
-}
-
-mixin _$AccountState on _AccountState, Store {
-  final _$addressAtom = Atom(name: '_AccountState.address');
-
-  @override
-  String get address {
-    _$addressAtom.context.enforceReadPolicy(_$addressAtom);
-    _$addressAtom.reportObserved();
-    return super.address;
-  }
-
-  @override
-  set address(String value) {
-    _$addressAtom.context.conditionallyRunInAction(() {
-      super.address = value;
-      _$addressAtom.reportChanged();
-    }, _$addressAtom, name: '${_$addressAtom.name}_set');
-  }
-
-  final _$balanceAtom = Atom(name: '_AccountState.balance');
-
-  @override
-  String get balance {
-    _$balanceAtom.context.enforceReadPolicy(_$balanceAtom);
-    _$balanceAtom.reportObserved();
-    return super.balance;
-  }
-
-  @override
-  set balance(String value) {
-    _$balanceAtom.context.conditionallyRunInAction(() {
-      super.balance = value;
-      _$balanceAtom.reportChanged();
-    }, _$balanceAtom, name: '${_$balanceAtom.name}_set');
   }
 }
