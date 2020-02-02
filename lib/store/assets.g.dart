@@ -3,12 +3,53 @@
 part of 'assets.dart';
 
 // **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+BlockData _$BlockDataFromJson(Map<String, dynamic> json) {
+  return BlockData()
+    ..id = json['id'] as int
+    ..hash = json['hash'] as String
+    ..datetime = json['datetime'] as String;
+}
+
+Map<String, dynamic> _$BlockDataToJson(BlockData instance) => <String, dynamic>{
+      'id': instance.id,
+      'hash': instance.hash,
+      'datetime': instance.datetime,
+    };
+
+// **************************************************************************
 // StoreGenerator
 // **************************************************************************
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AssetsState on _AssetsState, Store {
+  Computed<ObservableList<TransferData>> _$txsViewComputed;
+
+  @override
+  ObservableList<TransferData> get txsView => (_$txsViewComputed ??=
+          Computed<ObservableList<TransferData>>(() => super.txsView))
+      .value;
+
+  final _$addressAtom = Atom(name: '_AssetsState.address');
+
+  @override
+  String get address {
+    _$addressAtom.context.enforceReadPolicy(_$addressAtom);
+    _$addressAtom.reportObserved();
+    return super.address;
+  }
+
+  @override
+  set address(String value) {
+    _$addressAtom.context.conditionallyRunInAction(() {
+      super.address = value;
+      _$addressAtom.reportChanged();
+    }, _$addressAtom, name: '${_$addressAtom.name}_set');
+  }
+
   final _$balanceAtom = Atom(name: '_AssetsState.balance');
 
   @override
@@ -43,6 +84,23 @@ mixin _$AssetsState on _AssetsState, Store {
     }, _$txsAtom, name: '${_$txsAtom.name}_set');
   }
 
+  final _$txsFilterAtom = Atom(name: '_AssetsState.txsFilter');
+
+  @override
+  int get txsFilter {
+    _$txsFilterAtom.context.enforceReadPolicy(_$txsFilterAtom);
+    _$txsFilterAtom.reportObserved();
+    return super.txsFilter;
+  }
+
+  @override
+  set txsFilter(int value) {
+    _$txsFilterAtom.context.conditionallyRunInAction(() {
+      super.txsFilter = value;
+      _$txsFilterAtom.reportChanged();
+    }, _$txsFilterAtom, name: '${_$txsFilterAtom.name}_set');
+  }
+
   final _$txDetailAtom = Atom(name: '_AssetsState.txDetail');
 
   @override
@@ -58,6 +116,23 @@ mixin _$AssetsState on _AssetsState, Store {
       super.txDetail = value;
       _$txDetailAtom.reportChanged();
     }, _$txDetailAtom, name: '${_$txDetailAtom.name}_set');
+  }
+
+  final _$blockMapAtom = Atom(name: '_AssetsState.blockMap');
+
+  @override
+  ObservableMap<String, BlockData> get blockMap {
+    _$blockMapAtom.context.enforceReadPolicy(_$blockMapAtom);
+    _$blockMapAtom.reportObserved();
+    return super.blockMap;
+  }
+
+  @override
+  set blockMap(ObservableMap<String, BlockData> value) {
+    _$blockMapAtom.context.conditionallyRunInAction(() {
+      super.blockMap = value;
+      _$blockMapAtom.reportChanged();
+    }, _$blockMapAtom, name: '${_$blockMapAtom.name}_set');
   }
 }
 
@@ -196,5 +271,58 @@ mixin _$TransferData on _TransferData, Store {
       super.fee = value;
       _$feeAtom.reportChanged();
     }, _$feeAtom, name: '${_$feeAtom.name}_set');
+  }
+}
+
+mixin _$BlockData on _BlockData, Store {
+  final _$idAtom = Atom(name: '_BlockData.id');
+
+  @override
+  int get id {
+    _$idAtom.context.enforceReadPolicy(_$idAtom);
+    _$idAtom.reportObserved();
+    return super.id;
+  }
+
+  @override
+  set id(int value) {
+    _$idAtom.context.conditionallyRunInAction(() {
+      super.id = value;
+      _$idAtom.reportChanged();
+    }, _$idAtom, name: '${_$idAtom.name}_set');
+  }
+
+  final _$hashAtom = Atom(name: '_BlockData.hash');
+
+  @override
+  String get hash {
+    _$hashAtom.context.enforceReadPolicy(_$hashAtom);
+    _$hashAtom.reportObserved();
+    return super.hash;
+  }
+
+  @override
+  set hash(String value) {
+    _$hashAtom.context.conditionallyRunInAction(() {
+      super.hash = value;
+      _$hashAtom.reportChanged();
+    }, _$hashAtom, name: '${_$hashAtom.name}_set');
+  }
+
+  final _$datetimeAtom = Atom(name: '_BlockData.datetime');
+
+  @override
+  String get datetime {
+    _$datetimeAtom.context.enforceReadPolicy(_$datetimeAtom);
+    _$datetimeAtom.reportObserved();
+    return super.datetime;
+  }
+
+  @override
+  set datetime(String value) {
+    _$datetimeAtom.context.conditionallyRunInAction(() {
+      super.datetime = value;
+      _$datetimeAtom.reportChanged();
+    }, _$datetimeAtom, name: '${_$datetimeAtom.name}_set');
   }
 }

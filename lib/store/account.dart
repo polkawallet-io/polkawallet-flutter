@@ -50,6 +50,7 @@ abstract class _AccountStore with Store {
   @action
   void setCurrentAccount(Account acc) {
     currentAccount = acc;
+    assetsState.address = acc.address;
 
     LocalStorage.setCurrentAccount(acc.address);
   }
@@ -97,23 +98,27 @@ abstract class _AccountStore with Store {
 
   @action
   Future<void> getTxs() async {
-    assetsState.txs.clear();
     String data = await PolkaScanApi.fetchTxs(currentAccount.address);
     List<dynamic> txs = jsonDecode(data)['data'];
+    assetsState.txs.clear();
     txs.forEach((i) {
-      TransferData tx = TransferData();
-      tx.type = i['type'];
-      tx.id = i['id'];
-      tx.value = i['attributes']['value'];
-      tx.fee = i['attributes']['fee'];
-      tx.sender = i['attributes']['sender']['attributes']['address'];
-      tx.senderId = i['attributes']['sender']['attributes']['index_address'];
-      tx.destination = i['attributes']['destination']['attributes']['address'];
-      tx.destinationId =
-          i['attributes']['destination']['attributes']['index_address'];
+      TransferData tx = TransferData.fromJson(i);
       assetsState.txs.add(tx);
     });
-    print(assetsState.txs.length);
+  }
+
+  @action
+  void setTxsFilter(int filter) {
+    assetsState.txsFilter = filter;
+  }
+
+  @action
+  Future<void> getBlock(String hash) async {
+    if (assetsState.blockMap[hash] == null) {
+      String data = await PolkaScanApi.fetchBlock(hash);
+      assetsState.blockMap[hash] =
+          BlockData.fromJson(jsonDecode(data)['data']['attributes']);
+    }
   }
 }
 

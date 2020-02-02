@@ -70,14 +70,12 @@ class _TransferState extends State<Transfer> {
         ),
         Padding(
           padding: EdgeInsets.all(16),
-          child: Text(
-              'TransferFee: ${settingsStore.transferFeeView.toString()} $symbol',
+          child: Text('TransferFee: ${settingsStore.transferFeeView} $symbol',
               style: TextStyle(fontSize: 16, color: Colors.black54)),
         ),
         Padding(
           padding: EdgeInsets.all(16),
-          child: Text(
-              'CreationFee: ${settingsStore.creationFeeView.toString()} $symbol',
+          child: Text('CreationFee: ${settingsStore.creationFeeView} $symbol',
               style: TextStyle(fontSize: 16, color: Colors.black54)),
         ),
         Row(

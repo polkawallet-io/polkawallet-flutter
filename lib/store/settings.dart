@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:polka_wallet/utils/format.dart';
 
 part 'settings.g.dart';
 
@@ -21,13 +20,13 @@ abstract class _SettingsStore with Store {
   NetworkConst networkConst = NetworkConst();
 
   @computed
-  double get creationFeeView {
-    return networkConst.creationFee / pow(10, networkState.tokenDecimals);
+  String get creationFeeView {
+    return Fmt.token(networkConst.creationFee, networkState.tokenDecimals, 3);
   }
 
   @computed
-  double get transferFeeView {
-    return networkConst.transferFee / pow(10, networkState.tokenDecimals);
+  String get transferFeeView {
+    return Fmt.token(networkConst.transferFee, networkState.tokenDecimals, 3);
   }
 
   @action

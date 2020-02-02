@@ -42,17 +42,17 @@ Map<String, dynamic> _$NetworkConstToJson(NetworkConst instance) =>
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$SettingsStore on _SettingsStore, Store {
-  Computed<double> _$creationFeeViewComputed;
+  Computed<String> _$creationFeeViewComputed;
 
   @override
-  double get creationFeeView => (_$creationFeeViewComputed ??=
-          Computed<double>(() => super.creationFeeView))
+  String get creationFeeView => (_$creationFeeViewComputed ??=
+          Computed<String>(() => super.creationFeeView))
       .value;
-  Computed<double> _$transferFeeViewComputed;
+  Computed<String> _$transferFeeViewComputed;
 
   @override
-  double get transferFeeView => (_$transferFeeViewComputed ??=
-          Computed<double>(() => super.transferFeeView))
+  String get transferFeeView => (_$transferFeeViewComputed ??=
+          Computed<String>(() => super.transferFeeView))
       .value;
 
   final _$networkNameAtom = Atom(name: '_SettingsStore.networkName');

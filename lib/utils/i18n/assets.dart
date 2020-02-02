@@ -5,6 +5,10 @@ const Map<String, String> enAssets = {
   'address.error': 'Invalid Address',
   'amount': 'Amount',
   'make': 'Make Transfer',
+  'balance': 'Balance',
+  'all': 'All',
+  'in': 'In',
+  'out': 'Out',
 };
 
 const Map<String, String> zhAssets = {
@@ -14,4 +18,8 @@ const Map<String, String> zhAssets = {
   'address.error': '无效地址',
   'amount': '数量',
   'make': '添加转账',
+  'balance': '余额',
+  'all': '全部',
+  'in': '转入',
+  'out': '转出',
 };

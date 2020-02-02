@@ -134,6 +134,13 @@ mixin _$AccountStore on _AccountStore, Store {
     return _$getTxsAsyncAction.run(() => super.getTxs());
   }
 
+  final _$getBlockAsyncAction = AsyncAction('getBlock');
+
+  @override
+  Future<void> getBlock(String hash) {
+    return _$getBlockAsyncAction.run(() => super.getBlock(hash));
+  }
+
   final _$_AccountStoreActionController =
       ActionController(name: '_AccountStore');
 
@@ -182,6 +189,16 @@ mixin _$AccountStore on _AccountStore, Store {
     final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
       return super.setAccountBalance(balance);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setTxsFilter(int filter) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    try {
+      return super.setTxsFilter(filter);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }
