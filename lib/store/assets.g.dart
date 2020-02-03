@@ -3,23 +3,6 @@
 part of 'assets.dart';
 
 // **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
-
-BlockData _$BlockDataFromJson(Map<String, dynamic> json) {
-  return BlockData()
-    ..id = json['id'] as int
-    ..hash = json['hash'] as String
-    ..datetime = json['datetime'] as String;
-}
-
-Map<String, dynamic> _$BlockDataToJson(BlockData instance) => <String, dynamic>{
-      'id': instance.id,
-      'hash': instance.hash,
-      'datetime': instance.datetime,
-    };
-
-// **************************************************************************
 // StoreGenerator
 // **************************************************************************
 
@@ -121,18 +104,30 @@ mixin _$AssetsState on _AssetsState, Store {
   final _$blockMapAtom = Atom(name: '_AssetsState.blockMap');
 
   @override
-  ObservableMap<String, BlockData> get blockMap {
+  ObservableMap<int, BlockData> get blockMap {
     _$blockMapAtom.context.enforceReadPolicy(_$blockMapAtom);
     _$blockMapAtom.reportObserved();
     return super.blockMap;
   }
 
   @override
-  set blockMap(ObservableMap<String, BlockData> value) {
+  set blockMap(ObservableMap<int, BlockData> value) {
     _$blockMapAtom.context.conditionallyRunInAction(() {
       super.blockMap = value;
       _$blockMapAtom.reportChanged();
     }, _$blockMapAtom, name: '${_$blockMapAtom.name}_set');
+  }
+
+  final _$_AssetsStateActionController = ActionController(name: '_AssetsState');
+
+  @override
+  void setTxDetail(TransferData tx) {
+    final _$actionInfo = _$_AssetsStateActionController.startAction();
+    try {
+      return super.setTxDetail(tx);
+    } finally {
+      _$_AssetsStateActionController.endAction(_$actionInfo);
+    }
   }
 }
 
@@ -169,6 +164,23 @@ mixin _$TransferData on _TransferData, Store {
       super.id = value;
       _$idAtom.reportChanged();
     }, _$idAtom, name: '${_$idAtom.name}_set');
+  }
+
+  final _$blockAtom = Atom(name: '_TransferData.block');
+
+  @override
+  int get block {
+    _$blockAtom.context.enforceReadPolicy(_$blockAtom);
+    _$blockAtom.reportObserved();
+    return super.block;
+  }
+
+  @override
+  set block(int value) {
+    _$blockAtom.context.conditionallyRunInAction(() {
+      super.block = value;
+      _$blockAtom.reportChanged();
+    }, _$blockAtom, name: '${_$blockAtom.name}_set');
   }
 
   final _$senderAtom = Atom(name: '_TransferData.sender');
@@ -309,20 +321,20 @@ mixin _$BlockData on _BlockData, Store {
     }, _$hashAtom, name: '${_$hashAtom.name}_set');
   }
 
-  final _$datetimeAtom = Atom(name: '_BlockData.datetime');
+  final _$timeAtom = Atom(name: '_BlockData.time');
 
   @override
-  String get datetime {
-    _$datetimeAtom.context.enforceReadPolicy(_$datetimeAtom);
-    _$datetimeAtom.reportObserved();
-    return super.datetime;
+  String get time {
+    _$timeAtom.context.enforceReadPolicy(_$timeAtom);
+    _$timeAtom.reportObserved();
+    return super.time;
   }
 
   @override
-  set datetime(String value) {
-    _$datetimeAtom.context.conditionallyRunInAction(() {
-      super.datetime = value;
-      _$datetimeAtom.reportChanged();
-    }, _$datetimeAtom, name: '${_$datetimeAtom.name}_set');
+  set time(String value) {
+    _$timeAtom.context.conditionallyRunInAction(() {
+      super.time = value;
+      _$timeAtom.reportChanged();
+    }, _$timeAtom, name: '${_$timeAtom.name}_set');
   }
 }

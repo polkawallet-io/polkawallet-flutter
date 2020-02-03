@@ -9,6 +9,14 @@ const Map<String, String> enAssets = {
   'all': 'All',
   'in': 'In',
   'out': 'Out',
+  'detail': 'Detail',
+  'success': 'Success',
+  'value': 'Value',
+  'fee': 'Fee',
+  'from': 'From',
+  'to': 'To',
+  'block': 'Block',
+  'event': 'Event ID',
 };
 
 const Map<String, String> zhAssets = {
@@ -22,4 +30,12 @@ const Map<String, String> zhAssets = {
   'all': '全部',
   'in': '转入',
   'out': '转出',
+  'detail': '详情',
+  'success': '成功',
+  'value': '金额',
+  'fee': '手续费',
+  'from': '付款地址',
+  'to': '收款地址',
+  'block': '区块',
+  'event': '交易ID',
 };

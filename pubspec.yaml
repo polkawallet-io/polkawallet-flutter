@@ -17,6 +17,7 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  intl:
   # state management with mobx & provider
   mobx: ^0.4.0
   flutter_mobx: ^0.3.6
@@ -67,6 +68,7 @@ flutter:
     - assets/images/public/Staking_dark.png
     - assets/images/public/About_logo.png
     - assets/images/public/dontscreen.png
+    - assets/images/public/copy.png
     - assets/images/assets/logo.png
     - assets/images/assets/Assets_bg.png
     - assets/images/assets/Assets_nav_0.png
@@ -81,6 +83,7 @@ flutter:
     - assets/images/assets/assets_up.png
     - assets/images/assets/assets_down.png
     - assets/images/assets/assets_fail.png
+    - assets/images/assets/success.png
     - assets/images/profile/about.png
     - assets/images/profile/address.png
     - assets/images/profile/setting.png

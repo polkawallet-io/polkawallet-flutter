@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:intl/intl.dart';
+
 class Fmt {
   static String address(String addr) {
     if (addr == null || addr.length == 0) {
@@ -15,7 +17,9 @@ class Fmt {
     return raw.split('T')[0];
   }
 
-  static String token(int value, int decimals, int decimalFixed) {
-    return (value / pow(10, decimals)).toStringAsFixed(decimalFixed);
+  static String token(int value, int decimals, {fullLength: bool}) {
+    NumberFormat f = NumberFormat(
+        ",##0.${fullLength == true ? '000#########' : '000'}", "en_US");
+    return f.format(value / pow(10, decimals));
   }
 }

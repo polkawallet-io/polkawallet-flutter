@@ -21,12 +21,12 @@ abstract class _SettingsStore with Store {
 
   @computed
   String get creationFeeView {
-    return Fmt.token(networkConst.creationFee, networkState.tokenDecimals, 3);
+    return Fmt.token(networkConst.creationFee, networkState.tokenDecimals);
   }
 
   @computed
   String get transferFeeView {
-    return Fmt.token(networkConst.transferFee, networkState.tokenDecimals, 3);
+    return Fmt.token(networkConst.transferFee, networkState.tokenDecimals);
   }
 
   @action

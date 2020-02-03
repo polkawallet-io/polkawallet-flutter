@@ -59,7 +59,7 @@ class _HomePageState extends State<Home> {
   Widget _getPage(i) {
     switch (i) {
       case 0:
-        return Assets(settingsStore, accountStore);
+        return Assets(api, settingsStore, accountStore);
         break;
       case 1:
         return Staking();

@@ -1,13 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 import 'package:polka_wallet/store/account.dart';
 
 class Assets extends StatelessWidget {
-  Assets(this.settingsStore, this.store);
+  Assets(this.api, this.settingsStore, this.store);
 
+  final Api api;
   final SettingsStore settingsStore;
   final AccountStore store;
 
@@ -64,7 +68,18 @@ class Assets extends StatelessWidget {
                       color: Colors.black54),
                 ),
                 onTap: () {
-                  store.getTxs();
+                  store.getTxs().then((ids) {
+                    Map<int, bool> blocksNeedUpdate = Map<int, bool>();
+                    ids.forEach((i) {
+                      if (store.assetsState.blockMap[i] == null) {
+                        blocksNeedUpdate[i] = true;
+                      }
+                    });
+                    if (blocksNeedUpdate.length > 0) {
+                      String blocks = blocksNeedUpdate.keys.join(',');
+                      api.evalJavascript('account.getBlockTime([$blocks])');
+                    }
+                  });
                   Navigator.pushNamed(context, '/assets/detail');
                 },
               ),

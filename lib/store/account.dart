@@ -97,7 +97,7 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  Future<void> getTxs() async {
+  Future<List<int>> getTxs() async {
     String data = await PolkaScanApi.fetchTxs(currentAccount.address);
     List<dynamic> txs = jsonDecode(data)['data'];
     assetsState.txs.clear();
@@ -105,6 +105,7 @@ abstract class _AccountStore with Store {
       TransferData tx = TransferData.fromJson(i);
       assetsState.txs.add(tx);
     });
+    return assetsState.txs.map((i) => i.block).toList();
   }
 
   @action
@@ -113,12 +114,12 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  Future<void> getBlock(String hash) async {
-    if (assetsState.blockMap[hash] == null) {
-      String data = await PolkaScanApi.fetchBlock(hash);
-      assetsState.blockMap[hash] =
-          BlockData.fromJson(jsonDecode(data)['data']['attributes']);
-    }
+  Future<void> setBlockMap(String data) async {
+    jsonDecode(data).forEach((i) {
+      if (assetsState.blockMap[i['id']] == null) {
+        assetsState.blockMap[i['id']] = BlockData.fromJson(i);
+      }
+    });
   }
 }
 

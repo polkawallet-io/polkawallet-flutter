@@ -82,6 +82,10 @@ class Api {
       print(hash);
     }
 
+    void onBlockTime(String data) {
+      accountStore.setBlockMap(data);
+    }
+
     _msgHandlers = {
       'ready': onWebReady,
       'settings.getNetworkConst': settingsStore.setNetworkConst,
@@ -91,6 +95,7 @@ class Api {
       'account.recover': onAccountRecover,
       'account.getBalance': accountStore.setAccountBalance,
       'account.transfer': onTransfer,
+      'account.getBlockTime': onBlockTime,
     };
   }
 

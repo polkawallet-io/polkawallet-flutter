@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -40,32 +41,39 @@ class _AssetPageState extends State<AssetPage>
   List<Widget> _buildTxList(BuildContext context) {
     int decimals = settingsStore.networkState.tokenDecimals;
     String symbol = settingsStore.networkState.tokenSymbol;
+    Map<int, BlockData> blockMap = accountStore.assetsState.blockMap;
     return accountStore.assetsState.txsView
         .map(
           (i) => Container(
-              decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(width: 0.5, color: Colors.black12)),
-              ),
-              child: ListTile(
-                  title: Text(i.id),
-                  subtitle: Text('time'),
-                  trailing: Container(
-                    width: 110,
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                            child: Text(
-                          '${Fmt.token(i.value, decimals, 3)} $symbol',
-                          style: Theme.of(context).textTheme.display4,
-                        )),
-                        i.sender == accountStore.currentAccount.address
-                            ? Image.asset('assets/images/assets/assets_up.png')
-                            : Image.asset(
-                                'assets/images/assets/assets_down.png')
-                      ],
-                    ),
-                  ))),
+            decoration: BoxDecoration(
+              border:
+                  Border(bottom: BorderSide(width: 0.5, color: Colors.black12)),
+            ),
+            child: ListTile(
+                title: Text(i.id),
+                subtitle: Text(blockMap[i.block] == null
+                    ? 'time'
+                    : blockMap[i.block].time),
+                trailing: Container(
+                  width: 110,
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                          child: Text(
+                        '${Fmt.token(i.value, decimals)} $symbol',
+                        style: Theme.of(context).textTheme.display4,
+                      )),
+                      i.sender == accountStore.currentAccount.address
+                          ? Image.asset('assets/images/assets/assets_up.png')
+                          : Image.asset('assets/images/assets/assets_down.png')
+                    ],
+                  ),
+                ),
+                onTap: () {
+                  accountStore.assetsState.setTxDetail(i);
+                  Navigator.pushNamed(context, '/assets/tx');
+                }),
+          ),
         )
         .toList();
   }
@@ -157,6 +165,10 @@ class _AssetPageState extends State<AssetPage>
                                 ),
                               ],
                             ),
+                            onPressed: () {
+                              print('receive');
+//                              Navigator.pushNamed(context, '/assets/receive');
+                            },
                           ),
                         ),
                       )

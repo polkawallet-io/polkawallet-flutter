@@ -22,8 +22,7 @@ abstract class _AssetsState with Store {
   TransferData txDetail = TransferData();
 
   @observable
-  ObservableMap<String, BlockData> blockMap =
-      ObservableMap<String, BlockData>();
+  ObservableMap<int, BlockData> blockMap = ObservableMap<int, BlockData>();
 
   @computed
   ObservableList<TransferData> get txsView {
@@ -38,6 +37,11 @@ abstract class _AssetsState with Store {
       }
     }));
   }
+
+  @action
+  void setTxDetail(TransferData tx) {
+    txDetail = tx;
+  }
 }
 
 class TransferData extends _TransferData with _$TransferData {
@@ -45,6 +49,7 @@ class TransferData extends _TransferData with _$TransferData {
     TransferData tx = TransferData();
     tx.type = json['type'];
     tx.id = json['id'];
+    tx.block = json['attributes']['block_id'];
     tx.value = json['attributes']['value'];
     tx.fee = json['attributes']['fee'];
     tx.sender = json['attributes']['sender']['attributes']['address'];
@@ -62,6 +67,9 @@ abstract class _TransferData with Store {
 
   @observable
   String id = '';
+
+  @observable
+  int block = 0;
 
   @observable
   String sender = '';
@@ -82,10 +90,16 @@ abstract class _TransferData with Store {
   int fee = 0;
 }
 
-@JsonSerializable()
 class BlockData extends _BlockData with _$BlockData {
-  static BlockData fromJson(Map<String, dynamic> json) =>
-      _$BlockDataFromJson(json);
+  static BlockData fromJson(Map<String, dynamic> json) {
+    BlockData block = BlockData();
+    block.id = json['id'];
+    block.hash = json['hash'];
+    block.time = DateTime.fromMillisecondsSinceEpoch(json['timestamp'])
+        .toString()
+        .split('.')[0];
+    return block;
+  }
 }
 
 abstract class _BlockData with Store {
@@ -96,5 +110,5 @@ abstract class _BlockData with Store {
   String hash = '';
 
   @observable
-  String datetime = '';
+  String time = '';
 }

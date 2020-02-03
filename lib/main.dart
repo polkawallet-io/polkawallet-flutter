@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:polka_wallet/page/assets/secondary/asset/asset.dart';
+import 'package:polka_wallet/page/assets/secondary/transfer/detail.dart';
 import 'package:polka_wallet/page/assets/secondary/transfer/transfer.dart';
 import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
@@ -70,6 +71,7 @@ class _WalletAppState extends State<WalletApp> {
         '/account/import': (_) => ImportAccount(_api, _accountStore),
         '/assets/detail': (_) => AssetPage(_accountStore, _settingStore),
         '/assets/transfer': (_) => Transfer(_api, _accountStore, _settingStore),
+        '/assets/tx': (_) => TransferDetail(_accountStore, _settingStore),
         '/profile/account': (_) => AccountManage(_accountStore),
       },
     );

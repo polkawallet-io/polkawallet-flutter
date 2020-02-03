@@ -130,15 +130,15 @@ mixin _$AccountStore on _AccountStore, Store {
   final _$getTxsAsyncAction = AsyncAction('getTxs');
 
   @override
-  Future<void> getTxs() {
+  Future<List<int>> getTxs() {
     return _$getTxsAsyncAction.run(() => super.getTxs());
   }
 
-  final _$getBlockAsyncAction = AsyncAction('getBlock');
+  final _$setBlockMapAsyncAction = AsyncAction('setBlockMap');
 
   @override
-  Future<void> getBlock(String hash) {
-    return _$getBlockAsyncAction.run(() => super.getBlock(hash));
+  Future<void> setBlockMap(String data) {
+    return _$setBlockMapAsyncAction.run(() => super.setBlockMap(data));
   }
 
   final _$_AccountStoreActionController =
