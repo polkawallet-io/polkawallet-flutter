@@ -7,6 +7,9 @@ class AssetsState extends _AssetsState with _$AssetsState {}
 
 abstract class _AssetsState with Store {
   @observable
+  bool loading = false;
+
+  @observable
   String address = '';
 
   @observable

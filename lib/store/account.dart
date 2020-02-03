@@ -98,6 +98,7 @@ abstract class _AccountStore with Store {
 
   @action
   Future<List<int>> getTxs() async {
+    assetsState.loading = true;
     String data = await PolkaScanApi.fetchTxs(currentAccount.address);
     List<dynamic> txs = jsonDecode(data)['data'];
     assetsState.txs.clear();
@@ -120,6 +121,7 @@ abstract class _AccountStore with Store {
         assetsState.blockMap[i['id']] = BlockData.fromJson(i);
       }
     });
+    assetsState.loading = false;
   }
 }
 

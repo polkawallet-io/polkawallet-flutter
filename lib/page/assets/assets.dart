@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/service/api.dart';
@@ -52,42 +53,40 @@ class Assets extends StatelessWidget {
                       ),
                     )
                   ]),
-              child: ListTile(
-                leading: Container(
-                  width: 40,
-                  height: 40,
-                  child: Image.asset('assets/images/assets/KSC.png'),
-                ),
-                title: Text(settingsStore.networkState.tokenSymbol ?? ''),
-                subtitle: Text(settingsStore.networkName ?? ''),
-                trailing: Text(
-                  Fmt.balance(store.assetsState.balance),
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black54),
-                ),
-                onTap: () {
-                  store.getTxs().then((ids) {
-                    Map<int, bool> blocksNeedUpdate = Map<int, bool>();
-                    ids.forEach((i) {
-                      if (store.assetsState.blockMap[i] == null) {
-                        blocksNeedUpdate[i] = true;
-                      }
-                    });
-                    if (blocksNeedUpdate.length > 0) {
-                      String blocks = blocksNeedUpdate.keys.join(',');
-                      api.evalJavascript('account.getBlockTime([$blocks])');
-                    }
-                  });
-                  Navigator.pushNamed(context, '/assets/detail');
-                },
-              ),
+              child: settingsStore.loading
+                  ? Padding(
+                      padding: EdgeInsets.all(24),
+                      child: CupertinoActivityIndicator())
+                  : ListTile(
+                      leading: Container(
+                        width: 40,
+                        height: 40,
+                        child: Image.asset('assets/images/assets/KSC.png'),
+                      ),
+                      title: Text(settingsStore.networkState.tokenSymbol ?? ''),
+                      subtitle: Text(settingsStore.networkName ?? ''),
+                      trailing: Text(
+                        Fmt.balance(store.assetsState.balance),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black54),
+                      ),
+                      onTap: () {
+                        store.getTxs().then((ids) {
+                          Map<int, bool> blocksNeedUpdate = Map<int, bool>();
+                          ids.forEach((i) {
+                            if (store.assetsState.blockMap[i] == null) {
+                              blocksNeedUpdate[i] = true;
+                            }
+                          });
+                          String blocks = blocksNeedUpdate.keys.join(',');
+                          api.evalJavascript('account.getBlockTime([$blocks])');
+                        });
+                        Navigator.pushNamed(context, '/assets/detail');
+                      },
+                    ),
             ),
-//            RaisedButton(
-//              child: Text('test', style: Theme.of(context).textTheme.display2),
-//              onPressed: () => Navigator.pushNamed(context, '/account/backup'),
-//            )
           ],
         ),
       );

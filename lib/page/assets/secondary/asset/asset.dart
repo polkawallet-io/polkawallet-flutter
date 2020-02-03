@@ -86,7 +86,8 @@ class _AssetPageState extends State<AssetPage>
       Tab(text: dic['in']),
       Tab(text: dic['out']),
     ];
-    final String balance = Fmt.balance(accountStore.assetsState.balance);
+
+    String balance = Fmt.balance(accountStore.assetsState.balance);
 
     return Observer(
         builder: (_) => Scaffold(
@@ -114,7 +115,12 @@ class _AssetPageState extends State<AssetPage>
                               accountStore.setTxsFilter(i);
                             },
                           ),
-                          ..._buildTxList(context)
+                          if (accountStore.assetsState.loading)
+                            Padding(
+                                padding: EdgeInsets.only(top: 36),
+                                child: CupertinoActivityIndicator()),
+                          if (!accountStore.assetsState.loading)
+                            ..._buildTxList(context)
                         ],
                       ),
                     ),

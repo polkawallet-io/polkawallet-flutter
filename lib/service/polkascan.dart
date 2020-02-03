@@ -8,9 +8,4 @@ class PolkaScanApi {
         await get('$endpoint/balances/transfer?&filter[address]=$address');
     return res.body;
   }
-
-  static Future<String> fetchBlock(String hash) async {
-    Response res = await get('$endpoint/block/$hash');
-    return res.body;
-  }
 }

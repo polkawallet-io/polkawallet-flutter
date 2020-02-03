@@ -8,13 +8,14 @@ part 'settings.g.dart';
 class SettingsStore = _SettingsStore with _$SettingsStore;
 
 abstract class _SettingsStore with Store {
-  _SettingsStore();
+  @observable
+  bool loading = true;
 
   @observable
   String networkName = '';
 
   @observable
-  NetworkState networkState = NetworkState('');
+  NetworkState networkState = NetworkState();
 
   @observable
   NetworkConst networkConst = NetworkConst();
@@ -37,6 +38,7 @@ abstract class _SettingsStore with Store {
   @action
   Future<void> setNetworkState(Map<String, dynamic> data) async {
     networkState = NetworkState.fromJson(data);
+    loading = false;
   }
 
   @action
@@ -47,8 +49,6 @@ abstract class _SettingsStore with Store {
 
 @JsonSerializable()
 class NetworkState extends _NetworkState with _$NetworkState {
-  NetworkState(String endpoint) : super(endpoint);
-
   static NetworkState fromJson(Map<String, dynamic> json) =>
       _$NetworkStateFromJson(json);
   static Map<String, dynamic> toJson(NetworkState net) =>
@@ -56,8 +56,6 @@ class NetworkState extends _NetworkState with _$NetworkState {
 }
 
 abstract class _NetworkState with Store {
-  _NetworkState(this.endpoint);
-
   @observable
   String endpoint = '';
 

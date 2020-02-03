@@ -7,9 +7,8 @@ part of 'settings.dart';
 // **************************************************************************
 
 NetworkState _$NetworkStateFromJson(Map<String, dynamic> json) {
-  return NetworkState(
-    json['endpoint'] as String,
-  )
+  return NetworkState()
+    ..endpoint = json['endpoint'] as String
     ..ss58Format = json['ss58Format'] as int
     ..tokenDecimals = json['tokenDecimals'] as int
     ..tokenSymbol = json['tokenSymbol'] as String;
@@ -54,6 +53,23 @@ mixin _$SettingsStore on _SettingsStore, Store {
   String get transferFeeView => (_$transferFeeViewComputed ??=
           Computed<String>(() => super.transferFeeView))
       .value;
+
+  final _$loadingAtom = Atom(name: '_SettingsStore.loading');
+
+  @override
+  bool get loading {
+    _$loadingAtom.context.enforceReadPolicy(_$loadingAtom);
+    _$loadingAtom.reportObserved();
+    return super.loading;
+  }
+
+  @override
+  set loading(bool value) {
+    _$loadingAtom.context.conditionallyRunInAction(() {
+      super.loading = value;
+      _$loadingAtom.reportChanged();
+    }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
+  }
 
   final _$networkNameAtom = Atom(name: '_SettingsStore.networkName');
 
