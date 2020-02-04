@@ -84,6 +84,8 @@ class DrawerMenu extends StatelessWidget {
                 ),
                 title: Text(I18n.of(context).home['scan'],
                     style: TextStyle(fontSize: 16, color: Colors.white)),
+                onTap: () => Navigator.pushNamed(context, '/account/scan',
+                    arguments: 'tx'),
               ),
               ListTile(
                 leading: Container(

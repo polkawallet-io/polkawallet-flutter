@@ -75,6 +75,10 @@ class Receive extends StatelessWidget {
                       child: QrImage(
                         data: store.currentAccount.address,
                         size: 200,
+//                        embeddedImage:
+//                            AssetImage('assets/images/public/About_logo.png'),
+//                        embeddedImageStyle:
+//                            QrEmbeddedImageStyle(size: Size(40, 40)),
                       ),
                     ),
                     Container(
