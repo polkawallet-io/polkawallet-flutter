@@ -172,8 +172,7 @@ class _AssetPageState extends State<AssetPage>
                               ],
                             ),
                             onPressed: () {
-                              print('receive');
-//                              Navigator.pushNamed(context, '/assets/receive');
+                              Navigator.pushNamed(context, '/assets/receive');
                             },
                           ),
                         ),

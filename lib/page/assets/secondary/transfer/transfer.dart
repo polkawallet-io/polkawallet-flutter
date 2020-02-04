@@ -141,6 +141,35 @@ class _TransferState extends State<Transfer> {
       }
     }
 
+    void onTransferError(String msg) {
+      print('transfer error: $msg');
+      accountStore.assetsState.setSubmitting(false);
+      if (state.mounted) {
+        state.removeCurrentSnackBar();
+      }
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          final Map<String, String> accDic = I18n.of(context).account;
+          return CupertinoAlertDialog(
+            title: Container(),
+            content: Text(
+                '${accDic['import.invalid']} ${accDic['create.password']}'),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(dic['cancel']),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              CupertinoButton(
+                child: Text(dic['ok']),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     void onTransfer() {
       accountStore.assetsState.setSubmitting(true);
       state.showSnackBar(SnackBar(
@@ -155,7 +184,7 @@ class _TransferState extends State<Transfer> {
       ));
 
       api.transfer(_addressCtrl.text, double.parse(_amountCtrl.text),
-          _passCtrl.text, onTransferFinish);
+          _passCtrl.text, onTransferFinish, onTransferError);
     }
 
     return Observer(

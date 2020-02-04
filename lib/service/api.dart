@@ -148,8 +148,10 @@ class Api {
     fetchBalance();
   }
 
-  void transfer(String to, double amount, String password, Function callback) {
-    _msgHandlers['account.transfer'] = callback;
+  void transfer(String to, double amount, String password, Function onSuccess,
+      Function onError) {
+    _msgHandlers['account.transfer'] = onSuccess;
+    _msgHandlers['account.transfer.error'] = onError;
 
     String from = accountStore.currentAccount.address;
     double amt = amount * pow(10, settingsStore.networkState.tokenDecimals);

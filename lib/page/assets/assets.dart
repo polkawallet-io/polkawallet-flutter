@@ -114,7 +114,14 @@ class _TopCard extends StatelessWidget {
             ),
             ListTile(
               title: Text(Fmt.address(account.address) ?? ''),
-              trailing: Image.asset('assets/images/assets/Assets_nav_code.png'),
+              trailing: IconButton(
+                icon: Image.asset('assets/images/assets/Assets_nav_code.png'),
+                onPressed: () {
+                  if (account.address != '') {
+                    Navigator.pushNamed(context, '/assets/receive');
+                  }
+                },
+              ),
             ),
           ],
         ),

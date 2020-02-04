@@ -1,6 +1,7 @@
 const Map<String, String> enAssets = {
   'transfer': 'Transfer',
   'receive': 'Receive',
+  'copy': 'Copy Address',
   'address': 'Send to Address',
   'address.error': 'Invalid Address',
   'amount': 'Amount',
@@ -22,6 +23,7 @@ const Map<String, String> enAssets = {
 const Map<String, String> zhAssets = {
   'transfer': '转账',
   'receive': '收款',
+  'copy': '复制地址',
   'address': '收款地址',
   'address.error': '无效地址',
   'amount': '数量',
