@@ -11,7 +11,7 @@ class Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, String> dic = I18n.of(context).profile;
+    final Map<String, String> dic = I18n.of(context).profile;
 
     return Observer(
       builder: (_) => Scaffold(

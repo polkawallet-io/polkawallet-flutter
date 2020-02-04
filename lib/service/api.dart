@@ -80,10 +80,11 @@ class Api {
 
     void onTransfer(String hash) {
       print(hash);
+      accountStore.assetsState.setSubmitting(false);
     }
 
     void onBlockTime(String data) {
-      accountStore.setBlockMap(data);
+      accountStore.assetsState.setBlockMap(data);
     }
 
     _msgHandlers = {
@@ -93,7 +94,7 @@ class Api {
       'api.rpc.system.properties': settingsStore.setNetworkState,
       'account.gen': onAccountGen,
       'account.recover': onAccountRecover,
-      'account.getBalance': accountStore.setAccountBalance,
+      'account.getBalance': accountStore.assetsState.setAccountBalance,
       'account.transfer': onTransfer,
       'account.getBlockTime': onBlockTime,
     };
@@ -130,7 +131,26 @@ class Api {
     evalJavascript(code);
   }
 
-  void transfer(String to, double amount, String password) {
+  void updateTxs() {
+    accountStore.assetsState
+        .getTxs(accountStore.currentAccount.address)
+        .then((ids) {
+      Map<int, bool> blocksNeedUpdate = Map<int, bool>();
+      ids.forEach((i) {
+        if (accountStore.assetsState.blockMap[i] == null) {
+          blocksNeedUpdate[i] = true;
+        }
+      });
+      String blocks = blocksNeedUpdate.keys.join(',');
+      evalJavascript('account.getBlockTime([$blocks])');
+    });
+
+    fetchBalance();
+  }
+
+  void transfer(String to, double amount, String password, Function callback) {
+    _msgHandlers['account.transfer'] = callback;
+
     String from = accountStore.currentAccount.address;
     double amt = amount * pow(10, settingsStore.networkState.tokenDecimals);
     evalJavascript(

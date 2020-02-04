@@ -1,5 +1,7 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert';
+
 import 'package:mobx/mobx.dart';
+import 'package:polka_wallet/service/polkascan.dart';
 
 part 'assets.g.dart';
 
@@ -8,6 +10,9 @@ class AssetsState extends _AssetsState with _$AssetsState {}
 abstract class _AssetsState with Store {
   @observable
   bool loading = false;
+
+  @observable
+  bool submitting = false;
 
   @observable
   String address = '';
@@ -42,8 +47,46 @@ abstract class _AssetsState with Store {
   }
 
   @action
+  void setAccountBalance(String amt) {
+    balance = amt;
+  }
+
+  @action
+  Future<List<int>> getTxs(String address) async {
+    loading = true;
+    String data = await PolkaScanApi.fetchTxs(address);
+    List<dynamic> ls = jsonDecode(data)['data'];
+    txs.clear();
+    ls.forEach((i) {
+      TransferData tx = TransferData.fromJson(i);
+      txs.add(tx);
+    });
+    return txs.map((i) => i.block).toList();
+  }
+
+  @action
+  void setTxsFilter(int filter) {
+    txsFilter = filter;
+  }
+
+  @action
+  Future<void> setBlockMap(String data) async {
+    jsonDecode(data).forEach((i) {
+      if (blockMap[i['id']] == null) {
+        blockMap[i['id']] = BlockData.fromJson(i);
+      }
+    });
+    loading = false;
+  }
+
+  @action
   void setTxDetail(TransferData tx) {
     txDetail = tx;
+  }
+
+  @action
+  void setSubmitting(bool isSubmitting) {
+    submitting = isSubmitting;
   }
 }
 

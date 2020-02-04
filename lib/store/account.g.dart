@@ -127,20 +127,6 @@ mixin _$AccountStore on _AccountStore, Store {
     return _$loadAccountAsyncAction.run(() => super.loadAccount());
   }
 
-  final _$getTxsAsyncAction = AsyncAction('getTxs');
-
-  @override
-  Future<List<int>> getTxs() {
-    return _$getTxsAsyncAction.run(() => super.getTxs());
-  }
-
-  final _$setBlockMapAsyncAction = AsyncAction('setBlockMap');
-
-  @override
-  Future<void> setBlockMap(String data) {
-    return _$setBlockMapAsyncAction.run(() => super.setBlockMap(data));
-  }
-
   final _$_AccountStoreActionController =
       ActionController(name: '_AccountStore');
 
@@ -179,26 +165,6 @@ mixin _$AccountStore on _AccountStore, Store {
     final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
       return super.setCurrentAccount(acc);
-    } finally {
-      _$_AccountStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setAccountBalance(String balance) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction();
-    try {
-      return super.setAccountBalance(balance);
-    } finally {
-      _$_AccountStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setTxsFilter(int filter) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction();
-    try {
-      return super.setTxsFilter(filter);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }

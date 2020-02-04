@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/service/polkascan.dart';
 
 import 'package:polka_wallet/utils/localStorage.dart';
 
@@ -86,42 +83,10 @@ abstract class _AccountStore with Store {
       String address = await LocalStorage.getCurrentAccount();
       Map<String, dynamic> acc =
           accList.firstWhere((i) => i['address'] == address);
+      print('load account: $acc');
       currentAccount = Account.fromJson(acc);
+      assetsState.address = currentAccount.address;
     }
-    print('load account: ${currentAccount.name}');
-  }
-
-  @action
-  void setAccountBalance(String balance) {
-    assetsState.balance = balance;
-  }
-
-  @action
-  Future<List<int>> getTxs() async {
-    assetsState.loading = true;
-    String data = await PolkaScanApi.fetchTxs(currentAccount.address);
-    List<dynamic> txs = jsonDecode(data)['data'];
-    assetsState.txs.clear();
-    txs.forEach((i) {
-      TransferData tx = TransferData.fromJson(i);
-      assetsState.txs.add(tx);
-    });
-    return assetsState.txs.map((i) => i.block).toList();
-  }
-
-  @action
-  void setTxsFilter(int filter) {
-    assetsState.txsFilter = filter;
-  }
-
-  @action
-  Future<void> setBlockMap(String data) async {
-    jsonDecode(data).forEach((i) {
-      if (assetsState.blockMap[i['id']] == null) {
-        assetsState.blockMap[i['id']] = BlockData.fromJson(i);
-      }
-    });
-    assetsState.loading = false;
   }
 }
 

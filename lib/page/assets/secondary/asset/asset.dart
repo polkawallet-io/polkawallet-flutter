@@ -80,7 +80,7 @@ class _AssetPageState extends State<AssetPage>
 
   @override
   Widget build(BuildContext context) {
-    Map<String, String> dic = I18n.of(context).assets;
+    final Map<String, String> dic = I18n.of(context).assets;
     final List<Tab> _myTabs = <Tab>[
       Tab(text: dic['all']),
       Tab(text: dic['in']),
@@ -112,7 +112,7 @@ class _AssetPageState extends State<AssetPage>
                             controller: _tabController,
                             tabs: _myTabs,
                             onTap: (i) {
-                              accountStore.setTxsFilter(i);
+                              accountStore.assetsState.setTxsFilter(i);
                             },
                           ),
                           if (accountStore.assetsState.loading)

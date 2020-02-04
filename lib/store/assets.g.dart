@@ -33,6 +33,23 @@ mixin _$AssetsState on _AssetsState, Store {
     }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
   }
 
+  final _$submittingAtom = Atom(name: '_AssetsState.submitting');
+
+  @override
+  bool get submitting {
+    _$submittingAtom.context.enforceReadPolicy(_$submittingAtom);
+    _$submittingAtom.reportObserved();
+    return super.submitting;
+  }
+
+  @override
+  set submitting(bool value) {
+    _$submittingAtom.context.conditionallyRunInAction(() {
+      super.submitting = value;
+      _$submittingAtom.reportChanged();
+    }, _$submittingAtom, name: '${_$submittingAtom.name}_set');
+  }
+
   final _$addressAtom = Atom(name: '_AssetsState.address');
 
   @override
@@ -135,13 +152,57 @@ mixin _$AssetsState on _AssetsState, Store {
     }, _$blockMapAtom, name: '${_$blockMapAtom.name}_set');
   }
 
+  final _$getTxsAsyncAction = AsyncAction('getTxs');
+
+  @override
+  Future<List<int>> getTxs(String address) {
+    return _$getTxsAsyncAction.run(() => super.getTxs(address));
+  }
+
+  final _$setBlockMapAsyncAction = AsyncAction('setBlockMap');
+
+  @override
+  Future<void> setBlockMap(String data) {
+    return _$setBlockMapAsyncAction.run(() => super.setBlockMap(data));
+  }
+
   final _$_AssetsStateActionController = ActionController(name: '_AssetsState');
+
+  @override
+  void setAccountBalance(String amt) {
+    final _$actionInfo = _$_AssetsStateActionController.startAction();
+    try {
+      return super.setAccountBalance(amt);
+    } finally {
+      _$_AssetsStateActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setTxsFilter(int filter) {
+    final _$actionInfo = _$_AssetsStateActionController.startAction();
+    try {
+      return super.setTxsFilter(filter);
+    } finally {
+      _$_AssetsStateActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void setTxDetail(TransferData tx) {
     final _$actionInfo = _$_AssetsStateActionController.startAction();
     try {
       return super.setTxDetail(tx);
+    } finally {
+      _$_AssetsStateActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setSubmitting(bool isSubmitting) {
+    final _$actionInfo = _$_AssetsStateActionController.startAction();
+    try {
+      return super.setSubmitting(isSubmitting);
     } finally {
       _$_AssetsStateActionController.endAction(_$actionInfo);
     }

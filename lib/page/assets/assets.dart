@@ -73,16 +73,7 @@ class Assets extends StatelessWidget {
                             color: Colors.black54),
                       ),
                       onTap: () {
-                        store.getTxs().then((ids) {
-                          Map<int, bool> blocksNeedUpdate = Map<int, bool>();
-                          ids.forEach((i) {
-                            if (store.assetsState.blockMap[i] == null) {
-                              blocksNeedUpdate[i] = true;
-                            }
-                          });
-                          String blocks = blocksNeedUpdate.keys.join(',');
-                          api.evalJavascript('account.getBlockTime([$blocks])');
-                        });
+                        api.updateTxs();
                         Navigator.pushNamed(context, '/assets/detail');
                       },
                     ),
