@@ -6,6 +6,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Transfer extends StatefulWidget {
@@ -38,6 +39,9 @@ class _TransferState extends State<Transfer> {
   Widget _buildStep0(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).assets;
     String symbol = settingsStore.networkState.tokenSymbol;
+
+//    final String args = ModalRoute.of(context).settings.arguments;
+
     return ListView(
       children: <Widget>[
         Form(
@@ -53,7 +57,9 @@ class _TransferState extends State<Transfer> {
                   ),
                   controller: _addressCtrl,
                   validator: (v) {
-                    return v.trim().length == 47 ? null : dic['address.error'];
+                    return Fmt.isAddress(v.trim())
+                        ? null
+                        : dic['address.error'];
                   },
                 ),
               ),
@@ -271,13 +277,37 @@ class _TransferState extends State<Transfer> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final String args = ModalRoute.of(context).settings.arguments;
+    if (args != null) {
+      setState(() {
+        _addressCtrl.text = args;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).assets;
     String symbol = settingsStore.networkState.tokenSymbol;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('${dic['transfer']} $symbol'),
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Image.asset('assets/images/assets/Menu_scan.png'),
+            onPressed: () async {
+              var to = await Navigator.of(context).pushNamed('/account/scan');
+              setState(() {
+                _addressCtrl.text = to;
+              });
+            },
+          )
+        ],
       ),
       body: Builder(builder: (BuildContext context) {
         return _step == 0 ? _buildStep0(context) : _buildStep1(context);

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/service/polkascan.dart';
+import 'package:polka_wallet/utils/format.dart';
 
 part 'assets.g.dart';
 
@@ -53,6 +54,11 @@ abstract class _AssetsState with Store {
 
   @action
   Future<List<int>> getTxs(String address) async {
+    if (!Fmt.isAddress(address)) {
+      txs.clear();
+      return [];
+    }
+
     loading = true;
     String data = await PolkaScanApi.fetchTxs(address);
     List<dynamic> ls = jsonDecode(data)['data'];

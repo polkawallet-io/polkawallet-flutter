@@ -3,13 +3,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_qr_reader/qrcode_reader_view.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:polka_wallet/utils/format.dart';
 
-class Scan extends StatefulWidget {
-  @override
-  _ScanState createState() => _ScanState();
-}
-
-class _ScanState extends State<Scan> {
+class Scan extends StatelessWidget {
   final GlobalKey<QrcodeReaderViewState> _qrViewKey = GlobalKey();
 
   Future<bool> canOpenCamera() async {
@@ -23,30 +19,24 @@ class _ScanState extends State<Scan> {
           return false;
         }
       }
-    } else {
-      return true;
     }
     return true;
   }
 
   @override
-  void initState() {
-    super.initState();
-    canOpenCamera();
-  }
-
-  @override
   Widget build(BuildContext context) {
     Future onScan(String data) async {
-      print(data);
-      final String args = ModalRoute.of(context).settings.arguments;
-      if (args == 'tx') {
-        Navigator.pushNamed(context, '/assets/transfer', arguments: data);
-        return;
+      if (Fmt.isAddress(data)) {
+        final String args = ModalRoute.of(context).settings.arguments;
+        if (args == 'tx') {
+          Navigator.of(context).pop();
+          Navigator.of(context).pushNamed('/assets/transfer', arguments: data);
+        } else {
+          Navigator.of(context).pop(data);
+        }
       } else {
-        Navigator.of(context).pop(data);
+        _qrViewKey.currentState.startScan();
       }
-      _qrViewKey.currentState.startScan();
     }
 
     return Scaffold(

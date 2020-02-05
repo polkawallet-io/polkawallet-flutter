@@ -22,4 +22,9 @@ class Fmt {
         ",##0.${fullLength == true ? '000#########' : '000'}", "en_US");
     return f.format(value / pow(10, decimals));
   }
+
+  static bool isAddress(String txt) {
+    var reg = RegExp(r'^[A-z\d]{47}$');
+    return reg.hasMatch(txt);
+  }
 }

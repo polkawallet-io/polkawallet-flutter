@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/page/assets/secondary/asset/asset.dart';
 import 'package:polka_wallet/page/assets/secondary/receive/receive.dart';
 import 'package:polka_wallet/page/assets/secondary/scan.dart';
@@ -8,6 +9,7 @@ import 'package:polka_wallet/page/assets/secondary/transfer/detail.dart';
 import 'package:polka_wallet/page/assets/secondary/transfer/transfer.dart';
 import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/utils/format.dart';
 
 import 'utils/i18n/index.dart';
 import 'common/theme.dart';
@@ -57,6 +59,7 @@ class _WalletAppState extends State<WalletApp> {
       localizationsDelegates: [
         const AppLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: [
@@ -66,7 +69,11 @@ class _WalletAppState extends State<WalletApp> {
       initialRoute: '/',
       theme: appTheme,
       routes: {
-        '/': (_) => Home(_api, _settingStore, _accountStore),
+        '/': (_) => Observer(
+              builder: (_) => _accountStore.accountList.length > 0
+                  ? Home(_api, _settingStore, _accountStore)
+                  : CreateAccountEntry(),
+            ),
         '/account/entry': (_) => CreateAccountEntry(),
         '/account/create': (_) => CreateAccount(_accountStore.setNewAccount),
         '/account/backup': (_) => BackupAccount(_api, _accountStore),
