@@ -40,6 +40,8 @@ dependencies:
   qr_flutter: ^3.1.0
   flutter_qr_reader: ^1.0.3
   permission_handler:
+  # PackageInfo
+  package_info:
 
 dev_dependencies:
   build_runner:

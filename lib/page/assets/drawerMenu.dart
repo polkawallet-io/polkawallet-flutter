@@ -18,7 +18,7 @@ class DrawerMenu extends StatelessWidget {
               leading: Container(
                 width: 40,
                 height: 40,
-                child: Image.asset('assets/images/assets/KSC.png'),
+                child: Image.asset('assets/images/assets/Assets_nav_0.png'),
               ),
               title: Text(i.name ?? 'name',
                   style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -64,7 +64,7 @@ class DrawerMenu extends StatelessWidget {
                   leading: Container(
                     width: 40,
                     height: 40,
-                    child: Image.asset('assets/images/assets/KSC.png'),
+                    child: Image.asset('assets/images/assets/Assets_nav_0.png'),
                   ),
                   title: Text(store.currentAccount.name ?? 'name',
                       style: TextStyle(fontSize: 16, color: Colors.white)),

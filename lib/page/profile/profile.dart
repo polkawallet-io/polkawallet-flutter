@@ -29,7 +29,7 @@ class Profile extends StatelessWidget {
                 leading: Container(
                   width: 72,
                   height: 72,
-                  child: Image.asset('assets/images/assets/KSC.png'),
+                  child: Image.asset('assets/images/assets/Assets_nav_0.png'),
                 ),
                 title: Text(store.currentAccount.name ?? 'name',
                     style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -39,12 +39,25 @@ class Profile extends StatelessWidget {
                 ),
               ),
             ),
-            Container(padding: EdgeInsets.only(top: 16)),
-            ListTile(
-              leading: Image.asset('assets/images/profile/address.png'),
-              title: Text(dic['account']),
-              trailing: Icon(Icons.arrow_forward_ios, size: 18),
-              onTap: () => Navigator.pushNamed(context, '/profile/account'),
+            Container(
+              padding: EdgeInsets.all(24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  RaisedButton(
+                    padding: EdgeInsets.all(12),
+                    color: Colors.pinkAccent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24)),
+                    child: Text(
+                      dic['account'],
+                      style: Theme.of(context).textTheme.button,
+                    ),
+                    onPressed: () =>
+                        Navigator.pushNamed(context, '/profile/account'),
+                  )
+                ],
+              ),
             ),
             ListTile(
               leading: Image.asset('assets/images/profile/address.png'),
@@ -60,6 +73,7 @@ class Profile extends StatelessWidget {
               leading: Image.asset('assets/images/profile/about.png'),
               title: Text(dic['about']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
+              onTap: () => Navigator.of(context).pushNamed('/profile/about'),
             ),
           ],
         ),

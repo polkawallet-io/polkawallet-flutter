@@ -30,7 +30,7 @@ class AccountManage extends StatelessWidget {
                 leading: Container(
                   width: 72,
                   height: 72,
-                  child: Image.asset('assets/images/assets/KSC.png'),
+                  child: Image.asset('assets/images/assets/Assets_nav_0.png'),
                 ),
                 title: Text(store.currentAccount.name ?? 'name',
                     style: TextStyle(fontSize: 16, color: Colors.white)),

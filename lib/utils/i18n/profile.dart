@@ -1,6 +1,6 @@
 const Map<String, String> enProfile = {
   'title': 'Profile',
-  'account': 'Account',
+  'account': 'Manage Account',
   'address': 'Contacts',
   'setting': 'Settings',
   'about': 'About',
@@ -10,11 +10,13 @@ const Map<String, String> enProfile = {
   'delete': 'Delete Account',
   'delete.confirm': 'Confirm',
   'delete.warn': 'Are you sure you want to delete the current account?',
+  'about.brif': 'Mobile Wallet for Polkadot',
+  'about.version': 'Version',
 };
 
 const Map<String, String> zhProfile = {
   'title': '设置',
-  'account': '账户',
+  'account': '账户管理',
   'address': '常用地址',
   'setting': '设置',
   'about': '关于',
@@ -24,4 +26,6 @@ const Map<String, String> zhProfile = {
   'delete': '删除账户',
   'delete.confirm': '确认删除',
   'delete.warn': '确认删除当前账户吗？',
+  'about.brif': 'Mobile Wallet for Polkadot',
+  'about.version': '版本',
 };
