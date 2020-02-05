@@ -34,6 +34,20 @@ Map<String, dynamic> _$NetworkConstToJson(NetworkConst instance) =>
       'transferFee': instance.transferFee,
     };
 
+ContactData _$ContactDataFromJson(Map<String, dynamic> json) {
+  return ContactData()
+    ..name = json['name'] as String
+    ..address = json['address'] as String
+    ..memo = json['memo'] as String;
+}
+
+Map<String, dynamic> _$ContactDataToJson(ContactData instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'address': instance.address,
+      'memo': instance.memo,
+    };
+
 // **************************************************************************
 // StoreGenerator
 // **************************************************************************
@@ -122,6 +136,23 @@ mixin _$SettingsStore on _SettingsStore, Store {
     }, _$networkConstAtom, name: '${_$networkConstAtom.name}_set');
   }
 
+  final _$contactListAtom = Atom(name: '_SettingsStore.contactList');
+
+  @override
+  ObservableList<ContactData> get contactList {
+    _$contactListAtom.context.enforceReadPolicy(_$contactListAtom);
+    _$contactListAtom.reportObserved();
+    return super.contactList;
+  }
+
+  @override
+  set contactList(ObservableList<ContactData> value) {
+    _$contactListAtom.context.conditionallyRunInAction(() {
+      super.contactList = value;
+      _$contactListAtom.reportChanged();
+    }, _$contactListAtom, name: '${_$contactListAtom.name}_set');
+  }
+
   final _$setNetworkStateAsyncAction = AsyncAction('setNetworkState');
 
   @override
@@ -134,6 +165,34 @@ mixin _$SettingsStore on _SettingsStore, Store {
   @override
   Future<void> setNetworkConst(Map<String, dynamic> data) {
     return _$setNetworkConstAsyncAction.run(() => super.setNetworkConst(data));
+  }
+
+  final _$loadContactsAsyncAction = AsyncAction('loadContacts');
+
+  @override
+  Future<void> loadContacts() {
+    return _$loadContactsAsyncAction.run(() => super.loadContacts());
+  }
+
+  final _$addContactAsyncAction = AsyncAction('addContact');
+
+  @override
+  Future<void> addContact(Map<String, dynamic> con) {
+    return _$addContactAsyncAction.run(() => super.addContact(con));
+  }
+
+  final _$removeContactAsyncAction = AsyncAction('removeContact');
+
+  @override
+  Future<void> removeContact(ContactData con) {
+    return _$removeContactAsyncAction.run(() => super.removeContact(con));
+  }
+
+  final _$updateContactAsyncAction = AsyncAction('updateContact');
+
+  @override
+  Future<void> updateContact(Map<String, dynamic> con) {
+    return _$updateContactAsyncAction.run(() => super.updateContact(con));
   }
 
   final _$_SettingsStoreActionController =
@@ -253,5 +312,58 @@ mixin _$NetworkConst on _NetworkConst, Store {
       super.transferFee = value;
       _$transferFeeAtom.reportChanged();
     }, _$transferFeeAtom, name: '${_$transferFeeAtom.name}_set');
+  }
+}
+
+mixin _$ContactData on _ContactData, Store {
+  final _$nameAtom = Atom(name: '_ContactData.name');
+
+  @override
+  String get name {
+    _$nameAtom.context.enforceReadPolicy(_$nameAtom);
+    _$nameAtom.reportObserved();
+    return super.name;
+  }
+
+  @override
+  set name(String value) {
+    _$nameAtom.context.conditionallyRunInAction(() {
+      super.name = value;
+      _$nameAtom.reportChanged();
+    }, _$nameAtom, name: '${_$nameAtom.name}_set');
+  }
+
+  final _$addressAtom = Atom(name: '_ContactData.address');
+
+  @override
+  String get address {
+    _$addressAtom.context.enforceReadPolicy(_$addressAtom);
+    _$addressAtom.reportObserved();
+    return super.address;
+  }
+
+  @override
+  set address(String value) {
+    _$addressAtom.context.conditionallyRunInAction(() {
+      super.address = value;
+      _$addressAtom.reportChanged();
+    }, _$addressAtom, name: '${_$addressAtom.name}_set');
+  }
+
+  final _$memoAtom = Atom(name: '_ContactData.memo');
+
+  @override
+  String get memo {
+    _$memoAtom.context.enforceReadPolicy(_$memoAtom);
+    _$memoAtom.reportObserved();
+    return super.memo;
+  }
+
+  @override
+  set memo(String value) {
+    _$memoAtom.context.conditionallyRunInAction(() {
+      super.memo = value;
+      _$memoAtom.reportChanged();
+    }, _$memoAtom, name: '${_$memoAtom.name}_set');
   }
 }

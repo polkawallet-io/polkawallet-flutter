@@ -8,6 +8,8 @@ import 'package:polka_wallet/page/assets/secondary/scan.dart';
 import 'package:polka_wallet/page/assets/secondary/transfer/detail.dart';
 import 'package:polka_wallet/page/assets/secondary/transfer/transfer.dart';
 import 'package:polka_wallet/page/profile/secondary/about.dart';
+import 'package:polka_wallet/page/profile/secondary/contact.dart';
+import 'package:polka_wallet/page/profile/secondary/contacts.dart';
 import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -42,6 +44,7 @@ class _WalletAppState extends State<WalletApp> {
   @override
   void initState() {
     _accountStore.loadAccount();
+    _settingStore.loadContacts();
 
     _api = Api(
         context: context,
@@ -85,6 +88,8 @@ class _WalletAppState extends State<WalletApp> {
         '/assets/receive': (_) => Receive(_accountStore),
         '/assets/tx': (_) => TransferDetail(_accountStore, _settingStore),
         '/profile/account': (_) => AccountManage(_accountStore),
+        '/profile/contacts': (_) => Contacts(_settingStore),
+        '/profile/contact': (_) => Contact(_settingStore),
         '/profile/about': (_) => About(),
       },
     );

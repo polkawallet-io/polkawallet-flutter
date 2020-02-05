@@ -45,7 +45,7 @@ class Profile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   RaisedButton(
-                    padding: EdgeInsets.all(12),
+                    padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
                     color: Colors.pinkAccent,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24)),
@@ -61,8 +61,9 @@ class Profile extends StatelessWidget {
             ),
             ListTile(
               leading: Image.asset('assets/images/profile/address.png'),
-              title: Text(dic['address']),
+              title: Text(dic['contact']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
+              onTap: () => Navigator.of(context).pushNamed('/profile/contacts'),
             ),
             ListTile(
               leading: Image.asset('assets/images/profile/setting.png'),

@@ -66,29 +66,29 @@ class AccountManage extends StatelessWidget {
                     textColor: Colors.pink,
                     child: Text(dic['delete']),
                     onPressed: () {
-                      print('press delete');
                       showCupertinoDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CupertinoAlertDialog(
-                              title: Text(dic['delete.confirm']),
-                              content: Text(dic['delete.warn']),
-                              actions: <Widget>[
-                                CupertinoButton(
-                                  child: Text(I18n.of(context).home['cancel']),
-                                  onPressed: () => Navigator.of(context).pop(),
-                                ),
-                                CupertinoButton(
-                                  child: Text(I18n.of(context).home['ok']),
-                                  onPressed: () {
-                                    Navigator.popUntil(
-                                        context, ModalRoute.withName('/'));
-                                    store.removeAccount(store.currentAccount);
-                                  },
-                                ),
-                              ],
-                            );
-                          });
+                        context: context,
+                        builder: (BuildContext context) {
+                          return CupertinoAlertDialog(
+                            title: Text(dic['delete.confirm']),
+                            content: Text(dic['delete.warn']),
+                            actions: <Widget>[
+                              CupertinoButton(
+                                child: Text(I18n.of(context).home['cancel']),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                              CupertinoButton(
+                                child: Text(I18n.of(context).home['ok']),
+                                onPressed: () {
+                                  Navigator.popUntil(
+                                      context, ModalRoute.withName('/'));
+                                  store.removeAccount(store.currentAccount);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     },
                   ),
                 ),
