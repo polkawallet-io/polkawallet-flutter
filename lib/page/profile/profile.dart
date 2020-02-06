@@ -69,6 +69,7 @@ class Profile extends StatelessWidget {
               leading: Image.asset('assets/images/profile/setting.png'),
               title: Text(dic['setting']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
+              onTap: () => Navigator.of(context).pushNamed('/profile/settings'),
             ),
             ListTile(
               leading: Image.asset('assets/images/profile/about.png'),

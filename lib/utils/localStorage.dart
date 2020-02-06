@@ -6,6 +6,7 @@ class LocalStorage {
   static const accountsKey = 'wallet_account_list';
   static const currentAccountKey = 'wallet_current_account';
   static const contactsKey = 'wallet_contact_list';
+  static const endpointKey = 'wallet_endpoint';
 
   static final storage = new _LocalStorage();
 
@@ -44,6 +45,14 @@ class LocalStorage {
 
   static Future<List<Map<String, dynamic>>> getContractList() async {
     return storage.getList(contactsKey);
+  }
+
+  static Future<void> setEndpoint(String value) async {
+    return storage.setKV(endpointKey, value);
+  }
+
+  static Future<String> getEndpoint() async {
+    return storage.getKV(endpointKey);
   }
 }
 

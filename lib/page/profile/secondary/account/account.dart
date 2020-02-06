@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -9,6 +12,28 @@ class AccountManage extends StatelessWidget {
   AccountManage(this.store);
 
   final AccountStore store;
+
+  void _onExportKeystore(BuildContext context) {
+    var dic = I18n.of(context).profile;
+    Clipboard.setData(ClipboardData(
+      text: jsonEncode(Account.toJson(store.currentAccount)),
+    ));
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(dic['export']),
+          content: Text(dic['export.ok']),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(I18n.of(context).home['ok']),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +84,7 @@ class AccountManage extends StatelessWidget {
                   ListTile(
                     title: Text(dic['export']),
                     trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                    onTap: () => _onExportKeystore(context),
                   ),
                 ],
               ),

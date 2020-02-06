@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
@@ -11,6 +13,9 @@ class SettingsStore = _SettingsStore with _$SettingsStore;
 abstract class _SettingsStore with Store {
   @observable
   bool loading = true;
+
+  @observable
+  EndpointData endpoint = EndpointData();
 
   @observable
   String networkName = '';
@@ -73,6 +78,26 @@ abstract class _SettingsStore with Store {
     await LocalStorage.updateContact(con);
     loadContacts();
   }
+
+  @action
+  void setEndpoint(Map<String, dynamic> value) {
+    endpoint = EndpointData.fromJson(value);
+    LocalStorage.setEndpoint(jsonEncode(value));
+  }
+
+  @action
+  Future<void> loadEndpoint() async {
+    String value = await LocalStorage.getEndpoint();
+    if (value != null) {
+      endpoint = EndpointData.fromJson(jsonDecode(value));
+    } else {
+      endpoint = EndpointData.fromJson({
+        'info': 'kusama',
+        'text': 'Kusama (Polkadot Canary, hosted by Parity)',
+        'value': 'wss://kusama-rpc.polkadot.io/',
+      });
+    }
+  }
 }
 
 @JsonSerializable()
@@ -130,4 +155,23 @@ abstract class _ContactData with Store {
 
   @observable
   String memo = '';
+}
+
+@JsonSerializable()
+class EndpointData extends _EndpointData with _$EndpointData {
+  static EndpointData fromJson(Map<String, dynamic> json) =>
+      _$EndpointDataFromJson(json);
+  static Map<String, dynamic> toJson(EndpointData data) =>
+      _$EndpointDataToJson(data);
+}
+
+abstract class _EndpointData with Store {
+  @observable
+  String info = '';
+
+  @observable
+  String text = '';
+
+  @observable
+  String value = '';
 }

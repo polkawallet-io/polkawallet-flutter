@@ -12,6 +12,8 @@ import 'package:polka_wallet/page/profile/secondary/account/changeName.dart';
 import 'package:polka_wallet/page/profile/secondary/account/changePassword.dart';
 import 'package:polka_wallet/page/profile/secondary/contacts/contact.dart';
 import 'package:polka_wallet/page/profile/secondary/contacts/contacts.dart';
+import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
+import 'package:polka_wallet/page/profile/secondary/settings/settings.dart';
 import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 
@@ -45,6 +47,7 @@ class _WalletAppState extends State<WalletApp> {
   @override
   void initState() {
     _accountStore.loadAccount();
+    _settingStore.loadEndpoint();
     _settingStore.loadContacts();
 
     _api = Api(
@@ -93,6 +96,8 @@ class _WalletAppState extends State<WalletApp> {
         '/profile/contact': (_) => Contact(_settingStore),
         '/profile/name': (_) => ChangeName(_api, _accountStore),
         '/profile/password': (_) => ChangePassword(_api, _accountStore),
+        '/profile/settings': (_) => Settings(_settingStore),
+        '/profile/endpoint': (_) => RemoteNode(_settingStore),
         '/profile/about': (_) => About(),
       },
     );

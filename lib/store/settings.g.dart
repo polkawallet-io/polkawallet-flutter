@@ -48,6 +48,20 @@ Map<String, dynamic> _$ContactDataToJson(ContactData instance) =>
       'memo': instance.memo,
     };
 
+EndpointData _$EndpointDataFromJson(Map<String, dynamic> json) {
+  return EndpointData()
+    ..info = json['info'] as String
+    ..text = json['text'] as String
+    ..value = json['value'] as String;
+}
+
+Map<String, dynamic> _$EndpointDataToJson(EndpointData instance) =>
+    <String, dynamic>{
+      'info': instance.info,
+      'text': instance.text,
+      'value': instance.value,
+    };
+
 // **************************************************************************
 // StoreGenerator
 // **************************************************************************
@@ -83,6 +97,23 @@ mixin _$SettingsStore on _SettingsStore, Store {
       super.loading = value;
       _$loadingAtom.reportChanged();
     }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
+  }
+
+  final _$endpointAtom = Atom(name: '_SettingsStore.endpoint');
+
+  @override
+  EndpointData get endpoint {
+    _$endpointAtom.context.enforceReadPolicy(_$endpointAtom);
+    _$endpointAtom.reportObserved();
+    return super.endpoint;
+  }
+
+  @override
+  set endpoint(EndpointData value) {
+    _$endpointAtom.context.conditionallyRunInAction(() {
+      super.endpoint = value;
+      _$endpointAtom.reportChanged();
+    }, _$endpointAtom, name: '${_$endpointAtom.name}_set');
   }
 
   final _$networkNameAtom = Atom(name: '_SettingsStore.networkName');
@@ -195,6 +226,13 @@ mixin _$SettingsStore on _SettingsStore, Store {
     return _$updateContactAsyncAction.run(() => super.updateContact(con));
   }
 
+  final _$loadEndpointAsyncAction = AsyncAction('loadEndpoint');
+
+  @override
+  Future<void> loadEndpoint() {
+    return _$loadEndpointAsyncAction.run(() => super.loadEndpoint());
+  }
+
   final _$_SettingsStoreActionController =
       ActionController(name: '_SettingsStore');
 
@@ -203,6 +241,16 @@ mixin _$SettingsStore on _SettingsStore, Store {
     final _$actionInfo = _$_SettingsStoreActionController.startAction();
     try {
       return super.setNetworkName(name);
+    } finally {
+      _$_SettingsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setEndpoint(Map<String, dynamic> value) {
+    final _$actionInfo = _$_SettingsStoreActionController.startAction();
+    try {
+      return super.setEndpoint(value);
     } finally {
       _$_SettingsStoreActionController.endAction(_$actionInfo);
     }
@@ -365,5 +413,58 @@ mixin _$ContactData on _ContactData, Store {
       super.memo = value;
       _$memoAtom.reportChanged();
     }, _$memoAtom, name: '${_$memoAtom.name}_set');
+  }
+}
+
+mixin _$EndpointData on _EndpointData, Store {
+  final _$infoAtom = Atom(name: '_EndpointData.info');
+
+  @override
+  String get info {
+    _$infoAtom.context.enforceReadPolicy(_$infoAtom);
+    _$infoAtom.reportObserved();
+    return super.info;
+  }
+
+  @override
+  set info(String value) {
+    _$infoAtom.context.conditionallyRunInAction(() {
+      super.info = value;
+      _$infoAtom.reportChanged();
+    }, _$infoAtom, name: '${_$infoAtom.name}_set');
+  }
+
+  final _$textAtom = Atom(name: '_EndpointData.text');
+
+  @override
+  String get text {
+    _$textAtom.context.enforceReadPolicy(_$textAtom);
+    _$textAtom.reportObserved();
+    return super.text;
+  }
+
+  @override
+  set text(String value) {
+    _$textAtom.context.conditionallyRunInAction(() {
+      super.text = value;
+      _$textAtom.reportChanged();
+    }, _$textAtom, name: '${_$textAtom.name}_set');
+  }
+
+  final _$valueAtom = Atom(name: '_EndpointData.value');
+
+  @override
+  String get value {
+    _$valueAtom.context.enforceReadPolicy(_$valueAtom);
+    _$valueAtom.reportObserved();
+    return super.value;
+  }
+
+  @override
+  set value(String value) {
+    _$valueAtom.context.conditionallyRunInAction(() {
+      super.value = value;
+      _$valueAtom.reportChanged();
+    }, _$valueAtom, name: '${_$valueAtom.name}_set');
   }
 }

@@ -32,6 +32,7 @@ class Api {
             .then((String js) {
           print('js file loaded');
           _web.evalJavascript(js);
+          connectNode();
         });
       }
     });
@@ -69,6 +70,10 @@ class Api {
       fetchBalance();
     }
 
+    void onWebConnectError(_) {
+      print('connect failed');
+    }
+
     void onAccountGen(Map<String, dynamic> acc) {
       accountStore.setNewAccountKey(acc['mnemonic']);
     }
@@ -84,7 +89,8 @@ class Api {
     }
 
     _msgHandlers = {
-      'ready': onWebReady,
+      'settings.connect': onWebReady,
+      'settings.connect.error': onWebConnectError,
       'settings.getNetworkConst': settingsStore.setNetworkConst,
       'api.rpc.system.chain': settingsStore.setNetworkName,
       'api.rpc.system.properties': settingsStore.setNetworkState,
@@ -103,6 +109,16 @@ class Api {
         '  PolkaWallet.postMessage(JSON.stringify({ path: "log", data: err.message }));'
         '})';
     _web.evalJavascript(script);
+  }
+
+  void connectNode() {
+    String value =
+        settingsStore.endpoint.value ?? 'wss://kusama-rpc.polkadot.io/';
+    evalJavascript('settings.connect("$value")');
+  }
+
+  void changeNode(String endpoint) {
+    evalJavascript('settings.changeEndpoint("$endpoint")');
   }
 
   void fetchBalance() async {

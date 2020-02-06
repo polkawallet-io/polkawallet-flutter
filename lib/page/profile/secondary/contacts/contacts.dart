@@ -103,8 +103,11 @@ class Contacts extends StatelessWidget {
                 )
               ],
             ),
-            body: ListView(
-              children: ls,
+            body: Padding(
+              padding: EdgeInsets.only(top: 8, left: 8),
+              child: ListView(
+                children: ls,
+              ),
             ),
           );
         },
