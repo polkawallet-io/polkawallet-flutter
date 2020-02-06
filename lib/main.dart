@@ -8,11 +8,11 @@ import 'package:polka_wallet/page/assets/secondary/scan.dart';
 import 'package:polka_wallet/page/assets/secondary/transfer/detail.dart';
 import 'package:polka_wallet/page/assets/secondary/transfer/transfer.dart';
 import 'package:polka_wallet/page/profile/secondary/about.dart';
-import 'package:polka_wallet/page/profile/secondary/contact.dart';
-import 'package:polka_wallet/page/profile/secondary/contacts.dart';
+import 'package:polka_wallet/page/profile/secondary/account/changeName.dart';
+import 'package:polka_wallet/page/profile/secondary/contacts/contact.dart';
+import 'package:polka_wallet/page/profile/secondary/contacts/contacts.dart';
 import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
-import 'package:polka_wallet/utils/format.dart';
 
 import 'utils/i18n/index.dart';
 import 'common/theme.dart';
@@ -24,7 +24,7 @@ import 'package:polka_wallet/page/assets/secondary/createAccount/createAccount.d
 import 'package:polka_wallet/page/assets/secondary/createAccount/backupAccount.dart';
 import 'package:polka_wallet/page/assets/secondary/importAccount/importAccount.dart';
 import 'package:polka_wallet/page/assets/secondary/createAccountEntry.dart';
-import 'package:polka_wallet/page/profile/secondary/Account.dart';
+import 'package:polka_wallet/page/profile/secondary/account/Account.dart';
 
 void main() => runApp(WalletApp());
 
@@ -90,6 +90,7 @@ class _WalletAppState extends State<WalletApp> {
         '/profile/account': (_) => AccountManage(_accountStore),
         '/profile/contacts': (_) => Contacts(_settingStore),
         '/profile/contact': (_) => Contact(_settingStore),
+        '/profile/name': (_) => ChangeName(_api, _accountStore),
         '/profile/about': (_) => About(),
       },
     );

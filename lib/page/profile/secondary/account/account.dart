@@ -23,39 +23,45 @@ class AccountManage extends StatelessWidget {
         ),
         body: Column(
           children: <Widget>[
-            Container(
-              color: Colors.pink,
-              padding: EdgeInsets.only(bottom: 16),
-              child: ListTile(
-                leading: Container(
-                  width: 72,
-                  height: 72,
-                  child: Image.asset('assets/images/assets/Assets_nav_0.png'),
-                ),
-                title: Text(store.currentAccount.name ?? 'name',
-                    style: TextStyle(fontSize: 16, color: Colors.white)),
-                subtitle: Text(
-                  Fmt.address(store.currentAccount.address) ?? '',
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
-                ),
-              ),
-            ),
-            Container(padding: EdgeInsets.only(top: 16)),
-            ListTile(
-              title: Text(dic['name.change']),
-              trailing: Icon(Icons.arrow_forward_ios, size: 18),
-              onTap: () => Navigator.pushNamed(context, '/account/manage'),
-            ),
-            ListTile(
-              title: Text(dic['pass.change']),
-              trailing: Icon(Icons.arrow_forward_ios, size: 18),
-            ),
-            ListTile(
-              title: Text(dic['export']),
-              trailing: Icon(Icons.arrow_forward_ios, size: 18),
-            ),
             Expanded(
-              child: Container(),
+              child: ListView(
+                children: <Widget>[
+                  Container(
+                    color: Colors.pink,
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: ListTile(
+                      leading: Container(
+                        width: 72,
+                        height: 72,
+                        child: Image.asset(
+                            'assets/images/assets/Assets_nav_0.png'),
+                      ),
+                      title: Text(store.currentAccount.name ?? 'name',
+                          style: TextStyle(fontSize: 16, color: Colors.white)),
+                      subtitle: Text(
+                        Fmt.address(store.currentAccount.address) ?? '',
+                        style: TextStyle(fontSize: 16, color: Colors.white70),
+                      ),
+                    ),
+                  ),
+                  Container(padding: EdgeInsets.only(top: 16)),
+                  ListTile(
+                    title: Text(dic['name.change']),
+                    trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                    onTap: () => Navigator.pushNamed(context, '/profile/name'),
+                  ),
+                  ListTile(
+                    title: Text(dic['pass.change']),
+                    trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                    onTap: () =>
+                        Navigator.pushNamed(context, '/profile/password'),
+                  ),
+                  ListTile(
+                    title: Text(dic['export']),
+                    trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                  ),
+                ],
+              ),
             ),
             Row(
               children: <Widget>[

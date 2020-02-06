@@ -74,13 +74,13 @@ class Api {
     }
 
     void onAccountRecover(Map<String, dynamic> acc) async {
+      acc['name'] = accountStore.newAccount.name;
       await accountStore.addAccount(acc);
       fetchBalance();
     }
 
-    void onTransfer(String hash) {
-      print(hash);
-      accountStore.assetsState.setSubmitting(false);
+    void onChangePassword(Map<String, dynamic> acc) {
+      accountStore.updateAccount(acc);
     }
 
     void onBlockTime(String data) {
@@ -95,8 +95,8 @@ class Api {
       'account.gen': onAccountGen,
       'account.recover': onAccountRecover,
       'account.getBalance': accountStore.assetsState.setAccountBalance,
-      'account.transfer': onTransfer,
       'account.getBlockTime': onBlockTime,
+      'account.changePassword': onChangePassword,
     };
   }
 
@@ -124,10 +124,8 @@ class Api {
   void importAccount(
       {String keyType = 'Mnemonic', String cryptoType = 'sr25519'}) {
     String key = accountStore.newAccount.key;
-    String name = accountStore.newAccount.name;
     String pass = accountStore.newAccount.password;
-    String code =
-        'account.recover("$keyType", "$cryptoType", "$key", "$name", "$pass")';
+    String code = 'account.recover("$keyType", "$cryptoType", "$key", "$pass")';
     evalJavascript(code);
   }
 
@@ -157,5 +155,11 @@ class Api {
     double amt = amount * pow(10, settingsStore.networkState.tokenDecimals);
     evalJavascript(
         'account.transfer("$from", "$to", ${amt.toString()}, "$password")');
+  }
+
+  void changeAccountPassword(String passOld, String passNew) {
+    String address = accountStore.currentAccount.address;
+    evalJavascript(
+        'account.changePassword("$address", "$passOld", "$passNew")');
   }
 }

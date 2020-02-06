@@ -106,6 +106,13 @@ mixin _$AccountStore on _AccountStore, Store {
     }, _$accountListAtom, name: '${_$accountListAtom.name}_set');
   }
 
+  final _$updateAccountAsyncAction = AsyncAction('updateAccount');
+
+  @override
+  Future<void> updateAccount(Map<String, dynamic> acc) {
+    return _$updateAccountAsyncAction.run(() => super.updateAccount(acc));
+  }
+
   final _$addAccountAsyncAction = AsyncAction('addAccount');
 
   @override
@@ -165,6 +172,16 @@ mixin _$AccountStore on _AccountStore, Store {
     final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
       return super.setCurrentAccount(acc);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateAccountName(String name) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    try {
+      return super.updateAccountName(name);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }

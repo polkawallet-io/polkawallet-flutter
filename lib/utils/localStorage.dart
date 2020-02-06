@@ -22,7 +22,7 @@ class LocalStorage {
   }
 
   static Future<void> setCurrentAccount(String address) async {
-    return storage.setKV(currentAccountKey, currentAccountKey);
+    return storage.setKV(currentAccountKey, address);
   }
 
   static Future<String> getCurrentAccount() async {
@@ -55,7 +55,7 @@ class _LocalStorage {
 
   Future<void> setKV(String key, value) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString(key, value);
+    return prefs.setString(key, value);
   }
 
   Future<void> addItemToList(String storeKey, Map<String, dynamic> acc) async {

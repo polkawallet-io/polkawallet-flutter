@@ -53,6 +53,23 @@ abstract class _AccountStore with Store {
   }
 
   @action
+  void updateAccountName(String name) {
+    Map<String, dynamic> acc = Account.toJson(currentAccount);
+    acc['name'] = name;
+
+    updateAccount(acc);
+  }
+
+  @action
+  Future<void> updateAccount(Map<String, dynamic> acc) async {
+    Account accNew = Account.fromJson(acc);
+    await LocalStorage.removeAccount(accNew.address);
+    await LocalStorage.addAccount(acc);
+
+    await loadAccount();
+  }
+
+  @action
   Future<void> addAccount(Map<String, dynamic> acc) async {
     await LocalStorage.addAccount(acc);
     await LocalStorage.setCurrentAccount(acc['address']);
@@ -83,7 +100,6 @@ abstract class _AccountStore with Store {
       String address = await LocalStorage.getCurrentAccount();
       Map<String, dynamic> acc =
           accList.firstWhere((i) => i['address'] == address);
-      print('load account: $acc');
       currentAccount = Account.fromJson(acc);
       assetsState.address = currentAccount.address;
     }
