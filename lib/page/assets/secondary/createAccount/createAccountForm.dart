@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class CreateAccountForm extends StatelessWidget {
@@ -46,9 +47,7 @@ class CreateAccountForm extends StatelessWidget {
               ),
               controller: _passCtrl,
               validator: (v) {
-                var pass =
-                    RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$');
-                return v.trim().contains(pass)
+                return Fmt.checkPassword(v.trim())
                     ? null
                     : dic['create.password.error'];
               },

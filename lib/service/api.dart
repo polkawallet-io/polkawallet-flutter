@@ -79,10 +79,6 @@ class Api {
       fetchBalance();
     }
 
-    void onChangePassword(Map<String, dynamic> acc) {
-      accountStore.updateAccount(acc);
-    }
-
     void onBlockTime(String data) {
       accountStore.assetsState.setBlockMap(data);
     }
@@ -96,7 +92,6 @@ class Api {
       'account.recover': onAccountRecover,
       'account.getBalance': accountStore.assetsState.setAccountBalance,
       'account.getBlockTime': onBlockTime,
-      'account.changePassword': onChangePassword,
     };
   }
 
@@ -157,7 +152,11 @@ class Api {
         'account.transfer("$from", "$to", ${amt.toString()}, "$password")');
   }
 
-  void changeAccountPassword(String passOld, String passNew) {
+  void changeAccountPassword(
+      String passOld, String passNew, Function onSuccess, Function onError) {
+    _msgHandlers['account.changePassword'] = onSuccess;
+    _msgHandlers['account.changePassword.error'] = onError;
+
     String address = accountStore.currentAccount.address;
     evalJavascript(
         'account.changePassword("$address", "$passOld", "$passNew")');

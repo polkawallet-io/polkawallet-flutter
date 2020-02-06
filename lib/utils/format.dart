@@ -27,4 +27,9 @@ class Fmt {
     var reg = RegExp(r'^[A-z\d]{47}$');
     return reg.hasMatch(txt);
   }
+
+  static bool checkPassword(String pass) {
+    var reg = RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$');
+    return reg.hasMatch(pass);
+  }
 }

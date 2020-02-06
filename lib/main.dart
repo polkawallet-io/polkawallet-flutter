@@ -9,6 +9,7 @@ import 'package:polka_wallet/page/assets/secondary/transfer/detail.dart';
 import 'package:polka_wallet/page/assets/secondary/transfer/transfer.dart';
 import 'package:polka_wallet/page/profile/secondary/about.dart';
 import 'package:polka_wallet/page/profile/secondary/account/changeName.dart';
+import 'package:polka_wallet/page/profile/secondary/account/changePassword.dart';
 import 'package:polka_wallet/page/profile/secondary/contacts/contact.dart';
 import 'package:polka_wallet/page/profile/secondary/contacts/contacts.dart';
 import 'package:polka_wallet/service/api.dart';
@@ -91,6 +92,7 @@ class _WalletAppState extends State<WalletApp> {
         '/profile/contacts': (_) => Contacts(_settingStore),
         '/profile/contact': (_) => Contact(_settingStore),
         '/profile/name': (_) => ChangeName(_api, _accountStore),
+        '/profile/password': (_) => ChangePassword(_api, _accountStore),
         '/profile/about': (_) => About(),
       },
     );
