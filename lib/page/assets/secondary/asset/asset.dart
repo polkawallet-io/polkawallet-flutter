@@ -39,6 +39,7 @@ class _AssetPageState extends State<AssetPage>
     super.dispose();
   }
 
+  // TODO: get error while txs loaded: The getter 'time' was called on null
   List<Widget> _buildTxList(BuildContext context) {
     if (accountStore.assetsState.txsView.length == 0) {
       return [
@@ -109,7 +110,6 @@ class _AssetPageState extends State<AssetPage>
 
           List<Map<String, dynamic>> balanceHistory =
               accountStore.assetsState.balanceHistory;
-          print(balanceHistory);
           return Scaffold(
             appBar: AppBar(
               title: Text(settingsStore.networkState.tokenSymbol),

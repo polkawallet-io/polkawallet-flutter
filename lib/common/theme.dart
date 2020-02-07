@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// TODO: dark theme has display issues
 final appTheme = ThemeData(
   primarySwatch: Colors.pink,
   textTheme: TextTheme(

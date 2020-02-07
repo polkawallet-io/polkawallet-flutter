@@ -60,8 +60,10 @@ class _Settings extends State<Settings> {
             ),
             onWillPop: () async {
               String code = _langOptions[_selected];
-              store.setLocalCode(code);
-              changeLang(code);
+              if (code != store.localeCode) {
+                store.setLocalCode(code);
+                changeLang(code);
+              }
               return true;
             },
           ),

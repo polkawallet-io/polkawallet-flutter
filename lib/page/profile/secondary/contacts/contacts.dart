@@ -97,10 +97,13 @@ class Contacts extends StatelessWidget {
               title: Text(I18n.of(context).profile['contact']),
               centerTitle: true,
               actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () =>
-                      Navigator.of(context).pushNamed('/profile/contact'),
+                Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed('/profile/contact'),
+                  ),
                 )
               ],
             ),

@@ -36,6 +36,7 @@ class _TransferState extends State<Transfer> {
   final TextEditingController _amountCtrl = new TextEditingController();
   final TextEditingController _passCtrl = new TextEditingController();
 
+  // TODO: show account balance in transfer form
   Widget _buildStep0(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).assets;
     String symbol = settingsStore.networkState.tokenSymbol;
@@ -70,6 +71,7 @@ class _TransferState extends State<Transfer> {
                 ),
               ),
               Padding(
+                // TODO: amount input render error when back from step1
                 padding: EdgeInsets.all(16),
                 child: TextFormField(
                   decoration: InputDecoration(

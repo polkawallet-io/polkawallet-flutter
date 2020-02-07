@@ -35,6 +35,7 @@ class AccountManage extends StatelessWidget {
     );
   }
 
+  // TODO: need password to delete account
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).profile;

@@ -7,6 +7,7 @@ import 'package:polka_wallet/store/assets.dart';
 
 part 'account.g.dart';
 
+// TODO: refactor AccountStore
 class AccountStore extends _AccountStore with _$AccountStore {}
 
 abstract class _AccountStore with Store {

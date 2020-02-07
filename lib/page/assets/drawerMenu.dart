@@ -42,7 +42,7 @@ class DrawerMenu extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.fromLTRB(16, 28, 0, 28),
+                padding: EdgeInsets.fromLTRB(16, 36, 0, 28),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[

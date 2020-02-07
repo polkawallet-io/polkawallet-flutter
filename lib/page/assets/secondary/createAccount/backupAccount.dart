@@ -162,6 +162,7 @@ class _BackupAccountState extends State<BackupAccount> {
                     color: Colors.pink,
                     child: Text(I18n.of(context).home['next'],
                         style: Theme.of(context).textTheme.button),
+                    // TODO: validate user input onPressed(skip validate for test)
                     onPressed: _wordsSelected.length == 12
                         ? () async {
                             api.importAccount();
