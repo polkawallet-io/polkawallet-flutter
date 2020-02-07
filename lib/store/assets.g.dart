@@ -15,6 +15,14 @@ mixin _$AssetsState on _AssetsState, Store {
   ObservableList<TransferData> get txsView => (_$txsViewComputed ??=
           Computed<ObservableList<TransferData>>(() => super.txsView))
       .value;
+  Computed<ObservableList<Map<String, dynamic>>> _$balanceHistoryComputed;
+
+  @override
+  ObservableList<Map<String, dynamic>> get balanceHistory =>
+      (_$balanceHistoryComputed ??=
+              Computed<ObservableList<Map<String, dynamic>>>(
+                  () => super.balanceHistory))
+          .value;
 
   final _$loadingAtom = Atom(name: '_AssetsState.loading');
 
@@ -402,14 +410,14 @@ mixin _$BlockData on _BlockData, Store {
   final _$timeAtom = Atom(name: '_BlockData.time');
 
   @override
-  String get time {
+  DateTime get time {
     _$timeAtom.context.enforceReadPolicy(_$timeAtom);
     _$timeAtom.reportObserved();
     return super.time;
   }
 
   @override
-  set time(String value) {
+  set time(DateTime value) {
     _$timeAtom.context.conditionallyRunInAction(() {
       super.time = value;
       _$timeAtom.reportChanged();

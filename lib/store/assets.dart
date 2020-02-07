@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/service/polkascan.dart';
@@ -47,6 +48,21 @@ abstract class _AssetsState with Store {
     }));
   }
 
+  @computed
+  ObservableList<Map<String, dynamic>> get balanceHistory {
+    ObservableList res = ObservableList<Map<String, dynamic>>();
+    int total = 0;
+    txs.reversed.forEach((i) {
+      if (i.sender == address) {
+        total -= i.value;
+      } else {
+        total += i.value;
+      }
+      res.add({"time": blockMap[i.block].time, "value": total / pow(10, 12)});
+    });
+    return res;
+  }
+
   @action
   void setAccountBalance(String amt) {
     balance = amt;
@@ -54,15 +70,14 @@ abstract class _AssetsState with Store {
 
   @action
   Future<List<int>> getTxs(String address) async {
+    txs.clear();
     if (!Fmt.isAddress(address)) {
-      txs.clear();
       return [];
     }
 
     loading = true;
     String data = await PolkaScanApi.fetchTxs(address);
     List<dynamic> ls = jsonDecode(data)['data'];
-    txs.clear();
     ls.forEach((i) {
       TransferData tx = TransferData.fromJson(i);
       txs.add(tx);
@@ -147,9 +162,7 @@ class BlockData extends _BlockData with _$BlockData {
     BlockData block = BlockData();
     block.id = json['id'];
     block.hash = json['hash'];
-    block.time = DateTime.fromMillisecondsSinceEpoch(json['timestamp'])
-        .toString()
-        .split('.')[0];
+    block.time = DateTime.fromMillisecondsSinceEpoch(json['timestamp']);
     return block;
   }
 }
@@ -162,5 +175,5 @@ abstract class _BlockData with Store {
   String hash = '';
 
   @observable
-  String time = '';
+  DateTime time = DateTime.now();
 }

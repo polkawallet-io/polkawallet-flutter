@@ -52,7 +52,9 @@ class TransferDetail extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.only(top: 8, bottom: 32),
-                child: Text(block != null ? block.time : 'datetime'),
+                child: Text(block != null
+                    ? block.time.toString().split('.')[0]
+                    : 'datetime'),
               ),
             ],
           ),

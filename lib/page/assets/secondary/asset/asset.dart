@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/page/assets/secondary/asset/assetChart.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/store/settings.dart';
@@ -39,6 +40,22 @@ class _AssetPageState extends State<AssetPage>
   }
 
   List<Widget> _buildTxList(BuildContext context) {
+    if (accountStore.assetsState.txsView.length == 0) {
+      return [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(24),
+              child: Text(
+                'No Data',
+                style: TextStyle(fontSize: 18, color: Colors.black38),
+              ),
+            )
+          ],
+        )
+      ];
+    }
     int decimals = settingsStore.networkState.tokenDecimals;
     String symbol = settingsStore.networkState.tokenSymbol;
     Map<int, BlockData> blockMap = accountStore.assetsState.blockMap;
@@ -53,7 +70,7 @@ class _AssetPageState extends State<AssetPage>
                 title: Text(i.id),
                 subtitle: Text(blockMap[i.block] == null
                     ? 'time'
-                    : blockMap[i.block].time),
+                    : blockMap[i.block].time.toString().split('.')[0]),
                 trailing: Container(
                   width: 110,
                   child: Row(
@@ -79,108 +96,116 @@ class _AssetPageState extends State<AssetPage>
   }
 
   @override
-  Widget build(BuildContext context) {
-    final Map<String, String> dic = I18n.of(context).assets;
-    final List<Tab> _myTabs = <Tab>[
-      Tab(text: dic['all']),
-      Tab(text: dic['in']),
-      Tab(text: dic['out']),
-    ];
+  Widget build(BuildContext context) => Observer(
+        builder: (_) {
+          final Map<String, String> dic = I18n.of(context).assets;
+          final List<Tab> _myTabs = <Tab>[
+            Tab(text: dic['all']),
+            Tab(text: dic['in']),
+            Tab(text: dic['out']),
+          ];
 
-    String balance = Fmt.balance(accountStore.assetsState.balance);
+          String balance = Fmt.balance(accountStore.assetsState.balance);
 
-    return Observer(
-        builder: (_) => Scaffold(
-              appBar: AppBar(
-                title: Text(settingsStore.networkState.tokenSymbol),
-                centerTitle: true,
-              ),
-              body: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      color: Colors.white,
-                      child: ListView(
-                        children: <Widget>[
+          List<Map<String, dynamic>> balanceHistory =
+              accountStore.assetsState.balanceHistory;
+          print(balanceHistory);
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(settingsStore.networkState.tokenSymbol),
+              centerTitle: true,
+            ),
+            body: Column(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    color: Colors.white,
+                    child: ListView(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Text('${dic['balance']}: $balance'),
+                        ),
+                        Container(
+                          height: 240,
+                          child: AssetChart.withData(balanceHistory),
+                        ),
+                        TabBar(
+                          labelColor: Colors.black87,
+                          labelStyle: TextStyle(fontSize: 18),
+                          controller: _tabController,
+                          tabs: _myTabs,
+                          onTap: (i) {
+                            accountStore.assetsState.setTxsFilter(i);
+                          },
+                        ),
+                        if (accountStore.assetsState.loading)
                           Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Text('${dic['balance']}: $balance'),
-                          ),
-                          TabBar(
-                            labelColor: Colors.black87,
-                            labelStyle: TextStyle(fontSize: 18),
-                            controller: _tabController,
-                            tabs: _myTabs,
-                            onTap: (i) {
-                              accountStore.assetsState.setTxsFilter(i);
-                            },
-                          ),
-                          if (accountStore.assetsState.loading)
-                            Padding(
-                                padding: EdgeInsets.only(top: 36),
-                                child: CupertinoActivityIndicator()),
-                          if (!accountStore.assetsState.loading)
-                            ..._buildTxList(context)
-                        ],
-                      ),
+                              padding: EdgeInsets.only(top: 36),
+                              child: CupertinoActivityIndicator()),
+                        if (!accountStore.assetsState.loading)
+                          ..._buildTxList(context)
+                      ],
                     ),
                   ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          color: Colors.lightBlue,
-                          child: FlatButton(
-                            padding: EdgeInsets.all(16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(right: 16),
-                                  child: Image.asset(
-                                      'assets/images/assets/assets_send.png'),
-                                ),
-                                Text(
-                                  I18n.of(context).assets['transfer'],
-                                  style: TextStyle(color: Colors.white),
-                                )
-                              ],
-                            ),
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/assets/transfer');
-                            },
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        color: Colors.lightBlue,
+                        child: FlatButton(
+                          padding: EdgeInsets.all(16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(right: 16),
+                                child: Image.asset(
+                                    'assets/images/assets/assets_send.png'),
+                              ),
+                              Text(
+                                I18n.of(context).assets['transfer'],
+                                style: TextStyle(color: Colors.white),
+                              )
+                            ],
                           ),
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/assets/transfer');
+                          },
                         ),
                       ),
-                      Expanded(
-                        child: Container(
-                          color: Colors.lightGreen,
-                          child: FlatButton(
-                            padding: EdgeInsets.all(16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(right: 16),
-                                  child: Image.asset(
-                                      'assets/images/assets/assets_receive.png'),
-                                ),
-                                Text(
-                                  I18n.of(context).assets['receive'],
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            ),
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/assets/receive');
-                            },
+                    ),
+                    Expanded(
+                      child: Container(
+                        color: Colors.lightGreen,
+                        child: FlatButton(
+                          padding: EdgeInsets.all(16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(right: 16),
+                                child: Image.asset(
+                                    'assets/images/assets/assets_receive.png'),
+                              ),
+                              Text(
+                                I18n.of(context).assets['receive'],
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
                           ),
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/assets/receive');
+                          },
                         ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ));
-  }
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          );
+        },
+      );
 }

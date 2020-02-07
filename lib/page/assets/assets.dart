@@ -84,7 +84,19 @@ class Assets extends StatelessWidget {
                     padding: EdgeInsets.all(24),
                     child: CupertinoActivityIndicator())
                 : settingsStore.networkName == null
-                    ? Container()
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(24),
+                            child: Text(
+                              'No Data',
+                              style: TextStyle(
+                                  fontSize: 18, color: Colors.black38),
+                            ),
+                          )
+                        ],
+                      )
                     : Container(
                         margin: EdgeInsets.fromLTRB(0, 16, 0, 16),
                         decoration: BoxDecoration(
