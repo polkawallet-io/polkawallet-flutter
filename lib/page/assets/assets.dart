@@ -8,6 +8,7 @@ import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Assets extends StatelessWidget {
   Assets(this.api, this.settingsStore, this.store);
@@ -16,12 +17,56 @@ class Assets extends StatelessWidget {
   final SettingsStore settingsStore;
   final AccountStore store;
 
+  Widget _buildTopCard(BuildContext context) {
+    var dic = I18n.of(context).assets;
+    String network = settingsStore.loading
+        ? dic['node.connecting']
+        : settingsStore.networkName ?? dic['node.failed'];
+    return Container(
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(const Radius.circular(8)),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 16.0, // has the effect of softening the shadow
+              spreadRadius: 4.0, // has the effect of extending the shadow
+              offset: Offset(
+                2.0, // horizontal, move right 10
+                2.0, // vertical, move down 10
+              ),
+            )
+          ]),
+      child: Column(
+        children: <Widget>[
+          ListTile(
+            leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
+            title: Text(store.currentAccount.name ?? ''),
+            subtitle: Text(network),
+          ),
+          ListTile(
+            title: Text(Fmt.address(store.currentAccount.address) ?? ''),
+            trailing: IconButton(
+              icon: Image.asset('assets/images/assets/Assets_nav_code.png'),
+              onPressed: () {
+                if (store.currentAccount.address != '') {
+                  Navigator.pushNamed(context, '/assets/receive');
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Observer(
         builder: (_) => ListView(
           padding: EdgeInsets.only(left: 16, right: 16),
           children: <Widget>[
-            _TopCard(store.currentAccount),
+            _buildTopCard(context),
             Container(padding: EdgeInsets.only(top: 32)),
             Container(
               padding: EdgeInsets.only(left: 8),
@@ -34,95 +79,53 @@ class Assets extends StatelessWidget {
                       fontSize: 20,
                       color: Colors.black54)),
             ),
-            Container(
-              margin: EdgeInsets.fromLTRB(0, 16, 0, 16),
-              decoration: BoxDecoration(
-                  borderRadius:
-                      const BorderRadius.all(const Radius.circular(8)),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius:
-                          32.0, // has the effect of softening the shadow
-                      spreadRadius:
-                          2.0, // has the effect of extending the shadow
-                      offset: Offset(
-                        2.0, // horizontal, move right 10
-                        2.0, // vertical, move down 10
+            settingsStore.loading
+                ? Padding(
+                    padding: EdgeInsets.all(24),
+                    child: CupertinoActivityIndicator())
+                : settingsStore.networkName == null
+                    ? Container()
+                    : Container(
+                        margin: EdgeInsets.fromLTRB(0, 16, 0, 16),
+                        decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(
+                                const Radius.circular(8)),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius:
+                                    32.0, // has the effect of softening the shadow
+                                spreadRadius:
+                                    2.0, // has the effect of extending the shadow
+                                offset: Offset(
+                                  2.0, // horizontal, move right 10
+                                  2.0, // vertical, move down 10
+                                ),
+                              )
+                            ]),
+                        child: ListTile(
+                          leading: Container(
+                            width: 40,
+                            height: 40,
+                            child: Image.asset('assets/images/assets/KSC.png'),
+                          ),
+                          title: Text(
+                              settingsStore.networkState.tokenSymbol ?? ''),
+                          subtitle: Text(settingsStore.networkName ?? ''),
+                          trailing: Text(
+                            Fmt.balance(store.assetsState.balance),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.black54),
+                          ),
+                          onTap: () {
+                            api.updateTxs();
+                            Navigator.pushNamed(context, '/assets/detail');
+                          },
+                        ),
                       ),
-                    )
-                  ]),
-              child: settingsStore.loading
-                  ? Padding(
-                      padding: EdgeInsets.all(24),
-                      child: CupertinoActivityIndicator())
-                  : ListTile(
-                      leading: Container(
-                        width: 40,
-                        height: 40,
-                        child: Image.asset('assets/images/assets/KSC.png'),
-                      ),
-                      title: Text(settingsStore.networkState.tokenSymbol ?? ''),
-                      subtitle: Text(settingsStore.networkName ?? ''),
-                      trailing: Text(
-                        Fmt.balance(store.assetsState.balance),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.black54),
-                      ),
-                      onTap: () {
-                        api.updateTxs();
-                        Navigator.pushNamed(context, '/assets/detail');
-                      },
-                    ),
-            ),
-          ],
-        ),
-      );
-}
-
-class _TopCard extends StatelessWidget {
-  _TopCard(this.account);
-
-  final Account account;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(const Radius.circular(8)),
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 16.0, // has the effect of softening the shadow
-                spreadRadius: 4.0, // has the effect of extending the shadow
-                offset: Offset(
-                  2.0, // horizontal, move right 10
-                  2.0, // vertical, move down 10
-                ),
-              )
-            ]),
-        child: Column(
-          children: <Widget>[
-            ListTile(
-              leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
-              title: Text(account.name ?? ''),
-              subtitle: Text(account.name ?? ''),
-            ),
-            ListTile(
-              title: Text(Fmt.address(account.address) ?? ''),
-              trailing: IconButton(
-                icon: Image.asset('assets/images/assets/Assets_nav_code.png'),
-                onPressed: () {
-                  if (account.address != '') {
-                    Navigator.pushNamed(context, '/assets/receive');
-                  }
-                },
-              ),
-            ),
           ],
         ),
       );

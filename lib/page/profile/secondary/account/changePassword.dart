@@ -128,8 +128,6 @@ class _ChangePassword extends State<ChangePassword> {
                       ),
                       controller: _pass2Ctrl,
                       validator: (v) {
-                        print(_passCtrl.text);
-                        print(v);
                         return v.trim() != _passCtrl.text
                             ? accDic['create.password2.error']
                             : null;

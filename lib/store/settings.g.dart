@@ -99,6 +99,23 @@ mixin _$SettingsStore on _SettingsStore, Store {
     }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
   }
 
+  final _$localeCodeAtom = Atom(name: '_SettingsStore.localeCode');
+
+  @override
+  String get localeCode {
+    _$localeCodeAtom.context.enforceReadPolicy(_$localeCodeAtom);
+    _$localeCodeAtom.reportObserved();
+    return super.localeCode;
+  }
+
+  @override
+  set localeCode(String value) {
+    _$localeCodeAtom.context.conditionallyRunInAction(() {
+      super.localeCode = value;
+      _$localeCodeAtom.reportChanged();
+    }, _$localeCodeAtom, name: '${_$localeCodeAtom.name}_set');
+  }
+
   final _$endpointAtom = Atom(name: '_SettingsStore.endpoint');
 
   @override
@@ -184,6 +201,20 @@ mixin _$SettingsStore on _SettingsStore, Store {
     }, _$contactListAtom, name: '${_$contactListAtom.name}_set');
   }
 
+  final _$setLocalCodeAsyncAction = AsyncAction('setLocalCode');
+
+  @override
+  Future<void> setLocalCode(String code) {
+    return _$setLocalCodeAsyncAction.run(() => super.setLocalCode(code));
+  }
+
+  final _$loadLocalCodeAsyncAction = AsyncAction('loadLocalCode');
+
+  @override
+  Future<void> loadLocalCode() {
+    return _$loadLocalCodeAsyncAction.run(() => super.loadLocalCode());
+  }
+
   final _$setNetworkStateAsyncAction = AsyncAction('setNetworkState');
 
   @override
@@ -235,6 +266,26 @@ mixin _$SettingsStore on _SettingsStore, Store {
 
   final _$_SettingsStoreActionController =
       ActionController(name: '_SettingsStore');
+
+  @override
+  void init() {
+    final _$actionInfo = _$_SettingsStoreActionController.startAction();
+    try {
+      return super.init();
+    } finally {
+      _$_SettingsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setNetworkLoading(bool isLoading) {
+    final _$actionInfo = _$_SettingsStoreActionController.startAction();
+    try {
+      return super.setNetworkLoading(isLoading);
+    } finally {
+      _$_SettingsStoreActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void setNetworkName(String name) {

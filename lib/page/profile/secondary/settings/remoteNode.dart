@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -37,8 +38,9 @@ const nodeList = [
 ];
 
 class RemoteNode extends StatelessWidget {
-  RemoteNode(this.store);
+  RemoteNode(this.api, this.store);
 
+  final Api api;
   final SettingsStore store;
 
   @override
@@ -51,6 +53,7 @@ class RemoteNode extends StatelessWidget {
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
               onTap: () {
                 store.setEndpoint(i);
+                api.changeNode(i['value']);
                 Navigator.of(context).pop();
               },
             ))

@@ -6,6 +6,7 @@ class LocalStorage {
   static const accountsKey = 'wallet_account_list';
   static const currentAccountKey = 'wallet_current_account';
   static const contactsKey = 'wallet_contact_list';
+  static const localeKey = 'wallet_locale';
   static const endpointKey = 'wallet_endpoint';
 
   static final storage = new _LocalStorage();
@@ -47,12 +48,28 @@ class LocalStorage {
     return storage.getList(contactsKey);
   }
 
-  static Future<void> setEndpoint(String value) async {
-    return storage.setKV(endpointKey, value);
+  static Future<void> setLocale(String value) async {
+    return storage.setKV(localeKey, value);
   }
 
-  static Future<String> getEndpoint() async {
-    return storage.getKV(endpointKey);
+  static Future<String> getLocale() async {
+    return storage.getKV(localeKey);
+  }
+
+  static Future<void> setEndpoint(Map<String, dynamic> value) async {
+    return storage.setKV(endpointKey, jsonEncode(value));
+  }
+
+  static Future<Map<String, dynamic>> getEndpoint() async {
+    String value = await storage.getKV(endpointKey);
+    if (value != null) {
+      return jsonDecode(value);
+    }
+    return {
+      'info': 'kusama',
+      'text': 'Kusama (Polkadot Canary, hosted by Parity)',
+      'value': 'wss://kusama-rpc.polkadot.io/',
+    };
   }
 }
 

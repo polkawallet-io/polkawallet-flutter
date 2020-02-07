@@ -44,11 +44,31 @@ class _WalletAppState extends State<WalletApp> {
 
   Api _api;
 
+  Locale _locale = const Locale('en', '');
+
+  void _changeLang(String code) {
+    _settingStore.setLocalCode(code);
+
+    Locale res;
+    switch (code) {
+      case 'zh':
+        res = const Locale('zh', '');
+        break;
+      case 'en':
+        res = const Locale('en', '');
+        break;
+      default:
+        res = const Locale('en', '');
+    }
+    setState(() {
+      _locale = res;
+    });
+  }
+
   @override
   void initState() {
     _accountStore.loadAccount();
-    _settingStore.loadEndpoint();
-    _settingStore.loadContacts();
+    _settingStore.init();
 
     _api = Api(
         context: context,
@@ -56,6 +76,8 @@ class _WalletAppState extends State<WalletApp> {
         settingsStore: _settingStore);
 
     _api.init();
+
+    _changeLang(_settingStore.localeCode);
 
     super.initState();
   }
@@ -65,7 +87,7 @@ class _WalletAppState extends State<WalletApp> {
     return MaterialApp(
       title: 'PolkaWallet',
       localizationsDelegates: [
-        const AppLocalizationsDelegate(),
+        AppLocalizationsDelegate(_locale),
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -78,10 +100,9 @@ class _WalletAppState extends State<WalletApp> {
       theme: appTheme,
       routes: {
         '/': (_) => Observer(
-              builder: (_) => _accountStore.accountList.length > 0
-                  ? Home(_api, _settingStore, _accountStore)
-                  : CreateAccountEntry(),
-            ),
+            builder: (_) => _accountStore.accountList.length > 0
+                ? Home(_api, _settingStore, _accountStore)
+                : CreateAccountEntry()),
         '/account/entry': (_) => CreateAccountEntry(),
         '/account/create': (_) => CreateAccount(_accountStore.setNewAccount),
         '/account/backup': (_) => BackupAccount(_api, _accountStore),
@@ -96,8 +117,8 @@ class _WalletAppState extends State<WalletApp> {
         '/profile/contact': (_) => Contact(_settingStore),
         '/profile/name': (_) => ChangeName(_api, _accountStore),
         '/profile/password': (_) => ChangePassword(_api, _accountStore),
-        '/profile/settings': (_) => Settings(_settingStore),
-        '/profile/endpoint': (_) => RemoteNode(_settingStore),
+        '/profile/settings': (_) => Settings(_settingStore, _changeLang),
+        '/profile/endpoint': (_) => RemoteNode(_api, _settingStore),
         '/profile/about': (_) => About(),
       },
     );

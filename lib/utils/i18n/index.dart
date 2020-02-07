@@ -8,20 +8,20 @@ import 'account.dart';
 import 'profile.dart';
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<I18n> {
-  const AppLocalizationsDelegate();
+  const AppLocalizationsDelegate(this.overriddenLocale);
+
+  final Locale overriddenLocale;
 
   @override
   bool isSupported(Locale locale) => ['en', 'zh'].contains(locale.languageCode);
 
   @override
   Future<I18n> load(Locale locale) {
-    // Returning a SynchronousFuture here because an async "load" operation
-    // isn't needed to produce an instance of DemoLocalizations.
-    return SynchronousFuture<I18n>(I18n(locale));
+    return SynchronousFuture<I18n>(I18n(overriddenLocale));
   }
 
   @override
-  bool shouldReload(AppLocalizationsDelegate old) => false;
+  bool shouldReload(AppLocalizationsDelegate old) => true;
 }
 
 class I18n {

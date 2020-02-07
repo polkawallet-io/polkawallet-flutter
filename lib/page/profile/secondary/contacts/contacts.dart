@@ -19,7 +19,7 @@ class Contacts extends StatelessWidget {
                 Icon(Icons.edit),
                 Padding(
                   padding: EdgeInsets.only(left: 8),
-                  child: Text('Edit'),
+                  child: Text(I18n.of(context).home['edit']),
                 ),
               ],
             ),
@@ -35,7 +35,7 @@ class Contacts extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 8),
                   child: Text(
-                    'Delete',
+                    I18n.of(context).home['delete'],
                     style: TextStyle(color: Colors.pink),
                   ),
                 ),

@@ -19,6 +19,8 @@ const Map<String, String> enHome = {
   'submit.from': 'You are about to sign a transaction from ',
   'submit.call': 'Calling ',
   'unlock': 'Unlock Account with Password',
+  'edit': 'Edit',
+  'delete': 'Delete',
 };
 
 const Map<String, String> zhHome = {
@@ -39,4 +41,6 @@ const Map<String, String> zhHome = {
   'submit.from': '你将使用以下账户发送交易：',
   'submit.call': '调用 ',
   'unlock': '使用密码解锁账户',
+  'edit': '编辑',
+  'delete': '删除',
 };

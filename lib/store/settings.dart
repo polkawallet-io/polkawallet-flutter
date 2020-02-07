@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
@@ -13,6 +11,9 @@ class SettingsStore = _SettingsStore with _$SettingsStore;
 abstract class _SettingsStore with Store {
   @observable
   bool loading = true;
+
+  @observable
+  String localeCode = '';
 
   @observable
   EndpointData endpoint = EndpointData();
@@ -40,14 +41,37 @@ abstract class _SettingsStore with Store {
   }
 
   @action
+  void init() {
+    loadLocalCode();
+    loadEndpoint();
+    loadContacts();
+  }
+
+  @action
+  Future<void> setLocalCode(String code) async {
+    await LocalStorage.setLocale(code);
+    loadLocalCode();
+  }
+
+  @action
+  Future<void> loadLocalCode() async {
+    localeCode = await LocalStorage.getLocale();
+  }
+
+  @action
+  void setNetworkLoading(bool isLoading) {
+    loading = isLoading;
+  }
+
+  @action
   void setNetworkName(String name) {
     networkName = name;
+    loading = false;
   }
 
   @action
   Future<void> setNetworkState(Map<String, dynamic> data) async {
     networkState = NetworkState.fromJson(data);
-    loading = false;
   }
 
   @action
@@ -82,21 +106,13 @@ abstract class _SettingsStore with Store {
   @action
   void setEndpoint(Map<String, dynamic> value) {
     endpoint = EndpointData.fromJson(value);
-    LocalStorage.setEndpoint(jsonEncode(value));
+    LocalStorage.setEndpoint(value);
   }
 
   @action
   Future<void> loadEndpoint() async {
-    String value = await LocalStorage.getEndpoint();
-    if (value != null) {
-      endpoint = EndpointData.fromJson(jsonDecode(value));
-    } else {
-      endpoint = EndpointData.fromJson({
-        'info': 'kusama',
-        'text': 'Kusama (Polkadot Canary, hosted by Parity)',
-        'value': 'wss://kusama-rpc.polkadot.io/',
-      });
-    }
+    Map<String, dynamic> value = await LocalStorage.getEndpoint();
+    endpoint = EndpointData.fromJson(value);
   }
 }
 

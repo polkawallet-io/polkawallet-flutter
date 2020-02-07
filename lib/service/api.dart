@@ -60,8 +60,8 @@ class Api {
     // fetch data after polkadotjs api ready
     void onWebReady(_) {
       evalJavascript('settings.getNetworkConst()');
-      evalJavascript('api.rpc.system.chain()');
       evalJavascript('api.rpc.system.properties()');
+      evalJavascript('api.rpc.system.chain()');
 
       String accounts = jsonEncode(
           accountStore.accountList.map((i) => Account.toJson(i)).toList());
@@ -72,6 +72,7 @@ class Api {
 
     void onWebConnectError(_) {
       print('connect failed');
+      settingsStore.setNetworkName(null);
     }
 
     void onAccountGen(Map<String, dynamic> acc) {
@@ -91,6 +92,8 @@ class Api {
     _msgHandlers = {
       'settings.connect': onWebReady,
       'settings.connect.error': onWebConnectError,
+      'settings.changeEndpoint': onWebReady,
+      'settings.changeEndpoint.error': onWebConnectError,
       'settings.getNetworkConst': settingsStore.setNetworkConst,
       'api.rpc.system.chain': settingsStore.setNetworkName,
       'api.rpc.system.properties': settingsStore.setNetworkState,
@@ -114,11 +117,12 @@ class Api {
   void connectNode() {
     String value =
         settingsStore.endpoint.value ?? 'wss://kusama-rpc.polkadot.io/';
-    evalJavascript('settings.connect("$value")');
+    _web.evalJavascript('settings.connect("$value")');
   }
 
   void changeNode(String endpoint) {
-    evalJavascript('settings.changeEndpoint("$endpoint")');
+    settingsStore.setNetworkLoading(true);
+    _web.evalJavascript('settings.changeEndpoint("$endpoint")');
   }
 
   void fetchBalance() async {
