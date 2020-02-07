@@ -56,6 +56,7 @@ abstract class _SettingsStore with Store {
   @action
   Future<void> loadLocalCode() async {
     localeCode = await LocalStorage.getLocale();
+    print('load lang code: $localeCode');
   }
 
   @action

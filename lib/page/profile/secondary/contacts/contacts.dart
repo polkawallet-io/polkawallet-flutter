@@ -95,6 +95,7 @@ class Contacts extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: Text(I18n.of(context).profile['contact']),
+              centerTitle: true,
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.add),

@@ -73,7 +73,7 @@ class Assets extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border(left: BorderSide(width: 3, color: Colors.pink)),
               ),
-              child: Text('Assets',
+              child: Text(I18n.of(context).home['assets'],
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,

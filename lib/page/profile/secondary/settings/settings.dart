@@ -38,7 +38,6 @@ class _Settings extends State<Settings> {
     }
 
     void _onLanguageTap() {
-      print('tt');
       showCupertinoModalPopup(
         context: context,
         builder: (_) => Container(
@@ -60,7 +59,9 @@ class _Settings extends State<Settings> {
               },
             ),
             onWillPop: () async {
-              changeLang(_langOptions[_selected]);
+              String code = _langOptions[_selected];
+              store.setLocalCode(code);
+              changeLang(code);
               return true;
             },
           ),

@@ -39,9 +39,6 @@ class _TransferState extends State<Transfer> {
   Widget _buildStep0(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).assets;
     String symbol = settingsStore.networkState.tokenSymbol;
-
-//    final String args = ModalRoute.of(context).settings.arguments;
-
     return ListView(
       children: <Widget>[
         Form(
@@ -52,9 +49,18 @@ class _TransferState extends State<Transfer> {
                 padding: EdgeInsets.all(16),
                 child: TextFormField(
                   decoration: InputDecoration(
-                    hintText: dic['address'],
-                    labelText: dic['address'],
-                  ),
+                      hintText: dic['address'],
+                      labelText: dic['address'],
+                      suffix: IconButton(
+                        icon: Image.asset('assets/images/profile/address.png'),
+                        onPressed: () async {
+                          var to = await Navigator.of(context)
+                              .pushNamed('/contacts/list');
+                          setState(() {
+                            _addressCtrl.text = to;
+                          });
+                        },
+                      )),
                   controller: _addressCtrl,
                   validator: (v) {
                     return Fmt.isAddress(v.trim())

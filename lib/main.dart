@@ -11,11 +11,13 @@ import 'package:polka_wallet/page/profile/secondary/about.dart';
 import 'package:polka_wallet/page/profile/secondary/account/changeName.dart';
 import 'package:polka_wallet/page/profile/secondary/account/changePassword.dart';
 import 'package:polka_wallet/page/profile/secondary/contacts/contact.dart';
+import 'package:polka_wallet/page/profile/secondary/contacts/contactList.dart';
 import 'package:polka_wallet/page/profile/secondary/contacts/contacts.dart';
 import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
 import 'package:polka_wallet/page/profile/secondary/settings/settings.dart';
 import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 import 'utils/i18n/index.dart';
 import 'common/theme.dart';
@@ -47,8 +49,6 @@ class _WalletAppState extends State<WalletApp> {
   Locale _locale = const Locale('en', '');
 
   void _changeLang(String code) {
-    _settingStore.setLocalCode(code);
-
     Locale res;
     switch (code) {
       case 'zh':
@@ -65,10 +65,15 @@ class _WalletAppState extends State<WalletApp> {
     });
   }
 
+  Future<void> _initLocaleFromLocalStorage() async {
+    String value = await LocalStorage.getLocale();
+    _changeLang(value);
+  }
+
   @override
   void initState() {
-    _accountStore.loadAccount();
     _settingStore.init();
+    _accountStore.loadAccount();
 
     _api = Api(
         context: context,
@@ -77,7 +82,7 @@ class _WalletAppState extends State<WalletApp> {
 
     _api.init();
 
-    _changeLang(_settingStore.localeCode);
+    _initLocaleFromLocalStorage();
 
     super.initState();
   }
@@ -114,6 +119,7 @@ class _WalletAppState extends State<WalletApp> {
         '/assets/tx': (_) => TransferDetail(_accountStore, _settingStore),
         '/profile/account': (_) => AccountManage(_accountStore),
         '/profile/contacts': (_) => Contacts(_settingStore),
+        '/contacts/list': (_) => ContactList(_settingStore),
         '/profile/contact': (_) => Contact(_settingStore),
         '/profile/name': (_) => ChangeName(_api, _accountStore),
         '/profile/password': (_) => ChangePassword(_api, _accountStore),
