@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
@@ -172,13 +173,30 @@ class Api {
         'account.transfer("$from", "$to", ${amt.toString()}, "$password")');
   }
 
-  void changeAccountPassword(
-      String passOld, String passNew, Function onSuccess, Function onError) {
-    _msgHandlers['account.changePassword'] = onSuccess;
-    _msgHandlers['account.changePassword.error'] = onError;
+  Future<dynamic> changeAccountPassword(String passOld, String passNew) async {
+    Completer c = new Completer();
+    void onComplete(Map<String, dynamic> res) {
+      c.complete(res);
+    }
+
+    _msgHandlers['account.changePassword'] = onComplete;
 
     String address = accountStore.currentAccount.address;
     evalJavascript(
         'account.changePassword("$address", "$passOld", "$passNew")');
+    return c.future;
+  }
+
+  Future<dynamic> checkAccountPassword(String pass) async {
+    Completer c = new Completer();
+    void onComplete(Map<String, dynamic> res) {
+      c.complete(res);
+    }
+
+    _msgHandlers['account.checkPassword'] = onComplete;
+
+    String address = accountStore.currentAccount.address;
+    evalJavascript('account.checkPassword("$address", "$pass")');
+    return c.future;
   }
 }

@@ -26,10 +26,28 @@ class _ChangePassword extends State<ChangePassword> {
   final TextEditingController _passCtrl = new TextEditingController();
   final TextEditingController _pass2Ctrl = new TextEditingController();
 
-  void _onSave() {
+  Future<void> _onSave() async {
     if (_formKey.currentState.validate()) {
       var dic = I18n.of(context).profile;
-      api.changeAccountPassword(_passOldCtrl.text, _passCtrl.text, (acc) {
+      var acc =
+          await api.changeAccountPassword(_passOldCtrl.text, _passCtrl.text);
+      if (acc == null) {
+        showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: Text(dic['pass.error']),
+              content: Text(dic['pass.error.txt']),
+              actions: <Widget>[
+                CupertinoButton(
+                  child: Text(I18n.of(context).home['ok']),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
         acc['name'] = store.currentAccount.name;
         store.updateAccount(acc);
         showCupertinoDialog(
@@ -48,23 +66,7 @@ class _ChangePassword extends State<ChangePassword> {
             );
           },
         );
-      }, (_) {
-        showCupertinoDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CupertinoAlertDialog(
-              title: Text(dic['pass.error']),
-              content: Text(dic['pass.error.txt']),
-              actions: <Widget>[
-                CupertinoButton(
-                  child: Text(I18n.of(context).home['ok']),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            );
-          },
-        );
-      });
+      }
     }
   }
 

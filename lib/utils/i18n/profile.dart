@@ -31,8 +31,7 @@ const Map<String, String> enProfile = {
   'export': 'Export Keystore',
   'export.ok': 'Keystore was copied to clipboard.',
   'delete': 'Delete Account',
-  'delete.confirm': 'Confirm',
-  'delete.warn': 'Are you sure you want to delete the current account?',
+  'delete.confirm': 'Input your password to confirm',
   'about.brif': 'Mobile Wallet for Polkadot',
   'about.version': 'Version',
 };
@@ -70,8 +69,7 @@ const Map<String, String> zhProfile = {
   'export': '导出Keystore',
   'export.ok': 'Keystore 已经复制到剪切板',
   'delete': '删除账户',
-  'delete.confirm': '确认删除',
-  'delete.warn': '确认删除当前账户吗？',
+  'delete.confirm': '输入密码确认删除',
   'about.brif': 'Mobile Wallet for Polkadot',
   'about.version': '版本',
 };

@@ -117,7 +117,7 @@ class _WalletAppState extends State<WalletApp> {
         '/assets/transfer': (_) => Transfer(_api, _accountStore, _settingStore),
         '/assets/receive': (_) => Receive(_accountStore),
         '/assets/tx': (_) => TransferDetail(_accountStore, _settingStore),
-        '/profile/account': (_) => AccountManage(_accountStore),
+        '/profile/account': (_) => AccountManage(_api, _accountStore),
         '/profile/contacts': (_) => Contacts(_settingStore),
         '/contacts/list': (_) => ContactList(_settingStore),
         '/profile/contact': (_) => Contact(_settingStore),

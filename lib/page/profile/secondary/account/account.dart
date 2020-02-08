@@ -4,14 +4,82 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class AccountManage extends StatelessWidget {
-  AccountManage(this.store);
+  AccountManage(this.api, this.store);
 
+  final Api api;
   final AccountStore store;
+
+  final TextEditingController _passCtrl = new TextEditingController();
+
+  void _onDeleteAccount(BuildContext context) {
+    final Map<String, String> dic = I18n.of(context).profile;
+    final Map<String, String> accDic = I18n.of(context).account;
+
+    Future<void> onOk() async {
+      var res = await api.checkAccountPassword(_passCtrl.text);
+      if (res == null) {
+        showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: Text(dic['pass.error']),
+              content: Text(dic['pass.error.txt']),
+              actions: <Widget>[
+                CupertinoButton(
+                  child: Text(I18n.of(context).home['ok']),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        store.removeAccount(store.currentAccount);
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+      }
+    }
+
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(dic['delete.confirm']),
+          content: Padding(
+            padding: EdgeInsets.only(top: 16),
+            child: CupertinoTextField(
+              placeholder: dic['pass.old'],
+              controller: _passCtrl,
+              onChanged: (v) {
+                return Fmt.checkPassword(v.trim())
+                    ? null
+                    : accDic['create.password.error'];
+              },
+              obscureText: true,
+            ),
+          ),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(I18n.of(context).home['cancel']),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _passCtrl.clear();
+              },
+            ),
+            CupertinoButton(
+              child: Text(I18n.of(context).home['ok']),
+              onPressed: onOk,
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _onExportKeystore(BuildContext context) {
     var dic = I18n.of(context).profile;
@@ -35,7 +103,6 @@ class AccountManage extends StatelessWidget {
     );
   }
 
-  // TODO: need password to delete account
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).profile;
@@ -98,31 +165,7 @@ class AccountManage extends StatelessWidget {
                     color: Colors.white,
                     textColor: Colors.pink,
                     child: Text(dic['delete']),
-                    onPressed: () {
-                      showCupertinoDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return CupertinoAlertDialog(
-                            title: Text(dic['delete.confirm']),
-                            content: Text(dic['delete.warn']),
-                            actions: <Widget>[
-                              CupertinoButton(
-                                child: Text(I18n.of(context).home['cancel']),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
-                              CupertinoButton(
-                                child: Text(I18n.of(context).home['ok']),
-                                onPressed: () {
-                                  Navigator.popUntil(
-                                      context, ModalRoute.withName('/'));
-                                  store.removeAccount(store.currentAccount);
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
+                    onPressed: () => _onDeleteAccount(context),
                   ),
                 ),
               ],
