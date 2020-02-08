@@ -59,7 +59,13 @@ class Api {
 
   void _initWebMsgHandler() {
     // fetch data after polkadotjs api ready
-    void onWebReady(_) {
+    void onWebReady(String res) {
+      if (res == null) {
+        print('connect failed');
+        settingsStore.setNetworkName(null);
+        return;
+      }
+
       evalJavascript('settings.getNetworkConst()');
       evalJavascript('api.rpc.system.properties()');
       evalJavascript('api.rpc.system.chain()');
@@ -69,11 +75,6 @@ class Api {
       evalJavascript('account.initKeys($accounts)');
 
       fetchBalance();
-    }
-
-    void onWebConnectError(_) {
-      print('connect failed');
-      settingsStore.setNetworkName(null);
     }
 
     void onAccountGen(Map<String, dynamic> acc) {
@@ -92,9 +93,6 @@ class Api {
 
     _msgHandlers = {
       'settings.connect': onWebReady,
-      'settings.connect.error': onWebConnectError,
-      'settings.changeEndpoint': onWebReady,
-      'settings.changeEndpoint.error': onWebConnectError,
       'settings.getNetworkConst': settingsStore.setNetworkConst,
       'api.rpc.system.chain': settingsStore.setNetworkName,
       'api.rpc.system.properties': settingsStore.setNetworkState,
@@ -162,18 +160,24 @@ class Api {
     fetchBalance();
   }
 
-  void transfer(String to, double amount, String password, Function onSuccess,
-      Function onError) {
-    _msgHandlers['account.transfer'] = onSuccess;
-    _msgHandlers['account.transfer.error'] = onError;
+  Future<Map<String, dynamic>> transfer(
+      String to, double amount, String password) async {
+    Completer c = new Completer();
+    void onComplete(Map<String, dynamic> res) {
+      c.complete(res);
+    }
+
+    _msgHandlers['account.transfer'] = onComplete;
 
     String from = accountStore.currentAccount.address;
     double amt = amount * pow(10, settingsStore.networkState.tokenDecimals);
     evalJavascript(
         'account.transfer("$from", "$to", ${amt.toString()}, "$password")');
+    return c.future;
   }
 
-  Future<dynamic> changeAccountPassword(String passOld, String passNew) async {
+  Future<Map<String, dynamic>> changeAccountPassword(
+      String passOld, String passNew) async {
     Completer c = new Completer();
     void onComplete(Map<String, dynamic> res) {
       c.complete(res);
@@ -187,7 +191,7 @@ class Api {
     return c.future;
   }
 
-  Future<dynamic> checkAccountPassword(String pass) async {
+  Future<Map<String, dynamic>> checkAccountPassword(String pass) async {
     Completer c = new Completer();
     void onComplete(Map<String, dynamic> res) {
       c.complete(res);

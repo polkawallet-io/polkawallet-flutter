@@ -155,8 +155,7 @@ class _TransferState extends State<Transfer> {
       }
     }
 
-    void onTransferError(String msg) {
-      print('transfer error: $msg');
+    void onTransferError() {
       accountStore.assetsState.setSubmitting(false);
       if (state.mounted) {
         state.removeCurrentSnackBar();
@@ -184,7 +183,7 @@ class _TransferState extends State<Transfer> {
       );
     }
 
-    void onTransfer() {
+    Future<void> onTransfer() async {
       accountStore.assetsState.setSubmitting(true);
       state.showSnackBar(SnackBar(
         backgroundColor: Colors.white,
@@ -197,8 +196,14 @@ class _TransferState extends State<Transfer> {
         ),
       ));
 
-      api.transfer(_addressCtrl.text, double.parse(_amountCtrl.text),
-          _passCtrl.text, onTransferFinish, onTransferError);
+      var res = await api.transfer(
+          _addressCtrl.text, double.parse(_amountCtrl.text), _passCtrl.text);
+
+      if (res == null) {
+        onTransferError();
+      } else {
+        onTransferFinish(res['hash']);
+      }
     }
 
     return Observer(
