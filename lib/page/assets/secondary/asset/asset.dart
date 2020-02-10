@@ -18,7 +18,6 @@ class AssetPage extends StatefulWidget {
   _AssetPageState createState() => _AssetPageState(accountStore, settingsStore);
 }
 
-// TODO: get error while txs loaded: The getter 'time' was called on null
 class _AssetPageState extends State<AssetPage>
     with SingleTickerProviderStateMixin {
   _AssetPageState(this.accountStore, this.settingsStore);

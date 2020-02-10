@@ -87,9 +87,8 @@ class _BackupAccountState extends State<BackupAccount> {
                               setState(() {
                                 _step = 1;
                                 _wordsSelected = <String>[];
-                                _wordsLeft = accountStore.newAccount.key
-                                    .toString()
-                                    .split(' ');
+                                _wordsLeft =
+                                    accountStore.newAccount.key.split(' ');
                               });
                             },
                           ),
@@ -129,10 +128,31 @@ class _BackupAccountState extends State<BackupAccount> {
                   style: Theme.of(context).textTheme.display4,
                 ),
                 Container(
-                  padding: EdgeInsets.only(top: 16, bottom: 32),
+                  padding: EdgeInsets.only(top: 16),
                   child: Text(
                     i18n['backup.confirm'],
                   ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    OutlineButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24)),
+                      color: Colors.pink,
+                      padding: EdgeInsets.all(4),
+                      child: Text(
+                        i18n['backup.reset'],
+                        style: TextStyle(fontSize: 14, color: Colors.pink),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _wordsLeft = accountStore.newAccount.key.split(' ');
+                          _wordsSelected = [];
+                        });
+                      },
+                    )
+                  ],
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -162,14 +182,14 @@ class _BackupAccountState extends State<BackupAccount> {
                     color: Colors.pink,
                     child: Text(I18n.of(context).home['next'],
                         style: Theme.of(context).textTheme.button),
-                    // TODO: validate user input onPressed(skip validate for test)
-                    onPressed: _wordsSelected.length == 12
-                        ? () async {
-                            api.importAccount();
-                            Navigator.popUntil(
-                                context, ModalRoute.withName('/'));
-                          }
-                        : null,
+                    onPressed:
+                        _wordsSelected.join('') == accountStore.newAccount.key
+                            ? () async {
+                                api.importAccount();
+                                Navigator.popUntil(
+                                    context, ModalRoute.withName('/'));
+                              }
+                            : null,
                   ),
                 ),
               ),

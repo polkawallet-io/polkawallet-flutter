@@ -58,7 +58,9 @@ abstract class _AssetsState with Store {
       } else {
         total += i.value;
       }
-      res.add({"time": blockMap[i.block].time, "value": total / pow(10, 12)});
+      if (blockMap[i.block] != null) {
+        res.add({"time": blockMap[i.block].time, "value": total / pow(10, 12)});
+      }
     });
     return res;
   }
