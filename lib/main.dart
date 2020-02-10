@@ -7,6 +7,7 @@ import 'package:polka_wallet/page/assets/secondary/receive/receive.dart';
 import 'package:polka_wallet/page/assets/secondary/scan.dart';
 import 'package:polka_wallet/page/assets/secondary/transfer/detail.dart';
 import 'package:polka_wallet/page/assets/secondary/transfer/transfer.dart';
+import 'package:polka_wallet/page/assets/secondary/transfer/transferConfirm.dart';
 import 'package:polka_wallet/page/profile/secondary/about.dart';
 import 'package:polka_wallet/page/profile/secondary/account/changeName.dart';
 import 'package:polka_wallet/page/profile/secondary/account/changePassword.dart';
@@ -114,7 +115,9 @@ class _WalletAppState extends State<WalletApp> {
         '/account/import': (_) => ImportAccount(_api, _accountStore),
         '/account/scan': (_) => Scan(),
         '/assets/detail': (_) => AssetPage(_accountStore, _settingStore),
-        '/assets/transfer': (_) => Transfer(_api, _accountStore, _settingStore),
+        '/assets/transfer': (_) => Transfer(_accountStore, _settingStore),
+        '/assets/transfer/confirm': (_) =>
+            TransferConfirm(_api, _accountStore, _settingStore),
         '/assets/receive': (_) => Receive(_accountStore),
         '/assets/tx': (_) => TransferDetail(_accountStore, _settingStore),
         '/profile/account': (_) => AccountManage(_api, _accountStore),

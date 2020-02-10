@@ -11,7 +11,7 @@ class AssetsState extends _AssetsState with _$AssetsState {}
 
 abstract class _AssetsState with Store {
   @observable
-  bool loading = false;
+  bool loading = true;
 
   @observable
   bool submitting = false;
@@ -64,6 +64,11 @@ abstract class _AssetsState with Store {
   }
 
   @action
+  void setLoading(bool isLoading) {
+    loading = isLoading;
+  }
+
+  @action
   void setAccountBalance(String amt) {
     balance = amt;
   }
@@ -91,13 +96,12 @@ abstract class _AssetsState with Store {
   }
 
   @action
-  Future<void> setBlockMap(String data) async {
+  void setBlockMap(String data) {
     jsonDecode(data).forEach((i) {
       if (blockMap[i['id']] == null) {
         blockMap[i['id']] = BlockData.fromJson(i);
       }
     });
-    loading = false;
   }
 
   @action

@@ -167,14 +167,17 @@ mixin _$AssetsState on _AssetsState, Store {
     return _$getTxsAsyncAction.run(() => super.getTxs(address));
   }
 
-  final _$setBlockMapAsyncAction = AsyncAction('setBlockMap');
+  final _$_AssetsStateActionController = ActionController(name: '_AssetsState');
 
   @override
-  Future<void> setBlockMap(String data) {
-    return _$setBlockMapAsyncAction.run(() => super.setBlockMap(data));
+  void setLoading(bool isLoading) {
+    final _$actionInfo = _$_AssetsStateActionController.startAction();
+    try {
+      return super.setLoading(isLoading);
+    } finally {
+      _$_AssetsStateActionController.endAction(_$actionInfo);
+    }
   }
-
-  final _$_AssetsStateActionController = ActionController(name: '_AssetsState');
 
   @override
   void setAccountBalance(String amt) {
@@ -191,6 +194,16 @@ mixin _$AssetsState on _AssetsState, Store {
     final _$actionInfo = _$_AssetsStateActionController.startAction();
     try {
       return super.setTxsFilter(filter);
+    } finally {
+      _$_AssetsStateActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setBlockMap(String data) {
+    final _$actionInfo = _$_AssetsStateActionController.startAction();
+    try {
+      return super.setBlockMap(data);
     } finally {
       _$_AssetsStateActionController.endAction(_$actionInfo);
     }

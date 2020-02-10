@@ -18,6 +18,7 @@ class AssetPage extends StatefulWidget {
   _AssetPageState createState() => _AssetPageState(accountStore, settingsStore);
 }
 
+// TODO: get error while txs loaded: The getter 'time' was called on null
 class _AssetPageState extends State<AssetPage>
     with SingleTickerProviderStateMixin {
   _AssetPageState(this.accountStore, this.settingsStore);
@@ -39,7 +40,6 @@ class _AssetPageState extends State<AssetPage>
     super.dispose();
   }
 
-  // TODO: get error while txs loaded: The getter 'time' was called on null
   List<Widget> _buildTxList(BuildContext context) {
     if (accountStore.assetsState.txsView.length == 0) {
       return [
@@ -60,40 +60,40 @@ class _AssetPageState extends State<AssetPage>
     int decimals = settingsStore.networkState.tokenDecimals;
     String symbol = settingsStore.networkState.tokenSymbol;
     Map<int, BlockData> blockMap = accountStore.assetsState.blockMap;
-    return accountStore.assetsState.txsView
-        .map(
-          (i) => Container(
-            decoration: BoxDecoration(
-              border:
-                  Border(bottom: BorderSide(width: 0.5, color: Colors.black12)),
+    return accountStore.assetsState.txsView.map((i) {
+      BlockData block = blockMap[i.block];
+      String time = 'time';
+      if (block != null) {
+        time = block.time.toString().split('.')[0];
+      }
+      return Container(
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(width: 0.5, color: Colors.black12)),
+        ),
+        child: ListTile(
+            title: Text(i.id),
+            subtitle: Text(time),
+            trailing: Container(
+              width: 110,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                      child: Text(
+                    '${Fmt.token(i.value, decimals)} $symbol',
+                    style: Theme.of(context).textTheme.display4,
+                  )),
+                  i.sender == accountStore.currentAccount.address
+                      ? Image.asset('assets/images/assets/assets_up.png')
+                      : Image.asset('assets/images/assets/assets_down.png')
+                ],
+              ),
             ),
-            child: ListTile(
-                title: Text(i.id),
-                subtitle: Text(blockMap[i.block] == null
-                    ? 'time'
-                    : blockMap[i.block].time.toString().split('.')[0]),
-                trailing: Container(
-                  width: 110,
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                          child: Text(
-                        '${Fmt.token(i.value, decimals)} $symbol',
-                        style: Theme.of(context).textTheme.display4,
-                      )),
-                      i.sender == accountStore.currentAccount.address
-                          ? Image.asset('assets/images/assets/assets_up.png')
-                          : Image.asset('assets/images/assets/assets_down.png')
-                    ],
-                  ),
-                ),
-                onTap: () {
-                  accountStore.assetsState.setTxDetail(i);
-                  Navigator.pushNamed(context, '/assets/tx');
-                }),
-          ),
-        )
-        .toList();
+            onTap: () {
+              accountStore.assetsState.setTxDetail(i);
+              Navigator.pushNamed(context, '/assets/tx');
+            }),
+      );
+    }).toList();
   }
 
   @override

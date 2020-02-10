@@ -89,6 +89,7 @@ class Api {
 
     void onBlockTime(String data) {
       accountStore.assetsState.setBlockMap(data);
+      accountStore.assetsState.setLoading(false);
     }
 
     _msgHandlers = {
