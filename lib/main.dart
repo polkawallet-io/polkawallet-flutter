@@ -18,6 +18,7 @@ import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
 import 'package:polka_wallet/page/profile/secondary/settings/settings.dart';
 import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
 import 'utils/i18n/index.dart';
@@ -44,6 +45,7 @@ class WalletApp extends StatefulWidget {
 class _WalletAppState extends State<WalletApp> {
   final _accountStore = AccountStore();
   final _settingStore = SettingsStore();
+  final _stakingStore = StakingStore();
 
   Api _api;
 
@@ -107,7 +109,7 @@ class _WalletAppState extends State<WalletApp> {
       routes: {
         '/': (_) => Observer(
             builder: (_) => _accountStore.accountList.length > 0
-                ? Home(_api, _settingStore, _accountStore)
+                ? Home(_api, _settingStore, _accountStore, _stakingStore)
                 : CreateAccountEntry()),
         '/account/entry': (_) => CreateAccountEntry(),
         '/account/create': (_) => CreateAccount(_accountStore.setNewAccount),

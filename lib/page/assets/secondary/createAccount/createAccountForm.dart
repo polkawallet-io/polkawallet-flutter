@@ -76,7 +76,7 @@ class CreateAccountForm extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
                   child: RaisedButton(
                     padding: EdgeInsets.all(16),
                     color: Colors.pink,

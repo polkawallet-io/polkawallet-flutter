@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show SynchronousFuture;
 import 'package:polka_wallet/utils/i18n/assets.dart';
+import 'package:polka_wallet/utils/i18n/staking.dart';
 
 import 'home.dart';
 import 'account.dart';
@@ -38,12 +39,14 @@ class I18n {
       'home': enHome,
       'account': enAccount,
       'assets': enAssets,
+      'staking': enStaking,
       'profile': enProfile
     },
     'zh': {
       'home': zhHome,
       'account': zhAccount,
       'assets': zhAssets,
+      'staking': zhStaking,
       'profile': zhProfile
     },
   };
@@ -58,6 +61,10 @@ class I18n {
 
   Map<String, String> get assets {
     return _localizedValues[locale.languageCode]['assets'];
+  }
+
+  Map<String, String> get staking {
+    return _localizedValues[locale.languageCode]['staking'];
   }
 
   Map<String, String> get profile {

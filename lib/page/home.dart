@@ -7,27 +7,31 @@ import 'package:polka_wallet/page/staking/staking.dart';
 import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/store/staking.dart';
 
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Home extends StatefulWidget {
-  Home(this.api, this.settingStore, this.accountStore);
+  Home(this.api, this.settingStore, this.accountStore, this.stakingStore);
 
   final Api api;
   final SettingsStore settingStore;
   final AccountStore accountStore;
+  final StakingStore stakingStore;
 
   @override
   _HomePageState createState() =>
-      new _HomePageState(api, settingStore, accountStore);
+      new _HomePageState(api, settingStore, accountStore, stakingStore);
 }
 
 class _HomePageState extends State<Home> {
-  _HomePageState(this.api, this.settingsStore, this.accountStore);
+  _HomePageState(
+      this.api, this.settingsStore, this.accountStore, this.stakingStore);
 
   final Api api;
   final SettingsStore settingsStore;
   final AccountStore accountStore;
+  final StakingStore stakingStore;
 
   final List<String> _tabList = [
     'Assets',
@@ -62,7 +66,7 @@ class _HomePageState extends State<Home> {
         return Assets(api, settingsStore, accountStore);
         break;
       case 1:
-        return Staking();
+        return Staking(stakingStore);
         break;
       case 2:
         return Democracy();
@@ -81,57 +85,41 @@ class _HomePageState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return _curIndex == 0
-        ? Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: Theme.of(context).canvasColor,
+    if (_curIndex == 0) {
+      // return assets page
+      return Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Theme.of(context).canvasColor,
+          ),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                alignment: Alignment.topLeft,
+                image: AssetImage("assets/images/assets/Assets_bg.png"),
+                fit: BoxFit.contain,
               ),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    alignment: Alignment.topLeft,
-                    image: AssetImage("assets/images/assets/Assets_bg.png"),
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              Scaffold(
-                backgroundColor: Colors.transparent,
-                appBar: AppBar(
-                  title: Image.asset('assets/images/assets/logo.png'),
-                  backgroundColor: Colors.transparent,
-                  elevation: 0.0,
-                ),
-                endDrawer: Drawer(
-                  child: DrawerMenu(api, accountStore),
-                ),
-                bottomNavigationBar: BottomNavigationBar(
-                    currentIndex: _curIndex,
-                    iconSize: 22.0,
-                    onTap: (index) {
-                      setState(() {
-                        _curIndex = index;
-                      });
-                    },
-                    type: BottomNavigationBarType.fixed,
-                    items: _navBarItems()),
-                body: _getPage(_curIndex),
-              )
-            ],
-          )
-        : Scaffold(
+            ),
+          ),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              title: Image.asset('assets/images/assets/logo.png'),
+              centerTitle: false,
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+            ),
+            endDrawer: Drawer(
+              child: DrawerMenu(api, accountStore),
+            ),
             bottomNavigationBar: BottomNavigationBar(
                 currentIndex: _curIndex,
                 iconSize: 22.0,
                 onTap: (index) {
-                  if (index == 0) {
-                    api.fetchBalance();
-                  }
                   setState(() {
                     _curIndex = index;
                   });
@@ -139,6 +127,68 @@ class _HomePageState extends State<Home> {
                 type: BottomNavigationBarType.fixed,
                 items: _navBarItems()),
             body: _getPage(_curIndex),
-          );
+          )
+        ],
+      );
+    }
+    if (_curIndex == 1) {
+      // return staking page
+      return Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Theme.of(context).canvasColor,
+          ),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                alignment: Alignment.topLeft,
+                image: AssetImage("assets/images/staking/top_bg.png"),
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              title: Text(I18n.of(context).home['staking']),
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+                currentIndex: _curIndex,
+                iconSize: 22.0,
+                onTap: (index) {
+                  setState(() {
+                    _curIndex = index;
+                  });
+                },
+                type: BottomNavigationBarType.fixed,
+                items: _navBarItems()),
+            body: _getPage(_curIndex),
+          )
+        ],
+      );
+    }
+    return Scaffold(
+      bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _curIndex,
+          iconSize: 22.0,
+          onTap: (index) {
+            if (index == 0) {
+              api.fetchBalance();
+            }
+            setState(() {
+              _curIndex = index;
+            });
+          },
+          type: BottomNavigationBarType.fixed,
+          items: _navBarItems()),
+      body: _getPage(_curIndex),
+    );
   }
 }

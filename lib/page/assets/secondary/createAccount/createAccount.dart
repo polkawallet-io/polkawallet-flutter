@@ -30,7 +30,7 @@ class _CreateAccountState extends State<CreateAccount> {
         children: <Widget>[
           Expanded(
             child: ListView(
-              padding: EdgeInsets.all(32),
+              padding: EdgeInsets.all(16),
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.only(bottom: 16),
@@ -62,7 +62,7 @@ class _CreateAccountState extends State<CreateAccount> {
             children: <Widget>[
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(32),
+                  padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
                   child: RaisedButton(
                     padding: EdgeInsets.all(16),
                     color: Colors.pink,

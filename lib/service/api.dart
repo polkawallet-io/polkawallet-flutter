@@ -38,7 +38,7 @@ class Api {
       }
     });
 
-    _web.launch('_blank',
+    _web.launch('about:blank',
         javascriptChannels: [
           JavascriptChannel(
               name: 'PolkaWallet',
@@ -52,8 +52,8 @@ class Api {
                 handler(msg['data']);
               }),
         ].toSet(),
-        withLocalUrl: true,
-        localUrlScope: 'lib/polkadot_js_service/dist/',
+//        withLocalUrl: true,
+//        localUrlScope: 'lib/polkadot_js_service/dist/',
         hidden: true);
   }
 

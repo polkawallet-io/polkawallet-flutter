@@ -99,6 +99,7 @@ flutter:
     - assets/images/assets/assets_down.png
     - assets/images/assets/assets_fail.png
     - assets/images/assets/sweep_code_line.png
+    - assets/images/staking/top_bg.png
     - assets/images/profile/about.png
     - assets/images/profile/address.png
     - assets/images/profile/setting.png

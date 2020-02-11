@@ -3,22 +3,6 @@
 part of 'staking.dart';
 
 // **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
-
-StakingStore _$StakingStoreFromJson(Map<String, dynamic> json) {
-  return StakingStore(
-    json['description'] as String,
-  )..done = json['done'] as bool;
-}
-
-Map<String, dynamic> _$StakingStoreToJson(StakingStore instance) =>
-    <String, dynamic>{
-      'description': instance.description,
-      'done': instance.done,
-    };
-
-// **************************************************************************
 // StoreGenerator
 // **************************************************************************
 
