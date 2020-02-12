@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/page/staking/actions.dart';
+import 'package:polka_wallet/page/staking/overview.dart';
 import 'package:polka_wallet/service/api.dart';
 
 import 'package:polka_wallet/store/staking.dart';
@@ -22,10 +24,29 @@ class _StakingState extends State<Staking> {
 
   int _tab = 0;
 
+  Future<void> _fetchControllers() async {
+    var res = await api.evalJavascript('api.derive.staking.controllers()');
+    store.setOverview({"intentions": res[0]});
+  }
+
+  Future<void> _fetchElectedInfo() async {
+    var res = await api.evalJavascript('api.derive.staking.electedInfo()');
+    store.setOverview({"elected": res});
+  }
+
   Future<void> _fetchOverviewInfo() async {
-    Map<String, dynamic> res =
-        await api.evalJavascript('api.derive.staking.overview()');
-    print(res.keys);
+    var data = await Future.wait([
+      api.evalJavascript('api.derive.staking.overview()'),
+      api.evalJavascript('api.derive.session.info()'),
+    ]);
+    var overview = data[0];
+    overview['session'] = data[1];
+    print(overview.keys.join(','));
+    store.setOverview(overview);
+    print('overview set');
+//    overview.keys.forEach((key) => print(store.overview[key]));
+    _fetchControllers();
+    _fetchElectedInfo();
   }
 
   List<Widget> _buildTabs() {
@@ -57,86 +78,23 @@ class _StakingState extends State<Staking> {
                       bottom: BorderSide(
                           width: _tab == index ? 3 : 0, color: Colors.white)),
                 ),
-//                child: Text('aa'),
               )
             ],
           ),
           onTap: () {
-            if (index == 1) {
-              _fetchOverviewInfo();
+            if (_tab != index) {
+              if (index == 1) {
+                _fetchOverviewInfo();
+//                _fetchControllers();
+              }
+              setState(() {
+                _tab = index;
+              });
             }
-            setState(() {
-              _tab = index;
-            });
           },
         );
       },
     ).toList();
-  }
-
-  Widget _buildTopCard() {
-    var dic = I18n.of(context).staking;
-    return Container(
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 16),
-      padding: EdgeInsets.all(24),
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(const Radius.circular(8)),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 16.0, // has the effect of softening the shadow
-              spreadRadius: 4.0, // has the effect of extending the shadow
-              offset: Offset(
-                2.0, // horizontal, move right 10
-                2.0, // vertical, move down 10
-              ),
-            )
-          ]),
-      child: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              InfoItem(
-                title: dic['validators'],
-                content: '15',
-              ),
-              InfoItem(
-                title: dic['waitting'],
-                content: '15',
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 16, bottom: 16),
-            child: Row(
-              children: <Widget>[
-                InfoItem(
-                  title: dic['session'],
-                  content: '15',
-                ),
-                InfoItem(
-                  title: dic['era'],
-                  content: '15',
-                ),
-              ],
-            ),
-          ),
-          Row(
-            children: <Widget>[
-              InfoItem(
-                title: dic['total'],
-                content: '15',
-              ),
-              InfoItem(
-                title: dic['staked'],
-                content: '15',
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -149,39 +107,18 @@ class _StakingState extends State<Staking> {
         backgroundColor: Colors.transparent,
         body: Container(
           color: Colors.transparent,
-          child: ListView(
+          child: Column(
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: _buildTabs(),
               ),
-              _buildTopCard(),
-              Text('Staking'),
+              Expanded(
+                child:
+                    _tab == 1 ? StakingOverview(api, store) : StakingActions(),
+              ),
             ],
           ),
         ),
       );
-}
-
-class InfoItem extends StatelessWidget {
-  InfoItem({this.title, this.content});
-  final String title;
-  final String content;
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-          ),
-          Text(
-            content,
-            style: Theme.of(context).textTheme.display4,
-          )
-        ],
-      ),
-    );
-  }
 }

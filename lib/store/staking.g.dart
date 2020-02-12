@@ -9,21 +9,28 @@ part of 'staking.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$StakingStore on _StakingStore, Store {
-  final _$descriptionAtom = Atom(name: '_StakingStore.description');
+  Computed<ObservableList<String>> _$nextUpsComputed;
 
   @override
-  String get description {
-    _$descriptionAtom.context.enforceReadPolicy(_$descriptionAtom);
-    _$descriptionAtom.reportObserved();
-    return super.description;
+  ObservableList<String> get nextUps => (_$nextUpsComputed ??=
+          Computed<ObservableList<String>>(() => super.nextUps))
+      .value;
+
+  final _$overviewAtom = Atom(name: '_StakingStore.overview');
+
+  @override
+  ObservableMap<String, dynamic> get overview {
+    _$overviewAtom.context.enforceReadPolicy(_$overviewAtom);
+    _$overviewAtom.reportObserved();
+    return super.overview;
   }
 
   @override
-  set description(String value) {
-    _$descriptionAtom.context.conditionallyRunInAction(() {
-      super.description = value;
-      _$descriptionAtom.reportChanged();
-    }, _$descriptionAtom, name: '${_$descriptionAtom.name}_set');
+  set overview(ObservableMap<String, dynamic> value) {
+    _$overviewAtom.context.conditionallyRunInAction(() {
+      super.overview = value;
+      _$overviewAtom.reportChanged();
+    }, _$overviewAtom, name: '${_$overviewAtom.name}_set');
   }
 
   final _$doneAtom = Atom(name: '_StakingStore.done');
@@ -41,5 +48,18 @@ mixin _$StakingStore on _StakingStore, Store {
       super.done = value;
       _$doneAtom.reportChanged();
     }, _$doneAtom, name: '${_$doneAtom.name}_set');
+  }
+
+  final _$_StakingStoreActionController =
+      ActionController(name: '_StakingStore');
+
+  @override
+  void setOverview(Map<String, dynamic> data) {
+    final _$actionInfo = _$_StakingStoreActionController.startAction();
+    try {
+      return super.setOverview(data);
+    } finally {
+      _$_StakingStoreActionController.endAction(_$actionInfo);
+    }
   }
 }
