@@ -122,7 +122,6 @@ class _CreateAccountState extends State<CreateAccount> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> dic = I18n.of(context).account;
     if (_step == 2) {
       return _buildStep2(context);
     }

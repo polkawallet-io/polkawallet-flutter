@@ -160,6 +160,13 @@ mixin _$AssetsState on _AssetsState, Store {
     }, _$blockMapAtom, name: '${_$blockMapAtom.name}_set');
   }
 
+  final _$setTxsAsyncAction = AsyncAction('setTxs');
+
+  @override
+  Future<void> setTxs(List<dynamic> ls) {
+    return _$setTxsAsyncAction.run(() => super.setTxs(ls));
+  }
+
   final _$getTxsAsyncAction = AsyncAction('getTxs');
 
   @override

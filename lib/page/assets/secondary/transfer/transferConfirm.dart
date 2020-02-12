@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -104,8 +105,11 @@ class _TransferConfirmState extends State<TransferConfirm> {
       ),
     ));
 
-    var res = await api.transfer(
-        args['to'], double.parse(args['amount']), _passCtrl.text);
+    var from = accountStore.currentAccount.address;
+    var amount = double.parse(args['amount']) *
+        pow(10, settingsStore.networkState.tokenDecimals);
+    var res = await api.evalJavascript(
+        'account.transfer("$from", "${args['to']}", ${amount.toString()}, "${_passCtrl.text}")');
 
     if (res == null) {
       onTransferError();

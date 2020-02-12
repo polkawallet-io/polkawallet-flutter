@@ -76,6 +76,15 @@ abstract class _AssetsState with Store {
   }
 
   @action
+  Future<void> setTxs(List ls) async {
+    txs.clear();
+    ls.forEach((i) {
+      TransferData tx = TransferData.fromJson(i);
+      txs.add(tx);
+    });
+  }
+
+  @action
   Future<List<int>> getTxs(String address) async {
     txs.clear();
     if (!Fmt.isAddress(address)) {

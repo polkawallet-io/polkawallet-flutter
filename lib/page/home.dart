@@ -66,7 +66,7 @@ class _HomePageState extends State<Home> {
         return Assets(api, settingsStore, accountStore);
         break;
       case 1:
-        return Staking(stakingStore);
+        return Staking(api, stakingStore);
         break;
       case 2:
         return Democracy();

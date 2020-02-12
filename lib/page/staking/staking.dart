@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/service/api.dart';
 
 import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Staking extends StatefulWidget {
-  Staking(this.store);
+  Staking(this.api, this.store);
 
+  final Api api;
   final StakingStore store;
 
   @override
-  _StakingState createState() => _StakingState(store);
+  _StakingState createState() => _StakingState(api, store);
 }
 
 class _StakingState extends State<Staking> {
-  _StakingState(this.store);
+  _StakingState(this.api, this.store);
 
+  final Api api;
   final StakingStore store;
 
   int _tab = 0;
+
+  Future<void> _fetchOverviewInfo() async {
+    Map<String, dynamic> res =
+        await api.evalJavascript('api.derive.staking.overview()');
+    print(res.keys);
+  }
 
   List<Widget> _buildTabs() {
     var dic = I18n.of(context).staking;
@@ -53,6 +62,9 @@ class _StakingState extends State<Staking> {
             ],
           ),
           onTap: () {
+            if (index == 1) {
+              _fetchOverviewInfo();
+            }
             setState(() {
               _tab = index;
             });
@@ -125,6 +137,11 @@ class _StakingState extends State<Staking> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
