@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 
 part 'staking.g.dart';
@@ -10,6 +13,19 @@ abstract class _StakingStore with Store {
 
   @observable
   bool done = false;
+
+  @observable
+  int staked = 0;
+
+  @observable
+  int nominatorCount = 0;
+
+  @observable
+  ObservableList<ValidatorData> validatorsInfo =
+      ObservableList<ValidatorData>();
+
+  @observable
+  ObservableList<ValidatorData> nextUpsInfo = ObservableList<ValidatorData>();
 
   @computed
   ObservableList<String> get nextUps {
@@ -24,7 +40,79 @@ abstract class _StakingStore with Store {
   }
 
   @action
+  void setValidatorsInfo() {
+    int totalStaked = 0;
+    var nominators = {};
+    List<ValidatorData> ls = List<ValidatorData>();
+    overview['elected']['info'].forEach((i) {
+      ValidatorData data = ValidatorData.fromJson(i);
+      totalStaked += data.total;
+      data.nominators.forEach((n) {
+        nominators[n['who']] = true;
+      });
+      ls.add(data);
+    });
+    ls.sort((a, b) => a.total > b.total ? -1 : 1);
+    validatorsInfo = ObservableList.of(ls);
+    staked = totalStaked;
+    nominatorCount = nominators.keys.length;
+  }
+
+  @action
+  void setNextUpsInfo(list) {
+    List<ValidatorData> ls = List<ValidatorData>();
+    list.forEach((i) {
+      ValidatorData data = ValidatorData.fromJson(i);
+      ls.add(data);
+    });
+    ls.sort((a, b) => a.total > b.total ? -1 : 1);
+    nextUpsInfo = ObservableList.of(ls);
+  }
+
+  @action
   void setOverview(Map<String, dynamic> data) {
     data.keys.forEach((key) => overview[key] = data[key]);
+    if (data.keys.toList().indexOf('elected') >= 0) {
+      setValidatorsInfo();
+    }
   }
+}
+
+class ValidatorData extends _ValidatorData with _$ValidatorData {
+  static ValidatorData fromJson(Map<String, dynamic> json) {
+    ValidatorData data = ValidatorData();
+    data.accountId = json['accountId'];
+    data.total = int.parse(json['stakers']['total']);
+    if (json['stakers']['own'].runtimeType == String) {
+      data.bondOwn = int.parse(json['stakers']['own']);
+    } else {
+      data.bondOwn = json['stakers']['own'];
+    }
+    data.bondOther = data.total - data.bondOwn;
+    data.commission = NumberFormat('0.00%')
+        .format(json['validatorPrefs']['commission'] / pow(10, 9));
+    data.nominators =
+        List<Map<String, dynamic>>.from(json['stakers']['others']);
+    return data;
+  }
+}
+
+abstract class _ValidatorData with Store {
+  @observable
+  String accountId = '';
+
+  @observable
+  int total = 0;
+
+  @observable
+  int bondOwn = 0;
+
+  @observable
+  int bondOther = 0;
+
+  @observable
+  String commission = '';
+
+  @observable
+  List<Map<String, dynamic>> nominators = List<Map<String, dynamic>>();
 }

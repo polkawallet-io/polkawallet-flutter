@@ -66,7 +66,7 @@ class _HomePageState extends State<Home> {
         return Assets(api, settingsStore, accountStore);
         break;
       case 1:
-        return Staking(api, stakingStore);
+        return Staking(api, stakingStore, settingsStore);
         break;
       case 2:
         return Democracy();
@@ -79,8 +79,10 @@ class _HomePageState extends State<Home> {
 
   @override
   void initState() {
-    api.fetchBalance();
     super.initState();
+    if (!settingsStore.loading) {
+      api.fetchBalance();
+    }
   }
 
   @override

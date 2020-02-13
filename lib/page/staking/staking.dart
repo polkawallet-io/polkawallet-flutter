@@ -2,25 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:polka_wallet/page/staking/actions.dart';
 import 'package:polka_wallet/page/staking/overview.dart';
 import 'package:polka_wallet/service/api.dart';
+import 'package:polka_wallet/store/settings.dart';
 
 import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Staking extends StatefulWidget {
-  Staking(this.api, this.store);
+  Staking(this.api, this.store, this.settingsStore);
 
   final Api api;
   final StakingStore store;
+  final SettingsStore settingsStore;
 
   @override
-  _StakingState createState() => _StakingState(api, store);
+  _StakingState createState() => _StakingState(api, store, settingsStore);
 }
 
 class _StakingState extends State<Staking> {
-  _StakingState(this.api, this.store);
+  _StakingState(this.api, this.store, this.settingsStore);
 
   final Api api;
   final StakingStore store;
+  final SettingsStore settingsStore;
 
   int _tab = 0;
 
@@ -35,17 +38,20 @@ class _StakingState extends State<Staking> {
   }
 
   Future<void> _fetchOverviewInfo() async {
+    if (settingsStore.loading) {
+      return;
+    }
     var data = await Future.wait([
       api.evalJavascript('api.derive.staking.overview()'),
       api.evalJavascript('api.derive.session.info()'),
+      api.evalJavascript('api.query.balances.totalIssuance()'),
     ]);
     var overview = data[0];
     overview['session'] = data[1];
-    print(overview.keys.join(','));
+    overview['issuance'] = data[2];
+    print('setOverview');
     store.setOverview(overview);
-    print('overview set');
-//    overview.keys.forEach((key) => print(store.overview[key]));
-    _fetchControllers();
+//    _fetchControllers();
     _fetchElectedInfo();
   }
 
@@ -83,10 +89,7 @@ class _StakingState extends State<Staking> {
           ),
           onTap: () {
             if (_tab != index) {
-              if (index == 1) {
-                _fetchOverviewInfo();
-//                _fetchControllers();
-              }
+              store.setValidatorsInfo();
               setState(() {
                 _tab = index;
               });
@@ -100,6 +103,7 @@ class _StakingState extends State<Staking> {
   @override
   void initState() {
     super.initState();
+    _fetchOverviewInfo();
   }
 
   @override
@@ -114,8 +118,10 @@ class _StakingState extends State<Staking> {
                 children: _buildTabs(),
               ),
               Expanded(
-                child:
-                    _tab == 1 ? StakingOverview(api, store) : StakingActions(),
+                child: _tab == 1
+                    ? StakingOverview(
+                        api, store, settingsStore, _fetchOverviewInfo)
+                    : StakingActions(),
               ),
             ],
           ),

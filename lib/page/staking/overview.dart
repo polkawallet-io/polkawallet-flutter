@@ -1,30 +1,57 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:intl/intl.dart';
+import 'package:polka_wallet/page/staking/validator.dart';
 import 'package:polka_wallet/service/api.dart';
+import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class StakingOverview extends StatefulWidget {
-  StakingOverview(this.api, this.store);
+  StakingOverview(
+      this.api, this.store, this.settingsStore, this.reloadStakingOverview);
 
   final Api api;
   final StakingStore store;
+  final SettingsStore settingsStore;
+  final Function reloadStakingOverview;
 
   @override
-  _StakingOverviewState createState() => _StakingOverviewState(api, store);
+  _StakingOverviewState createState() =>
+      _StakingOverviewState(api, store, settingsStore, reloadStakingOverview);
 }
 
 class _StakingOverviewState extends State<StakingOverview> {
-  _StakingOverviewState(this.api, this.store);
+  _StakingOverviewState(
+      this.api, this.store, this.settingsStore, this.reloadStakingOverview);
 
   final Api api;
   final StakingStore store;
+  final SettingsStore settingsStore;
+  final Function reloadStakingOverview;
 
   int _tab = 0;
+  ScrollController _scrollController;
+  int _validatorListLength = 10;
+  int _nextListLength = 10;
+
+  Future<void> _getNextUpsInfo() async {
+    int len = store.nextUps.length;
+    if (len > 0) {
+      var res = await Future.wait(store.nextUps
+          .sublist(_nextListLength - 10, _nextListLength)
+          .map((address) =>
+              api.evalJavascript('api.derive.staking.query("$address")')));
+      print(res.length);
+      store.setNextUpsInfo(res);
+    }
+  }
 
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).staking;
+    String symbol = settingsStore.networkState.tokenSymbol;
     String session;
     if (store.overview['session'] != null) {
       session =
@@ -62,8 +89,8 @@ class _StakingOverviewState extends State<StakingOverview> {
                     '${store.overview['validators'].length}/${store.overview['validatorCount']}',
               ),
               InfoItem(
-                title: dic['waitting'],
-                content: store.nextUps.length.toString(),
+                title: dic['nominators'],
+                content: store.nominatorCount.toString(),
               ),
             ],
           ),
@@ -85,12 +112,13 @@ class _StakingOverviewState extends State<StakingOverview> {
           Row(
             children: <Widget>[
               InfoItem(
-                title: dic['total'],
-                content: '15',
+                title: '${dic['total']} ($symbol)',
+                content: '${Fmt.token(store.staked, 18)} M',
               ),
               InfoItem(
                 title: dic['staked'],
-                content: '15',
+                content: NumberFormat('0.00%').format(
+                    store.staked / int.parse(store.overview['issuance'])),
               ),
             ],
           ),
@@ -99,50 +127,52 @@ class _StakingOverviewState extends State<StakingOverview> {
     );
   }
 
-  List<Widget> _buildTabs(BuildContext context) {
-    var dic = I18n.of(context).staking;
-    var tabs = [dic['validators'], dic['waitting']];
-    return tabs.map(
-      (title) {
-        var index = tabs.indexOf(title);
-        return GestureDetector(
-          child: Column(
-            children: <Widget>[
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      title,
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: _tab != index ? Colors.black54 : Colors.pink),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                height: 16,
-                width: 32,
-                decoration: _tab != index
-                    ? null
-                    : BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(width: 3, color: Colors.pink)),
-                      ),
-              )
-            ],
-          ),
-          onTap: () {
-            if (_tab != index) {
-              setState(() {
-                _tab = index;
-              });
-            }
-          },
-        );
-      },
-    ).toList();
+  List<Widget> _buildValidatorList() {
+    if (_tab == 1) {
+      return store.nextUpsInfo.length > 0
+          ? store.nextUpsInfo
+              .sublist(0, _nextListLength)
+              .map((i) => Validator(null, i))
+              .toList()
+          : [CupertinoActivityIndicator()];
+    }
+    return store.validatorsInfo.length > 0
+        ? store.validatorsInfo
+            .sublist(0, _validatorListLength)
+            .map((i) => Validator(null, i))
+            .toList()
+        : [CupertinoActivityIndicator()];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController = ScrollController();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          int end;
+          if (_tab == 0) {
+            end = _validatorListLength + 10;
+            _validatorListLength = end > store.validatorsInfo.length
+                ? store.validatorsInfo.length
+                : end;
+          } else {
+            end = _nextListLength + 10;
+            _nextListLength =
+                end > store.nextUps.length ? store.nextUps.length : end;
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
   }
 
   @override
@@ -150,23 +180,41 @@ class _StakingOverviewState extends State<StakingOverview> {
     return Observer(
       builder: (_) {
         bool hashData = store.overview['validators'] != null;
-        print(store.overview.keys);
-        return ListView(
-          children: <Widget>[
-            hashData ? _buildTopCard(context) : Container(),
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: Row(
-                children: _buildTabs(context),
-              ),
+        if (hashData) {
+          return RefreshIndicator(
+            child: ListView(
+              controller: _scrollController,
+              children: <Widget>[
+                _buildTopCard(context),
+                Container(
+                  color: Colors.white,
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.all(16),
+                        height: 16,
+                        decoration: BoxDecoration(
+                          border: Border(
+                              left: BorderSide(width: 3, color: Colors.pink)),
+                        ),
+                      ),
+                      Text(
+                        I18n.of(context).staking['validators'],
+                        style: Theme.of(context).textTheme.display4,
+                      ),
+                      Expanded(
+                        child: Container(),
+                      )
+                    ],
+                  ),
+                ),
+                ..._buildValidatorList()
+              ],
             ),
-            hashData
-                ? Text(_tab == 0
-                    ? store.overview['validators'].length.toString()
-                    : 'ggg')
-                : Container()
-          ],
-        );
+            onRefresh: reloadStakingOverview,
+          );
+        }
+        return CupertinoActivityIndicator();
       },
     );
   }

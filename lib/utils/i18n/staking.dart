@@ -8,6 +8,7 @@ const Map<String, String> enStaking = {
   'era': 'Era',
   'staked': 'Staked',
   'total': 'Total Staked',
+  'commission': 'Commission',
 };
 
 const Map<String, String> zhStaking = {
@@ -20,4 +21,5 @@ const Map<String, String> zhStaking = {
   'era': '时代',
   'staked': '质押率',
   'total': '总质押',
+  'commission': '佣金',
 };
