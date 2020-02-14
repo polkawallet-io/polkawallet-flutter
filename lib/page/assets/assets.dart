@@ -130,7 +130,6 @@ class Assets extends StatelessWidget {
                                 color: Colors.black54),
                           ),
                           onTap: () {
-                            store.api.updateTxs();
                             Navigator.pushNamed(context, '/assets/detail');
                           },
                         ),

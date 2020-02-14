@@ -53,7 +53,6 @@ class _TransferConfirmState extends State<TransferConfirm> {
 
         Timer(Duration(seconds: 2), () {
           Navigator.popUntil(context, ModalRoute.withName('/assets/detail'));
-          store.api.updateTxs();
         });
       }
     }

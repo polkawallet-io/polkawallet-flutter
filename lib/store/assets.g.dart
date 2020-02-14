@@ -143,18 +143,18 @@ mixin _$AssetsStore on _AssetsStore, Store {
     }, _$blockMapAtom, name: '${_$blockMapAtom.name}_set');
   }
 
-  final _$setTxsAsyncAction = AsyncAction('setTxs');
+  final _$clearTxsAsyncAction = AsyncAction('clearTxs');
 
   @override
-  Future<void> setTxs(List<dynamic> ls) {
-    return _$setTxsAsyncAction.run(() => super.setTxs(ls));
+  Future<void> clearTxs() {
+    return _$clearTxsAsyncAction.run(() => super.clearTxs());
   }
 
-  final _$getTxsAsyncAction = AsyncAction('getTxs');
+  final _$addTxsAsyncAction = AsyncAction('addTxs');
 
   @override
-  Future<List<int>> getTxs(String address) {
-    return _$getTxsAsyncAction.run(() => super.getTxs(address));
+  Future<void> addTxs(List<dynamic> ls) {
+    return _$addTxsAsyncAction.run(() => super.addTxs(ls));
   }
 
   final _$_AssetsStoreActionController = ActionController(name: '_AssetsStore');

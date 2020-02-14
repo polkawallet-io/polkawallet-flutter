@@ -176,6 +176,7 @@ class _StakingOverviewState extends State<StakingOverview> {
         bool hashData = store.staking.overview['validators'] != null;
         if (hashData) {
           return RefreshIndicator(
+            onRefresh: reloadStakingOverview,
             child: ListView(
               controller: _scrollController,
               children: <Widget>[
@@ -205,7 +206,6 @@ class _StakingOverviewState extends State<StakingOverview> {
                 ..._buildValidatorList()
               ],
             ),
-            onRefresh: reloadStakingOverview,
           );
         }
         return CupertinoActivityIndicator();

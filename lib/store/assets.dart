@@ -2,9 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/account.dart';
-import 'package:polka_wallet/utils/format.dart';
 
 part 'assets.g.dart';
 
@@ -80,29 +78,16 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  Future<void> setTxs(List ls) async {
+  Future<void> clearTxs() async {
     txs.clear();
-    ls.forEach((i) {
-      TransferData tx = TransferData.fromJson(i);
-      txs.add(tx);
-    });
   }
 
   @action
-  Future<List<int>> getTxs(String address) async {
-    txs.clear();
-    if (!Fmt.isAddress(address)) {
-      return [];
-    }
-
-    loading = true;
-    String data = await PolkaScanApi.fetchTxs(address);
-    List<dynamic> ls = jsonDecode(data)['data'];
+  Future<void> addTxs(List ls) async {
     ls.forEach((i) {
       TransferData tx = TransferData.fromJson(i);
       txs.add(tx);
     });
-    return txs.map((i) => i.block).toList();
   }
 
   @action

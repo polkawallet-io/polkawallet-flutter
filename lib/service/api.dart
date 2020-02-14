@@ -142,18 +142,20 @@ class Api {
     fetchBalance();
   }
 
-  Future<void> updateTxs() async {
+  Future<List> updateTxs(int page) async {
+    if (page == 1) {
+      assetsStore.clearTxs();
+    }
     assetsStore.setLoading(true);
     String data =
-        await PolkaScanApi.fetchTxs(accountStore.currentAccount.address);
+        await PolkaScanApi.fetchTxs(accountStore.currentAccount.address, page);
     List ls = jsonDecode(data)['data'];
 
-    await assetsStore.setTxs(ls);
+    await assetsStore.addTxs(ls);
 
     await updateBlocks();
     assetsStore.setLoading(false);
-
-    fetchBalance();
+    return ls;
   }
 
   Future<void> updateBlocks() async {
