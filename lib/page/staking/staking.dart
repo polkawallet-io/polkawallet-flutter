@@ -114,7 +114,7 @@ class _StakingState extends State<Staking> {
               Expanded(
                 child: _tab == 1
                     ? StakingOverview(store, _fetchOverviewInfo)
-                    : StakingActions(),
+                    : StakingActions(store),
               ),
             ],
           ),

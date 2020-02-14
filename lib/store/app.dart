@@ -36,6 +36,7 @@ abstract class _AppStore with Store {
         context: context,
         accountStore: account,
         assetsStore: assets,
+        stakingStore: staking,
         settingsStore: settings);
     api.init();
   }

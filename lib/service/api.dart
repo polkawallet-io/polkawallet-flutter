@@ -6,18 +6,21 @@ import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/store/staking.dart';
 
 class Api {
   Api(
       {@required this.context,
       @required this.accountStore,
       @required this.assetsStore,
+      @required this.stakingStore,
       @required this.settingsStore});
 
   final BuildContext context;
   final AccountStore accountStore;
   final AssetsStore assetsStore;
   final SettingsStore settingsStore;
+  final StakingStore stakingStore;
 
   Map<String, Function> _msgHandlers = {};
   FlutterWebviewPlugin _web;
@@ -158,6 +161,30 @@ class Api {
     return ls;
   }
 
+  Future<List> updateStaking(int page) async {
+    if (page == 1) {
+      stakingStore.clearTxs();
+    }
+    String data = await PolkaScanApi.fetchStaking(
+        accountStore.currentAccount.address, page);
+    var ls = jsonDecode(data)['data'];
+
+    await stakingStore.addTxs(List<Map<String, dynamic>>.from(ls));
+
+    Map<int, bool> blocksNeedUpdate = Map<int, bool>();
+    ls.forEach((i) {
+      int block = i['attributes']['block_id'];
+      if (assetsStore.blockMap[block] == null) {
+        blocksNeedUpdate[block] = true;
+      }
+    });
+    String blocks = blocksNeedUpdate.keys.join(',');
+    var blockData = await evalJavascript('account.getBlockTime([$blocks])');
+
+    assetsStore.setBlockMap(blockData);
+    return ls;
+  }
+
   Future<void> updateBlocks() async {
     Map<int, bool> blocksNeedUpdate = Map<int, bool>();
     assetsStore.txs.forEach((i) {
@@ -171,7 +198,7 @@ class Api {
     assetsStore.setBlockMap(data);
   }
 
-  Future<Map<String, dynamic>> checkAccountPassword(String pass) async {
+  Future<dynamic> checkAccountPassword(String pass) async {
     String address = accountStore.currentAccount.address;
     return evalJavascript('account.checkPassword("$address", "$pass")');
   }

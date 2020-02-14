@@ -118,6 +118,37 @@ mixin _$StakingStore on _StakingStore, Store {
     }, _$nextUpsInfoAtom, name: '${_$nextUpsInfoAtom.name}_set');
   }
 
+  final _$txsAtom = Atom(name: '_StakingStore.txs');
+
+  @override
+  ObservableList<Map<String, dynamic>> get txs {
+    _$txsAtom.context.enforceReadPolicy(_$txsAtom);
+    _$txsAtom.reportObserved();
+    return super.txs;
+  }
+
+  @override
+  set txs(ObservableList<Map<String, dynamic>> value) {
+    _$txsAtom.context.conditionallyRunInAction(() {
+      super.txs = value;
+      _$txsAtom.reportChanged();
+    }, _$txsAtom, name: '${_$txsAtom.name}_set');
+  }
+
+  final _$clearTxsAsyncAction = AsyncAction('clearTxs');
+
+  @override
+  Future<void> clearTxs() {
+    return _$clearTxsAsyncAction.run(() => super.clearTxs());
+  }
+
+  final _$addTxsAsyncAction = AsyncAction('addTxs');
+
+  @override
+  Future<void> addTxs(List<Map<String, dynamic>> ls) {
+    return _$addTxsAsyncAction.run(() => super.addTxs(ls));
+  }
+
   final _$_StakingStoreActionController =
       ActionController(name: '_StakingStore');
 

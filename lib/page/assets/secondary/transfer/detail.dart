@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +12,25 @@ class TransferDetail extends StatelessWidget {
   TransferDetail(this.store);
 
   final AppStore store;
+
+  void _onCopy(BuildContext context, String text) {
+    Clipboard.setData(ClipboardData(text: text));
+
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final Map<String, String> dic = I18n.of(context).assets;
+        return CupertinoAlertDialog(
+          title: Container(),
+          content: Text('${dic['copy']} ${dic['success']}'),
+        );
+      },
+    );
+
+    Timer(Duration(seconds: 2), () {
+      Navigator.of(context).pop();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +94,7 @@ class TransferDetail extends StatelessWidget {
             subtitle: Text(Fmt.address(tx.sender)),
             trailing: IconButton(
               icon: Image.asset('assets/images/public/copy.png'),
-              onPressed: () =>
-                  Clipboard.setData(ClipboardData(text: tx.sender)),
+              onPressed: () => _onCopy(context, tx.sender),
             ),
           ),
           ListTile(
@@ -83,8 +103,7 @@ class TransferDetail extends StatelessWidget {
             subtitle: Text(Fmt.address(tx.destination)),
             trailing: IconButton(
               icon: Image.asset('assets/images/public/copy.png'),
-              onPressed: () =>
-                  Clipboard.setData(ClipboardData(text: tx.destination)),
+              onPressed: () => _onCopy(context, tx.destination),
             ),
           ),
           ListTile(

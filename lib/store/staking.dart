@@ -27,6 +27,13 @@ abstract class _StakingStore with Store {
   @observable
   ObservableList<ValidatorData> nextUpsInfo = ObservableList<ValidatorData>();
 
+  @observable
+  ObservableMap<String, dynamic> ledger = ObservableMap<String, dynamic>();
+
+  @observable
+  ObservableList<Map<String, dynamic>> txs =
+      ObservableList<Map<String, dynamic>>();
+
   @computed
   ObservableList<String> get nextUps {
     if (overview['intentions'] == null) {
@@ -75,6 +82,21 @@ abstract class _StakingStore with Store {
     if (data.keys.toList().indexOf('elected') >= 0) {
       setValidatorsInfo();
     }
+  }
+
+  @action
+  void setLedger(Map<String, dynamic> data) {
+    data.keys.forEach((key) => ledger[key] = data[key]);
+  }
+
+  @action
+  Future<void> clearTxs() async {
+    txs.clear();
+  }
+
+  @action
+  Future<void> addTxs(List<Map<String, dynamic>> ls) async {
+    txs.addAll(ls);
   }
 }
 

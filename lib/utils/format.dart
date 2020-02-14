@@ -3,11 +3,15 @@ import 'dart:math';
 import 'package:intl/intl.dart';
 
 class Fmt {
-  static String address(String addr) {
+  static String address(String addr, {len}) {
+    int pad = 8;
+    if (len != null) {
+      pad = len;
+    }
     if (addr == null || addr.length == 0) {
       return addr;
     }
-    return addr.substring(0, 8) + '...' + addr.substring(addr.length - 8);
+    return addr.substring(0, pad) + '...' + addr.substring(addr.length - pad);
   }
 
   static String balance(String raw) {
