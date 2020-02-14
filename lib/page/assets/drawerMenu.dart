@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/service/api.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-import 'package:polka_wallet/store/account.dart';
-
 class DrawerMenu extends StatelessWidget {
-  DrawerMenu(this.api, this.store);
+  DrawerMenu(this.store);
 
-  final Api api;
-  final AccountStore store;
+  final AppStore store;
 
   List<ListTile> _buildAccList(BuildContext context) {
-    return store.optionalAccounts
+    return store.account.optionalAccounts
         .map((i) => ListTile(
               leading: Container(
                 width: 40,
@@ -28,8 +25,8 @@ class DrawerMenu extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                store.setCurrentAccount(i);
-                api.fetchBalance();
+                store.account.setCurrentAccount(i);
+                store.api.fetchBalance();
               },
             ))
         .toList();
@@ -66,10 +63,10 @@ class DrawerMenu extends StatelessWidget {
                     height: 40,
                     child: Image.asset('assets/images/assets/Assets_nav_0.png'),
                   ),
-                  title: Text(store.currentAccount.name ?? 'name',
+                  title: Text(store.account.currentAccount.name ?? 'name',
                       style: TextStyle(fontSize: 16, color: Colors.white)),
                   subtitle: Text(
-                    Fmt.address(store.currentAccount.address) ?? '',
+                    Fmt.address(store.account.currentAccount.address) ?? '',
                     style: TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                 ),

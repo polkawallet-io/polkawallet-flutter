@@ -84,7 +84,7 @@ class AccountManage extends StatelessWidget {
   void _onExportKeystore(BuildContext context) {
     var dic = I18n.of(context).profile;
     Clipboard.setData(ClipboardData(
-      text: jsonEncode(Account.toJson(store.currentAccount)),
+      text: jsonEncode(AccountData.toJson(store.currentAccount)),
     ));
     showCupertinoDialog(
       context: context,

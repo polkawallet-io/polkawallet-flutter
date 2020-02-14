@@ -2,28 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/page/assets/secondary/asset/assetChart.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets.dart';
-import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class AssetPage extends StatefulWidget {
-  AssetPage(this.accountStore, this.settingsStore);
+  AssetPage(this.store);
 
-  final AccountStore accountStore;
-  final SettingsStore settingsStore;
+  final AppStore store;
 
   @override
-  _AssetPageState createState() => _AssetPageState(accountStore, settingsStore);
+  _AssetPageState createState() => _AssetPageState(store);
 }
 
 class _AssetPageState extends State<AssetPage>
     with SingleTickerProviderStateMixin {
-  _AssetPageState(this.accountStore, this.settingsStore);
+  _AssetPageState(this.store);
 
-  final AccountStore accountStore;
-  final SettingsStore settingsStore;
+  final AppStore store;
 
   TabController _tabController;
 
@@ -40,7 +37,7 @@ class _AssetPageState extends State<AssetPage>
   }
 
   List<Widget> _buildTxList(BuildContext context) {
-    if (accountStore.assetsState.txsView.length == 0) {
+    if (store.assets.txsView.length == 0) {
       return [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -56,10 +53,10 @@ class _AssetPageState extends State<AssetPage>
         )
       ];
     }
-    int decimals = settingsStore.networkState.tokenDecimals;
-    String symbol = settingsStore.networkState.tokenSymbol;
-    Map<int, BlockData> blockMap = accountStore.assetsState.blockMap;
-    return accountStore.assetsState.txsView.map((i) {
+    int decimals = store.settings.networkState.tokenDecimals;
+    String symbol = store.settings.networkState.tokenSymbol;
+    Map<int, BlockData> blockMap = store.assets.blockMap;
+    return store.assets.txsView.map((i) {
       BlockData block = blockMap[i.block];
       String time = 'time';
       if (block != null) {
@@ -81,14 +78,14 @@ class _AssetPageState extends State<AssetPage>
                     '${Fmt.token(i.value, decimals)} $symbol',
                     style: Theme.of(context).textTheme.display4,
                   )),
-                  i.sender == accountStore.currentAccount.address
+                  i.sender == store.account.currentAccount.address
                       ? Image.asset('assets/images/assets/assets_up.png')
                       : Image.asset('assets/images/assets/assets_down.png')
                 ],
               ),
             ),
             onTap: () {
-              accountStore.assetsState.setTxDetail(i);
+              store.assets.setTxDetail(i);
               Navigator.pushNamed(context, '/assets/tx');
             }),
       );
@@ -105,13 +102,13 @@ class _AssetPageState extends State<AssetPage>
             Tab(text: dic['out']),
           ];
 
-          String balance = Fmt.balance(accountStore.assetsState.balance);
+          String balance = Fmt.balance(store.assets.balance);
 
           List<Map<String, dynamic>> balanceHistory =
-              accountStore.assetsState.balanceHistory;
+              store.assets.balanceHistory;
           return Scaffold(
             appBar: AppBar(
-              title: Text(settingsStore.networkState.tokenSymbol),
+              title: Text(store.settings.networkState.tokenSymbol),
               centerTitle: true,
             ),
             body: Column(
@@ -135,15 +132,14 @@ class _AssetPageState extends State<AssetPage>
                           controller: _tabController,
                           tabs: _myTabs,
                           onTap: (i) {
-                            accountStore.assetsState.setTxsFilter(i);
+                            store.assets.setTxsFilter(i);
                           },
                         ),
-                        if (accountStore.assetsState.loading)
+                        if (store.assets.loading)
                           Padding(
                               padding: EdgeInsets.only(top: 36),
                               child: CupertinoActivityIndicator()),
-                        if (!accountStore.assetsState.loading)
-                          ..._buildTxList(context)
+                        if (!store.assets.loading) ..._buildTxList(context)
                       ],
                     ),
                   ),

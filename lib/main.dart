@@ -16,15 +16,11 @@ import 'package:polka_wallet/page/profile/secondary/contacts/contactList.dart';
 import 'package:polka_wallet/page/profile/secondary/contacts/contacts.dart';
 import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
 import 'package:polka_wallet/page/profile/secondary/settings/settings.dart';
-import 'package:polka_wallet/service/api.dart';
-import 'package:polka_wallet/store/settings.dart';
-import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
 import 'utils/i18n/index.dart';
 import 'common/theme.dart';
-
-import 'package:polka_wallet/store/account.dart';
 
 import 'package:polka_wallet/page/home.dart';
 import 'package:polka_wallet/page/assets/secondary/createAccount/createAccount.dart';
@@ -43,11 +39,7 @@ class WalletApp extends StatefulWidget {
 }
 
 class _WalletAppState extends State<WalletApp> {
-  final _accountStore = AccountStore();
-  final _settingStore = SettingsStore();
-  final _stakingStore = StakingStore();
-
-  Api _api;
+  final _appStore = AppStore();
 
   Locale _locale = const Locale('en', '');
 
@@ -75,15 +67,7 @@ class _WalletAppState extends State<WalletApp> {
 
   @override
   void initState() {
-    _settingStore.init();
-    _accountStore.loadAccount();
-
-    _api = Api(
-        context: context,
-        accountStore: _accountStore,
-        settingsStore: _settingStore);
-
-    _api.init();
+    _appStore.init(context);
 
     _initLocaleFromLocalStorage();
 
@@ -108,28 +92,31 @@ class _WalletAppState extends State<WalletApp> {
       theme: appTheme,
       routes: {
         '/': (_) => Observer(
-            builder: (_) => _accountStore.accountList.length > 0
-                ? Home(_api, _settingStore, _accountStore, _stakingStore)
+            builder: (_) => _appStore.account.accountList.length > 0
+                ? Home(_appStore)
                 : CreateAccountEntry()),
         '/account/entry': (_) => CreateAccountEntry(),
-        '/account/create': (_) => CreateAccount(_accountStore.setNewAccount),
-        '/account/backup': (_) => BackupAccount(_api, _accountStore),
-        '/account/import': (_) => ImportAccount(_api, _accountStore),
+        '/account/create': (_) =>
+            CreateAccount(_appStore.account.setNewAccount),
+        '/account/backup': (_) => BackupAccount(_appStore),
+        '/account/import': (_) => ImportAccount(_appStore),
         '/account/scan': (_) => Scan(),
-        '/assets/detail': (_) => AssetPage(_accountStore, _settingStore),
-        '/assets/transfer': (_) => Transfer(_accountStore, _settingStore),
-        '/assets/transfer/confirm': (_) =>
-            TransferConfirm(_api, _accountStore, _settingStore),
-        '/assets/receive': (_) => Receive(_accountStore),
-        '/assets/tx': (_) => TransferDetail(_accountStore, _settingStore),
-        '/profile/account': (_) => AccountManage(_api, _accountStore),
-        '/profile/contacts': (_) => Contacts(_settingStore),
-        '/contacts/list': (_) => ContactList(_settingStore),
-        '/profile/contact': (_) => Contact(_settingStore),
-        '/profile/name': (_) => ChangeName(_api, _accountStore),
-        '/profile/password': (_) => ChangePassword(_api, _accountStore),
-        '/profile/settings': (_) => Settings(_settingStore, _changeLang),
-        '/profile/endpoint': (_) => RemoteNode(_api, _settingStore),
+        '/assets/detail': (_) => AssetPage(_appStore),
+        '/assets/transfer': (_) => Transfer(_appStore),
+        '/assets/transfer/confirm': (_) => TransferConfirm(_appStore),
+        '/assets/receive': (_) => Receive(_appStore.account),
+        '/assets/tx': (_) => TransferDetail(_appStore),
+        '/profile/account': (_) =>
+            AccountManage(_appStore.api, _appStore.account),
+        '/profile/contacts': (_) => Contacts(_appStore.settings),
+        '/contacts/list': (_) => ContactList(_appStore.settings),
+        '/profile/contact': (_) => Contact(_appStore.settings),
+        '/profile/name': (_) => ChangeName(_appStore.api, _appStore.account),
+        '/profile/password': (_) =>
+            ChangePassword(_appStore.api, _appStore.account),
+        '/profile/settings': (_) => Settings(_appStore.settings, _changeLang),
+        '/profile/endpoint': (_) =>
+            RemoteNode(_appStore.api, _appStore.settings),
         '/profile/about': (_) => About(),
       },
     );

@@ -4,30 +4,23 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/service/api.dart';
-import 'package:polka_wallet/store/account.dart';
-import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class TransferConfirm extends StatefulWidget {
-  const TransferConfirm(this.api, this.accountStore, this.settingsStore);
+  const TransferConfirm(this.store);
 
-  final Api api;
-  final AccountStore accountStore;
-  final SettingsStore settingsStore;
+  final AppStore store;
 
   @override
-  _TransferConfirmState createState() =>
-      _TransferConfirmState(api, accountStore, settingsStore);
+  _TransferConfirmState createState() => _TransferConfirmState(store);
 }
 
 class _TransferConfirmState extends State<TransferConfirm> {
-  _TransferConfirmState(this.api, this.accountStore, this.settingsStore);
+  _TransferConfirmState(this.store);
 
-  final Api api;
-  final AccountStore accountStore;
-  final SettingsStore settingsStore;
+  final AppStore store;
 
   final TextEditingController _passCtrl = new TextEditingController();
 
@@ -39,7 +32,7 @@ class _TransferConfirmState extends State<TransferConfirm> {
 
     void onTransferFinish(String blockHash) {
       print('callback triggered, blockHash: $blockHash');
-      accountStore.assetsState.setSubmitting(false);
+      store.assets.setSubmitting(false);
       if (state.mounted) {
         state.removeCurrentSnackBar();
 
@@ -60,13 +53,13 @@ class _TransferConfirmState extends State<TransferConfirm> {
 
         Timer(Duration(seconds: 2), () {
           Navigator.popUntil(context, ModalRoute.withName('/assets/detail'));
-          api.updateTxs();
+          store.api.updateTxs();
         });
       }
     }
 
     void onTransferError() {
-      accountStore.assetsState.setSubmitting(false);
+      store.assets.setSubmitting(false);
       if (state.mounted) {
         state.removeCurrentSnackBar();
       }
@@ -93,7 +86,7 @@ class _TransferConfirmState extends State<TransferConfirm> {
       );
     }
 
-    accountStore.assetsState.setSubmitting(true);
+    store.assets.setSubmitting(true);
     state.showSnackBar(SnackBar(
       backgroundColor: Colors.white,
       content: ListTile(
@@ -105,10 +98,10 @@ class _TransferConfirmState extends State<TransferConfirm> {
       ),
     ));
 
-    var from = accountStore.currentAccount.address;
+    var from = store.account.currentAccount.address;
     var amount = double.parse(args['amount']) *
-        pow(10, settingsStore.networkState.tokenDecimals);
-    var res = await api.evalJavascript(
+        pow(10, store.settings.networkState.tokenDecimals);
+    var res = await store.api.evalJavascript(
         'account.transfer("$from", "${args['to']}", ${amount.toString()}, "${_passCtrl.text}")');
 
     if (res == null) {
@@ -121,7 +114,7 @@ class _TransferConfirmState extends State<TransferConfirm> {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).home;
-    String symbol = settingsStore.networkState.tokenSymbol;
+    String symbol = store.settings.networkState.tokenSymbol;
 
     final Map<String, String> args = ModalRoute.of(context).settings.arguments;
 
@@ -147,7 +140,7 @@ class _TransferConfirmState extends State<TransferConfirm> {
                     Padding(
                       padding: EdgeInsets.all(16),
                       child: Text(
-                        '${dic["submit.from"]}${accountStore.currentAccount.address}',
+                        '${dic["submit.from"]}${store.account.currentAccount.address}',
                       ),
                     ),
                     Padding(
@@ -187,7 +180,7 @@ class _TransferConfirmState extends State<TransferConfirm> {
                 children: <Widget>[
                   Expanded(
                     child: Container(
-                      color: accountStore.assetsState.submitting
+                      color: store.assets.submitting
                           ? Colors.black12
                           : Colors.orange,
                       child: FlatButton(
@@ -203,7 +196,7 @@ class _TransferConfirmState extends State<TransferConfirm> {
                   ),
                   Expanded(
                     child: Container(
-                      color: accountStore.assetsState.submitting
+                      color: store.assets.submitting
                           ? Colors.black12
                           : Colors.pink,
                       child: FlatButton(
@@ -212,7 +205,7 @@ class _TransferConfirmState extends State<TransferConfirm> {
                           dic['submit'],
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: accountStore.assetsState.submitting
+                        onPressed: store.assets.submitting
                             ? null
                             : () => onTransfer(context),
                       ),

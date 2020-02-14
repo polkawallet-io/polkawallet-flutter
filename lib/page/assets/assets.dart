@@ -1,25 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/service/api.dart';
-import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Assets extends StatelessWidget {
-  Assets(this.api, this.settingsStore, this.store);
+  Assets(this.store);
 
-  final Api api;
-  final SettingsStore settingsStore;
-  final AccountStore store;
+  final AppStore store;
 
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).assets;
-    String network = settingsStore.loading
+    String network = store.settings.loading
         ? dic['node.connecting']
-        : settingsStore.networkName ?? dic['node.failed'];
+        : store.settings.networkName ?? dic['node.failed'];
+
+    AccountData acc = store.account.currentAccount;
     return Container(
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -40,15 +39,15 @@ class Assets extends StatelessWidget {
         children: <Widget>[
           ListTile(
             leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
-            title: Text(store.currentAccount.name ?? ''),
+            title: Text(acc.name ?? ''),
             subtitle: Text(network),
           ),
           ListTile(
-            title: Text(Fmt.address(store.currentAccount.address) ?? ''),
+            title: Text(Fmt.address(acc.address) ?? ''),
             trailing: IconButton(
               icon: Image.asset('assets/images/assets/Assets_nav_code.png'),
               onPressed: () {
-                if (store.currentAccount.address != '') {
+                if (acc.address != '') {
                   Navigator.pushNamed(context, '/assets/receive');
                 }
               },
@@ -77,11 +76,11 @@ class Assets extends StatelessWidget {
                       fontSize: 20,
                       color: Colors.black54)),
             ),
-            settingsStore.loading
+            store.settings.loading
                 ? Padding(
                     padding: EdgeInsets.all(24),
                     child: CupertinoActivityIndicator())
-                : settingsStore.networkName == null
+                : store.settings.networkName == null
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -121,17 +120,17 @@ class Assets extends StatelessWidget {
                             child: Image.asset('assets/images/assets/KSC.png'),
                           ),
                           title: Text(
-                              settingsStore.networkState.tokenSymbol ?? ''),
-                          subtitle: Text(settingsStore.networkName ?? ''),
+                              store.settings.networkState.tokenSymbol ?? ''),
+                          subtitle: Text(store.settings.networkName ?? ''),
                           trailing: Text(
-                            Fmt.balance(store.assetsState.balance),
+                            Fmt.balance(store.assets.balance),
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
                                 color: Colors.black54),
                           ),
                           onTap: () {
-                            api.updateTxs();
+                            store.api.updateTxs();
                             Navigator.pushNamed(context, '/assets/detail');
                           },
                         ),

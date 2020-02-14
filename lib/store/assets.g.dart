@@ -8,7 +8,7 @@ part of 'assets.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
-mixin _$AssetsState on _AssetsState, Store {
+mixin _$AssetsStore on _AssetsStore, Store {
   Computed<ObservableList<TransferData>> _$txsViewComputed;
 
   @override
@@ -24,7 +24,7 @@ mixin _$AssetsState on _AssetsState, Store {
                   () => super.balanceHistory))
           .value;
 
-  final _$loadingAtom = Atom(name: '_AssetsState.loading');
+  final _$loadingAtom = Atom(name: '_AssetsStore.loading');
 
   @override
   bool get loading {
@@ -41,7 +41,7 @@ mixin _$AssetsState on _AssetsState, Store {
     }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
   }
 
-  final _$submittingAtom = Atom(name: '_AssetsState.submitting');
+  final _$submittingAtom = Atom(name: '_AssetsStore.submitting');
 
   @override
   bool get submitting {
@@ -58,24 +58,7 @@ mixin _$AssetsState on _AssetsState, Store {
     }, _$submittingAtom, name: '${_$submittingAtom.name}_set');
   }
 
-  final _$addressAtom = Atom(name: '_AssetsState.address');
-
-  @override
-  String get address {
-    _$addressAtom.context.enforceReadPolicy(_$addressAtom);
-    _$addressAtom.reportObserved();
-    return super.address;
-  }
-
-  @override
-  set address(String value) {
-    _$addressAtom.context.conditionallyRunInAction(() {
-      super.address = value;
-      _$addressAtom.reportChanged();
-    }, _$addressAtom, name: '${_$addressAtom.name}_set');
-  }
-
-  final _$balanceAtom = Atom(name: '_AssetsState.balance');
+  final _$balanceAtom = Atom(name: '_AssetsStore.balance');
 
   @override
   String get balance {
@@ -92,7 +75,7 @@ mixin _$AssetsState on _AssetsState, Store {
     }, _$balanceAtom, name: '${_$balanceAtom.name}_set');
   }
 
-  final _$txsAtom = Atom(name: '_AssetsState.txs');
+  final _$txsAtom = Atom(name: '_AssetsStore.txs');
 
   @override
   ObservableList<TransferData> get txs {
@@ -109,7 +92,7 @@ mixin _$AssetsState on _AssetsState, Store {
     }, _$txsAtom, name: '${_$txsAtom.name}_set');
   }
 
-  final _$txsFilterAtom = Atom(name: '_AssetsState.txsFilter');
+  final _$txsFilterAtom = Atom(name: '_AssetsStore.txsFilter');
 
   @override
   int get txsFilter {
@@ -126,7 +109,7 @@ mixin _$AssetsState on _AssetsState, Store {
     }, _$txsFilterAtom, name: '${_$txsFilterAtom.name}_set');
   }
 
-  final _$txDetailAtom = Atom(name: '_AssetsState.txDetail');
+  final _$txDetailAtom = Atom(name: '_AssetsStore.txDetail');
 
   @override
   TransferData get txDetail {
@@ -143,7 +126,7 @@ mixin _$AssetsState on _AssetsState, Store {
     }, _$txDetailAtom, name: '${_$txDetailAtom.name}_set');
   }
 
-  final _$blockMapAtom = Atom(name: '_AssetsState.blockMap');
+  final _$blockMapAtom = Atom(name: '_AssetsStore.blockMap');
 
   @override
   ObservableMap<int, BlockData> get blockMap {
@@ -174,65 +157,65 @@ mixin _$AssetsState on _AssetsState, Store {
     return _$getTxsAsyncAction.run(() => super.getTxs(address));
   }
 
-  final _$_AssetsStateActionController = ActionController(name: '_AssetsState');
+  final _$_AssetsStoreActionController = ActionController(name: '_AssetsStore');
 
   @override
   void setLoading(bool isLoading) {
-    final _$actionInfo = _$_AssetsStateActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
       return super.setLoading(isLoading);
     } finally {
-      _$_AssetsStateActionController.endAction(_$actionInfo);
+      _$_AssetsStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void setAccountBalance(String amt) {
-    final _$actionInfo = _$_AssetsStateActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
       return super.setAccountBalance(amt);
     } finally {
-      _$_AssetsStateActionController.endAction(_$actionInfo);
+      _$_AssetsStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void setTxsFilter(int filter) {
-    final _$actionInfo = _$_AssetsStateActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
       return super.setTxsFilter(filter);
     } finally {
-      _$_AssetsStateActionController.endAction(_$actionInfo);
+      _$_AssetsStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void setBlockMap(String data) {
-    final _$actionInfo = _$_AssetsStateActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
       return super.setBlockMap(data);
     } finally {
-      _$_AssetsStateActionController.endAction(_$actionInfo);
+      _$_AssetsStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void setTxDetail(TransferData tx) {
-    final _$actionInfo = _$_AssetsStateActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
       return super.setTxDetail(tx);
     } finally {
-      _$_AssetsStateActionController.endAction(_$actionInfo);
+      _$_AssetsStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void setSubmitting(bool isSubmitting) {
-    final _$actionInfo = _$_AssetsStateActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
       return super.setSubmitting(isSubmitting);
     } finally {
-      _$_AssetsStateActionController.endAction(_$actionInfo);
+      _$_AssetsStoreActionController.endAction(_$actionInfo);
     }
   }
 }

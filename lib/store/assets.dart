@@ -3,21 +3,25 @@ import 'dart:math';
 
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/service/polkascan.dart';
+import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 part 'assets.g.dart';
 
-class AssetsState extends _AssetsState with _$AssetsState {}
+class AssetsStore extends _AssetsStore with _$AssetsStore {
+  AssetsStore(AccountStore account) : super(account);
+}
 
-abstract class _AssetsState with Store {
+abstract class _AssetsStore with Store {
+  _AssetsStore(this.account);
+
+  AccountStore account;
+
   @observable
   bool loading = true;
 
   @observable
   bool submitting = false;
-
-  @observable
-  String address = '';
 
   @observable
   String balance = '0';
@@ -39,9 +43,9 @@ abstract class _AssetsState with Store {
     return ObservableList.of(txs.where((i) {
       switch (txsFilter) {
         case 1:
-          return i.destination == address;
+          return i.destination == account.currentAccount.address;
         case 2:
-          return i.sender == address;
+          return i.sender == account.currentAccount.address;
         default:
           return true;
       }
@@ -53,7 +57,7 @@ abstract class _AssetsState with Store {
     ObservableList res = ObservableList<Map<String, dynamic>>();
     int total = 0;
     txs.reversed.forEach((i) {
-      if (i.sender == address) {
+      if (i.sender == account.currentAccount.address) {
         total -= i.value;
       } else {
         total += i.value;

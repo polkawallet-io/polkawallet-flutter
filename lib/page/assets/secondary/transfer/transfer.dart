@@ -2,26 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
-import 'package:polka_wallet/store/account.dart';
-import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Transfer extends StatefulWidget {
-  const Transfer(this.accountStore, this.settingsStore);
+  const Transfer(this.store);
 
-  final AccountStore accountStore;
-  final SettingsStore settingsStore;
+  final AppStore store;
 
   @override
-  _TransferState createState() => _TransferState(accountStore, settingsStore);
+  _TransferState createState() => _TransferState(store);
 }
 
 class _TransferState extends State<Transfer> {
-  _TransferState(this.accountStore, this.settingsStore);
+  _TransferState(this.store);
 
-  final AccountStore accountStore;
-  final SettingsStore settingsStore;
+  final AppStore store;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -43,10 +40,10 @@ class _TransferState extends State<Transfer> {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).assets;
-    String symbol = settingsStore.networkState.tokenSymbol;
-    int decimals = settingsStore.networkState.tokenDecimals;
+    String symbol = store.settings.networkState.tokenSymbol;
+    int decimals = store.settings.networkState.tokenDecimals;
 
-    String balance = Fmt.balance(accountStore.assetsState.balance);
+    String balance = Fmt.balance(store.assets.balance);
 
     return Scaffold(
       appBar: AppBar(
@@ -127,14 +124,14 @@ class _TransferState extends State<Transfer> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                       child: Text(
-                          'TransferFee: ${settingsStore.transferFeeView} $symbol',
+                          'TransferFee: ${store.settings.transferFeeView} $symbol',
                           style:
                               TextStyle(fontSize: 16, color: Colors.black54)),
                     ),
                     Padding(
                       padding: EdgeInsets.all(16),
                       child: Text(
-                          'CreationFee: ${settingsStore.creationFeeView} $symbol',
+                          'CreationFee: ${store.settings.creationFeeView} $symbol',
                           style:
                               TextStyle(fontSize: 16, color: Colors.black54)),
                     ),

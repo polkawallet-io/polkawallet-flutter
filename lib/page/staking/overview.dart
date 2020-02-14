@@ -3,33 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:polka_wallet/page/staking/validator.dart';
-import 'package:polka_wallet/service/api.dart';
-import 'package:polka_wallet/store/settings.dart';
-import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class StakingOverview extends StatefulWidget {
-  StakingOverview(
-      this.api, this.store, this.settingsStore, this.reloadStakingOverview);
+  StakingOverview(this.store, this.reloadStakingOverview);
 
-  final Api api;
-  final StakingStore store;
-  final SettingsStore settingsStore;
+  final AppStore store;
   final Function reloadStakingOverview;
 
   @override
   _StakingOverviewState createState() =>
-      _StakingOverviewState(api, store, settingsStore, reloadStakingOverview);
+      _StakingOverviewState(store, reloadStakingOverview);
 }
 
 class _StakingOverviewState extends State<StakingOverview> {
-  _StakingOverviewState(
-      this.api, this.store, this.settingsStore, this.reloadStakingOverview);
+  _StakingOverviewState(this.store, this.reloadStakingOverview);
 
-  final Api api;
-  final StakingStore store;
-  final SettingsStore settingsStore;
+  final AppStore store;
   final Function reloadStakingOverview;
 
   int _tab = 0;
@@ -38,29 +30,30 @@ class _StakingOverviewState extends State<StakingOverview> {
   int _nextListLength = 10;
 
   Future<void> _getNextUpsInfo() async {
-    int len = store.nextUps.length;
+    int len = store.staking.nextUps.length;
     if (len > 0) {
-      var res = await Future.wait(store.nextUps
+      var res = await Future.wait(store.staking.nextUps
           .sublist(_nextListLength - 10, _nextListLength)
-          .map((address) =>
-              api.evalJavascript('api.derive.staking.query("$address")')));
+          .map((address) => store.api
+              .evalJavascript('api.derive.staking.query("$address")')));
       print(res.length);
-      store.setNextUpsInfo(res);
+      store.staking.setNextUpsInfo(res);
     }
   }
 
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).staking;
-    String symbol = settingsStore.networkState.tokenSymbol;
+    String symbol = store.settings.networkState.tokenSymbol;
+    var overview = store.staking.overview;
     String session;
-    if (store.overview['session'] != null) {
+    if (overview['session'] != null) {
       session =
-          '${store.overview['session']['sessionProgress']}/${store.overview['session']['sessionLength']}';
+          '${overview['session']['sessionProgress']}/${overview['session']['sessionLength']}';
     }
     String era;
-    if (store.overview['session'] != null) {
+    if (overview['session'] != null) {
       era =
-          '${store.overview['session']['eraProgress']}/${store.overview['session']['eraLength']}';
+          '${overview['session']['eraProgress']}/${overview['session']['eraLength']}';
     }
     return Container(
       margin: EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -86,11 +79,11 @@ class _StakingOverviewState extends State<StakingOverview> {
               InfoItem(
                 title: dic['validators'],
                 content:
-                    '${store.overview['validators'].length}/${store.overview['validatorCount']}',
+                    '${overview['validators'].length}/${overview['validatorCount']}',
               ),
               InfoItem(
                 title: dic['nominators'],
-                content: store.nominatorCount.toString(),
+                content: store.staking.nominatorCount.toString(),
               ),
             ],
           ),
@@ -113,12 +106,12 @@ class _StakingOverviewState extends State<StakingOverview> {
             children: <Widget>[
               InfoItem(
                 title: '${dic['total']} ($symbol)',
-                content: '${Fmt.token(store.staked, 18)} M',
+                content: '${Fmt.token(store.staking.staked, 18)} M',
               ),
               InfoItem(
                 title: dic['staked'],
                 content: NumberFormat('0.00%').format(
-                    store.staked / int.parse(store.overview['issuance'])),
+                    store.staking.staked / int.parse(overview['issuance'])),
               ),
             ],
           ),
@@ -129,15 +122,15 @@ class _StakingOverviewState extends State<StakingOverview> {
 
   List<Widget> _buildValidatorList() {
     if (_tab == 1) {
-      return store.nextUpsInfo.length > 0
-          ? store.nextUpsInfo
+      return store.staking.nextUpsInfo.length > 0
+          ? store.staking.nextUpsInfo
               .sublist(0, _nextListLength)
               .map((i) => Validator(null, i))
               .toList()
           : [CupertinoActivityIndicator()];
     }
-    return store.validatorsInfo.length > 0
-        ? store.validatorsInfo
+    return store.staking.validatorsInfo.length > 0
+        ? store.staking.validatorsInfo
             .sublist(0, _validatorListLength)
             .map((i) => Validator(null, i))
             .toList()
@@ -156,13 +149,14 @@ class _StakingOverviewState extends State<StakingOverview> {
           int end;
           if (_tab == 0) {
             end = _validatorListLength + 10;
-            _validatorListLength = end > store.validatorsInfo.length
-                ? store.validatorsInfo.length
+            _validatorListLength = end > store.staking.validatorsInfo.length
+                ? store.staking.validatorsInfo.length
                 : end;
           } else {
             end = _nextListLength + 10;
-            _nextListLength =
-                end > store.nextUps.length ? store.nextUps.length : end;
+            _nextListLength = end > store.staking.nextUps.length
+                ? store.staking.nextUps.length
+                : end;
           }
         });
       }
@@ -179,7 +173,7 @@ class _StakingOverviewState extends State<StakingOverview> {
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        bool hashData = store.overview['validators'] != null;
+        bool hashData = store.staking.overview['validators'] != null;
         if (hashData) {
           return RefreshIndicator(
             child: ListView(

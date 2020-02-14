@@ -1,28 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets.dart';
-import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class TransferDetail extends StatelessWidget {
-  TransferDetail(this.store, this.settingsStore);
+  TransferDetail(this.store);
 
-  final AccountStore store;
-  final SettingsStore settingsStore;
+  final AppStore store;
 
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).assets;
-    final String symbol = settingsStore.networkState.tokenSymbol;
-    final int decimals = settingsStore.networkState.tokenDecimals;
-    final TransferData tx = store.assetsState.txDetail;
-    final BlockData block = store.assetsState.blockMap[tx.block];
+    final String symbol = store.settings.networkState.tokenSymbol;
+    final int decimals = store.settings.networkState.tokenDecimals;
+    final TransferData tx = store.assets.txDetail;
+    final BlockData block = store.assets.blockMap[tx.block];
 
     final TextStyle labelStyle = Theme.of(context).textTheme.display4;
-    final String txType = tx.sender == store.currentAccount.address
+    final String txType = tx.sender == store.account.currentAccount.address
         ? dic['transfer']
         : dic['receive'];
     Widget buildLabel(String name) {

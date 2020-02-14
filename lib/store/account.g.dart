@@ -6,8 +6,8 @@ part of 'account.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Account _$AccountFromJson(Map<String, dynamic> json) {
-  return Account()
+AccountData _$AccountDataFromJson(Map<String, dynamic> json) {
+  return AccountData()
     ..name = json['name'] as String
     ..address = json['address'] as String
     ..encoded = json['encoded'] as String
@@ -15,7 +15,8 @@ Account _$AccountFromJson(Map<String, dynamic> json) {
     ..meta = json['meta'] as Map<String, dynamic>;
 }
 
-Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
+Map<String, dynamic> _$AccountDataToJson(AccountData instance) =>
+    <String, dynamic>{
       'name': instance.name,
       'address': instance.address,
       'encoded': instance.encoded,
@@ -30,12 +31,12 @@ Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AccountStore on _AccountStore, Store {
-  Computed<ObservableList<Account>> _$optionalAccountsComputed;
+  Computed<ObservableList<AccountData>> _$optionalAccountsComputed;
 
   @override
-  ObservableList<Account> get optionalAccounts =>
-      (_$optionalAccountsComputed ??=
-              Computed<ObservableList<Account>>(() => super.optionalAccounts))
+  ObservableList<AccountData> get optionalAccounts =>
+      (_$optionalAccountsComputed ??= Computed<ObservableList<AccountData>>(
+              () => super.optionalAccounts))
           .value;
 
   final _$newAccountAtom = Atom(name: '_AccountStore.newAccount');
@@ -58,48 +59,31 @@ mixin _$AccountStore on _AccountStore, Store {
   final _$currentAccountAtom = Atom(name: '_AccountStore.currentAccount');
 
   @override
-  Account get currentAccount {
+  AccountData get currentAccount {
     _$currentAccountAtom.context.enforceReadPolicy(_$currentAccountAtom);
     _$currentAccountAtom.reportObserved();
     return super.currentAccount;
   }
 
   @override
-  set currentAccount(Account value) {
+  set currentAccount(AccountData value) {
     _$currentAccountAtom.context.conditionallyRunInAction(() {
       super.currentAccount = value;
       _$currentAccountAtom.reportChanged();
     }, _$currentAccountAtom, name: '${_$currentAccountAtom.name}_set');
   }
 
-  final _$assetsStateAtom = Atom(name: '_AccountStore.assetsState');
-
-  @override
-  AssetsState get assetsState {
-    _$assetsStateAtom.context.enforceReadPolicy(_$assetsStateAtom);
-    _$assetsStateAtom.reportObserved();
-    return super.assetsState;
-  }
-
-  @override
-  set assetsState(AssetsState value) {
-    _$assetsStateAtom.context.conditionallyRunInAction(() {
-      super.assetsState = value;
-      _$assetsStateAtom.reportChanged();
-    }, _$assetsStateAtom, name: '${_$assetsStateAtom.name}_set');
-  }
-
   final _$accountListAtom = Atom(name: '_AccountStore.accountList');
 
   @override
-  ObservableList<Account> get accountList {
+  ObservableList<AccountData> get accountList {
     _$accountListAtom.context.enforceReadPolicy(_$accountListAtom);
     _$accountListAtom.reportObserved();
     return super.accountList;
   }
 
   @override
-  set accountList(ObservableList<Account> value) {
+  set accountList(ObservableList<AccountData> value) {
     _$accountListAtom.context.conditionallyRunInAction(() {
       super.accountList = value;
       _$accountListAtom.reportChanged();
@@ -123,7 +107,7 @@ mixin _$AccountStore on _AccountStore, Store {
   final _$removeAccountAsyncAction = AsyncAction('removeAccount');
 
   @override
-  Future<void> removeAccount(Account acc) {
+  Future<void> removeAccount(AccountData acc) {
     return _$removeAccountAsyncAction.run(() => super.removeAccount(acc));
   }
 
@@ -168,7 +152,7 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void setCurrentAccount(Account acc) {
+  void setCurrentAccount(AccountData acc) {
     final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
       return super.setCurrentAccount(acc);
@@ -241,8 +225,8 @@ mixin _$AccountCreate on _AccountCreate, Store {
   }
 }
 
-mixin _$Account on _Account, Store {
-  final _$nameAtom = Atom(name: '_Account.name');
+mixin _$AccountData on _AccountData, Store {
+  final _$nameAtom = Atom(name: '_AccountData.name');
 
   @override
   String get name {
@@ -259,7 +243,7 @@ mixin _$Account on _Account, Store {
     }, _$nameAtom, name: '${_$nameAtom.name}_set');
   }
 
-  final _$addressAtom = Atom(name: '_Account.address');
+  final _$addressAtom = Atom(name: '_AccountData.address');
 
   @override
   String get address {
@@ -276,7 +260,7 @@ mixin _$Account on _Account, Store {
     }, _$addressAtom, name: '${_$addressAtom.name}_set');
   }
 
-  final _$encodedAtom = Atom(name: '_Account.encoded');
+  final _$encodedAtom = Atom(name: '_AccountData.encoded');
 
   @override
   String get encoded {
@@ -293,7 +277,7 @@ mixin _$Account on _Account, Store {
     }, _$encodedAtom, name: '${_$encodedAtom.name}_set');
   }
 
-  final _$encodingAtom = Atom(name: '_Account.encoding');
+  final _$encodingAtom = Atom(name: '_AccountData.encoding');
 
   @override
   Map<String, dynamic> get encoding {
@@ -310,7 +294,7 @@ mixin _$Account on _Account, Store {
     }, _$encodingAtom, name: '${_$encodingAtom.name}_set');
   }
 
-  final _$metaAtom = Atom(name: '_Account.meta');
+  final _$metaAtom = Atom(name: '_AccountData.meta');
 
   @override
   Map<String, dynamic> get meta {

@@ -4,16 +4,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/store/settings.dart';
 
 class Api {
   Api(
       {@required this.context,
       @required this.accountStore,
+      @required this.assetsStore,
       @required this.settingsStore});
 
   final BuildContext context;
   final AccountStore accountStore;
+  final AssetsStore assetsStore;
   final SettingsStore settingsStore;
 
   Map<String, Function> _msgHandlers = {};
@@ -76,7 +79,7 @@ class Api {
 
   Future<void> fetchNetworkProps() async {
     String accounts = jsonEncode(
-        accountStore.accountList.map((i) => Account.toJson(i)).toList());
+        accountStore.accountList.map((i) => AccountData.toJson(i)).toList());
 
     List<dynamic> info = await Future.wait([
       evalJavascript('settings.getNetworkConst()'),
@@ -118,7 +121,7 @@ class Api {
     String address = accountStore.currentAccount.address;
     if (address.length > 0) {
       var res = await evalJavascript('account.getBalance("$address")');
-      accountStore.assetsState.setAccountBalance(res);
+      assetsStore.setAccountBalance(res);
     }
   }
 
@@ -140,30 +143,30 @@ class Api {
   }
 
   Future<void> updateTxs() async {
-    accountStore.assetsState.setLoading(true);
+    assetsStore.setLoading(true);
     String data =
         await PolkaScanApi.fetchTxs(accountStore.currentAccount.address);
     List ls = jsonDecode(data)['data'];
 
-    await accountStore.assetsState.setTxs(ls);
+    await assetsStore.setTxs(ls);
 
     await updateBlocks();
-    accountStore.assetsState.setLoading(false);
+    assetsStore.setLoading(false);
 
     fetchBalance();
   }
 
   Future<void> updateBlocks() async {
     Map<int, bool> blocksNeedUpdate = Map<int, bool>();
-    accountStore.assetsState.txs.forEach((i) {
-      if (accountStore.assetsState.blockMap[i.block] == null) {
+    assetsStore.txs.forEach((i) {
+      if (assetsStore.blockMap[i.block] == null) {
         blocksNeedUpdate[i.block] = true;
       }
     });
     String blocks = blocksNeedUpdate.keys.join(',');
     var data = await evalJavascript('account.getBlockTime([$blocks])');
 
-    accountStore.assetsState.setBlockMap(data);
+    assetsStore.setBlockMap(data);
   }
 
   Future<Map<String, dynamic>> checkAccountPassword(String pass) async {

@@ -7,7 +7,6 @@ import 'package:polka_wallet/store/assets.dart';
 
 part 'account.g.dart';
 
-// TODO: refactor AccountStore
 class AccountStore extends _AccountStore with _$AccountStore {}
 
 abstract class _AccountStore with Store {
@@ -15,16 +14,13 @@ abstract class _AccountStore with Store {
   AccountCreate newAccount = AccountCreate();
 
   @observable
-  Account currentAccount = Account();
+  AccountData currentAccount = AccountData();
 
   @observable
-  AssetsState assetsState = AssetsState();
-
-  @observable
-  ObservableList<Account> accountList = ObservableList<Account>();
+  ObservableList<AccountData> accountList = ObservableList<AccountData>();
 
   @computed
-  ObservableList<Account> get optionalAccounts {
+  ObservableList<AccountData> get optionalAccounts {
     return ObservableList.of(
         accountList.where((i) => i.address != currentAccount.address));
   }
@@ -46,16 +42,15 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  void setCurrentAccount(Account acc) {
+  void setCurrentAccount(AccountData acc) {
     currentAccount = acc;
-    assetsState.address = acc.address;
 
     LocalStorage.setCurrentAccount(acc.address);
   }
 
   @action
   void updateAccountName(String name) {
-    Map<String, dynamic> acc = Account.toJson(currentAccount);
+    Map<String, dynamic> acc = AccountData.toJson(currentAccount);
     acc['name'] = name;
 
     updateAccount(acc);
@@ -63,7 +58,7 @@ abstract class _AccountStore with Store {
 
   @action
   Future<void> updateAccount(Map<String, dynamic> acc) async {
-    Account accNew = Account.fromJson(acc);
+    AccountData accNew = AccountData.fromJson(acc);
     await LocalStorage.removeAccount(accNew.address);
     await LocalStorage.addAccount(acc);
 
@@ -79,7 +74,7 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  Future<void> removeAccount(Account acc) async {
+  Future<void> removeAccount(AccountData acc) async {
     LocalStorage.removeAccount(acc.address);
 
     List<Map<String, dynamic>> accounts = await LocalStorage.getAccountList();
@@ -95,14 +90,14 @@ abstract class _AccountStore with Store {
   @action
   Future<void> loadAccount() async {
     List<Map<String, dynamic>> accList = await LocalStorage.getAccountList();
-    accountList = ObservableList.of(accList.map((i) => Account.fromJson(i)));
+    accountList =
+        ObservableList.of(accList.map((i) => AccountData.fromJson(i)));
 
     if (accountList.length > 0) {
       String address = await LocalStorage.getCurrentAccount();
       Map<String, dynamic> acc =
           accList.firstWhere((i) => i['address'] == address);
-      currentAccount = Account.fromJson(acc);
-      assetsState.address = currentAccount.address;
+      currentAccount = AccountData.fromJson(acc);
     }
   }
 }
@@ -121,12 +116,14 @@ abstract class _AccountCreate with Store {
 }
 
 @JsonSerializable()
-class Account extends _Account with _$Account {
-  static Account fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
-  static Map<String, dynamic> toJson(Account acc) => _$AccountToJson(acc);
+class AccountData extends _AccountData with _$AccountData {
+  static AccountData fromJson(Map<String, dynamic> json) =>
+      _$AccountDataFromJson(json);
+  static Map<String, dynamic> toJson(AccountData acc) =>
+      _$AccountDataToJson(acc);
 }
 
-abstract class _Account with Store {
+abstract class _AccountData with Store {
   @observable
   String name = '';
 

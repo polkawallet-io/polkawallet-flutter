@@ -1,25 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/service/api.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class BackupAccount extends StatefulWidget {
-  const BackupAccount(this.api, this.accountStore);
+  const BackupAccount(this.store);
 
-  final Api api;
-  final AccountStore accountStore;
+  final AppStore store;
 
   @override
-  _BackupAccountState createState() => _BackupAccountState(api, accountStore);
+  _BackupAccountState createState() => _BackupAccountState(store);
 }
 
 class _BackupAccountState extends State<BackupAccount> {
-  _BackupAccountState(this.api, this.accountStore);
+  _BackupAccountState(this.store);
 
-  final Api api;
-  final AccountStore accountStore;
+  final AppStore store;
 
   int _step = 0;
 
@@ -28,7 +25,7 @@ class _BackupAccountState extends State<BackupAccount> {
 
   @override
   void initState() {
-    api.generateAccount();
+    store.api.generateAccount();
     super.initState();
   }
 
@@ -66,7 +63,7 @@ class _BackupAccountState extends State<BackupAccount> {
                                   BorderRadius.all(Radius.circular(4))),
                           padding: EdgeInsets.all(16),
                           child: Text(
-                            accountStore.newAccount.key ?? '',
+                            store.account.newAccount.key ?? '',
                             style: Theme.of(context).textTheme.display3,
                           ),
                         ),
@@ -88,7 +85,7 @@ class _BackupAccountState extends State<BackupAccount> {
                                 _step = 1;
                                 _wordsSelected = <String>[];
                                 _wordsLeft =
-                                    accountStore.newAccount.key.split(' ');
+                                    store.account.newAccount.key.split(' ');
                               });
                             },
                           ),
@@ -147,7 +144,7 @@ class _BackupAccountState extends State<BackupAccount> {
                       ),
                       onPressed: () {
                         setState(() {
-                          _wordsLeft = accountStore.newAccount.key.split(' ');
+                          _wordsLeft = store.account.newAccount.key.split(' ');
                           _wordsSelected = [];
                         });
                       },
@@ -183,9 +180,9 @@ class _BackupAccountState extends State<BackupAccount> {
                     child: Text(I18n.of(context).home['next'],
                         style: Theme.of(context).textTheme.button),
                     onPressed:
-                        _wordsSelected.join(' ') == accountStore.newAccount.key
+                        _wordsSelected.join(' ') == store.account.newAccount.key
                             ? () async {
-                                api.importAccount();
+                                store.api.importAccount();
                                 Navigator.popUntil(
                                     context, ModalRoute.withName('/'));
                               }

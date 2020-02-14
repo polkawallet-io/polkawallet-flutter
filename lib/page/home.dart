@@ -4,34 +4,26 @@ import 'package:polka_wallet/page/assets/drawerMenu.dart';
 import 'package:polka_wallet/page/democracy/democracy.dart';
 import 'package:polka_wallet/page/profile/profile.dart';
 import 'package:polka_wallet/page/staking/staking.dart';
-import 'package:polka_wallet/service/api.dart';
-import 'package:polka_wallet/store/account.dart';
-import 'package:polka_wallet/store/settings.dart';
-import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/store/app.dart';
 
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Home extends StatefulWidget {
-  Home(this.api, this.settingStore, this.accountStore, this.stakingStore);
+  Home(this.store);
 
-  final Api api;
-  final SettingsStore settingStore;
-  final AccountStore accountStore;
-  final StakingStore stakingStore;
+  final AppStore store;
 
   @override
-  _HomePageState createState() =>
-      new _HomePageState(api, settingStore, accountStore, stakingStore);
+  _HomePageState createState() => new _HomePageState(store);
 }
 
 class _HomePageState extends State<Home> {
-  _HomePageState(
-      this.api, this.settingsStore, this.accountStore, this.stakingStore);
+  _HomePageState(this.store);
 
-  final Api api;
-  final SettingsStore settingsStore;
-  final AccountStore accountStore;
-  final StakingStore stakingStore;
+//  final Api api;
+//  final SettingsStore settingsStore;
+//  final AccountStore accountStore;
+  final AppStore store;
 
   final List<String> _tabList = [
     'Assets',
@@ -63,25 +55,24 @@ class _HomePageState extends State<Home> {
   Widget _getPage(i) {
     switch (i) {
       case 0:
-        return Assets(api, settingsStore, accountStore);
+        return Assets(store);
         break;
       case 1:
-        return Staking(api, stakingStore, settingsStore);
+        return Staking(store);
         break;
       case 2:
         return Democracy();
         break;
       default:
-        return Profile(accountStore);
-        break;
+        return Profile(store.account);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    if (!settingsStore.loading) {
-      api.fetchBalance();
+    if (!store.settings.loading) {
+      store.api.fetchBalance();
     }
   }
 
@@ -116,7 +107,7 @@ class _HomePageState extends State<Home> {
               elevation: 0.0,
             ),
             endDrawer: Drawer(
-              child: DrawerMenu(api, accountStore),
+              child: DrawerMenu(store),
             ),
             bottomNavigationBar: BottomNavigationBar(
                 currentIndex: _curIndex,
@@ -182,7 +173,7 @@ class _HomePageState extends State<Home> {
           iconSize: 22.0,
           onTap: (index) {
             if (index == 0) {
-              api.fetchBalance();
+              store.api.fetchBalance();
             }
             setState(() {
               _curIndex = index;
