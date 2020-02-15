@@ -20,6 +20,7 @@ class _StakingActions extends State<StakingActions>
   final AppStore store;
 
   TabController _tabController;
+  int _tab = 0;
 
   int _txsPage = 1;
   bool _txsLoading = true;
@@ -62,12 +63,16 @@ class _StakingActions extends State<StakingActions>
           controller: _tabController,
           tabs: _myTabs,
           onTap: (i) {
-            store.assets.setTxsFilter(i);
+            setState(() {
+              _tab = i;
+            });
           },
         ),
       ),
     ];
-    list.addAll(_buildTxList());
+    if (_tab == 0) {
+      list.addAll(_buildList());
+    }
     if (_txsLoading) {
       list.add(Padding(
         padding: EdgeInsets.all(16),
@@ -77,7 +82,7 @@ class _StakingActions extends State<StakingActions>
     return list;
   }
 
-  List<Widget> _buildTxList() {
+  List<Widget> _buildList() {
     return store.staking.txs.map((i) {
       String call = i['attributes']['call_id'];
       String value = '';
@@ -87,6 +92,7 @@ class _StakingActions extends State<StakingActions>
           value = Fmt.token(i['detail']['params'][1]['value']);
           break;
         case 'bond_extra':
+        case 'unbond':
           value = Fmt.token(i['detail']['params'][0]['value']);
           break;
       }
@@ -124,6 +130,9 @@ class _StakingActions extends State<StakingActions>
                     )
             ],
           ),
+          onTap: () {
+            Navigator.of(context).pushNamed('/staking/tx', arguments: i);
+          },
         ),
       );
     }).toList();

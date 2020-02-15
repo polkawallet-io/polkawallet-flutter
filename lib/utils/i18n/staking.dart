@@ -2,6 +2,7 @@ const Map<String, String> enStaking = {
   'overview': 'Overview',
   'actions': 'Account Actions',
   'validators': 'Validators',
+  'validator': 'Validator',
   'waitting': 'Waitting',
   'nominators': 'Nominators',
   'session': 'Session',
@@ -16,12 +17,15 @@ const Map<String, String> enStaking = {
   'balance': 'Balance',
   'available': 'Available',
   'bonded': 'Bonded',
+  'action': '操作',
+  'value': '金额',
 };
 
 const Map<String, String> zhStaking = {
   'overview': '概览',
   'actions': '账户操作',
   'validators': '验证人',
+  'validator': '验证人',
   'waitting': '候选验证人',
   'nominators': '见证人',
   'session': '时期',
@@ -36,4 +40,6 @@ const Map<String, String> zhStaking = {
   'balance': '余额',
   'available': '可用',
   'bonded': '绑定',
+  'action': '操作',
+  'value': '金额',
 };

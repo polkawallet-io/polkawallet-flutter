@@ -16,6 +16,7 @@ import 'package:polka_wallet/page/profile/secondary/contacts/contactList.dart';
 import 'package:polka_wallet/page/profile/secondary/contacts/contacts.dart';
 import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
 import 'package:polka_wallet/page/profile/secondary/settings/settings.dart';
+import 'package:polka_wallet/page/staking/secondary/detail.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
@@ -107,6 +108,7 @@ class _WalletAppState extends State<WalletApp> {
         '/assets/transfer/confirm': (_) => TransferConfirm(_appStore),
         '/assets/receive': (_) => Receive(_appStore.account),
         '/assets/tx': (_) => TransferDetail(_appStore),
+        '/staking/tx': (_) => StakingDetail(_appStore),
         '/profile/account': (_) =>
             AccountManage(_appStore.api, _appStore.account),
         '/profile/contacts': (_) => Contacts(_appStore.settings),
