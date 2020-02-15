@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -27,10 +28,7 @@ class _StakingActions extends State<StakingActions>
     setState(() {
       _txsLoading = true;
     });
-    var ls = await store.api.updateStaking(_txsPage);
-    print('stakings fetched');
-    print(ls.length);
-
+    await store.api.updateStaking(_txsPage);
     setState(() {
       _txsLoading = false;
     });
@@ -69,6 +67,7 @@ class _StakingActions extends State<StakingActions>
         ),
       ),
     ];
+    list.addAll(_buildTxList());
     if (_txsLoading) {
       list.add(Padding(
         padding: EdgeInsets.all(16),
@@ -78,11 +77,64 @@ class _StakingActions extends State<StakingActions>
     return list;
   }
 
+  List<Widget> _buildTxList() {
+    return store.staking.txs.map((i) {
+      String call = i['attributes']['call_id'];
+      String value = '';
+      bool success = i['detail']['success'] > 0;
+      switch (call) {
+        case 'bond':
+          value = Fmt.token(i['detail']['params'][1]['value']);
+          break;
+        case 'bond_extra':
+          value = Fmt.token(i['detail']['params'][0]['value']);
+          break;
+      }
+      BlockData block = store.assets.blockMap[i['attributes']['block_id']];
+      String time = 'time';
+      if (block != null) {
+        time = block.time.toString().split('.')[0];
+      }
+      return Container(
+        color: Theme.of(context).cardColor,
+        child: ListTile(
+          leading: Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: success
+                ? Image.asset('assets/images/staking/ok.png')
+                : Image.asset('assets/images/staking/error.png'),
+          ),
+          title: Text(call),
+          subtitle: Text(time),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                value,
+                style: Theme.of(context).textTheme.display4,
+              ),
+              success
+                  ? Text(
+                      'Success',
+                      style: TextStyle(color: Colors.green),
+                    )
+                  : Text(
+                      'Failed',
+                      style: TextStyle(color: Colors.pink),
+                    )
+            ],
+          ),
+        ),
+      );
+    }).toList();
+  }
+
   Widget _buildActionCard() {
+    var dic = I18n.of(context).staking;
     String symbol = store.settings.networkState.tokenSymbol;
-    String balance = store.assets.balance.split('T')[0];
-    String bonded = Fmt.token(store.staking.ledger['ledger']['active'], 12);
-    double avaliable = double.parse(balance) - double.parse(bonded);
+    var balance = Fmt.balanceNum(store.assets.balance);
+    var bonded = store.staking.ledger['ledger']['active'];
+    double available = balance - bonded;
     return Container(
       margin: EdgeInsets.fromLTRB(16, 8, 16, 16),
       padding: EdgeInsets.all(24),
@@ -117,7 +169,7 @@ class _StakingActions extends State<StakingActions>
                     child: Image.asset('assets/images/assets/Assets_nav_0.png'),
                   ),
                   Text(
-                    'Controller',
+                    dic['controller'],
                     style: Theme.of(context).textTheme.display4,
                   )
                 ],
@@ -130,13 +182,13 @@ class _StakingActions extends State<StakingActions>
                     child: Image.asset('assets/images/assets/Assets_nav_0.png'),
                   ),
                   Text(
-                    'stash',
+                    dic['stash'],
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.black54),
                   ),
                   Text(
                     Fmt.address(store.staking.ledger['ledger']['stash'],
-                        len: 4),
+                        pad: 4),
                     style: TextStyle(fontSize: 12, color: Colors.black54),
                   ),
                 ],
@@ -160,10 +212,10 @@ class _StakingActions extends State<StakingActions>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  Text('balance:'),
-                  Text('avaliable:'),
+                  Text(dic['balance']),
+                  Text(dic['available']),
                   Text(
-                    'bonded:',
+                    dic['bonded'],
                     style: TextStyle(color: Colors.green),
                   )
                 ],
@@ -174,13 +226,40 @@ class _StakingActions extends State<StakingActions>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text('$balance $symbol'),
-                  Text('${avaliable.toString()} $symbol'),
+                  Text('${Fmt.balance(balance.toString())} $symbol'),
+                  Text('${Fmt.balance(available.toString())} $symbol'),
                   Text(
-                    '$bonded $symbol',
+                    '${Fmt.balance(bonded.toString())} $symbol',
                     style: TextStyle(color: Colors.green),
                   )
                 ],
+              )
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: RaisedButton(
+                  color: Colors.green,
+                  child: Text(
+                    'stake',
+                    style: Theme.of(context).textTheme.button,
+                  ),
+                  onPressed: () => print('stake'),
+                ),
+              ),
+              Container(
+                width: 16,
+              ),
+              Expanded(
+                child: RaisedButton(
+                  color: Colors.pink,
+                  child: Text(
+                    'stake2',
+                    style: Theme.of(context).textTheme.button,
+                  ),
+                  onPressed: () => print('stake2'),
+                ),
               )
             ],
           )

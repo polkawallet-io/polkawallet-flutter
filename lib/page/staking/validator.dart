@@ -18,8 +18,8 @@ class Validator extends StatelessWidget {
       color: Colors.white,
       child: ListTile(
         leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
-        title: Text(Fmt.address(validator.accountId)),
-        subtitle: Text('${dic['staked']}: ${Fmt.token(validator.total, 12)}'),
+        title: Text(Fmt.address(validator.accountId, pad: 6)),
+        subtitle: Text('${dic['staked']}: ${Fmt.token(validator.total)}'),
         trailing: Container(
           width: 120,
           child: Column(

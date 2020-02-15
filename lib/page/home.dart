@@ -20,9 +20,6 @@ class Home extends StatefulWidget {
 class _HomePageState extends State<Home> {
   _HomePageState(this.store);
 
-//  final Api api;
-//  final SettingsStore settingsStore;
-//  final AccountStore accountStore;
   final AppStore store;
 
   final List<String> _tabList = [

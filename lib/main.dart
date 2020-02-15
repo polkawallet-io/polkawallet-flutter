@@ -90,6 +90,7 @@ class _WalletAppState extends State<WalletApp> {
       ],
       initialRoute: '/',
       theme: appTheme,
+//      darkTheme: darkTheme,
       routes: {
         '/': (_) => Observer(
             builder: (_) => _appStore.account.accountList.length > 0

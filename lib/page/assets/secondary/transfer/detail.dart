@@ -81,12 +81,12 @@ class TransferDetail extends StatelessWidget {
           ListTile(
             leading: buildLabel(dic['value']),
             title: Text(
-                '${Fmt.token(tx.value, decimals, fullLength: true)} $symbol'),
+                '${Fmt.token(tx.value, decimals: decimals, fullLength: true)} $symbol'),
           ),
           ListTile(
             leading: buildLabel(dic['fee']),
             title: Text(
-                '${Fmt.token(tx.fee, decimals, fullLength: true)} $symbol'),
+                '${Fmt.token(tx.fee, decimals: decimals, fullLength: true)} $symbol'),
           ),
           ListTile(
             leading: buildLabel(dic['from']),

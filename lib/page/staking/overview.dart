@@ -106,7 +106,7 @@ class _StakingOverviewState extends State<StakingOverview> {
             children: <Widget>[
               InfoItem(
                 title: '${dic['total']} ($symbol)',
-                content: '${Fmt.token(store.staking.staked, 18)} M',
+                content: '${Fmt.token(store.staking.staked, decimals: 18)} M',
               ),
               InfoItem(
                 title: dic['staked'],

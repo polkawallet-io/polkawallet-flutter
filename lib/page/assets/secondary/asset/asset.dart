@@ -112,7 +112,7 @@ class _AssetPageState extends State<AssetPage>
                 children: <Widget>[
                   Expanded(
                       child: Text(
-                    '${Fmt.token(i.value, decimals)} $symbol',
+                    '${Fmt.token(i.value, decimals: decimals)} $symbol',
                     style: Theme.of(context).textTheme.display4,
                   )),
                   i.sender == store.account.currentAccount.address

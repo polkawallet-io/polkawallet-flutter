@@ -165,10 +165,20 @@ class Api {
     if (page == 1) {
       stakingStore.clearTxs();
     }
+//    String data = await PolkaScanApi.fetchStaking(
+//        accountStore.currentAccount.address, page);
     String data = await PolkaScanApi.fetchStaking(
-        accountStore.currentAccount.address, page);
+        'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n', page);
     var ls = jsonDecode(data)['data'];
-
+    var detailReqs = List<Future<dynamic>>();
+    ls.forEach((i) => detailReqs
+        .add(PolkaScanApi.fetchTx(i['attributes']['extrinsic_hash'])));
+    var details = await Future.wait(detailReqs);
+    var index = 0;
+    ls.forEach((i) {
+      i['detail'] = jsonDecode(details[index])['data']['attributes'];
+      index++;
+    });
     await stakingStore.addTxs(List<Map<String, dynamic>>.from(ls));
 
     Map<int, bool> blocksNeedUpdate = Map<int, bool>();

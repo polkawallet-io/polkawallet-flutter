@@ -11,6 +11,11 @@ const Map<String, String> enStaking = {
   'commission': 'Commission',
   'txs': 'Staking Records',
   'nominating': 'Nominating',
+  'controller': 'Controller',
+  'stash': 'Stash',
+  'balance': 'Balance',
+  'available': 'Available',
+  'bonded': 'Bonded',
 };
 
 const Map<String, String> zhStaking = {
@@ -26,4 +31,9 @@ const Map<String, String> zhStaking = {
   'commission': '佣金',
   'txs': '质押记录',
   'nominating': '参与见证',
+  'controller': '控制账户',
+  'stash': '储值账户',
+  'balance': '余额',
+  'available': '可用',
+  'bonded': '绑定',
 };
