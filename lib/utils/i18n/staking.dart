@@ -9,6 +9,9 @@ const Map<String, String> enStaking = {
   'era': 'Era',
   'staked': 'Staked',
   'total': 'Total Staked',
+  'stake': 'Staked',
+  'stake.own': 'Own',
+  'stake.other': 'Other',
   'commission': 'Commission',
   'txs': 'Staking Records',
   'nominating': 'Nominating',
@@ -17,8 +20,8 @@ const Map<String, String> enStaking = {
   'balance': 'Balance',
   'available': 'Available',
   'bonded': 'Bonded',
-  'action': '操作',
-  'value': '金额',
+  'action': 'Action',
+  'value': 'Value',
 };
 
 const Map<String, String> zhStaking = {
@@ -32,6 +35,9 @@ const Map<String, String> zhStaking = {
   'era': '时代',
   'staked': '质押率',
   'total': '总质押',
+  'stake': '质押',
+  'stake.own': '节点',
+  'stake.other': '他人',
   'commission': '佣金',
   'txs': '质押记录',
   'nominating': '参与见证',

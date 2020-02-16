@@ -18,7 +18,7 @@ abstract class _AppStore with Store {
   AssetsStore assets;
 
   @observable
-  StakingStore staking = StakingStore();
+  StakingStore staking;
 
   @observable
   SettingsStore settings = SettingsStore();
@@ -31,6 +31,7 @@ abstract class _AppStore with Store {
     settings.init();
     account.loadAccount();
     assets = AssetsStore(account);
+    staking = StakingStore(account);
 
     api = Api(
         context: context,

@@ -2,12 +2,19 @@ import 'dart:math';
 
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
+import 'package:polka_wallet/store/account.dart';
 
 part 'staking.g.dart';
 
-class StakingStore extends _StakingStore with _$StakingStore {}
+class StakingStore extends _StakingStore with _$StakingStore {
+  StakingStore(AccountStore store) : super(store);
+}
 
 abstract class _StakingStore with Store {
+  _StakingStore(this.account);
+
+  final AccountStore account;
+
   @observable
   ObservableMap<String, dynamic> overview = ObservableMap<String, dynamic>();
 
@@ -44,6 +51,17 @@ abstract class _StakingStore with Store {
       return ok;
     }));
     return ObservableList.of(ls);
+  }
+
+  @computed
+  ObservableList<ValidatorData> get nominatingList {
+    return ObservableList.of(validatorsInfo.where((i) {
+//      String address = account.currentAccount.address;
+      String address = 'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n';
+      return i.nominators
+              .indexWhere((nominator) => nominator['who'] == address) >=
+          0;
+    }));
   }
 
   @action

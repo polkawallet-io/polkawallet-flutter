@@ -1,9 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -22,31 +20,12 @@ class TxDetail extends StatelessWidget {
   final BlockData block;
   final List<DetailInfoItem> info;
 
-  void _onCopy(BuildContext context, String text) {
-    Clipboard.setData(ClipboardData(text: text));
-
-    showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        final Map<String, String> dic = I18n.of(context).assets;
-        return CupertinoAlertDialog(
-          title: Container(),
-          content: Text('${dic['copy']} ${dic['success']}'),
-        );
-      },
-    );
-
-    Timer(Duration(seconds: 2), () {
-      Navigator.of(context).pop();
-    });
-  }
-
   List<Widget> _buildListView(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).assets;
     Widget buildLabel(String name) {
       return Container(
           padding: EdgeInsets.only(left: 8),
-          width: 88,
+          width: 80,
           child: Text(name, style: Theme.of(context).textTheme.display4));
     }
 
@@ -82,7 +61,7 @@ class TxDetail extends StatelessWidget {
         trailing: i.address != null
             ? IconButton(
                 icon: Image.asset('assets/images/public/copy.png'),
-                onPressed: () => _onCopy(context, i.address),
+                onPressed: () => UI.copyAndNotify(context, i.address),
               )
             : null,
       ));

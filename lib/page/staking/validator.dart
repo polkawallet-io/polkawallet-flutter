@@ -27,6 +27,8 @@ class Validator extends StatelessWidget {
             children: <Widget>[Text('commission'), Text(validator.commission)],
           ),
         ),
+        onTap: () => Navigator.of(context)
+            .pushNamed('/staking/validator', arguments: validator),
       ),
     );
   }

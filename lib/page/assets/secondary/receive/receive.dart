@@ -1,9 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -11,23 +9,6 @@ class Receive extends StatelessWidget {
   Receive(this.store);
 
   final AccountStore store;
-
-  void showDialog(BuildContext context) {
-    showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        final Map<String, String> dic = I18n.of(context).assets;
-        return CupertinoAlertDialog(
-          title: Container(),
-          content: Text('${dic['copy']} ${dic['success']}'),
-        );
-      },
-    );
-
-    Timer(Duration(seconds: 2), () {
-      Navigator.of(context).pop();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,12 +74,8 @@ class Receive extends StatelessWidget {
                           I18n.of(context).assets['copy'],
                           style: Theme.of(context).textTheme.button,
                         ),
-                        onPressed: () {
-                          Clipboard.setData(
-                            ClipboardData(text: store.currentAccount.address),
-                          );
-                          showDialog(context);
-                        },
+                        onPressed: () => UI.copyAndNotify(
+                            context, store.currentAccount.address),
                       ),
                     )
                   ],

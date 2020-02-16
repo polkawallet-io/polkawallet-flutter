@@ -23,6 +23,7 @@ class _StakingActions extends State<StakingActions>
   int _tab = 0;
 
   int _txsPage = 1;
+  bool _ledgerLoading = true;
   bool _txsLoading = true;
 
   Future<void> _updateStakingTxs() async {
@@ -39,10 +40,16 @@ class _StakingActions extends State<StakingActions>
     if (store.settings.loading) {
       return;
     }
+    setState(() {
+      _ledgerLoading = true;
+    });
     String acc = '["${store.account.currentAccount.address}"]';
     var res =
         await store.api.evalJavascript('api.query.staking.ledger.multi($acc)');
     store.staking.setLedger({"ledger": res[0]});
+    setState(() {
+      _ledgerLoading = false;
+    });
   }
 
   List<Widget> _buildListView() {
@@ -71,7 +78,10 @@ class _StakingActions extends State<StakingActions>
       ),
     ];
     if (_tab == 0) {
-      list.addAll(_buildList());
+      list.addAll(_buildTxList());
+    }
+    if (_tab == 1) {
+      list.addAll(_buildNominatingList());
     }
     if (_txsLoading) {
       list.add(Padding(
@@ -82,7 +92,7 @@ class _StakingActions extends State<StakingActions>
     return list;
   }
 
-  List<Widget> _buildList() {
+  List<Widget> _buildTxList() {
     return store.staking.txs.map((i) {
       String call = i['attributes']['call_id'];
       String value = '';
@@ -138,12 +148,68 @@ class _StakingActions extends State<StakingActions>
     }).toList();
   }
 
+  List<Widget> _buildNominatingList() {
+    String symbol = store.settings.networkState.tokenSymbol;
+//    String address = store.account.currentAccount.address;
+    String address = 'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n';
+    return store.staking.nominatingList.map((validator) {
+      var me = validator.nominators.firstWhere((i) => i['who'] == address);
+      return Container(
+        color: Theme.of(context).cardColor,
+        child: ListTile(
+          leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
+          title: Text('${Fmt.token(me['value'])} $symbol'),
+          subtitle: Text(Fmt.address(validator.accountId)),
+          trailing: Container(
+            width: 120,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text('commission'),
+                Text(validator.commission)
+              ],
+            ),
+          ),
+          onTap: () => Navigator.of(context)
+              .pushNamed('/staking/validator', arguments: validator),
+        ),
+      );
+    }).toList();
+  }
+
   Widget _buildActionCard() {
     var dic = I18n.of(context).staking;
     String symbol = store.settings.networkState.tokenSymbol;
-    var balance = Fmt.balanceNum(store.assets.balance);
-    var bonded = store.staking.ledger['ledger']['active'];
-    double available = balance - bonded;
+    bool hasData = store.staking.ledger['ledger'] != null;
+    double stashWidgetWidth = MediaQuery.of(context).size.width / 4;
+    Widget stashAcc = Container(width: stashWidgetWidth);
+    if (hasData) {
+      stashAcc = Container(
+        width: stashWidgetWidth,
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(2),
+              width: 32,
+              child: Image.asset('assets/images/assets/Assets_nav_0.png'),
+            ),
+            Text(
+              dic['stash'],
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.black54),
+            ),
+            Text(
+              Fmt.address(store.staking.ledger['ledger']['stash'], pad: 4),
+              style: TextStyle(fontSize: 12, color: Colors.black54),
+            ),
+          ],
+        ),
+      );
+    }
+
+    int balance = Fmt.balanceInt(store.assets.balance);
+    int bonded = hasData ? store.staking.ledger['ledger']['active'] : 0;
+    int available = balance - bonded;
     return Container(
       margin: EdgeInsets.fromLTRB(16, 8, 16, 16),
       padding: EdgeInsets.all(24),
@@ -167,8 +233,9 @@ class _StakingActions extends State<StakingActions>
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(left: 24, top: 8, right: 24),
+              Container(
+                width: stashWidgetWidth,
+                height: 36,
                 child: Image.asset('assets/images/staking/set.png'),
               ),
               Column(
@@ -183,25 +250,7 @@ class _StakingActions extends State<StakingActions>
                   )
                 ],
               ),
-              Column(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.all(2),
-                    width: 32,
-                    child: Image.asset('assets/images/assets/Assets_nav_0.png'),
-                  ),
-                  Text(
-                    dic['stash'],
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black54),
-                  ),
-                  Text(
-                    Fmt.address(store.staking.ledger['ledger']['stash'],
-                        pad: 4),
-                    style: TextStyle(fontSize: 12, color: Colors.black54),
-                  ),
-                ],
-              )
+              stashAcc
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
@@ -223,10 +272,12 @@ class _StakingActions extends State<StakingActions>
                 children: <Widget>[
                   Text(dic['balance']),
                   Text(dic['available']),
-                  Text(
-                    dic['bonded'],
-                    style: TextStyle(color: Colors.green),
-                  )
+                  bonded > 0
+                      ? Text(
+                          dic['bonded'],
+                          style: TextStyle(color: Colors.green),
+                        )
+                      : Container()
                 ],
               ),
               Container(
@@ -237,10 +288,12 @@ class _StakingActions extends State<StakingActions>
                 children: <Widget>[
                   Text('${Fmt.balance(balance.toString())} $symbol'),
                   Text('${Fmt.balance(available.toString())} $symbol'),
-                  Text(
-                    '${Fmt.balance(bonded.toString())} $symbol',
-                    style: TextStyle(color: Colors.green),
-                  )
+                  bonded > 0
+                      ? Text(
+                          '${Fmt.balance(bonded.toString())} $symbol',
+                          style: TextStyle(color: Colors.green),
+                        )
+                      : Container()
                 ],
               )
             ],
@@ -295,14 +348,13 @@ class _StakingActions extends State<StakingActions>
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        bool hasData = store.staking.ledger['ledger'] != null;
         return RefreshIndicator(
           onRefresh: _updateStakingInfo,
-          child: hasData
-              ? ListView(
+          child: _ledgerLoading
+              ? CupertinoActivityIndicator()
+              : ListView(
                   children: _buildListView(),
-                )
-              : CupertinoActivityIndicator(),
+                ),
         );
       },
     );

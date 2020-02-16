@@ -15,6 +15,13 @@ mixin _$StakingStore on _StakingStore, Store {
   ObservableList<String> get nextUps => (_$nextUpsComputed ??=
           Computed<ObservableList<String>>(() => super.nextUps))
       .value;
+  Computed<ObservableList<ValidatorData>> _$nominatingListComputed;
+
+  @override
+  ObservableList<ValidatorData> get nominatingList =>
+      (_$nominatingListComputed ??= Computed<ObservableList<ValidatorData>>(
+              () => super.nominatingList))
+          .value;
 
   final _$overviewAtom = Atom(name: '_StakingStore.overview');
 
@@ -118,6 +125,23 @@ mixin _$StakingStore on _StakingStore, Store {
     }, _$nextUpsInfoAtom, name: '${_$nextUpsInfoAtom.name}_set');
   }
 
+  final _$ledgerAtom = Atom(name: '_StakingStore.ledger');
+
+  @override
+  ObservableMap<String, dynamic> get ledger {
+    _$ledgerAtom.context.enforceReadPolicy(_$ledgerAtom);
+    _$ledgerAtom.reportObserved();
+    return super.ledger;
+  }
+
+  @override
+  set ledger(ObservableMap<String, dynamic> value) {
+    _$ledgerAtom.context.conditionallyRunInAction(() {
+      super.ledger = value;
+      _$ledgerAtom.reportChanged();
+    }, _$ledgerAtom, name: '${_$ledgerAtom.name}_set');
+  }
+
   final _$txsAtom = Atom(name: '_StakingStore.txs');
 
   @override
@@ -177,6 +201,16 @@ mixin _$StakingStore on _StakingStore, Store {
     final _$actionInfo = _$_StakingStoreActionController.startAction();
     try {
       return super.setOverview(data);
+    } finally {
+      _$_StakingStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setLedger(Map<String, dynamic> data) {
+    final _$actionInfo = _$_StakingStoreActionController.startAction();
+    try {
+      return super.setLedger(data);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }

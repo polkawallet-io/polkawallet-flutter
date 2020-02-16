@@ -19,11 +19,11 @@ class Fmt {
     return f.format(num / pow(10, decimals));
   }
 
-  static double balanceNum(String raw, {int decimals = 12}) {
+  static int balanceInt(String raw) {
     if (raw == null || raw.length == 0) {
       return 0;
     }
-    return NumberFormat(",##0.000").parse(raw);
+    return NumberFormat(",##0.000").parse(raw).toInt();
   }
 
   static String token(int value, {int decimals = 12, bool fullLength = false}) {
