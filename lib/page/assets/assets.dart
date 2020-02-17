@@ -7,8 +7,17 @@ import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-class Assets extends StatelessWidget {
+class Assets extends StatefulWidget {
   Assets(this.store);
+
+  final AppStore store;
+
+  @override
+  _AssetsState createState() => _AssetsState(store);
+}
+
+class _AssetsState extends State<Assets> {
+  _AssetsState(this.store);
 
   final AppStore store;
 
@@ -56,6 +65,12 @@ class Assets extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    store.api.fetchBalance();
+    super.initState();
   }
 
   @override

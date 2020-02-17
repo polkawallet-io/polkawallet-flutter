@@ -42,23 +42,26 @@ class Api {
       }
     });
 
-    _web.launch('about:blank',
-        javascriptChannels: [
-          JavascriptChannel(
-              name: 'PolkaWallet',
-              onMessageReceived: (JavascriptMessage message) {
-                print('received msg: ${message.message}');
-                final msg = jsonDecode(message.message);
-                var handler = _msgHandlers[msg['path'] as String];
-                if (handler == null) {
-                  return;
-                }
-                handler(msg['data']);
-              }),
-        ].toSet(),
+    _web.launch(
+      'about:blank',
+      javascriptChannels: [
+        JavascriptChannel(
+            name: 'PolkaWallet',
+            onMessageReceived: (JavascriptMessage message) {
+              print('received msg: ${message.message}');
+              final msg = jsonDecode(message.message);
+              var handler = _msgHandlers[msg['path'] as String];
+              if (handler == null) {
+                return;
+              }
+              handler(msg['data']);
+            }),
+      ].toSet(),
+      ignoreSSLErrors: true,
 //        withLocalUrl: true,
 //        localUrlScope: 'lib/polkadot_js_service/dist/',
-        hidden: true);
+      hidden: true,
+    );
   }
 
   Future<dynamic> evalJavascript(String code) async {
@@ -100,6 +103,7 @@ class Api {
   Future<void> connectNode() async {
     String value =
         settingsStore.endpoint.value ?? 'wss://kusama-rpc.polkadot.io/';
+    print(value);
     String res = await evalJavascript('settings.connect("$value")');
     if (res == null) {
       print('connect failed');
@@ -165,10 +169,10 @@ class Api {
     if (page == 1) {
       stakingStore.clearTxs();
     }
-//    String data = await PolkaScanApi.fetchStaking(
-//        accountStore.currentAccount.address, page);
     String data = await PolkaScanApi.fetchStaking(
-        'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n', page);
+        accountStore.currentAccount.address, page);
+//    String data = await PolkaScanApi.fetchStaking(
+//        'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n', page);
     var ls = jsonDecode(data)['data'];
     var detailReqs = List<Future<dynamic>>();
     ls.forEach((i) => detailReqs
@@ -212,4 +216,35 @@ class Api {
     String address = accountStore.currentAccount.address;
     return evalJavascript('account.checkPassword("$address", "$pass")');
   }
+
+  // TODO: chart data in validator detail page
+  Future<List> querySessionRewards() async {
+    var header = await evalJavascript('api.rpc.chain.getHeader()');
+    print('header: ${header.keys.join(',')}');
+    String toHash = header['parentHash'];
+    int toNumber = header['number'];
+    int fromNumber = toNumber - max_blocks;
+    var fromHash =
+        await evalJavascript('api.rpc.chain.getBlockHash($fromNumber)');
+
+    print('blocks: $max_blocks');
+    print('$fromHash $toHash');
+    var newQueue = await _loadBlocks(fromHash, toHash);
+    print(newQueue.length);
+    print(newQueue[0]);
+//    return [toHash, fromHash];
+    return [];
+  }
+
+  Future<List> _loadBlocks(String fromHash, String toHash) async {
+    List results = await evalJavascript(
+        'api.rpc.state.queryStorage([api.query.session.currentIndex.key()], "$fromHash", "$toHash"');
+    print('results.length: ${results.length}');
+    List headers = await Future.wait(results
+        .map((i) => evalJavascript('api.rpc.chain.getHeader(${i['block']})')));
+
+    return headers;
+  }
 }
+
+const int max_blocks = 10;

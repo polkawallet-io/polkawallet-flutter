@@ -21,6 +21,7 @@ const Map<String, String> enHome = {
   'unlock': 'Unlock Account with Password',
   'edit': 'Edit',
   'delete': 'Delete',
+  'detail': 'Detail',
 };
 
 const Map<String, String> zhHome = {
@@ -43,4 +44,5 @@ const Map<String, String> zhHome = {
   'unlock': '使用密码解锁账户',
   'edit': '编辑',
   'delete': '删除',
+  'detail': '详情',
 };

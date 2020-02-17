@@ -31,9 +31,11 @@ class _StakingActions extends State<StakingActions>
       _txsLoading = true;
     });
     await store.api.updateStaking(_txsPage);
-    setState(() {
-      _txsLoading = false;
-    });
+    if (Scaffold.of(context).mounted) {
+      setState(() {
+        _txsLoading = false;
+      });
+    }
   }
 
   Future<void> _updateStakingInfo() async {
@@ -47,49 +49,68 @@ class _StakingActions extends State<StakingActions>
     var res =
         await store.api.evalJavascript('api.query.staking.ledger.multi($acc)');
     store.staking.setLedger({"ledger": res[0]});
-    setState(() {
-      _ledgerLoading = false;
-    });
+    if (Scaffold.of(context).mounted) {
+      setState(() {
+        _ledgerLoading = false;
+      });
+    }
+//    var data = await store.api.querySessionRewards();
+//    print(data);
   }
 
-  List<Widget> _buildListView() {
-    final Map<String, String> dic = I18n.of(context).staking;
+  void _chill() {
+    var dic = I18n.of(context).staking;
+    var args = {
+      "title": dic['action.unbond'],
+      "detail": 'chill',
+      "params": {
+        "module": 'staking',
+        "call": 'chill',
+      },
+      'redirect': '/'
+    };
+    Navigator.of(context).pushNamed('/staking/confirm', arguments: args);
+  }
 
-    final List<Tab> _myTabs = <Tab>[
-      Tab(text: dic['txs']),
-      Tab(text: dic['nominating']),
-    ];
-
-    List list = <Widget>[
-      _buildActionCard(),
-      Container(
-        color: Colors.white,
-        child: TabBar(
-          labelColor: Colors.black87,
-          labelStyle: TextStyle(fontSize: 18),
-          controller: _tabController,
-          tabs: _myTabs,
-          onTap: (i) {
-            setState(() {
-              _tab = i;
-            });
+  // TODO: set payee action
+  void _showActions() {
+    var dic = I18n.of(context).staking;
+    bool hasData = store.staking.ledger['ledger'] != null;
+    List<Widget> actions = <Widget>[];
+    if (hasData) {
+      actions.add(CupertinoActionSheetAction(
+        child: Text(dic['action.bondExtra']),
+        onPressed: () => Navigator.of(context).pushNamed('/staking/bondExtra'),
+      ));
+      actions.add(CupertinoActionSheetAction(
+        child: Text(dic['action.reward']),
+        onPressed: () => Navigator.of(context).pushNamed('/staking/payee'),
+      ));
+      if (store.staking.ledger['ledger']['active'] > 0) {
+        actions.add(CupertinoActionSheetAction(
+          child: Text(dic['action.unbond']),
+          onPressed: () => Navigator.of(context).pushNamed('/staking/unbond'),
+        ));
+      }
+      if (store.staking.nominatingList.length > 0) {
+        actions.add(CupertinoActionSheetAction(
+          child: Text(dic['action.nominate']),
+          onPressed: () => Navigator.of(context).pushNamed('/staking/nominate'),
+        ));
+      }
+    }
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        actions: actions,
+        cancelButton: CupertinoActionSheetAction(
+          child: Text(I18n.of(context).home['cancel']),
+          onPressed: () {
+            Navigator.pop(context);
           },
         ),
       ),
-    ];
-    if (_tab == 0) {
-      list.addAll(_buildTxList());
-    }
-    if (_tab == 1) {
-      list.addAll(_buildNominatingList());
-    }
-    if (_txsLoading) {
-      list.add(Padding(
-        padding: EdgeInsets.all(16),
-        child: CupertinoActivityIndicator(),
-      ));
-    }
-    return list;
+    );
   }
 
   List<Widget> _buildTxList() {
@@ -150,8 +171,9 @@ class _StakingActions extends State<StakingActions>
 
   List<Widget> _buildNominatingList() {
     String symbol = store.settings.networkState.tokenSymbol;
-//    String address = store.account.currentAccount.address;
-    String address = 'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n';
+    String address = store.account.currentAccount.address;
+//    String address = 'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n';
+    print(store.staking.nominatingList.length);
     return store.staking.nominatingList.map((validator) {
       var me = validator.nominators.firstWhere((i) => i['who'] == address);
       return Container(
@@ -210,6 +232,47 @@ class _StakingActions extends State<StakingActions>
     int balance = Fmt.balanceInt(store.assets.balance);
     int bonded = hasData ? store.staking.ledger['ledger']['active'] : 0;
     int available = balance - bonded;
+
+    List<Widget> actionButton = [];
+    if (bonded == 0) {
+      actionButton.add(Expanded(
+        child: RaisedButton(
+          color: Colors.pinkAccent,
+          child: Text(
+            dic['action.bond'],
+            style: Theme.of(context).textTheme.button,
+          ),
+          onPressed: () => Navigator.of(context).pushNamed('/staking/bond'),
+        ),
+      ));
+    } else {
+      // if (bonded > 0)
+      if (store.staking.nominatingList.length == 0) {
+        // if user is not nominating
+        actionButton.add(Expanded(
+          child: RaisedButton(
+            color: Colors.pinkAccent,
+            child: Text(
+              dic['action.nominate'],
+              style: Theme.of(context).textTheme.button,
+            ),
+            onPressed: store.staking.validatorsInfo.length == 0
+                ? null
+                : () => Navigator.of(context).pushNamed('/staking/nominate'),
+          ),
+        ));
+      } else {
+        actionButton.add(Expanded(
+          child: RaisedButton(
+            child: Text(
+              dic['action.chill'],
+              style: Theme.of(context).textTheme.button,
+            ),
+            onPressed: _chill,
+          ),
+        ));
+      }
+    }
     return Container(
       margin: EdgeInsets.fromLTRB(16, 8, 16, 16),
       padding: EdgeInsets.all(24),
@@ -236,7 +299,10 @@ class _StakingActions extends State<StakingActions>
               Container(
                 width: stashWidgetWidth,
                 height: 36,
-                child: Image.asset('assets/images/staking/set.png'),
+                child: IconButton(
+                  icon: Image.asset('assets/images/staking/set.png'),
+                  onPressed: _showActions,
+                ),
               ),
               Column(
                 children: <Widget>[
@@ -299,31 +365,7 @@ class _StakingActions extends State<StakingActions>
             ],
           ),
           Row(
-            children: <Widget>[
-              Expanded(
-                child: RaisedButton(
-                  color: Colors.green,
-                  child: Text(
-                    'stake',
-                    style: Theme.of(context).textTheme.button,
-                  ),
-                  onPressed: () => print('stake'),
-                ),
-              ),
-              Container(
-                width: 16,
-              ),
-              Expanded(
-                child: RaisedButton(
-                  color: Colors.pink,
-                  child: Text(
-                    'stake2',
-                    style: Theme.of(context).textTheme.button,
-                  ),
-                  onPressed: () => print('stake2'),
-                ),
-              )
-            ],
+            children: actionButton,
           )
         ],
       ),
@@ -346,14 +388,50 @@ class _StakingActions extends State<StakingActions>
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, String> dic = I18n.of(context).staking;
+
+    final List<Tab> _myTabs = <Tab>[
+      Tab(text: dic['txs']),
+      Tab(text: dic['nominating']),
+    ];
+
     return Observer(
       builder: (_) {
+        List list = <Widget>[
+          _buildActionCard(),
+          Container(
+            color: Colors.white,
+            child: TabBar(
+              labelColor: Colors.black87,
+              labelStyle: TextStyle(fontSize: 18),
+              controller: _tabController,
+              tabs: _myTabs,
+              onTap: (i) {
+                setState(() {
+                  _tab = i;
+                });
+              },
+            ),
+          ),
+        ];
+        if (_tab == 0) {
+          list.addAll(_buildTxList());
+        }
+        if (_tab == 1) {
+          list.addAll(_buildNominatingList());
+        }
+        if (_txsLoading) {
+          list.add(Padding(
+            padding: EdgeInsets.all(16),
+            child: CupertinoActivityIndicator(),
+          ));
+        }
         return RefreshIndicator(
           onRefresh: _updateStakingInfo,
           child: _ledgerLoading
               ? CupertinoActivityIndicator()
               : ListView(
-                  children: _buildListView(),
+                  children: list,
                 ),
         );
       },

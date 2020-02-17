@@ -5,6 +5,7 @@ import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
 part 'app.g.dart';
 
@@ -23,8 +24,9 @@ abstract class _AppStore with Store {
   @observable
   SettingsStore settings = SettingsStore();
 
-  @observable
   Api api;
+
+  I18n i18n;
 
   @action
   void init(BuildContext context) {
@@ -40,5 +42,7 @@ abstract class _AppStore with Store {
         stakingStore: staking,
         settingsStore: settings);
     api.init();
+
+    i18n = I18n.of(context);
   }
 }

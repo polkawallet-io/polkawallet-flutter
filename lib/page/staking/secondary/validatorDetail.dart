@@ -14,13 +14,11 @@ class ValidatorDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
     final ValidatorData detail = ModalRoute.of(context).settings.arguments;
-    Widget buildLabel(String name) {
-      return Container(
-          padding: EdgeInsets.only(left: 8),
-          width: 80,
-          child: Text(name, style: Theme.of(context).textTheme.display4));
-    }
+    print(store.staking.overview.keys.join(','));
 
+    List validators = store.staking.overview['currentElected'];
+    int points = store.staking.overview['eraPoints']['individual']
+        [validators.indexOf(detail.accountId)];
     return Scaffold(
       appBar: AppBar(
         title: Text(dic['validator']),
@@ -63,7 +61,7 @@ class ValidatorDetail extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 16, left: 24, bottom: 24),
+                  padding: EdgeInsets.only(top: 16, left: 24),
                   child: Row(
                     children: <Widget>[
                       InfoItem(
@@ -73,6 +71,21 @@ class ValidatorDetail extends StatelessWidget {
                       InfoItem(
                         title: dic['stake.other'],
                         content: Fmt.token(detail.bondOther),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 16, left: 24, bottom: 24),
+                  child: Row(
+                    children: <Widget>[
+                      InfoItem(
+                        title: 'points',
+                        content: '$points',
+                      ),
+                      InfoItem(
+                        title: '',
+                        content: '',
                       ),
                     ],
                   ),
