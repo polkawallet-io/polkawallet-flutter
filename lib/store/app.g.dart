@@ -77,23 +77,6 @@ mixin _$AppStore on _AppStore, Store {
     }, _$settingsAtom, name: '${_$settingsAtom.name}_set');
   }
 
-  final _$apiAtom = Atom(name: '_AppStore.api');
-
-  @override
-  Api get api {
-    _$apiAtom.context.enforceReadPolicy(_$apiAtom);
-    _$apiAtom.reportObserved();
-    return super.api;
-  }
-
-  @override
-  set api(Api value) {
-    _$apiAtom.context.conditionallyRunInAction(() {
-      super.api = value;
-      _$apiAtom.reportChanged();
-    }, _$apiAtom, name: '${_$apiAtom.name}_set');
-  }
-
   final _$_AppStoreActionController = ActionController(name: '_AppStore');
 
   @override

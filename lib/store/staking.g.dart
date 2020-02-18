@@ -215,6 +215,16 @@ mixin _$StakingStore on _StakingStore, Store {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }
   }
+
+  @override
+  void clearSate() {
+    final _$actionInfo = _$_StakingStoreActionController.startAction();
+    try {
+      return super.clearSate();
+    } finally {
+      _$_StakingStoreActionController.endAction(_$actionInfo);
+    }
+  }
 }
 
 mixin _$ValidatorData on _ValidatorData, Store {

@@ -21,7 +21,47 @@ class _ImportAccountState extends State<ImportAccount> {
 
   int _step = 0;
 
-  Widget _buildStep0(BuildContext context) {
+  Future<void> _importAccount(Map<String, dynamic> data) async {
+    var acc = await store.api.importAccount(
+      keyType: data['keyType'],
+      cryptoType: data['cryptoType'],
+    );
+    if (acc != null) {
+      Navigator.popUntil(context, ModalRoute.withName('/'));
+      return;
+    }
+
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final Map<String, String> accDic = I18n.of(context).account;
+        return CupertinoAlertDialog(
+          title: Container(),
+          content:
+              Text('${accDic['import.invalid']} ${accDic['create.password']}'),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(I18n.of(context).home['cancel']),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            CupertinoButton(
+              child: Text(I18n.of(context).home['ok']),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_step == 1) {
+      return Scaffold(
+        appBar: AppBar(title: Text(I18n.of(context).home['import'])),
+        body: ImportAccountForm(store.account.setNewAccountKey, _importAccount),
+      );
+    }
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['import'])),
       body: CreateAccountForm(store.account.setNewAccount, () {
@@ -30,27 +70,5 @@ class _ImportAccountState extends State<ImportAccount> {
         });
       }),
     );
-  }
-
-  Widget _buildStep1(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(I18n.of(context).home['import'])),
-      body: ImportAccountForm(store.account.setNewAccountKey,
-          (Map<String, dynamic> data) {
-        store.api.importAccount(
-          keyType: data['keyType'],
-          cryptoType: data['cryptoType'],
-        );
-        Navigator.popUntil(context, ModalRoute.withName('/'));
-      }),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_step == 1) {
-      return _buildStep1(context);
-    }
-    return _buildStep0(context);
   }
 }

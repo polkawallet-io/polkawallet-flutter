@@ -20,7 +20,7 @@ class Profile extends StatelessWidget {
           centerTitle: true,
           elevation: 0.0,
         ),
-        body: Column(
+        body: ListView(
           children: <Widget>[
             Container(
               color: Colors.pink,

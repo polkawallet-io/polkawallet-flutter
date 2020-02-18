@@ -31,12 +31,16 @@ class Api {
     _web.onStateChanged.listen((viewState) async {
       if (viewState.type == WebViewState.finishLoad) {
         print('webview loaded');
-
         DefaultAssetBundle.of(context)
             .loadString('lib/polkadot_js_service/dist/main.js')
             .then((String js) {
           print('js file loaded');
+          // inject js file to webview
           _web.evalJavascript(js);
+
+          // load keyPairs from local data
+          initAccounts();
+          // connect remote node
           connectNode();
         });
       }
@@ -84,20 +88,22 @@ class Api {
   }
 
   Future<void> fetchNetworkProps() async {
-    String accounts = jsonEncode(
-        accountStore.accountList.map((i) => AccountData.toJson(i)).toList());
-
     List<dynamic> info = await Future.wait([
       evalJavascript('settings.getNetworkConst()'),
       evalJavascript('api.rpc.system.properties()'),
       evalJavascript('api.rpc.system.chain()'),
-      evalJavascript('account.initKeys($accounts)'),
       fetchBalance(),
     ]);
 
     settingsStore.setNetworkConst(info[0]);
     settingsStore.setNetworkState(info[1]);
     settingsStore.setNetworkName(info[2]);
+  }
+
+  void initAccounts() {
+    String accounts = jsonEncode(
+        accountStore.accountList.map((i) => AccountData.toJson(i)).toList());
+    evalJavascript('account.initKeys($accounts)');
   }
 
   Future<void> connectNode() async {
@@ -115,6 +121,7 @@ class Api {
 
   Future<void> changeNode(String endpoint) async {
     settingsStore.setNetworkLoading(true);
+    stakingStore.clearSate();
     String res = await evalJavascript('settings.changeEndpoint("$endpoint")');
     if (res == null) {
       print('connect failed');
@@ -137,16 +144,20 @@ class Api {
     accountStore.setNewAccountKey(acc['mnemonic']);
   }
 
-  Future<void> importAccount(
+  Future<Map<String, dynamic>> importAccount(
       {String keyType = 'Mnemonic', String cryptoType = 'sr25519'}) async {
     String key = accountStore.newAccount.key;
     String pass = accountStore.newAccount.password;
-    String code = 'account.recover("$keyType", "$cryptoType", "$key", "$pass")';
+    String code =
+        'account.recover("$keyType", "$cryptoType", \'$key\', "$pass")';
+    print(code);
     Map<String, dynamic> acc = await evalJavascript(code);
-
-    acc['name'] = accountStore.newAccount.name;
-    await accountStore.addAccount(acc);
-    fetchBalance();
+    if (acc != null) {
+      acc['name'] = accountStore.newAccount.name;
+      await accountStore.addAccount(acc);
+      fetchBalance();
+    }
+    return acc;
   }
 
   Future<List> updateTxs(int page) async {
@@ -214,6 +225,8 @@ class Api {
 
   Future<dynamic> checkAccountPassword(String pass) async {
     String address = accountStore.currentAccount.address;
+//    String address = 'HmyonjFVFZyg1mRjRvohVGRw9ouFDRoQ5ea9nDfH2Yi44qQ';
+    print('checkpass: $address, $pass');
     return evalJavascript('account.checkPassword("$address", "$pass")');
   }
 

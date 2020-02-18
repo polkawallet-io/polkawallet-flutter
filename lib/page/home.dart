@@ -25,7 +25,7 @@ class _HomePageState extends State<Home> {
   final List<String> _tabList = [
     'Assets',
     'Staking',
-    'Democracy',
+//    'Democracy',
     'Profile',
   ];
 
@@ -57,9 +57,9 @@ class _HomePageState extends State<Home> {
       case 1:
         return Staking(store);
         break;
-      case 2:
-        return Democracy();
-        break;
+//      case 2:
+//        return Democracy();
+//        break;
       default:
         return Profile(store.account);
     }

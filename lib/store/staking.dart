@@ -57,7 +57,6 @@ abstract class _StakingStore with Store {
   ObservableList<ValidatorData> get nominatingList {
     return ObservableList.of(validatorsInfo.where((i) {
       String address = account.currentAccount.address;
-//      String address = 'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n';
       return i.nominators
               .indexWhere((nominator) => nominator['who'] == address) >=
           0;
@@ -115,6 +114,12 @@ abstract class _StakingStore with Store {
   @action
   Future<void> addTxs(List<Map<String, dynamic>> ls) async {
     txs.addAll(ls);
+  }
+
+  @action
+  void clearSate() {
+    txs.clear();
+    overview = ObservableMap<String, dynamic>();
   }
 }
 

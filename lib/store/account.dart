@@ -3,13 +3,14 @@ import 'package:mobx/mobx.dart';
 
 import 'package:polka_wallet/utils/localStorage.dart';
 
-import 'package:polka_wallet/store/assets.dart';
-
 part 'account.g.dart';
 
 class AccountStore extends _AccountStore with _$AccountStore {}
 
 abstract class _AccountStore with Store {
+  @observable
+  bool loading = true;
+
   @observable
   AccountCreate newAccount = AccountCreate();
 
@@ -75,7 +76,7 @@ abstract class _AccountStore with Store {
 
   @action
   Future<void> removeAccount(AccountData acc) async {
-    LocalStorage.removeAccount(acc.address);
+    await LocalStorage.removeAccount(acc.address);
 
     List<Map<String, dynamic>> accounts = await LocalStorage.getAccountList();
     if (accounts.length > 0) {
@@ -95,10 +96,15 @@ abstract class _AccountStore with Store {
 
     if (accountList.length > 0) {
       String address = await LocalStorage.getCurrentAccount();
-      Map<String, dynamic> acc =
-          accList.firstWhere((i) => i['address'] == address);
-      currentAccount = AccountData.fromJson(acc);
+      print(address);
+      int accIndex = accList.indexWhere((i) => i['address'] == address);
+      print(accIndex);
+      if (accIndex >= 0) {
+        Map<String, dynamic> acc = accList[accIndex];
+        currentAccount = AccountData.fromJson(acc);
+      }
     }
+    loading = false;
   }
 }
 

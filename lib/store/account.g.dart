@@ -39,6 +39,23 @@ mixin _$AccountStore on _AccountStore, Store {
               () => super.optionalAccounts))
           .value;
 
+  final _$loadingAtom = Atom(name: '_AccountStore.loading');
+
+  @override
+  bool get loading {
+    _$loadingAtom.context.enforceReadPolicy(_$loadingAtom);
+    _$loadingAtom.reportObserved();
+    return super.loading;
+  }
+
+  @override
+  set loading(bool value) {
+    _$loadingAtom.context.conditionallyRunInAction(() {
+      super.loading = value;
+      _$loadingAtom.reportChanged();
+    }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
+  }
+
   final _$newAccountAtom = Atom(name: '_AccountStore.newAccount');
 
   @override

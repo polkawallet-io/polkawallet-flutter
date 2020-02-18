@@ -69,7 +69,12 @@ class _AssetsState extends State<Assets> {
 
   @override
   void initState() {
-    store.api.fetchBalance();
+    if (!store.settings.loading && store.settings.networkName == null) {
+      store.settings.setNetworkLoading(true);
+      store.api.connectNode();
+    } else {
+      store.api.fetchBalance();
+    }
     super.initState();
   }
 

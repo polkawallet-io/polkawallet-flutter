@@ -21,7 +21,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
   final Function setNewAccountMnemonic;
   final Function onSubmit;
 
-  final List<String> _keyOptions = ['Mnemonic', 'Raw Seed', 'KeyStore'];
+  final List<String> _keyOptions = ['Mnemonic', 'Raw Seed', 'Keystore'];
   final List<String> _typeOptions = ['sr25519', 'ed25519'];
 
   int _keySelection = 0;

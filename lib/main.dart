@@ -101,9 +101,11 @@ class _WalletAppState extends State<WalletApp> {
 //      darkTheme: darkTheme,
       routes: {
         '/': (_) => Observer(
-            builder: (_) => _appStore.account.accountList.length > 0
-                ? Home(_appStore)
-                : CreateAccountEntry()),
+            builder: (_) => _appStore.account.loading
+                ? About()
+                : _appStore.account.accountList.length > 0
+                    ? Home(_appStore)
+                    : CreateAccountEntry()),
         '/account/entry': (_) => CreateAccountEntry(),
         '/account/create': (_) =>
             CreateAccount(_appStore.account.setNewAccount),
