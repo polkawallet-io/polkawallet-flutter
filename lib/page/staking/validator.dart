@@ -19,12 +19,15 @@ class Validator extends StatelessWidget {
       child: ListTile(
         leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
         title: Text(Fmt.address(validator.accountId, pad: 6)),
-        subtitle: Text('${dic['staked']}: ${Fmt.token(validator.total)}'),
+        subtitle: Text('${dic['total']}: ${Fmt.token(validator.total)}'),
         trailing: Container(
           width: 120,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[Text('commission'), Text(validator.commission)],
+            children: <Widget>[
+              Text(dic['commission']),
+              Text(validator.commission)
+            ],
           ),
         ),
         onTap: () => Navigator.of(context)

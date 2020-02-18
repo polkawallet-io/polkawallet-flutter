@@ -178,6 +178,7 @@ class _StakingActions extends State<StakingActions>
   }
 
   List<Widget> _buildNominatingList() {
+    bool hasData = store.staking.ledger['stakingLedger'] != null;
     if (_ledgerLoading) {
       return <Widget>[
         Padding(
@@ -185,6 +186,9 @@ class _StakingActions extends State<StakingActions>
           child: CupertinoActivityIndicator(),
         )
       ];
+    }
+    if (!hasData) {
+      return <Widget>[Container()];
     }
     String symbol = store.settings.networkState.tokenSymbol;
     String address = store.account.currentAccount.address;
