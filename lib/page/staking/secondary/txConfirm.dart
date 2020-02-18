@@ -112,6 +112,13 @@ class _TxConfirmState extends State<TxConfirm> {
   }
 
   @override
+  void initState() {
+    // setSubmitting false for testing
+//    store.assets.setSubmitting(false);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).home;
 

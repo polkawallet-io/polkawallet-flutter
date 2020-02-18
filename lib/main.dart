@@ -20,6 +20,7 @@ import 'package:polka_wallet/page/staking/secondary/bond.dart';
 import 'package:polka_wallet/page/staking/secondary/bondExtra.dart';
 import 'package:polka_wallet/page/staking/secondary/detail.dart';
 import 'package:polka_wallet/page/staking/secondary/nominate.dart';
+import 'package:polka_wallet/page/staking/secondary/payee.dart';
 import 'package:polka_wallet/page/staking/secondary/txConfirm.dart';
 import 'package:polka_wallet/page/staking/secondary/unbond.dart';
 import 'package:polka_wallet/page/staking/secondary/validatorDetail.dart';
@@ -120,7 +121,7 @@ class _WalletAppState extends State<WalletApp> {
         '/staking/bondExtra': (_) => BondExtra(_appStore),
         '/staking/unbond': (_) => UnBond(_appStore),
         '/staking/nominate': (_) => Nominate(_appStore),
-        '/staking/payee': (_) => UnBond(_appStore),
+        '/staking/payee': (_) => SetPayee(_appStore),
         '/staking/confirm': (_) => TxConfirm(_appStore),
         '/profile/account': (_) =>
             AccountManage(_appStore.api, _appStore.account),

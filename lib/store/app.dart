@@ -26,8 +26,6 @@ abstract class _AppStore with Store {
 
   Api api;
 
-  I18n i18n;
-
   @action
   void init(BuildContext context) {
     settings.init();
@@ -42,7 +40,5 @@ abstract class _AppStore with Store {
         stakingStore: staking,
         settingsStore: settings);
     api.init();
-
-    i18n = I18n.of(context);
   }
 }

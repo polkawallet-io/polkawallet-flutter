@@ -30,8 +30,9 @@ class _UnBondState extends State<UnBond> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    bool hasData = store.staking.ledger['ledger'] != null;
-    int bondedInt = hasData ? store.staking.ledger['ledger']['active'] : 0;
+    bool hasData = store.staking.ledger['stakingLedger'] != null;
+    int bondedInt =
+        hasData ? store.staking.ledger['stakingLedger']['active'] : 0;
     String bonded = Fmt.token(bondedInt);
     String address = store.account.currentAccount.address;
 

@@ -30,9 +30,10 @@ const Map<String, String> enStaking = {
   'action.chill': 'Stop Nominating',
   'action.reward': 'Change Reward Destination',
   'action.setting': 'Bonding Preference',
-  'bond.reward': 'Reward Destination',
+  'bond.reward': 'Reward',
   'reward.bond': 'Increase the amount at stake',
   'reward.stash': 'Do not increase the amount at stake',
+  'unlocking': 'Unlocking',
 };
 
 const Map<String, String> zhStaking = {
@@ -70,4 +71,5 @@ const Map<String, String> zhStaking = {
   'bond.reward': '分红方式',
   'reward.bond': '收益再质押',
   'reward.stash': '收益不再质押（发至储值账户）',
+  'unlocking': '解锁中',
 };

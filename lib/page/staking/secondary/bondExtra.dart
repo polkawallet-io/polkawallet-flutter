@@ -30,7 +30,9 @@ class _BondExtraState extends State<BondExtra> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    String balance = Fmt.balance(store.assets.balance);
+    int balance = Fmt.balanceInt(store.assets.balance);
+    int bonded = store.staking.ledger['stakingLedger']['active'];
+    int available = balance - bonded;
     String address = store.account.currentAccount.address;
 
     return Scaffold(
@@ -74,7 +76,7 @@ class _BondExtraState extends State<BondExtra> {
                         decoration: InputDecoration(
                           hintText: assetDic['amount'],
                           labelText:
-                              '${assetDic['amount']} (${dic['balance']}: $balance $symbol)',
+                              '${assetDic['amount']} (${dic['available']}: ${Fmt.token(available)} $symbol)',
                         ),
                         inputFormatters: [
                           RegExInputFormatter.withRegex(
@@ -88,7 +90,7 @@ class _BondExtraState extends State<BondExtra> {
                             return assetDic['amount.error'];
                           }
                           if (double.parse(v.trim()) >=
-                              double.parse(balance) - 0.02) {
+                              double.parse(Fmt.token(available)) - 0.02) {
                             return assetDic['amount.low'];
                           }
                           return null;

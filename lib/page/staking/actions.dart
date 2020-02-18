@@ -31,7 +31,7 @@ class _StakingActions extends State<StakingActions>
       _txsLoading = true;
     });
     await store.api.updateStaking(_txsPage);
-    if (Scaffold.of(context).mounted) {
+    if (context != null) {
       setState(() {
         _txsLoading = false;
       });
@@ -45,11 +45,11 @@ class _StakingActions extends State<StakingActions>
     setState(() {
       _ledgerLoading = true;
     });
-    String acc = '["${store.account.currentAccount.address}"]';
+    String acc = store.account.currentAccount.address;
     var res =
-        await store.api.evalJavascript('api.query.staking.ledger.multi($acc)');
-    store.staking.setLedger({"ledger": res[0]});
-    if (Scaffold.of(context).mounted) {
+        await store.api.evalJavascript('api.derive.staking.account("$acc")');
+    store.staking.setLedger(res);
+    if (context != null) {
       setState(() {
         _ledgerLoading = false;
       });
@@ -61,7 +61,7 @@ class _StakingActions extends State<StakingActions>
   void _chill() {
     var dic = I18n.of(context).staking;
     var args = {
-      "title": dic['action.unbond'],
+      "title": dic['action.chill'],
       "detail": 'chill',
       "params": {
         "module": 'staking',
@@ -75,18 +75,14 @@ class _StakingActions extends State<StakingActions>
   // TODO: set payee action
   void _showActions() {
     var dic = I18n.of(context).staking;
-    bool hasData = store.staking.ledger['ledger'] != null;
+    bool hasData = store.staking.ledger['stakingLedger'] != null;
     List<Widget> actions = <Widget>[];
     if (hasData) {
       actions.add(CupertinoActionSheetAction(
         child: Text(dic['action.bondExtra']),
         onPressed: () => Navigator.of(context).pushNamed('/staking/bondExtra'),
       ));
-      actions.add(CupertinoActionSheetAction(
-        child: Text(dic['action.reward']),
-        onPressed: () => Navigator.of(context).pushNamed('/staking/payee'),
-      ));
-      if (store.staking.ledger['ledger']['active'] > 0) {
+      if (store.staking.ledger['stakingLedger']['active'] > 0) {
         actions.add(CupertinoActionSheetAction(
           child: Text(dic['action.unbond']),
           onPressed: () => Navigator.of(context).pushNamed('/staking/unbond'),
@@ -94,10 +90,14 @@ class _StakingActions extends State<StakingActions>
       }
       if (store.staking.nominatingList.length > 0) {
         actions.add(CupertinoActionSheetAction(
-          child: Text(dic['action.nominate']),
+          child: Text(dic['action.nominee']),
           onPressed: () => Navigator.of(context).pushNamed('/staking/nominate'),
         ));
       }
+      actions.add(CupertinoActionSheetAction(
+        child: Text(dic['action.reward']),
+        onPressed: () => Navigator.of(context).pushNamed('/staking/payee'),
+      ));
     }
     showCupertinoModalPopup(
       context: context,
@@ -114,6 +114,14 @@ class _StakingActions extends State<StakingActions>
   }
 
   List<Widget> _buildTxList() {
+    if (_txsLoading) {
+      return <Widget>[
+        Padding(
+          padding: EdgeInsets.all(16),
+          child: CupertinoActivityIndicator(),
+        )
+      ];
+    }
     return store.staking.txs.map((i) {
       String call = i['attributes']['call_id'];
       String value = '';
@@ -170,11 +178,20 @@ class _StakingActions extends State<StakingActions>
   }
 
   List<Widget> _buildNominatingList() {
+    if (_ledgerLoading) {
+      return <Widget>[
+        Padding(
+          padding: EdgeInsets.all(16),
+          child: CupertinoActivityIndicator(),
+        )
+      ];
+    }
     String symbol = store.settings.networkState.tokenSymbol;
     String address = store.account.currentAccount.address;
 //    String address = 'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n';
-    print(store.staking.nominatingList.length);
-    return store.staking.nominatingList.map((validator) {
+    return List<Widget>.from(store.staking.ledger['nominators'].map((id) {
+      var validator =
+          store.staking.validatorsInfo.firstWhere((i) => i.accountId == id);
       var me = validator.nominators.firstWhere((i) => i['who'] == address);
       return Container(
         color: Theme.of(context).cardColor,
@@ -196,13 +213,13 @@ class _StakingActions extends State<StakingActions>
               .pushNamed('/staking/validator', arguments: validator),
         ),
       );
-    }).toList();
+    }).toList());
   }
 
   Widget _buildActionCard() {
     var dic = I18n.of(context).staking;
     String symbol = store.settings.networkState.tokenSymbol;
-    bool hasData = store.staking.ledger['ledger'] != null;
+    bool hasData = store.staking.ledger['stakingLedger'] != null;
     double stashWidgetWidth = MediaQuery.of(context).size.width / 4;
     Widget stashAcc = Container(width: stashWidgetWidth);
     if (hasData) {
@@ -221,7 +238,8 @@ class _StakingActions extends State<StakingActions>
                   TextStyle(fontWeight: FontWeight.bold, color: Colors.black54),
             ),
             Text(
-              Fmt.address(store.staking.ledger['ledger']['stash'], pad: 4),
+              Fmt.address(store.staking.ledger['stakingLedger']['stash'],
+                  pad: 4),
               style: TextStyle(fontSize: 12, color: Colors.black54),
             ),
           ],
@@ -229,8 +247,15 @@ class _StakingActions extends State<StakingActions>
       );
     }
 
+    String payee = store.staking.ledger['rewardDestination'];
+    int unbonding = 0;
+    if (hasData) {
+      List unlocking = store.staking.ledger['stakingLedger']['unlocking'];
+      unlocking.forEach((i) => unbonding += i['value']);
+    }
+
     int balance = Fmt.balanceInt(store.assets.balance);
-    int bonded = hasData ? store.staking.ledger['ledger']['active'] : 0;
+    int bonded = hasData ? store.staking.ledger['stakingLedger']['active'] : 0;
     int available = balance - bonded;
 
     List<Widget> actionButton = [];
@@ -247,7 +272,7 @@ class _StakingActions extends State<StakingActions>
       ));
     } else {
       // if (bonded > 0)
-      if (store.staking.nominatingList.length == 0) {
+      if (store.staking.ledger['nominators'].length == 0) {
         // if user is not nominating
         actionButton.add(Expanded(
           child: RaisedButton(
@@ -264,6 +289,7 @@ class _StakingActions extends State<StakingActions>
       } else {
         actionButton.add(Expanded(
           child: RaisedButton(
+            color: Colors.pinkAccent,
             child: Text(
               dic['action.chill'],
               style: Theme.of(context).textTheme.button,
@@ -275,7 +301,7 @@ class _StakingActions extends State<StakingActions>
     }
     return Container(
       margin: EdgeInsets.fromLTRB(16, 8, 16, 16),
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.fromLTRB(24, 24, 24, 16),
       decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(const Radius.circular(8)),
           color: Colors.white,
@@ -334,10 +360,12 @@ class _StakingActions extends State<StakingActions>
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(dic['balance']),
                   Text(dic['available']),
+                  unbonding > 0 ? Text(dic['unlocking']) : Container(),
+                  payee != null ? Text(dic['bond.reward']) : Container(),
                   bonded > 0
                       ? Text(
                           dic['bonded'],
@@ -354,6 +382,10 @@ class _StakingActions extends State<StakingActions>
                 children: <Widget>[
                   Text('${Fmt.balance(balance.toString())} $symbol'),
                   Text('${Fmt.balance(available.toString())} $symbol'),
+                  unbonding > 0
+                      ? Text('${Fmt.token(unbonding)} $symbol')
+                      : Container(),
+                  payee != null ? Text(payee) : Container(),
                   bonded > 0
                       ? Text(
                           '${Fmt.balance(bonded.toString())} $symbol',
@@ -364,8 +396,11 @@ class _StakingActions extends State<StakingActions>
               )
             ],
           ),
-          Row(
-            children: actionButton,
+          Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Row(
+              children: actionButton,
+            ),
           )
         ],
       ),
@@ -397,7 +432,7 @@ class _StakingActions extends State<StakingActions>
 
     return Observer(
       builder: (_) {
-        List list = <Widget>[
+        List<Widget> list = <Widget>[
           _buildActionCard(),
           Container(
             color: Colors.white,
@@ -420,15 +455,13 @@ class _StakingActions extends State<StakingActions>
         if (_tab == 1) {
           list.addAll(_buildNominatingList());
         }
-        if (_txsLoading) {
-          list.add(Padding(
-            padding: EdgeInsets.all(16),
-            child: CupertinoActivityIndicator(),
-          ));
-        }
+        bool hasData = store.staking.ledger['stakingLedger'] != null;
         return RefreshIndicator(
-          onRefresh: _updateStakingInfo,
-          child: _ledgerLoading
+          onRefresh: () async {
+            _updateStakingTxs();
+            await _updateStakingInfo();
+          },
+          child: !hasData && _ledgerLoading
               ? CupertinoActivityIndicator()
               : ListView(
                   children: list,

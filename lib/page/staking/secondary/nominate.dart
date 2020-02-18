@@ -47,6 +47,8 @@ class _NominateState extends State<Nominate> {
     list.addAll(_selected);
     list.addAll(_notSelected);
     List<Widget> ls = list.map((i) {
+      // don't route to validator detail page here,
+      // it will reset _selected list state.
       return ListTile(
         leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
         title: Text(Fmt.address(i)),

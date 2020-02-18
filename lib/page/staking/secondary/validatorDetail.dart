@@ -50,21 +50,6 @@ class ValidatorDetail extends StatelessWidget {
                   child: Row(
                     children: <Widget>[
                       InfoItem(
-                        title: dic['total'],
-                        content: Fmt.token(detail.total),
-                      ),
-                      InfoItem(
-                        title: dic['commission'],
-                        content: detail.commission,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 16, left: 24),
-                  child: Row(
-                    children: <Widget>[
-                      InfoItem(
                         title: dic['stake.own'],
                         content: Fmt.token(detail.bondOwn),
                       ),
@@ -80,25 +65,25 @@ class ValidatorDetail extends StatelessWidget {
                   child: Row(
                     children: <Widget>[
                       InfoItem(
-                        title: 'points',
-                        content: '$points',
+                        title: dic['commission'],
+                        content: detail.commission,
                       ),
                       InfoItem(
-                        title: '',
-                        content: '',
+                        title: 'points',
+                        content: points.toString(),
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
-          Container(
-            child: Text('chart1'),
-          ),
-          Container(
-            child: Text('chart2'),
-          ),
+//          Container(
+//            child: Text('chart1'),
+//          ),
+//          Container(
+//            child: Text('chart2'),
+//          ),
         ],
       ),
     );

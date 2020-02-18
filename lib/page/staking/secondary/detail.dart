@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/page/assets/secondary/transfer/txDetail.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -51,12 +52,17 @@ class StakingDetail extends StatelessWidget {
         });
         break;
     }
-    return TxDetail(
-      success: detail['attributes']['success'] > 0,
-      action: action,
-      eventId: detail['id'],
-      block: store.assets.blockMap[detail['attributes']['block_id']],
-      info: info,
-    );
+
+    BlockData block = store.assets.blockMap[detail['attributes']['block_id']];
+
+    return block == null
+        ? Container()
+        : TxDetail(
+            success: detail['attributes']['success'] > 0,
+            action: action,
+            eventId: detail['id'],
+            block: store.assets.blockMap[detail['attributes']['block_id']],
+            info: info,
+          );
   }
 }
