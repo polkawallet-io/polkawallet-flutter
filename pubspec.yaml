@@ -11,29 +11,50 @@ description: PolkaWallet made with Flutter.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 0.1.0
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  # intl - format numbers
+  intl:
   # state management with mobx & provider
   mobx: ^0.4.0
   flutter_mobx: ^0.3.6
   mobx_codegen: ^0.3.12
   provider: ^3.1.0
   json_serializable: ^3.0.0
+  shared_preferences:
+  http:
+  flutter_webview_plugin:
   flutter:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+  # QR code generator & reader
+  qr_flutter: ^3.1.0
+  flutter_qr_reader: ^1.0.3
+  permission_handler:
+  # PackageInfo
+  package_info:
+  # charts
+  charts_flutter:
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.7.3"
   build_runner:
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/public/app.png"
 
 
 # For information on the generic Dart part of this file, see the
@@ -49,7 +70,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/public/logo.svg
+    # js service
+    - lib/polkadot_js_service/dist/main.js
+    # images
     - assets/images/public/Assets.png
     - assets/images/public/Democracy.png
     - assets/images/public/Profile.png
@@ -58,6 +81,34 @@ flutter:
     - assets/images/public/Democracy_dark.png
     - assets/images/public/Profile_dark.png
     - assets/images/public/Staking_dark.png
+    - assets/images/public/About_logo.png
+    - assets/images/public/dontscreen.png
+    - assets/images/public/copy.png
+    - assets/images/assets/logo.png
+    - assets/images/assets/Assets_bg.png
+    - assets/images/assets/Assets_nav_0.png
+    - assets/images/assets/Assets_nav_1.png
+    - assets/images/assets/Assets_nav_code.png
+    - assets/images/assets/Assets_nav_plus.png
+    - assets/images/assets/KSC.png
+    - assets/images/assets/Menu_scan.png
+    - assets/images/assets/Menu_create.png
+    - assets/images/assets/assets_send.png
+    - assets/images/assets/assets_receive.png
+    - assets/images/assets/assets_up.png
+    - assets/images/assets/assets_down.png
+    - assets/images/assets/assets_fail.png
+    - assets/images/assets/success.png
+    - assets/images/assets/sweep_code_line.png
+    - assets/images/staking/top_bg.png
+    - assets/images/staking/set.png
+    - assets/images/staking/ok.png
+    - assets/images/staking/error.png
+    - assets/images/staking/stake.png
+    - assets/images/staking/nominate.png
+    - assets/images/profile/about.png
+    - assets/images/profile/address.png
+    - assets/images/profile/setting.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

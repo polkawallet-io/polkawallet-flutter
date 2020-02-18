@@ -3,22 +3,6 @@
 part of 'democracy.dart';
 
 // **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
-
-DemocracyStore _$DemocracyStoreFromJson(Map<String, dynamic> json) {
-  return DemocracyStore(
-    json['description'] as String,
-  )..done = json['done'] as bool;
-}
-
-Map<String, dynamic> _$DemocracyStoreToJson(DemocracyStore instance) =>
-    <String, dynamic>{
-      'description': instance.description,
-      'done': instance.done,
-    };
-
-// **************************************************************************
 // StoreGenerator
 // **************************************************************************
 

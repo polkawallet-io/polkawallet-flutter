@@ -6,7 +6,7 @@ import 'package:polka_wallet/store/democracy.dart';
 class Democracy extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Provider<DemocracyStore>(
-      create: (_) => DemocracyStore('d'),
+      create: (_) => DemocracyStore(),
       child: Scaffold(
           appBar: AppBar(
             title: const Text('Democracy'),
