@@ -125,14 +125,14 @@ class _StakingOverviewState extends State<StakingOverview> {
       return store.staking.nextUpsInfo.length > 0
           ? store.staking.nextUpsInfo
               .sublist(0, _nextListLength)
-              .map((i) => Validator(null, i))
+              .map((i) => Validator(store.api, i))
               .toList()
           : [CupertinoActivityIndicator()];
     }
     return store.staking.validatorsInfo.length > 0
         ? store.staking.validatorsInfo
             .sublist(0, _validatorListLength)
-            .map((i) => Validator(null, i))
+            .map((i) => Validator(store.api, i))
             .toList()
         : [CupertinoActivityIndicator()];
   }

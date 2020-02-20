@@ -30,8 +30,11 @@ class Validator extends StatelessWidget {
             ],
           ),
         ),
-        onTap: () => Navigator.of(context)
-            .pushNamed('/staking/validator', arguments: validator),
+        onTap: () {
+//          api.queryValidatorRewards(validator.accountId);
+          Navigator.of(context)
+              .pushNamed('/staking/validator', arguments: validator);
+        },
       ),
     );
   }

@@ -41,6 +41,10 @@ abstract class _StakingStore with Store {
   ObservableList<Map<String, dynamic>> txs =
       ObservableList<Map<String, dynamic>>();
 
+  @observable
+  ObservableMap<String, dynamic> chartDataCache =
+      ObservableMap<String, dynamic>();
+
   @computed
   ObservableList<String> get nextUps {
     if (overview['intentions'] == null) {
@@ -120,6 +124,11 @@ abstract class _StakingStore with Store {
   void clearSate() {
     txs.clear();
     overview = ObservableMap<String, dynamic>();
+  }
+
+  @action
+  void setChartData(String validatorId, Map data) {
+    chartDataCache[validatorId] = data;
   }
 }
 

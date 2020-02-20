@@ -54,8 +54,6 @@ class _StakingActions extends State<StakingActions>
         _ledgerLoading = false;
       });
     }
-//    var data = await store.api.querySessionRewards();
-//    print(data);
   }
 
   void _chill() {
@@ -213,8 +211,11 @@ class _StakingActions extends State<StakingActions>
               ],
             ),
           ),
-          onTap: () => Navigator.of(context)
-              .pushNamed('/staking/validator', arguments: validator),
+          onTap: () {
+//            store.api.queryValidatorRewards(validator.accountId);
+            Navigator.of(context)
+                .pushNamed('/staking/validator', arguments: validator);
+          },
         ),
       );
     }).toList());

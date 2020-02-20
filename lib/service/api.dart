@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/assets.dart';
@@ -230,34 +232,18 @@ class Api {
     return evalJavascript('account.checkPassword("$address", "$pass")');
   }
 
-  // TODO: chart data in validator detail page
-  Future<List> querySessionRewards() async {
-    var header = await evalJavascript('api.rpc.chain.getHeader()');
-    print('header: ${header.keys.join(',')}');
-    String toHash = header['parentHash'];
-    int toNumber = header['number'];
-    int fromNumber = toNumber - max_blocks;
-    var fromHash =
-        await evalJavascript('api.rpc.chain.getBlockHash($fromNumber)');
-
-    print('blocks: $max_blocks');
-    print('$fromHash $toHash');
-    var newQueue = await _loadBlocks(fromHash, toHash);
-    print(newQueue.length);
-    print(newQueue[0]);
-//    return [toHash, fromHash];
-    return [];
-  }
-
-  Future<List> _loadBlocks(String fromHash, String toHash) async {
-    List results = await evalJavascript(
-        'api.rpc.state.queryStorage([api.query.session.currentIndex.key()], "$fromHash", "$toHash"');
-    print('results.length: ${results.length}');
-    List headers = await Future.wait(results
-        .map((i) => evalJavascript('api.rpc.chain.getHeader(${i['block']})')));
-
-    return headers;
+  Future<Map> queryValidatorRewards(String accountId) async {
+    int timestamp = DateTime.now().second;
+    Map cached = stakingStore.chartDataCache[accountId];
+    if (cached != null && cached['timestamp'] > timestamp - 600) {
+      return cached;
+    }
+    print('fetching chart data');
+    Map data = await evalJavascript(
+        'staking.loadValidatorRewardsData(api, "$accountId")');
+    if (data != null && List.of(data['rewardsLabels']).length > 0) {
+      stakingStore.setChartData(accountId, data);
+    }
+    return data;
   }
 }
-
-const int max_blocks = 10;

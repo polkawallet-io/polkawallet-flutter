@@ -159,6 +159,23 @@ mixin _$StakingStore on _StakingStore, Store {
     }, _$txsAtom, name: '${_$txsAtom.name}_set');
   }
 
+  final _$chartDataCacheAtom = Atom(name: '_StakingStore.chartDataCache');
+
+  @override
+  ObservableMap<String, dynamic> get chartDataCache {
+    _$chartDataCacheAtom.context.enforceReadPolicy(_$chartDataCacheAtom);
+    _$chartDataCacheAtom.reportObserved();
+    return super.chartDataCache;
+  }
+
+  @override
+  set chartDataCache(ObservableMap<String, dynamic> value) {
+    _$chartDataCacheAtom.context.conditionallyRunInAction(() {
+      super.chartDataCache = value;
+      _$chartDataCacheAtom.reportChanged();
+    }, _$chartDataCacheAtom, name: '${_$chartDataCacheAtom.name}_set');
+  }
+
   final _$clearTxsAsyncAction = AsyncAction('clearTxs');
 
   @override
@@ -221,6 +238,16 @@ mixin _$StakingStore on _StakingStore, Store {
     final _$actionInfo = _$_StakingStoreActionController.startAction();
     try {
       return super.clearSate();
+    } finally {
+      _$_StakingStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setChartData(String validatorId, Map<dynamic, dynamic> data) {
+    final _$actionInfo = _$_StakingStoreActionController.startAction();
+    try {
+      return super.setChartData(validatorId, data);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }
