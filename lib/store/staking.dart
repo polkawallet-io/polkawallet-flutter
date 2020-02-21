@@ -72,7 +72,12 @@ abstract class _StakingStore with Store {
     int totalStaked = 0;
     var nominators = {};
     List<ValidatorData> ls = List<ValidatorData>();
+
+    List ids = overview['currentElected'];
+    List points = overview['eraPoints']['individual'];
+
     overview['elected']['info'].forEach((i) {
+      i['points'] = points[ids.indexOf(i['accountId'])];
       ValidatorData data = ValidatorData.fromJson(i);
       totalStaked += data.total;
       data.nominators.forEach((n) {
@@ -143,6 +148,7 @@ class ValidatorData extends _ValidatorData with _$ValidatorData {
       data.bondOwn = json['stakers']['own'];
     }
     data.bondOther = data.total - data.bondOwn;
+    data.points = json['points'];
     data.commission = NumberFormat('0.00%')
         .format(json['validatorPrefs']['commission'] / pow(10, 9));
     data.nominators =
@@ -163,6 +169,9 @@ abstract class _ValidatorData with Store {
 
   @observable
   int bondOther = 0;
+
+  @observable
+  int points = 0;
 
   @observable
   String commission = '';

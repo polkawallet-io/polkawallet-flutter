@@ -133,16 +133,15 @@ class _BackupAccountState extends State<BackupAccount> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    OutlineButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24)),
-                      color: Colors.pink,
-                      padding: EdgeInsets.all(4),
-                      child: Text(
-                        i18n['backup.reset'],
-                        style: TextStyle(fontSize: 14, color: Colors.pink),
+                    GestureDetector(
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Text(
+                          i18n['backup.reset'],
+                          style: TextStyle(fontSize: 14, color: Colors.pink),
+                        ),
                       ),
-                      onPressed: () {
+                      onTap: () {
                         setState(() {
                           _wordsLeft = store.account.newAccount.key.split(' ');
                           _wordsSelected = [];

@@ -18,11 +18,7 @@ class ValidatorDetail extends StatelessWidget {
           var dic = I18n.of(context).staking;
           final ValidatorData detail =
               ModalRoute.of(context).settings.arguments;
-          print(store.staking.chartDataCache.keys.join(','));
-
-          List validators = store.staking.overview['currentElected'];
-          int points = store.staking.overview['eraPoints']['individual']
-              [validators.indexOf(detail.accountId)];
+//          print(store.staking.chartDataCache.keys.join(','));
 
           final myFakeDesktopData = [
             {'label': 0, 'value': 1.005},
@@ -55,7 +51,7 @@ class ValidatorDetail extends StatelessWidget {
                           IconButton(
                             icon: Image.asset('assets/images/public/copy.png'),
                             onPressed: () =>
-                                UI.copyAndNotify(context, '0xksjfo...'),
+                                UI.copyAndNotify(context, detail.accountId),
                           )
                         ],
                       ),
@@ -85,7 +81,7 @@ class ValidatorDetail extends StatelessWidget {
                             ),
                             InfoItem(
                               title: 'points',
-                              content: points.toString(),
+                              content: detail.points.toString(),
                             ),
                           ],
                         ),

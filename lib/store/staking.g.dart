@@ -323,6 +323,23 @@ mixin _$ValidatorData on _ValidatorData, Store {
     }, _$bondOtherAtom, name: '${_$bondOtherAtom.name}_set');
   }
 
+  final _$pointsAtom = Atom(name: '_ValidatorData.points');
+
+  @override
+  int get points {
+    _$pointsAtom.context.enforceReadPolicy(_$pointsAtom);
+    _$pointsAtom.reportObserved();
+    return super.points;
+  }
+
+  @override
+  set points(int value) {
+    _$pointsAtom.context.conditionallyRunInAction(() {
+      super.points = value;
+      _$pointsAtom.reportChanged();
+    }, _$pointsAtom, name: '${_$pointsAtom.name}_set');
+  }
+
   final _$commissionAtom = Atom(name: '_ValidatorData.commission');
 
   @override

@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
+import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/page/staking/validator.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -28,6 +30,9 @@ class _StakingOverviewState extends State<StakingOverview> {
   ScrollController _scrollController;
   int _validatorListLength = 10;
   int _nextListLength = 10;
+
+  int _sort = 0;
+  String _filter = '';
 
   Future<void> _getNextUpsInfo() async {
     int len = store.staking.nextUps.length;
@@ -120,23 +125,6 @@ class _StakingOverviewState extends State<StakingOverview> {
     );
   }
 
-  List<Widget> _buildValidatorList() {
-    if (_tab == 1) {
-      return store.staking.nextUpsInfo.length > 0
-          ? store.staking.nextUpsInfo
-              .sublist(0, _nextListLength)
-              .map((i) => Validator(store.api, i))
-              .toList()
-          : [CupertinoActivityIndicator()];
-    }
-    return store.staking.validatorsInfo.length > 0
-        ? store.staking.validatorsInfo
-            .sublist(0, _validatorListLength)
-            .map((i) => Validator(store.api, i))
-            .toList()
-        : [CupertinoActivityIndicator()];
-  }
-
   @override
   void initState() {
     super.initState();
@@ -174,41 +162,73 @@ class _StakingOverviewState extends State<StakingOverview> {
     return Observer(
       builder: (_) {
         bool hashData = store.staking.overview['validators'] != null;
-        if (hashData) {
-          return RefreshIndicator(
-            onRefresh: reloadStakingOverview,
-            child: ListView(
-              controller: _scrollController,
-              children: <Widget>[
-                _buildTopCard(context),
-                Container(
-                  color: Colors.white,
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.all(16),
-                        height: 16,
-                        decoration: BoxDecoration(
-                          border: Border(
-                              left: BorderSide(width: 3, color: Colors.pink)),
-                        ),
-                      ),
-                      Text(
-                        I18n.of(context).staking['validators'],
-                        style: Theme.of(context).textTheme.display4,
-                      ),
-                      Expanded(
-                        child: Container(),
-                      )
-                    ],
-                  ),
-                ),
-                ..._buildValidatorList()
-              ],
-            ),
-          );
+        List<Widget> list = [
+          Padding(
+            padding: EdgeInsets.all(24),
+            child: CupertinoActivityIndicator(),
+          )
+        ];
+        if (store.staking.validatorsInfo.length > 0) {
+          List<ValidatorData> ls =
+              List<ValidatorData>.of(store.staking.validatorsInfo);
+          // filter list
+          ls.retainWhere(
+              (i) => i.accountId.toLowerCase().contains(_filter.toLowerCase()));
+          // sort list
+          ls.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
+          list = ls.map((i) => Validator(store.api, i)).toList();
         }
-        return CupertinoActivityIndicator();
+        return hashData
+            ? RefreshIndicator(
+                onRefresh: reloadStakingOverview,
+                child: ListView(
+                  controller: _scrollController,
+                  children: <Widget>[
+                    _buildTopCard(context),
+                    Container(
+                      color: Colors.white,
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.all(16),
+                            height: 16,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                  left:
+                                      BorderSide(width: 3, color: Colors.pink)),
+                            ),
+                          ),
+                          Text(
+                            I18n.of(context).staking['validators'],
+                            style: Theme.of(context).textTheme.display4,
+                          ),
+                          Expanded(
+                            child: Container(),
+                          )
+                        ],
+                      ),
+                    ),
+                    ValidatorListFilter(
+                      onSortChange: (value) {
+                        if (value != _sort) {
+                          setState(() {
+                            _sort = value;
+                          });
+                        }
+                      },
+                      onFilterChange: (value) {
+                        if (value != _filter) {
+                          setState(() {
+                            _filter = value;
+                          });
+                        }
+                      },
+                    ),
+                    ...list
+                  ],
+                ),
+              )
+            : CupertinoActivityIndicator();
       },
     );
   }

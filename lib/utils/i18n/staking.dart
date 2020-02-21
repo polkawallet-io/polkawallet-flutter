@@ -34,6 +34,8 @@ const Map<String, String> enStaking = {
   'reward.bond': 'Increase the amount at stake',
   'reward.stash': 'Do not increase the amount at stake',
   'unlocking': 'Unlocking',
+  'filter': 'Filter with Address',
+  'sort': 'Sort by',
 };
 
 const Map<String, String> zhStaking = {
@@ -72,4 +74,6 @@ const Map<String, String> zhStaking = {
   'reward.bond': '收益再质押',
   'reward.stash': '收益不再质押（发至储值账户）',
   'unlocking': '解锁中',
+  'filter': '验证人地址筛选',
+  'sort': '排序',
 };
