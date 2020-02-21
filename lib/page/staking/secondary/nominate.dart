@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking.dart';
@@ -120,45 +121,33 @@ class _NominateState extends State<Nominate> {
                   children: ls,
                 ),
               ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                      child: RaisedButton(
-                        color: Colors.pink,
-                        padding: EdgeInsets.all(16),
-                        child: Text(
-                          I18n.of(context).home['submit.tx'],
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: _selected.length == 0
-                            ? null
-                            : () {
-                                List<String> targets =
-                                    _selected.map((i) => i.accountId).toList();
+              Padding(
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+                child: RoundedButton(
+                  text: I18n.of(context).home['submit.tx'],
+                  onPressed: _selected.length == 0
+                      ? null
+                      : () {
+                          List<String> targets =
+                              _selected.map((i) => i.accountId).toList();
 
-                                var args = {
-                                  "title": dic['action.nominate'],
-                                  "detail": jsonEncode({
-                                    "targets": targets.join(', '),
-                                  }),
-                                  "params": {
-                                    "module": 'staking',
-                                    "call": 'nominate',
-                                    "targets": targets,
-                                  },
-                                  'redirect': '/'
-                                };
-                                Navigator.of(context).pushNamed(
-                                    '/staking/confirm',
-                                    arguments: args);
-                              },
-                      ),
-                    ),
-                  ),
-                ],
-              )
+                          var args = {
+                            "title": dic['action.nominate'],
+                            "detail": jsonEncode({
+                              "targets": targets.join(', '),
+                            }),
+                            "params": {
+                              "module": 'staking',
+                              "call": 'nominate',
+                              "targets": targets,
+                            },
+                            'redirect': '/'
+                          };
+                          Navigator.of(context)
+                              .pushNamed('/staking/confirm', arguments: args);
+                        },
+                ),
+              ),
             ],
           ),
         );

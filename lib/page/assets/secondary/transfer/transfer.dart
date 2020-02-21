@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -139,32 +140,20 @@ class _TransferState extends State<Transfer> {
                 ),
               ),
             ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    child: RaisedButton(
-                      color: Colors.pink,
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        I18n.of(context).assets['make'],
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          Navigator.of(context).pushNamed(
-                              '/assets/transfer/confirm',
-                              arguments: {
-                                "to": _addressCtrl.text.trim(),
-                                "amount": _amountCtrl.text.trim(),
-                              });
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
+            Container(
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+              child: RoundedButton(
+                text: I18n.of(context).assets['make'],
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    Navigator.of(context)
+                        .pushNamed('/assets/transfer/confirm', arguments: {
+                      "to": _addressCtrl.text.trim(),
+                      "amount": _amountCtrl.text.trim(),
+                    });
+                  }
+                },
+              ),
             )
           ],
         );

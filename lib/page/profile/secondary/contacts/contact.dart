@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -148,24 +149,13 @@ class _Contact extends State<Contact> {
               ),
             ),
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(24, 8, 24, 24),
-                  child: RaisedButton(
-                    padding: EdgeInsets.all(16),
-                    color: Colors.pink,
-                    child: Text(
-                      dic['contact.save'],
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: _onSave,
-                  ),
-                ),
-              ),
-            ],
-          )
+          Container(
+            margin: EdgeInsets.fromLTRB(24, 8, 24, 24),
+            child: RoundedButton(
+              text: dic['contact.save'],
+              onPressed: _onSave,
+            ),
+          ),
         ],
       ),
     );

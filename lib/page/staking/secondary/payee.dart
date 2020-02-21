@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -102,39 +103,28 @@ class _SetPayeeState extends State<SetPayee> {
                 ],
               ),
             ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    child: RaisedButton(
-                      color: Colors.pink,
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        I18n.of(context).home['submit.tx'],
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () {
-                        var args = {
-                          "title": dic['action.setting'],
-                          "detail": jsonEncode({
-                            "reward_destination": rewardToOptions[_rewardTo],
-                          }),
-                          "params": {
-                            "module": 'staking',
-                            "call": 'setPayee',
-                            "to": _rewardTo,
-                          },
-                          'redirect': '/'
-                        };
-                        Navigator.of(context)
-                            .pushNamed('/staking/confirm', arguments: args);
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            )
+            Padding(
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+              child: RoundedButton(
+                text: I18n.of(context).home['submit.tx'],
+                onPressed: () {
+                  var args = {
+                    "title": dic['action.setting'],
+                    "detail": jsonEncode({
+                      "reward_destination": rewardToOptions[_rewardTo],
+                    }),
+                    "params": {
+                      "module": 'staking',
+                      "call": 'setPayee',
+                      "to": _rewardTo,
+                    },
+                    'redirect': '/'
+                  };
+                  Navigator.of(context)
+                      .pushNamed('/staking/confirm', arguments: args);
+                },
+              ),
+            ),
           ],
         );
       }),

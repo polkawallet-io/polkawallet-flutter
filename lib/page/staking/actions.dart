@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -253,60 +254,54 @@ class _StakingActions extends State<StakingActions>
     }
 
     String payee = store.staking.ledger['rewardDestination'];
-    int unbonding = 0;
+    int unlocking = 0;
     if (hasData) {
-      List unlocking = store.staking.ledger['stakingLedger']['unlocking'];
-      unlocking.forEach((i) => unbonding += i['value']);
+      List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
+      unlockingList.forEach((i) => unlocking += i['value']);
     }
 
     int balance = Fmt.balanceInt(store.assets.balance);
     int bonded = hasData ? store.staking.ledger['stakingLedger']['active'] : 0;
-    int available = balance - bonded;
+    int available = balance - bonded - unlocking;
 
-    List<Widget> actionButton = [];
+    Widget actionButton = Container();
     if (bonded == 0) {
-      actionButton.add(Expanded(
-        child: RaisedButton(
+      actionButton = Padding(
+        padding: EdgeInsets.only(top: 16),
+        child: RoundedButton(
+          text: dic['action.bond'],
           color: Colors.pinkAccent,
-          child: Text(
-            dic['action.bond'],
-            style: Theme.of(context).textTheme.button,
-          ),
           onPressed: () => Navigator.of(context).pushNamed('/staking/bond'),
         ),
-      ));
+      );
     } else {
       // if (bonded > 0)
       if (store.staking.ledger['nominators'].length == 0) {
         // if user is not nominating
-        actionButton.add(Expanded(
-          child: RaisedButton(
+        actionButton = Padding(
+          padding: EdgeInsets.only(top: 16),
+          child: RoundedButton(
+            text: dic['action.nominate'],
             color: Colors.pinkAccent,
-            child: Text(
-              dic['action.nominate'],
-              style: Theme.of(context).textTheme.button,
-            ),
             onPressed: store.staking.validatorsInfo.length == 0
                 ? null
                 : () => Navigator.of(context).pushNamed('/staking/nominate'),
           ),
-        ));
+        );
       } else {
-        actionButton.add(Expanded(
-          child: RaisedButton(
+        actionButton = Padding(
+          padding: EdgeInsets.only(top: 16),
+          child: RoundedButton(
+            text: dic['action.chill'],
             color: Colors.pinkAccent,
-            child: Text(
-              dic['action.chill'],
-              style: Theme.of(context).textTheme.button,
-            ),
             onPressed: _chill,
           ),
-        ));
+        );
       }
     }
     return Container(
       margin: EdgeInsets.fromLTRB(16, 8, 16, 16),
-      padding: EdgeInsets.fromLTRB(24, 24, 24, 16),
+      padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(const Radius.circular(8)),
           color: Colors.white,
@@ -369,7 +364,7 @@ class _StakingActions extends State<StakingActions>
                 children: <Widget>[
                   Text(dic['balance']),
                   Text(dic['available']),
-                  unbonding > 0 ? Text(dic['unlocking']) : Container(),
+                  unlocking > 0 ? Text(dic['unlocking']) : Container(),
                   payee != null ? Text(dic['bond.reward']) : Container(),
                   bonded > 0
                       ? Text(
@@ -387,8 +382,8 @@ class _StakingActions extends State<StakingActions>
                 children: <Widget>[
                   Text('${Fmt.balance(balance.toString())} $symbol'),
                   Text('${Fmt.balance(available.toString())} $symbol'),
-                  unbonding > 0
-                      ? Text('${Fmt.token(unbonding)} $symbol')
+                  unlocking > 0
+                      ? Text('${Fmt.token(unlocking)} $symbol')
                       : Container(),
                   payee != null ? Text(payee) : Container(),
                   bonded > 0
@@ -401,12 +396,7 @@ class _StakingActions extends State<StakingActions>
               )
             ],
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 8),
-            child: Row(
-              children: actionButton,
-            ),
-          )
+          actionButton
         ],
       ),
     );

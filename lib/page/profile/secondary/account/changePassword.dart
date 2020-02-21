@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -141,23 +142,10 @@ class _ChangePassword extends State<ChangePassword> {
               ),
             ),
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(24, 8, 24, 24),
-                  child: RaisedButton(
-                      padding: EdgeInsets.all(16),
-                      color: Colors.pink,
-                      child: Text(
-                        dic['contact.save'],
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: _onSave),
-                ),
-              ),
-            ],
-          )
+          Container(
+            margin: EdgeInsets.fromLTRB(24, 8, 24, 24),
+            child: RoundedButton(text: dic['contact.save'], onPressed: _onSave),
+          ),
         ],
       ),
     );
