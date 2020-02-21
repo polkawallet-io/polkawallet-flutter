@@ -46,7 +46,10 @@ class _StakingActions extends State<StakingActions>
     setState(() {
       _ledgerLoading = true;
     });
-    await store.api.fetchBalance();
+    await Future.wait([
+      store.api.fetchBalance(),
+      store.api.fetchAccountStaking(),
+    ]);
     if (context != null) {
       setState(() {
         _ledgerLoading = false;

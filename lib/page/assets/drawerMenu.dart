@@ -27,6 +27,7 @@ class DrawerMenu extends StatelessWidget {
                 Navigator.pop(context);
                 store.account.setCurrentAccount(i);
                 store.api.fetchBalance();
+                store.api.fetchAccountStaking();
               },
             ))
         .toList();

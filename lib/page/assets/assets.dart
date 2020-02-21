@@ -72,89 +72,92 @@ class _AssetsState extends State<Assets> {
     if (!store.settings.loading && store.settings.networkName == null) {
       store.settings.setNetworkLoading(true);
       store.api.connectNode();
-    } else {
-      store.api.fetchBalance();
     }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) => Observer(
-        builder: (_) => ListView(
-          padding: EdgeInsets.only(left: 16, right: 16),
-          children: <Widget>[
-            _buildTopCard(context),
-            Container(padding: EdgeInsets.only(top: 32)),
-            Container(
-              padding: EdgeInsets.only(left: 8),
-              decoration: BoxDecoration(
-                border: Border(left: BorderSide(width: 3, color: Colors.pink)),
+        builder: (_) => RefreshIndicator(
+          onRefresh: store.api.fetchBalance,
+          child: ListView(
+            padding: EdgeInsets.only(left: 16, right: 16),
+            children: <Widget>[
+              _buildTopCard(context),
+              Container(padding: EdgeInsets.only(top: 32)),
+              Container(
+                padding: EdgeInsets.only(left: 8),
+                decoration: BoxDecoration(
+                  border:
+                      Border(left: BorderSide(width: 3, color: Colors.pink)),
+                ),
+                child: Text(I18n.of(context).home['assets'],
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.black54)),
               ),
-              child: Text(I18n.of(context).home['assets'],
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black54)),
-            ),
-            store.settings.loading
-                ? Padding(
-                    padding: EdgeInsets.all(24),
-                    child: CupertinoActivityIndicator())
-                : store.settings.networkName == null
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.all(24),
-                            child: Text(
-                              'No Data',
-                              style: TextStyle(
-                                  fontSize: 18, color: Colors.black38),
+              store.settings.loading
+                  ? Padding(
+                      padding: EdgeInsets.all(24),
+                      child: CupertinoActivityIndicator())
+                  : store.settings.networkName == null
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.all(24),
+                              child: Text(
+                                'No Data',
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.black38),
+                              ),
+                            )
+                          ],
+                        )
+                      : Container(
+                          margin: EdgeInsets.fromLTRB(0, 16, 0, 16),
+                          decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(
+                                  const Radius.circular(8)),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius:
+                                      32.0, // has the effect of softening the shadow
+                                  spreadRadius:
+                                      2.0, // has the effect of extending the shadow
+                                  offset: Offset(
+                                    2.0, // horizontal, move right 10
+                                    2.0, // vertical, move down 10
+                                  ),
+                                )
+                              ]),
+                          child: ListTile(
+                            leading: Container(
+                              width: 40,
+                              height: 40,
+                              child:
+                                  Image.asset('assets/images/assets/KSC.png'),
                             ),
-                          )
-                        ],
-                      )
-                    : Container(
-                        margin: EdgeInsets.fromLTRB(0, 16, 0, 16),
-                        decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(
-                                const Radius.circular(8)),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius:
-                                    32.0, // has the effect of softening the shadow
-                                spreadRadius:
-                                    2.0, // has the effect of extending the shadow
-                                offset: Offset(
-                                  2.0, // horizontal, move right 10
-                                  2.0, // vertical, move down 10
-                                ),
-                              )
-                            ]),
-                        child: ListTile(
-                          leading: Container(
-                            width: 40,
-                            height: 40,
-                            child: Image.asset('assets/images/assets/KSC.png'),
+                            title: Text(
+                                store.settings.networkState.tokenSymbol ?? ''),
+                            subtitle: Text(store.settings.networkName ?? ''),
+                            trailing: Text(
+                              Fmt.balance(store.assets.balance),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black54),
+                            ),
+                            onTap: () {
+                              Navigator.pushNamed(context, '/assets/detail');
+                            },
                           ),
-                          title: Text(
-                              store.settings.networkState.tokenSymbol ?? ''),
-                          subtitle: Text(store.settings.networkName ?? ''),
-                          trailing: Text(
-                            Fmt.balance(store.assets.balance),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: Colors.black54),
-                          ),
-                          onTap: () {
-                            Navigator.pushNamed(context, '/assets/detail');
-                          },
                         ),
-                      ),
-          ],
+            ],
+          ),
         ),
       );
 }

@@ -28,29 +28,33 @@ class _AssetPageState extends State<AssetPage>
   bool _isLastPage = false;
   ScrollController _scrollController;
 
-  Future<void> _updateTxs() async {
+  Future<void> _updateData() async {
+    store.api.fetchBalance();
+    store.api.fetchAccountStaking();
     List res = await store.api.updateTxs(_txsPage);
-    if (res.length < list_page_size) {
+    if (res.length < tx_list_page_size) {
       setState(() {
         _isLastPage = true;
       });
     }
   }
 
-  Future<void> _refreshTxs() async {
+  Future<void> _refreshData() async {
     setState(() {
       _txsPage = 1;
       _isLastPage = false;
     });
-    await _updateTxs();
+    await _updateData();
   }
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 3);
-    _updateTxs();
-    store.api.fetchBalance();
+
+    if (store.assets.txsView.length == 0) {
+      _updateData();
+    }
 
     _scrollController = ScrollController();
     _scrollController.addListener(() {
@@ -59,7 +63,7 @@ class _AssetPageState extends State<AssetPage>
         setState(() {
           if (_tabController.index == 0 && !_isLastPage) {
             _txsPage += 1;
-            _updateTxs();
+            _updateData();
           }
         });
       }
@@ -221,7 +225,7 @@ class _AssetPageState extends State<AssetPage>
                   child: Container(
                     color: Colors.white,
                     child: RefreshIndicator(
-                      onRefresh: _refreshTxs,
+                      onRefresh: _refreshData,
                       child: ListView(
                         controller: _scrollController,
                         children: _buildListView(),

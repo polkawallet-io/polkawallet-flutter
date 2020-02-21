@@ -136,12 +136,16 @@ class Api {
   Future<void> fetchBalance() async {
     String address = accountStore.currentAccount.address;
     if (address.length > 0) {
-      var res = await Future.wait([
-        evalJavascript('account.getBalance("$address")'),
-        evalJavascript('api.derive.staking.account("$address")')
-      ]);
-      assetsStore.setAccountBalance(res[0]);
-      stakingStore.setLedger(res[1]);
+      var res = await evalJavascript('account.getBalance("$address")');
+      assetsStore.setAccountBalance(res);
+    }
+  }
+
+  Future<void> fetchAccountStaking() async {
+    String address = accountStore.currentAccount.address;
+    if (address.length > 0) {
+      var res = await evalJavascript('api.derive.staking.account("$address")');
+      stakingStore.setLedger(res);
     }
   }
 
@@ -162,6 +166,7 @@ class Api {
       acc['name'] = accountStore.newAccount.name;
       await accountStore.addAccount(acc);
       fetchBalance();
+      fetchAccountStaking();
     }
     return acc;
   }
@@ -169,8 +174,8 @@ class Api {
   Future<List> updateTxs(int page) async {
     if (page == 1) {
       assetsStore.clearTxs();
+      assetsStore.setLoading(true);
     }
-    assetsStore.setLoading(true);
     String data =
         await PolkaScanApi.fetchTxs(accountStore.currentAccount.address, page);
     List ls = jsonDecode(data)['data'];

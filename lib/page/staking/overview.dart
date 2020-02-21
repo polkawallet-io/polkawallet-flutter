@@ -9,6 +9,8 @@ import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+const validator_list_page_size = 100;
+
 class StakingOverview extends StatefulWidget {
   StakingOverview(this.store, this.reloadStakingOverview);
 
@@ -136,12 +138,12 @@ class _StakingOverviewState extends State<StakingOverview> {
         setState(() {
           int end;
           if (_tab == 0) {
-            end = _validatorListLength + 10;
+            end = _validatorListLength + validator_list_page_size;
             _validatorListLength = end > store.staking.validatorsInfo.length
                 ? store.staking.validatorsInfo.length
                 : end;
           } else {
-            end = _nextListLength + 10;
+            end = _nextListLength + validator_list_page_size;
             _nextListLength = end > store.staking.nextUps.length
                 ? store.staking.nextUps.length
                 : end;
@@ -224,7 +226,7 @@ class _StakingOverviewState extends State<StakingOverview> {
                         }
                       },
                     ),
-                    ...list
+                    ...list.sublist(0, _validatorListLength)
                   ],
                 ),
               )

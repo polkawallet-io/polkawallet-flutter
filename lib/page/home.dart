@@ -66,14 +66,6 @@ class _HomePageState extends State<Home> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    if (!store.settings.loading) {
-      store.api.fetchBalance();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     if (_curIndex == 0) {
       // return assets page
@@ -169,9 +161,6 @@ class _HomePageState extends State<Home> {
           currentIndex: _curIndex,
           iconSize: 22.0,
           onTap: (index) {
-            if (index == 0) {
-              store.api.fetchBalance();
-            }
             setState(() {
               _curIndex = index;
             });
