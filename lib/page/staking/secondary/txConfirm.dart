@@ -113,10 +113,9 @@ class _TxConfirmState extends State<TxConfirm> {
   }
 
   @override
-  void initState() {
-    // setSubmitting false for testing
-//    store.assets.setSubmitting(false);
-    super.initState();
+  void dispose() {
+    store.assets.setSubmitting(false);
+    super.dispose();
   }
 
   @override

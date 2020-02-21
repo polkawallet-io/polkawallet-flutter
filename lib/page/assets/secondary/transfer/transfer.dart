@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -157,12 +158,24 @@ class _TransferState extends State<Transfer> {
                 text: I18n.of(context).assets['make'],
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
-                    // TODO: use txConfirm page to replace transferConfirm page
+                    var args = {
+                      "title": I18n.of(context).assets['transfer'],
+                      "detail": jsonEncode({
+                        "amount": _amountCtrl.text.trim(),
+                        "destination": _addressCtrl.text.trim(),
+                      }),
+                      "params": {
+                        "module": 'balances',
+                        "call": 'transfer',
+                        "amount": (double.parse(_amountCtrl.text.trim()) *
+                                pow(10, decimals))
+                            .toInt(),
+                        "to": _addressCtrl.text.trim(),
+                      },
+                      'redirect': '/assets/detail'
+                    };
                     Navigator.of(context)
-                        .pushNamed('/assets/transfer/confirm', arguments: {
-                      "to": _addressCtrl.text.trim(),
-                      "amount": _amountCtrl.text.trim(),
-                    });
+                        .pushNamed('/staking/confirm', arguments: args);
                   }
                 },
               ),
