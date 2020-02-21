@@ -130,8 +130,20 @@ class _AssetPageState extends State<AssetPage>
   }
 
   List<Widget> _buildListView() {
-    final Map<String, String> dic = I18n.of(context).assets;
-    String balance = Fmt.balance(store.assets.balance);
+    final dic = I18n.of(context).assets;
+
+    int balance = Fmt.balanceInt(store.assets.balance);
+    int bonded = 0;
+    int unlocking = 0;
+    bool hasData = store.staking.ledger['stakingLedger'] != null;
+    if (hasData) {
+      List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
+      unlockingList.forEach((i) => unlocking += i['value']);
+      bonded = store.staking.ledger['stakingLedger']['active'];
+    }
+
+    int locked = bonded + unlocking;
+    int available = balance - locked;
 
     final List<Tab> _myTabs = <Tab>[
       Tab(text: dic['all']),
@@ -139,12 +151,21 @@ class _AssetPageState extends State<AssetPage>
       Tab(text: dic['out']),
     ];
 
+    // TODO: chart data is generated from transfer history
+    // need to use other data source
     List<Map<String, dynamic>> balanceHistory = store.assets.balanceHistory;
 
     List<Widget> list = <Widget>[
       Padding(
         padding: EdgeInsets.all(16),
-        child: Text('${dic['balance']}: $balance'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('${dic['balance']}: ${Fmt.token(balance)}'),
+            Text('${dic['locked']}: ${Fmt.token(locked)}'),
+            Text('${dic['available']}: ${Fmt.token(available)}'),
+          ],
+        ),
       ),
       Container(
         height: 240,

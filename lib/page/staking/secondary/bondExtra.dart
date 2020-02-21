@@ -33,7 +33,10 @@ class _BondExtraState extends State<BondExtra> {
 
     int balance = Fmt.balanceInt(store.assets.balance);
     int bonded = store.staking.ledger['stakingLedger']['active'];
-    int available = balance - bonded;
+    int unlocking = 0;
+    List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
+    unlockingList.forEach((i) => unlocking += i['value']);
+    int available = balance - bonded - unlocking;
     String address = store.account.currentAccount.address;
 
     return Scaffold(
@@ -91,7 +94,7 @@ class _BondExtraState extends State<BondExtra> {
                             return assetDic['amount.error'];
                           }
                           if (double.parse(v.trim()) >=
-                              double.parse(Fmt.token(available)) - 0.02) {
+                              available / pow(10, decimals) - 0.02) {
                             return assetDic['amount.low'];
                           }
                           return null;

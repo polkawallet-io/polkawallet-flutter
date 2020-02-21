@@ -107,6 +107,7 @@ class _TxConfirmState extends State<TxConfirm> {
     if (res == null) {
       onTxError();
     } else {
+      // TODO: add system notification here
       onTxFinish(res['hash']);
     }
   }

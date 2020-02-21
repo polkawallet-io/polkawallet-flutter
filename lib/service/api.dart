@@ -136,8 +136,12 @@ class Api {
   Future<void> fetchBalance() async {
     String address = accountStore.currentAccount.address;
     if (address.length > 0) {
-      var res = await evalJavascript('account.getBalance("$address")');
-      assetsStore.setAccountBalance(res);
+      var res = await Future.wait([
+        evalJavascript('account.getBalance("$address")'),
+        evalJavascript('api.derive.staking.account("$address")')
+      ]);
+      assetsStore.setAccountBalance(res[0]);
+      stakingStore.setLedger(res[1]);
     }
   }
 

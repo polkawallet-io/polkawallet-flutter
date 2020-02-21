@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -44,7 +46,16 @@ class _TransferState extends State<Transfer> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    String balance = Fmt.balance(store.assets.balance);
+    int balance = Fmt.balanceInt(store.assets.balance);
+    int available = balance;
+    bool hasStakingData = store.staking.ledger['stakingLedger'] != null;
+    if (hasStakingData) {
+      int bonded = store.staking.ledger['stakingLedger']['active'];
+      int unlocking = 0;
+      List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
+      unlockingList.forEach((i) => unlocking += i['value']);
+      available = balance - bonded - unlocking;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -101,7 +112,7 @@ class _TransferState extends State<Transfer> {
                         decoration: InputDecoration(
                           hintText: dic['amount'],
                           labelText:
-                              '${dic['amount']} (${dic['balance']}: $balance)',
+                              '${dic['amount']} (${dic['balance']}: ${Fmt.token(available)})',
                         ),
                         inputFormatters: [
                           RegExInputFormatter.withRegex(
@@ -115,7 +126,7 @@ class _TransferState extends State<Transfer> {
                             return dic['amount.error'];
                           }
                           if (double.parse(v.trim()) >=
-                              double.parse(balance) - 0.02) {
+                              available / pow(10, decimals) - 0.02) {
                             return dic['amount.low'];
                           }
                           return null;
@@ -146,6 +157,7 @@ class _TransferState extends State<Transfer> {
                 text: I18n.of(context).assets['make'],
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
+                    // TODO: use txConfirm page to replace transferConfirm page
                     Navigator.of(context)
                         .pushNamed('/assets/transfer/confirm', arguments: {
                       "to": _addressCtrl.text.trim(),

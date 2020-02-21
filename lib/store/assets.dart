@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/utils/format.dart';
 
 part 'assets.g.dart';
 
@@ -52,19 +53,24 @@ abstract class _AssetsStore with Store {
 
   @computed
   ObservableList<Map<String, dynamic>> get balanceHistory {
-    ObservableList res = ObservableList<Map<String, dynamic>>();
-    int total = 0;
-    txs.reversed.forEach((i) {
-      if (i.sender == account.currentAccount.address) {
-        total -= i.value;
-      } else {
-        total += i.value;
+    List<Map<String, dynamic>> res = List<Map<String, dynamic>>();
+    int total = Fmt.balanceInt(balance);
+    txs.asMap().forEach((index, i) {
+      if (index != 0) {
+        TransferData prev = txs[index - 1];
+        if (i.sender == account.currentAccount.address) {
+          total -= prev.value;
+        } else {
+          total += prev.value;
+        }
+        // add transfer fee: 0.02KSM
+        total += 20000000000;
       }
       if (blockMap[i.block] != null) {
         res.add({"time": blockMap[i.block].time, "value": total / pow(10, 12)});
       }
     });
-    return res;
+    return ObservableList.of(res.reversed);
   }
 
   @action

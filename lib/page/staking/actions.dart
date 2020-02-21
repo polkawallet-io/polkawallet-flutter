@@ -46,10 +46,7 @@ class _StakingActions extends State<StakingActions>
     setState(() {
       _ledgerLoading = true;
     });
-    String acc = store.account.currentAccount.address;
-    var res =
-        await store.api.evalJavascript('api.derive.staking.account("$acc")');
-    store.staking.setLedger(res);
+    await store.api.fetchBalance();
     if (context != null) {
       setState(() {
         _ledgerLoading = false;
@@ -71,7 +68,6 @@ class _StakingActions extends State<StakingActions>
     Navigator.of(context).pushNamed('/staking/confirm', arguments: args);
   }
 
-  // TODO: set payee action
   void _showActions() {
     var dic = I18n.of(context).staking;
     bool hasData = store.staking.ledger['stakingLedger'] != null;
@@ -254,14 +250,15 @@ class _StakingActions extends State<StakingActions>
     }
 
     String payee = store.staking.ledger['rewardDestination'];
+
+    int balance = Fmt.balanceInt(store.assets.balance);
+    int bonded = 0;
     int unlocking = 0;
     if (hasData) {
       List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
       unlockingList.forEach((i) => unlocking += i['value']);
+      bonded = store.staking.ledger['stakingLedger']['active'];
     }
-
-    int balance = Fmt.balanceInt(store.assets.balance);
-    int bonded = hasData ? store.staking.ledger['stakingLedger']['active'] : 0;
     int available = balance - bonded - unlocking;
 
     Widget actionButton = Container();

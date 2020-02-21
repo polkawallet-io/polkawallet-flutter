@@ -20,21 +20,16 @@ class _SetPayeeState extends State<SetPayee> {
   int _rewardTo = 0;
 
   @override
-  void initState() {
-    super.initState();
-    if (store.staking.ledger['rewardDestination'] != 'Staked') {
-      setState(() {
-        _rewardTo = 1;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
     String address = store.account.currentAccount.address;
 
     var rewardToOptions = [dic['reward.bond'], dic['reward.stash']];
+
+    int currentPayee = 0;
+    if (store.staking.ledger['rewardDestination'] != 'Staked') {
+      currentPayee = 1;
+    }
 
 //    print(store.staking.overview['account'].keys.join(','));
     return Scaffold(
@@ -84,7 +79,7 @@ class _SetPayeeState extends State<SetPayee> {
                             backgroundColor: Colors.white,
                             itemExtent: 56,
                             scrollController: FixedExtentScrollController(
-                                initialItem: _rewardTo),
+                                initialItem: currentPayee),
                             children: rewardToOptions
                                 .map((i) => Padding(
                                     padding: EdgeInsets.all(16),
@@ -108,6 +103,24 @@ class _SetPayeeState extends State<SetPayee> {
               child: RoundedButton(
                 text: I18n.of(context).home['submit.tx'],
                 onPressed: () {
+                  if (currentPayee == _rewardTo) {
+                    showCupertinoDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return CupertinoAlertDialog(
+                          title: Container(),
+                          content: Text('${dic['reward.warn']}'),
+                          actions: <Widget>[
+                            CupertinoButton(
+                              child: Text(dic['cancel']),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    return;
+                  }
                   var args = {
                     "title": dic['action.setting'],
                     "detail": jsonEncode({
