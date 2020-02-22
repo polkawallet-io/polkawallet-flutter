@@ -96,9 +96,7 @@ abstract class _AccountStore with Store {
 
     if (accountList.length > 0) {
       String address = await LocalStorage.getCurrentAccount();
-      print(address);
       int accIndex = accList.indexWhere((i) => i['address'] == address);
-      print(accIndex);
       if (accIndex >= 0) {
         Map<String, dynamic> acc = accList[accIndex];
         currentAccount = AccountData.fromJson(acc);

@@ -22,6 +22,7 @@ const Map<String, String> enHome = {
   'edit': 'Edit',
   'delete': 'Delete',
   'detail': 'Detail',
+  'notify.submitted': 'Transaction Submitted',
 };
 
 const Map<String, String> zhHome = {
@@ -45,4 +46,5 @@ const Map<String, String> zhHome = {
   'edit': '编辑',
   'delete': '删除',
   'detail': '详情',
+  'notify.submitted': '交易发送成功',
 };

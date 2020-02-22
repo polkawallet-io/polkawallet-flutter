@@ -44,7 +44,6 @@ class _StakingState extends State<Staking> {
     var overview = data[0];
     overview['session'] = data[1];
     overview['issuance'] = data[2];
-    print('setOverview');
     store.staking.setOverview(overview);
 //    _fetchControllers();
     _fetchElectedInfo();

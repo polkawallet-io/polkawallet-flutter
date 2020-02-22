@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -299,23 +300,9 @@ class _StakingActions extends State<StakingActions>
         );
       }
     }
-    return Container(
+    return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 8, 16, 16),
       padding: EdgeInsets.all(24),
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(const Radius.circular(8)),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 16.0, // has the effect of softening the shadow
-              spreadRadius: 4.0, // has the effect of extending the shadow
-              offset: Offset(
-                2.0, // horizontal, move right 10
-                2.0, // vertical, move down 10
-              ),
-            )
-          ]),
       child: Column(
         children: <Widget>[
           Row(

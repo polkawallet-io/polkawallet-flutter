@@ -79,10 +79,10 @@ class _SetPayeeState extends State<SetPayee> {
                             backgroundColor: Colors.white,
                             itemExtent: 56,
                             scrollController: FixedExtentScrollController(
-                                initialItem: currentPayee),
+                                initialItem: _rewardTo),
                             children: rewardToOptions
                                 .map((i) => Padding(
-                                    padding: EdgeInsets.all(16),
+                                    padding: EdgeInsets.all(12),
                                     child: Text(i)))
                                 .toList(),
                             onSelectedItemChanged: (v) {
@@ -112,7 +112,7 @@ class _SetPayeeState extends State<SetPayee> {
                           content: Text('${dic['reward.warn']}'),
                           actions: <Widget>[
                             CupertinoButton(
-                              child: Text(dic['cancel']),
+                              child: Text(I18n.of(context).home['cancel']),
                               onPressed: () => Navigator.of(context).pop(),
                             ),
                           ],

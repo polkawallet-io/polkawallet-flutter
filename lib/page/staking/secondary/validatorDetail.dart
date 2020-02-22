@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/staking/overview.dart';
 import 'package:polka_wallet/page/staking/secondary/rewardsChart.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -35,7 +36,7 @@ class ValidatorDetail extends StatelessWidget {
             ),
             body: ListView(
               children: <Widget>[
-                Card(
+                RoundedCard(
                   margin: EdgeInsets.all(16),
                   child: Column(
                     children: <Widget>[

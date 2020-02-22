@@ -4,11 +4,13 @@ import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:mobx/mobx.dart';
+import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/utils/UI.dart';
 
 class Api {
   Api(
@@ -239,6 +241,29 @@ class Api {
 //    String address = 'HmyonjFVFZyg1mRjRvohVGRw9ouFDRoQ5ea9nDfH2Yi44qQ';
     print('checkpass: $address, $pass');
     return evalJavascript('account.checkPassword("$address", "$pass")');
+  }
+
+  Future<dynamic> sendTx(Map params, String notificationTitle) async {
+//    var res = await evalJavascript('account.sendTx(${jsonEncode(params)})');
+//
+//    if (res != null) {
+//      String hash = res['hash'];
+//      NotificationPlugin.showNotification(int.parse(hash.substring(0, 6)),
+//          notificationTitle, '${params['module']}.${params['call']}');
+//    }
+
+    Completer c = new Completer();
+    void onComplete(res) {
+      if (res != null) {
+        String hash = res['hash'];
+        NotificationPlugin.showNotification(int.parse(hash.substring(0, 6)),
+            notificationTitle, '${params['module']}.${params['call']}');
+      }
+      c.complete(res);
+    }
+
+    Timer(Duration(seconds: 5), () => onComplete({"hash": "0xab753e"}));
+    return c.future;
   }
 
   Future<Map> queryValidatorRewards(String accountId) async {

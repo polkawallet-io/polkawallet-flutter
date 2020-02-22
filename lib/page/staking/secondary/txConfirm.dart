@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -86,7 +87,7 @@ class _TxConfirmState extends State<TxConfirm> {
 
     store.assets.setSubmitting(true);
     state.showSnackBar(SnackBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       content: ListTile(
         leading: CupertinoActivityIndicator(),
         title: Text(
@@ -101,13 +102,10 @@ class _TxConfirmState extends State<TxConfirm> {
     params['from'] = store.account.currentAccount.address;
     params['password'] = _passCtrl.text;
     print(params);
-    var res =
-        await store.api.evalJavascript('account.sendTx(${jsonEncode(params)})');
-
+    var res = await store.api.sendTx(params, dic['notify.submitted']);
     if (res == null) {
       onTxError();
     } else {
-      // TODO: add system notification here
       onTxFinish(res['hash']);
     }
   }

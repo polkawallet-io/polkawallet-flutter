@@ -45,7 +45,7 @@ class Profile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   RaisedButton(
-                    padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
+                    padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
                     color: Colors.pinkAccent,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24)),
