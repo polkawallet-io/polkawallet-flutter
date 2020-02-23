@@ -29,6 +29,9 @@ class _StakingActions extends State<StakingActions>
   bool _txsLoading = true;
 
   Future<void> _updateStakingTxs() async {
+    if (store.settings.loading) {
+      return;
+    }
     setState(() {
       _txsLoading = true;
     });

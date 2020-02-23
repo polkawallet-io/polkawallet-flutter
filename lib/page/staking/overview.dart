@@ -30,24 +30,9 @@ class _StakingOverviewState extends State<StakingOverview> {
   final Function reloadStakingOverview;
 
   int _tab = 0;
-  ScrollController _scrollController;
-  int _validatorListLength = 10;
-  int _nextListLength = 10;
 
   int _sort = 0;
   String _filter = '';
-
-  Future<void> _getNextUpsInfo() async {
-    int len = store.staking.nextUps.length;
-    if (len > 0) {
-      var res = await Future.wait(store.staking.nextUps
-          .sublist(_nextListLength - 10, _nextListLength)
-          .map((address) => store.api
-              .evalJavascript('api.derive.staking.query("$address")')));
-      print(res.length);
-      store.staking.setNextUpsInfo(res);
-    }
-  }
 
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).staking;
@@ -115,47 +100,52 @@ class _StakingOverviewState extends State<StakingOverview> {
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    _scrollController = ScrollController();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent) {
-        setState(() {
-          int end;
-          if (_tab == 0) {
-            end = _validatorListLength + validator_list_page_size;
-            _validatorListLength = end > store.staking.validatorsInfo.length
-                ? store.staking.validatorsInfo.length
-                : end;
-          } else {
-            end = _nextListLength + validator_list_page_size;
-            _nextListLength = end > store.staking.nextUps.length
-                ? store.staking.nextUps.length
-                : end;
-          }
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _scrollController.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
         bool hashData = store.staking.overview['validators'] != null;
-        List<Widget> list = [
-          Padding(
-            padding: EdgeInsets.all(24),
-            child: CupertinoActivityIndicator(),
-          )
+        List list = [
+          // index_0: the overview card
+          _buildTopCard(context),
+          // index_1: the 'Validators' label
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.all(16),
+                height: 16,
+                decoration: BoxDecoration(
+                  border:
+                      Border(left: BorderSide(width: 3, color: Colors.pink)),
+                ),
+              ),
+              Text(
+                I18n.of(context).staking['validators'],
+                style: Theme.of(context).textTheme.display4,
+              ),
+            ],
+          ),
+          // index_2: the filter
+          Container(
+            color: Colors.white,
+            padding: EdgeInsets.only(top: 8),
+            child: ValidatorListFilter(
+              onSortChange: (value) {
+                if (value != _sort) {
+                  setState(() {
+                    _sort = value;
+                  });
+                }
+              },
+              onFilterChange: (value) {
+                if (value != _filter) {
+                  setState(() {
+                    _filter = value;
+                  });
+                }
+              },
+            ),
+          ),
         ];
         if (store.staking.validatorsInfo.length > 0) {
           List<ValidatorData> ls =
@@ -165,56 +155,21 @@ class _StakingOverviewState extends State<StakingOverview> {
               (i) => i.accountId.toLowerCase().contains(_filter.toLowerCase()));
           // sort list
           ls.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
-          list = ls.map((i) => Validator(store.api, i)).toList();
+//          list = ls.map((i) => Validator(store.api, i)).toList();
+          list.addAll(ls);
         }
         return hashData
             ? RefreshIndicator(
                 onRefresh: reloadStakingOverview,
-                child: ListView(
-                  controller: _scrollController,
-                  children: <Widget>[
-                    _buildTopCard(context),
-                    Container(
-                      color: Colors.white,
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.all(16),
-                            height: 16,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                  left:
-                                      BorderSide(width: 3, color: Colors.pink)),
-                            ),
-                          ),
-                          Text(
-                            I18n.of(context).staking['validators'],
-                            style: Theme.of(context).textTheme.display4,
-                          ),
-                          Expanded(
-                            child: Container(),
-                          )
-                        ],
-                      ),
-                    ),
-                    ValidatorListFilter(
-                      onSortChange: (value) {
-                        if (value != _sort) {
-                          setState(() {
-                            _sort = value;
-                          });
-                        }
-                      },
-                      onFilterChange: (value) {
-                        if (value != _filter) {
-                          setState(() {
-                            _filter = value;
-                          });
-                        }
-                      },
-                    ),
-                    ...list.sublist(0, _validatorListLength)
-                  ],
+                child: ListView.builder(
+                  itemCount: list.length,
+                  itemBuilder: (BuildContext context, int i) {
+                    // we already have the index_0 - index_2 Widget
+                    if (i < 3) {
+                      return list[i];
+                    }
+                    return Validator(store.api, list[i] as ValidatorData);
+                  },
                 ),
               )
             : CupertinoActivityIndicator();
