@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/chartLabel.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/staking/overview.dart';
 import 'package:polka_wallet/page/staking/secondary/rewardsChart.dart';
@@ -19,15 +20,26 @@ class ValidatorDetail extends StatelessWidget {
           var dic = I18n.of(context).staking;
           final ValidatorData detail =
               ModalRoute.of(context).settings.arguments;
-//          print(store.staking.chartDataCache.keys.join(','));
 
-          final myFakeDesktopData = [
-            {'label': 0, 'value': 1.005},
-            {'label': 1, 'value': 0.005},
-            {'label': 2, 'value': 1.005},
-            {'label': 3, 'value': 2.005},
-          ];
-          final labels = ['123', '23', 'dfg', '345'];
+          List<List<num>> dataList = [];
+          List<String> labels = [];
+
+          Map chartData = store.staking.chartDataCache[detail.accountId];
+          if (chartData != null) {
+            List.of(chartData['rewardsChart']).forEach((ls) {
+              dataList.add(
+                  List<num>.from(ls.map((i) => double.parse(Fmt.token(i)))));
+            });
+            List<String>.from(chartData['rewardsLabels'])
+                .asMap()
+                .forEach((k, v) {
+              if ((k + 2) % 3 == 0) {
+                labels.add(v);
+              } else {
+                labels.add('');
+              }
+            });
+          }
 
           return Scaffold(
             appBar: AppBar(
@@ -90,11 +102,33 @@ class ValidatorDetail extends StatelessWidget {
                     ],
                   ),
                 ),
-// TODO: some issues with chart data fetching
-//                Container(
-//                  height: 240,
-//                  child: RewardsChart.withData(myFakeDesktopData, labels),
-//                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 16),
+                  child: Column(
+                    children: <Widget>[
+                      ChartLabel(
+                        name: 'Rewards',
+                        color: Colors.blue,
+                      ),
+                      ChartLabel(
+                        name: 'Slashes',
+                        color: Colors.red,
+                      ),
+                      ChartLabel(
+                        name: 'Average',
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: 240,
+                  padding: EdgeInsets.all(8),
+                  margin: EdgeInsets.only(top: 16),
+                  child: dataList.length == 0
+                      ? CupertinoActivityIndicator()
+                      : RewardsChart.withData(dataList, labels),
+                ),
               ],
             ),
           );

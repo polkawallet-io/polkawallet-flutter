@@ -4,11 +4,18 @@ import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+const default_node_zh = 'ws://mandala-01.acala.network:9954/';
+const default_node = 'wss://kusama-rpc.polkadot.io/';
 const nodeList = [
   {
     'info': 'kusama',
+    'text': 'Kusama (Polkadot Canary, hosted by Polkawallet)',
+    'value': default_node_zh,
+  },
+  {
+    'info': 'kusama',
     'text': 'Kusama (Polkadot Canary, hosted by Parity)',
-    'value': 'wss://kusama-rpc.polkadot.io/',
+    'value': default_node,
   },
   {
     'info': 'kusama',

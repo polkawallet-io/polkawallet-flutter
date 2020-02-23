@@ -10,8 +10,7 @@ class RewardsChart extends StatelessWidget {
 
   final charts.BasicNumericTickFormatterSpec labelFormatter;
 
-  factory RewardsChart.withData(
-      List<Map<String, dynamic>> ls, List<String> labels) {
+  factory RewardsChart.withData(List<List<num>> ls, List<String> labels) {
     var formatter = charts.BasicNumericTickFormatterSpec((num value) {
       return labels[value.toInt()] ?? '';
     });
@@ -24,15 +23,28 @@ class RewardsChart extends StatelessWidget {
     );
   }
 
-  static List<charts.Series<Map<String, dynamic>, num>> _formatData(
-      List<Map<String, dynamic>> ls) {
+  static List<charts.Series<num, num>> _formatData(List<List<num>> ls) {
     return [
-      new charts.Series<Map<String, dynamic>, num>(
+      new charts.Series<num, num>(
+        id: 'Slashes',
+        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
+        domainFn: (_, int index) => index,
+        measureFn: (num item, _) => item,
+        data: ls[0],
+      ),
+      new charts.Series<num, num>(
         id: 'Rewards',
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (Map<String, dynamic> item, _) => item['label'],
-        measureFn: (Map<String, dynamic> item, _) => item['value'],
-        data: ls,
+        domainFn: (_, int index) => index,
+        measureFn: (num item, _) => item,
+        data: ls[1],
+      ),
+      new charts.Series<num, num>(
+        id: 'Average',
+        colorFn: (_, __) => charts.MaterialPalette.gray.shadeDefault,
+        domainFn: (_, int index) => index,
+        measureFn: (num item, _) => item,
+        data: ls[2],
       ),
     ];
   }

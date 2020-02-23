@@ -216,7 +216,7 @@ class _StakingActions extends State<StakingActions>
             ),
           ),
           onTap: () {
-//            store.api.queryValidatorRewards(validator.accountId);
+            store.api.queryValidatorRewards(validator.accountId);
             Navigator.of(context)
                 .pushNamed('/staking/validator', arguments: validator);
           },

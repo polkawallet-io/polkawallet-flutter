@@ -77,7 +77,11 @@ abstract class _StakingStore with Store {
     List points = overview['eraPoints']['individual'];
 
     overview['elected']['info'].forEach((i) {
-      i['points'] = points[ids.indexOf(i['accountId'])];
+      try {
+        i['points'] = points[ids.indexOf(i['accountId'])];
+      } catch (err) {
+        print(err);
+      }
       ValidatorData data = ValidatorData.fromJson(i);
       totalStaked += data.total;
       data.nominators.forEach((n) {

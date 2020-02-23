@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:mobx/mobx.dart';
+import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking.dart';
-import 'package:polka_wallet/utils/UI.dart';
 
 class Api {
   Api(
@@ -111,8 +109,11 @@ class Api {
   }
 
   Future<void> connectNode() async {
-    String value =
-        settingsStore.endpoint.value ?? 'wss://kusama-rpc.polkadot.io/';
+//    String defaultEndpoint = Locale.cachedLocaleString.contains('zh')
+//        ? default_node_zh
+//        : default_node;
+//    String value = settingsStore.endpoint.value ?? defaultEndpoint;
+    String value = settingsStore.endpoint.value ?? default_node;
     print(value);
     String res = await evalJavascript('settings.connect("$value")');
     if (res == null) {
@@ -269,13 +270,14 @@ class Api {
   Future<Map> queryValidatorRewards(String accountId) async {
     int timestamp = DateTime.now().second;
     Map cached = stakingStore.chartDataCache[accountId];
-    if (cached != null && cached['timestamp'] > timestamp - 600) {
+    if (cached != null && cached['timestamp'] > timestamp - 1800) {
       return cached;
     }
     print('fetching chart data');
     Map data = await evalJavascript(
         'staking.loadValidatorRewardsData(api, "$accountId")');
     if (data != null && List.of(data['rewardsLabels']).length > 0) {
+      data['timestamp'] = timestamp;
       stakingStore.setChartData(accountId, data);
     }
     return data;

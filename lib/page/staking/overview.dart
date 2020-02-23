@@ -106,7 +106,7 @@ class _StakingOverviewState extends State<StakingOverview> {
         bool hashData = store.staking.overview['validators'] != null;
         List list = [
           // index_0: the overview card
-          _buildTopCard(context),
+          hashData ? _buildTopCard(context) : Container(),
           // index_1: the 'Validators' label
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -125,8 +125,10 @@ class _StakingOverviewState extends State<StakingOverview> {
               ),
             ],
           ),
-          // index_2: the filter
-          Container(
+        ];
+        if (store.staking.validatorsInfo.length > 0) {
+          // index_2: the filter Widget
+          list.add(Container(
             color: Colors.white,
             padding: EdgeInsets.only(top: 8),
             child: ValidatorListFilter(
@@ -145,9 +147,7 @@ class _StakingOverviewState extends State<StakingOverview> {
                 }
               },
             ),
-          ),
-        ];
-        if (store.staking.validatorsInfo.length > 0) {
+          ));
           List<ValidatorData> ls =
               List<ValidatorData>.of(store.staking.validatorsInfo);
           // filter list
@@ -155,8 +155,9 @@ class _StakingOverviewState extends State<StakingOverview> {
               (i) => i.accountId.toLowerCase().contains(_filter.toLowerCase()));
           // sort list
           ls.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
-//          list = ls.map((i) => Validator(store.api, i)).toList();
           list.addAll(ls);
+        } else {
+          list.add(CupertinoActivityIndicator());
         }
         return hashData
             ? RefreshIndicator(
