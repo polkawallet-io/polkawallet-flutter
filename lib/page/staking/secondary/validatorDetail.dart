@@ -6,6 +6,7 @@ import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/staking/overview.dart';
 import 'package:polka_wallet/page/staking/secondary/blocksChart.dart';
 import 'package:polka_wallet/page/staking/secondary/rewardsChart.dart';
+import 'package:polka_wallet/page/staking/secondary/splitChart.dart';
 import 'package:polka_wallet/page/staking/secondary/stakesChart.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking.dart';
@@ -40,11 +41,8 @@ class ValidatorDetail extends StatelessWidget {
 
           Map stakesChartData =
               store.staking.stakesChartDataCache[detail.accountId];
-          print(stakesChartData['splitChart']);
           List<List<num>> stakesList = [];
           List<String> stakesLabels = [];
-//          List<List<num>> splitList = [[], []];
-//          List<String> splitLabels = [];
           if (stakesChartData != null) {
             stakesList.add(List<num>.from(stakesChartData['stakeChart'][0]));
             List<String>.from(stakesChartData['stakeLabels'])
@@ -56,9 +54,6 @@ class ValidatorDetail extends StatelessWidget {
                 stakesLabels.add('');
               }
             });
-
-//            blocksList = List<List<num>>.from(rewardsChartData['blocksList']);
-//            blocksLabels = List<String>.from(rewardsChartData['blocksLabels']);
           }
 
           return Scaffold(
@@ -122,77 +117,109 @@ class ValidatorDetail extends StatelessWidget {
                     ],
                   ),
                 ),
-                // blocks labels & chart
-                Padding(
-                  padding: EdgeInsets.only(left: 16),
+                Container(
+                  color: Theme.of(context).cardColor,
                   child: Column(
                     children: <Widget>[
-                      ChartLabel(
-                        name: 'Blocks produced',
-                        color: Colors.yellow,
+                      // blocks labels & chart
+                      Padding(
+                        padding: EdgeInsets.only(left: 16, top: 16),
+                        child: Column(
+                          children: <Widget>[
+                            ChartLabel(
+                              name: 'Blocks produced',
+                              color: Colors.yellow,
+                            ),
+                            ChartLabel(
+                              name: 'Average',
+                              color: Colors.grey,
+                            ),
+                          ],
+                        ),
                       ),
-                      ChartLabel(
-                        name: 'Average',
-                        color: Colors.grey,
+                      Container(
+                        height: 240,
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.only(bottom: 16),
+                        child: rewardsChartData == null
+                            ? CupertinoActivityIndicator()
+                            : BlocksChart.withData(blocksList, blocksLabels),
+                      ),
+                      // Rewards labels & chart
+                      Divider(),
+                      Padding(
+                        padding: EdgeInsets.only(left: 16, top: 8),
+                        child: Column(
+                          children: <Widget>[
+                            ChartLabel(
+                              name: 'Rewards',
+                              color: Colors.blue,
+                            ),
+                            ChartLabel(
+                              name: 'Slashes',
+                              color: Colors.red,
+                            ),
+                            ChartLabel(
+                              name: 'Average',
+                              color: Colors.grey,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 240,
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.only(bottom: 16),
+                        child: rewardsChartData == null
+                            ? CupertinoActivityIndicator()
+                            : RewardsChart.withData(rewardsList, rewardsLabels),
+                      ),
+                      // Stakes labels & chart
+                      Divider(),
+                      Padding(
+                        padding: EdgeInsets.only(left: 16, top: 8),
+                        child: Column(
+                          children: <Widget>[
+                            ChartLabel(
+                              name: 'Elected Stake',
+                              color: Colors.yellow,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 240,
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.only(bottom: 16),
+                        child: stakesChartData == null
+                            ? CupertinoActivityIndicator()
+                            : StakesChart.withData(stakesList, stakesLabels),
+                      ),
+                      // Stakes labels & chart
+                      Divider(),
+                      Padding(
+                        padding: EdgeInsets.only(left: 16, top: 8),
+                        child: Column(
+                          children: <Widget>[
+                            ChartLabel(
+                              name: 'Staker Percentages (%)',
+                              color: Colors.yellow,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 520,
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.only(bottom: 16),
+                        child: stakesChartData == null
+                            ? CupertinoActivityIndicator()
+                            : SplitChart.withData(
+                                List<Map<String, dynamic>>.from(
+                                    stakesChartData['splitChart'])),
                       ),
                     ],
                   ),
-                ),
-                Container(
-                  height: 240,
-                  padding: EdgeInsets.all(8),
-                  margin: EdgeInsets.only(top: 16),
-                  child: rewardsChartData == null
-                      ? CupertinoActivityIndicator()
-                      : BlocksChart.withData(blocksList, blocksLabels),
-                ),
-                // Rewards labels & chart
-                Padding(
-                  padding: EdgeInsets.only(left: 16),
-                  child: Column(
-                    children: <Widget>[
-                      ChartLabel(
-                        name: 'Rewards',
-                        color: Colors.blue,
-                      ),
-                      ChartLabel(
-                        name: 'Slashes',
-                        color: Colors.red,
-                      ),
-                      ChartLabel(
-                        name: 'Average',
-                        color: Colors.grey,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 240,
-                  padding: EdgeInsets.all(8),
-                  margin: EdgeInsets.only(top: 16),
-                  child: rewardsChartData == null
-                      ? CupertinoActivityIndicator()
-                      : RewardsChart.withData(rewardsList, rewardsLabels),
-                ),
-                // Stakes labels & chart
-                Padding(
-                  padding: EdgeInsets.only(left: 16),
-                  child: Column(
-                    children: <Widget>[
-                      ChartLabel(
-                        name: 'Elected Stake',
-                        color: Colors.yellow,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 240,
-                  padding: EdgeInsets.all(8),
-                  margin: EdgeInsets.only(top: 16),
-                  child: stakesChartData == null
-                      ? CupertinoActivityIndicator()
-                      : StakesChart.withData(stakesList, stakesLabels),
                 ),
               ],
             ),

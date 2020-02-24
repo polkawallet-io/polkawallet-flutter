@@ -271,9 +271,10 @@ class Api {
   Future<Map> queryValidatorRewards(String accountId) async {
     int timestamp = DateTime.now().second;
     Map cached = stakingStore.rewardsChartDataCache[accountId];
-//    if (cached != null && cached['timestamp'] > timestamp - 1800) {
-//      return cached;
-//    }
+    if (cached != null && cached['timestamp'] > timestamp - 1800) {
+      queryValidatorStakes(accountId);
+      return cached;
+    }
     print('fetching rewards chart data');
     Map data = await evalJavascript(
         'staking.loadValidatorRewardsData(api, "$accountId")');
@@ -298,7 +299,6 @@ class Api {
     Map data = await evalJavascript(
         'staking.loadValidatorStakeData(api, "$accountId")');
     if (data != null && List.of(data['stakeLabels']).length > 0) {
-//      Map chartData = Fmt.formatRewardsChartData(data);
       data['timestamp'] = timestamp;
       stakingStore.setStakesChartData(accountId, data);
     }
