@@ -159,21 +159,44 @@ mixin _$StakingStore on _StakingStore, Store {
     }, _$txsAtom, name: '${_$txsAtom.name}_set');
   }
 
-  final _$chartDataCacheAtom = Atom(name: '_StakingStore.chartDataCache');
+  final _$rewardsChartDataCacheAtom =
+      Atom(name: '_StakingStore.rewardsChartDataCache');
 
   @override
-  ObservableMap<String, dynamic> get chartDataCache {
-    _$chartDataCacheAtom.context.enforceReadPolicy(_$chartDataCacheAtom);
-    _$chartDataCacheAtom.reportObserved();
-    return super.chartDataCache;
+  ObservableMap<String, dynamic> get rewardsChartDataCache {
+    _$rewardsChartDataCacheAtom.context
+        .enforceReadPolicy(_$rewardsChartDataCacheAtom);
+    _$rewardsChartDataCacheAtom.reportObserved();
+    return super.rewardsChartDataCache;
   }
 
   @override
-  set chartDataCache(ObservableMap<String, dynamic> value) {
-    _$chartDataCacheAtom.context.conditionallyRunInAction(() {
-      super.chartDataCache = value;
-      _$chartDataCacheAtom.reportChanged();
-    }, _$chartDataCacheAtom, name: '${_$chartDataCacheAtom.name}_set');
+  set rewardsChartDataCache(ObservableMap<String, dynamic> value) {
+    _$rewardsChartDataCacheAtom.context.conditionallyRunInAction(() {
+      super.rewardsChartDataCache = value;
+      _$rewardsChartDataCacheAtom.reportChanged();
+    }, _$rewardsChartDataCacheAtom,
+        name: '${_$rewardsChartDataCacheAtom.name}_set');
+  }
+
+  final _$stakesChartDataCacheAtom =
+      Atom(name: '_StakingStore.stakesChartDataCache');
+
+  @override
+  ObservableMap<String, dynamic> get stakesChartDataCache {
+    _$stakesChartDataCacheAtom.context
+        .enforceReadPolicy(_$stakesChartDataCacheAtom);
+    _$stakesChartDataCacheAtom.reportObserved();
+    return super.stakesChartDataCache;
+  }
+
+  @override
+  set stakesChartDataCache(ObservableMap<String, dynamic> value) {
+    _$stakesChartDataCacheAtom.context.conditionallyRunInAction(() {
+      super.stakesChartDataCache = value;
+      _$stakesChartDataCacheAtom.reportChanged();
+    }, _$stakesChartDataCacheAtom,
+        name: '${_$stakesChartDataCacheAtom.name}_set');
   }
 
   final _$clearTxsAsyncAction = AsyncAction('clearTxs');
@@ -244,10 +267,20 @@ mixin _$StakingStore on _StakingStore, Store {
   }
 
   @override
-  void setChartData(String validatorId, Map<dynamic, dynamic> data) {
+  void setRewardsChartData(String validatorId, Map data) {
     final _$actionInfo = _$_StakingStoreActionController.startAction();
     try {
-      return super.setChartData(validatorId, data);
+      return super.setRewardsChartData(validatorId, data);
+    } finally {
+      _$_StakingStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setStakesChartData(String validatorId, Map data) {
+    final _$actionInfo = _$_StakingStoreActionController.startAction();
+    try {
+      return super.setStakesChartData(validatorId, data);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }

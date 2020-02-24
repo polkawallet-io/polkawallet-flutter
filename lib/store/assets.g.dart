@@ -153,7 +153,7 @@ mixin _$AssetsStore on _AssetsStore, Store {
   final _$addTxsAsyncAction = AsyncAction('addTxs');
 
   @override
-  Future<void> addTxs(List<dynamic> ls) {
+  Future<void> addTxs(List ls) {
     return _$addTxsAsyncAction.run(() => super.addTxs(ls));
   }
 

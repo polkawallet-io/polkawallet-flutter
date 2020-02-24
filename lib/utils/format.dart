@@ -57,4 +57,50 @@ class Fmt {
         return 1;
     }
   }
+
+  static Map formatRewardsChartData(Map chartData) {
+    List<List<num>> rewardsList = [];
+    List<String> rewardsLabels = [];
+    List.of(chartData['rewardsChart']).asMap().forEach((index, ls) {
+      if (index == 2) {
+        List<num> average = [];
+        List<num>.from(ls).asMap().forEach((i, v) {
+          average.add((v - chartData['rewardsChart'][1][i]));
+        });
+        rewardsList.add(average);
+      } else {
+        rewardsList.add(List<num>.from(ls));
+      }
+    });
+    List<String>.from(chartData['rewardsLabels']).asMap().forEach((k, v) {
+      if ((k + 2) % 3 == 0) {
+        rewardsLabels.add(v);
+      } else {
+        rewardsLabels.add('');
+      }
+    });
+
+    List<List<num>> blocksList = [
+      List<num>.from(chartData['idxSet']).sublist(7),
+      <num>[]
+    ];
+    List<String> blocksLabels = [];
+    List<num>.from(chartData['avgSet']).sublist(7).asMap().forEach((i, v) {
+      blocksList[1].add(v - blocksList[0][i]);
+    });
+    List<String>.from(chartData['blocksLabels']).asMap().forEach((k, v) {
+      if ((k + 2) % 3 == 0) {
+        blocksLabels.add(v);
+      } else {
+        blocksLabels.add('');
+      }
+    });
+
+    return {
+      'rewards': rewardsList,
+      'rewardsLabels': rewardsLabels,
+      'blocksList': blocksList,
+      'blocksLabels': blocksLabels,
+    };
+  }
 }

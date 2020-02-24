@@ -4,7 +4,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/chartLabel.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/staking/overview.dart';
+import 'package:polka_wallet/page/staking/secondary/blocksChart.dart';
 import 'package:polka_wallet/page/staking/secondary/rewardsChart.dart';
+import 'package:polka_wallet/page/staking/secondary/stakesChart.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -21,24 +23,42 @@ class ValidatorDetail extends StatelessWidget {
           final ValidatorData detail =
               ModalRoute.of(context).settings.arguments;
 
-          List<List<num>> dataList = [];
-          List<String> labels = [];
+          Map rewardsChartData =
+              store.staking.rewardsChartDataCache[detail.accountId];
+          List<List<num>> rewardsList = [[], [], []];
+          List<String> rewardsLabels = [];
+          List<List<num>> blocksList = [[], []];
+          List<String> blocksLabels = [];
+          if (rewardsChartData != null) {
+            rewardsList = List<List<num>>.from(rewardsChartData['rewards']);
+            rewardsLabels =
+                List<String>.from(rewardsChartData['rewardsLabels']);
 
-          Map chartData = store.staking.chartDataCache[detail.accountId];
-          if (chartData != null) {
-            List.of(chartData['rewardsChart']).forEach((ls) {
-              dataList.add(
-                  List<num>.from(ls.map((i) => double.parse(Fmt.token(i)))));
-            });
-            List<String>.from(chartData['rewardsLabels'])
+            blocksList = List<List<num>>.from(rewardsChartData['blocksList']);
+            blocksLabels = List<String>.from(rewardsChartData['blocksLabels']);
+          }
+
+          Map stakesChartData =
+              store.staking.stakesChartDataCache[detail.accountId];
+          print(stakesChartData['splitChart']);
+          List<List<num>> stakesList = [];
+          List<String> stakesLabels = [];
+//          List<List<num>> splitList = [[], []];
+//          List<String> splitLabels = [];
+          if (stakesChartData != null) {
+            stakesList.add(List<num>.from(stakesChartData['stakeChart'][0]));
+            List<String>.from(stakesChartData['stakeLabels'])
                 .asMap()
                 .forEach((k, v) {
-              if ((k + 2) % 3 == 0) {
-                labels.add(v);
+              if ((k + 2) % 5 == 0) {
+                stakesLabels.add(v);
               } else {
-                labels.add('');
+                stakesLabels.add('');
               }
             });
+
+//            blocksList = List<List<num>>.from(rewardsChartData['blocksList']);
+//            blocksLabels = List<String>.from(rewardsChartData['blocksLabels']);
           }
 
           return Scaffold(
@@ -102,6 +122,31 @@ class ValidatorDetail extends StatelessWidget {
                     ],
                   ),
                 ),
+                // blocks labels & chart
+                Padding(
+                  padding: EdgeInsets.only(left: 16),
+                  child: Column(
+                    children: <Widget>[
+                      ChartLabel(
+                        name: 'Blocks produced',
+                        color: Colors.yellow,
+                      ),
+                      ChartLabel(
+                        name: 'Average',
+                        color: Colors.grey,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: 240,
+                  padding: EdgeInsets.all(8),
+                  margin: EdgeInsets.only(top: 16),
+                  child: rewardsChartData == null
+                      ? CupertinoActivityIndicator()
+                      : BlocksChart.withData(blocksList, blocksLabels),
+                ),
+                // Rewards labels & chart
                 Padding(
                   padding: EdgeInsets.only(left: 16),
                   child: Column(
@@ -125,9 +170,29 @@ class ValidatorDetail extends StatelessWidget {
                   height: 240,
                   padding: EdgeInsets.all(8),
                   margin: EdgeInsets.only(top: 16),
-                  child: dataList.length == 0
+                  child: rewardsChartData == null
                       ? CupertinoActivityIndicator()
-                      : RewardsChart.withData(dataList, labels),
+                      : RewardsChart.withData(rewardsList, rewardsLabels),
+                ),
+                // Stakes labels & chart
+                Padding(
+                  padding: EdgeInsets.only(left: 16),
+                  child: Column(
+                    children: <Widget>[
+                      ChartLabel(
+                        name: 'Elected Stake',
+                        color: Colors.yellow,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: 240,
+                  padding: EdgeInsets.all(8),
+                  margin: EdgeInsets.only(top: 16),
+                  child: stakesChartData == null
+                      ? CupertinoActivityIndicator()
+                      : StakesChart.withData(stakesList, stakesLabels),
                 ),
               ],
             ),

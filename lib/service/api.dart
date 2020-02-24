@@ -9,6 +9,7 @@ import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/utils/format.dart';
 
 class Api {
   Api(
@@ -269,16 +270,37 @@ class Api {
 
   Future<Map> queryValidatorRewards(String accountId) async {
     int timestamp = DateTime.now().second;
-    Map cached = stakingStore.chartDataCache[accountId];
-    if (cached != null && cached['timestamp'] > timestamp - 1800) {
-      return cached;
-    }
-    print('fetching chart data');
+    Map cached = stakingStore.rewardsChartDataCache[accountId];
+//    if (cached != null && cached['timestamp'] > timestamp - 1800) {
+//      return cached;
+//    }
+    print('fetching rewards chart data');
     Map data = await evalJavascript(
         'staking.loadValidatorRewardsData(api, "$accountId")');
     if (data != null && List.of(data['rewardsLabels']).length > 0) {
+      // fetch validator stakes data while rewards data query finished
+      queryValidatorStakes(accountId);
+      // format rewards data & set cache
+      Map chartData = Fmt.formatRewardsChartData(data);
+      chartData['timestamp'] = timestamp;
+      stakingStore.setRewardsChartData(accountId, chartData);
+    }
+    return data;
+  }
+
+  Future<Map> queryValidatorStakes(String accountId) async {
+    int timestamp = DateTime.now().second;
+    Map cached = stakingStore.stakesChartDataCache[accountId];
+    if (cached != null && cached['timestamp'] > timestamp - 1800) {
+      return cached;
+    }
+    print('fetching stakes chart data');
+    Map data = await evalJavascript(
+        'staking.loadValidatorStakeData(api, "$accountId")');
+    if (data != null && List.of(data['stakeLabels']).length > 0) {
+//      Map chartData = Fmt.formatRewardsChartData(data);
       data['timestamp'] = timestamp;
-      stakingStore.setChartData(accountId, data);
+      stakingStore.setStakesChartData(accountId, data);
     }
     return data;
   }

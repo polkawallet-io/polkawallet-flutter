@@ -42,7 +42,11 @@ abstract class _StakingStore with Store {
       ObservableList<Map<String, dynamic>>();
 
   @observable
-  ObservableMap<String, dynamic> chartDataCache =
+  ObservableMap<String, dynamic> rewardsChartDataCache =
+      ObservableMap<String, dynamic>();
+
+  @observable
+  ObservableMap<String, dynamic> stakesChartDataCache =
       ObservableMap<String, dynamic>();
 
   @computed
@@ -136,8 +140,13 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void setChartData(String validatorId, Map data) {
-    chartDataCache[validatorId] = data;
+  void setRewardsChartData(String validatorId, Map data) {
+    rewardsChartDataCache[validatorId] = data;
+  }
+
+  @action
+  void setStakesChartData(String validatorId, Map data) {
+    stakesChartDataCache[validatorId] = data;
   }
 }
 
