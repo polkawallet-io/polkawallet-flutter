@@ -47,7 +47,6 @@ class WalletApp extends StatefulWidget {
 
 class _WalletAppState extends State<WalletApp> {
   final _appStore = AppStore();
-  final _notificationPlugin = NotificationPlugin();
 
   Locale _locale = const Locale('en', '');
 
@@ -78,7 +77,6 @@ class _WalletAppState extends State<WalletApp> {
     if (_appStore.api == null) {
       print('initailizing app state');
       _appStore.init(context);
-      _notificationPlugin.init(context);
 
       _initLocaleFromLocalStorage();
     } else {

@@ -76,12 +76,13 @@ class NotificationPlugin {
 
   void _configureSelectNotificationSubject(BuildContext context) {
     selectNotificationSubject.stream.listen((String payload) async {
-      print(payload);
-      await Navigator.pushNamed(
-        context,
-        '/',
-        arguments: payload,
-      );
+      // do nothing for now
+//      print(payload);
+//      await Navigator.pushNamed(
+//        context,
+//        '/',
+//        arguments: payload,
+//      );
     });
   }
 

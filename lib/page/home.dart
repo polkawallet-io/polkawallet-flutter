@@ -4,6 +4,7 @@ import 'package:polka_wallet/page/assets/drawerMenu.dart';
 import 'package:polka_wallet/page/democracy/democracy.dart';
 import 'package:polka_wallet/page/profile/profile.dart';
 import 'package:polka_wallet/page/staking/staking.dart';
+import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
 
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -21,6 +22,7 @@ class _HomePageState extends State<Home> {
   _HomePageState(this.store);
 
   final AppStore store;
+  NotificationPlugin _notificationPlugin;
 
   final List<String> _tabList = [
     'Assets',
@@ -63,6 +65,16 @@ class _HomePageState extends State<Home> {
       default:
         return Profile(store.account);
     }
+  }
+
+  @override
+  void initState() {
+    if (_notificationPlugin == null) {
+      _notificationPlugin = NotificationPlugin();
+      _notificationPlugin.init(context);
+    }
+
+    super.initState();
   }
 
   @override

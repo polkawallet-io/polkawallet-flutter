@@ -110,6 +110,7 @@ class Api {
   }
 
   Future<void> connectNode() async {
+    // TODO: use polkawallet node
 //    String defaultEndpoint = Locale.cachedLocaleString.contains('zh')
 //        ? default_node_zh
 //        : default_node;
@@ -240,32 +241,19 @@ class Api {
 
   Future<dynamic> checkAccountPassword(String pass) async {
     String address = accountStore.currentAccount.address;
-//    String address = 'HmyonjFVFZyg1mRjRvohVGRw9ouFDRoQ5ea9nDfH2Yi44qQ';
     print('checkpass: $address, $pass');
     return evalJavascript('account.checkPassword("$address", "$pass")');
   }
 
   Future<dynamic> sendTx(Map params, String notificationTitle) async {
-//    var res = await evalJavascript('account.sendTx(${jsonEncode(params)})');
-//
-//    if (res != null) {
-//      String hash = res['hash'];
-//      NotificationPlugin.showNotification(int.parse(hash.substring(0, 6)),
-//          notificationTitle, '${params['module']}.${params['call']}');
-//    }
+    var res = await evalJavascript('account.sendTx(${jsonEncode(params)})');
 
-    Completer c = new Completer();
-    void onComplete(res) {
-      if (res != null) {
-        String hash = res['hash'];
-        NotificationPlugin.showNotification(int.parse(hash.substring(0, 6)),
-            notificationTitle, '${params['module']}.${params['call']}');
-      }
-      c.complete(res);
+    if (res != null) {
+      String hash = res['hash'];
+      NotificationPlugin.showNotification(int.parse(hash.substring(0, 6)),
+          notificationTitle, '${params['module']}.${params['call']}');
     }
-
-    Timer(Duration(seconds: 5), () => onComplete({"hash": "0xab753e"}));
-    return c.future;
+    return res;
   }
 
   Future<Map> queryValidatorRewards(String accountId) async {
