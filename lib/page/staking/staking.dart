@@ -99,6 +99,9 @@ class _StakingState extends State<Staking> {
     _fetchOverviewInfo();
   }
 
+  // TODO: change UI layout in staking page
+  // 1. move nominate actions to overview tab
+  // 2. show validator name or index instead of address
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: Colors.transparent,
