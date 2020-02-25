@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:intl/intl.dart';
+import 'package:polka_wallet/store/staking.dart';
 
 class Fmt {
   static String address(String addr, {int pad = 8}) {
@@ -33,7 +34,7 @@ class Fmt {
   }
 
   static bool isAddress(String txt) {
-    var reg = RegExp(r'^[A-z\d]{47}$');
+    var reg = RegExp(r'^[A-z\d]{47,48}$');
     return reg.hasMatch(txt);
   }
 
@@ -50,12 +51,28 @@ class Fmt {
       case 0:
         return a.total != b.total ? cmpStake : comA > comB ? 1 : -1;
       case 1:
-        return a.points == b.points ? cmpStake : a.points < b.points ? 1 : -1;
-      case 2:
         return comA == comB ? cmpStake : comA > comB ? 1 : -1;
       default:
         return 1;
     }
+  }
+
+  static List<ValidatorData> filterValidatorList(
+      List<ValidatorData> ls, String filter, Map accIndexMap) {
+    ls.retainWhere((i) {
+      String value = filter.toLowerCase();
+      String accIndex = '';
+      String accName = '';
+      Map accInfo = accIndexMap[i.accountId];
+      if (accInfo != null) {
+        accIndex = accInfo['accountIndex'];
+        accName = accInfo['identity']['display'] ?? '';
+      }
+      return i.accountId.toLowerCase().contains(value) ||
+          accIndex.toLowerCase().contains(value) ||
+          accName.toLowerCase().contains(value);
+    });
+    return ls;
   }
 
   static Map formatRewardsChartData(Map chartData) {

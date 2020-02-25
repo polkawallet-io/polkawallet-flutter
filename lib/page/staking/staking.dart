@@ -47,7 +47,7 @@ class _StakingState extends State<Staking> {
 
   List<Widget> _buildTabs() {
     var dic = I18n.of(context).staking;
-    var tabs = [dic['actions'], dic['overview']];
+    var tabs = [dic['actions'], dic['validators']];
     return tabs.map(
       (title) {
         var index = tabs.indexOf(title);
@@ -95,9 +95,6 @@ class _StakingState extends State<Staking> {
     _fetchOverviewInfo();
   }
 
-  // TODO: change UI layout in staking page
-  // 1. move nominate actions to overview tab
-  // 2. show validator name or index instead of address
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: Colors.transparent,

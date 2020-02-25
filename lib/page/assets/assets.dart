@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 import 'package:polka_wallet/store/account.dart';
@@ -39,7 +38,8 @@ class _AssetsState extends State<Assets> {
           ListTile(
             leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
             title: Text(acc.name ?? ''),
-            subtitle: Text(accInfo == null ? network : accInfo['accountIndex']),
+            subtitle: Text(
+                accInfo == null ? network : accInfo['accountIndex'] ?? network),
           ),
           ListTile(
             title: Text(Fmt.address(acc.address) ?? ''),
@@ -74,18 +74,11 @@ class _AssetsState extends State<Assets> {
             padding: EdgeInsets.only(left: 16, right: 16),
             children: <Widget>[
               _buildTopCard(context),
-              Container(padding: EdgeInsets.only(top: 32)),
-              Container(
-                padding: EdgeInsets.only(left: 8),
-                decoration: BoxDecoration(
-                  border:
-                      Border(left: BorderSide(width: 3, color: Colors.pink)),
+              Padding(
+                padding: EdgeInsets.only(top: 32),
+                child: BorderedTitle(
+                  title: I18n.of(context).home['assets'],
                 ),
-                child: Text(I18n.of(context).home['assets'],
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.black54)),
               ),
               store.settings.loading
                   ? Padding(

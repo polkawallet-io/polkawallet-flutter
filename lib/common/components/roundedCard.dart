@@ -12,7 +12,7 @@ class RoundedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: margin,
-      padding: padding ?? EdgeInsets.all(8),
+      padding: padding,
       child: child,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(const Radius.circular(8)),

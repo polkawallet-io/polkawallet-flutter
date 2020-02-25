@@ -267,6 +267,7 @@ class Api {
       NotificationPlugin.showNotification(int.parse(hash.substring(0, 6)),
           notificationTitle, '${params['module']}.${params['call']}');
     }
+    // TODO: reload account info after tx finished
     return res;
   }
 

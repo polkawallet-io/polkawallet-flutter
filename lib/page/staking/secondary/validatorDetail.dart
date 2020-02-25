@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/chartLabel.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/page/staking/overview.dart';
+import 'package:polka_wallet/page/staking/actions.dart';
 import 'package:polka_wallet/page/staking/secondary/blocksChart.dart';
 import 'package:polka_wallet/page/staking/secondary/rewardsChart.dart';
 import 'package:polka_wallet/page/staking/secondary/splitChart.dart';
@@ -240,7 +240,11 @@ class ValidatorDetail extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        height: 520,
+                        height: stakesChartData == null
+                            ? 240
+                            : double.parse(
+                                (stakesChartData['splitChart'].length * 24)
+                                    .toString()),
                         padding: EdgeInsets.all(8),
                         margin: EdgeInsets.only(bottom: 16),
                         child: stakesChartData == null

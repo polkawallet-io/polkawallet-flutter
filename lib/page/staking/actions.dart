@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/components/BorderedTitle.dart';
+import 'package:polka_wallet/common/components/outlinedCircle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets.dart';
@@ -20,9 +21,6 @@ class _StakingActions extends State<StakingActions>
   _StakingActions(this.store);
 
   final AppStore store;
-
-  TabController _tabController;
-  int _tab = 0;
 
   int _txsPage = 1;
   bool _ledgerLoading = true;
@@ -59,60 +57,6 @@ class _StakingActions extends State<StakingActions>
         _ledgerLoading = false;
       });
     }
-  }
-
-  void _chill() {
-    var dic = I18n.of(context).staking;
-    var args = {
-      "title": dic['action.chill'],
-      "detail": 'chill',
-      "params": {
-        "module": 'staking',
-        "call": 'chill',
-      },
-      'redirect': '/'
-    };
-    Navigator.of(context).pushNamed('/staking/confirm', arguments: args);
-  }
-
-  void _showActions() {
-    var dic = I18n.of(context).staking;
-    bool hasData = store.staking.ledger['stakingLedger'] != null;
-    List<Widget> actions = <Widget>[];
-    if (hasData) {
-      actions.add(CupertinoActionSheetAction(
-        child: Text(dic['action.bondExtra']),
-        onPressed: () => Navigator.of(context).pushNamed('/staking/bondExtra'),
-      ));
-      if (store.staking.ledger['stakingLedger']['active'] > 0) {
-        actions.add(CupertinoActionSheetAction(
-          child: Text(dic['action.unbond']),
-          onPressed: () => Navigator.of(context).pushNamed('/staking/unbond'),
-        ));
-      }
-      if (store.staking.nominatingList.length > 0) {
-        actions.add(CupertinoActionSheetAction(
-          child: Text(dic['action.nominee']),
-          onPressed: () => Navigator.of(context).pushNamed('/staking/nominate'),
-        ));
-      }
-      actions.add(CupertinoActionSheetAction(
-        child: Text(dic['action.reward']),
-        onPressed: () => Navigator.of(context).pushNamed('/staking/payee'),
-      ));
-    }
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        actions: actions,
-        cancelButton: CupertinoActionSheetAction(
-          child: Text(I18n.of(context).home['cancel']),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
   }
 
   List<Widget> _buildTxList() {
@@ -179,81 +123,15 @@ class _StakingActions extends State<StakingActions>
     }).toList();
   }
 
-  List<Widget> _buildNominatingList() {
-    bool hasData = store.staking.ledger['stakingLedger'] != null;
-    if (_ledgerLoading) {
-      return <Widget>[
-        Padding(
-          padding: EdgeInsets.all(16),
-          child: CupertinoActivityIndicator(),
-        )
-      ];
-    }
-    if (!hasData) {
-      return <Widget>[Container()];
-    }
-    String symbol = store.settings.networkState.tokenSymbol;
-    String address = store.account.currentAccount.address;
-//    String address = 'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n';
-    return List<Widget>.from(store.staking.ledger['nominators'].map((id) {
-      var validator =
-          store.staking.validatorsInfo.firstWhere((i) => i.accountId == id);
-      var me = validator.nominators.firstWhere((i) => i['who'] == address);
-      return Container(
-        color: Theme.of(context).cardColor,
-        child: ListTile(
-          leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
-          title: Text('${Fmt.token(me['value'])} $symbol'),
-          subtitle: Text(Fmt.address(validator.accountId)),
-          trailing: Container(
-            width: 120,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('commission'),
-                Text(validator.commission)
-              ],
-            ),
-          ),
-          onTap: () {
-            store.api.queryValidatorRewards(validator.accountId);
-            Navigator.of(context)
-                .pushNamed('/staking/validator', arguments: validator);
-          },
-        ),
-      );
-    }).toList());
-  }
-
   Widget _buildActionCard() {
     var dic = I18n.of(context).staking;
     String symbol = store.settings.networkState.tokenSymbol;
     bool hasData = store.staking.ledger['stakingLedger'] != null;
-    double stashWidgetWidth = MediaQuery.of(context).size.width / 4;
-    Widget stashAcc = Container(width: stashWidgetWidth);
-    if (hasData) {
-      stashAcc = Container(
-        width: stashWidgetWidth,
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(2),
-              width: 32,
-              child: Image.asset('assets/images/assets/Assets_nav_0.png'),
-            ),
-            Text(
-              dic['stash'],
-              style:
-                  TextStyle(fontWeight: FontWeight.bold, color: Colors.black54),
-            ),
-            Text(
-              Fmt.address(store.staking.ledger['stakingLedger']['stash'],
-                  pad: 4),
-              style: TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-          ],
-        ),
-      );
+    String accIndex;
+    Map accInfo =
+        store.account.accountIndexMap[store.account.currentAccount.address];
+    if (accInfo != null) {
+      accIndex = accInfo['accountIndex'];
     }
 
     String payee = store.staking.ledger['rewardDestination'];
@@ -268,125 +146,183 @@ class _StakingActions extends State<StakingActions>
     }
     int available = balance - bonded - unlocking;
 
-    Widget actionButton = Container();
-    if (bonded == 0) {
-      actionButton = Padding(
-        padding: EdgeInsets.only(top: 16),
-        child: RoundedButton(
-          text: dic['action.bond'],
-          color: Colors.pinkAccent,
-          onPressed: () => Navigator.of(context).pushNamed('/staking/bond'),
-        ),
-      );
-    } else {
-      // if (bonded > 0)
-      if (store.staking.ledger['nominators'].length == 0) {
-        // if user is not nominating
-        actionButton = Padding(
-          padding: EdgeInsets.only(top: 16),
-          child: RoundedButton(
-            text: dic['action.nominate'],
-            color: Colors.pinkAccent,
-            onPressed: store.staking.validatorsInfo.length == 0
-                ? null
-                : () => Navigator.of(context).pushNamed('/staking/nominate'),
-          ),
-        );
-      } else {
-        actionButton = Padding(
-          padding: EdgeInsets.only(top: 16),
-          child: RoundedButton(
-            text: dic['action.chill'],
-            color: Colors.pinkAccent,
-            onPressed: _chill,
-          ),
-        );
-      }
-    }
+    num actionButtonWidth = MediaQuery.of(context).size.width / 4;
+    Color actionButtonColor = Theme.of(context).primaryColor;
+    Color disabledColor = Theme.of(context).disabledColor;
+
     return RoundedCard(
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 16),
-      padding: EdgeInsets.all(24),
+      margin: EdgeInsets.fromLTRB(16, 8, 16, 24),
+      padding: EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                width: stashWidgetWidth,
-                height: 36,
-                child: IconButton(
-                  icon: Image.asset('assets/images/staking/set.png'),
-                  onPressed: _showActions,
+                width: 40,
+                margin: EdgeInsets.only(right: 8),
+                child: Image.asset('assets/images/assets/Assets_nav_0.png'),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      store.account.currentAccount.name +
+                          '${accIndex != null ? ' ($accIndex)' : ''}',
+                      style: Theme.of(context).textTheme.display4,
+                    ),
+                    Text(Fmt.address(store.account.currentAccount.address))
+                  ],
                 ),
-              ),
-              Column(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 6),
-                    child: Image.asset('assets/images/assets/Assets_nav_0.png'),
-                  ),
-                  Text(
-                    dic['controller'],
-                    style: Theme.of(context).textTheme.display4,
-                  )
-                ],
-              ),
-              stashAcc
-            ],
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            Column(children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(12),
-                child: Text(
-                  Fmt.address(store.account.currentAccount.address),
-                  style: TextStyle(color: Colors.black54),
-                ),
-              ),
-            ]),
-          ]),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(dic['balance']),
-                  Text(dic['available']),
-                  unlocking > 0 ? Text(dic['unlocking']) : Container(),
-                  payee != null ? Text(dic['bond.reward']) : Container(),
-                  bonded > 0
-                      ? Text(
-                          dic['bonded'],
-                          style: TextStyle(color: Colors.green),
-                        )
-                      : Container()
-                ],
               ),
               Container(
-                padding: EdgeInsets.all(8),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text('${Fmt.balance(balance.toString())} $symbol'),
-                  Text('${Fmt.balance(available.toString())} $symbol'),
-                  unlocking > 0
-                      ? Text('${Fmt.token(unlocking)} $symbol')
-                      : Container(),
-                  payee != null ? Text(payee) : Container(),
-                  bonded > 0
-                      ? Text(
-                          '${Fmt.balance(bonded.toString())} $symbol',
-                          style: TextStyle(color: Colors.green),
-                        )
-                      : Container()
-                ],
+                width: 80,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      '${Fmt.balance(balance.toString())}',
+                      style: Theme.of(context).textTheme.display4,
+                    ),
+                    Text(
+                      dic['balance'],
+                    ),
+                  ],
+                ),
               )
             ],
           ),
-          actionButton
+          Container(height: 8),
+          Divider(),
+          Row(
+            children: <Widget>[
+              InfoItem(
+                title: dic['available'],
+                content: Fmt.balance(available.toString()),
+                crossAxisAlignment: CrossAxisAlignment.center,
+              ),
+              InfoItem(
+                title: dic['bonded'],
+                content: Fmt.balance(bonded.toString()),
+                crossAxisAlignment: CrossAxisAlignment.center,
+              ),
+            ],
+          ),
+          Container(
+            height: 16,
+          ),
+          Row(
+            children: <Widget>[
+              InfoItem(
+                title: dic['unlocking'],
+                content: Fmt.token(unlocking),
+                crossAxisAlignment: CrossAxisAlignment.center,
+              ),
+              InfoItem(
+                title: dic['bond.reward'],
+                content: payee,
+                crossAxisAlignment: CrossAxisAlignment.center,
+              ),
+            ],
+          ),
+          Divider(),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  width: actionButtonWidth,
+                  child: GestureDetector(
+                    child: Column(
+                      children: <Widget>[
+                        OutlinedCircle(
+                          icon: Icons.add,
+                          color: actionButtonColor,
+                        ),
+                        Text(
+                          bonded > 0
+                              ? dic['action.bondExtra']
+                              : dic['action.bond'],
+                          style: TextStyle(color: actionButtonColor),
+                        )
+                      ],
+                    ),
+                    onTap: () => Navigator.of(context).pushNamed(
+                        bonded > 0 ? '/staking/bondExtra' : '/staking/bond'),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  width: actionButtonWidth,
+                  child: bonded > 0
+                      ? GestureDetector(
+                          child: Column(
+                            children: <Widget>[
+                              OutlinedCircle(
+                                icon: Icons.remove,
+                                color: actionButtonColor,
+                              ),
+                              Text(
+                                dic['action.unbond'],
+                                style: TextStyle(color: actionButtonColor),
+                              )
+                            ],
+                          ),
+                          onTap: () => Navigator.of(context)
+                              .pushNamed('/staking/unbond'),
+                        )
+                      : Column(
+                          children: <Widget>[
+                            OutlinedCircle(
+                              icon: Icons.remove,
+                              color: disabledColor,
+                            ),
+                            Text(
+                              dic['action.unbond'],
+                              style: TextStyle(color: disabledColor),
+                            )
+                          ],
+                        ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  width: actionButtonWidth,
+                  child: bonded > 0
+                      ? GestureDetector(
+                          child: Column(
+                            children: <Widget>[
+                              OutlinedCircle(
+                                icon: Icons.repeat,
+                                color: actionButtonColor,
+                              ),
+                              Text(
+                                dic['action.reward'],
+                                style: TextStyle(color: actionButtonColor),
+                              )
+                            ],
+                          ),
+                          onTap: () =>
+                              Navigator.of(context).pushNamed('/staking/payee'),
+                        )
+                      : Column(
+                          children: <Widget>[
+                            OutlinedCircle(
+                              icon: Icons.repeat,
+                              color: disabledColor,
+                            ),
+                            Text(
+                              dic['action.reward'],
+                              style: TextStyle(color: disabledColor),
+                            )
+                          ],
+                        ),
+                ),
+              )
+            ],
+          )
         ],
       ),
     );
@@ -397,49 +333,23 @@ class _StakingActions extends State<StakingActions>
     super.initState();
     _updateStakingInfo();
     _updateStakingTxs();
-    _tabController = TabController(vsync: this, length: 2);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).staking;
 
-    final List<Tab> _myTabs = <Tab>[
-      Tab(text: dic['txs']),
-      Tab(text: dic['nominating']),
-    ];
-
     return Observer(
       builder: (_) {
         List<Widget> list = <Widget>[
           _buildActionCard(),
           Container(
-            color: Colors.white,
-            child: TabBar(
-              labelColor: Colors.black87,
-              labelStyle: TextStyle(fontSize: 18),
-              controller: _tabController,
-              tabs: _myTabs,
-              onTap: (i) {
-                setState(() {
-                  _tab = i;
-                });
-              },
-            ),
+            color: Theme.of(context).cardColor,
+            padding: EdgeInsets.all(16),
+            child: BorderedTitle(title: dic['txs']),
           ),
         ];
-        if (_tab == 0) {
-          list.addAll(_buildTxList());
-        }
-        if (_tab == 1) {
-          list.addAll(_buildNominatingList());
-        }
+        list.addAll(_buildTxList());
         bool hasData = store.staking.ledger['stakingLedger'] != null;
         return RefreshIndicator(
           onRefresh: () async {
@@ -453,6 +363,32 @@ class _StakingActions extends State<StakingActions>
                 ),
         );
       },
+    );
+  }
+}
+
+class InfoItem extends StatelessWidget {
+  InfoItem({this.title, this.content, this.crossAxisAlignment});
+  final String title;
+  final String content;
+  final CrossAxisAlignment crossAxisAlignment;
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            title,
+          ),
+          content == null
+              ? CupertinoActivityIndicator()
+              : Text(
+                  content,
+                  style: Theme.of(context).textTheme.display4,
+                )
+        ],
+      ),
     );
   }
 }

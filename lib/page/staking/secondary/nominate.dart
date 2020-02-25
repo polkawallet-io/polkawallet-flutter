@@ -28,6 +28,39 @@ class _NominateState extends State<Nominate> {
   String _filter = '';
   int _sort = 0;
 
+  void _chill() {
+    var dic = I18n.of(context).staking;
+    var args = {
+      "title": dic['action.chill'],
+      "detail": 'chill',
+      "params": {
+        "module": 'staking',
+        "call": 'chill',
+      },
+      'redirect': '/'
+    };
+    Navigator.of(context).pushNamed('/staking/confirm', arguments: args);
+  }
+
+  void _setNominee() {
+    var dic = I18n.of(context).staking;
+    List<String> targets = _selected.map((i) => i.accountId).toList();
+
+    var args = {
+      "title": dic['action.nominate'],
+      "detail": jsonEncode({
+        "targets": targets.join(', '),
+      }),
+      "params": {
+        "module": 'staking',
+        "call": 'nominate',
+        "targets": targets,
+      },
+      'redirect': '/'
+    };
+    Navigator.of(context).pushNamed('/staking/confirm', arguments: args);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -53,15 +86,21 @@ class _NominateState extends State<Nominate> {
     list.addAll(_selected);
     // filter the _notSelected list
     List<ValidatorData> retained = List.of(_notSelected);
-    retained.retainWhere(
-        (i) => i.accountId.toLowerCase().contains(_filter.toLowerCase()));
+    retained = Fmt.filterValidatorList(
+        retained, _filter, store.account.accountIndexMap);
     // and sort it
     retained.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
     list.addAll(retained);
     List<Widget> ls = list.map((i) {
+      Map accInfo = store.account.accountIndexMap[i.accountId];
       return ListTile(
         leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
-        title: Text(Fmt.address(i.accountId)),
+        title: Text(accInfo != null
+            ? accInfo['identity']['display'] != null
+                ? accInfo['identity']['display'].toString().toUpperCase()
+                : accInfo['accountIndex']
+            : Fmt.address(i.accountId, pad: 6)),
+        subtitle: Text('${dic['total']}: ${Fmt.token(i.total)}'),
         trailing: CupertinoSwitch(
           value: _selectedMap[i.accountId],
           onChanged: (bool value) {
@@ -125,27 +164,7 @@ class _NominateState extends State<Nominate> {
                 padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
                 child: RoundedButton(
                   text: I18n.of(context).home['submit.tx'],
-                  onPressed: _selected.length == 0
-                      ? null
-                      : () {
-                          List<String> targets =
-                              _selected.map((i) => i.accountId).toList();
-
-                          var args = {
-                            "title": dic['action.nominate'],
-                            "detail": jsonEncode({
-                              "targets": targets.join(', '),
-                            }),
-                            "params": {
-                              "module": 'staking',
-                              "call": 'nominate',
-                              "targets": targets,
-                            },
-                            'redirect': '/'
-                          };
-                          Navigator.of(context)
-                              .pushNamed('/staking/confirm', arguments: args);
-                        },
+                  onPressed: _selected.length == 0 ? _chill : _setNominee,
                 ),
               ),
             ],
