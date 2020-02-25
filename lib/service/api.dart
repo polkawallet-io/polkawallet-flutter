@@ -101,6 +101,8 @@ class Api {
     settingsStore.setNetworkConst(info[0]);
     settingsStore.setNetworkState(info[1]);
     settingsStore.setNetworkName(info[2]);
+
+    fetchAccountsIndex(accountStore.accountList.map((i) => i.address).toList());
   }
 
   void initAccounts() {
@@ -152,6 +154,18 @@ class Api {
       var res = await evalJavascript('api.derive.staking.account("$address")');
       stakingStore.setLedger(res);
     }
+  }
+
+  Future<List> fetchAccountsIndex(List addresses) async {
+    if (addresses == null || addresses.length == 0) {
+      return [];
+    }
+    addresses
+        .retainWhere((i) => !accountStore.accountIndexMap.keys.contains(i));
+    var res = await evalJavascript(
+        'account.getAccountIndex(${jsonEncode(addresses)})');
+    accountStore.setAccountsIndex(res);
+    return res;
   }
 
   Future<void> generateAccount() async {
@@ -254,6 +268,11 @@ class Api {
           notificationTitle, '${params['module']}.${params['call']}');
     }
     return res;
+  }
+
+  Future<void> fetchElectedInfo() async {
+    var res = await evalJavascript('api.derive.staking.electedInfo()');
+    stakingStore.setOverview({"elected": res});
   }
 
   Future<Map> queryValidatorRewards(String accountId) async {

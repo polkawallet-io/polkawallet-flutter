@@ -20,6 +20,9 @@ abstract class _AccountStore with Store {
   @observable
   ObservableList<AccountData> accountList = ObservableList<AccountData>();
 
+  @observable
+  ObservableMap<String, Map> accountIndexMap = ObservableMap<String, Map>();
+
   @computed
   ObservableList<AccountData> get optionalAccounts {
     return ObservableList.of(
@@ -103,6 +106,13 @@ abstract class _AccountStore with Store {
       }
     }
     loading = false;
+  }
+
+  @action
+  void setAccountsIndex(List list) {
+    list.forEach((i) {
+      accountIndexMap[i['accountId']] = i;
+    });
   }
 }
 

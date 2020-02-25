@@ -77,15 +77,8 @@ abstract class _StakingStore with Store {
     var nominators = {};
     List<ValidatorData> ls = List<ValidatorData>();
 
-    List ids = overview['currentElected'];
-    List points = overview['eraPoints']['individual'];
-
     overview['elected']['info'].forEach((i) {
-      try {
-        i['points'] = points[ids.indexOf(i['accountId'])];
-      } catch (err) {
-        print(err);
-      }
+      i['points'] = overview['eraPoints']['individual'][i['accountId']];
       ValidatorData data = ValidatorData.fromJson(i);
       totalStaked += data.total;
       data.nominators.forEach((n) {
@@ -154,18 +147,19 @@ class ValidatorData extends _ValidatorData with _$ValidatorData {
   static ValidatorData fromJson(Map<String, dynamic> json) {
     ValidatorData data = ValidatorData();
     data.accountId = json['accountId'];
-    data.total = int.parse(json['stakers']['total']);
-    if (json['stakers']['own'].runtimeType == String) {
-      data.bondOwn = int.parse(json['stakers']['own']);
+    data.total = int.parse(json['exposure']['total']);
+    var own = json['exposure']['own'];
+    if (own.runtimeType == String) {
+      data.bondOwn = int.parse(own);
     } else {
-      data.bondOwn = json['stakers']['own'];
+      data.bondOwn = own;
     }
     data.bondOther = data.total - data.bondOwn;
     data.points = json['points'];
     data.commission = NumberFormat('0.00%')
         .format(json['validatorPrefs']['commission'] / pow(10, 9));
     data.nominators =
-        List<Map<String, dynamic>>.from(json['stakers']['others']);
+        List<Map<String, dynamic>>.from(json['exposure']['others']);
     return data;
   }
 }

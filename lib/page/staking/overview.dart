@@ -151,8 +151,19 @@ class _StakingOverviewState extends State<StakingOverview> {
           List<ValidatorData> ls =
               List<ValidatorData>.of(store.staking.validatorsInfo);
           // filter list
-          ls.retainWhere(
-              (i) => i.accountId.toLowerCase().contains(_filter.toLowerCase()));
+          ls.retainWhere((i) {
+            String filter = _filter.toLowerCase();
+            String accIndex = '';
+            String accName = '';
+            Map accInfo = store.account.accountIndexMap[i.accountId];
+            if (accInfo != null) {
+              accIndex = accInfo['accountIndex'];
+              accName = accInfo['identity']['display'] ?? '';
+            }
+            return i.accountId.toLowerCase().contains(filter) ||
+                accIndex.toLowerCase().contains(filter) ||
+                accName.toLowerCase().contains(filter);
+          });
           // sort list
           ls.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
           list.addAll(ls);
@@ -169,7 +180,7 @@ class _StakingOverviewState extends State<StakingOverview> {
                     if (i < 3) {
                       return list[i];
                     }
-                    return Validator(store.api, list[i] as ValidatorData);
+                    return Validator(store, list[i] as ValidatorData);
                   },
                 ),
               )

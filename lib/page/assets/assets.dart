@@ -31,13 +31,15 @@ class _AssetsState extends State<Assets> {
         : store.settings.networkName ?? dic['node.failed'];
 
     AccountData acc = store.account.currentAccount;
+    Map accInfo = store.account.accountIndexMap[acc.address];
+
     return RoundedCard(
       child: Column(
         children: <Widget>[
           ListTile(
             leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
             title: Text(acc.name ?? ''),
-            subtitle: Text(network),
+            subtitle: Text(accInfo == null ? network : accInfo['accountIndex']),
           ),
           ListTile(
             title: Text(Fmt.address(acc.address) ?? ''),

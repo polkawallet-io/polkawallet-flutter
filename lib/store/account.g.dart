@@ -107,6 +107,23 @@ mixin _$AccountStore on _AccountStore, Store {
     }, _$accountListAtom, name: '${_$accountListAtom.name}_set');
   }
 
+  final _$accountIndexMapAtom = Atom(name: '_AccountStore.accountIndexMap');
+
+  @override
+  ObservableMap<String, Map> get accountIndexMap {
+    _$accountIndexMapAtom.context.enforceReadPolicy(_$accountIndexMapAtom);
+    _$accountIndexMapAtom.reportObserved();
+    return super.accountIndexMap;
+  }
+
+  @override
+  set accountIndexMap(ObservableMap<String, Map> value) {
+    _$accountIndexMapAtom.context.conditionallyRunInAction(() {
+      super.accountIndexMap = value;
+      _$accountIndexMapAtom.reportChanged();
+    }, _$accountIndexMapAtom, name: '${_$accountIndexMapAtom.name}_set');
+  }
+
   final _$updateAccountAsyncAction = AsyncAction('updateAccount');
 
   @override
@@ -183,6 +200,16 @@ mixin _$AccountStore on _AccountStore, Store {
     final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
       return super.updateAccountName(name);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setAccountsIndex(List list) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    try {
+      return super.setAccountsIndex(list);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }

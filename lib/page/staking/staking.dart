@@ -26,12 +26,6 @@ class _StakingState extends State<Staking> {
     store.staking.setOverview({"intentions": res[0]});
   }
 
-  Future<void> _fetchElectedInfo() async {
-    var res =
-        await store.api.evalJavascript('api.derive.staking.electedInfo()');
-    store.staking.setOverview({"elected": res});
-  }
-
   Future<void> _fetchOverviewInfo() async {
     if (store.settings.loading) {
       return;
@@ -46,7 +40,9 @@ class _StakingState extends State<Staking> {
     overview['issuance'] = data[2];
     store.staking.setOverview(overview);
 //    _fetchControllers();
-    _fetchElectedInfo();
+    store.api.fetchElectedInfo();
+
+    store.api.fetchAccountsIndex(List.of(overview['validators']));
   }
 
   List<Widget> _buildTabs() {
