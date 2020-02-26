@@ -86,7 +86,7 @@ class _AssetPageState extends State<AssetPage>
             Padding(
               padding: EdgeInsets.all(24),
               child: Text(
-                'No Data',
+                I18n.of(context).home['data.empty'],
                 style: TextStyle(fontSize: 18, color: Colors.black38),
               ),
             )

@@ -33,6 +33,7 @@ class _AssetsState extends State<Assets> {
     Map accInfo = store.account.accountIndexMap[acc.address];
 
     return RoundedCard(
+      padding: EdgeInsets.all(8),
       child: Column(
         children: <Widget>[
           ListTile(
@@ -91,7 +92,7 @@ class _AssetsState extends State<Assets> {
                             Padding(
                               padding: EdgeInsets.all(24),
                               child: Text(
-                                'No Data',
+                                I18n.of(context).home['data.empty'],
                                 style: TextStyle(
                                     fontSize: 18, color: Colors.black38),
                               ),

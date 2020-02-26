@@ -23,6 +23,7 @@ const Map<String, String> enHome = {
   'delete': 'Delete',
   'detail': 'Detail',
   'notify.submitted': 'Transaction Finalized',
+  'data.empty': 'No Data',
 };
 
 const Map<String, String> zhHome = {
@@ -47,4 +48,5 @@ const Map<String, String> zhHome = {
   'delete': '删除',
   'detail': '详情',
   'notify.finish': '交易发送成功',
+  'data.empty': '暂无数据',
 };

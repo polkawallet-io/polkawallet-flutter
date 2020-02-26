@@ -381,12 +381,10 @@ class InfoItem extends StatelessWidget {
           Text(
             title,
           ),
-          content == null
-              ? CupertinoActivityIndicator()
-              : Text(
-                  content,
-                  style: Theme.of(context).textTheme.display4,
-                )
+          Text(
+            content ?? '-',
+            style: Theme.of(context).textTheme.display4,
+          )
         ],
       ),
     );

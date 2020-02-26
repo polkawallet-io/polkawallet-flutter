@@ -20,28 +20,16 @@ class _StakingState extends State<Staking> {
 
   int _tab = 0;
 
-  Future<void> _fetchControllers() async {
-    var res =
-        await store.api.evalJavascript('api.derive.staking.controllers()');
-    store.staking.setOverview({"intentions": res[0]});
-  }
-
   Future<void> _fetchOverviewInfo() async {
     if (store.settings.loading) {
       return;
     }
-    var data = await Future.wait([
-      store.api.evalJavascript('api.derive.staking.overview()'),
-      store.api.evalJavascript('api.derive.session.info()'),
-      store.api.evalJavascript('api.query.balances.totalIssuance()'),
-    ]);
-    var overview = data[0];
-    overview['session'] = data[1];
-    overview['issuance'] = data[2];
+    var overview =
+        await store.api.evalJavascript('api.derive.staking.overview()');
     store.staking.setOverview(overview);
-//    _fetchControllers();
-    store.api.fetchElectedInfo();
 
+    // fetch all validators details
+    store.api.fetchElectedInfo();
     store.api.fetchAccountsIndex(List.of(overview['validators']));
   }
 
@@ -92,7 +80,9 @@ class _StakingState extends State<Staking> {
   @override
   void initState() {
     super.initState();
-    _fetchOverviewInfo();
+    if (store.staking.overview['validators'] == null) {
+      _fetchOverviewInfo();
+    }
   }
 
   @override

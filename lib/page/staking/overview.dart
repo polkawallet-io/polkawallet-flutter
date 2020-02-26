@@ -44,7 +44,7 @@ class _StakingOverviewState extends State<StakingOverview> {
       bonded = store.staking.ledger['stakingLedger']['active'];
       nominators = store.staking.ledger['nominators'];
       if (nominators.length > 0) {
-        nominatorListHeight = double.parse((nominators.length * 48).toString());
+        nominatorListHeight = double.parse((nominators.length * 60).toString());
       }
     }
 
@@ -53,7 +53,7 @@ class _StakingOverviewState extends State<StakingOverview> {
 
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 8, 16, 24),
-//      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.only(bottom: 8),
       child: Column(
         children: <Widget>[
           ListTile(
@@ -132,67 +132,88 @@ class _StakingOverviewState extends State<StakingOverview> {
           Divider(
             height: 1,
           ),
-          // TODO: nominating list unfinished
           AnimatedContainer(
             height: _expanded ? nominatorListHeight : 0,
             duration: Duration(seconds: 1),
             curve: Curves.fastOutSlowIn,
-            child: nominators.length > 0
-                ? _buildNominatingList()
-                : Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Text('No Data'),
-                  ),
+            child: AnimatedOpacity(
+              opacity: _expanded ? 1.0 : 0.0,
+              duration: Duration(seconds: 1),
+              curve: Curves.fastLinearToSlowEaseIn,
+              child: nominators.length > 0
+                  ? _buildNominatingList()
+                  : Padding(
+                      padding: EdgeInsets.only(top: 16),
+                      child: Text(
+                        I18n.of(context).home['data.empty'],
+                        style: TextStyle(color: Colors.black54),
+                      ),
+                    ),
+            ),
           )
         ],
       ),
     );
   }
 
-  List<Widget> _buildNominatingList() {
+  Widget _buildNominatingList() {
     bool hasData = store.staking.ledger['stakingLedger'] != null;
-//    if (_ledgerLoading) {
-//      return <Widget>[
-//        Padding(
-//          padding: EdgeInsets.all(16),
-//          child: CupertinoActivityIndicator(),
-//        )
-//      ];
-//    }
     if (!hasData) {
-      return <Widget>[Container()];
+      return Container();
     }
     String symbol = store.settings.networkState.tokenSymbol;
     String address = store.account.currentAccount.address;
-//    String address = 'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n';
-    return List<Widget>.from(store.staking.ledger['nominators'].map((id) {
-      var validator =
-          store.staking.validatorsInfo.firstWhere((i) => i.accountId == id);
-      var me = validator.nominators.firstWhere((i) => i['who'] == address);
-      return Container(
-        color: Theme.of(context).cardColor,
-        child: ListTile(
-          leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
-          title: Text('${Fmt.token(me['value'])} $symbol'),
-          subtitle: Text(Fmt.address(validator.accountId)),
-          trailing: Container(
-            width: 120,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('commission'),
-                Text(validator.commission)
-              ],
+
+    return Column(
+      children: List<Widget>.from(store.staking.ledger['nominators'].map((id) {
+        ValidatorData validator;
+        int validatorIndex =
+            store.staking.validatorsInfo.indexWhere((i) => i.accountId == id);
+        if (validatorIndex >= 0) {
+          validator = store.staking.validatorsInfo[validatorIndex];
+        } else {
+          return Container();
+        }
+
+        int meStaked = 0;
+        int meIndex =
+            validator.nominators.indexWhere((i) => i['who'] == address);
+        if (meIndex >= 0) {
+          meStaked = validator.nominators[meIndex]['value'];
+        }
+        return Expanded(
+          child: Container(
+            color: Theme.of(context).cardColor,
+            child: ListTile(
+              leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
+              title: Text('${Fmt.token(meStaked)} $symbol'),
+              subtitle: Text(Fmt.address(validator.accountId)),
+              trailing: Container(
+                width: 120,
+                height: 40,
+//                color: Colors.grey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text('commission'),
+                    ),
+                    Expanded(
+                      child: Text(validator.commission),
+                    )
+                  ],
+                ),
+              ),
+              onTap: () {
+                store.api.queryValidatorRewards(validator.accountId);
+                Navigator.of(context)
+                    .pushNamed('/staking/validator', arguments: validator);
+              },
             ),
           ),
-          onTap: () {
-            store.api.queryValidatorRewards(validator.accountId);
-            Navigator.of(context)
-                .pushNamed('/staking/validator', arguments: validator);
-          },
-        ),
-      );
-    }).toList());
+        );
+      }).toList()),
+    );
   }
 
   @override
@@ -212,7 +233,6 @@ class _StakingOverviewState extends State<StakingOverview> {
             ),
           ),
         ];
-//        list.addAll(_buildNominatingList());
         if (store.staking.validatorsInfo.length > 0) {
           // index_2: the filter Widget
           list.add(Container(
@@ -248,7 +268,10 @@ class _StakingOverviewState extends State<StakingOverview> {
         }
         return hashData
             ? RefreshIndicator(
-                onRefresh: reloadStakingOverview,
+                onRefresh: () async {
+                  reloadStakingOverview();
+                  await store.api.fetchAccountStaking();
+                },
                 child: ListView.builder(
                   itemCount: list.length,
                   itemBuilder: (BuildContext context, int i) {

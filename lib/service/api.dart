@@ -184,6 +184,7 @@ class Api {
     if (acc != null) {
       acc['name'] = accountStore.newAccount.name;
       await accountStore.addAccount(acc);
+      stakingStore.clearSate();
       fetchBalance();
       fetchAccountStaking();
     }
