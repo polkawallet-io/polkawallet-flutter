@@ -130,6 +130,7 @@ class Api {
       return;
     }
     fetchNetworkProps();
+    subscribeBestNumber();
   }
 
   Future<void> changeNode(String endpoint) async {
@@ -330,5 +331,28 @@ class Api {
       govStore.setCouncilInfo(info);
     }
     return info;
+  }
+
+  Future<List> fetchReferendums() async {
+    List list = await evalJavascript('api.derive.democracy.referendums()');
+    if (list != null && list.length > 0) {
+      govStore.setReferendums(List<Map<String, dynamic>>.from(list));
+      fetchReferendumVotes(List<int>.from(list.map((i) => i['index'])));
+    }
+    return list;
+  }
+
+  Future<void> fetchReferendumVotes(List<int> indexes) async {
+    String code = indexes.map((i) => 'gov.getReferendumVotes($i)').join(',');
+    List res = await evalJavascript('Promise.all([$code])');
+    res.asMap().forEach((k, v) {
+      govStore.setReferendumVotes(indexes[k], v);
+    });
+  }
+
+  Future<void> subscribeBestNumber() async {
+    _msgHandlers['bestNumber'] = govStore.setBestNumber;
+    evalJavascript(
+        'api.derive.chain.bestNumber(function(res){PolkaWallet.postMessage(JSON.stringify({ path: "bestNumber", data: res.toNumber() }))})');
   }
 }

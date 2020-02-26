@@ -12,11 +12,37 @@ abstract class _GovernanceStore with Store {
   _GovernanceStore(AccountStore store);
 
   @observable
+  int bestNumber = 0;
+
+  @observable
   CouncilInfo council = CouncilInfo();
+
+  @observable
+  ObservableList<ReferendumInfo> referendums = ObservableList<ReferendumInfo>();
+
+  @observable
+  ObservableMap<int, ReferendumVotes> referendumVotes =
+      ObservableMap<int, ReferendumVotes>();
 
   @action
   void setCouncilInfo(Map info) {
     council = CouncilInfo.fromJson(info);
+  }
+
+  @action
+  void setBestNumber(int number) {
+    bestNumber = number;
+  }
+
+  @action
+  void setReferendums(List ls) {
+    referendums = ObservableList.of(
+        ls.map((i) => ReferendumInfo.fromJson(i as Map<String, dynamic>)));
+  }
+
+  @action
+  void setReferendumVotes(int index, Map votes) {
+    referendumVotes[index] = ReferendumVotes.fromJson(votes);
   }
 }
 
@@ -24,8 +50,8 @@ abstract class _GovernanceStore with Store {
 class CouncilInfo extends _CouncilInfo with _$CouncilInfo {
   static CouncilInfo fromJson(Map<String, dynamic> json) =>
       _$CouncilInfoFromJson(json);
-  static Map<String, dynamic> toJson(CouncilInfo acc) =>
-      _$CouncilInfoToJson(acc);
+  static Map<String, dynamic> toJson(CouncilInfo info) =>
+      _$CouncilInfoToJson(info);
 }
 
 abstract class _CouncilInfo with Store {
@@ -39,4 +65,43 @@ abstract class _CouncilInfo with Store {
 
   int candidateCount;
   int candidacyBond;
+}
+
+@JsonSerializable()
+class ReferendumInfo extends _ReferendumInfo with _$ReferendumInfo {
+  static ReferendumInfo fromJson(Map<String, dynamic> json) =>
+      _$ReferendumInfoFromJson(json);
+  static Map<String, dynamic> toJson(ReferendumInfo info) =>
+      _$ReferendumInfoToJson(info);
+}
+
+abstract class _ReferendumInfo with Store {
+  int index;
+  String hash;
+
+  Map<String, dynamic> info;
+  Map<String, dynamic> proposal;
+  Map<String, dynamic> preimage;
+}
+
+class ReferendumVotes extends _ReferendumVotes {
+  static ReferendumVotes fromJson(Map<String, dynamic> json) {
+    ReferendumVotes res = ReferendumVotes();
+    res.voteCount = json['voteCount'];
+    res.voteCountAye = json['voteCountAye'];
+    res.voteCountNay = json['voteCountNay'];
+    res.votedAye = int.parse('0x${json['votedAye']}');
+    res.votedNay = int.parse('0x${json['votedAye']}');
+    res.votedTotal = int.parse('0x${json['votedAye']}');
+    return res;
+  }
+}
+
+abstract class _ReferendumVotes {
+  int voteCount;
+  int voteCountAye;
+  int voteCountNay;
+  int votedAye;
+  int votedNay;
+  int votedTotal;
 }
