@@ -60,6 +60,23 @@ mixin _$AppStore on _AppStore, Store {
     }, _$stakingAtom, name: '${_$stakingAtom.name}_set');
   }
 
+  final _$govAtom = Atom(name: '_AppStore.gov');
+
+  @override
+  GovernanceStore get gov {
+    _$govAtom.context.enforceReadPolicy(_$govAtom);
+    _$govAtom.reportObserved();
+    return super.gov;
+  }
+
+  @override
+  set gov(GovernanceStore value) {
+    _$govAtom.context.conditionallyRunInAction(() {
+      super.gov = value;
+      _$govAtom.reportChanged();
+    }, _$govAtom, name: '${_$govAtom.name}_set');
+  }
+
   final _$settingsAtom = Atom(name: '_AppStore.settings');
 
   @override

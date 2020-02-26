@@ -76,11 +76,11 @@ flutter:
     - lib/polkadot_js_service/dist/main.js
     # images
     - assets/images/public/Assets.png
-    - assets/images/public/Democracy.png
+    - assets/images/public/Governance.png
     - assets/images/public/Profile.png
     - assets/images/public/Staking.png
     - assets/images/public/Assets_dark.png
-    - assets/images/public/Democracy_dark.png
+    - assets/images/public/Governance_dark.png
     - assets/images/public/Profile_dark.png
     - assets/images/public/Staking_dark.png
     - assets/images/public/About_logo.png

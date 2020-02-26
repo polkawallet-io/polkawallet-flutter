@@ -14,7 +14,7 @@ const Map<String, String> enStaking = {
   'stake.other': 'Other',
   'commission': 'Commission',
   'txs': 'Staking Records',
-  'nominating': 'Nominating',
+  'nominating': 'My Nominating',
   'controller': 'Controller',
   'stash': 'Stash',
   'balance': 'Balance',

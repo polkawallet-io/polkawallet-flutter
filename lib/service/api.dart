@@ -7,6 +7,7 @@ import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/store/governance.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -17,12 +18,14 @@ class Api {
       @required this.accountStore,
       @required this.assetsStore,
       @required this.stakingStore,
+      @required this.govStore,
       @required this.settingsStore});
 
   final BuildContext context;
   final AccountStore accountStore;
   final AssetsStore assetsStore;
   final SettingsStore settingsStore;
+  final GovernanceStore govStore;
   final StakingStore stakingStore;
 
   Map<String, Function> _msgHandlers = {};
@@ -108,7 +111,8 @@ class Api {
   void initAccounts() {
     String accounts = jsonEncode(
         accountStore.accountList.map((i) => AccountData.toJson(i)).toList());
-    evalJavascript('account.initKeys($accounts)');
+    evalJavascript(
+        'settings.cryptoWaitReady().then(function(res){return account.initKeys($accounts)})');
   }
 
   Future<void> connectNode() async {
@@ -312,5 +316,19 @@ class Api {
       stakingStore.setStakesChartData(accountId, data);
     }
     return data;
+  }
+
+  Future<Map> fetchCouncilInfo() async {
+    Map info = await evalJavascript('api.derive.elections.info()');
+    if (info != null) {
+      List all = [];
+      all.addAll(info['members'].map((i) => i[0]));
+      all.addAll(info['runnersUp'].map((i) => i[0]));
+      all.addAll(info['candidates'].map((i) => i[0]));
+      print(all);
+      fetchAccountsIndex(all);
+      govStore.setCouncilInfo(info);
+    }
+    return info;
   }
 }

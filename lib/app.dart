@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/page/governance/sencondary/candidateDetail.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/page/assets/secondary/asset/asset.dart';
 import 'package:polka_wallet/page/assets/secondary/receive/receive.dart';
@@ -135,6 +136,7 @@ class _WalletAppState extends State<WalletApp> {
         '/staking/nominate': (_) => Nominate(_appStore),
         '/staking/payee': (_) => SetPayee(_appStore),
         '/staking/confirm': (_) => TxConfirm(_appStore),
+        '/gov/candidate': (_) => CandidateDetail(_appStore),
         '/profile/account': (_) =>
             AccountManage(_appStore.api, _appStore.account),
         '/profile/contacts': (_) => Contacts(_appStore.settings),

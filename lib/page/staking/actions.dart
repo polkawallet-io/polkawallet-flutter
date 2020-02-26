@@ -151,7 +151,7 @@ class _StakingActions extends State<StakingActions>
     Color disabledColor = Theme.of(context).disabledColor;
 
     return RoundedCard(
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 24),
+      margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
       padding: EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
@@ -331,8 +331,10 @@ class _StakingActions extends State<StakingActions>
   @override
   void initState() {
     super.initState();
-    _updateStakingInfo();
-    _updateStakingTxs();
+    if (store.staking.ledger['accountId'] == null) {
+      _updateStakingInfo();
+      _updateStakingTxs();
+    }
   }
 
   @override

@@ -1,7 +1,7 @@
 const Map<String, String> enHome = {
   'assets': 'Assets',
   'staking': 'Staking',
-  'democracy': 'Democracy',
+  'governance': 'Governance',
   'profile': 'Profile',
   'account': 'Account',
   'menu': 'Menu',
@@ -29,7 +29,7 @@ const Map<String, String> enHome = {
 const Map<String, String> zhHome = {
   'assets': '资产',
   'staking': '抵押',
-  'democracy': '民主',
+  'governance': '治理',
   'profile': '设置',
   'account': '账户',
   'menu': '菜单',

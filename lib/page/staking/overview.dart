@@ -52,7 +52,7 @@ class _StakingOverviewState extends State<StakingOverview> {
     Color disabledColor = Theme.of(context).disabledColor;
 
     return RoundedCard(
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 24),
+      margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
       padding: EdgeInsets.only(bottom: 8),
       child: Column(
         children: <Widget>[
@@ -264,7 +264,11 @@ class _StakingOverviewState extends State<StakingOverview> {
           ls.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
           list.addAll(ls);
         } else {
-          list.add(CupertinoActivityIndicator());
+          list.add(Container(
+            color: Theme.of(context).cardColor,
+            height: 160,
+            child: CupertinoActivityIndicator(),
+          ));
         }
         return hashData
             ? RefreshIndicator(

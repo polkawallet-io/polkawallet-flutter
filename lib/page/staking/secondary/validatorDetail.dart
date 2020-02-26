@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/accountInfo.dart';
 import 'package:polka_wallet/common/components/chartLabel.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/staking/actions.dart';
@@ -10,37 +11,12 @@ import 'package:polka_wallet/page/staking/secondary/splitChart.dart';
 import 'package:polka_wallet/page/staking/secondary/stakesChart.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking.dart';
-import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ValidatorDetail extends StatelessWidget {
   ValidatorDetail(this.store);
   final AppStore store;
-
-  Widget _buildAccInfo(Map accInfo) {
-    List<Widget> ls = List<Widget>.from(accInfo['identity'].keys.map((k) {
-      if (k == 'judgements') {
-        return Container();
-      }
-      return Row(
-        children: <Widget>[
-          Container(
-            width: 80,
-            child: Text(k),
-          ),
-          Text(accInfo['identity'][k]),
-        ],
-      );
-    }));
-    return accInfo == null
-        ? Container()
-        : Container(
-            padding: EdgeInsets.only(left: 24, right: 24),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, children: ls),
-          );
-  }
 
   @override
   Widget build(BuildContext context) => Observer(
@@ -94,26 +70,7 @@ class ValidatorDetail extends StatelessWidget {
                   margin: EdgeInsets.all(16),
                   child: Column(
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(top: 16, bottom: 8),
-                        child: Image.asset(
-                            'assets/images/assets/Assets_nav_0.png'),
-                      ),
-                      accInfo != null
-                          ? Text(accInfo['accountIndex'])
-                          : Container(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(Fmt.address(detail.accountId)),
-                          IconButton(
-                            icon: Image.asset('assets/images/public/copy.png'),
-                            onPressed: () =>
-                                UI.copyAndNotify(context, detail.accountId),
-                          )
-                        ],
-                      ),
-                      _buildAccInfo(accInfo),
+                      AccountInfo(accInfo: accInfo, address: detail.accountId),
                       Divider(),
                       Padding(
                         padding: EdgeInsets.only(top: 16, left: 24),

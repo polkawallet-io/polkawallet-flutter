@@ -5,7 +5,7 @@ import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/assets.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:polka_wallet/store/governance.dart';
 
 part 'app.g.dart';
 
@@ -22,6 +22,9 @@ abstract class _AppStore with Store {
   StakingStore staking;
 
   @observable
+  GovernanceStore gov;
+
+  @observable
   SettingsStore settings = SettingsStore();
 
   Api api;
@@ -32,12 +35,14 @@ abstract class _AppStore with Store {
     account.loadAccount();
     assets = AssetsStore(account);
     staking = StakingStore(account);
+    gov = GovernanceStore(account);
 
     api = Api(
         context: context,
         accountStore: account,
         assetsStore: assets,
         stakingStore: staking,
+        govStore: gov,
         settingsStore: settings);
     api.init();
   }
