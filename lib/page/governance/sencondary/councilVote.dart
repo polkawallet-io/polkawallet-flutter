@@ -25,6 +25,14 @@ class _CouncilVote extends State<CouncilVote> {
 
   List<String> _selected = List<String>();
 
+  Future<void> _handleCandidateSelect() async {
+    List<String> res =
+        await Navigator.pushNamed(context, '/council/candidates');
+    if (res != null && res.length > 0) {
+      _selected.addAll(res);
+    }
+  }
+
   Widget _buildSelectedList() {
     return Column(
       children: List<Widget>.from(_selected.map((address) => Text(address))),
@@ -100,6 +108,7 @@ class _CouncilVote extends State<CouncilVote> {
                       trailing: Icon(Icons.arrow_forward_ios),
                       onTap: () {
                         print('select candidate');
+                        _handleCandidateSelect();
                       },
                     ),
                     _buildSelectedList()

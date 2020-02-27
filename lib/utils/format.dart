@@ -43,7 +43,7 @@ class Fmt {
     return reg.hasMatch(pass);
   }
 
-  static int sortValidatorList(a, b, int sortType) {
+  static int sortValidatorList(ValidatorData a, ValidatorData b, int sortType) {
     double comA = double.parse(a.commission.split('%')[0]);
     double comB = double.parse(b.commission.split('%')[0]);
     var cmpStake = a.total < b.total ? 1 : -1;
@@ -69,6 +69,24 @@ class Fmt {
         accName = accInfo['identity']['display'] ?? '';
       }
       return i.accountId.toLowerCase().contains(value) ||
+          accIndex.toLowerCase().contains(value) ||
+          accName.toLowerCase().contains(value);
+    });
+    return ls;
+  }
+
+  static List<List<String>> filterCandidateList(
+      List<List<String>> ls, String filter, Map accIndexMap) {
+    ls.retainWhere((i) {
+      String value = filter.toLowerCase();
+      String accIndex = '';
+      String accName = '';
+      Map accInfo = accIndexMap[i[0]];
+      if (accInfo != null) {
+        accIndex = accInfo['accountIndex'];
+        accName = accInfo['identity']['display'] ?? '';
+      }
+      return i[0].toLowerCase().contains(value) ||
           accIndex.toLowerCase().contains(value) ||
           accName.toLowerCase().contains(value);
     });

@@ -61,6 +61,44 @@ class _NominateState extends State<Nominate> {
     Navigator.of(context).pushNamed('/staking/confirm', arguments: args);
   }
 
+  Widget _buildListItem(BuildContext context, int i, List<ValidatorData> list) {
+    Map accInfo = store.account.accountIndexMap[list[i].accountId];
+
+    return ListTile(
+      leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
+      title: Text(accInfo != null
+          ? accInfo['identity']['display'] != null
+              ? accInfo['identity']['display'].toString().toUpperCase()
+              : accInfo['accountIndex']
+          : Fmt.address(list[i].accountId, pad: 6)),
+      subtitle: Text(
+          '${I18n.of(context).staking['total']}: ${Fmt.token(list[i].total)}'),
+      trailing: CupertinoSwitch(
+        value: _selectedMap[list[i].accountId],
+        onChanged: (bool value) {
+          setState(() {
+            _selectedMap[list[i].accountId] = value;
+          });
+          Timer(Duration(milliseconds: 500), () {
+            setState(() {
+              if (value) {
+                _selected.add(list[i]);
+                _notSelected
+                    .removeWhere((item) => item.accountId == list[i].accountId);
+              } else {
+                _selected
+                    .removeWhere((item) => item.accountId == list[i].accountId);
+                _notSelected.add(list[i]);
+              }
+            });
+          });
+        },
+      ),
+      onTap: () => Navigator.of(context)
+          .pushNamed('/staking/validator', arguments: list[i]),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -91,41 +129,7 @@ class _NominateState extends State<Nominate> {
     // and sort it
     retained.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
     list.addAll(retained);
-    List<Widget> ls = list.map((i) {
-      Map accInfo = store.account.accountIndexMap[i.accountId];
-      return ListTile(
-        leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
-        title: Text(accInfo != null
-            ? accInfo['identity']['display'] != null
-                ? accInfo['identity']['display'].toString().toUpperCase()
-                : accInfo['accountIndex']
-            : Fmt.address(i.accountId, pad: 6)),
-        subtitle: Text('${dic['total']}: ${Fmt.token(i.total)}'),
-        trailing: CupertinoSwitch(
-          value: _selectedMap[i.accountId],
-          onChanged: (bool value) {
-            setState(() {
-              _selectedMap[i.accountId] = value;
-            });
-            Timer(Duration(milliseconds: 500), () {
-              setState(() {
-                if (value) {
-                  _selected.add(i);
-                  _notSelected
-                      .removeWhere((item) => item.accountId == i.accountId);
-                } else {
-                  _selected
-                      .removeWhere((item) => item.accountId == i.accountId);
-                  _notSelected.add(i);
-                }
-              });
-            });
-          },
-        ),
-        onTap: () =>
-            Navigator.of(context).pushNamed('/staking/validator', arguments: i),
-      );
-    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(dic['action.nominate']),
@@ -156,8 +160,11 @@ class _NominateState extends State<Nominate> {
                 ),
               ),
               Expanded(
-                child: ListView(
-                  children: ls,
+                child: ListView.builder(
+                  itemCount: list.length,
+                  itemBuilder: (BuildContext context, int i) {
+                    return _buildListItem(context, i, list);
+                  },
                 ),
               ),
               Padding(
