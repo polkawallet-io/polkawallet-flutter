@@ -30,8 +30,9 @@ class CandidateDetail extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   AccountInfo(accInfo: accInfo, address: info[0]),
+                  Divider(),
                   Padding(
-                    padding: EdgeInsets.only(top: 16, bottom: 8),
+                    padding: EdgeInsets.only(top: 8, bottom: 8),
                     child: Text('${Fmt.token(int.parse(info[1]))} $symbol',
                         style: style),
                   ),

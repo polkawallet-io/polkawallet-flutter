@@ -71,7 +71,7 @@ class _CouncilState extends State<Council> {
           Divider(height: 40),
           RoundedButton(
             text: dic['vote'],
-            onPressed: () => print('vote'),
+            onPressed: () => Navigator.of(context).pushNamed('/gov/vote'),
           )
         ],
       ),

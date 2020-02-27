@@ -10,25 +10,28 @@ class AccountInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> list = [];
-    List<Widget> ls = List<Widget>.from(accInfo['identity'].keys.map((k) {
-      if (k == 'judgements') {
-        return Container();
-      }
-      return Row(
-        children: <Widget>[
-          Container(
-            width: 80,
-            child: Text(k),
-          ),
-          Text(accInfo['identity'][k]),
-        ],
-      );
-    }));
 
-    if (ls.length > 0) {
-      list.add(Divider());
-      list.add(Container(height: 4));
-      list.addAll(ls);
+    if (accInfo != null) {
+      List<Widget> ls = [];
+      accInfo['identity'].keys.forEach((k) {
+        if (k != 'judgements') {
+          ls.add(Row(
+            children: <Widget>[
+              Container(
+                width: 80,
+                child: Text(k),
+              ),
+              Text(accInfo['identity'][k].toString()),
+            ],
+          ));
+        }
+      });
+
+      if (ls.length > 0) {
+        list.add(Divider());
+        list.add(Container(height: 4));
+        list.addAll(ls);
+      }
     }
 
     return Column(
@@ -53,7 +56,8 @@ class AccountInfo extends StatelessWidget {
             : Container(
                 padding: EdgeInsets.only(left: 24, right: 24, bottom: 4),
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start, children: ls),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: list),
               )
       ],
     );
