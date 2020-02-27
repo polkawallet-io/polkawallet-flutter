@@ -326,27 +326,31 @@ class Api {
       all.addAll(info['members'].map((i) => i[0]));
       all.addAll(info['runnersUp'].map((i) => i[0]));
       all.addAll(info['candidates'].map((i) => i[0]));
-      print(all);
       fetchAccountsIndex(all);
       govStore.setCouncilInfo(info);
     }
     return info;
   }
 
-  Future<List> fetchReferendums() async {
-    List list = await evalJavascript('api.derive.democracy.referendums()');
-    if (list != null && list.length > 0) {
-      govStore.setReferendums(List<Map<String, dynamic>>.from(list));
-      fetchReferendumVotes(List<int>.from(list.map((i) => i['index'])));
+  Future<Map> fetchReferendums() async {
+    Map data = await evalJavascript('gov.fetchReferendums()');
+    if (data != null) {
+      List list = data['referendums'];
+      if (list.length > 0) {
+        list.asMap().forEach((k, v) => v['detail'] = data['details'][k]);
+        print(list[0]['detail']);
+        govStore.setReferendums(List<Map<String, dynamic>>.from(list));
+        fetchReferendumVotes(List<int>.from(list.map((i) => i['index'])));
+      }
     }
-    return list;
+    return data;
   }
 
   Future<void> fetchReferendumVotes(List<int> indexes) async {
     String code = indexes.map((i) => 'gov.getReferendumVotes($i)').join(',');
     List res = await evalJavascript('Promise.all([$code])');
     res.asMap().forEach((k, v) {
-      govStore.setReferendumVotes(indexes[k], v);
+      govStore.setReferendumVotes(indexes[k], v as Map);
     });
   }
 

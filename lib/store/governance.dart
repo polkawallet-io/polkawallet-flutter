@@ -82,6 +82,7 @@ abstract class _ReferendumInfo with Store {
   Map<String, dynamic> info;
   Map<String, dynamic> proposal;
   Map<String, dynamic> preimage;
+  Map<String, dynamic> detail;
 }
 
 class ReferendumVotes extends _ReferendumVotes {
@@ -91,8 +92,8 @@ class ReferendumVotes extends _ReferendumVotes {
     res.voteCountAye = json['voteCountAye'];
     res.voteCountNay = json['voteCountNay'];
     res.votedAye = int.parse('0x${json['votedAye']}');
-    res.votedNay = int.parse('0x${json['votedAye']}');
-    res.votedTotal = int.parse('0x${json['votedAye']}');
+    res.votedNay = int.parse('0x${json['votedNay']}');
+    res.votedTotal = int.parse('0x${json['votedTotal']}');
     return res;
   }
 }

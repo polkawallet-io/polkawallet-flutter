@@ -42,7 +42,8 @@ ReferendumInfo _$ReferendumInfoFromJson(Map<String, dynamic> json) {
     ..hash = json['hash'] as String
     ..info = json['info'] as Map<String, dynamic>
     ..proposal = json['proposal'] as Map<String, dynamic>
-    ..preimage = json['preimage'] as Map<String, dynamic>;
+    ..preimage = json['preimage'] as Map<String, dynamic>
+    ..detail = json['detail'] as Map<String, dynamic>;
 }
 
 Map<String, dynamic> _$ReferendumInfoToJson(ReferendumInfo instance) =>
@@ -52,6 +53,7 @@ Map<String, dynamic> _$ReferendumInfoToJson(ReferendumInfo instance) =>
       'info': instance.info,
       'proposal': instance.proposal,
       'preimage': instance.preimage,
+      'detail': instance.detail,
     };
 
 // **************************************************************************
