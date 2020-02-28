@@ -7,6 +7,7 @@ import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -37,7 +38,10 @@ class _NominateState extends State<Nominate> {
         "module": 'staking',
         "call": 'chill',
       },
-      'redirect': '/'
+      'onFinish': (BuildContext txPageContext) {
+        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        globalNominatingRefreshKey.currentState.show();
+      }
     };
     Navigator.of(context).pushNamed('/staking/confirm', arguments: args);
   }
@@ -56,7 +60,10 @@ class _NominateState extends State<Nominate> {
         "call": 'nominate',
         "targets": targets,
       },
-      'redirect': '/'
+      'onFinish': (BuildContext txPageContext) {
+        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        globalNominatingRefreshKey.currentState.show();
+      }
     };
     Navigator.of(context).pushNamed('/staking/confirm', arguments: args);
   }
@@ -79,7 +86,7 @@ class _NominateState extends State<Nominate> {
           setState(() {
             _selectedMap[list[i].accountId] = value;
           });
-          Timer(Duration(milliseconds: 500), () {
+          Timer(Duration(milliseconds: 300), () {
             setState(() {
               if (value) {
                 _selected.add(list[i]);

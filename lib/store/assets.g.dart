@@ -24,21 +24,21 @@ mixin _$AssetsStore on _AssetsStore, Store {
                   () => super.balanceHistory))
           .value;
 
-  final _$loadingAtom = Atom(name: '_AssetsStore.loading');
+  final _$isTxsLoadingAtom = Atom(name: '_AssetsStore.isTxsLoading');
 
   @override
-  bool get loading {
-    _$loadingAtom.context.enforceReadPolicy(_$loadingAtom);
-    _$loadingAtom.reportObserved();
-    return super.loading;
+  bool get isTxsLoading {
+    _$isTxsLoadingAtom.context.enforceReadPolicy(_$isTxsLoadingAtom);
+    _$isTxsLoadingAtom.reportObserved();
+    return super.isTxsLoading;
   }
 
   @override
-  set loading(bool value) {
-    _$loadingAtom.context.conditionallyRunInAction(() {
-      super.loading = value;
-      _$loadingAtom.reportChanged();
-    }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
+  set isTxsLoading(bool value) {
+    _$isTxsLoadingAtom.context.conditionallyRunInAction(() {
+      super.isTxsLoading = value;
+      _$isTxsLoadingAtom.reportChanged();
+    }, _$isTxsLoadingAtom, name: '${_$isTxsLoadingAtom.name}_set');
   }
 
   final _$submittingAtom = Atom(name: '_AssetsStore.submitting');
@@ -160,10 +160,10 @@ mixin _$AssetsStore on _AssetsStore, Store {
   final _$_AssetsStoreActionController = ActionController(name: '_AssetsStore');
 
   @override
-  void setLoading(bool isLoading) {
+  void setTxsLoading(bool isLoading) {
     final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
-      return super.setLoading(isLoading);
+      return super.setTxsLoading(isLoading);
     } finally {
       _$_AssetsStoreActionController.endAction(_$actionInfo);
     }

@@ -7,6 +7,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -162,7 +163,11 @@ class _CouncilVote extends State<CouncilVote> {
                                 "votes": selected,
                                 "voteValue": Fmt.balanceInt(amt),
                               },
-                              'redirect': '/'
+                              'onFinish': (BuildContext txPageContext) {
+                                Navigator.popUntil(
+                                    txPageContext, ModalRoute.withName('/'));
+                                globalCouncilRefreshKey.currentState.show();
+                              }
                             };
                             Navigator.of(context)
                                 .pushNamed('/staking/confirm', arguments: args);

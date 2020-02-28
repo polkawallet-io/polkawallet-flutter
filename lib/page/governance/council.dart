@@ -6,6 +6,7 @@ import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/staking/actions.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -22,26 +23,22 @@ class _CouncilState extends State<Council> {
 
   final AppStore store;
 
-  bool _isLoading = false;
-
   Future<void> _fetchCouncilInfo() async {
-    setState(() {
-      _isLoading = true;
-    });
-    await store.api.fetchCouncilInfo();
-    if (context != null) {
-      setState(() {
-        _isLoading = false;
-      });
+    if (store.settings.loading) {
+      return;
     }
+    await store.api.fetchCouncilInfo();
   }
 
   @override
   void initState() {
     super.initState();
-    if (store.gov.council == null) {
-      _fetchCouncilInfo();
-    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (store.gov.council == null) {
+        globalCouncilRefreshKey.currentState.show();
+      }
+    });
   }
 
   Widget _buildTopCard() {
@@ -86,11 +83,12 @@ class _CouncilState extends State<Council> {
     final Map dic = I18n.of(context).gov;
     return Observer(builder: (_) {
       var accIndexMap = store.account.accountIndexMap;
-      return _isLoading
-          ? CupertinoActivityIndicator()
-          : RefreshIndicator(
-              onRefresh: _fetchCouncilInfo,
-              child: ListView(
+      return RefreshIndicator(
+        key: globalCouncilRefreshKey,
+        onRefresh: _fetchCouncilInfo,
+        child: store.gov.council == null
+            ? Container()
+            : ListView(
                 children: <Widget>[
                   _buildTopCard(),
                   Container(
@@ -155,7 +153,7 @@ class _CouncilState extends State<Council> {
                   ),
                 ],
               ),
-            );
+      );
     });
   }
 }

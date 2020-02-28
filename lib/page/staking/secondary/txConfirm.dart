@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -52,7 +50,9 @@ class _TxConfirmState extends State<TxConfirm> {
         ));
 
         Timer(Duration(seconds: 2), () {
-          Navigator.popUntil(context, ModalRoute.withName(args['redirect']));
+          if (state.mounted) {
+            (args['onFinish'] as Function(BuildContext))(context);
+          }
         });
       }
     }

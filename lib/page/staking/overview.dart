@@ -8,6 +8,7 @@ import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/page/staking/validator.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -34,6 +35,14 @@ class _StakingOverviewState extends State<StakingOverview> {
 
   int _sort = 0;
   String _filter = '';
+
+  Future<void> _refreshData() async {
+    if (store.settings.loading) {
+      return;
+    }
+    reloadStakingOverview();
+    await store.api.fetchAccountStaking();
+  }
 
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).staking;
@@ -92,7 +101,9 @@ class _StakingOverviewState extends State<StakingOverview> {
                                   color: actionButtonColor,
                                 ),
                                 Text(
-                                  dic['action.nominee'],
+                                  dic[nominators.length > 0
+                                      ? 'action.nominee'
+                                      : 'action.nominate'],
                                   style: TextStyle(color: actionButtonColor),
                                 )
                               ],
@@ -109,11 +120,8 @@ class _StakingOverviewState extends State<StakingOverview> {
                                 )
                               ],
                             ),
-                      onTap: () => Navigator.pushNamed(
-                          context,
-                          nominators.length > 0
-                              ? '/staking/nominee'
-                              : '/staking/nominate'),
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/staking/nominate'),
                     )
                   : Column(
                       children: <Widget>[
@@ -172,7 +180,7 @@ class _StakingOverviewState extends State<StakingOverview> {
         if (validatorIndex >= 0) {
           validator = store.staking.validatorsInfo[validatorIndex];
         } else {
-          return Container();
+          return CupertinoActivityIndicator();
         }
 
         int meStaked = 0;
@@ -187,6 +195,7 @@ class _StakingOverviewState extends State<StakingOverview> {
             child: ListTile(
               leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
               title: Text('${Fmt.token(meStaked)} $symbol'),
+              // TODO: show validator name
               subtitle: Text(Fmt.address(validator.accountId)),
               trailing: Container(
                 width: 120,
@@ -217,10 +226,21 @@ class _StakingOverviewState extends State<StakingOverview> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (store.staking.ledger['stakingLedger'] == null) {
+        globalNominatingRefreshKey.currentState.show();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        bool hashData = store.staking.overview['validators'] != null;
+        bool hashData = store.staking.ledger['stakingLedger'] != null;
         List list = [
           // index_0: the overview card
           hashData ? _buildTopCard(context) : Container(),
@@ -272,10 +292,8 @@ class _StakingOverviewState extends State<StakingOverview> {
         }
         return hashData
             ? RefreshIndicator(
-                onRefresh: () async {
-                  reloadStakingOverview();
-                  await store.api.fetchAccountStaking();
-                },
+                key: globalNominatingRefreshKey,
+                onRefresh: _refreshData,
                 child: ListView.builder(
                   itemCount: list.length,
                   itemBuilder: (BuildContext context, int i) {
@@ -287,7 +305,7 @@ class _StakingOverviewState extends State<StakingOverview> {
                   },
                 ),
               )
-            : CupertinoActivityIndicator();
+            : Container();
       },
     );
   }

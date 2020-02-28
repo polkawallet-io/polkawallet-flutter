@@ -6,6 +6,7 @@ import 'package:polka_wallet/common/components/outlinedCircle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -23,7 +24,7 @@ class _StakingActions extends State<StakingActions>
   final AppStore store;
 
   int _txsPage = 1;
-  bool _ledgerLoading = true;
+
   bool _txsLoading = true;
 
   Future<void> _updateStakingTxs() async {
@@ -45,18 +46,10 @@ class _StakingActions extends State<StakingActions>
     if (store.settings.loading) {
       return;
     }
-    setState(() {
-      _ledgerLoading = true;
-    });
     await Future.wait([
       store.api.fetchBalance(),
       store.api.fetchAccountStaking(),
     ]);
-    if (context != null) {
-      setState(() {
-        _ledgerLoading = false;
-      });
-    }
   }
 
   List<Widget> _buildTxList() {
@@ -331,10 +324,12 @@ class _StakingActions extends State<StakingActions>
   @override
   void initState() {
     super.initState();
-    if (store.staking.ledger['accountId'] == null) {
-      _updateStakingInfo();
-      _updateStakingTxs();
-    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (store.staking.ledger['stakingLedger'] == null) {
+        globalBondingRefreshKey.currentState.show();
+      }
+    });
   }
 
   @override
@@ -354,12 +349,13 @@ class _StakingActions extends State<StakingActions>
         list.addAll(_buildTxList());
         bool hasData = store.staking.ledger['stakingLedger'] != null;
         return RefreshIndicator(
+          key: globalBondingRefreshKey,
           onRefresh: () async {
             _updateStakingTxs();
             await _updateStakingInfo();
           },
-          child: !hasData && _ledgerLoading
-              ? CupertinoActivityIndicator()
+          child: !hasData
+              ? Container()
               : ListView(
                   children: list,
                 ),

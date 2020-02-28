@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -27,7 +28,7 @@ class DrawerMenu extends StatelessWidget {
                 Navigator.pop(context);
                 store.account.setCurrentAccount(i);
                 store.staking.clearSate();
-                store.api.fetchBalance();
+                globalBalanceRefreshKey.currentState.show();
                 store.api.fetchAccountStaking();
               },
             ))

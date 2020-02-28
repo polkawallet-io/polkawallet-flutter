@@ -5,6 +5,7 @@ import 'package:polka_wallet/page/assets/secondary/asset/assetChart.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -52,10 +53,6 @@ class _AssetPageState extends State<AssetPage>
     super.initState();
     _tabController = TabController(vsync: this, length: 3);
 
-    if (store.assets.txsView.length == 0) {
-      _updateData();
-    }
-
     _scrollController = ScrollController();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
@@ -68,6 +65,12 @@ class _AssetPageState extends State<AssetPage>
         });
       }
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (store.assets.txsView.length == 0) {
+        globalAssetRefreshKey.currentState.show();
+      }
+    });
   }
 
   @override
@@ -78,7 +81,7 @@ class _AssetPageState extends State<AssetPage>
   }
 
   List<Widget> _buildTxList() {
-    if (!store.assets.loading && store.assets.txsView.length == 0) {
+    if (!store.assets.isTxsLoading && store.assets.txsView.length == 0) {
       return [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -186,7 +189,7 @@ class _AssetPageState extends State<AssetPage>
       ),
     ];
     list.addAll(_buildTxList());
-    if (store.assets.loading) {
+    if (store.assets.isTxsLoading) {
       list.add(
         Padding(
             padding: EdgeInsets.all(8), child: CupertinoActivityIndicator()),
@@ -225,6 +228,7 @@ class _AssetPageState extends State<AssetPage>
                   child: Container(
                     color: Colors.white,
                     child: RefreshIndicator(
+                      key: globalAssetRefreshKey,
                       onRefresh: _refreshData,
                       child: ListView(
                         controller: _scrollController,

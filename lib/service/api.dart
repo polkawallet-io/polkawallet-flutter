@@ -199,7 +199,7 @@ class Api {
   Future<List> updateTxs(int page) async {
     if (page == 1) {
       assetsStore.clearTxs();
-      assetsStore.setLoading(true);
+      assetsStore.setTxsLoading(true);
     }
     String data =
         await PolkaScanApi.fetchTxs(accountStore.currentAccount.address, page);
@@ -208,7 +208,7 @@ class Api {
     await assetsStore.addTxs(ls);
 
     await updateBlocks();
-    assetsStore.setLoading(false);
+    assetsStore.setTxsLoading(false);
     return ls;
   }
 
@@ -265,8 +265,19 @@ class Api {
     return evalJavascript('account.checkPassword("$address", "$pass")');
   }
 
+  Future<dynamic> _testSendTx() async {
+    Completer c = new Completer();
+    void onComplete(res) {
+      c.complete(res);
+    }
+
+    Timer(Duration(seconds: 6), () => onComplete({'hash': '0x79867'}));
+    return c.future;
+  }
+
   Future<dynamic> sendTx(Map params, String notificationTitle) async {
-    var res = await evalJavascript('account.sendTx(${jsonEncode(params)})');
+    var res = await _testSendTx();
+//    var res = await evalJavascript('account.sendTx(${jsonEncode(params)})');
 
     if (res != null) {
       String hash = res['hash'];

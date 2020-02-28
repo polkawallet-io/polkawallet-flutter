@@ -7,6 +7,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumPanel.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/governance.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Democracy extends StatefulWidget {
@@ -24,18 +25,11 @@ class _DemocracyState extends State<Democracy> {
 
   final _options = [0, 1, 2, 3, 4, 5, 6];
 
-  bool _isLoading = false;
-
   Future<void> _fetchReferendums() async {
-    setState(() {
-      _isLoading = true;
-    });
-    await store.api.fetchReferendums();
-    if (context != null) {
-      setState(() {
-        _isLoading = false;
-      });
+    if (store.settings.loading) {
+      return;
     }
+    await store.api.fetchReferendums();
   }
 
   List<num> _calcTimes(int value) {
@@ -68,7 +62,10 @@ class _DemocracyState extends State<Democracy> {
               "id": id,
               "options": options
             },
-            'redirect': '/'
+            'onFinish': (BuildContext txPageContext) {
+              Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+              globalDemocracyRefreshKey.currentState.show();
+            }
           };
           List times = _calcTimes(i);
           String days = i == 0
@@ -98,44 +95,48 @@ class _DemocracyState extends State<Democracy> {
   @override
   void initState() {
     super.initState();
-    if (store.gov.council == null) {
-      _fetchReferendums();
-    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (store.gov.referendums == null) {
+        globalDemocracyRefreshKey.currentState.show();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    String symbol = store.settings.networkState.tokenSymbol;
-    List<ReferendumInfo> list = store.gov.referendums;
     return Observer(
       builder: (_) {
+        String symbol = store.settings.networkState.tokenSymbol;
+        List<ReferendumInfo> list = store.gov.referendums;
         int bestNumber = store.gov.bestNumber;
-        return _isLoading
-            ? CupertinoActivityIndicator()
-            : RefreshIndicator(
-                onRefresh: _fetchReferendums,
-                child: list == null
-                    ? Container(
-                        height: 80,
-                        padding: EdgeInsets.all(24),
-                        child: Text(
-                          I18n.of(context).home['data.empty'],
-                          style: Theme.of(context).textTheme.display4,
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: list.length,
-                        itemBuilder: (BuildContext context, int i) {
-                          return ReferendumPanel(
-                            data: list[i],
-                            bestNumber: bestNumber,
-                            votes: store.gov.referendumVotes[list[i].index],
-                            symbol: symbol,
-                            onVote: _onVote,
-                          );
-                        },
+        return RefreshIndicator(
+          key: globalDemocracyRefreshKey,
+          onRefresh: _fetchReferendums,
+          child: list == null
+              ? Container()
+              : list.length == 0
+                  ? Container(
+                      height: 80,
+                      padding: EdgeInsets.all(24),
+                      child: Text(
+                        I18n.of(context).home['data.empty'],
+                        style: Theme.of(context).textTheme.display4,
                       ),
-              );
+                    )
+                  : ListView.builder(
+                      itemCount: list.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        return ReferendumPanel(
+                          data: list[i],
+                          bestNumber: bestNumber,
+                          votes: store.gov.referendumVotes[list[i].index],
+                          symbol: symbol,
+                          onVote: _onVote,
+                        );
+                      },
+                    ),
+        );
       },
     );
   }

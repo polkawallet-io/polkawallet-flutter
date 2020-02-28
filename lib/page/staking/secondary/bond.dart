@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -155,7 +156,11 @@ class _BondState extends State<Bond> {
                             .toInt(),
                         "to": _rewardTo,
                       },
-                      'redirect': '/'
+                      'onFinish': (BuildContext txPageContext) {
+                        Navigator.popUntil(
+                            txPageContext, ModalRoute.withName('/'));
+                        globalBondingRefreshKey.currentState.show();
+                      }
                     };
                     Navigator.of(context)
                         .pushNamed('/staking/confirm', arguments: args);

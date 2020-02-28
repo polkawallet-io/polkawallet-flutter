@@ -105,6 +105,7 @@ abstract class _StakingStore with Store {
 
   @action
   void setOverview(Map<String, dynamic> data) {
+    // TODO: split setElectedInfo with setOverview
     data.keys.forEach((key) => overview[key] = data[key]);
     if (data.keys.toList().indexOf('elected') >= 0) {
       setValidatorsInfo();

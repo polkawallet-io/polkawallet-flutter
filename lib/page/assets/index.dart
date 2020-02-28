@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 import 'package:polka_wallet/store/account.dart';
@@ -22,6 +23,8 @@ class _AssetsState extends State<Assets> {
   _AssetsState(this.store);
 
   final AppStore store;
+
+  bool _test = true;
 
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).assets;
@@ -70,6 +73,7 @@ class _AssetsState extends State<Assets> {
   @override
   Widget build(BuildContext context) => Observer(
         builder: (_) => RefreshIndicator(
+          key: globalBalanceRefreshKey,
           onRefresh: store.api.fetchBalance,
           child: ListView(
             padding: EdgeInsets.only(left: 16, right: 16),

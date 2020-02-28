@@ -49,6 +49,7 @@ abstract class _AccountStore with Store {
   void setCurrentAccount(AccountData acc) {
     currentAccount = acc;
 
+    // TODO: store account info with account pubKey
     LocalStorage.setCurrentAccount(acc.address);
   }
 

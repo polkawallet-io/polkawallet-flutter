@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class SetPayee extends StatefulWidget {
@@ -131,7 +132,11 @@ class _SetPayeeState extends State<SetPayee> {
                       "call": 'setPayee',
                       "to": _rewardTo,
                     },
-                    'redirect': '/'
+                    'onFinish': (BuildContext txPageContext) {
+                      Navigator.popUntil(
+                          txPageContext, ModalRoute.withName('/'));
+                      globalBondingRefreshKey.currentState.show();
+                    }
                   };
                   Navigator.of(context)
                       .pushNamed('/staking/confirm', arguments: args);

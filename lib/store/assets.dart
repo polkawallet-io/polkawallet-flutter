@@ -17,7 +17,7 @@ abstract class _AssetsStore with Store {
   AccountStore account;
 
   @observable
-  bool loading = true;
+  bool isTxsLoading = true;
 
   @observable
   bool submitting = false;
@@ -74,8 +74,8 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  void setLoading(bool isLoading) {
-    loading = isLoading;
+  void setTxsLoading(bool isLoading) {
+    isTxsLoading = isLoading;
   }
 
   @action
