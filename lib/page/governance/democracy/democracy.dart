@@ -95,6 +95,7 @@ class _DemocracyState extends State<Democracy> {
   @override
   void initState() {
     super.initState();
+    store.api.subscribeBestNumber();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (store.gov.referendums == null) {
@@ -104,12 +105,19 @@ class _DemocracyState extends State<Democracy> {
   }
 
   @override
+  void dispose() {
+    store.api.unsubscribeBestNumber();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
         String symbol = store.settings.networkState.tokenSymbol;
         List<ReferendumInfo> list = store.gov.referendums;
         int bestNumber = store.gov.bestNumber;
+        print(bestNumber);
         return RefreshIndicator(
           key: globalDemocracyRefreshKey,
           onRefresh: _fetchReferendums,

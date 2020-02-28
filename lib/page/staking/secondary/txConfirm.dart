@@ -95,7 +95,7 @@ class _TxConfirmState extends State<TxConfirm> {
           style: TextStyle(color: Colors.black54),
         ),
       ),
-      duration: Duration(minutes: 1),
+      duration: Duration(minutes: 5),
     ));
 
     Map params = args['params'];

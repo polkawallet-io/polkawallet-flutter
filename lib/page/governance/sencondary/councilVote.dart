@@ -158,10 +158,12 @@ class _CouncilVote extends State<CouncilVote> {
                                 "voteValue": amt,
                               }),
                               "params": {
-                                "module": 'elections',
+                                "module": 'electionsPhragmen',
                                 "call": 'vote',
                                 "votes": selected,
-                                "voteValue": Fmt.balanceInt(amt),
+                                "voteValue":
+                                    (double.parse(amt) * pow(10, decimals))
+                                        .toInt(),
                               },
                               'onFinish': (BuildContext txPageContext) {
                                 Navigator.popUntil(

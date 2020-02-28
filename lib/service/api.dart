@@ -130,7 +130,6 @@ class Api {
       return;
     }
     fetchNetworkProps();
-    subscribeBestNumber();
   }
 
   Future<void> changeNode(String endpoint) async {
@@ -276,8 +275,8 @@ class Api {
   }
 
   Future<dynamic> sendTx(Map params, String notificationTitle) async {
-    var res = await _testSendTx();
-//    var res = await evalJavascript('account.sendTx(${jsonEncode(params)})');
+//    var res = await _testSendTx();
+    var res = await evalJavascript('account.sendTx(${jsonEncode(params)})');
 
     if (res != null) {
       String hash = res['hash'];
@@ -366,8 +365,12 @@ class Api {
   }
 
   Future<void> subscribeBestNumber() async {
+    // TODO: bug - can not set bestNumber properly
     _msgHandlers['bestNumber'] = govStore.setBestNumber;
-    evalJavascript(
-        'api.derive.chain.bestNumber(function(res){PolkaWallet.postMessage(JSON.stringify({ path: "bestNumber", data: res.toNumber() }))})');
+    evalJavascript('gov.subBestNumber()');
+  }
+
+  Future<void> unsubscribeBestNumber() async {
+    _web.evalJavascript('unsubBestNumber()');
   }
 }

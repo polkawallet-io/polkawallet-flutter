@@ -161,11 +161,12 @@ class _StakingActions extends State<StakingActions>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      store.account.currentAccount.name +
-                          '${accIndex != null ? ' ($accIndex)' : ''}',
+                      store.account.currentAccount.name,
                       style: Theme.of(context).textTheme.display4,
                     ),
-                    Text(Fmt.address(store.account.currentAccount.address))
+                    Text(accIndex != null
+                        ? accIndex
+                        : Fmt.address(store.account.currentAccount.address))
                   ],
                 ),
               ),
