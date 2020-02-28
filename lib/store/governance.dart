@@ -15,10 +15,10 @@ abstract class _GovernanceStore with Store {
   int bestNumber = 0;
 
   @observable
-  CouncilInfo council = CouncilInfo();
+  CouncilInfo council;
 
   @observable
-  ObservableList<ReferendumInfo> referendums = ObservableList<ReferendumInfo>();
+  ObservableList<ReferendumInfo> referendums;
 
   @observable
   ObservableMap<int, ReferendumVotes> referendumVotes =

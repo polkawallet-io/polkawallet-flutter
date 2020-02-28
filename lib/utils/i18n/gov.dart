@@ -7,8 +7,8 @@ const Map<String, String> enGov = {
   'candidate': 'Candidates',
   'backing': 'Backing',
   'vote': 'Vote',
-  'vote.candidate': 'Vote for candidate',
-  'vote.proposal': 'Vote on proposal',
+  'vote.candidate': 'Vote for Candidate',
+  'vote.proposal': 'Vote on Proposal',
   'referenda': 'Referenda',
   'proposal': 'Proposal',
   'end': 'end',
@@ -16,9 +16,10 @@ const Map<String, String> enGov = {
   'no': 'Nay',
   'yes.text': 'Aye, I approve',
   'no.text': 'Nay, I do not approve',
+  'balance': 'balance',
   'locked': 'locked for',
   'locked.no': 'no lockup period',
-  'day': 'Days',
+  'day': 'days',
 };
 
 const Map<String, String> zhGov = {
@@ -39,6 +40,7 @@ const Map<String, String> zhGov = {
   'no': '反对',
   'yes.text': '投支持票',
   'no.text': '投反对票',
+  'balance': '余额投票',
   'locked': '锁定时间',
   'locked.no': '无锁定期',
   'day': '天',

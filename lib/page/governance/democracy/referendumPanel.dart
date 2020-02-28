@@ -4,6 +4,7 @@ import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/governance.dart';
 import 'package:polka_wallet/utils/format.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ReferendumPanel extends StatelessWidget {
   ReferendumPanel(
@@ -17,24 +18,33 @@ class ReferendumPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var dic = I18n.of(context).gov;
     List<Widget> list = <Widget>[
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
         Text(
           '${data.proposal['section']}.${data.proposal['method']}',
           style: Theme.of(context).textTheme.display4,
         ),
-        Text('#${data.index}'),
+        Text(
+          '#${data.index}',
+          style: Theme.of(context).textTheme.display4,
+        ),
       ]),
       Divider(),
       Row(
         children: <Widget>[
           Container(
+            padding: EdgeInsets.only(right: 8),
             child: Image.asset('assets/images/gov/time.png'),
           ),
-          Text('${data.info['end'] - bestNumber} blocks end')
+          Text(
+            '${data.info['end'] - bestNumber} blocks ${dic['end']}',
+            style: TextStyle(color: Colors.lightGreen),
+          )
         ],
       ),
       Container(
+        padding: EdgeInsets.only(top: 16),
         child: Text(data.detail['content'].toString().trim()),
       )
     ];
@@ -77,21 +87,28 @@ class ReferendumPanel extends StatelessWidget {
       ));
     }
     list.add(Container(
+      padding: EdgeInsets.only(top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[Text('prop hash'), Text(Fmt.address(data.hash))],
+        children: <Widget>[
+          Text(
+            '${dic['proposal']} hash',
+            style: TextStyle(color: Colors.black54),
+          ),
+          Text(Fmt.address(data.hash))
+        ],
       ),
     ));
-    list.add(Divider());
+    list.add(Divider(height: 32));
 
-    if (votes.votedTotal > 0) {
+    if (votes != null && votes.votedTotal > 0) {
       double widthFull = MediaQuery.of(context).size.width - 72;
       double yes = votes.votedAye / votes.votedTotal;
       double widthYes = yes * widthFull;
       double widthMin = 6;
       list.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[Text('nay'), Text('aye')],
+        children: <Widget>[Text(dic['no']), Text(dic['yes'])],
       ));
       list.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -131,14 +148,14 @@ class ReferendumPanel extends StatelessWidget {
           Expanded(
             child: RoundedButton(
               color: Colors.orange,
-              text: 'n',
+              text: dic['no'],
               onPressed: () => onVote(data.index, false),
             ),
           ),
           Container(width: 8),
           Expanded(
             child: RoundedButton(
-              text: 'y',
+              text: dic['yes'],
               onPressed: () => onVote(data.index, true),
             ),
           )

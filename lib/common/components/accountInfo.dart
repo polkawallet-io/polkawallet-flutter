@@ -14,7 +14,7 @@ class AccountInfo extends StatelessWidget {
     if (accInfo != null) {
       List<Widget> ls = [];
       accInfo['identity'].keys.forEach((k) {
-        if (k != 'judgements') {
+        if (k != 'judgements' && k != 'other') {
           ls.add(Row(
             children: <Widget>[
               Container(

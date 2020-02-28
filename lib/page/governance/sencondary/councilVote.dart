@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -23,27 +25,58 @@ class _CouncilVote extends State<CouncilVote> {
 
   final TextEditingController _amountCtrl = new TextEditingController();
 
-  List<String> _selected = List<String>();
+  List<List<String>> _selected = List<List<String>>();
 
   Future<void> _handleCandidateSelect() async {
-    List<String> res =
-        await Navigator.pushNamed(context, '/council/candidates');
-    if (res != null && res.length > 0) {
-      _selected.addAll(res);
+    var res = await Navigator.of(context)
+        .pushNamed('/gov/candidates', arguments: _selected);
+    if (res != null) {
+      _selected = List<List<String>>.of(res);
     }
   }
 
   Widget _buildSelectedList() {
     return Column(
-      children: List<Widget>.from(_selected.map((address) => Text(address))),
+      children: List<Widget>.from(_selected.map((i) {
+        var accInfo = store.account.accountIndexMap[i[0]];
+        return Container(
+          margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: 28,
+                margin: EdgeInsets.only(right: 8),
+                child: Image.asset('assets/images/assets/Assets_nav_0.png'),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  accInfo != null
+                      ? accInfo['identity']['display'] != null
+                          ? Text(accInfo['identity']['display']
+                              .toString()
+                              .toUpperCase())
+                          : Container()
+                      : Container(),
+                  Text(
+                    Fmt.address(i[0]),
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      })),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    var govDic = I18n.of(context).gov;
     return Scaffold(
       appBar: AppBar(
-        title: Text('vote candi..'),
+        title: Text(govDic['vote.candidate']),
         centerTitle: true,
       ),
       body: Observer(
@@ -52,67 +85,89 @@ class _CouncilVote extends State<CouncilVote> {
           int decimals = store.settings.networkState.tokenDecimals;
 
           int balance = Fmt.balanceInt(store.assets.balance);
-          int available = balance;
-          bool hasStakingData = store.staking.ledger['stakingLedger'] != null;
-          if (hasStakingData) {
-            int bonded = store.staking.ledger['stakingLedger']['active'];
-            int unlocking = 0;
-            List unlockingList =
-                store.staking.ledger['stakingLedger']['unlocking'];
-            unlockingList.forEach((i) => unlocking += i['value']);
-            available = balance - bonded - unlocking;
-          }
 
-          return ListView(
+          return Column(
             children: <Widget>[
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: TextFormField(
-                        decoration: InputDecoration(labelText: dic['address']),
-                        initialValue: store.account.currentAccount.address,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: dic['amount'],
-                          labelText:
-                              '${dic['amount']} (${dic['balance']}: ${Fmt.token(available)})',
+              Expanded(
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: TextFormField(
+                          decoration:
+                              InputDecoration(labelText: dic['address']),
+                          initialValue: store.account.currentAccount.address,
                         ),
-                        inputFormatters: [
-                          RegExInputFormatter.withRegex(
-                              '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                        ],
-                        controller: _amountCtrl,
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                        validator: (v) {
-                          if (v.isEmpty) {
-                            return dic['amount.error'];
-                          }
-                          if (double.parse(v.trim()) >=
-                              available / pow(10, decimals) - 0.02) {
-                            return dic['amount.low'];
-                          }
-                          return null;
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: dic['amount'],
+                            labelText:
+                                '${dic['amount']} (${dic['balance']}: ${Fmt.token(balance)})',
+                          ),
+                          inputFormatters: [
+                            RegExInputFormatter.withRegex(
+                                '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                          ],
+                          controller: _amountCtrl,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          validator: (v) {
+                            if (v.isEmpty) {
+                              return dic['amount.error'];
+                            }
+                            if (double.parse(v.trim()) >=
+                                balance / pow(10, decimals) - 0.02) {
+                              return dic['amount.low'];
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      ListTile(
+                        title: Text(govDic['candidate']),
+                        trailing: Icon(Icons.arrow_forward_ios),
+                        onTap: () {
+                          _handleCandidateSelect();
                         },
                       ),
-                    ),
-                    ListTile(
-                      title: Text(I18n.of(context).gov['candidate']),
-                      trailing: Icon(Icons.arrow_forward_ios),
-                      onTap: () {
-                        print('select candidate');
-                        _handleCandidateSelect();
-                      },
-                    ),
-                    _buildSelectedList()
-                  ],
+                      _buildSelectedList()
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+                child: RoundedButton(
+                  text: I18n.of(context).home['submit.tx'],
+                  onPressed: _selected.length == 0
+                      ? null
+                      : () {
+                          if (_formKey.currentState.validate()) {
+                            String amt = _amountCtrl.text.trim();
+                            List selected = _selected.map((i) => i[0]).toList();
+                            var args = {
+                              "title": govDic['vote.candidate'],
+                              "detail": jsonEncode({
+                                "votes": selected,
+                                "voteValue": amt,
+                              }),
+                              "params": {
+                                "module": 'elections',
+                                "call": 'vote',
+                                "votes": selected,
+                                "voteValue": Fmt.balanceInt(amt),
+                              },
+                              'redirect': '/'
+                            };
+                            Navigator.of(context)
+                                .pushNamed('/staking/confirm', arguments: args);
+                          }
+                        },
                 ),
               )
             ],

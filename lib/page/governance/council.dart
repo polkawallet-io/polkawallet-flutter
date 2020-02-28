@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
@@ -21,7 +22,7 @@ class _CouncilState extends State<Council> {
 
   final AppStore store;
 
-  bool _isLoading = true;
+  bool _isLoading = false;
 
   Future<void> _fetchCouncilInfo() async {
     setState(() {
@@ -37,8 +38,10 @@ class _CouncilState extends State<Council> {
 
   @override
   void initState() {
-    _fetchCouncilInfo();
     super.initState();
+    if (store.gov.council == null) {
+      _fetchCouncilInfo();
+    }
   }
 
   Widget _buildTopCard() {
@@ -83,11 +86,11 @@ class _CouncilState extends State<Council> {
     final Map dic = I18n.of(context).gov;
     return Observer(builder: (_) {
       var accIndexMap = store.account.accountIndexMap;
-      return RefreshIndicator(
-        onRefresh: _fetchCouncilInfo,
-        child: _isLoading
-            ? Container()
-            : ListView(
+      return _isLoading
+          ? CupertinoActivityIndicator()
+          : RefreshIndicator(
+              onRefresh: _fetchCouncilInfo,
+              child: ListView(
                 children: <Widget>[
                   _buildTopCard(),
                   Container(
@@ -152,16 +155,23 @@ class _CouncilState extends State<Council> {
                   ),
                 ],
               ),
-      );
+            );
     });
   }
 }
 
 class CandidateItem extends StatelessWidget {
-  CandidateItem({this.accInfo, this.balance, this.tokenSymbol});
+  CandidateItem(
+      {this.accInfo,
+      this.balance,
+      this.tokenSymbol,
+      this.switchValue,
+      this.onSwitch});
   final Map accInfo;
   final List<String> balance;
   final String tokenSymbol;
+  final bool switchValue;
+  final Function(bool) onSwitch;
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -175,6 +185,12 @@ class CandidateItem extends StatelessWidget {
           '${I18n.of(context).gov['backing']}: ${Fmt.token(int.parse(balance[1]))} $tokenSymbol'),
       onTap: () =>
           Navigator.of(context).pushNamed('/gov/candidate', arguments: balance),
+      trailing: onSwitch == null
+          ? Container(width: 8)
+          : CupertinoSwitch(
+              value: switchValue,
+              onChanged: onSwitch,
+            ),
     );
   }
 }

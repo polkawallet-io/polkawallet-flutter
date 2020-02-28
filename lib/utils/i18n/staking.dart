@@ -35,7 +35,7 @@ const Map<String, String> enStaking = {
   'reward.stash': 'Do not increase the amount at stake',
   'reward.warn': 'Reward destination is not changed',
   'unlocking': 'Unlocking',
-  'filter': 'Filter with Address',
+  'filter': 'Filter with Address/Name',
   'sort': 'Sort by',
 };
 
@@ -76,6 +76,6 @@ const Map<String, String> zhStaking = {
   'reward.stash': '收益不再质押（发至储值账户）',
   'reward.warn': '分红方式未修改',
   'unlocking': '解锁中',
-  'filter': '验证人地址筛选',
+  'filter': '地址/名称筛选',
   'sort': '排序',
 };
