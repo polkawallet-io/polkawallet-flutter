@@ -283,7 +283,6 @@ class Api {
       NotificationPlugin.showNotification(int.parse(hash.substring(0, 6)),
           notificationTitle, '${params['module']}.${params['call']}');
     }
-    // TODO: reload account info after tx finished
     return res;
   }
 
@@ -335,7 +334,7 @@ class Api {
       List all = [];
       all.addAll(info['members'].map((i) => i[0]));
       all.addAll(info['runnersUp'].map((i) => i[0]));
-      all.addAll(info['candidates'].map((i) => i[0]));
+      all.addAll(info['candidates']);
       fetchAccountsIndex(all);
       govStore.setCouncilInfo(info);
     }
@@ -365,8 +364,9 @@ class Api {
   }
 
   Future<void> subscribeBestNumber() async {
-    // TODO: bug - can not set bestNumber properly
-    _msgHandlers['bestNumber'] = govStore.setBestNumber;
+    _msgHandlers['bestNumber'] = (data) {
+      govStore.setBestNumber(data as int);
+    };
     evalJavascript('gov.subBestNumber()');
   }
 

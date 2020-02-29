@@ -40,8 +40,8 @@ class _StakingOverviewState extends State<StakingOverview> {
     if (store.settings.loading) {
       return;
     }
-    reloadStakingOverview();
     await store.api.fetchAccountStaking();
+    reloadStakingOverview();
   }
 
   Widget _buildTopCard(BuildContext context) {
@@ -189,14 +189,18 @@ class _StakingOverviewState extends State<StakingOverview> {
         if (meIndex >= 0) {
           meStaked = validator.nominators[meIndex]['value'];
         }
+        Map accInfo = store.account.accountIndexMap[id];
         return Expanded(
           child: Container(
             color: Theme.of(context).cardColor,
             child: ListTile(
               leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
               title: Text('${Fmt.token(meStaked)} $symbol'),
-              // TODO: show validator name
-              subtitle: Text(Fmt.address(validator.accountId)),
+              subtitle: accInfo != null
+                  ? accInfo['identity']['display'] != null
+                      ? accInfo['identity']['display'].toString().toUpperCase()
+                      : accInfo['accountIndex']
+                  : Text(Fmt.address(validator.accountId, pad: 6)),
               trailing: Container(
                 width: 120,
                 height: 40,

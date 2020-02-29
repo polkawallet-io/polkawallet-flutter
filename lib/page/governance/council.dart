@@ -142,10 +142,10 @@ class _CouncilState extends State<Council> {
                     color: Theme.of(context).cardColor,
                     child: Column(
                       children: store.gov.council.candidates.map((i) {
-                        Map accInfo = accIndexMap[i[0]];
+                        Map accInfo = accIndexMap[i];
                         return CandidateItem(
                           accInfo: accInfo,
-                          balance: i,
+                          balance: [i],
                           tokenSymbol: store.settings.networkState.tokenSymbol,
                         );
                       }).toList(),
@@ -166,6 +166,7 @@ class CandidateItem extends StatelessWidget {
       this.switchValue,
       this.onSwitch});
   final Map accInfo;
+  // balance == [<candidate_address>, <0x_candidate_backing_amount>]
   final List<String> balance;
   final String tokenSymbol;
   final bool switchValue;
@@ -179,10 +180,12 @@ class CandidateItem extends StatelessWidget {
               ? accInfo['identity']['display'].toString().toUpperCase()
               : accInfo['accountIndex']
           : Fmt.address(balance[0], pad: 6)),
-      subtitle: Text(
-          '${I18n.of(context).gov['backing']}: ${Fmt.token(int.parse(balance[1]))} $tokenSymbol'),
-      onTap: () =>
-          Navigator.of(context).pushNamed('/gov/candidate', arguments: balance),
+      subtitle: balance.length == 1
+          ? null
+          : Text(
+              '${I18n.of(context).gov['backing']}: ${Fmt.token(int.parse(balance[1]))} $tokenSymbol'),
+      onTap: () => Navigator.of(context).pushNamed('/gov/candidate',
+          arguments: balance.length == 1 ? [balance[0], '0x0'] : balance),
       trailing: onSwitch == null
           ? Container(width: 8)
           : CupertinoSwitch(

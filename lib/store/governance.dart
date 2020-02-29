@@ -61,7 +61,7 @@ abstract class _CouncilInfo with Store {
 
   List<List<String>> members;
   List<List<String>> runnersUp;
-  List<List<String>> candidates;
+  List<String> candidates;
 
   int candidateCount;
   int candidacyBond;

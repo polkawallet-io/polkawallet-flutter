@@ -17,9 +17,8 @@ CouncilInfo _$CouncilInfoFromJson(Map<String, dynamic> json) {
     ..runnersUp = (json['runnersUp'] as List)
         ?.map((e) => (e as List)?.map((e) => e as String)?.toList())
         ?.toList()
-    ..candidates = (json['candidates'] as List)
-        ?.map((e) => (e as List)?.map((e) => e as String)?.toList())
-        ?.toList()
+    ..candidates =
+        (json['candidates'] as List)?.map((e) => e as String)?.toList()
     ..candidateCount = json['candidateCount'] as int
     ..candidacyBond = json['candidacyBond'] as int;
 }
