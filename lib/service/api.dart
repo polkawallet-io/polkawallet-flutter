@@ -288,7 +288,7 @@ class Api {
 
   Future<void> fetchElectedInfo() async {
     var res = await evalJavascript('api.derive.staking.electedInfo()');
-    stakingStore.setOverview({"elected": res});
+    stakingStore.setValidatorsInfo(res);
   }
 
   Future<Map> queryValidatorRewards(String accountId) async {

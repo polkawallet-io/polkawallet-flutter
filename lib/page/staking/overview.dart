@@ -196,11 +196,11 @@ class _StakingOverviewState extends State<StakingOverview> {
             child: ListTile(
               leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
               title: Text('${Fmt.token(meStaked)} $symbol'),
-              subtitle: accInfo != null
+              subtitle: Text(accInfo != null
                   ? accInfo['identity']['display'] != null
                       ? accInfo['identity']['display'].toString().toUpperCase()
                       : accInfo['accountIndex']
-                  : Text(Fmt.address(validator.accountId, pad: 6)),
+                  : Fmt.address(validator.accountId, pad: 6)),
               trailing: Container(
                 width: 120,
                 height: 40,

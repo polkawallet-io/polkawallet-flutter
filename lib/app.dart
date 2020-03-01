@@ -114,11 +114,10 @@ class _WalletAppState extends State<WalletApp> {
       theme: appTheme,
 //      darkTheme: darkTheme,
       routes: {
-        // TODO: add splash page
         // TODO: add swipe page changing
         '/': (_) => Observer(
             builder: (_) => _appStore.account.loading
-                ? About()
+                ? Container()
                 : _appStore.account.accountList.length > 0
                     ? Home(_appStore)
                     : CreateAccountEntry()),

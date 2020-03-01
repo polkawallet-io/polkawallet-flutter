@@ -217,10 +217,10 @@ mixin _$StakingStore on _StakingStore, Store {
       ActionController(name: '_StakingStore');
 
   @override
-  void setValidatorsInfo() {
+  void setValidatorsInfo(Map<String, dynamic> data) {
     final _$actionInfo = _$_StakingStoreActionController.startAction();
     try {
-      return super.setValidatorsInfo();
+      return super.setValidatorsInfo(data);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }

@@ -72,12 +72,12 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void setValidatorsInfo() {
+  void setValidatorsInfo(Map<String, dynamic> data) {
     int totalStaked = 0;
     var nominators = {};
     List<ValidatorData> ls = List<ValidatorData>();
 
-    overview['elected']['info'].forEach((i) {
+    data['info'].forEach((i) {
       i['points'] = overview['eraPoints']['individual'][i['accountId']];
       ValidatorData data = ValidatorData.fromJson(i);
       totalStaked += data.total;
@@ -105,11 +105,7 @@ abstract class _StakingStore with Store {
 
   @action
   void setOverview(Map<String, dynamic> data) {
-    // TODO: split setElectedInfo with setOverview
     data.keys.forEach((key) => overview[key] = data[key]);
-    if (data.keys.toList().indexOf('elected') >= 0) {
-      setValidatorsInfo();
-    }
   }
 
   @action
