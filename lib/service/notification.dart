@@ -37,13 +37,14 @@ class NotificationPlugin {
   }
 
   void _requestIOSPermissions() {
-    if (Platform.isIOS) {
-      IOSFlutterLocalNotificationsPlugin.instance?.requestPermissions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-    }
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
   }
 
   void _configureDidReceiveLocalNotificationSubject(BuildContext context) {
