@@ -35,7 +35,7 @@ class _BondState extends State<Bond> {
     int decimals = store.settings.networkState.tokenDecimals;
 
     String balance = Fmt.balance(store.assets.balance);
-    String address = store.account.currentAccount.address;
+    String address = store.account.currentAddress;
 
     var rewardToOptions = [dic['reward.bond'], dic['reward.stash']];
 
@@ -144,18 +144,24 @@ class _BondState extends State<Bond> {
                   if (_formKey.currentState.validate()) {
                     var args = {
                       "title": dic['action.bond'],
+                      "txInfo": {
+                        "module": 'staking',
+                        "call": 'bond',
+                      },
                       "detail": jsonEncode({
                         "amount": _amountCtrl.text.trim(),
                         "reward_destination": rewardToOptions[_rewardTo],
                       }),
-                      "params": {
-                        "module": 'staking',
-                        "call": 'bond',
-                        "amount": (double.parse(_amountCtrl.text.trim()) *
+                      "params": [
+                        // "from":
+                        store.account.currentAddress,
+                        // "amount":
+                        (double.parse(_amountCtrl.text.trim()) *
                                 pow(10, decimals))
                             .toInt(),
-                        "to": _rewardTo,
-                      },
+                        // "to"
+                        _rewardTo,
+                      ],
                       'onFinish': (BuildContext txPageContext) {
                         Navigator.popUntil(
                             txPageContext, ModalRoute.withName('/'));

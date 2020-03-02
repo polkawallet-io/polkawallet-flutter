@@ -98,11 +98,13 @@ class _TxConfirmState extends State<TxConfirm> {
       duration: Duration(minutes: 5),
     ));
 
-    Map params = args['params'];
-    params['from'] = store.account.currentAccount.address;
-    params['password'] = _passCtrl.text;
-    print(params);
-    var res = await store.api.sendTx(params, dic['notify.submitted']);
+    Map txInfo = args['txInfo'];
+    txInfo['pubKey'] = store.account.currentAccount.pubKey;
+    txInfo['password'] = _passCtrl.text;
+    print(txInfo);
+    print(args['params']);
+    var res =
+        await store.api.sendTx(txInfo, args['params'], dic['notify.submitted']);
     if (res == null) {
       onTxError();
     } else {
@@ -128,6 +130,8 @@ class _TxConfirmState extends State<TxConfirm> {
         centerTitle: true,
       ),
       body: Builder(builder: (BuildContext context) {
+        String address =
+            store.account.pubKeyAddressMap[store.account.currentAccount.pubKey];
         return Observer(
           builder: (_) => Column(
             children: <Widget>[
@@ -144,7 +148,7 @@ class _TxConfirmState extends State<TxConfirm> {
                     Padding(
                       padding: EdgeInsets.all(16),
                       child: Text(
-                        '${dic["submit.from"]}${store.account.currentAccount.address}',
+                        '${dic["submit.from"]}$address',
                       ),
                     ),
                     Padding(
@@ -158,7 +162,7 @@ class _TxConfirmState extends State<TxConfirm> {
                             ),
                           ),
                           Text(
-                            '${args['params']['module']}.${args['params']['call']}',
+                            '${args['txInfo']['module']}.${args['txInfo']['call']}',
                           ),
                         ],
                       ),

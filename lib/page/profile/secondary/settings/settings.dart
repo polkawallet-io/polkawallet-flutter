@@ -82,11 +82,27 @@ class _Settings extends State<Settings> {
           child: ListView(
             children: <Widget>[
               ListTile(
+                leading: Container(
+                  width: 36,
+                  child: Image.asset(
+                      'assets/images/public/${store.endpoint.info}.png'),
+                ),
                 title: Text(dic['setting.node']),
                 subtitle: Text(store.endpoint.text ?? ''),
                 trailing: Icon(Icons.arrow_forward_ios, size: 18),
                 onTap: () =>
                     Navigator.of(context).pushNamed('/profile/endpoint'),
+              ),
+              ListTile(
+                leading: Container(
+                  width: 36,
+                  child: Image.asset(
+                      'assets/images/public/${store.customSS58Format['info']}.png'),
+                ),
+                title: Text(dic['setting.prefix']),
+                subtitle: Text(store.customSS58Format['text'] ?? ''),
+                trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                onTap: () => Navigator.of(context).pushNamed('/profile/ss58'),
               ),
               ListTile(
                 title: Text(dic['setting.lang']),

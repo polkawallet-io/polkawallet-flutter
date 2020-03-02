@@ -55,7 +55,7 @@ class Receive extends StatelessWidget {
                       ),
                       margin: EdgeInsets.fromLTRB(48, 24, 48, 24),
                       child: QrImage(
-                        data: store.currentAccount.address,
+                        data: store.currentAddress,
                         size: 200,
 //                        embeddedImage:
 //                            AssetImage('assets/images/public/About_logo.png'),
@@ -65,7 +65,7 @@ class Receive extends StatelessWidget {
                     ),
                     Container(
                       width: 160,
-                      child: Text(store.currentAccount.address),
+                      child: Text(store.currentAddress),
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width / 2,
@@ -73,8 +73,8 @@ class Receive extends StatelessWidget {
                       child: RoundedButton(
                         color: Colors.pinkAccent,
                         text: I18n.of(context).assets['copy'],
-                        onPressed: () => UI.copyAndNotify(
-                            context, store.currentAccount.address),
+                        onPressed: () =>
+                            UI.copyAndNotify(context, store.currentAddress),
                       ),
                     )
                   ],

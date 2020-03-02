@@ -36,7 +36,7 @@ class _UnBondState extends State<UnBond> {
     int bondedInt =
         hasData ? store.staking.ledger['stakingLedger']['active'] : 0;
     String bonded = Fmt.token(bondedInt);
-    String address = store.account.currentAccount.address;
+    String address = store.account.currentAddress;
 
     return Scaffold(
       appBar: AppBar(
@@ -111,16 +111,19 @@ class _UnBondState extends State<UnBond> {
                   if (_formKey.currentState.validate()) {
                     var args = {
                       "title": dic['action.unbond'],
+                      "txInfo": {
+                        "module": 'staking',
+                        "call": 'unbond',
+                      },
                       "detail": jsonEncode({
                         "amount": _amountCtrl.text.trim(),
                       }),
-                      "params": {
-                        "module": 'staking',
-                        "call": 'unbond',
-                        "amount": (double.parse(_amountCtrl.text.trim()) *
+                      "params": [
+                        // "amount"
+                        (double.parse(_amountCtrl.text.trim()) *
                                 pow(10, decimals))
                             .toInt(),
-                      },
+                      ],
                       'onFinish': (BuildContext txPageContext) {
                         Navigator.popUntil(
                             txPageContext, ModalRoute.withName('/'));

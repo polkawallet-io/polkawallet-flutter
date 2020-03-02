@@ -8,6 +8,7 @@ class TopTabs extends StatelessWidget {
   final Function(int) onTab;
   final int activeTab;
 
+  // TODO: tab text style
   @override
   Widget build(BuildContext context) {
     return Row(

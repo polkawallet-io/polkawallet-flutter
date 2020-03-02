@@ -164,13 +164,14 @@ class _StakingOverviewState extends State<StakingOverview> {
     );
   }
 
+  // TODO: NominatingList style
   Widget _buildNominatingList() {
     bool hasData = store.staking.ledger['stakingLedger'] != null;
     if (!hasData) {
       return Container();
     }
     String symbol = store.settings.networkState.tokenSymbol;
-    String address = store.account.currentAccount.address;
+    String address = store.account.currentAddress;
 
     return Column(
       children: List<Widget>.from(store.staking.ledger['nominators'].map((id) {

@@ -38,7 +38,7 @@ class _BondExtraState extends State<BondExtra> {
     List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
     unlockingList.forEach((i) => unlocking += i['value']);
     int available = balance - bonded - unlocking;
-    String address = store.account.currentAccount.address;
+    String address = store.account.currentAddress;
 
     return Scaffold(
       appBar: AppBar(
@@ -114,16 +114,19 @@ class _BondExtraState extends State<BondExtra> {
                   if (_formKey.currentState.validate()) {
                     var args = {
                       "title": dic['action.bondExtra'],
+                      "txInfo": {
+                        "module": 'staking',
+                        "call": 'bondExtra',
+                      },
                       "detail": jsonEncode({
                         "amount": _amountCtrl.text.trim(),
                       }),
-                      "params": {
-                        "module": 'staking',
-                        "call": 'bondExtra',
-                        "amount": (double.parse(_amountCtrl.text.trim()) *
+                      "params": [
+                        // "amount"
+                        (double.parse(_amountCtrl.text.trim()) *
                                 pow(10, decimals))
                             .toInt(),
-                      },
+                      ],
                       'onFinish': (BuildContext txPageContext) {
                         Navigator.popUntil(
                             txPageContext, ModalRoute.withName('/'));

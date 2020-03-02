@@ -52,16 +52,20 @@ class _DemocracyState extends State<Democracy> {
           Map options = {'aye': yes, 'conviction': i};
           var args = {
             "title": dic['vote.proposal'],
+            "txInfo": {
+              "module": 'democracy',
+              "call": 'vote',
+            },
             "detail": jsonEncode({
               "id": id,
               "options": options,
             }),
-            "params": {
-              "module": 'democracy',
-              "call": 'vote',
-              "id": id,
-              "options": options
-            },
+            "params": [
+              // "id"
+              id,
+              // "options"
+              options
+            ],
             'onFinish': (BuildContext txPageContext) {
               Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
               globalDemocracyRefreshKey.currentState.show();

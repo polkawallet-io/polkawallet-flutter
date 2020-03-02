@@ -99,7 +99,7 @@ class _CouncilVote extends State<CouncilVote> {
                         child: TextFormField(
                           decoration:
                               InputDecoration(labelText: dic['address']),
-                          initialValue: store.account.currentAccount.address,
+                          initialValue: store.account.currentAddress,
                         ),
                       ),
                       Padding(
@@ -153,18 +153,20 @@ class _CouncilVote extends State<CouncilVote> {
                             List selected = _selected.map((i) => i[0]).toList();
                             var args = {
                               "title": govDic['vote.candidate'],
+                              "txInfo": {
+                                "module": 'electionsPhragmen',
+                                "call": 'vote',
+                              },
                               "detail": jsonEncode({
                                 "votes": selected,
                                 "voteValue": amt,
                               }),
-                              "params": {
-                                "module": 'electionsPhragmen',
-                                "call": 'vote',
-                                "votes": selected,
-                                "voteValue":
-                                    (double.parse(amt) * pow(10, decimals))
-                                        .toInt(),
-                              },
+                              "params": [
+                                // "votes"
+                                selected,
+                                // "voteValue"
+                                (double.parse(amt) * pow(10, decimals)).toInt(),
+                              ],
                               'onFinish': (BuildContext txPageContext) {
                                 Navigator.popUntil(
                                     txPageContext, ModalRoute.withName('/'));

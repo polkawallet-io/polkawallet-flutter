@@ -166,19 +166,22 @@ class _TransferState extends State<Transfer> {
                           if (_formKey.currentState.validate()) {
                             var args = {
                               "title": I18n.of(context).assets['transfer'],
-                              "detail": jsonEncode({
-                                "amount": _amountCtrl.text.trim(),
-                                "destination": _addressCtrl.text.trim(),
-                              }),
-                              "params": {
+                              "txInfo": {
                                 "module": 'balances',
                                 "call": 'transfer',
-                                "amount":
-                                    (double.parse(_amountCtrl.text.trim()) *
-                                            pow(10, decimals))
-                                        .toInt(),
-                                "to": _addressCtrl.text.trim(),
                               },
+                              "detail": jsonEncode({
+                                "destination": _addressCtrl.text.trim(),
+                                "amount": _amountCtrl.text.trim(),
+                              }),
+                              "params": [
+                                // params.to
+                                _addressCtrl.text.trim(),
+                                // params.amount
+                                (double.parse(_amountCtrl.text.trim()) *
+                                        pow(10, decimals))
+                                    .toInt(),
+                              ],
                               'onFinish': (BuildContext txPageContext) {
                                 Navigator.popUntil(txPageContext,
                                     ModalRoute.withName('/assets/detail'));

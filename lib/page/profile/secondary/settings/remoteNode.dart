@@ -4,19 +4,19 @@ import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-const default_node_zh = 'ws://mandala-01.acala.network:9954/';
-const default_node = 'wss://kusama-rpc.polkadot.io/';
+const default_node_zh = {
+  'info': 'kusama',
+  'text': 'Kusama (Polkadot Canary, hosted by Polkawallet)',
+  'value': 'ws://mandala-01.acala.network:9954/',
+};
+const default_node = {
+  'info': 'kusama',
+  'text': 'Kusama (Polkadot Canary, hosted by Parity)',
+  'value': 'wss://kusama-rpc.polkadot.io/',
+};
 const nodeList = [
-  {
-    'info': 'kusama',
-    'text': 'Kusama (Polkadot Canary, hosted by Polkawallet)',
-    'value': default_node_zh,
-  },
-  {
-    'info': 'kusama',
-    'text': 'Kusama (Polkadot Canary, hosted by Parity)',
-    'value': default_node,
-  },
+//  default_node_zh,
+  default_node,
   {
     'info': 'kusama',
     'text': 'Kusama (Polkadot Canary, hosted by Web3 Foundation)',
@@ -26,11 +26,6 @@ const nodeList = [
     'info': 'westend',
     'text': 'Westend (Polkadot Testnet, hosted by Parity)',
     'value': 'wss://westend-rpc.polkadot.io',
-  },
-  {
-    'info': 'edgeware',
-    'text': 'Edgeware Testnet (Edgeware Testnet, hosted by Commonwealth Labs)',
-    'value': 'wss://testnet4.edgewa.re',
   },
   {
     'info': 'substrate',
@@ -43,6 +38,12 @@ const nodeList = [
     'value': 'wss://rpc.kulupu.network/ws',
   },
 ];
+const default_ss58_map = {
+  'kusama': 2,
+  'substrate': 42,
+  'westend': 42,
+  'polkadot': 0,
+};
 
 class RemoteNode extends StatelessWidget {
   RemoteNode(this.api, this.store);
@@ -55,6 +56,10 @@ class RemoteNode extends StatelessWidget {
     var dic = I18n.of(context).profile;
     List<Widget> list = nodeList
         .map((i) => ListTile(
+              leading: Container(
+                width: 36,
+                child: Image.asset('assets/images/public/${i['info']}.png'),
+              ),
               title: Text(i['info']),
               subtitle: Text(i['text']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),

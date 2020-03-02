@@ -121,8 +121,7 @@ class _StakingActions extends State<StakingActions>
     String symbol = store.settings.networkState.tokenSymbol;
     bool hasData = store.staking.ledger['stakingLedger'] != null;
     String accIndex;
-    Map accInfo =
-        store.account.accountIndexMap[store.account.currentAccount.address];
+    Map accInfo = store.account.accountIndexMap[store.account.currentAddress];
     if (accInfo != null) {
       accIndex = accInfo['accountIndex'];
     }
@@ -166,7 +165,7 @@ class _StakingActions extends State<StakingActions>
                     ),
                     Text(accIndex != null
                         ? accIndex
-                        : Fmt.address(store.account.currentAccount.address))
+                        : Fmt.address(store.account.currentAddress))
                   ],
                 ),
               ),

@@ -122,7 +122,7 @@ class _AssetPageState extends State<AssetPage>
                     '${Fmt.token(i.value, decimals: decimals)} $symbol',
                     style: Theme.of(context).textTheme.display4,
                   )),
-                  i.sender == store.account.currentAccount.address
+                  i.sender == store.account.currentAddress
                       ? Image.asset('assets/images/assets/assets_up.png')
                       : Image.asset('assets/images/assets/assets_down.png')
                 ],

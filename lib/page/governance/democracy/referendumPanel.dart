@@ -16,6 +16,7 @@ class ReferendumPanel extends StatelessWidget {
   final ReferendumVotes votes;
   final Function(int, bool) onVote;
 
+  // TODO: add user voted status
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).gov;

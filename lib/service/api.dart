@@ -105,23 +105,31 @@ class Api {
     settingsStore.setNetworkState(info[1]);
     settingsStore.setNetworkName(info[2]);
 
+    if (settingsStore.customSS58Format['info'] == 'default') {
+      setSS58Format(info[1]['ss58Format']);
+    }
+
     fetchAccountsIndex(accountStore.accountList.map((i) => i.address).toList());
   }
 
-  void initAccounts() {
+  Future<void> initAccounts() async {
     String accounts = jsonEncode(
         accountStore.accountList.map((i) => AccountData.toJson(i)).toList());
-    evalJavascript(
-        'settings.cryptoWaitReady().then(function(res){return account.initKeys($accounts)})');
+    int ss58 = default_ss58_map[settingsStore.endpoint.info];
+    if (settingsStore.customSS58Format['info'] != 'default') {
+      ss58 = settingsStore.customSS58Format['value'];
+    }
+    List keys = await evalJavascript('account.initKeys($accounts, $ss58)');
+    accountStore.setPubKeyAddressMap(keys);
   }
 
   Future<void> connectNode() async {
-    // TODO: use polkawallet node
-//    String defaultEndpoint = Locale.cachedLocaleString.contains('zh')
+//    // TODO: use polkawallet node
+//    var defaultNode = Locale.cachedLocaleString.contains('zh')
 //        ? default_node_zh
 //        : default_node;
-//    String value = settingsStore.endpoint.value ?? defaultEndpoint;
-    String value = settingsStore.endpoint.value ?? default_node;
+//    String value = settingsStore.endpoint.value ?? defaultNode['value'];
+    String value = settingsStore.endpoint.value ?? default_node['value'];
     print(value);
     String res = await evalJavascript('settings.connect("$value")');
     if (res == null) {
@@ -144,17 +152,24 @@ class Api {
     fetchNetworkProps();
   }
 
+  Future<void> setSS58Format(int value) async {
+    print('set ss58: $value');
+    // setSS58Format and reload new addresses
+    List res = await evalJavascript('settings.resetSS58Format($value)');
+    accountStore.setPubKeyAddressMap(res);
+  }
+
   Future<void> fetchBalance() async {
-    String address = accountStore.currentAccount.address;
-    if (address.length > 0) {
+    String address = accountStore.currentAddress;
+    if (address != null) {
       var res = await evalJavascript('account.getBalance("$address")');
       assetsStore.setAccountBalance(res);
     }
   }
 
   Future<void> fetchAccountStaking() async {
-    String address = accountStore.currentAccount.address;
-    if (address.length > 0) {
+    String address = accountStore.currentAddress;
+    if (address != null) {
       var res = await evalJavascript('api.derive.staking.account("$address")');
       stakingStore.setLedger(res);
     }
@@ -189,6 +204,13 @@ class Api {
       acc['name'] = accountStore.newAccount.name;
       await accountStore.addAccount(acc);
       stakingStore.clearSate();
+
+      if (settingsStore.customSS58Format['info'] == 'default') {
+        await setSS58Format(default_ss58_map[settingsStore.endpoint.info]);
+      } else {
+        await setSS58Format(settingsStore.customSS58Format['value']);
+      }
+
       fetchBalance();
       fetchAccountStaking();
     }
@@ -201,7 +223,7 @@ class Api {
       assetsStore.setTxsLoading(true);
     }
     String data =
-        await PolkaScanApi.fetchTxs(accountStore.currentAccount.address, page);
+        await PolkaScanApi.fetchTxs(accountStore.currentAddress, page);
     List ls = jsonDecode(data)['data'];
 
     await assetsStore.addTxs(ls);
@@ -215,8 +237,8 @@ class Api {
     if (page == 1) {
       stakingStore.clearTxs();
     }
-    String data = await PolkaScanApi.fetchStaking(
-        accountStore.currentAccount.address, page);
+    String data =
+        await PolkaScanApi.fetchStaking(accountStore.currentAddress, page);
 //    String data = await PolkaScanApi.fetchStaking(
 //        'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n', page);
     var ls = jsonDecode(data)['data'];
@@ -259,9 +281,9 @@ class Api {
   }
 
   Future<dynamic> checkAccountPassword(String pass) async {
-    String address = accountStore.currentAccount.address;
-    print('checkpass: $address, $pass');
-    return evalJavascript('account.checkPassword("$address", "$pass")');
+    String pubKey = accountStore.currentAccount.pubKey;
+    print('checkpass: $pubKey, $pass');
+    return evalJavascript('account.checkPassword("$pubKey", "$pass")');
   }
 
   Future<dynamic> _testSendTx() async {
@@ -274,14 +296,16 @@ class Api {
     return c.future;
   }
 
-  Future<dynamic> sendTx(Map params, String notificationTitle) async {
+  Future<dynamic> sendTx(
+      Map txInfo, List params, String notificationTitle) async {
 //    var res = await _testSendTx();
-    var res = await evalJavascript('account.sendTx(${jsonEncode(params)})');
+    var res = await evalJavascript(
+        'account.sendTx(${jsonEncode(txInfo)}, ${jsonEncode(params)})');
 
     if (res != null) {
       String hash = res['hash'];
       NotificationPlugin.showNotification(int.parse(hash.substring(0, 6)),
-          notificationTitle, '${params['module']}.${params['call']}');
+          notificationTitle, '${txInfo['module']}.${txInfo['call']}');
     }
     return res;
   }

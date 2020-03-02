@@ -23,7 +23,7 @@ class _SetPayeeState extends State<SetPayee> {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
-    String address = store.account.currentAccount.address;
+    String address = store.account.currentAddress;
 
     var rewardToOptions = [dic['reward.bond'], dic['reward.stash']];
 
@@ -124,14 +124,17 @@ class _SetPayeeState extends State<SetPayee> {
                   }
                   var args = {
                     "title": dic['action.setting'],
+                    "txInfo": {
+                      "module": 'staking',
+                      "call": 'setPayee',
+                    },
                     "detail": jsonEncode({
                       "reward_destination": rewardToOptions[_rewardTo],
                     }),
-                    "params": {
-                      "module": 'staking',
-                      "call": 'setPayee',
-                      "to": _rewardTo,
-                    },
+                    "params": [
+                      // "to"
+                      _rewardTo,
+                    ],
                     'onFinish': (BuildContext txPageContext) {
                       Navigator.popUntil(
                           txPageContext, ModalRoute.withName('/'));

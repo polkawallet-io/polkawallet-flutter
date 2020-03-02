@@ -64,7 +64,7 @@ abstract class _StakingStore with Store {
   @computed
   ObservableList<ValidatorData> get nominatingList {
     return ObservableList.of(validatorsInfo.where((i) {
-      String address = account.currentAccount.address;
+      String address = account.currentAddress;
       return i.nominators
               .indexWhere((nominator) => nominator['who'] == address) >=
           0;

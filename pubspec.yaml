@@ -85,13 +85,17 @@ flutter:
     - assets/images/public/About_logo.png
     - assets/images/public/dontscreen.png
     - assets/images/public/copy.png
+    - assets/images/public/polkadot.png
+    - assets/images/public/westend.png
+    - assets/images/public/kusama.png
+    - assets/images/public/substrate.png
+    - assets/images/public/default.png
     - assets/images/assets/logo.png
     - assets/images/assets/Assets_bg.png
     - assets/images/assets/Assets_nav_0.png
     - assets/images/assets/Assets_nav_1.png
     - assets/images/assets/Assets_nav_code.png
     - assets/images/assets/Assets_nav_plus.png
-    - assets/images/assets/KSC.png
     - assets/images/assets/Menu_scan.png
     - assets/images/assets/Menu_create.png
     - assets/images/assets/assets_send.png

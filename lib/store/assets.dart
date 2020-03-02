@@ -42,9 +42,9 @@ abstract class _AssetsStore with Store {
     return ObservableList.of(txs.where((i) {
       switch (txsFilter) {
         case 1:
-          return i.destination == account.currentAccount.address;
+          return i.destination == account.currentAddress;
         case 2:
-          return i.sender == account.currentAccount.address;
+          return i.sender == account.currentAddress;
         default:
           return true;
       }
@@ -58,7 +58,7 @@ abstract class _AssetsStore with Store {
     txs.asMap().forEach((index, i) {
       if (index != 0) {
         TransferData prev = txs[index - 1];
-        if (i.sender == account.currentAccount.address) {
+        if (i.sender == account.currentAddress) {
           total -= prev.value;
         } else {
           total += prev.value;

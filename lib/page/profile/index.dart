@@ -12,9 +12,9 @@ class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).profile;
-
-    return Observer(
-      builder: (_) => Scaffold(
+    return Observer(builder: (_) {
+      AccountData acc = store.currentAccount;
+      return Scaffold(
         appBar: AppBar(
           title: Text(dic['title']),
           centerTitle: true,
@@ -31,10 +31,10 @@ class Profile extends StatelessWidget {
                   height: 72,
                   child: Image.asset('assets/images/assets/Assets_nav_0.png'),
                 ),
-                title: Text(store.currentAccount.name ?? 'name',
+                title: Text(acc.name ?? 'name',
                     style: TextStyle(fontSize: 16, color: Colors.white)),
                 subtitle: Text(
-                  Fmt.address(store.currentAccount.address) ?? '',
+                  Fmt.address(store.currentAddress) ?? '',
                   style: TextStyle(fontSize: 16, color: Colors.white70),
                 ),
               ),
@@ -79,7 +79,7 @@ class Profile extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 }

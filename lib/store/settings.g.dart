@@ -133,6 +133,23 @@ mixin _$SettingsStore on _SettingsStore, Store {
     }, _$endpointAtom, name: '${_$endpointAtom.name}_set');
   }
 
+  final _$customSS58FormatAtom = Atom(name: '_SettingsStore.customSS58Format');
+
+  @override
+  Map<String, dynamic> get customSS58Format {
+    _$customSS58FormatAtom.context.enforceReadPolicy(_$customSS58FormatAtom);
+    _$customSS58FormatAtom.reportObserved();
+    return super.customSS58Format;
+  }
+
+  @override
+  set customSS58Format(Map<String, dynamic> value) {
+    _$customSS58FormatAtom.context.conditionallyRunInAction(() {
+      super.customSS58Format = value;
+      _$customSS58FormatAtom.reportChanged();
+    }, _$customSS58FormatAtom, name: '${_$customSS58FormatAtom.name}_set');
+  }
+
   final _$networkNameAtom = Atom(name: '_SettingsStore.networkName');
 
   @override
@@ -264,6 +281,14 @@ mixin _$SettingsStore on _SettingsStore, Store {
     return _$loadEndpointAsyncAction.run(() => super.loadEndpoint());
   }
 
+  final _$loadCustomSS58FormatAsyncAction = AsyncAction('loadCustomSS58Format');
+
+  @override
+  Future<void> loadCustomSS58Format() {
+    return _$loadCustomSS58FormatAsyncAction
+        .run(() => super.loadCustomSS58Format());
+  }
+
   final _$_SettingsStoreActionController =
       ActionController(name: '_SettingsStore');
 
@@ -302,6 +327,16 @@ mixin _$SettingsStore on _SettingsStore, Store {
     final _$actionInfo = _$_SettingsStoreActionController.startAction();
     try {
       return super.setEndpoint(value);
+    } finally {
+      _$_SettingsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setCustomSS58Format(Map<String, dynamic> value) {
+    final _$actionInfo = _$_SettingsStoreActionController.startAction();
+    try {
+      return super.setCustomSS58Format(value);
     } finally {
       _$_SettingsStoreActionController.endAction(_$actionInfo);
     }

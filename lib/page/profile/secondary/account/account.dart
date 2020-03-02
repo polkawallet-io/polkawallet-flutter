@@ -132,7 +132,7 @@ class AccountManage extends StatelessWidget {
                       title: Text(store.currentAccount.name ?? 'name',
                           style: TextStyle(fontSize: 16, color: Colors.white)),
                       subtitle: Text(
-                        Fmt.address(store.currentAccount.address) ?? '',
+                        Fmt.address(store.currentAddress) ?? '',
                         style: TextStyle(fontSize: 16, color: Colors.white70),
                       ),
                     ),

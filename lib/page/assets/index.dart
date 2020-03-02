@@ -33,7 +33,8 @@ class _AssetsState extends State<Assets> {
         : store.settings.networkName ?? dic['node.failed'];
 
     AccountData acc = store.account.currentAccount;
-    Map accInfo = store.account.accountIndexMap[acc.address];
+    String address = store.account.currentAddress;
+    Map accInfo = store.account.accountIndexMap[address];
 
     return RoundedCard(
       padding: EdgeInsets.all(8),
@@ -46,7 +47,7 @@ class _AssetsState extends State<Assets> {
                 accInfo == null ? network : accInfo['accountIndex'] ?? network),
           ),
           ListTile(
-            title: Text(Fmt.address(acc.address) ?? ''),
+            title: Text(Fmt.address(address) ?? ''),
             trailing: IconButton(
               icon: Image.asset('assets/images/assets/Assets_nav_code.png'),
               onPressed: () {
@@ -126,8 +127,8 @@ class _AssetsState extends State<Assets> {
                             leading: Container(
                               width: 40,
                               height: 40,
-                              child:
-                                  Image.asset('assets/images/assets/KSC.png'),
+                              child: Image.asset(
+                                  'assets/images/public/${store.settings.endpoint.info}.png'),
                             ),
                             title: Text(
                                 store.settings.networkState.tokenSymbol ?? ''),

@@ -23,10 +23,19 @@ abstract class _AccountStore with Store {
   @observable
   ObservableMap<String, Map> accountIndexMap = ObservableMap<String, Map>();
 
+  @observable
+  ObservableMap<String, String> pubKeyAddressMap =
+      ObservableMap<String, String>();
+
   @computed
   ObservableList<AccountData> get optionalAccounts {
-    return ObservableList.of(
-        accountList.where((i) => i.address != currentAccount.address));
+    return ObservableList.of(accountList.where(
+        (i) => (pubKeyAddressMap[i.pubKey] ?? i.address) != currentAddress));
+  }
+
+  @computed
+  String get currentAddress {
+    return pubKeyAddressMap[currentAccount.pubKey] ?? currentAccount.address;
   }
 
   @action
@@ -50,7 +59,7 @@ abstract class _AccountStore with Store {
     currentAccount = acc;
 
     // TODO: store account info with account pubKey
-    LocalStorage.setCurrentAccount(acc.address);
+    LocalStorage.setCurrentAccount(acc.pubKey);
   }
 
   @action
@@ -64,7 +73,7 @@ abstract class _AccountStore with Store {
   @action
   Future<void> updateAccount(Map<String, dynamic> acc) async {
     AccountData accNew = AccountData.fromJson(acc);
-    await LocalStorage.removeAccount(accNew.address);
+    await LocalStorage.removeAccount(accNew.pubKey);
     await LocalStorage.addAccount(acc);
 
     await loadAccount();
@@ -73,18 +82,18 @@ abstract class _AccountStore with Store {
   @action
   Future<void> addAccount(Map<String, dynamic> acc) async {
     await LocalStorage.addAccount(acc);
-    await LocalStorage.setCurrentAccount(acc['address']);
+    await LocalStorage.setCurrentAccount(acc['pubKey']);
 
     await loadAccount();
   }
 
   @action
   Future<void> removeAccount(AccountData acc) async {
-    await LocalStorage.removeAccount(acc.address);
+    await LocalStorage.removeAccount(acc.pubKey);
 
     List<Map<String, dynamic>> accounts = await LocalStorage.getAccountList();
     if (accounts.length > 0) {
-      await LocalStorage.setCurrentAccount(accounts[0]['address']);
+      await LocalStorage.setCurrentAccount(accounts[0]['pubKey']);
     } else {
       await LocalStorage.setCurrentAccount('');
     }
@@ -99,14 +108,22 @@ abstract class _AccountStore with Store {
         ObservableList.of(accList.map((i) => AccountData.fromJson(i)));
 
     if (accountList.length > 0) {
-      String address = await LocalStorage.getCurrentAccount();
-      int accIndex = accList.indexWhere((i) => i['address'] == address);
+      String pubKey = await LocalStorage.getCurrentAccount();
+      int accIndex = accList.indexWhere((i) => i['pubKey'] == pubKey);
       if (accIndex >= 0) {
         Map<String, dynamic> acc = accList[accIndex];
         currentAccount = AccountData.fromJson(acc);
       }
     }
     loading = false;
+  }
+
+  @action
+  void setPubKeyAddressMap(List list) {
+    list.forEach((i) {
+      pubKeyAddressMap[i['pubKey']] = i['address'];
+    });
+    print(pubKeyAddressMap.toString());
   }
 
   @action
@@ -147,6 +164,9 @@ abstract class _AccountData with Store {
 
   @observable
   String encoded = '';
+
+  @observable
+  String pubKey = '';
 
   @observable
   Map<String, dynamic> encoding = Map<String, dynamic>();

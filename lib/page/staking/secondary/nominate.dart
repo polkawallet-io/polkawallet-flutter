@@ -33,11 +33,12 @@ class _NominateState extends State<Nominate> {
     var dic = I18n.of(context).staking;
     var args = {
       "title": dic['action.chill'],
-      "detail": 'chill',
-      "params": {
+      "txInfo": {
         "module": 'staking',
         "call": 'chill',
       },
+      "detail": 'chill',
+      "params": [],
       'onFinish': (BuildContext txPageContext) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalNominatingRefreshKey.currentState.show();
@@ -52,14 +53,17 @@ class _NominateState extends State<Nominate> {
 
     var args = {
       "title": dic['action.nominate'],
+      "txInfo": {
+        "module": 'staking',
+        "call": 'nominate',
+      },
       "detail": jsonEncode({
         "targets": targets.join(', '),
       }),
-      "params": {
-        "module": 'staking',
-        "call": 'nominate',
-        "targets": targets,
-      },
+      "params": [
+        // "targets"
+        targets,
+      ],
       'onFinish': (BuildContext txPageContext) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalNominatingRefreshKey.currentState.show();

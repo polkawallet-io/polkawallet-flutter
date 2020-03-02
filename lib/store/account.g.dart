@@ -11,6 +11,7 @@ AccountData _$AccountDataFromJson(Map<String, dynamic> json) {
     ..name = json['name'] as String
     ..address = json['address'] as String
     ..encoded = json['encoded'] as String
+    ..pubKey = json['pubKey'] as String
     ..encoding = json['encoding'] as Map<String, dynamic>
     ..meta = json['meta'] as Map<String, dynamic>;
 }
@@ -20,6 +21,7 @@ Map<String, dynamic> _$AccountDataToJson(AccountData instance) =>
       'name': instance.name,
       'address': instance.address,
       'encoded': instance.encoded,
+      'pubKey': instance.pubKey,
       'encoding': instance.encoding,
       'meta': instance.meta,
     };
@@ -38,6 +40,12 @@ mixin _$AccountStore on _AccountStore, Store {
       (_$optionalAccountsComputed ??= Computed<ObservableList<AccountData>>(
               () => super.optionalAccounts))
           .value;
+  Computed<String> _$currentAddressComputed;
+
+  @override
+  String get currentAddress => (_$currentAddressComputed ??=
+          Computed<String>(() => super.currentAddress))
+      .value;
 
   final _$loadingAtom = Atom(name: '_AccountStore.loading');
 
@@ -124,6 +132,23 @@ mixin _$AccountStore on _AccountStore, Store {
     }, _$accountIndexMapAtom, name: '${_$accountIndexMapAtom.name}_set');
   }
 
+  final _$pubKeyAddressMapAtom = Atom(name: '_AccountStore.pubKeyAddressMap');
+
+  @override
+  ObservableMap<String, String> get pubKeyAddressMap {
+    _$pubKeyAddressMapAtom.context.enforceReadPolicy(_$pubKeyAddressMapAtom);
+    _$pubKeyAddressMapAtom.reportObserved();
+    return super.pubKeyAddressMap;
+  }
+
+  @override
+  set pubKeyAddressMap(ObservableMap<String, String> value) {
+    _$pubKeyAddressMapAtom.context.conditionallyRunInAction(() {
+      super.pubKeyAddressMap = value;
+      _$pubKeyAddressMapAtom.reportChanged();
+    }, _$pubKeyAddressMapAtom, name: '${_$pubKeyAddressMapAtom.name}_set');
+  }
+
   final _$updateAccountAsyncAction = AsyncAction('updateAccount');
 
   @override
@@ -200,6 +225,16 @@ mixin _$AccountStore on _AccountStore, Store {
     final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
       return super.updateAccountName(name);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setPubKeyAddressMap(List list) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    try {
+      return super.setPubKeyAddressMap(list);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }
@@ -319,6 +354,23 @@ mixin _$AccountData on _AccountData, Store {
       super.encoded = value;
       _$encodedAtom.reportChanged();
     }, _$encodedAtom, name: '${_$encodedAtom.name}_set');
+  }
+
+  final _$pubKeyAtom = Atom(name: '_AccountData.pubKey');
+
+  @override
+  String get pubKey {
+    _$pubKeyAtom.context.enforceReadPolicy(_$pubKeyAtom);
+    _$pubKeyAtom.reportObserved();
+    return super.pubKey;
+  }
+
+  @override
+  set pubKey(String value) {
+    _$pubKeyAtom.context.conditionallyRunInAction(() {
+      super.pubKey = value;
+      _$pubKeyAtom.reportChanged();
+    }, _$pubKeyAtom, name: '${_$pubKeyAtom.name}_set');
   }
 
   final _$encodingAtom = Atom(name: '_AccountData.encoding');
