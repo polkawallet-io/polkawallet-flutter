@@ -82,7 +82,6 @@ class _CouncilState extends State<Council> {
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).gov;
     return Observer(builder: (_) {
-      var accIndexMap = store.account.accountIndexMap;
       return RefreshIndicator(
         key: globalCouncilRefreshKey,
         onRefresh: _fetchCouncilInfo,
@@ -102,7 +101,7 @@ class _CouncilState extends State<Council> {
                     color: Theme.of(context).cardColor,
                     child: Column(
                       children: store.gov.council.members.map((i) {
-                        Map accInfo = accIndexMap[i[0]];
+                        Map accInfo = store.account.accountIndexMap[i[0]];
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: i,
@@ -122,7 +121,7 @@ class _CouncilState extends State<Council> {
                     color: Theme.of(context).cardColor,
                     child: Column(
                       children: store.gov.council.runnersUp.map((i) {
-                        Map accInfo = accIndexMap[i[0]];
+                        Map accInfo = store.account.accountIndexMap[i[0]];
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: i,
@@ -142,7 +141,7 @@ class _CouncilState extends State<Council> {
                     color: Theme.of(context).cardColor,
                     child: Column(
                       children: store.gov.council.candidates.map((i) {
-                        Map accInfo = accIndexMap[i];
+                        Map accInfo = store.account.accountIndexMap[i];
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: [i],

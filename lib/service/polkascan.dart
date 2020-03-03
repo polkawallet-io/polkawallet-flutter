@@ -20,4 +20,10 @@ class PolkaScanApi {
         '$endpoint/extrinsic?filter[module_id]=staking&filter[address]=$address&page[number]=$page&page[size]=$tx_list_page_size');
     return res.body;
   }
+
+  static Future<String> fetchDemocracyVotes(String address) async {
+    Response res = await get(
+        '$endpoint/extrinsic?filter[module_id]=democracy&filter[address]=$address&page[number]=1&page[size]=$tx_list_page_size');
+    return res.body;
+  }
 }

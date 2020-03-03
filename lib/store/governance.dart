@@ -24,6 +24,21 @@ abstract class _GovernanceStore with Store {
   ObservableMap<int, ReferendumVotes> referendumVotes =
       ObservableMap<int, ReferendumVotes>();
 
+  @observable
+  ObservableList<Map> userReferendumVotes = ObservableList<Map>();
+
+  @computed
+  Map<int, int> get votedMap {
+    Map<int, int> res = Map<int, int>();
+    userReferendumVotes.forEach((i) {
+      int id = i['detail']['params'][0]['value'];
+      if (res[id] == null) {
+        res[id] = i['detail']['params'][1]['value'];
+      }
+    });
+    return res;
+  }
+
   @action
   void setCouncilInfo(Map info) {
     council = CouncilInfo.fromJson(info);
@@ -43,6 +58,11 @@ abstract class _GovernanceStore with Store {
   @action
   void setReferendumVotes(int index, Map votes) {
     referendumVotes[index] = ReferendumVotes.fromJson(votes);
+  }
+
+  @action
+  void setUserReferendumVotes(List ls) {
+    userReferendumVotes.addAll(List<Map>.from(ls));
   }
 }
 

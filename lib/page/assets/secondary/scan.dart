@@ -26,13 +26,21 @@ class Scan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future onScan(String data) async {
-      if (Fmt.isAddress(data)) {
+      String address = '';
+      for (String item in data.split(':')) {
+        if (Fmt.isAddress(item)) {
+          address = item;
+          break;
+        }
+      }
+      if (address.length > 0) {
         final String args = ModalRoute.of(context).settings.arguments;
         if (args == 'tx') {
           Navigator.of(context).pop();
-          Navigator.of(context).pushNamed('/assets/transfer', arguments: data);
+          Navigator.of(context)
+              .pushNamed('/assets/transfer', arguments: address);
         } else {
-          Navigator.of(context).pop(data);
+          Navigator.of(context).pop(address);
         }
       } else {
         _qrViewKey.currentState.startScan();

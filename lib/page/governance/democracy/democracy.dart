@@ -26,6 +26,7 @@ class _DemocracyState extends State<Democracy> {
   final _options = [0, 1, 2, 3, 4, 5, 6];
 
   Future<void> _fetchReferendums() async {
+    store.api.updateDemocracyVotes();
     if (store.settings.loading) {
       return;
     }
@@ -121,7 +122,6 @@ class _DemocracyState extends State<Democracy> {
         String symbol = store.settings.networkState.tokenSymbol;
         List<ReferendumInfo> list = store.gov.referendums;
         int bestNumber = store.gov.bestNumber;
-        print(bestNumber);
         return RefreshIndicator(
           key: globalDemocracyRefreshKey,
           onRefresh: _fetchReferendums,
@@ -139,12 +139,14 @@ class _DemocracyState extends State<Democracy> {
                   : ListView.builder(
                       itemCount: list.length,
                       itemBuilder: (BuildContext context, int i) {
+                        int voted = store.gov.votedMap[list[i].index];
                         return ReferendumPanel(
                           data: list[i],
                           bestNumber: bestNumber,
                           votes: store.gov.referendumVotes[list[i].index],
                           symbol: symbol,
                           onVote: _onVote,
+                          voted: voted,
                         );
                       },
                     ),

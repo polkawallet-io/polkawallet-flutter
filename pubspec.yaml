@@ -74,6 +74,7 @@ flutter:
     # js service
     - lib/polkadot_js_service/dist/main.js
     # images
+    - assets/images/public/app.png
     - assets/images/public/Assets.png
     - assets/images/public/Governance.png
     - assets/images/public/Profile.png

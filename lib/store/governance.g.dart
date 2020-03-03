@@ -62,6 +62,13 @@ Map<String, dynamic> _$ReferendumInfoToJson(ReferendumInfo instance) =>
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$GovernanceStore on _GovernanceStore, Store {
+  Computed<Map<int, int>> _$votedMapComputed;
+
+  @override
+  Map<int, int> get votedMap =>
+      (_$votedMapComputed ??= Computed<Map<int, int>>(() => super.votedMap))
+          .value;
+
   final _$bestNumberAtom = Atom(name: '_GovernanceStore.bestNumber');
 
   @override
@@ -130,6 +137,26 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
     }, _$referendumVotesAtom, name: '${_$referendumVotesAtom.name}_set');
   }
 
+  final _$userReferendumVotesAtom =
+      Atom(name: '_GovernanceStore.userReferendumVotes');
+
+  @override
+  ObservableList<Map> get userReferendumVotes {
+    _$userReferendumVotesAtom.context
+        .enforceReadPolicy(_$userReferendumVotesAtom);
+    _$userReferendumVotesAtom.reportObserved();
+    return super.userReferendumVotes;
+  }
+
+  @override
+  set userReferendumVotes(ObservableList<Map> value) {
+    _$userReferendumVotesAtom.context.conditionallyRunInAction(() {
+      super.userReferendumVotes = value;
+      _$userReferendumVotesAtom.reportChanged();
+    }, _$userReferendumVotesAtom,
+        name: '${_$userReferendumVotesAtom.name}_set');
+  }
+
   final _$_GovernanceStoreActionController =
       ActionController(name: '_GovernanceStore');
 
@@ -168,6 +195,16 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
     final _$actionInfo = _$_GovernanceStoreActionController.startAction();
     try {
       return super.setReferendumVotes(index, votes);
+    } finally {
+      _$_GovernanceStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setUserReferendumVotes(List ls) {
+    final _$actionInfo = _$_GovernanceStoreActionController.startAction();
+    try {
+      return super.setUserReferendumVotes(ls);
     } finally {
       _$_GovernanceStoreActionController.endAction(_$actionInfo);
     }

@@ -30,6 +30,7 @@ class Api {
 
   Map<String, Function> _msgHandlers = {};
   FlutterWebviewPlugin _web;
+  int _evalJavascriptUID = 0;
 
   void init() {
     _web = FlutterWebviewPlugin();
@@ -60,11 +61,15 @@ class Api {
             onMessageReceived: (JavascriptMessage message) {
               print('received msg: ${message.message}');
               final msg = jsonDecode(message.message);
-              var handler = _msgHandlers[msg['path'] as String];
+              final String path = msg['path'];
+              var handler = _msgHandlers[path];
               if (handler == null) {
                 return;
               }
               handler(msg['data']);
+              if (path.contains('uid=')) {
+                _msgHandlers.remove(path);
+              }
             }),
       ].toSet(),
       ignoreSSLErrors: true,
@@ -74,13 +79,17 @@ class Api {
     );
   }
 
+  int getEvalJavascriptUID() {
+    return _evalJavascriptUID++;
+  }
+
   Future<dynamic> evalJavascript(String code) async {
     Completer c = new Completer();
     void onComplete(res) {
       c.complete(res);
     }
 
-    String method = code.split('(')[0];
+    String method = 'uid=${getEvalJavascriptUID()};${code.split('(')[0]}';
     _msgHandlers[method] = onComplete;
 
     String script = '$code.then(function(res) {'
@@ -264,6 +273,19 @@ class Api {
     var blockData = await evalJavascript('account.getBlockTime([$blocks])');
 
     assetsStore.setBlockMap(blockData);
+    return ls;
+  }
+
+  Future<List> updateDemocracyVotes() async {
+    String data =
+        await PolkaScanApi.fetchDemocracyVotes(accountStore.currentAddress);
+    List ls = jsonDecode(data)['data'];
+    var details = await Future.wait(ls
+        .map((i) => PolkaScanApi.fetchTx(i['attributes']['extrinsic_hash']))
+        .toList());
+    ls.asMap().forEach(
+        (k, v) => v['detail'] = jsonDecode(details[k])['data']['attributes']);
+    govStore.setUserReferendumVotes(ls);
     return ls;
   }
 

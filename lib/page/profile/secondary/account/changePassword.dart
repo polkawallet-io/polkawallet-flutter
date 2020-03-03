@@ -31,7 +31,7 @@ class _ChangePassword extends State<ChangePassword> {
     if (_formKey.currentState.validate()) {
       var dic = I18n.of(context).profile;
       var acc = await api.evalJavascript(
-          'account.changePassword("${store.currentAddress}", "${_passOldCtrl.text}", "${_passCtrl.text}")');
+          'account.changePassword("${store.currentAccount.pubKey}", "${_passOldCtrl.text}", "${_passCtrl.text}")');
       if (acc == null) {
         showCupertinoDialog(
           context: context,

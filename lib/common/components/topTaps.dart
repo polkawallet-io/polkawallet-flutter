@@ -8,7 +8,6 @@ class TopTabs extends StatelessWidget {
   final Function(int) onTab;
   final int activeTab;
 
-  // TODO: tab text style
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -28,8 +27,10 @@ class TopTabs extends StatelessWidget {
                         title,
                         style: TextStyle(
                             fontSize: 20,
-                            color: Theme.of(context).cardColor,
-                            fontWeight: FontWeight.w600),
+                            color: activeTab == index
+                                ? Theme.of(context).cardColor
+                                : Colors.white70,
+                            fontWeight: FontWeight.w500),
                       )
                     ],
                   ),

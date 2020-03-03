@@ -130,8 +130,7 @@ class _TxConfirmState extends State<TxConfirm> {
         centerTitle: true,
       ),
       body: Builder(builder: (BuildContext context) {
-        String address =
-            store.account.pubKeyAddressMap[store.account.currentAccount.pubKey];
+        String address = store.account.currentAddress;
         return Observer(
           builder: (_) => Column(
             children: <Widget>[

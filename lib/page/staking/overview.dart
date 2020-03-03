@@ -62,7 +62,7 @@ class _StakingOverviewState extends State<StakingOverview> {
 
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
-      padding: EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.only(top: 8, bottom: 8),
       child: Column(
         children: <Widget>[
           ListTile(
@@ -137,9 +137,6 @@ class _StakingOverviewState extends State<StakingOverview> {
                     ),
             ),
           ),
-          Divider(
-            height: 1,
-          ),
           AnimatedContainer(
             height: _expanded ? nominatorListHeight : 0,
             duration: Duration(seconds: 1),
@@ -164,7 +161,6 @@ class _StakingOverviewState extends State<StakingOverview> {
     );
   }
 
-  // TODO: NominatingList style
   Widget _buildNominatingList() {
     bool hasData = store.staking.ledger['stakingLedger'] != null;
     if (!hasData) {
@@ -173,60 +169,75 @@ class _StakingOverviewState extends State<StakingOverview> {
     String symbol = store.settings.networkState.tokenSymbol;
     String address = store.account.currentAddress;
 
-    return Column(
-      children: List<Widget>.from(store.staking.ledger['nominators'].map((id) {
-        ValidatorData validator;
-        int validatorIndex =
-            store.staking.validatorsInfo.indexWhere((i) => i.accountId == id);
-        if (validatorIndex >= 0) {
-          validator = store.staking.validatorsInfo[validatorIndex];
-        } else {
-          return CupertinoActivityIndicator();
-        }
-
-        int meStaked = 0;
-        int meIndex =
-            validator.nominators.indexWhere((i) => i['who'] == address);
-        if (meIndex >= 0) {
-          meStaked = validator.nominators[meIndex]['value'];
-        }
-        Map accInfo = store.account.accountIndexMap[id];
-        return Expanded(
-          child: Container(
-            color: Theme.of(context).cardColor,
-            child: ListTile(
-              leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
-              title: Text('${Fmt.token(meStaked)} $symbol'),
-              subtitle: Text(accInfo != null
-                  ? accInfo['identity']['display'] != null
-                      ? accInfo['identity']['display'].toString().toUpperCase()
-                      : accInfo['accountIndex']
-                  : Fmt.address(validator.accountId, pad: 6)),
-              trailing: Container(
-                width: 120,
-                height: 40,
-//                color: Colors.grey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                      child: Text('commission'),
-                    ),
-                    Expanded(
-                      child: Text(validator.commission),
-                    )
-                  ],
-                ),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
+        ),
+      ),
+      child: Column(
+        children:
+            List<Widget>.from(store.staking.ledger['nominators'].map((id) {
+          ValidatorData validator;
+          int validatorIndex =
+              store.staking.validatorsInfo.indexWhere((i) => i.accountId == id);
+          if (validatorIndex >= 0) {
+            validator = store.staking.validatorsInfo[validatorIndex];
+          } else {
+            return Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[CupertinoActivityIndicator()],
               ),
-              onTap: () {
-                store.api.queryValidatorRewards(validator.accountId);
-                Navigator.of(context)
-                    .pushNamed('/staking/validator', arguments: validator);
-              },
+            );
+          }
+
+          int meStaked = 0;
+          int meIndex =
+              validator.nominators.indexWhere((i) => i['who'] == address);
+          if (meIndex >= 0) {
+            meStaked = validator.nominators[meIndex]['value'];
+          }
+          Map accInfo = store.account.accountIndexMap[id];
+          return Expanded(
+            child: Container(
+              color: Theme.of(context).cardColor,
+              child: ListTile(
+                leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
+                title: Text('${Fmt.token(meStaked)} $symbol'),
+                subtitle: Text(accInfo != null
+                    ? accInfo['identity']['display'] != null
+                        ? accInfo['identity']['display']
+                            .toString()
+                            .toUpperCase()
+                        : accInfo['accountIndex']
+                    : Fmt.address(validator.accountId, pad: 6)),
+                trailing: Container(
+                  width: 120,
+                  height: 40,
+//                color: Colors.grey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text('commission'),
+                      ),
+                      Expanded(
+                        child: Text(validator.commission),
+                      )
+                    ],
+                  ),
+                ),
+                onTap: () {
+                  store.api.queryValidatorRewards(validator.accountId);
+                  Navigator.of(context)
+                      .pushNamed('/staking/validator', arguments: validator);
+                },
+              ),
             ),
-          ),
-        );
-      }).toList()),
+          );
+        }).toList()),
+      ),
     );
   }
 

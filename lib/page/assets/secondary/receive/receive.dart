@@ -13,6 +13,8 @@ class Receive extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String codeAddress =
+        'substrate:${store.currentAddress}:${store.currentAccount.pubKey}:${store.currentAccount.name}';
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
@@ -55,12 +57,12 @@ class Receive extends StatelessWidget {
                       ),
                       margin: EdgeInsets.fromLTRB(48, 24, 48, 24),
                       child: QrImage(
-                        data: store.currentAddress,
+                        data: codeAddress,
                         size: 200,
-//                        embeddedImage:
-//                            AssetImage('assets/images/public/About_logo.png'),
-//                        embeddedImageStyle:
-//                            QrEmbeddedImageStyle(size: Size(40, 40)),
+                        embeddedImage:
+                            AssetImage('assets/images/public/app.png'),
+                        embeddedImageStyle:
+                            QrEmbeddedImageStyle(size: Size(40, 40)),
                       ),
                     ),
                     Container(

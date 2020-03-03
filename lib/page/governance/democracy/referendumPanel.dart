@@ -8,15 +8,20 @@ import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ReferendumPanel extends StatelessWidget {
   ReferendumPanel(
-      {this.symbol, this.data, this.bestNumber, this.votes, this.onVote});
+      {this.symbol,
+      this.data,
+      this.bestNumber,
+      this.votes,
+      this.voted,
+      this.onVote});
 
   final String symbol;
   final ReferendumInfo data;
   final int bestNumber;
   final ReferendumVotes votes;
+  final int voted;
   final Function(int, bool) onVote;
 
-  // TODO: add user voted status
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).gov;
@@ -142,6 +147,7 @@ class ReferendumPanel extends StatelessWidget {
       ));
     }
 
+    bool votedYes = voted > 6;
     list.add(Container(
       margin: EdgeInsets.only(top: 16),
       child: Row(
@@ -149,15 +155,21 @@ class ReferendumPanel extends StatelessWidget {
           Expanded(
             child: RoundedButton(
               color: Colors.orange,
-              text: dic['no'],
-              onPressed: () => onVote(data.index, false),
+              text:
+                  '${voted != null && !votedYes ? dic['voted'] : ''} ${dic['no']}',
+              onPressed: voted == null || votedYes
+                  ? () => onVote(data.index, false)
+                  : null,
             ),
           ),
           Container(width: 8),
           Expanded(
             child: RoundedButton(
-              text: dic['yes'],
-              onPressed: () => onVote(data.index, true),
+              text:
+                  '${voted != null && votedYes ? dic['voted'] : ''} ${dic['yes']}',
+              onPressed: voted == null || !votedYes
+                  ? () => onVote(data.index, true)
+                  : null,
             ),
           )
         ],
