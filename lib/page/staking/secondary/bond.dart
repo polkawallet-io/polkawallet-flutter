@@ -119,7 +119,7 @@ class _BondState extends State<Bond> {
                                   initialItem: _rewardTo),
                               children: rewardToOptions
                                   .map((i) => Padding(
-                                      padding: EdgeInsets.all(16),
+                                      padding: EdgeInsets.all(12),
                                       child: Text(i)))
                                   .toList(),
                               onSelectedItemChanged: (v) {

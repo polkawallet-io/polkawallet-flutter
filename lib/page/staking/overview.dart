@@ -46,10 +46,11 @@ class _StakingOverviewState extends State<StakingOverview> {
 
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).staking;
+    bool hashData = store.staking.ledger['stakingLedger'] != null;
     int bonded = 0;
     List nominators = [];
     double nominatorListHeight = 48;
-    if (store.staking.ledger['stakingLedger'] != null) {
+    if (hashData) {
       bonded = store.staking.ledger['stakingLedger']['active'];
       nominators = store.staking.ledger['nominators'];
       if (nominators.length > 0) {
@@ -256,10 +257,9 @@ class _StakingOverviewState extends State<StakingOverview> {
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        bool hashData = store.staking.ledger['stakingLedger'] != null;
         List list = [
           // index_0: the overview card
-          hashData ? _buildTopCard(context) : Container(),
+          _buildTopCard(context),
           // index_1: the 'Validators' label
           Container(
             color: Theme.of(context).cardColor,
@@ -306,22 +306,20 @@ class _StakingOverviewState extends State<StakingOverview> {
             child: CupertinoActivityIndicator(),
           ));
         }
-        return hashData
-            ? RefreshIndicator(
-                key: globalNominatingRefreshKey,
-                onRefresh: _refreshData,
-                child: ListView.builder(
-                  itemCount: list.length,
-                  itemBuilder: (BuildContext context, int i) {
-                    // we already have the index_0 - index_2 Widget
-                    if (i < 3) {
-                      return list[i];
-                    }
-                    return Validator(store, list[i] as ValidatorData);
-                  },
-                ),
-              )
-            : Container();
+        return RefreshIndicator(
+          key: globalNominatingRefreshKey,
+          onRefresh: _refreshData,
+          child: ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (BuildContext context, int i) {
+              // we already have the index_0 - index_2 Widget
+              if (i < 3) {
+                return list[i];
+              }
+              return Validator(store, list[i] as ValidatorData);
+            },
+          ),
+        );
       },
     );
   }

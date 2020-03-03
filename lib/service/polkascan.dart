@@ -1,6 +1,6 @@
 import 'package:http/http.dart';
 
-const String endpoint = 'https://host-02.polkascan.io/kusama/api/v1';
+const String endpoint = 'https://host-01.polkascan.io/kusama/api/v1';
 const int tx_list_page_size = 10;
 
 class PolkaScanApi {

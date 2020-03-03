@@ -61,6 +61,23 @@ class _StakingActions extends State<StakingActions>
         )
       ];
     }
+    if (store.staking.txs.length == 0) {
+      return <Widget>[
+        Container(
+          color: Theme.of(context).cardColor,
+          padding: EdgeInsets.all(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                I18n.of(context).home['data.empty'],
+                style: TextStyle(color: Colors.black54),
+              )
+            ],
+          ),
+        )
+      ];
+    }
     return store.staking.txs.map((i) {
       String call = i['attributes']['call_id'];
       String value = '';
@@ -347,18 +364,15 @@ class _StakingActions extends State<StakingActions>
           ),
         ];
         list.addAll(_buildTxList());
-        bool hasData = store.staking.ledger['stakingLedger'] != null;
         return RefreshIndicator(
           key: globalBondingRefreshKey,
           onRefresh: () async {
             _updateStakingTxs();
             await _updateStakingInfo();
           },
-          child: !hasData
-              ? Container()
-              : ListView(
-                  children: list,
-                ),
+          child: ListView(
+            children: list,
+          ),
         );
       },
     );
