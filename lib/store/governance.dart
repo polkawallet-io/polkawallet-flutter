@@ -64,6 +64,11 @@ abstract class _GovernanceStore with Store {
   void setUserReferendumVotes(List ls) {
     userReferendumVotes.addAll(List<Map>.from(ls));
   }
+
+  @action
+  void clearSate() {
+    userReferendumVotes = ObservableList<Map>();
+  }
 }
 
 @JsonSerializable()

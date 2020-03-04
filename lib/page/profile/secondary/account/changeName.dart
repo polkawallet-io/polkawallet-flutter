@@ -1,24 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ChangeName extends StatefulWidget {
-  ChangeName(this.api, this.store);
-
-  final Api api;
+  ChangeName(this.store);
   final AccountStore store;
 
   @override
-  _ChangeName createState() => _ChangeName(api, store);
+  _ChangeName createState() => _ChangeName(store);
 }
 
 class _ChangeName extends State<ChangeName> {
-  _ChangeName(this.api, this.store);
+  _ChangeName(this.store);
 
-  final Api api;
   final AccountStore store;
 
   final _formKey = GlobalKey<FormState>();

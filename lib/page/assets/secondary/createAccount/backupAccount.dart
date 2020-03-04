@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -26,7 +27,7 @@ class _BackupAccountState extends State<BackupAccount> {
 
   @override
   void initState() {
-    store.api.generateAccount();
+    webApi.account.generateAccount();
     super.initState();
   }
 
@@ -166,7 +167,7 @@ class _BackupAccountState extends State<BackupAccount> {
               onPressed:
                   _wordsSelected.join(' ') == store.account.newAccount.key
                       ? () async {
-                          store.api.importAccount();
+                          webApi.account.importAccount();
                           Navigator.popUntil(context, ModalRoute.withName('/'));
                         }
                       : null,

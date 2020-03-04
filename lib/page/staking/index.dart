@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/topTaps.dart';
 import 'package:polka_wallet/page/staking/actions.dart';
 import 'package:polka_wallet/page/staking/overview.dart';
@@ -25,13 +26,7 @@ class _StakingState extends State<Staking> {
     if (store.settings.loading) {
       return;
     }
-    var overview =
-        await store.api.evalJavascript('api.derive.staking.overview()');
-    store.staking.setOverview(overview);
-
-    // fetch all validators details
-    store.api.fetchElectedInfo();
-    store.api.fetchAccountsIndex(List.of(overview['validators']));
+    await webApi.staking.fetchStakingOverview();
   }
 
   @override

@@ -1,18 +1,18 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/service/api.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class AccountManage extends StatelessWidget {
-  AccountManage(this.api, this.store);
+  AccountManage(this.store);
 
-  final Api api;
+  final Api api = webApi;
   final AccountStore store;
 
   final TextEditingController _passCtrl = new TextEditingController();
@@ -22,7 +22,7 @@ class AccountManage extends StatelessWidget {
     final Map<String, String> accDic = I18n.of(context).account;
 
     Future<void> onOk() async {
-      var res = await api.checkAccountPassword(_passCtrl.text);
+      var res = await api.account.checkAccountPassword(_passCtrl.text);
       if (res == null) {
         showCupertinoDialog(
           context: context,
@@ -123,11 +123,8 @@ class AccountManage extends StatelessWidget {
                     color: Colors.pink,
                     padding: EdgeInsets.only(bottom: 16),
                     child: ListTile(
-                      leading: Container(
-                        width: 72,
-                        height: 72,
-                        child: Image.asset(
-                            'assets/images/assets/Assets_nav_0.png'),
+                      leading: AddressIcon(
+                        address: store.currentAddress,
                       ),
                       title: Text(store.currentAccount.name ?? 'name',
                           style: TextStyle(fontSize: 16, color: Colors.white)),

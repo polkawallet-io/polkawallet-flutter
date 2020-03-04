@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumPanel.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/governance.dart';
@@ -26,11 +27,11 @@ class _DemocracyState extends State<Democracy> {
   final _options = [0, 1, 2, 3, 4, 5, 6];
 
   Future<void> _fetchReferendums() async {
-    store.api.updateDemocracyVotes();
     if (store.settings.loading) {
       return;
     }
-    await store.api.fetchReferendums();
+    webApi.gov.updateDemocracyVotes(store.account.currentAddress);
+    await webApi.gov.fetchReferendums();
   }
 
   List<num> _calcTimes(int value) {
@@ -100,7 +101,7 @@ class _DemocracyState extends State<Democracy> {
   @override
   void initState() {
     super.initState();
-    store.api.subscribeBestNumber();
+    webApi.subscribeBestNumber();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (store.gov.referendums == null) {
@@ -111,7 +112,7 @@ class _DemocracyState extends State<Democracy> {
 
   @override
   void dispose() {
-    store.api.unsubscribeBestNumber();
+    webApi.unsubscribeBestNumber();
     super.dispose();
   }
 

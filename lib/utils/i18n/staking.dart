@@ -37,6 +37,7 @@ const Map<String, String> enStaking = {
   'unlocking': 'Unlocking',
   'filter': 'Filter with Address/Name',
   'sort': 'Sort by',
+  'notElected': 'Not Elected',
 };
 
 const Map<String, String> zhStaking = {
@@ -78,4 +79,5 @@ const Map<String, String> zhStaking = {
   'unlocking': '解锁中',
   'filter': '地址/名称筛选',
   'sort': '排序',
+  'notElected': '未选中',
 };

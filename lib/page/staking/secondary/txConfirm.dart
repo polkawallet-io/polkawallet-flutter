@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -103,8 +104,8 @@ class _TxConfirmState extends State<TxConfirm> {
     txInfo['password'] = _passCtrl.text;
     print(txInfo);
     print(args['params']);
-    var res =
-        await store.api.sendTx(txInfo, args['params'], dic['notify.submitted']);
+    var res = await webApi.account
+        .sendTx(txInfo, args['params'], dic['notify.submitted']);
     if (res == null) {
       onTxError();
     } else {

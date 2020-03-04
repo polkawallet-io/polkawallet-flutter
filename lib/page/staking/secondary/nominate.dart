@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -76,7 +77,7 @@ class _NominateState extends State<Nominate> {
     Map accInfo = store.account.accountIndexMap[list[i].accountId];
 
     return ListTile(
-      leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
+      leading: AddressIcon(address: list[i].accountId),
       title: Text(accInfo != null
           ? accInfo['identity']['display'] != null
               ? accInfo['identity']['display'].toString().toUpperCase()

@@ -1,25 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/service/api.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ChangePassword extends StatefulWidget {
-  ChangePassword(this.api, this.store);
+  ChangePassword(this.store);
 
-  final Api api;
   final AccountStore store;
 
   @override
-  _ChangePassword createState() => _ChangePassword(api, store);
+  _ChangePassword createState() => _ChangePassword(store);
 }
 
 class _ChangePassword extends State<ChangePassword> {
-  _ChangePassword(this.api, this.store);
+  _ChangePassword(this.store);
 
-  final Api api;
+  final Api api = webApi;
   final AccountStore store;
 
   final _formKey = GlobalKey<FormState>();

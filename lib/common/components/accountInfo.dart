@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -38,7 +39,7 @@ class AccountInfo extends StatelessWidget {
       children: <Widget>[
         Padding(
           padding: EdgeInsets.only(top: 16, bottom: 8),
-          child: Image.asset('assets/images/assets/Assets_nav_0.png'),
+          child: AddressIcon(address: address),
         ),
         accInfo != null ? Text(accInfo['accountIndex']) : Container(),
         Row(

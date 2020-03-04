@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/page/assets/secondary/createAccount/createAccountForm.dart';
 import 'package:polka_wallet/page/assets/secondary/importAccount/importAccountForm.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -24,7 +25,7 @@ class _ImportAccountState extends State<ImportAccount> {
   String _cryptoType = '';
 
   Future<void> _importAccount() async {
-    var acc = await store.api.importAccount(
+    var acc = await webApi.account.importAccount(
       keyType: _keyType,
       cryptoType: _cryptoType,
     );

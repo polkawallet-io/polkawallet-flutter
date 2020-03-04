@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -26,11 +27,7 @@ class Profile extends StatelessWidget {
               color: Colors.pink,
               padding: EdgeInsets.only(bottom: 16),
               child: ListTile(
-                leading: Container(
-                  width: 72,
-                  height: 72,
-                  child: Image.asset('assets/images/assets/Assets_nav_0.png'),
-                ),
+                leading: AddressIcon(address: store.currentAddress),
                 title: Text(acc.name ?? 'name',
                     style: TextStyle(fontSize: 16, color: Colors.white)),
                 subtitle: Text(

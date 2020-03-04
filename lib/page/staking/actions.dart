@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/outlinedCircle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -34,7 +36,7 @@ class _StakingActions extends State<StakingActions>
     setState(() {
       _txsLoading = true;
     });
-    await store.api.updateStaking(_txsPage);
+    await webApi.staking.updateStaking(_txsPage);
     if (context != null) {
       setState(() {
         _txsLoading = false;
@@ -46,9 +48,10 @@ class _StakingActions extends State<StakingActions>
     if (store.settings.loading) {
       return;
     }
+    String address = store.account.currentAddress;
     await Future.wait([
-      store.api.fetchBalance(),
-      store.api.fetchAccountStaking(),
+      webApi.assets.fetchBalance(address),
+      webApi.staking.fetchAccountStaking(address),
     ]);
   }
 
@@ -168,9 +171,10 @@ class _StakingActions extends State<StakingActions>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                width: 40,
-                margin: EdgeInsets.only(right: 8),
-                child: Image.asset('assets/images/assets/Assets_nav_0.png'),
+                margin: EdgeInsets.only(right: 16),
+                child: AddressIcon(
+                  address: store.account.currentAddress,
+                ),
               ),
               Expanded(
                 child: Column(

@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/staking/actions.dart';
@@ -27,7 +29,7 @@ class _CouncilState extends State<Council> {
     if (store.settings.loading) {
       return;
     }
-    await store.api.fetchCouncilInfo();
+    await webApi.gov.fetchCouncilInfo();
   }
 
   @override
@@ -173,7 +175,7 @@ class CandidateItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
+      leading: AddressIcon(address: balance[0]),
       title: Text(accInfo != null
           ? accInfo['identity']['display'] != null
               ? accInfo['identity']['display'].toString().toUpperCase()

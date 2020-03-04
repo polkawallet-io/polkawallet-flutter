@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -14,23 +16,22 @@ class DrawerMenu extends StatelessWidget {
     return store.account.optionalAccounts.map((i) {
       String address = store.account.pubKeyAddressMap[i.pubKey];
       return ListTile(
-        leading: Container(
-          width: 40,
-          height: 40,
-          child: Image.asset('assets/images/assets/Assets_nav_0.png'),
-        ),
+        leading: AddressIcon(address: address ?? i.address, size: 36),
         title: Text(i.name ?? 'name',
             style: TextStyle(fontSize: 16, color: Colors.white)),
         subtitle: Text(
-          Fmt.address(address) ?? '',
+          Fmt.address(address ?? i.address),
           style: TextStyle(fontSize: 16, color: Colors.white70),
         ),
         onTap: () {
           Navigator.pop(context);
           store.account.setCurrentAccount(i);
-          store.staking.clearSate();
+          // refresh balance
           globalBalanceRefreshKey.currentState.show();
-          store.api.fetchAccountStaking();
+          // refresh user's staking & gov info
+          store.staking.clearSate();
+          store.gov.clearSate();
+          webApi.staking.fetchAccountStaking(address);
         },
       );
     }).toList();
@@ -63,11 +64,8 @@ class DrawerMenu extends StatelessWidget {
             Container(
               color: Colors.indigo,
               child: ListTile(
-                leading: Container(
-                  width: 40,
-                  height: 40,
-                  child: Image.asset('assets/images/assets/Assets_nav_0.png'),
-                ),
+                leading: AddressIcon(
+                    address: store.account.currentAddress, size: 36),
                 title: Text(store.account.currentAccount.name ?? 'name',
                     style: TextStyle(fontSize: 16, color: Colors.white)),
                 subtitle: Text(

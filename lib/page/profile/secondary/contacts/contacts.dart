@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -74,7 +75,7 @@ class Contacts extends StatelessWidget {
         builder: (_) {
           List<Widget> ls = store.contactList.map((i) {
             return ListTile(
-              leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
+              leading: AddressIcon(address: i.address),
               title: Text(i.name),
               subtitle: Text(Fmt.address(i.address)),
               trailing: IconButton(

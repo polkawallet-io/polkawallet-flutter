@@ -7,6 +7,7 @@ import 'package:polka_wallet/page/governance/sencondary/candidateDetail.dart';
 import 'package:polka_wallet/page/governance/sencondary/candidateList.dart';
 import 'package:polka_wallet/page/governance/sencondary/councilVote.dart';
 import 'package:polka_wallet/page/profile/secondary/settings/ss58Prefix.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/page/assets/secondary/asset/asset.dart';
 import 'package:polka_wallet/page/assets/secondary/receive/receive.dart';
@@ -50,7 +51,7 @@ class WalletApp extends StatefulWidget {
 }
 
 class _WalletAppState extends State<WalletApp> {
-  final _appStore = AppStore();
+  final _appStore = globalAppStore;
 
   Locale _locale = const Locale('en', '');
 
@@ -78,9 +79,12 @@ class _WalletAppState extends State<WalletApp> {
 
   @override
   void initState() {
-    if (_appStore.api == null) {
+    if (!_appStore.isReady) {
       print('initailizing app state');
       _appStore.init(context);
+
+      webApi = Api(context, _appStore);
+      webApi.init();
 
       _initLocaleFromLocalStorage();
     } else {
@@ -143,18 +147,15 @@ class _WalletAppState extends State<WalletApp> {
         '/gov/candidate': (_) => CandidateDetail(_appStore),
         '/gov/vote': (_) => CouncilVote(_appStore),
         '/gov/candidates': (_) => CandidateList(_appStore),
-        '/profile/account': (_) =>
-            AccountManage(_appStore.api, _appStore.account),
+        '/profile/account': (_) => AccountManage(_appStore.account),
         '/profile/contacts': (_) => Contacts(_appStore.settings),
         '/contacts/list': (_) => ContactList(_appStore.settings),
         '/profile/contact': (_) => Contact(_appStore.settings),
-        '/profile/name': (_) => ChangeName(_appStore.api, _appStore.account),
-        '/profile/password': (_) =>
-            ChangePassword(_appStore.api, _appStore.account),
+        '/profile/name': (_) => ChangeName(_appStore.account),
+        '/profile/password': (_) => ChangePassword(_appStore.account),
         '/profile/settings': (_) => Settings(_appStore.settings, _changeLang),
-        '/profile/endpoint': (_) =>
-            RemoteNode(_appStore.api, _appStore.settings),
-        '/profile/ss58': (_) => SS58Prefix(_appStore.api, _appStore.settings),
+        '/profile/endpoint': (_) => RemoteNode(_appStore.settings),
+        '/profile/ss58': (_) => SS58Prefix(_appStore.settings),
         '/profile/about': (_) => About(),
       },
     );

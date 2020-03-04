@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
-import 'package:polka_wallet/service/api.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -18,9 +18,9 @@ const prefixList = [
 ];
 
 class SS58Prefix extends StatelessWidget {
-  SS58Prefix(this.api, this.store);
+  SS58Prefix(this.store);
 
-  final Api api;
+  final Api api = webApi;
   final SettingsStore store;
 
   @override

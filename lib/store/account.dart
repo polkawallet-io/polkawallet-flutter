@@ -27,6 +27,10 @@ abstract class _AccountStore with Store {
   ObservableMap<String, String> pubKeyAddressMap =
       ObservableMap<String, String>();
 
+  @observable
+  ObservableMap<String, String> accountIconsMap =
+      ObservableMap<String, String>();
+
   @computed
   ObservableList<AccountData> get optionalAccounts {
     return ObservableList.of(accountList.where(
@@ -122,7 +126,13 @@ abstract class _AccountStore with Store {
     list.forEach((i) {
       pubKeyAddressMap[i['pubKey']] = i['address'];
     });
-    print(pubKeyAddressMap.toString());
+  }
+
+  @action
+  void setAccountIconsMap(List list) {
+    list.forEach((i) {
+      accountIconsMap[i[0]] = i[1];
+    });
   }
 
   @action

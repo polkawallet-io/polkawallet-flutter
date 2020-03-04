@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -19,7 +21,7 @@ class Validator extends StatelessWidget {
     return Container(
       color: Colors.white,
       child: ListTile(
-        leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
+        leading: AddressIcon(address: validator.accountId),
         title: Text(accInfo != null
             ? accInfo['identity']['display'] != null
                 ? accInfo['identity']['display'].toString().toUpperCase()
@@ -37,7 +39,7 @@ class Validator extends StatelessWidget {
           ),
         ),
         onTap: () {
-          store.api.queryValidatorRewards(validator.accountId);
+          webApi.staking.queryValidatorRewards(validator.accountId);
           Navigator.of(context)
               .pushNamed('/staking/validator', arguments: validator);
         },

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/service/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/store/account.dart';
@@ -8,6 +7,8 @@ import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/store/governance.dart';
 
 part 'app.g.dart';
+
+final AppStore globalAppStore = AppStore();
 
 class AppStore extends _AppStore with _$AppStore {}
 
@@ -27,7 +28,8 @@ abstract class _AppStore with Store {
   @observable
   SettingsStore settings = SettingsStore();
 
-  Api api;
+  @observable
+  bool isReady = false;
 
   @action
   void init(BuildContext context) {
@@ -37,13 +39,6 @@ abstract class _AppStore with Store {
     staking = StakingStore(account);
     gov = GovernanceStore(account);
 
-    api = Api(
-        context: context,
-        accountStore: account,
-        assetsStore: assets,
-        stakingStore: staking,
-        govStore: gov,
-        settingsStore: settings);
-    api.init();
+    isReady = true;
   }
 }

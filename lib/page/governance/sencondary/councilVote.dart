@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -47,7 +48,7 @@ class _CouncilVote extends State<CouncilVote> {
               Container(
                 width: 28,
                 margin: EdgeInsets.only(right: 8),
-                child: Image.asset('assets/images/assets/Assets_nav_0.png'),
+                child: AddressIcon(address: i[0], size: 28),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

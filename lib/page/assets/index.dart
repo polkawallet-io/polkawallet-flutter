@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -41,7 +43,7 @@ class _AssetsState extends State<Assets> {
       child: Column(
         children: <Widget>[
           ListTile(
-            leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
+            leading: AddressIcon(address: address),
             title: Text(acc.name ?? ''),
             subtitle: Text(
                 accInfo == null ? network : accInfo['accountIndex'] ?? network),
@@ -66,7 +68,7 @@ class _AssetsState extends State<Assets> {
   void initState() {
     if (!store.settings.loading && store.settings.networkName == null) {
       store.settings.setNetworkLoading(true);
-      store.api.connectNode();
+      webApi.connectNode();
     }
     super.initState();
   }
@@ -75,7 +77,8 @@ class _AssetsState extends State<Assets> {
   Widget build(BuildContext context) => Observer(
         builder: (_) => RefreshIndicator(
           key: globalBalanceRefreshKey,
-          onRefresh: store.api.fetchBalance,
+          onRefresh: () async =>
+              webApi.assets.fetchBalance(store.account.currentAddress),
           child: ListView(
             padding: EdgeInsets.only(left: 16, right: 16),
             children: <Widget>[

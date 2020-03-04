@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/service/api.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -46,9 +46,9 @@ const default_ss58_map = {
 };
 
 class RemoteNode extends StatelessWidget {
-  RemoteNode(this.api, this.store);
+  RemoteNode(this.store);
 
-  final Api api;
+  final Api api = webApi;
   final SettingsStore store;
 
   @override

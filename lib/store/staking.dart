@@ -126,7 +126,6 @@ abstract class _StakingStore with Store {
   @action
   void clearSate() {
     txs.clear();
-//    overview = ObservableMap<String, dynamic>();
     ledger = ObservableMap<String, dynamic>();
   }
 

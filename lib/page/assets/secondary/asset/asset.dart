@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/page/assets/secondary/asset/assetChart.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -30,9 +31,10 @@ class _AssetPageState extends State<AssetPage>
   ScrollController _scrollController;
 
   Future<void> _updateData() async {
-    store.api.fetchBalance();
-    store.api.fetchAccountStaking();
-    List res = await store.api.updateTxs(_txsPage);
+    String address = store.account.currentAddress;
+    webApi.assets.fetchBalance(address);
+    webApi.staking.fetchAccountStaking(address);
+    List res = await webApi.assets.updateTxs(_txsPage);
     if (res.length < tx_list_page_size) {
       setState(() {
         _isLastPage = true;

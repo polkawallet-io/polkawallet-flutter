@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/outlinedCircle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/components/validatorListFilter.dart';
@@ -40,7 +42,7 @@ class _StakingOverviewState extends State<StakingOverview> {
     if (store.settings.loading) {
       return;
     }
-    await store.api.fetchAccountStaking();
+    await webApi.staking.fetchAccountStaking(store.account.currentAddress);
     reloadStakingOverview();
   }
 
@@ -171,6 +173,7 @@ class _StakingOverviewState extends State<StakingOverview> {
     String address = store.account.currentAddress;
 
     return Container(
+      padding: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
@@ -182,16 +185,15 @@ class _StakingOverviewState extends State<StakingOverview> {
           ValidatorData validator;
           int validatorIndex =
               store.staking.validatorsInfo.indexWhere((i) => i.accountId == id);
-          if (validatorIndex >= 0) {
-            validator = store.staking.validatorsInfo[validatorIndex];
-          } else {
+          if (validatorIndex < 0) {
             return Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[CupertinoActivityIndicator()],
-              ),
+              child: ListTile(
+                  leading: AddressIcon(address: id),
+                  title: Text(I18n.of(context).staking['notElected']),
+                  subtitle: Text(Fmt.address(id, pad: 6))),
             );
           }
+          validator = store.staking.validatorsInfo[validatorIndex];
 
           int meStaked = 0;
           int meIndex =
@@ -201,40 +203,35 @@ class _StakingOverviewState extends State<StakingOverview> {
           }
           Map accInfo = store.account.accountIndexMap[id];
           return Expanded(
-            child: Container(
-              color: Theme.of(context).cardColor,
-              child: ListTile(
-                leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
-                title: Text('${Fmt.token(meStaked)} $symbol'),
-                subtitle: Text(accInfo != null
-                    ? accInfo['identity']['display'] != null
-                        ? accInfo['identity']['display']
-                            .toString()
-                            .toUpperCase()
-                        : accInfo['accountIndex']
-                    : Fmt.address(validator.accountId, pad: 6)),
-                trailing: Container(
-                  width: 120,
-                  height: 40,
+            child: ListTile(
+              leading: AddressIcon(address: id),
+              title: Text('${Fmt.token(meStaked)} $symbol'),
+              subtitle: Text(accInfo != null
+                  ? accInfo['identity']['display'] != null
+                      ? accInfo['identity']['display'].toString().toUpperCase()
+                      : accInfo['accountIndex']
+                  : Fmt.address(validator.accountId, pad: 6)),
+              trailing: Container(
+                width: 120,
+                height: 40,
 //                color: Colors.grey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text('commission'),
-                      ),
-                      Expanded(
-                        child: Text(validator.commission),
-                      )
-                    ],
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text('commission'),
+                    ),
+                    Expanded(
+                      child: Text(validator.commission),
+                    )
+                  ],
                 ),
-                onTap: () {
-                  store.api.queryValidatorRewards(validator.accountId);
-                  Navigator.of(context)
-                      .pushNamed('/staking/validator', arguments: validator);
-                },
               ),
+              onTap: () {
+                webApi.staking.queryValidatorRewards(validator.accountId);
+                Navigator.of(context)
+                    .pushNamed('/staking/validator', arguments: validator);
+              },
             ),
           );
         }).toList()),
