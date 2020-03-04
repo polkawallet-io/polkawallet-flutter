@@ -183,7 +183,9 @@ class _NominateState extends State<Nominate> {
                 padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
                 child: RoundedButton(
                   text: I18n.of(context).home['submit.tx'],
-                  onPressed: _selected.length == 0 ? _chill : _setNominee,
+                  onPressed: store.staking.validatorsInfo.length == 0
+                      ? null
+                      : _selected.length == 0 ? _chill : _setNominee,
                 ),
               ),
             ],

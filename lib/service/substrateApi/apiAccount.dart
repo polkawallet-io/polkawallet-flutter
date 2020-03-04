@@ -97,6 +97,9 @@ class ApiAccount {
     }
     addresses
         .retainWhere((i) => !store.account.accountIndexMap.keys.contains(i));
+    if (addresses.length == 0) {
+      return [];
+    }
     var res = await apiRoot
         .evalJavascript('account.getAccountIndex(${jsonEncode(addresses)})');
     store.account.setAccountsIndex(res);
@@ -106,7 +109,9 @@ class ApiAccount {
   Future<List> getAddressIcons(List addresses) async {
     addresses
         .retainWhere((i) => !store.account.accountIconsMap.keys.contains(i));
-    print(addresses);
+    if (addresses.length == 0) {
+      return [];
+    }
     List res = await apiRoot
         .evalJavascript('account.genIcons(${jsonEncode(addresses)})');
     store.account.setAccountIconsMap(res);
