@@ -1,5 +1,7 @@
+import 'package:flutter_aes_ecb_pkcs5/flutter_aes_ecb_pkcs5.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
+import 'package:polka_wallet/utils/format.dart';
 
 import 'package:polka_wallet/utils/localStorage.dart';
 
@@ -83,7 +85,13 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  Future<void> addAccount(Map<String, dynamic> acc) async {
+  Future<void> addAccount(Map<String, dynamic> acc, String password) async {
+    // save mnemonic and remove it before add account
+    if (acc['mnemonic'].length > 0) {
+      encryptMnemonic(acc['pubKey'], acc['mnemonic'], password);
+      acc.remove(acc['mnemonic']);
+    }
+
     await LocalStorage.addAccount(acc);
     await LocalStorage.setCurrentAccount(acc['pubKey']);
 
@@ -94,6 +102,14 @@ abstract class _AccountStore with Store {
   Future<void> removeAccount(AccountData acc) async {
     await LocalStorage.removeAccount(acc.pubKey);
 
+    // remove mnemonic after removing account
+    Map stored = await LocalStorage.getMnemonic();
+    if (stored[acc.pubKey] != null) {
+      stored.remove([acc.pubKey]);
+      LocalStorage.setMnemonic(stored);
+    }
+
+    // set new currentAccount after currentAccount was removed
     List<Map<String, dynamic>> accounts = await LocalStorage.getAccountList();
     if (accounts.length > 0) {
       await LocalStorage.setCurrentAccount(accounts[0]['pubKey']);
@@ -119,6 +135,46 @@ abstract class _AccountStore with Store {
       }
     }
     loading = false;
+  }
+
+  @action
+  Future<void> encryptMnemonic(
+      String pubKey, String mnemonic, String password) async {
+    String key = Fmt.passwordToEncryptKey(password);
+    String encrypted = await FlutterAesEcbPkcs5.encryptString(mnemonic, key);
+    Map stored = await LocalStorage.getMnemonic();
+    stored[pubKey] = encrypted;
+    LocalStorage.setMnemonic(stored);
+  }
+
+  @action
+  Future<String> decryptMnemonic(String pubKey, String password) async {
+    Map stored = await LocalStorage.getMnemonic();
+    String encrypted = stored[pubKey];
+    if (encrypted == null) {
+      return null;
+    }
+    return FlutterAesEcbPkcs5.decryptString(
+        encrypted, Fmt.passwordToEncryptKey(password));
+  }
+
+  @action
+  Future<bool> checkMnemonicExist(String pubKey) async {
+    Map stored = await LocalStorage.getMnemonic();
+    String encrypted = stored[pubKey];
+    return encrypted != null;
+  }
+
+  @action
+  Future<void> updateMnemonic(
+      String pubKey, String passwordOld, String passwordNew) async {
+    Map stored = await LocalStorage.getMnemonic();
+    if (stored[pubKey] == null) {
+      return;
+    }
+    String mnemonic = await FlutterAesEcbPkcs5.decryptString(
+        stored[pubKey], Fmt.passwordToEncryptKey(passwordOld));
+    encryptMnemonic(pubKey, mnemonic, passwordNew);
   }
 
   @action

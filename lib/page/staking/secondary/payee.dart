@@ -69,7 +69,7 @@ class _SetPayeeState extends State<SetPayee> {
                   ListTile(
                     title: Text(dic['bond.reward']),
                     subtitle: Text(rewardToOptions[_rewardTo]),
-                    trailing: Icon(Icons.arrow_forward_ios),
+                    trailing: Icon(Icons.arrow_forward_ios, size: 18),
                     onTap: () {
                       showCupertinoModalPopup(
                         context: context,

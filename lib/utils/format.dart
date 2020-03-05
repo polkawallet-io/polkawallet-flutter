@@ -1,9 +1,19 @@
+import 'dart:convert';
 import 'dart:math';
 
+import 'package:convert/convert.dart';
 import 'package:intl/intl.dart';
 import 'package:polka_wallet/store/staking.dart';
 
 class Fmt {
+  static String passwordToEncryptKey(String password) {
+    String passHex = hex.encode(utf8.encode(password));
+    if (passHex.length > 32) {
+      return passHex.substring(0, 32);
+    }
+    return passHex.padRight(32, '0');
+  }
+
   static String address(String addr, {int pad = 8}) {
     if (addr == null || addr.length == 0) {
       return addr;

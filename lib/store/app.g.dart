@@ -94,6 +94,23 @@ mixin _$AppStore on _AppStore, Store {
     }, _$settingsAtom, name: '${_$settingsAtom.name}_set');
   }
 
+  final _$isReadyAtom = Atom(name: '_AppStore.isReady');
+
+  @override
+  bool get isReady {
+    _$isReadyAtom.context.enforceReadPolicy(_$isReadyAtom);
+    _$isReadyAtom.reportObserved();
+    return super.isReady;
+  }
+
+  @override
+  set isReady(bool value) {
+    _$isReadyAtom.context.conditionallyRunInAction(() {
+      super.isReady = value;
+      _$isReadyAtom.reportChanged();
+    }, _$isReadyAtom, name: '${_$isReadyAtom.name}_set');
+  }
+
   final _$_AppStoreActionController = ActionController(name: '_AppStore');
 
   @override

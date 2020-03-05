@@ -132,7 +132,7 @@ class _CouncilVote extends State<CouncilVote> {
                       ),
                       ListTile(
                         title: Text(govDic['candidate']),
-                        trailing: Icon(Icons.arrow_forward_ios),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 18),
                         onTap: () {
                           _handleCandidateSelect();
                         },

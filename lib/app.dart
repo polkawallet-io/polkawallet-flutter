@@ -6,6 +6,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/page/governance/sencondary/candidateDetail.dart';
 import 'package:polka_wallet/page/governance/sencondary/candidateList.dart';
 import 'package:polka_wallet/page/governance/sencondary/councilVote.dart';
+import 'package:polka_wallet/page/profile/secondary/account/exportAccount.dart';
 import 'package:polka_wallet/page/profile/secondary/settings/ss58Prefix.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
@@ -154,6 +155,7 @@ class _WalletAppState extends State<WalletApp> {
         '/profile/name': (_) => ChangeName(_appStore.account),
         '/profile/password': (_) => ChangePassword(_appStore.account),
         '/profile/settings': (_) => Settings(_appStore.settings, _changeLang),
+        '/profile/export': (_) => ExportAccount(_appStore.account),
         '/profile/endpoint': (_) => RemoteNode(_appStore.settings),
         '/profile/ss58': (_) => SS58Prefix(_appStore.settings),
         '/profile/about': (_) => About(),

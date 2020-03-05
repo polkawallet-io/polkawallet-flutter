@@ -195,6 +195,11 @@ class _TxConfirmState extends State<TxConfirm> {
                           icon: Icon(Icons.lock),
                           hintText: dic['unlock'],
                           labelText: dic['unlock'],
+                          suffixIcon: IconButton(
+                            iconSize: 18,
+                            icon: Icon(CupertinoIcons.clear_thick_circled),
+                            onPressed: () => _passCtrl.clear(),
+                          ),
                         ),
                         obscureText: true,
                         controller: _passCtrl,

@@ -149,6 +149,23 @@ mixin _$AccountStore on _AccountStore, Store {
     }, _$pubKeyAddressMapAtom, name: '${_$pubKeyAddressMapAtom.name}_set');
   }
 
+  final _$accountIconsMapAtom = Atom(name: '_AccountStore.accountIconsMap');
+
+  @override
+  ObservableMap<String, String> get accountIconsMap {
+    _$accountIconsMapAtom.context.enforceReadPolicy(_$accountIconsMapAtom);
+    _$accountIconsMapAtom.reportObserved();
+    return super.accountIconsMap;
+  }
+
+  @override
+  set accountIconsMap(ObservableMap<String, String> value) {
+    _$accountIconsMapAtom.context.conditionallyRunInAction(() {
+      super.accountIconsMap = value;
+      _$accountIconsMapAtom.reportChanged();
+    }, _$accountIconsMapAtom, name: '${_$accountIconsMapAtom.name}_set');
+  }
+
   final _$updateAccountAsyncAction = AsyncAction('updateAccount');
 
   @override
@@ -159,8 +176,8 @@ mixin _$AccountStore on _AccountStore, Store {
   final _$addAccountAsyncAction = AsyncAction('addAccount');
 
   @override
-  Future<void> addAccount(Map<String, dynamic> acc) {
-    return _$addAccountAsyncAction.run(() => super.addAccount(acc));
+  Future<void> addAccount(Map<String, dynamic> acc, String password) {
+    return _$addAccountAsyncAction.run(() => super.addAccount(acc, password));
   }
 
   final _$removeAccountAsyncAction = AsyncAction('removeAccount');
@@ -175,6 +192,32 @@ mixin _$AccountStore on _AccountStore, Store {
   @override
   Future<void> loadAccount() {
     return _$loadAccountAsyncAction.run(() => super.loadAccount());
+  }
+
+  final _$encryptMnemonicAsyncAction = AsyncAction('encryptMnemonic');
+
+  @override
+  Future<void> encryptMnemonic(
+      String pubKey, String mnemonic, String password) {
+    return _$encryptMnemonicAsyncAction
+        .run(() => super.encryptMnemonic(pubKey, mnemonic, password));
+  }
+
+  final _$decryptMnemonicAsyncAction = AsyncAction('decryptMnemonic');
+
+  @override
+  Future<String> decryptMnemonic(String pubKey, String password) {
+    return _$decryptMnemonicAsyncAction
+        .run(() => super.decryptMnemonic(pubKey, password));
+  }
+
+  final _$updateMnemonicAsyncAction = AsyncAction('updateMnemonic');
+
+  @override
+  Future<void> updateMnemonic(
+      String pubKey, String passwordOld, String passwordNew) {
+    return _$updateMnemonicAsyncAction
+        .run(() => super.updateMnemonic(pubKey, passwordOld, passwordNew));
   }
 
   final _$_AccountStoreActionController =
@@ -235,6 +278,16 @@ mixin _$AccountStore on _AccountStore, Store {
     final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
       return super.setPubKeyAddressMap(list);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setAccountIconsMap(List list) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    try {
+      return super.setAccountIconsMap(list);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }

@@ -209,6 +209,16 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
       _$_GovernanceStoreActionController.endAction(_$actionInfo);
     }
   }
+
+  @override
+  void clearSate() {
+    final _$actionInfo = _$_GovernanceStoreActionController.startAction();
+    try {
+      return super.clearSate();
+    } finally {
+      _$_GovernanceStoreActionController.endAction(_$actionInfo);
+    }
+  }
 }
 
 mixin _$CouncilInfo on _CouncilInfo, Store {}

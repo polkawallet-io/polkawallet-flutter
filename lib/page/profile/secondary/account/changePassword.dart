@@ -50,6 +50,8 @@ class _ChangePassword extends State<ChangePassword> {
       } else {
         acc['name'] = store.currentAccount.name;
         store.updateAccount(acc);
+        store.updateMnemonic(
+            store.currentAccount.pubKey, _passOldCtrl.text, _passCtrl.text);
         showCupertinoDialog(
           context: context,
           builder: (BuildContext context) {
@@ -93,6 +95,11 @@ class _ChangePassword extends State<ChangePassword> {
                         icon: Icon(Icons.lock),
                         hintText: dic['pass.old'],
                         labelText: dic['pass.old'],
+                        suffixIcon: IconButton(
+                          iconSize: 18,
+                          icon: Icon(CupertinoIcons.clear_thick_circled),
+                          onPressed: () => _passOldCtrl.clear(),
+                        ),
                       ),
                       controller: _passOldCtrl,
                       validator: (v) {

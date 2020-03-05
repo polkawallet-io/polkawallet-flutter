@@ -58,6 +58,11 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
             decoration: InputDecoration(
               hintText: dic['create.password'],
               labelText: dic['create.password'],
+              suffixIcon: IconButton(
+                iconSize: 18,
+                icon: Icon(CupertinoIcons.clear_thick_circled),
+                onPressed: () => _passCtrl.clear(),
+              ),
             ),
             controller: _passCtrl,
             obscureText: true,
@@ -110,7 +115,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                 ListTile(
                   title: Text(I18n.of(context).account['import.type']),
                   subtitle: Text(_keyOptions[_keySelection]),
-                  trailing: Icon(Icons.arrow_forward_ios),
+                  trailing: Icon(Icons.arrow_forward_ios, size: 18),
                   onTap: () {
                     showCupertinoModalPopup(
                       context: context,
@@ -154,7 +159,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                     : ListTile(
                         title: Text(I18n.of(context).account['import.encrypt']),
                         subtitle: Text(_typeOptions[_typeSelection]),
-                        trailing: Icon(Icons.arrow_forward_ios),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 18),
                         onTap: () {
                           showCupertinoModalPopup(
                             context: context,
