@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
+import 'package:polka_wallet/page/profile/secondary/settings/ss58Prefix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
@@ -8,6 +10,8 @@ class LocalStorage {
   static const contactsKey = 'wallet_contact_list';
   static const localeKey = 'wallet_locale';
   static const endpointKey = 'wallet_endpoint';
+  static const customSS58Key = 'wallet_custom_ss58';
+  static const mnemonicKey = 'wallet_mnemonic';
 
   static final storage = new _LocalStorage();
 
@@ -15,16 +19,16 @@ class LocalStorage {
     return storage.addItemToList(accountsKey, acc);
   }
 
-  static Future<void> removeAccount(String address) async {
-    return storage.removeItemFromList(accountsKey, 'address', address);
+  static Future<void> removeAccount(String pubKey) async {
+    return storage.removeItemFromList(accountsKey, 'pubKey', pubKey);
   }
 
   static Future<List<Map<String, dynamic>>> getAccountList() async {
     return storage.getList(accountsKey);
   }
 
-  static Future<void> setCurrentAccount(String address) async {
-    return storage.setKV(currentAccountKey, address);
+  static Future<void> setCurrentAccount(String pubKey) async {
+    return storage.setKV(currentAccountKey, pubKey);
   }
 
   static Future<String> getCurrentAccount() async {
@@ -65,11 +69,31 @@ class LocalStorage {
     if (value != null) {
       return jsonDecode(value);
     }
-    return {
-      'info': 'kusama',
-      'text': 'Kusama (Polkadot Canary, hosted by Parity)',
-      'value': 'wss://kusama-rpc.polkadot.io/',
-    };
+    return default_node;
+  }
+
+  static Future<void> setCustomSS58(Map<String, dynamic> value) async {
+    return storage.setKV(customSS58Key, jsonEncode(value));
+  }
+
+  static Future<Map<String, dynamic>> getCustomSS58() async {
+    String value = await storage.getKV(customSS58Key);
+    if (value != null) {
+      return jsonDecode(value);
+    }
+    return default_ss58_prefix;
+  }
+
+  static Future<void> setMnemonic(Map value) async {
+    return storage.setKV(mnemonicKey, jsonEncode(value));
+  }
+
+  static Future<Map> getMnemonic() async {
+    String value = await storage.getKV(mnemonicKey);
+    if (value != null) {
+      return jsonDecode(value);
+    }
+    return {};
   }
 }
 

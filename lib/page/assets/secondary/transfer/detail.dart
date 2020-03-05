@@ -19,7 +19,7 @@ class TransferDetail extends StatelessWidget {
     final TransferData tx = store.assets.txDetail;
     final BlockData block = store.assets.blockMap[tx.block];
 
-    final String txType = tx.sender == store.account.currentAccount.address
+    final String txType = tx.sender == store.account.currentAddress
         ? dic['transfer']
         : dic['receive'];
 

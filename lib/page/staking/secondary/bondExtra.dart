@@ -3,8 +3,10 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -32,8 +34,11 @@ class _BondExtraState extends State<BondExtra> {
 
     int balance = Fmt.balanceInt(store.assets.balance);
     int bonded = store.staking.ledger['stakingLedger']['active'];
-    int available = balance - bonded;
-    String address = store.account.currentAccount.address;
+    int unlocking = 0;
+    List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
+    unlockingList.forEach((i) => unlocking += i['value']);
+    int available = balance - bonded - unlocking;
+    String address = store.account.currentAddress;
 
     return Scaffold(
       appBar: AppBar(
@@ -90,7 +95,7 @@ class _BondExtraState extends State<BondExtra> {
                             return assetDic['amount.error'];
                           }
                           if (double.parse(v.trim()) >=
-                              double.parse(Fmt.token(available)) - 0.02) {
+                              available / pow(10, decimals) - 0.02) {
                             return assetDic['amount.low'];
                           }
                           return null;
@@ -101,43 +106,39 @@ class _BondExtraState extends State<BondExtra> {
                 ),
               ),
             ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    child: RaisedButton(
-                      color: Colors.pink,
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        I18n.of(context).home['submit.tx'],
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          var args = {
-                            "title": dic['action.bondExtra'],
-                            "detail": jsonEncode({
-                              "amount": _amountCtrl.text.trim(),
-                            }),
-                            "params": {
-                              "module": 'staking',
-                              "call": 'bondExtra',
-                              "amount": (double.parse(_amountCtrl.text.trim()) *
-                                      pow(10, decimals))
-                                  .toInt(),
-                            },
-                            'redirect': '/'
-                          };
-                          Navigator.of(context)
-                              .pushNamed('/staking/confirm', arguments: args);
-                        }
+            Padding(
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+              child: RoundedButton(
+                text: I18n.of(context).home['submit.tx'],
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    var args = {
+                      "title": dic['action.bondExtra'],
+                      "txInfo": {
+                        "module": 'staking',
+                        "call": 'bondExtra',
                       },
-                    ),
-                  ),
-                ),
-              ],
-            )
+                      "detail": jsonEncode({
+                        "amount": _amountCtrl.text.trim(),
+                      }),
+                      "params": [
+                        // "amount"
+                        (double.parse(_amountCtrl.text.trim()) *
+                                pow(10, decimals))
+                            .toInt(),
+                      ],
+                      'onFinish': (BuildContext txPageContext) {
+                        Navigator.popUntil(
+                            txPageContext, ModalRoute.withName('/'));
+                        globalBondingRefreshKey.currentState.show();
+                      }
+                    };
+                    Navigator.of(context)
+                        .pushNamed('/staking/confirm', arguments: args);
+                  }
+                },
+              ),
+            ),
           ],
         );
       }),

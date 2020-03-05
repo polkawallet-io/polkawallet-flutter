@@ -3,7 +3,12 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -18,22 +23,106 @@ class _NominateState extends State<Nominate> {
   _NominateState(this.store);
   final AppStore store;
 
-  List<String> _selected = List<String>();
-  List<String> _notSelected = List<String>();
+  final List<ValidatorData> _selected = List<ValidatorData>();
+  final List<ValidatorData> _notSelected = List<ValidatorData>();
   Map<String, bool> _selectedMap = Map<String, bool>();
 
+  String _filter = '';
+  int _sort = 0;
+
+  void _chill() {
+    var dic = I18n.of(context).staking;
+    var args = {
+      "title": dic['action.chill'],
+      "txInfo": {
+        "module": 'staking',
+        "call": 'chill',
+      },
+      "detail": 'chill',
+      "params": [],
+      'onFinish': (BuildContext txPageContext) {
+        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        globalNominatingRefreshKey.currentState.show();
+      }
+    };
+    Navigator.of(context).pushNamed('/staking/confirm', arguments: args);
+  }
+
+  void _setNominee() {
+    var dic = I18n.of(context).staking;
+    List<String> targets = _selected.map((i) => i.accountId).toList();
+
+    var args = {
+      "title": dic['action.nominate'],
+      "txInfo": {
+        "module": 'staking',
+        "call": 'nominate',
+      },
+      "detail": jsonEncode({
+        "targets": targets.join(', '),
+      }),
+      "params": [
+        // "targets"
+        targets,
+      ],
+      'onFinish': (BuildContext txPageContext) {
+        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        globalNominatingRefreshKey.currentState.show();
+      }
+    };
+    Navigator.of(context).pushNamed('/staking/confirm', arguments: args);
+  }
+
+  Widget _buildListItem(BuildContext context, int i, List<ValidatorData> list) {
+    Map accInfo = store.account.accountIndexMap[list[i].accountId];
+
+    return ListTile(
+      leading: AddressIcon(address: list[i].accountId),
+      title: Text(accInfo != null
+          ? accInfo['identity']['display'] != null
+              ? accInfo['identity']['display'].toString().toUpperCase()
+              : accInfo['accountIndex']
+          : Fmt.address(list[i].accountId, pad: 6)),
+      subtitle: Text(
+          '${I18n.of(context).staking['total']}: ${Fmt.token(list[i].total)}'),
+      trailing: CupertinoSwitch(
+        value: _selectedMap[list[i].accountId],
+        onChanged: (bool value) {
+          setState(() {
+            _selectedMap[list[i].accountId] = value;
+          });
+          Timer(Duration(milliseconds: 300), () {
+            setState(() {
+              if (value) {
+                _selected.add(list[i]);
+                _notSelected
+                    .removeWhere((item) => item.accountId == list[i].accountId);
+              } else {
+                _selected
+                    .removeWhere((item) => item.accountId == list[i].accountId);
+                _notSelected.add(list[i]);
+              }
+            });
+          });
+        },
+      ),
+      onTap: () => Navigator.of(context)
+          .pushNamed('/staking/validator', arguments: list[i]),
+    );
+  }
+
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
 
     setState(() {
       store.staking.validatorsInfo.forEach((i) {
-        _notSelected.add(i.accountId);
+        _notSelected.add(i);
         _selectedMap[i.accountId] = false;
       });
       store.staking.nominatingList.forEach((i) {
-        _selected.add(i.accountId);
-        _notSelected.remove(i.accountId);
+        _selected.add(i);
+        _notSelected.removeWhere((item) => item.accountId == i.accountId);
         _selectedMap[i.accountId] = true;
       });
     });
@@ -43,88 +132,64 @@ class _NominateState extends State<Nominate> {
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
 
-    var list = [];
+    List<ValidatorData> list = [];
     list.addAll(_selected);
-    list.addAll(_notSelected);
-    List<Widget> ls = list.map((i) {
-      // don't route to validator detail page here,
-      // it will reset _selected list state.
-      return ListTile(
-        leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
-        title: Text(Fmt.address(i)),
-        trailing: CupertinoSwitch(
-          value: _selectedMap[i],
-          onChanged: (bool value) {
-            setState(() {
-              _selectedMap[i] = value;
-            });
-            Timer(Duration(milliseconds: 500), () {
-              setState(() {
-                if (value) {
-                  _selected.add(i);
-                  _notSelected.remove(i);
-                } else {
-                  _selected.remove(i);
-                  _notSelected.add(i);
-                }
-              });
-            });
-          },
-        ),
-      );
-    }).toList();
+    // filter the _notSelected list
+    List<ValidatorData> retained = List.of(_notSelected);
+    retained = Fmt.filterValidatorList(
+        retained, _filter, store.account.accountIndexMap);
+    // and sort it
+    retained.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
+    list.addAll(retained);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(dic['action.nominate']),
         centerTitle: true,
       ),
       body: Builder(builder: (BuildContext context) {
-        return Column(
-          children: <Widget>[
-            Expanded(
-              child: ListView(
-                children: ls,
-              ),
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    child: RaisedButton(
-                      color: Colors.pink,
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        I18n.of(context).home['submit.tx'],
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: _selected.length == 0
-                          ? null
-                          : () {
-                              List<String> targets = List<String>();
-                              targets.addAll(_selected);
-                              var args = {
-                                "title": dic['action.nominate'],
-                                "detail": jsonEncode({
-                                  "targets": _selected.join(','),
-                                }),
-                                "params": {
-                                  "module": 'staking',
-                                  "call": 'nominate',
-                                  "targets": targets,
-                                },
-                                'redirect': '/'
-                              };
-                              Navigator.of(context).pushNamed(
-                                  '/staking/confirm',
-                                  arguments: args);
-                            },
-                    ),
-                  ),
+        return Container(
+          color: Theme.of(context).cardColor,
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 8, bottom: 8),
+                child: ValidatorListFilter(
+                  onFilterChange: (v) {
+                    if (_filter != v) {
+                      setState(() {
+                        _filter = v;
+                      });
+                    }
+                  },
+                  onSortChange: (v) {
+                    if (_sort != v) {
+                      setState(() {
+                        _sort = v;
+                      });
+                    }
+                  },
                 ),
-              ],
-            )
-          ],
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: list.length,
+                  itemBuilder: (BuildContext context, int i) {
+                    return _buildListItem(context, i, list);
+                  },
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+                child: RoundedButton(
+                  text: I18n.of(context).home['submit.tx'],
+                  onPressed: store.staking.validatorsInfo.length == 0
+                      ? null
+                      : _selected.length == 0 ? _chill : _setNominee,
+                ),
+              ),
+            ],
+          ),
         );
       }),
     );

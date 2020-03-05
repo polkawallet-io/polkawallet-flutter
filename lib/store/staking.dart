@@ -41,6 +41,14 @@ abstract class _StakingStore with Store {
   ObservableList<Map<String, dynamic>> txs =
       ObservableList<Map<String, dynamic>>();
 
+  @observable
+  ObservableMap<String, dynamic> rewardsChartDataCache =
+      ObservableMap<String, dynamic>();
+
+  @observable
+  ObservableMap<String, dynamic> stakesChartDataCache =
+      ObservableMap<String, dynamic>();
+
   @computed
   ObservableList<String> get nextUps {
     if (overview['intentions'] == null) {
@@ -56,7 +64,7 @@ abstract class _StakingStore with Store {
   @computed
   ObservableList<ValidatorData> get nominatingList {
     return ObservableList.of(validatorsInfo.where((i) {
-      String address = account.currentAccount.address;
+      String address = account.currentAddress;
       return i.nominators
               .indexWhere((nominator) => nominator['who'] == address) >=
           0;
@@ -64,11 +72,13 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void setValidatorsInfo() {
+  void setValidatorsInfo(Map<String, dynamic> data) {
     int totalStaked = 0;
     var nominators = {};
     List<ValidatorData> ls = List<ValidatorData>();
-    overview['elected']['info'].forEach((i) {
+
+    data['info'].forEach((i) {
+      i['points'] = overview['eraPoints']['individual'][i['accountId']];
       ValidatorData data = ValidatorData.fromJson(i);
       totalStaked += data.total;
       data.nominators.forEach((n) {
@@ -96,9 +106,6 @@ abstract class _StakingStore with Store {
   @action
   void setOverview(Map<String, dynamic> data) {
     data.keys.forEach((key) => overview[key] = data[key]);
-    if (data.keys.toList().indexOf('elected') >= 0) {
-      setValidatorsInfo();
-    }
   }
 
   @action
@@ -119,7 +126,17 @@ abstract class _StakingStore with Store {
   @action
   void clearSate() {
     txs.clear();
-    overview = ObservableMap<String, dynamic>();
+    ledger = ObservableMap<String, dynamic>();
+  }
+
+  @action
+  void setRewardsChartData(String validatorId, Map data) {
+    rewardsChartDataCache[validatorId] = data;
+  }
+
+  @action
+  void setStakesChartData(String validatorId, Map data) {
+    stakesChartDataCache[validatorId] = data;
   }
 }
 
@@ -127,17 +144,19 @@ class ValidatorData extends _ValidatorData with _$ValidatorData {
   static ValidatorData fromJson(Map<String, dynamic> json) {
     ValidatorData data = ValidatorData();
     data.accountId = json['accountId'];
-    data.total = int.parse(json['stakers']['total']);
-    if (json['stakers']['own'].runtimeType == String) {
-      data.bondOwn = int.parse(json['stakers']['own']);
+    data.total = int.parse(json['exposure']['total']);
+    var own = json['exposure']['own'];
+    if (own.runtimeType == String) {
+      data.bondOwn = int.parse(own);
     } else {
-      data.bondOwn = json['stakers']['own'];
+      data.bondOwn = own;
     }
     data.bondOther = data.total - data.bondOwn;
+    data.points = json['points'];
     data.commission = NumberFormat('0.00%')
         .format(json['validatorPrefs']['commission'] / pow(10, 9));
     data.nominators =
-        List<Map<String, dynamic>>.from(json['stakers']['others']);
+        List<Map<String, dynamic>>.from(json['exposure']['others']);
     return data;
   }
 }
@@ -154,6 +173,9 @@ abstract class _ValidatorData with Store {
 
   @observable
   int bondOther = 0;
+
+  @observable
+  int points = 0;
 
   @observable
   String commission = '';

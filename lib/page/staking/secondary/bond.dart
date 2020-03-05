@@ -3,8 +3,10 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -33,7 +35,7 @@ class _BondState extends State<Bond> {
     int decimals = store.settings.networkState.tokenDecimals;
 
     String balance = Fmt.balance(store.assets.balance);
-    String address = store.account.currentAccount.address;
+    String address = store.account.currentAddress;
 
     var rewardToOptions = [dic['reward.bond'], dic['reward.stash']];
 
@@ -102,7 +104,7 @@ class _BondState extends State<Bond> {
                     ListTile(
                       title: Text(dic['bond.reward']),
                       subtitle: Text(rewardToOptions[_rewardTo]),
-                      trailing: Icon(Icons.arrow_forward_ios),
+                      trailing: Icon(Icons.arrow_forward_ios, size: 18),
                       onTap: () {
                         showCupertinoModalPopup(
                           context: context,
@@ -117,7 +119,7 @@ class _BondState extends State<Bond> {
                                   initialItem: _rewardTo),
                               children: rewardToOptions
                                   .map((i) => Padding(
-                                      padding: EdgeInsets.all(16),
+                                      padding: EdgeInsets.all(12),
                                       child: Text(i)))
                                   .toList(),
                               onSelectedItemChanged: (v) {
@@ -134,45 +136,44 @@ class _BondState extends State<Bond> {
                 ),
               ),
             ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    child: RaisedButton(
-                      color: Colors.pink,
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        I18n.of(context).home['submit.tx'],
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          var args = {
-                            "title": dic['action.bond'],
-                            "detail": jsonEncode({
-                              "amount": _amountCtrl.text.trim(),
-                              "reward_destination": rewardToOptions[_rewardTo],
-                            }),
-                            "params": {
-                              "module": 'staking',
-                              "call": 'bond',
-                              "amount": (double.parse(_amountCtrl.text.trim()) *
-                                      pow(10, decimals))
-                                  .toInt(),
-                              "to": _rewardTo,
-                            },
-                            'redirect': '/'
-                          };
-                          Navigator.of(context)
-                              .pushNamed('/staking/confirm', arguments: args);
-                        }
+            Padding(
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+              child: RoundedButton(
+                text: I18n.of(context).home['submit.tx'],
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    var args = {
+                      "title": dic['action.bond'],
+                      "txInfo": {
+                        "module": 'staking',
+                        "call": 'bond',
                       },
-                    ),
-                  ),
-                ),
-              ],
-            )
+                      "detail": jsonEncode({
+                        "amount": _amountCtrl.text.trim(),
+                        "reward_destination": rewardToOptions[_rewardTo],
+                      }),
+                      "params": [
+                        // "from":
+                        store.account.currentAddress,
+                        // "amount":
+                        (double.parse(_amountCtrl.text.trim()) *
+                                pow(10, decimals))
+                            .toInt(),
+                        // "to"
+                        _rewardTo,
+                      ],
+                      'onFinish': (BuildContext txPageContext) {
+                        Navigator.popUntil(
+                            txPageContext, ModalRoute.withName('/'));
+                        globalBondingRefreshKey.currentState.show();
+                      }
+                    };
+                    Navigator.of(context)
+                        .pushNamed('/staking/confirm', arguments: args);
+                  }
+                },
+              ),
+            ),
           ],
         );
       }),

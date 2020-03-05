@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/page/assets/secondary/asset/assetChart.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -28,29 +30,30 @@ class _AssetPageState extends State<AssetPage>
   bool _isLastPage = false;
   ScrollController _scrollController;
 
-  Future<void> _updateTxs() async {
-    List res = await store.api.updateTxs(_txsPage);
-    if (res.length < list_page_size) {
+  Future<void> _updateData() async {
+    String address = store.account.currentAddress;
+    webApi.assets.fetchBalance(address);
+    webApi.staking.fetchAccountStaking(address);
+    List res = await webApi.assets.updateTxs(_txsPage);
+    if (res.length < tx_list_page_size) {
       setState(() {
         _isLastPage = true;
       });
     }
   }
 
-  Future<void> _refreshTxs() async {
+  Future<void> _refreshData() async {
     setState(() {
       _txsPage = 1;
       _isLastPage = false;
     });
-    await _updateTxs();
+    await _updateData();
   }
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: 3);
-    _updateTxs();
-    store.api.fetchBalance();
 
     _scrollController = ScrollController();
     _scrollController.addListener(() {
@@ -59,9 +62,15 @@ class _AssetPageState extends State<AssetPage>
         setState(() {
           if (_tabController.index == 0 && !_isLastPage) {
             _txsPage += 1;
-            _updateTxs();
+            _updateData();
           }
         });
+      }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (store.assets.txsView.length == 0) {
+        globalAssetRefreshKey.currentState.show();
       }
     });
   }
@@ -74,7 +83,7 @@ class _AssetPageState extends State<AssetPage>
   }
 
   List<Widget> _buildTxList() {
-    if (!store.assets.loading && store.assets.txsView.length == 0) {
+    if (!store.assets.isTxsLoading && store.assets.txsView.length == 0) {
       return [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -82,7 +91,7 @@ class _AssetPageState extends State<AssetPage>
             Padding(
               padding: EdgeInsets.all(24),
               child: Text(
-                'No Data',
+                I18n.of(context).home['data.empty'],
                 style: TextStyle(fontSize: 18, color: Colors.black38),
               ),
             )
@@ -115,7 +124,7 @@ class _AssetPageState extends State<AssetPage>
                     '${Fmt.token(i.value, decimals: decimals)} $symbol',
                     style: Theme.of(context).textTheme.display4,
                   )),
-                  i.sender == store.account.currentAccount.address
+                  i.sender == store.account.currentAddress
                       ? Image.asset('assets/images/assets/assets_up.png')
                       : Image.asset('assets/images/assets/assets_down.png')
                 ],
@@ -130,8 +139,20 @@ class _AssetPageState extends State<AssetPage>
   }
 
   List<Widget> _buildListView() {
-    final Map<String, String> dic = I18n.of(context).assets;
-    String balance = Fmt.balance(store.assets.balance);
+    final dic = I18n.of(context).assets;
+
+    int balance = Fmt.balanceInt(store.assets.balance);
+    int bonded = 0;
+    int unlocking = 0;
+    bool hasData = store.staking.ledger['stakingLedger'] != null;
+    if (hasData) {
+      List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
+      unlockingList.forEach((i) => unlocking += i['value']);
+      bonded = store.staking.ledger['stakingLedger']['active'];
+    }
+
+    int locked = bonded + unlocking;
+    int available = balance - locked;
 
     final List<Tab> _myTabs = <Tab>[
       Tab(text: dic['all']),
@@ -139,12 +160,21 @@ class _AssetPageState extends State<AssetPage>
       Tab(text: dic['out']),
     ];
 
+    // TODO: chart data is generated from transfer history
+    // need to use other data source
     List<Map<String, dynamic>> balanceHistory = store.assets.balanceHistory;
 
     List<Widget> list = <Widget>[
       Padding(
         padding: EdgeInsets.all(16),
-        child: Text('${dic['balance']}: $balance'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('${dic['balance']}: ${Fmt.token(balance)}'),
+            Text('${dic['locked']}: ${Fmt.token(locked)}'),
+            Text('${dic['available']}: ${Fmt.token(available)}'),
+          ],
+        ),
       ),
       Container(
         height: 240,
@@ -161,7 +191,7 @@ class _AssetPageState extends State<AssetPage>
       ),
     ];
     list.addAll(_buildTxList());
-    if (store.assets.loading) {
+    if (store.assets.isTxsLoading) {
       list.add(
         Padding(
             padding: EdgeInsets.all(8), child: CupertinoActivityIndicator()),
@@ -200,7 +230,8 @@ class _AssetPageState extends State<AssetPage>
                   child: Container(
                     color: Colors.white,
                     child: RefreshIndicator(
-                      onRefresh: _refreshTxs,
+                      key: globalAssetRefreshKey,
+                      onRefresh: _refreshData,
                       child: ListView(
                         controller: _scrollController,
                         children: _buildListView(),

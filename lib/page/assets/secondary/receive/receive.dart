@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -12,6 +14,8 @@ class Receive extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String codeAddress =
+        'substrate:${store.currentAddress}:${store.currentAccount.pubKey}:${store.currentAccount.name}';
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
@@ -39,8 +43,9 @@ class Receive extends StatelessWidget {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.all(16),
-                      child:
-                          Image.asset('assets/images/assets/Assets_nav_0.png'),
+                      child: AddressIcon(
+                        address: store.currentAccount.address,
+                      ),
                     ),
                     Text(
                       store.currentAccount.name,
@@ -54,28 +59,26 @@ class Receive extends StatelessWidget {
                       ),
                       margin: EdgeInsets.fromLTRB(48, 24, 48, 24),
                       child: QrImage(
-                        data: store.currentAccount.address,
+                        data: codeAddress,
                         size: 200,
-//                        embeddedImage:
-//                            AssetImage('assets/images/public/About_logo.png'),
-//                        embeddedImageStyle:
-//                            QrEmbeddedImageStyle(size: Size(40, 40)),
+                        embeddedImage:
+                            AssetImage('assets/images/public/app.png'),
+                        embeddedImageStyle:
+                            QrEmbeddedImageStyle(size: Size(40, 40)),
                       ),
                     ),
                     Container(
                       width: 160,
-                      child: Text(store.currentAccount.address),
+                      child: Text(store.currentAddress),
                     ),
-                    Padding(
+                    Container(
+                      width: MediaQuery.of(context).size.width / 2,
                       padding: EdgeInsets.only(top: 16, bottom: 32),
-                      child: RaisedButton(
+                      child: RoundedButton(
                         color: Colors.pinkAccent,
-                        child: Text(
-                          I18n.of(context).assets['copy'],
-                          style: Theme.of(context).textTheme.button,
-                        ),
-                        onPressed: () => UI.copyAndNotify(
-                            context, store.currentAccount.address),
+                        text: I18n.of(context).assets['copy'],
+                        onPressed: () =>
+                            UI.copyAndNotify(context, store.currentAddress),
                       ),
                     )
                   ],

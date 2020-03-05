@@ -1,24 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/service/api.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ChangePassword extends StatefulWidget {
-  ChangePassword(this.api, this.store);
+  ChangePassword(this.store);
 
-  final Api api;
   final AccountStore store;
 
   @override
-  _ChangePassword createState() => _ChangePassword(api, store);
+  _ChangePassword createState() => _ChangePassword(store);
 }
 
 class _ChangePassword extends State<ChangePassword> {
-  _ChangePassword(this.api, this.store);
+  _ChangePassword(this.store);
 
-  final Api api;
+  final Api api = webApi;
   final AccountStore store;
 
   final _formKey = GlobalKey<FormState>();
@@ -30,7 +30,7 @@ class _ChangePassword extends State<ChangePassword> {
     if (_formKey.currentState.validate()) {
       var dic = I18n.of(context).profile;
       var acc = await api.evalJavascript(
-          'account.changePassword("${store.currentAccount.address}", "${_passOldCtrl.text}", "${_passCtrl.text}")');
+          'account.changePassword("${store.currentAccount.pubKey}", "${_passOldCtrl.text}", "${_passCtrl.text}")');
       if (acc == null) {
         showCupertinoDialog(
           context: context,
@@ -50,6 +50,8 @@ class _ChangePassword extends State<ChangePassword> {
       } else {
         acc['name'] = store.currentAccount.name;
         store.updateAccount(acc);
+        store.updateMnemonic(
+            store.currentAccount.pubKey, _passOldCtrl.text, _passCtrl.text);
         showCupertinoDialog(
           context: context,
           builder: (BuildContext context) {
@@ -93,6 +95,17 @@ class _ChangePassword extends State<ChangePassword> {
                         icon: Icon(Icons.lock),
                         hintText: dic['pass.old'],
                         labelText: dic['pass.old'],
+                        suffixIcon: IconButton(
+                          iconSize: 18,
+                          icon: Icon(
+                            CupertinoIcons.clear_thick_circled,
+                            color: Theme.of(context).unselectedWidgetColor,
+                          ),
+                          onPressed: () {
+                            WidgetsBinding.instance.addPostFrameCallback(
+                                (_) => _passOldCtrl.clear());
+                          },
+                        ),
                       ),
                       controller: _passOldCtrl,
                       validator: (v) {
@@ -141,23 +154,10 @@ class _ChangePassword extends State<ChangePassword> {
               ),
             ),
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(24, 8, 24, 24),
-                  child: RaisedButton(
-                      padding: EdgeInsets.all(16),
-                      color: Colors.pink,
-                      child: Text(
-                        dic['contact.save'],
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: _onSave),
-                ),
-              ),
-            ],
-          )
+          Container(
+            margin: EdgeInsets.fromLTRB(24, 8, 24, 24),
+            child: RoundedButton(text: dic['contact.save'], onPressed: _onSave),
+          ),
         ],
       ),
     );

@@ -1,7 +1,7 @@
 const Map<String, String> enHome = {
   'assets': 'Assets',
   'staking': 'Staking',
-  'democracy': 'Democracy',
+  'governance': 'Governance',
   'profile': 'Profile',
   'account': 'Account',
   'menu': 'Menu',
@@ -22,12 +22,14 @@ const Map<String, String> enHome = {
   'edit': 'Edit',
   'delete': 'Delete',
   'detail': 'Detail',
+  'notify.submitted': 'Transaction Finalized',
+  'data.empty': 'No Data',
 };
 
 const Map<String, String> zhHome = {
   'assets': '资产',
   'staking': '抵押',
-  'democracy': '民主',
+  'governance': '治理',
   'profile': '设置',
   'account': '账户',
   'menu': '菜单',
@@ -45,4 +47,6 @@ const Map<String, String> zhHome = {
   'edit': '编辑',
   'delete': '删除',
   'detail': '详情',
+  'notify.finish': '交易发送成功',
+  'data.empty': '暂无数据',
 };

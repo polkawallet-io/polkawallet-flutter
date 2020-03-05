@@ -2,23 +2,25 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ImportAccountForm extends StatefulWidget {
-  const ImportAccountForm(this.setNewAccountMnemonic, this.onSubmit);
+  const ImportAccountForm(this.accountStore, this.onSubmit);
 
-  final Function setNewAccountMnemonic;
+  final AccountStore accountStore;
   final Function onSubmit;
 
   @override
   _ImportAccountFormState createState() =>
-      _ImportAccountFormState(setNewAccountMnemonic, onSubmit);
+      _ImportAccountFormState(accountStore, onSubmit);
 }
 
 class _ImportAccountFormState extends State<ImportAccountForm> {
-  _ImportAccountFormState(this.setNewAccountMnemonic, this.onSubmit);
+  _ImportAccountFormState(this.accountStore, this.onSubmit);
 
-  final Function setNewAccountMnemonic;
+  final AccountStore accountStore;
   final Function onSubmit;
 
   final List<String> _keyOptions = ['Mnemonic', 'Raw Seed', 'Keystore'];
@@ -30,6 +32,54 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _keyCtrl = new TextEditingController();
+  final TextEditingController _nameCtrl = new TextEditingController();
+  final TextEditingController _passCtrl = new TextEditingController();
+
+  Widget _buildNameAndPassInput() {
+    final Map<String, String> dic = I18n.of(context).account;
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(left: 16, right: 16),
+          child: TextFormField(
+            decoration: InputDecoration(
+              hintText: dic['create.name'],
+              labelText: dic['create.name'],
+            ),
+            controller: _nameCtrl,
+            validator: (v) {
+              return v.trim().length > 0 ? null : dic['create.name.error'];
+            },
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 16, right: 16),
+          child: TextFormField(
+            decoration: InputDecoration(
+              hintText: dic['create.password'],
+              labelText: dic['create.password'],
+              suffixIcon: IconButton(
+                iconSize: 18,
+                icon: Icon(
+                  CupertinoIcons.clear_thick_circled,
+                  color: Theme.of(context).unselectedWidgetColor,
+                ),
+                onPressed: () {
+                  WidgetsBinding.instance
+                      .addPostFrameCallback((_) => _passCtrl.clear());
+                },
+              ),
+            ),
+            controller: _passCtrl,
+            obscureText: true,
+            validator: (v) {
+              return v.trim().length > 0 ? null : dic['create.password.error'];
+            },
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,57 +111,17 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
           : '${dic['import.invalid']} ${_keyOptions[_keySelection]}';
     }
 
-    return Form(
-      key: _formKey,
-      child: ListView(
-        children: <Widget>[
-          ListTile(
-            title: Text(I18n.of(context).account['import.type']),
-            subtitle: Text(_keyOptions[_keySelection]),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              showCupertinoModalPopup(
-                context: context,
-                builder: (_) => Container(
-                  height: MediaQuery.of(context).copyWith().size.height / 3,
-                  child: CupertinoPicker(
-                    backgroundColor: Colors.white,
-                    itemExtent: 56,
-                    scrollController:
-                        FixedExtentScrollController(initialItem: _keySelection),
-                    children: _keyOptions
-                        .map((i) => Padding(
-                            padding: EdgeInsets.all(16), child: Text(i)))
-                        .toList(),
-                    onSelectedItemChanged: (v) {
-                      setState(() {
-                        _keyCtrl.value = TextEditingValue(text: '');
-                        _keySelection = v;
-                      });
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: TextFormField(
-              decoration: InputDecoration(
-                hintText: _keyOptions[_keySelection],
-                labelText: _keyOptions[_keySelection],
-              ),
-              controller: _keyCtrl,
-              maxLines: 3,
-              validator: validateInput,
-            ),
-          ),
-          _keySelection == 2
-              ? Container()
-              : ListTile(
-                  title: Text(I18n.of(context).account['import.encrypt']),
-                  subtitle: Text(_typeOptions[_typeSelection]),
-                  trailing: Icon(Icons.arrow_forward_ios),
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: <Widget>[
+                ListTile(
+                  title: Text(I18n.of(context).account['import.type']),
+                  subtitle: Text(_keyOptions[_keySelection]),
+                  trailing: Icon(Icons.arrow_forward_ios, size: 18),
                   onTap: () {
                     showCupertinoModalPopup(
                       context: context,
@@ -122,14 +132,15 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                           backgroundColor: Colors.white,
                           itemExtent: 56,
                           scrollController: FixedExtentScrollController(
-                              initialItem: _typeSelection),
-                          children: _typeOptions
+                              initialItem: _keySelection),
+                          children: _keyOptions
                               .map((i) => Padding(
                                   padding: EdgeInsets.all(16), child: Text(i)))
                               .toList(),
                           onSelectedItemChanged: (v) {
                             setState(() {
-                              _typeSelection = v;
+                              _keyCtrl.value = TextEditingValue(text: '');
+                              _keySelection = v;
                             });
                           },
                         ),
@@ -137,32 +148,78 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                     );
                   },
                 ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: RaisedButton(
-                    padding: EdgeInsets.all(16),
-                    color: Colors.pink,
-                    textColor: Colors.white,
-                    child: Text(I18n.of(context).home['ok']),
-                    onPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        setNewAccountMnemonic(_keyCtrl.text.trim());
-                        onSubmit({
-                          'keyType': _keyOptions[_keySelection],
-                          'cryptoType': _typeOptions[_typeSelection],
-                        });
-                      }
-                    },
+                Padding(
+                  padding: EdgeInsets.only(left: 16, right: 16),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      hintText: _keyOptions[_keySelection],
+                      labelText: _keyOptions[_keySelection],
+                    ),
+                    controller: _keyCtrl,
+                    maxLines: 2,
+                    validator: validateInput,
                   ),
                 ),
-              )
-            ],
+                _keySelection == 2
+                    ? _buildNameAndPassInput()
+                    : ListTile(
+                        title: Text(I18n.of(context).account['import.encrypt']),
+                        subtitle: Text(_typeOptions[_typeSelection]),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                        onTap: () {
+                          showCupertinoModalPopup(
+                            context: context,
+                            builder: (_) => Container(
+                              height: MediaQuery.of(context)
+                                      .copyWith()
+                                      .size
+                                      .height /
+                                  3,
+                              child: CupertinoPicker(
+                                backgroundColor: Colors.white,
+                                itemExtent: 56,
+                                scrollController: FixedExtentScrollController(
+                                    initialItem: _typeSelection),
+                                children: _typeOptions
+                                    .map((i) => Padding(
+                                        padding: EdgeInsets.all(16),
+                                        child: Text(i)))
+                                    .toList(),
+                                onSelectedItemChanged: (v) {
+                                  setState(() {
+                                    _typeSelection = v;
+                                  });
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ],
+            ),
           ),
-        ],
-      ),
+        ),
+        Container(
+          padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+          child: RoundedButton(
+            text: I18n.of(context).home['ok'],
+            onPressed: () {
+              if (_formKey.currentState.validate()) {
+                if (_keySelection == 2) {
+                  accountStore.setNewAccount(
+                      _nameCtrl.text.trim(), _passCtrl.text.trim());
+                }
+                accountStore.setNewAccountKey(_keyCtrl.text.trim());
+                onSubmit({
+                  'keyType': _keyOptions[_keySelection],
+                  'cryptoType': _typeOptions[_typeSelection],
+                  'finish': _keySelection == 2 ? true : null,
+                });
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 }

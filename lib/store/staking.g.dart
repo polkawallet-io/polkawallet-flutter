@@ -159,6 +159,46 @@ mixin _$StakingStore on _StakingStore, Store {
     }, _$txsAtom, name: '${_$txsAtom.name}_set');
   }
 
+  final _$rewardsChartDataCacheAtom =
+      Atom(name: '_StakingStore.rewardsChartDataCache');
+
+  @override
+  ObservableMap<String, dynamic> get rewardsChartDataCache {
+    _$rewardsChartDataCacheAtom.context
+        .enforceReadPolicy(_$rewardsChartDataCacheAtom);
+    _$rewardsChartDataCacheAtom.reportObserved();
+    return super.rewardsChartDataCache;
+  }
+
+  @override
+  set rewardsChartDataCache(ObservableMap<String, dynamic> value) {
+    _$rewardsChartDataCacheAtom.context.conditionallyRunInAction(() {
+      super.rewardsChartDataCache = value;
+      _$rewardsChartDataCacheAtom.reportChanged();
+    }, _$rewardsChartDataCacheAtom,
+        name: '${_$rewardsChartDataCacheAtom.name}_set');
+  }
+
+  final _$stakesChartDataCacheAtom =
+      Atom(name: '_StakingStore.stakesChartDataCache');
+
+  @override
+  ObservableMap<String, dynamic> get stakesChartDataCache {
+    _$stakesChartDataCacheAtom.context
+        .enforceReadPolicy(_$stakesChartDataCacheAtom);
+    _$stakesChartDataCacheAtom.reportObserved();
+    return super.stakesChartDataCache;
+  }
+
+  @override
+  set stakesChartDataCache(ObservableMap<String, dynamic> value) {
+    _$stakesChartDataCacheAtom.context.conditionallyRunInAction(() {
+      super.stakesChartDataCache = value;
+      _$stakesChartDataCacheAtom.reportChanged();
+    }, _$stakesChartDataCacheAtom,
+        name: '${_$stakesChartDataCacheAtom.name}_set');
+  }
+
   final _$clearTxsAsyncAction = AsyncAction('clearTxs');
 
   @override
@@ -177,10 +217,10 @@ mixin _$StakingStore on _StakingStore, Store {
       ActionController(name: '_StakingStore');
 
   @override
-  void setValidatorsInfo() {
+  void setValidatorsInfo(Map<String, dynamic> data) {
     final _$actionInfo = _$_StakingStoreActionController.startAction();
     try {
-      return super.setValidatorsInfo();
+      return super.setValidatorsInfo(data);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }
@@ -221,6 +261,26 @@ mixin _$StakingStore on _StakingStore, Store {
     final _$actionInfo = _$_StakingStoreActionController.startAction();
     try {
       return super.clearSate();
+    } finally {
+      _$_StakingStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setRewardsChartData(String validatorId, Map data) {
+    final _$actionInfo = _$_StakingStoreActionController.startAction();
+    try {
+      return super.setRewardsChartData(validatorId, data);
+    } finally {
+      _$_StakingStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setStakesChartData(String validatorId, Map data) {
+    final _$actionInfo = _$_StakingStoreActionController.startAction();
+    try {
+      return super.setStakesChartData(validatorId, data);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }
@@ -294,6 +354,23 @@ mixin _$ValidatorData on _ValidatorData, Store {
       super.bondOther = value;
       _$bondOtherAtom.reportChanged();
     }, _$bondOtherAtom, name: '${_$bondOtherAtom.name}_set');
+  }
+
+  final _$pointsAtom = Atom(name: '_ValidatorData.points');
+
+  @override
+  int get points {
+    _$pointsAtom.context.enforceReadPolicy(_$pointsAtom);
+    _$pointsAtom.reportObserved();
+    return super.points;
+  }
+
+  @override
+  set points(int value) {
+    _$pointsAtom.context.conditionallyRunInAction(() {
+      super.points = value;
+      _$pointsAtom.reportChanged();
+    }, _$pointsAtom, name: '${_$pointsAtom.name}_set');
   }
 
   final _$commissionAtom = Atom(name: '_ValidatorData.commission');

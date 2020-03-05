@@ -11,23 +11,27 @@ description: PolkaWallet made with Flutter.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.1.0
+version: 0.2.0+1
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
   # intl - format numbers
-  intl:
+  intl: ^0.16.0
   # state management with mobx & provider
   mobx: ^0.4.0
   flutter_mobx: ^0.3.6
   mobx_codegen: ^0.3.12
   provider: ^3.1.0
   json_serializable: ^3.0.0
-  shared_preferences:
-  http:
-  flutter_webview_plugin:
+  shared_preferences: ^0.5.6
+  flutter_aes_ecb_pkcs5: ^0.1.1
+  convert: ^2.1.1
+  http: ^0.12.0
+  flutter_webview_plugin: ^0.3.10
+  rxdart: ^0.23.1
+  flutter_local_notifications: ^1.1.6
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -39,15 +43,17 @@ dependencies:
   # QR code generator & reader
   qr_flutter: ^3.1.0
   flutter_qr_reader: ^1.0.3
-  permission_handler:
+  permission_handler: ^4.2.0
   # PackageInfo
-  package_info:
+  package_info: ^0.4.0
   # charts
-  charts_flutter:
+  charts_flutter: ^0.8.1
+  # svg renderer
+  flutter_svg: ^0.17.2
 
 dev_dependencies:
   flutter_launcher_icons: "^0.7.3"
-  build_runner:
+  build_runner: ^1.7.4
   flutter_test:
     sdk: flutter
 
@@ -55,7 +61,6 @@ flutter_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/images/public/app.png"
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -73,24 +78,29 @@ flutter:
     # js service
     - lib/polkadot_js_service/dist/main.js
     # images
+    - assets/images/public/app.png
     - assets/images/public/Assets.png
-    - assets/images/public/Democracy.png
+    - assets/images/public/Governance.png
     - assets/images/public/Profile.png
     - assets/images/public/Staking.png
     - assets/images/public/Assets_dark.png
-    - assets/images/public/Democracy_dark.png
+    - assets/images/public/Governance_dark.png
     - assets/images/public/Profile_dark.png
     - assets/images/public/Staking_dark.png
     - assets/images/public/About_logo.png
     - assets/images/public/dontscreen.png
     - assets/images/public/copy.png
+    - assets/images/public/polkadot.png
+    - assets/images/public/westend.png
+    - assets/images/public/kusama.png
+    - assets/images/public/substrate.png
+    - assets/images/public/default.png
     - assets/images/assets/logo.png
     - assets/images/assets/Assets_bg.png
     - assets/images/assets/Assets_nav_0.png
     - assets/images/assets/Assets_nav_1.png
     - assets/images/assets/Assets_nav_code.png
     - assets/images/assets/Assets_nav_plus.png
-    - assets/images/assets/KSC.png
     - assets/images/assets/Menu_scan.png
     - assets/images/assets/Menu_create.png
     - assets/images/assets/assets_send.png
@@ -106,6 +116,7 @@ flutter:
     - assets/images/staking/error.png
     - assets/images/staking/stake.png
     - assets/images/staking/nominate.png
+    - assets/images/gov/time.png
     - assets/images/profile/about.png
     - assets/images/profile/address.png
     - assets/images/profile/setting.png

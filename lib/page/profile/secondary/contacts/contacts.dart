@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -10,39 +11,38 @@ class Contacts extends StatelessWidget {
 
   final SettingsStore store;
 
-  Function _getMenuBuilder(BuildContext context) {
-    return (BuildContext context) => <PopupMenuEntry<String>>[
-          PopupMenuItem<String>(
-            value: 'edit',
-            child: Row(
-              children: <Widget>[
-                Icon(Icons.edit),
-                Padding(
-                  padding: EdgeInsets.only(left: 8),
-                  child: Text(I18n.of(context).home['edit']),
-                ),
-              ],
+  void _showActions(BuildContext pageContext, ContactData i) {
+    showCupertinoModalPopup(
+      context: pageContext,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            child: Text(
+              I18n.of(context).home['edit'],
             ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed('/profile/contact', arguments: i);
+            },
           ),
-          PopupMenuItem<String>(
-            value: 'delete',
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.delete,
-                  color: Colors.pink,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 8),
-                  child: Text(
-                    I18n.of(context).home['delete'],
-                    style: TextStyle(color: Colors.pink),
-                  ),
-                ),
-              ],
+          CupertinoActionSheetAction(
+            child: Text(
+              I18n.of(context).home['delete'],
             ),
-          ),
-        ];
+            onPressed: () {
+              Navigator.of(context).pop();
+              _removeItem(pageContext, i);
+            },
+          )
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: Text(I18n.of(context).home['cancel']),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
   }
 
   void _removeItem(BuildContext context, ContactData i) {
@@ -51,7 +51,6 @@ class Contacts extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text(dic['delete.confirm']),
           content: Text(dic['contact.delete.warn']),
           actions: <Widget>[
             CupertinoButton(
@@ -76,19 +75,12 @@ class Contacts extends StatelessWidget {
         builder: (_) {
           List<Widget> ls = store.contactList.map((i) {
             return ListTile(
-              leading: Image.asset('assets/images/assets/Assets_nav_0.png'),
+              leading: AddressIcon(address: i.address),
               title: Text(i.name),
               subtitle: Text(Fmt.address(i.address)),
-              trailing: PopupMenuButton<String>(
-                onSelected: (String result) {
-                  if (result == 'edit') {
-                    Navigator.of(context)
-                        .pushNamed('/profile/contact', arguments: i);
-                  } else {
-                    _removeItem(context, i);
-                  }
-                },
-                itemBuilder: _getMenuBuilder(context),
+              trailing: IconButton(
+                icon: Icon(Icons.more_vert),
+                onPressed: () => _showActions(context, i),
               ),
             );
           }).toList();

@@ -3,8 +3,10 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -34,7 +36,7 @@ class _UnBondState extends State<UnBond> {
     int bondedInt =
         hasData ? store.staking.ledger['stakingLedger']['active'] : 0;
     String bonded = Fmt.token(bondedInt);
-    String address = store.account.currentAccount.address;
+    String address = store.account.currentAddress;
 
     return Scaffold(
       appBar: AppBar(
@@ -101,43 +103,39 @@ class _UnBondState extends State<UnBond> {
                 ),
               ),
             ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    child: RaisedButton(
-                      color: Colors.pink,
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        I18n.of(context).home['submit.tx'],
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          var args = {
-                            "title": dic['action.unbond'],
-                            "detail": jsonEncode({
-                              "amount": _amountCtrl.text.trim(),
-                            }),
-                            "params": {
-                              "module": 'staking',
-                              "call": 'unbond',
-                              "amount": (double.parse(_amountCtrl.text.trim()) *
-                                      pow(10, decimals))
-                                  .toInt(),
-                            },
-                            'redirect': '/'
-                          };
-                          Navigator.of(context)
-                              .pushNamed('/staking/confirm', arguments: args);
-                        }
+            Padding(
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+              child: RoundedButton(
+                text: I18n.of(context).home['submit.tx'],
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    var args = {
+                      "title": dic['action.unbond'],
+                      "txInfo": {
+                        "module": 'staking',
+                        "call": 'unbond',
                       },
-                    ),
-                  ),
-                ),
-              ],
-            )
+                      "detail": jsonEncode({
+                        "amount": _amountCtrl.text.trim(),
+                      }),
+                      "params": [
+                        // "amount"
+                        (double.parse(_amountCtrl.text.trim()) *
+                                pow(10, decimals))
+                            .toInt(),
+                      ],
+                      'onFinish': (BuildContext txPageContext) {
+                        Navigator.popUntil(
+                            txPageContext, ModalRoute.withName('/'));
+                        globalBondingRefreshKey.currentState.show();
+                      }
+                    };
+                    Navigator.of(context)
+                        .pushNamed('/staking/confirm', arguments: args);
+                  }
+                },
+              ),
+            ),
           ],
         );
       }),

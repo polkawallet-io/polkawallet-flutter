@@ -60,6 +60,23 @@ mixin _$AppStore on _AppStore, Store {
     }, _$stakingAtom, name: '${_$stakingAtom.name}_set');
   }
 
+  final _$govAtom = Atom(name: '_AppStore.gov');
+
+  @override
+  GovernanceStore get gov {
+    _$govAtom.context.enforceReadPolicy(_$govAtom);
+    _$govAtom.reportObserved();
+    return super.gov;
+  }
+
+  @override
+  set gov(GovernanceStore value) {
+    _$govAtom.context.conditionallyRunInAction(() {
+      super.gov = value;
+      _$govAtom.reportChanged();
+    }, _$govAtom, name: '${_$govAtom.name}_set');
+  }
+
   final _$settingsAtom = Atom(name: '_AppStore.settings');
 
   @override
@@ -75,6 +92,23 @@ mixin _$AppStore on _AppStore, Store {
       super.settings = value;
       _$settingsAtom.reportChanged();
     }, _$settingsAtom, name: '${_$settingsAtom.name}_set');
+  }
+
+  final _$isReadyAtom = Atom(name: '_AppStore.isReady');
+
+  @override
+  bool get isReady {
+    _$isReadyAtom.context.enforceReadPolicy(_$isReadyAtom);
+    _$isReadyAtom.reportObserved();
+    return super.isReady;
+  }
+
+  @override
+  set isReady(bool value) {
+    _$isReadyAtom.context.conditionallyRunInAction(() {
+      super.isReady = value;
+      _$isReadyAtom.reportChanged();
+    }, _$isReadyAtom, name: '${_$isReadyAtom.name}_set');
   }
 
   final _$_AppStoreActionController = ActionController(name: '_AppStore');

@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -51,7 +51,9 @@ class _TxConfirmState extends State<TxConfirm> {
         ));
 
         Timer(Duration(seconds: 2), () {
-          Navigator.popUntil(context, ModalRoute.withName(args['redirect']));
+          if (state.mounted) {
+            (args['onFinish'] as Function(BuildContext))(context);
+          }
         });
       }
     }
@@ -86,7 +88,7 @@ class _TxConfirmState extends State<TxConfirm> {
 
     store.assets.setSubmitting(true);
     state.showSnackBar(SnackBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       content: ListTile(
         leading: CupertinoActivityIndicator(),
         title: Text(
@@ -94,16 +96,16 @@ class _TxConfirmState extends State<TxConfirm> {
           style: TextStyle(color: Colors.black54),
         ),
       ),
-      duration: Duration(minutes: 1),
+      duration: Duration(minutes: 5),
     ));
 
-    Map params = args['params'];
-    params['from'] = store.account.currentAccount.address;
-    params['password'] = _passCtrl.text;
-    print(params);
-    var res =
-        await store.api.evalJavascript('account.sendTx(${jsonEncode(params)})');
-
+    Map txInfo = args['txInfo'];
+    txInfo['pubKey'] = store.account.currentAccount.pubKey;
+    txInfo['password'] = _passCtrl.text;
+    print(txInfo);
+    print(args['params']);
+    var res = await webApi.account
+        .sendTx(txInfo, args['params'], dic['notify.submitted']);
     if (res == null) {
       onTxError();
     } else {
@@ -112,10 +114,9 @@ class _TxConfirmState extends State<TxConfirm> {
   }
 
   @override
-  void initState() {
-    // setSubmitting false for testing
-//    store.assets.setSubmitting(false);
-    super.initState();
+  void dispose() {
+    store.assets.setSubmitting(false);
+    super.dispose();
   }
 
   @override
@@ -130,6 +131,7 @@ class _TxConfirmState extends State<TxConfirm> {
         centerTitle: true,
       ),
       body: Builder(builder: (BuildContext context) {
+        String address = store.account.currentAddress;
         return Observer(
           builder: (_) => Column(
             children: <Widget>[
@@ -146,7 +148,7 @@ class _TxConfirmState extends State<TxConfirm> {
                     Padding(
                       padding: EdgeInsets.all(16),
                       child: Text(
-                        '${dic["submit.from"]}${store.account.currentAccount.address}',
+                        '${dic["submit.from"]}$address',
                       ),
                     ),
                     Padding(
@@ -160,7 +162,7 @@ class _TxConfirmState extends State<TxConfirm> {
                             ),
                           ),
                           Text(
-                            '${args['params']['module']}.${args['params']['call']}',
+                            '${args['txInfo']['module']}.${args['txInfo']['call']}',
                           ),
                         ],
                       ),
@@ -193,6 +195,17 @@ class _TxConfirmState extends State<TxConfirm> {
                           icon: Icon(Icons.lock),
                           hintText: dic['unlock'],
                           labelText: dic['unlock'],
+                          suffixIcon: IconButton(
+                            iconSize: 18,
+                            icon: Icon(
+                              CupertinoIcons.clear_thick_circled,
+                              color: Theme.of(context).unselectedWidgetColor,
+                            ),
+                            onPressed: () {
+                              WidgetsBinding.instance.addPostFrameCallback(
+                                  (_) => _passCtrl.clear());
+                            },
+                          ),
                         ),
                         obscureText: true,
                         controller: _passCtrl,

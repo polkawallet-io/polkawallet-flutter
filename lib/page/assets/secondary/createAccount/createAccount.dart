@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/assets/secondary/createAccount/createAccountForm.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -18,6 +19,43 @@ class _CreateAccountState extends State<CreateAccount> {
   final Function setNewAccount;
 
   int _step = 1;
+
+  void _onFinish() {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Container(),
+          content: Column(
+            children: <Widget>[
+              Image.asset('assets/images/public/dontscreen.png'),
+              Container(
+                padding: EdgeInsets.only(top: 16, bottom: 24),
+                child: Text(
+                  I18n.of(context).account['create.warn9'],
+                  style: Theme.of(context).textTheme.display4,
+                ),
+              ),
+              Text(I18n.of(context).account['create.warn10']),
+            ],
+          ),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(I18n.of(context).home['cancel']),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            CupertinoButton(
+              child: Text(I18n.of(context).home['ok']),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushNamed(context, '/account/backup');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Widget _buildStep2(BuildContext context) {
     var theme = Theme.of(context).textTheme;
@@ -58,63 +96,13 @@ class _CreateAccountState extends State<CreateAccount> {
               ],
             ),
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
-                  child: RaisedButton(
-                    padding: EdgeInsets.all(16),
-                    color: Colors.pink,
-                    child: Text(
-                      I18n.of(context).home['next'],
-                      style: theme.button,
-                    ),
-                    onPressed: () {
-                      showCupertinoDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CupertinoAlertDialog(
-                              title: Container(),
-                              content: Column(
-                                children: <Widget>[
-                                  Image.asset(
-                                      'assets/images/public/dontscreen.png'),
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(top: 16, bottom: 24),
-                                    child: Text(
-                                      I18n.of(context).account['create.warn9'],
-                                      style:
-                                          Theme.of(context).textTheme.display4,
-                                    ),
-                                  ),
-                                  Text(I18n.of(context)
-                                      .account['create.warn10']),
-                                ],
-                              ),
-                              actions: <Widget>[
-                                CupertinoButton(
-                                  child: Text(I18n.of(context).home['cancel']),
-                                  onPressed: () => Navigator.of(context).pop(),
-                                ),
-                                CupertinoButton(
-                                  child: Text(I18n.of(context).home['ok']),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    Navigator.pushNamed(
-                                        context, '/account/backup');
-                                  },
-                                ),
-                              ],
-                            );
-                          });
-                    },
-                  ),
-                ),
-              ),
-            ],
-          )
+          Container(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+            child: RoundedButton(
+              text: I18n.of(context).home['next'],
+              onPressed: _onFinish,
+            ),
+          ),
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class CreateAccountEntry extends StatelessWidget {
@@ -16,42 +17,20 @@ class CreateAccountEntry extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.all(16),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: RaisedButton(
-                    padding: EdgeInsets.all(16),
-                    color: Colors.pink,
-                    child: Text(
-                      I18n.of(context).home['create'],
-                      style: buttonStyle,
-                    ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/account/create');
-                    },
-                  ),
-                )
-              ],
+            child: RoundedButton(
+              text: I18n.of(context).home['create'],
+              onPressed: () {
+                Navigator.pushNamed(context, '/account/create');
+              },
             ),
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(16, 0, 16, 32),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: RaisedButton(
-                    padding: EdgeInsets.all(16),
-                    color: Colors.pink,
-                    child: Text(
-                      I18n.of(context).home['import'],
-                      style: buttonStyle,
-                    ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/account/import');
-                    },
-                  ),
-                )
-              ],
+            child: RoundedButton(
+              text: I18n.of(context).home['import'],
+              onPressed: () {
+                Navigator.pushNamed(context, '/account/import');
+              },
             ),
           ),
         ],

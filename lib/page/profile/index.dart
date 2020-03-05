@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -12,9 +13,9 @@ class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).profile;
-
-    return Observer(
-      builder: (_) => Scaffold(
+    return Observer(builder: (_) {
+      AccountData acc = store.currentAccount;
+      return Scaffold(
         appBar: AppBar(
           title: Text(dic['title']),
           centerTitle: true,
@@ -26,15 +27,11 @@ class Profile extends StatelessWidget {
               color: Colors.pink,
               padding: EdgeInsets.only(bottom: 16),
               child: ListTile(
-                leading: Container(
-                  width: 72,
-                  height: 72,
-                  child: Image.asset('assets/images/assets/Assets_nav_0.png'),
-                ),
-                title: Text(store.currentAccount.name ?? 'name',
+                leading: AddressIcon(address: store.currentAddress),
+                title: Text(acc.name ?? 'name',
                     style: TextStyle(fontSize: 16, color: Colors.white)),
                 subtitle: Text(
-                  Fmt.address(store.currentAccount.address) ?? '',
+                  Fmt.address(store.currentAddress) ?? '',
                   style: TextStyle(fontSize: 16, color: Colors.white70),
                 ),
               ),
@@ -45,7 +42,7 @@ class Profile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   RaisedButton(
-                    padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
+                    padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
                     color: Colors.pinkAccent,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24)),
@@ -79,7 +76,7 @@ class Profile extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 }

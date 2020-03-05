@@ -1,11 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:intl/intl.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/common/components/BorderedTitle.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/common/components/outlinedCircle.dart';
+import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/page/staking/validator.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+
+const validator_list_page_size = 100;
 
 class StakingOverview extends StatefulWidget {
   StakingOverview(this.store, this.reloadStakingOverview);
@@ -24,217 +33,291 @@ class _StakingOverviewState extends State<StakingOverview> {
   final AppStore store;
   final Function reloadStakingOverview;
 
-  int _tab = 0;
-  ScrollController _scrollController;
-  int _validatorListLength = 10;
-  int _nextListLength = 10;
+  bool _expanded = false;
 
-  Future<void> _getNextUpsInfo() async {
-    int len = store.staking.nextUps.length;
-    if (len > 0) {
-      var res = await Future.wait(store.staking.nextUps
-          .sublist(_nextListLength - 10, _nextListLength)
-          .map((address) => store.api
-              .evalJavascript('api.derive.staking.query("$address")')));
-      print(res.length);
-      store.staking.setNextUpsInfo(res);
+  int _sort = 0;
+  String _filter = '';
+
+  Future<void> _refreshData() async {
+    if (store.settings.loading) {
+      return;
     }
+    await webApi.staking.fetchAccountStaking(store.account.currentAddress);
+    reloadStakingOverview();
   }
 
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).staking;
-    String symbol = store.settings.networkState.tokenSymbol;
-    var overview = store.staking.overview;
-    String session;
-    if (overview['session'] != null) {
-      session =
-          '${overview['session']['sessionProgress']}/${overview['session']['sessionLength']}';
+    bool hashData = store.staking.ledger['stakingLedger'] != null;
+    int bonded = 0;
+    List nominators = [];
+    double nominatorListHeight = 48;
+    if (hashData) {
+      bonded = store.staking.ledger['stakingLedger']['active'];
+      nominators = store.staking.ledger['nominators'];
+      if (nominators.length > 0) {
+        nominatorListHeight = double.parse((nominators.length * 60).toString());
+      }
     }
-    String era;
-    if (overview['session'] != null) {
-      era =
-          '${overview['session']['eraProgress']}/${overview['session']['eraLength']}';
-    }
-    return Container(
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 16),
-      padding: EdgeInsets.all(24),
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(const Radius.circular(8)),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 16.0, // has the effect of softening the shadow
-              spreadRadius: 4.0, // has the effect of extending the shadow
-              offset: Offset(
-                2.0, // horizontal, move right 10
-                2.0, // vertical, move down 10
-              ),
-            )
-          ]),
+
+    Color actionButtonColor = Theme.of(context).primaryColor;
+    Color disabledColor = Theme.of(context).disabledColor;
+
+    return RoundedCard(
+      margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
+      padding: EdgeInsets.only(top: 8, bottom: 8),
       child: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              InfoItem(
-                title: dic['validators'],
-                content:
-                    '${overview['validators'].length}/${overview['validatorCount']}',
-              ),
-              InfoItem(
-                title: dic['nominators'],
-                content: store.staking.nominatorCount.toString(),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 16, bottom: 16),
-            child: Row(
-              children: <Widget>[
-                InfoItem(
-                  title: dic['session'],
-                  content: session,
+          ListTile(
+            leading: Container(
+              width: 32,
+              child: IconButton(
+                icon: Icon(
+                  _expanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  size: 32,
                 ),
-                InfoItem(
-                  title: dic['era'],
-                  content: era,
-                ),
-              ],
+                onPressed: () {
+                  setState(() {
+                    _expanded = !_expanded;
+                  });
+                },
+              ),
+            ),
+            title: Text(
+              store.staking.ledger['nominators'] != null
+                  ? store.staking.ledger['nominators'].length.toString()
+                  : '0',
+              style: Theme.of(context).textTheme.display4,
+            ),
+            subtitle: Text(dic['nominating']),
+            trailing: Container(
+              width: 100,
+              child: bonded > 0
+                  ? GestureDetector(
+                      child: nominators.length > 0
+                          ? Column(
+                              children: <Widget>[
+                                OutlinedCircle(
+                                  icon: Icons.add,
+                                  color: actionButtonColor,
+                                ),
+                                Text(
+                                  dic[nominators.length > 0
+                                      ? 'action.nominee'
+                                      : 'action.nominate'],
+                                  style: TextStyle(color: actionButtonColor),
+                                )
+                              ],
+                            )
+                          : Column(
+                              children: <Widget>[
+                                OutlinedCircle(
+                                  icon: Icons.add,
+                                  color: actionButtonColor,
+                                ),
+                                Text(
+                                  dic['action.nominate'],
+                                  style: TextStyle(color: actionButtonColor),
+                                )
+                              ],
+                            ),
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/staking/nominate'),
+                    )
+                  : Column(
+                      children: <Widget>[
+                        OutlinedCircle(
+                          icon: Icons.add,
+                          color: disabledColor,
+                        ),
+                        Text(
+                          dic['action.nominate'],
+                          style: TextStyle(color: disabledColor),
+                        )
+                      ],
+                    ),
             ),
           ),
-          Row(
-            children: <Widget>[
-              InfoItem(
-                title: '${dic['total']} ($symbol)',
-                content: '${Fmt.token(store.staking.staked, decimals: 18)} M',
-              ),
-              InfoItem(
-                title: dic['staked'],
-                content: NumberFormat('0.00%').format(
-                    store.staking.staked / int.parse(overview['issuance'])),
-              ),
-            ],
-          ),
+          AnimatedContainer(
+            height: _expanded ? nominatorListHeight : 0,
+            duration: Duration(seconds: 1),
+            curve: Curves.fastOutSlowIn,
+            child: AnimatedOpacity(
+              opacity: _expanded ? 1.0 : 0.0,
+              duration: Duration(seconds: 1),
+              curve: Curves.fastLinearToSlowEaseIn,
+              child: nominators.length > 0
+                  ? _buildNominatingList()
+                  : Padding(
+                      padding: EdgeInsets.only(top: 16),
+                      child: Text(
+                        I18n.of(context).home['data.empty'],
+                        style: TextStyle(color: Colors.black54),
+                      ),
+                    ),
+            ),
+          )
         ],
       ),
     );
   }
 
-  List<Widget> _buildValidatorList() {
-    if (_tab == 1) {
-      return store.staking.nextUpsInfo.length > 0
-          ? store.staking.nextUpsInfo
-              .sublist(0, _nextListLength)
-              .map((i) => Validator(null, i))
-              .toList()
-          : [CupertinoActivityIndicator()];
+  Widget _buildNominatingList() {
+    bool hasData = store.staking.ledger['stakingLedger'] != null;
+    if (!hasData) {
+      return Container();
     }
-    return store.staking.validatorsInfo.length > 0
-        ? store.staking.validatorsInfo
-            .sublist(0, _validatorListLength)
-            .map((i) => Validator(null, i))
-            .toList()
-        : [CupertinoActivityIndicator()];
+    String symbol = store.settings.networkState.tokenSymbol;
+    String address = store.account.currentAddress;
+
+    return Container(
+      padding: EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
+        ),
+      ),
+      child: Column(
+        children:
+            List<Widget>.from(store.staking.ledger['nominators'].map((id) {
+          ValidatorData validator;
+          int validatorIndex =
+              store.staking.validatorsInfo.indexWhere((i) => i.accountId == id);
+          if (validatorIndex < 0) {
+            return Expanded(
+              child: ListTile(
+                  leading: AddressIcon(address: id),
+                  title: Text(I18n.of(context).staking['notElected']),
+                  subtitle: Text(Fmt.address(id, pad: 6))),
+            );
+          }
+          validator = store.staking.validatorsInfo[validatorIndex];
+
+          int meStaked = 0;
+          int meIndex =
+              validator.nominators.indexWhere((i) => i['who'] == address);
+          if (meIndex >= 0) {
+            meStaked = validator.nominators[meIndex]['value'];
+          }
+          Map accInfo = store.account.accountIndexMap[id];
+          return Expanded(
+            child: ListTile(
+              leading: AddressIcon(address: id),
+              title: Text('${Fmt.token(meStaked)} $symbol'),
+              subtitle: Text(accInfo != null
+                  ? accInfo['identity']['display'] != null
+                      ? accInfo['identity']['display'].toString().toUpperCase()
+                      : accInfo['accountIndex']
+                  : Fmt.address(validator.accountId, pad: 6)),
+              trailing: Container(
+                width: 120,
+                height: 40,
+//                color: Colors.grey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text('commission'),
+                    ),
+                    Expanded(
+                      child: Text(validator.commission),
+                    )
+                  ],
+                ),
+              ),
+              onTap: () {
+                webApi.staking.queryValidatorRewards(validator.accountId);
+                Navigator.of(context)
+                    .pushNamed('/staking/validator', arguments: validator);
+              },
+            ),
+          );
+        }).toList()),
+      ),
+    );
   }
 
   @override
   void initState() {
     super.initState();
 
-    _scrollController = ScrollController();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent) {
-        setState(() {
-          int end;
-          if (_tab == 0) {
-            end = _validatorListLength + 10;
-            _validatorListLength = end > store.staking.validatorsInfo.length
-                ? store.staking.validatorsInfo.length
-                : end;
-          } else {
-            end = _nextListLength + 10;
-            _nextListLength = end > store.staking.nextUps.length
-                ? store.staking.nextUps.length
-                : end;
-          }
-        });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (store.staking.ledger['stakingLedger'] == null) {
+        globalNominatingRefreshKey.currentState.show();
       }
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _scrollController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        bool hashData = store.staking.overview['validators'] != null;
-        if (hashData) {
-          return RefreshIndicator(
-            onRefresh: reloadStakingOverview,
-            child: ListView(
-              controller: _scrollController,
-              children: <Widget>[
-                _buildTopCard(context),
-                Container(
-                  color: Colors.white,
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.all(16),
-                        height: 16,
-                        decoration: BoxDecoration(
-                          border: Border(
-                              left: BorderSide(width: 3, color: Colors.pink)),
-                        ),
-                      ),
-                      Text(
-                        I18n.of(context).staking['validators'],
-                        style: Theme.of(context).textTheme.display4,
-                      ),
-                      Expanded(
-                        child: Container(),
-                      )
-                    ],
-                  ),
-                ),
-                ..._buildValidatorList()
-              ],
+        List list = [
+          // index_0: the overview card
+          _buildTopCard(context),
+          // index_1: the 'Validators' label
+          Container(
+            color: Theme.of(context).cardColor,
+            padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
+            child: BorderedTitle(
+              title: I18n.of(context).staking['validators'],
             ),
-          );
-        }
-        return CupertinoActivityIndicator();
-      },
-    );
-  }
-}
-
-class InfoItem extends StatelessWidget {
-  InfoItem({this.title, this.content});
-  final String title;
-  final String content;
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
           ),
-          content == null
-              ? CupertinoActivityIndicator()
-              : Text(
-                  content,
-                  style: Theme.of(context).textTheme.display4,
-                )
-        ],
-      ),
+        ];
+        if (store.staking.validatorsInfo.length > 0) {
+          // index_2: the filter Widget
+          list.add(Container(
+            color: Colors.white,
+            padding: EdgeInsets.only(top: 8),
+            child: ValidatorListFilter(
+              onSortChange: (value) {
+                if (value != _sort) {
+                  setState(() {
+                    _sort = value;
+                  });
+                }
+              },
+              onFilterChange: (value) {
+                if (value != _filter) {
+                  setState(() {
+                    _filter = value;
+                  });
+                }
+              },
+            ),
+          ));
+          List<ValidatorData> ls =
+              List<ValidatorData>.of(store.staking.validatorsInfo);
+          // filter list
+          ls = Fmt.filterValidatorList(
+              ls, _filter, store.account.accountIndexMap);
+          // sort list
+          ls.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
+          list.addAll(ls);
+        } else {
+          list.add(Container(
+            color: Theme.of(context).cardColor,
+            height: 160,
+            child: CupertinoActivityIndicator(),
+          ));
+        }
+        return RefreshIndicator(
+          key: globalNominatingRefreshKey,
+          onRefresh: _refreshData,
+          child: ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (BuildContext context, int i) {
+              // we already have the index_0 - index_2 Widget
+              if (i < 3) {
+                return list[i];
+              }
+              return Validator(store, list[i] as ValidatorData);
+            },
+          ),
+        );
+      },
     );
   }
 }

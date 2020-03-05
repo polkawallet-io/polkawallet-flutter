@@ -1,23 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/service/api.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ChangeName extends StatefulWidget {
-  ChangeName(this.api, this.store);
-
-  final Api api;
+  ChangeName(this.store);
   final AccountStore store;
 
   @override
-  _ChangeName createState() => _ChangeName(api, store);
+  _ChangeName createState() => _ChangeName(store);
 }
 
 class _ChangeName extends State<ChangeName> {
-  _ChangeName(this.api, this.store);
+  _ChangeName(this.store);
 
-  final Api api;
   final AccountStore store;
 
   final _formKey = GlobalKey<FormState>();
@@ -71,29 +68,18 @@ class _ChangeName extends State<ChangeName> {
               ),
             ),
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(24, 8, 24, 24),
-                  child: RaisedButton(
-                    padding: EdgeInsets.all(16),
-                    color: Colors.pink,
-                    child: Text(
-                      dic['contact.save'],
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        store.updateAccountName(_nameCtrl.text);
-                        Navigator.of(context).pop();
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ],
-          )
+          Container(
+            margin: EdgeInsets.fromLTRB(24, 8, 24, 24),
+            child: RoundedButton(
+              text: dic['contact.save'],
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  store.updateAccountName(_nameCtrl.text);
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ),
         ],
       ),
     );

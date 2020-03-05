@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/page/assets/assets.dart';
 import 'package:polka_wallet/page/assets/drawerMenu.dart';
-import 'package:polka_wallet/page/democracy/democracy.dart';
-import 'package:polka_wallet/page/profile/profile.dart';
-import 'package:polka_wallet/page/staking/staking.dart';
+import 'package:polka_wallet/page/assets/index.dart';
+import 'package:polka_wallet/page/staking/index.dart';
+import 'package:polka_wallet/page/governance/index.dart';
+import 'package:polka_wallet/page/profile/index.dart';
+import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
 
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -21,11 +22,12 @@ class _HomePageState extends State<Home> {
   _HomePageState(this.store);
 
   final AppStore store;
+  NotificationPlugin _notificationPlugin;
 
   final List<String> _tabList = [
     'Assets',
     'Staking',
-//    'Democracy',
+    'Governance',
     'Profile',
   ];
 
@@ -53,13 +55,10 @@ class _HomePageState extends State<Home> {
     switch (i) {
       case 0:
         return Assets(store);
-        break;
       case 1:
         return Staking(store);
-        break;
-//      case 2:
-//        return Democracy();
-//        break;
+      case 2:
+        return Governance(store);
       default:
         return Profile(store.account);
     }
@@ -67,10 +66,12 @@ class _HomePageState extends State<Home> {
 
   @override
   void initState() {
-    super.initState();
-    if (!store.settings.loading) {
-      store.api.fetchBalance();
+    if (_notificationPlugin == null) {
+      _notificationPlugin = NotificationPlugin();
+      _notificationPlugin.init(context);
     }
+
+    super.initState();
   }
 
   @override
@@ -90,7 +91,7 @@ class _HomePageState extends State<Home> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 alignment: Alignment.topLeft,
-                image: AssetImage("assets/images/assets/Assets_bg.png"),
+                image: AssetImage("assets/images/staking/top_bg.png"),
                 fit: BoxFit.contain,
               ),
             ),
@@ -121,64 +122,40 @@ class _HomePageState extends State<Home> {
         ],
       );
     }
-    if (_curIndex == 1) {
-      // return staking page
-      return Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Theme.of(context).canvasColor,
-          ),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                alignment: Alignment.topLeft,
-                image: AssetImage("assets/images/staking/top_bg.png"),
-                fit: BoxFit.contain,
-              ),
+    // return staking page
+    return Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Theme.of(context).canvasColor,
+        ),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              alignment: Alignment.topLeft,
+              image: AssetImage("assets/images/assets/Assets_bg.png"),
+              fit: BoxFit.contain,
             ),
           ),
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            appBar: AppBar(
-              title: Text(I18n.of(context).home['staking']),
-              centerTitle: true,
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-                currentIndex: _curIndex,
-                iconSize: 22.0,
-                onTap: (index) {
-                  setState(() {
-                    _curIndex = index;
-                  });
-                },
-                type: BottomNavigationBarType.fixed,
-                items: _navBarItems()),
-            body: _getPage(_curIndex),
-          )
-        ],
-      );
-    }
-    return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _curIndex,
-          iconSize: 22.0,
-          onTap: (index) {
-            if (index == 0) {
-              store.api.fetchBalance();
-            }
-            setState(() {
-              _curIndex = index;
-            });
-          },
-          type: BottomNavigationBarType.fixed,
-          items: _navBarItems()),
-      body: _getPage(_curIndex),
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          bottomNavigationBar: BottomNavigationBar(
+              currentIndex: _curIndex,
+              iconSize: 22.0,
+              onTap: (index) {
+                setState(() {
+                  _curIndex = index;
+                });
+              },
+              type: BottomNavigationBarType.fixed,
+              items: _navBarItems()),
+          body: _getPage(_curIndex),
+        )
+      ],
     );
   }
 }
