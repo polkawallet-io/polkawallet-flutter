@@ -60,8 +60,14 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
               labelText: dic['create.password'],
               suffixIcon: IconButton(
                 iconSize: 18,
-                icon: Icon(CupertinoIcons.clear_thick_circled),
-                onPressed: () => _passCtrl.clear(),
+                icon: Icon(
+                  CupertinoIcons.clear_thick_circled,
+                  color: Theme.of(context).unselectedWidgetColor,
+                ),
+                onPressed: () {
+                  WidgetsBinding.instance
+                      .addPostFrameCallback((_) => _passCtrl.clear());
+                },
               ),
             ),
             controller: _passCtrl,

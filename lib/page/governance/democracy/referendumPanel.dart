@@ -28,7 +28,9 @@ class ReferendumPanel extends StatelessWidget {
     List<Widget> list = <Widget>[
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
         Text(
-          '${data.proposal['section']}.${data.proposal['method']}',
+          data.proposal != null
+              ? '${data.proposal['section']}.${data.proposal['method']}'
+              : '-',
           style: Theme.of(context).textTheme.display4,
         ),
         Text(
@@ -44,7 +46,7 @@ class ReferendumPanel extends StatelessWidget {
             child: Image.asset('assets/images/gov/time.png'),
           ),
           Text(
-            '${data.info['end'] - bestNumber} blocks ${dic['end']}',
+            '${data.info['end'] + data.info['delay'] - bestNumber} blocks ${dic['end']}',
             style: TextStyle(color: Colors.lightGreen),
           )
         ],
@@ -147,7 +149,7 @@ class ReferendumPanel extends StatelessWidget {
       ));
     }
 
-    bool votedYes = voted > 6;
+    bool votedYes = voted ?? 0 > 6;
     list.add(Container(
       margin: EdgeInsets.only(top: 16),
       child: Row(

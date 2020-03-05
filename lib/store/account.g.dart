@@ -211,6 +211,14 @@ mixin _$AccountStore on _AccountStore, Store {
         .run(() => super.decryptMnemonic(pubKey, password));
   }
 
+  final _$checkMnemonicExistAsyncAction = AsyncAction('checkMnemonicExist');
+
+  @override
+  Future<bool> checkMnemonicExist(String pubKey) {
+    return _$checkMnemonicExistAsyncAction
+        .run(() => super.checkMnemonicExist(pubKey));
+  }
+
   final _$updateMnemonicAsyncAction = AsyncAction('updateMnemonic');
 
   @override

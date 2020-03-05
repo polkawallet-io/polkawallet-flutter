@@ -97,8 +97,14 @@ class _ChangePassword extends State<ChangePassword> {
                         labelText: dic['pass.old'],
                         suffixIcon: IconButton(
                           iconSize: 18,
-                          icon: Icon(CupertinoIcons.clear_thick_circled),
-                          onPressed: () => _passOldCtrl.clear(),
+                          icon: Icon(
+                            CupertinoIcons.clear_thick_circled,
+                            color: Theme.of(context).unselectedWidgetColor,
+                          ),
+                          onPressed: () {
+                            WidgetsBinding.instance.addPostFrameCallback(
+                                (_) => _passOldCtrl.clear());
+                          },
                         ),
                       ),
                       controller: _passOldCtrl,

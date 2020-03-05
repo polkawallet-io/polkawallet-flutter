@@ -197,8 +197,14 @@ class _TxConfirmState extends State<TxConfirm> {
                           labelText: dic['unlock'],
                           suffixIcon: IconButton(
                             iconSize: 18,
-                            icon: Icon(CupertinoIcons.clear_thick_circled),
-                            onPressed: () => _passCtrl.clear(),
+                            icon: Icon(
+                              CupertinoIcons.clear_thick_circled,
+                              color: Theme.of(context).unselectedWidgetColor,
+                            ),
+                            onPressed: () {
+                              WidgetsBinding.instance.addPostFrameCallback(
+                                  (_) => _passCtrl.clear());
+                            },
                           ),
                         ),
                         obscureText: true,

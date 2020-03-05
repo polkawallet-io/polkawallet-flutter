@@ -37,6 +37,37 @@ class _CouncilVote extends State<CouncilVote> {
     }
   }
 
+  void _onSubmit() {
+    if (_formKey.currentState.validate()) {
+      var govDic = I18n.of(context).gov;
+      int decimals = store.settings.networkState.tokenDecimals;
+      String amt = _amountCtrl.text.trim();
+      List selected = _selected.map((i) => i[0]).toList();
+      var args = {
+        "title": govDic['vote.candidate'],
+        "txInfo": {
+          "module": 'electionsPhragmen',
+          "call": 'vote',
+        },
+        "detail": jsonEncode({
+          "votes": selected,
+          "voteValue": amt,
+        }),
+        "params": [
+          // "votes"
+          selected,
+          // "voteValue"
+          (double.parse(amt) * pow(10, decimals)).toInt(),
+        ],
+        'onFinish': (BuildContext txPageContext) {
+          Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+          globalCouncilRefreshKey.currentState.show();
+        }
+      };
+      Navigator.of(context).pushNamed('/staking/confirm', arguments: args);
+    }
+  }
+
   Widget _buildSelectedList() {
     return Column(
       children: List<Widget>.from(_selected.map((i) {
@@ -146,38 +177,7 @@ class _CouncilVote extends State<CouncilVote> {
                 padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
                 child: RoundedButton(
                   text: I18n.of(context).home['submit.tx'],
-                  onPressed: _selected.length == 0
-                      ? null
-                      : () {
-                          if (_formKey.currentState.validate()) {
-                            String amt = _amountCtrl.text.trim();
-                            List selected = _selected.map((i) => i[0]).toList();
-                            var args = {
-                              "title": govDic['vote.candidate'],
-                              "txInfo": {
-                                "module": 'electionsPhragmen',
-                                "call": 'vote',
-                              },
-                              "detail": jsonEncode({
-                                "votes": selected,
-                                "voteValue": amt,
-                              }),
-                              "params": [
-                                // "votes"
-                                selected,
-                                // "voteValue"
-                                (double.parse(amt) * pow(10, decimals)).toInt(),
-                              ],
-                              'onFinish': (BuildContext txPageContext) {
-                                Navigator.popUntil(
-                                    txPageContext, ModalRoute.withName('/'));
-                                globalCouncilRefreshKey.currentState.show();
-                              }
-                            };
-                            Navigator.of(context)
-                                .pushNamed('/staking/confirm', arguments: args);
-                          }
-                        },
+                  onPressed: _selected.length == 0 ? null : _onSubmit,
                 ),
               )
             ],
