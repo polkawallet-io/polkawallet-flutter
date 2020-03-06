@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/accountAdvanced.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -28,6 +29,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
 
   int _keySelection = 0;
   int _typeSelection = 0;
+  String _derivationPath = '';
 
   final _formKey = GlobalKey<FormState>();
 
@@ -162,39 +164,18 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                 ),
                 _keySelection == 2
                     ? _buildNameAndPassInput()
-                    : ListTile(
-                        title: Text(I18n.of(context).account['import.encrypt']),
-                        subtitle: Text(_typeOptions[_typeSelection]),
-                        trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                        onTap: () {
-                          showCupertinoModalPopup(
-                            context: context,
-                            builder: (_) => Container(
-                              height: MediaQuery.of(context)
-                                      .copyWith()
-                                      .size
-                                      .height /
-                                  3,
-                              child: CupertinoPicker(
-                                backgroundColor: Colors.white,
-                                itemExtent: 56,
-                                scrollController: FixedExtentScrollController(
-                                    initialItem: _typeSelection),
-                                children: _typeOptions
-                                    .map((i) => Padding(
-                                        padding: EdgeInsets.all(16),
-                                        child: Text(i)))
-                                    .toList(),
-                                onSelectedItemChanged: (v) {
-                                  setState(() {
-                                    _typeSelection = v;
-                                  });
-                                },
-                              ),
-                            ),
-                          );
+                    : AccountAdvanced(
+                        onCryptoTypeChange: (v) {
+                          setState(() {
+                            _typeSelection = v;
+                          });
                         },
-                      ),
+                        onDerivePathChange: (v) {
+                          setState(() {
+                            _derivationPath = v;
+                          });
+                        },
+                      )
               ],
             ),
           ),
@@ -213,6 +194,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                 onSubmit({
                   'keyType': _keyOptions[_keySelection],
                   'cryptoType': _typeOptions[_typeSelection],
+                  'derivationPath': _derivationPath,
                   'finish': _keySelection == 2 ? true : null,
                 });
               }

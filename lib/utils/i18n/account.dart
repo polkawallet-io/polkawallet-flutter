@@ -25,6 +25,8 @@ const Map<String, String> enAccount = {
   'import.type': 'Source Type',
   'import.encrypt': 'Encrypt Type',
   'import.invalid': 'Invalid',
+  'advanced': 'Advanced Options',
+  'path': 'Secret derivation path',
 };
 
 const Map<String, String> zhAccount = {
@@ -50,4 +52,6 @@ const Map<String, String> zhAccount = {
   'import.type': '导入类型',
   'import.encrypt': '加密类型',
   'import.invalid': '无效的',
+  'advanced': '高级选项',
+  'path': '加密派生路径',
 };
