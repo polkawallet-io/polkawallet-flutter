@@ -119,68 +119,70 @@ class _CouncilVote extends State<CouncilVote> {
 
           int balance = Fmt.balanceInt(store.assets.balance);
 
-          return Column(
-            children: <Widget>[
-              Expanded(
-                child: Form(
-                  key: _formKey,
-                  child: ListView(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: TextFormField(
-                          decoration:
-                              InputDecoration(labelText: dic['address']),
-                          initialValue: store.account.currentAddress,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            hintText: dic['amount'],
-                            labelText:
-                                '${dic['amount']} (${dic['balance']}: ${Fmt.token(balance)})',
+          return SafeArea(
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: Form(
+                    key: _formKey,
+                    child: ListView(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(16),
+                          child: TextFormField(
+                            decoration:
+                                InputDecoration(labelText: dic['address']),
+                            initialValue: store.account.currentAddress,
                           ),
-                          inputFormatters: [
-                            RegExInputFormatter.withRegex(
-                                '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                          ],
-                          controller: _amountCtrl,
-                          keyboardType:
-                              TextInputType.numberWithOptions(decimal: true),
-                          validator: (v) {
-                            if (v.isEmpty) {
-                              return dic['amount.error'];
-                            }
-                            if (double.parse(v.trim()) >=
-                                balance / pow(10, decimals) - 0.02) {
-                              return dic['amount.low'];
-                            }
-                            return null;
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(16),
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              hintText: dic['amount'],
+                              labelText:
+                                  '${dic['amount']} (${dic['balance']}: ${Fmt.token(balance)})',
+                            ),
+                            inputFormatters: [
+                              RegExInputFormatter.withRegex(
+                                  '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                            ],
+                            controller: _amountCtrl,
+                            keyboardType:
+                                TextInputType.numberWithOptions(decimal: true),
+                            validator: (v) {
+                              if (v.isEmpty) {
+                                return dic['amount.error'];
+                              }
+                              if (double.parse(v.trim()) >=
+                                  balance / pow(10, decimals) - 0.02) {
+                                return dic['amount.low'];
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        ListTile(
+                          title: Text(govDic['candidate']),
+                          trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                          onTap: () {
+                            _handleCandidateSelect();
                           },
                         ),
-                      ),
-                      ListTile(
-                        title: Text(govDic['candidate']),
-                        trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                        onTap: () {
-                          _handleCandidateSelect();
-                        },
-                      ),
-                      _buildSelectedList()
-                    ],
+                        _buildSelectedList()
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
-                child: RoundedButton(
-                  text: I18n.of(context).home['submit.tx'],
-                  onPressed: _selected.length == 0 ? null : _onSubmit,
-                ),
-              )
-            ],
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: RoundedButton(
+                    text: I18n.of(context).home['submit.tx'],
+                    onPressed: _selected.length == 0 ? null : _onSubmit,
+                  ),
+                )
+              ],
+            ),
           );
         },
       ),

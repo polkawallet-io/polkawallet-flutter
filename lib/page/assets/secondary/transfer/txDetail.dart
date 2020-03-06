@@ -93,7 +93,9 @@ class TxDetail extends StatelessWidget {
         title: Text('${I18n.of(context).assets['detail']}'),
         centerTitle: true,
       ),
-      body: ListView(children: _buildListView(context)),
+      body: SafeArea(
+        child: ListView(children: _buildListView(context)),
+      ),
     );
   }
 }

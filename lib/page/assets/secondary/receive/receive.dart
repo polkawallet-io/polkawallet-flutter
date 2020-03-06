@@ -23,70 +23,74 @@ class Receive extends StatelessWidget {
         title: Text(I18n.of(context).assets['receive']),
         centerTitle: true,
       ),
-      body: ListView(
-        children: <Widget>[
-          Stack(
-            alignment: AlignmentDirectional.topCenter,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 32),
-                child: Image.asset('assets/images/assets/sweep_code_line.png'),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 40),
-                decoration: BoxDecoration(
-                  borderRadius:
-                      const BorderRadius.all(const Radius.circular(4)),
-                  color: Colors.white,
+      body: SafeArea(
+        child: ListView(
+          children: <Widget>[
+            Stack(
+              alignment: AlignmentDirectional.topCenter,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 32),
+                  child:
+                      Image.asset('assets/images/assets/sweep_code_line.png'),
                 ),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: AddressIcon(
-                        address: store.currentAccount.address,
+                Container(
+                  margin: EdgeInsets.only(top: 40),
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        const BorderRadius.all(const Radius.circular(4)),
+                    color: Colors.white,
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: AddressIcon(
+                          address: store.currentAccount.address,
+                        ),
                       ),
-                    ),
-                    Text(
-                      store.currentAccount.name,
-                      style: Theme.of(context).textTheme.display4,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 4, color: Colors.pinkAccent),
-                        borderRadius:
-                            BorderRadius.all(const Radius.circular(8)),
+                      Text(
+                        store.currentAccount.name,
+                        style: Theme.of(context).textTheme.display4,
                       ),
-                      margin: EdgeInsets.fromLTRB(48, 24, 48, 24),
-                      child: QrImage(
-                        data: codeAddress,
-                        size: 200,
-                        embeddedImage:
-                            AssetImage('assets/images/public/app.png'),
-                        embeddedImageStyle:
-                            QrEmbeddedImageStyle(size: Size(40, 40)),
+                      Container(
+                        decoration: BoxDecoration(
+                          border:
+                              Border.all(width: 4, color: Colors.pinkAccent),
+                          borderRadius:
+                              BorderRadius.all(const Radius.circular(8)),
+                        ),
+                        margin: EdgeInsets.fromLTRB(48, 24, 48, 24),
+                        child: QrImage(
+                          data: codeAddress,
+                          size: 200,
+                          embeddedImage:
+                              AssetImage('assets/images/public/app.png'),
+                          embeddedImageStyle:
+                              QrEmbeddedImageStyle(size: Size(40, 40)),
+                        ),
                       ),
-                    ),
-                    Container(
-                      width: 160,
-                      child: Text(store.currentAddress),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 2,
-                      padding: EdgeInsets.only(top: 16, bottom: 32),
-                      child: RoundedButton(
-                        color: Colors.pinkAccent,
-                        text: I18n.of(context).assets['copy'],
-                        onPressed: () =>
-                            UI.copyAndNotify(context, store.currentAddress),
+                      Container(
+                        width: 160,
+                        child: Text(store.currentAddress),
                       ),
-                    )
-                  ],
-                ),
-              )
-            ],
-          )
-        ],
+                      Container(
+                        width: MediaQuery.of(context).size.width / 2,
+                        padding: EdgeInsets.only(top: 16, bottom: 32),
+                        child: RoundedButton(
+                          color: Colors.pinkAccent,
+                          text: I18n.of(context).assets['copy'],
+                          onPressed: () =>
+                              UI.copyAndNotify(context, store.currentAddress),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

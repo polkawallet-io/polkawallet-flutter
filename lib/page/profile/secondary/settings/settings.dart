@@ -77,8 +77,7 @@ class _Settings extends State<Settings> {
         centerTitle: true,
       ),
       body: Observer(
-        builder: (_) => Padding(
-          padding: EdgeInsets.all(8),
+        builder: (_) => SafeArea(
           child: ListView(
             children: <Widget>[
               ListTile(

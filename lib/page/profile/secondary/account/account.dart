@@ -91,61 +91,65 @@ class AccountManage extends StatelessWidget {
           centerTitle: true,
           elevation: 0.0,
         ),
-        body: Column(
-          children: <Widget>[
-            Expanded(
-              child: ListView(
-                children: <Widget>[
-                  Container(
-                    color: Colors.pink,
-                    padding: EdgeInsets.only(bottom: 16),
-                    child: ListTile(
-                      leading: AddressIcon(
-                        address: store.currentAddress,
-                      ),
-                      title: Text(store.currentAccount.name ?? 'name',
-                          style: TextStyle(fontSize: 16, color: Colors.white)),
-                      subtitle: Text(
-                        Fmt.address(store.currentAddress) ?? '',
-                        style: TextStyle(fontSize: 16, color: Colors.white70),
+        body: SafeArea(
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: ListView(
+                  children: <Widget>[
+                    Container(
+                      color: Colors.pink,
+                      padding: EdgeInsets.only(bottom: 16),
+                      child: ListTile(
+                        leading: AddressIcon(
+                          address: store.currentAddress,
+                        ),
+                        title: Text(store.currentAccount.name ?? 'name',
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.white)),
+                        subtitle: Text(
+                          Fmt.address(store.currentAddress) ?? '',
+                          style: TextStyle(fontSize: 16, color: Colors.white70),
+                        ),
                       ),
                     ),
-                  ),
-                  Container(padding: EdgeInsets.only(top: 16)),
-                  ListTile(
-                    title: Text(dic['name.change']),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                    onTap: () => Navigator.pushNamed(context, '/profile/name'),
-                  ),
-                  ListTile(
-                    title: Text(dic['pass.change']),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                    onTap: () =>
-                        Navigator.pushNamed(context, '/profile/password'),
-                  ),
-                  ListTile(
-                    title: Text(dic['export']),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                    onTap: () =>
-                        Navigator.of(context).pushNamed('/profile/export'),
+                    Container(padding: EdgeInsets.only(top: 16)),
+                    ListTile(
+                      title: Text(dic['name.change']),
+                      trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/profile/name'),
+                    ),
+                    ListTile(
+                      title: Text(dic['pass.change']),
+                      trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/profile/password'),
+                    ),
+                    ListTile(
+                      title: Text(dic['export']),
+                      trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                      onTap: () =>
+                          Navigator.of(context).pushNamed('/profile/export'),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: FlatButton(
+                      padding: EdgeInsets.all(16),
+                      color: Colors.white,
+                      textColor: Colors.pink,
+                      child: Text(dic['delete']),
+                      onPressed: () => _onDeleteAccount(context),
+                    ),
                   ),
                 ],
               ),
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: RaisedButton(
-                    padding: EdgeInsets.all(16),
-                    color: Colors.white,
-                    textColor: Colors.pink,
-                    child: Text(dic['delete']),
-                    onPressed: () => _onDeleteAccount(context),
-                  ),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

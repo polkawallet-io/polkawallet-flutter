@@ -21,9 +21,10 @@ class CandidateDetail extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           title: Text(I18n.of(context).home['detail']), centerTitle: true),
-      body: ListView(
-        children: <Widget>[
-          RoundedCard(
+      body: SafeArea(
+        child: ListView(
+          children: <Widget>[
+            RoundedCard(
               margin: EdgeInsets.all(16),
               padding: EdgeInsets.only(bottom: 16),
               child: Column(
@@ -38,8 +39,10 @@ class CandidateDetail extends StatelessWidget {
                   ),
                   Text(dic['backing'])
                 ],
-              )),
-        ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

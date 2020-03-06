@@ -148,11 +148,11 @@ class _NominateState extends State<Nominate> {
         centerTitle: true,
       ),
       body: Builder(builder: (BuildContext context) {
-        return Container(
-          color: Theme.of(context).cardColor,
+        return SafeArea(
           child: Column(
             children: <Widget>[
-              Padding(
+              Container(
+                color: Theme.of(context).cardColor,
                 padding: EdgeInsets.only(top: 8, bottom: 8),
                 child: ValidatorListFilter(
                   onFilterChange: (v) {
@@ -180,7 +180,7 @@ class _NominateState extends State<Nominate> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+                padding: EdgeInsets.all(16),
                 child: RoundedButton(
                   text: I18n.of(context).home['submit.tx'],
                   onPressed: store.staking.validatorsInfo.length == 0

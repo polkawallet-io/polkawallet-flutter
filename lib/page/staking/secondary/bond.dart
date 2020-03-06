@@ -45,136 +45,140 @@ class _BondState extends State<Bond> {
         centerTitle: true,
       ),
       body: Builder(builder: (BuildContext context) {
-        return Column(
-          children: <Widget>[
-            Expanded(
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: dic['stash'],
-                          labelText: dic['stash'],
-                        ),
-                        initialValue: address,
-                        readOnly: true,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: dic['controller'],
-                          labelText: dic['controller'],
-                        ),
-                        initialValue: address,
-                        readOnly: true,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: assetDic['amount'],
-                          labelText:
-                              '${assetDic['amount']} (${dic['balance']}: $balance $symbol)',
-                        ),
-                        inputFormatters: [
-                          RegExInputFormatter.withRegex(
-                              '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                        ],
-                        controller: _amountCtrl,
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                        validator: (v) {
-                          if (v.isEmpty) {
-                            return assetDic['amount.error'];
-                          }
-                          if (double.parse(v.trim()) >=
-                              double.parse(balance) - 0.02) {
-                            return assetDic['amount.low'];
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    ListTile(
-                      title: Text(dic['bond.reward']),
-                      subtitle: Text(rewardToOptions[_rewardTo]),
-                      trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                      onTap: () {
-                        showCupertinoModalPopup(
-                          context: context,
-                          builder: (_) => Container(
-                            height:
-                                MediaQuery.of(context).copyWith().size.height /
-                                    3,
-                            child: CupertinoPicker(
-                              backgroundColor: Colors.white,
-                              itemExtent: 56,
-                              scrollController: FixedExtentScrollController(
-                                  initialItem: _rewardTo),
-                              children: rewardToOptions
-                                  .map((i) => Padding(
-                                      padding: EdgeInsets.all(12),
-                                      child: Text(i)))
-                                  .toList(),
-                              onSelectedItemChanged: (v) {
-                                setState(() {
-                                  _rewardTo = v;
-                                });
-                              },
-                            ),
+        return SafeArea(
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: dic['stash'],
+                            labelText: dic['stash'],
                           ),
-                        );
-                      },
-                    )
-                  ],
+                          initialValue: address,
+                          readOnly: true,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: dic['controller'],
+                            labelText: dic['controller'],
+                          ),
+                          initialValue: address,
+                          readOnly: true,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: assetDic['amount'],
+                            labelText:
+                                '${assetDic['amount']} (${dic['balance']}: $balance $symbol)',
+                          ),
+                          inputFormatters: [
+                            RegExInputFormatter.withRegex(
+                                '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                          ],
+                          controller: _amountCtrl,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          validator: (v) {
+                            if (v.isEmpty) {
+                              return assetDic['amount.error'];
+                            }
+                            if (double.parse(v.trim()) >=
+                                double.parse(balance) - 0.02) {
+                              return assetDic['amount.low'];
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      ListTile(
+                        title: Text(dic['bond.reward']),
+                        subtitle: Text(rewardToOptions[_rewardTo]),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                        onTap: () {
+                          showCupertinoModalPopup(
+                            context: context,
+                            builder: (_) => Container(
+                              height: MediaQuery.of(context)
+                                      .copyWith()
+                                      .size
+                                      .height /
+                                  3,
+                              child: CupertinoPicker(
+                                backgroundColor: Colors.white,
+                                itemExtent: 56,
+                                scrollController: FixedExtentScrollController(
+                                    initialItem: _rewardTo),
+                                children: rewardToOptions
+                                    .map((i) => Padding(
+                                        padding: EdgeInsets.all(12),
+                                        child: Text(i)))
+                                    .toList(),
+                                onSelectedItemChanged: (v) {
+                                  setState(() {
+                                    _rewardTo = v;
+                                  });
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
-              child: RoundedButton(
-                text: I18n.of(context).home['submit.tx'],
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    var args = {
-                      "title": dic['action.bond'],
-                      "txInfo": {
-                        "module": 'staking',
-                        "call": 'bond',
-                      },
-                      "detail": jsonEncode({
-                        "amount": _amountCtrl.text.trim(),
-                        "reward_destination": rewardToOptions[_rewardTo],
-                      }),
-                      "params": [
-                        // "from":
-                        store.account.currentAddress,
-                        // "amount":
-                        (double.parse(_amountCtrl.text.trim()) *
-                                pow(10, decimals))
-                            .toInt(),
-                        // "to"
-                        _rewardTo,
-                      ],
-                      'onFinish': (BuildContext txPageContext) {
-                        Navigator.popUntil(
-                            txPageContext, ModalRoute.withName('/'));
-                        globalBondingRefreshKey.currentState.show();
-                      }
-                    };
-                    Navigator.of(context)
-                        .pushNamed('/staking/confirm', arguments: args);
-                  }
-                },
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: RoundedButton(
+                  text: I18n.of(context).home['submit.tx'],
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      var args = {
+                        "title": dic['action.bond'],
+                        "txInfo": {
+                          "module": 'staking',
+                          "call": 'bond',
+                        },
+                        "detail": jsonEncode({
+                          "amount": _amountCtrl.text.trim(),
+                          "reward_destination": rewardToOptions[_rewardTo],
+                        }),
+                        "params": [
+                          // "from":
+                          store.account.currentAddress,
+                          // "amount":
+                          (double.parse(_amountCtrl.text.trim()) *
+                                  pow(10, decimals))
+                              .toInt(),
+                          // "to"
+                          _rewardTo,
+                        ],
+                        'onFinish': (BuildContext txPageContext) {
+                          Navigator.popUntil(
+                              txPageContext, ModalRoute.withName('/'));
+                          globalBondingRefreshKey.currentState.show();
+                        }
+                      };
+                      Navigator.of(context)
+                          .pushNamed('/staking/confirm', arguments: args);
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       }),
     );

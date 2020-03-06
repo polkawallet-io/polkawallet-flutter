@@ -10,30 +10,32 @@ class CreateAccountEntry extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['create'])),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: Image.asset('assets/images/public/About_logo.png'),
-          ),
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: RoundedButton(
-              text: I18n.of(context).home['create'],
-              onPressed: () {
-                Navigator.pushNamed(context, '/account/create');
-              },
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Image.asset('assets/images/public/About_logo.png'),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, 32),
-            child: RoundedButton(
-              text: I18n.of(context).home['import'],
-              onPressed: () {
-                Navigator.pushNamed(context, '/account/import');
-              },
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: RoundedButton(
+                text: I18n.of(context).home['create'],
+                onPressed: () {
+                  Navigator.pushNamed(context, '/account/create');
+                },
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: RoundedButton(
+                text: I18n.of(context).home['import'],
+                onPressed: () {
+                  Navigator.pushNamed(context, '/account/import');
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

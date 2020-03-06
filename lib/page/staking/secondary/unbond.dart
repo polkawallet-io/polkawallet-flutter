@@ -44,99 +44,102 @@ class _UnBondState extends State<UnBond> {
         centerTitle: true,
       ),
       body: Builder(builder: (BuildContext context) {
-        return Column(
-          children: <Widget>[
-            Expanded(
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: dic['stash'],
-                          labelText: dic['stash'],
+        return SafeArea(
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: dic['stash'],
+                            labelText: dic['stash'],
+                          ),
+                          initialValue: address,
+                          readOnly: true,
                         ),
-                        initialValue: address,
-                        readOnly: true,
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: dic['controller'],
-                          labelText: dic['controller'],
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: dic['controller'],
+                            labelText: dic['controller'],
+                          ),
+                          initialValue: address,
+                          readOnly: true,
                         ),
-                        initialValue: address,
-                        readOnly: true,
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: assetDic['amount'],
-                          labelText:
-                              '${assetDic['amount']} (${dic['bonded']}: $bonded $symbol)',
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: assetDic['amount'],
+                            labelText:
+                                '${assetDic['amount']} (${dic['bonded']}: $bonded $symbol)',
+                          ),
+                          inputFormatters: [
+                            RegExInputFormatter.withRegex(
+                                '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                          ],
+                          controller: _amountCtrl,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          validator: (v) {
+                            if (v.isEmpty) {
+                              return assetDic['amount.error'];
+                            }
+                            if (double.parse(v.trim()) >=
+                                double.parse(bonded)) {
+                              return assetDic['amount.low'];
+                            }
+                            return null;
+                          },
                         ),
-                        inputFormatters: [
-                          RegExInputFormatter.withRegex(
-                              '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                        ],
-                        controller: _amountCtrl,
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                        validator: (v) {
-                          if (v.isEmpty) {
-                            return assetDic['amount.error'];
-                          }
-                          if (double.parse(v.trim()) >= double.parse(bonded)) {
-                            return assetDic['amount.low'];
-                          }
-                          return null;
-                        },
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
-              child: RoundedButton(
-                text: I18n.of(context).home['submit.tx'],
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    var args = {
-                      "title": dic['action.unbond'],
-                      "txInfo": {
-                        "module": 'staking',
-                        "call": 'unbond',
-                      },
-                      "detail": jsonEncode({
-                        "amount": _amountCtrl.text.trim(),
-                      }),
-                      "params": [
-                        // "amount"
-                        (double.parse(_amountCtrl.text.trim()) *
-                                pow(10, decimals))
-                            .toInt(),
-                      ],
-                      'onFinish': (BuildContext txPageContext) {
-                        Navigator.popUntil(
-                            txPageContext, ModalRoute.withName('/'));
-                        globalBondingRefreshKey.currentState.show();
-                      }
-                    };
-                    Navigator.of(context)
-                        .pushNamed('/staking/confirm', arguments: args);
-                  }
-                },
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: RoundedButton(
+                  text: I18n.of(context).home['submit.tx'],
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      var args = {
+                        "title": dic['action.unbond'],
+                        "txInfo": {
+                          "module": 'staking',
+                          "call": 'unbond',
+                        },
+                        "detail": jsonEncode({
+                          "amount": _amountCtrl.text.trim(),
+                        }),
+                        "params": [
+                          // "amount"
+                          (double.parse(_amountCtrl.text.trim()) *
+                                  pow(10, decimals))
+                              .toInt(),
+                        ],
+                        'onFinish': (BuildContext txPageContext) {
+                          Navigator.popUntil(
+                              txPageContext, ModalRoute.withName('/'));
+                          globalBondingRefreshKey.currentState.show();
+                        }
+                      };
+                      Navigator.of(context)
+                          .pushNamed('/staking/confirm', arguments: args);
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       }),
     );

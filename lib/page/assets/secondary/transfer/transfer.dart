@@ -44,42 +44,44 @@ class _TransferState extends State<Transfer> {
   }
 
   @override
-  Widget build(BuildContext context) => Observer(
-        builder: (_) {
-          final Map<String, String> dic = I18n.of(context).assets;
-          String symbol = store.settings.networkState.tokenSymbol;
-          int decimals = store.settings.networkState.tokenDecimals;
+  Widget build(BuildContext context) {
+    return Observer(
+      builder: (_) {
+        final Map<String, String> dic = I18n.of(context).assets;
+        String symbol = store.settings.networkState.tokenSymbol;
+        int decimals = store.settings.networkState.tokenDecimals;
 
-          int balance = Fmt.balanceInt(store.assets.balance);
-          int available = balance;
-          bool hasStakingData = store.staking.ledger['stakingLedger'] != null;
-          if (hasStakingData) {
-            int bonded = store.staking.ledger['stakingLedger']['active'];
-            int unlocking = 0;
-            List unlockingList =
-                store.staking.ledger['stakingLedger']['unlocking'];
-            unlockingList.forEach((i) => unlocking += i['value']);
-            available = balance - bonded - unlocking;
-          }
+        int balance = Fmt.balanceInt(store.assets.balance);
+        int available = balance;
+        bool hasStakingData = store.staking.ledger['stakingLedger'] != null;
+        if (hasStakingData) {
+          int bonded = store.staking.ledger['stakingLedger']['active'];
+          int unlocking = 0;
+          List unlockingList =
+              store.staking.ledger['stakingLedger']['unlocking'];
+          unlockingList.forEach((i) => unlocking += i['value']);
+          available = balance - bonded - unlocking;
+        }
 
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('${dic['transfer']} $symbol'),
-              centerTitle: true,
-              actions: <Widget>[
-                IconButton(
-                  icon: Image.asset('assets/images/assets/Menu_scan.png'),
-                  onPressed: () async {
-                    var to =
-                        await Navigator.of(context).pushNamed('/account/scan');
-                    setState(() {
-                      _addressCtrl.text = to;
-                    });
-                  },
-                )
-              ],
-            ),
-            body: Builder(
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('${dic['transfer']} $symbol'),
+            centerTitle: true,
+            actions: <Widget>[
+              IconButton(
+                icon: Image.asset('assets/images/assets/Menu_scan.png'),
+                onPressed: () async {
+                  var to =
+                      await Navigator.of(context).pushNamed('/account/scan');
+                  setState(() {
+                    _addressCtrl.text = to;
+                  });
+                },
+              )
+            ],
+          ),
+          body: SafeArea(
+            child: Builder(
               builder: (BuildContext context) {
                 return Column(
                   children: <Widget>[
@@ -159,7 +161,7 @@ class _TransferState extends State<Transfer> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+                      padding: EdgeInsets.all(16),
                       child: RoundedButton(
                         text: I18n.of(context).assets['make'],
                         onPressed: () {
@@ -198,7 +200,9 @@ class _TransferState extends State<Transfer> {
                 );
               },
             ),
-          );
-        },
-      );
+          ),
+        );
+      },
+    );
+  }
 }

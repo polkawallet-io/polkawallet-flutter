@@ -200,9 +200,9 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
           ),
         ),
         Container(
-          padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
+          padding: EdgeInsets.all(16),
           child: RoundedButton(
-            text: I18n.of(context).home['ok'],
+            text: I18n.of(context).home['next'],
             onPressed: () {
               if (_formKey.currentState.validate()) {
                 if (_keySelection == 2) {

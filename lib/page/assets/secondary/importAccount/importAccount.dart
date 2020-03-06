@@ -68,26 +68,30 @@ class _ImportAccountState extends State<ImportAccount> {
             },
           ),
         ),
-        body: CreateAccountForm(store.account.setNewAccount, _importAccount),
+        body: SafeArea(
+          child: CreateAccountForm(store.account.setNewAccount, _importAccount),
+        ),
       );
     }
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['import'])),
-      body: ImportAccountForm(store.account, (Map<String, dynamic> data) {
-        if (data['finish'] == null) {
-          setState(() {
-            _keyType = data['keyType'];
-            _cryptoType = data['cryptoType'];
-            _step = 1;
-          });
-        } else {
-          setState(() {
-            _keyType = data['keyType'];
-            _cryptoType = data['cryptoType'];
-          });
-          _importAccount();
-        }
-      }),
+      body: SafeArea(
+        child: ImportAccountForm(store.account, (Map<String, dynamic> data) {
+          if (data['finish'] == null) {
+            setState(() {
+              _keyType = data['keyType'];
+              _cryptoType = data['cryptoType'];
+              _step = 1;
+            });
+          } else {
+            setState(() {
+              _keyType = data['keyType'];
+              _cryptoType = data['cryptoType'];
+            });
+            _importAccount();
+          }
+        }),
+      ),
     );
   }
 }

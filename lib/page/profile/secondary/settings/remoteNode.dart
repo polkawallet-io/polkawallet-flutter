@@ -75,8 +75,7 @@ class RemoteNode extends StatelessWidget {
         title: Text(dic['setting.node.list']),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(8),
+      body: SafeArea(
         child: ListView(children: list),
       ),
     );

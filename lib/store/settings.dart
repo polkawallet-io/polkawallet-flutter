@@ -72,6 +72,7 @@ abstract class _SettingsStore with Store {
 
   @action
   void setNetworkName(String name) {
+    print('set netwwork name: $name');
     networkName = name;
     loading = false;
   }

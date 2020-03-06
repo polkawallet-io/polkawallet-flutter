@@ -130,131 +130,133 @@ class _TxConfirmState extends State<TxConfirm> {
         title: Text(args['title']),
         centerTitle: true,
       ),
-      body: Builder(builder: (BuildContext context) {
-        String address = store.account.currentAddress;
-        return Observer(
-          builder: (_) => Column(
-            children: <Widget>[
-              Expanded(
-                child: ListView(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        dic['submit.tx'],
-                        style: Theme.of(context).textTheme.display4,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        '${dic["submit.from"]}$address',
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            width: 64,
-                            child: Text(
-                              dic["submit.call"],
-                            ),
-                          ),
-                          Text(
-                            '${args['txInfo']['module']}.${args['txInfo']['call']}',
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            width: 64,
-                            child: Text(
-                              dic["detail"],
-                            ),
-                          ),
-                          Container(
-                            width:
-                                MediaQuery.of(context).copyWith().size.width -
-                                    120,
-                            child: Text(
-                              args['detail'],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          icon: Icon(Icons.lock),
-                          hintText: dic['unlock'],
-                          labelText: dic['unlock'],
-                          suffixIcon: IconButton(
-                            iconSize: 18,
-                            icon: Icon(
-                              CupertinoIcons.clear_thick_circled,
-                              color: Theme.of(context).unselectedWidgetColor,
-                            ),
-                            onPressed: () {
-                              WidgetsBinding.instance.addPostFrameCallback(
-                                  (_) => _passCtrl.clear());
-                            },
-                          ),
+      body: SafeArea(
+        child: Builder(builder: (BuildContext context) {
+          String address = store.account.currentAddress;
+          return Observer(
+            builder: (_) => Column(
+              children: <Widget>[
+                Expanded(
+                  child: ListView(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          dic['submit.tx'],
+                          style: Theme.of(context).textTheme.display4,
                         ),
-                        obscureText: true,
-                        controller: _passCtrl,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          '${dic["submit.from"]}$address',
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              width: 64,
+                              child: Text(
+                                dic["submit.call"],
+                              ),
+                            ),
+                            Text(
+                              '${args['txInfo']['module']}.${args['txInfo']['call']}',
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              width: 64,
+                              child: Text(
+                                dic["detail"],
+                              ),
+                            ),
+                            Container(
+                              width:
+                                  MediaQuery.of(context).copyWith().size.width -
+                                      120,
+                              child: Text(
+                                args['detail'],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            icon: Icon(Icons.lock),
+                            hintText: dic['unlock'],
+                            labelText: dic['unlock'],
+                            suffixIcon: IconButton(
+                              iconSize: 18,
+                              icon: Icon(
+                                CupertinoIcons.clear_thick_circled,
+                                color: Theme.of(context).unselectedWidgetColor,
+                              ),
+                              onPressed: () {
+                                WidgetsBinding.instance.addPostFrameCallback(
+                                    (_) => _passCtrl.clear());
+                              },
+                            ),
+                          ),
+                          obscureText: true,
+                          controller: _passCtrl,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        color: store.assets.submitting
+                            ? Colors.black12
+                            : Colors.orange,
+                        child: FlatButton(
+                          padding: EdgeInsets.all(16),
+                          child: Text(dic['cancel'],
+                              style: TextStyle(color: Colors.white)),
+                          onPressed: () {
+                            _passCtrl.value = TextEditingValue(text: '');
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        color: store.assets.submitting
+                            ? Colors.black12
+                            : Colors.pink,
+                        child: FlatButton(
+                          padding: EdgeInsets.all(16),
+                          child: Text(
+                            dic['submit'],
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: store.assets.submitting
+                              ? null
+                              : () => _onSubmit(context),
+                        ),
                       ),
                     ),
                   ],
-                ),
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      color: store.assets.submitting
-                          ? Colors.black12
-                          : Colors.orange,
-                      child: FlatButton(
-                        padding: EdgeInsets.all(16),
-                        child: Text(dic['cancel'],
-                            style: TextStyle(color: Colors.white)),
-                        onPressed: () {
-                          _passCtrl.value = TextEditingValue(text: '');
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      color: store.assets.submitting
-                          ? Colors.black12
-                          : Colors.pink,
-                      child: FlatButton(
-                        padding: EdgeInsets.all(16),
-                        child: Text(
-                          dic['submit'],
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: store.assets.submitting
-                            ? null
-                            : () => _onSubmit(context),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        );
-      }),
+                )
+              ],
+            ),
+          );
+        }),
+      ),
     );
   }
 }

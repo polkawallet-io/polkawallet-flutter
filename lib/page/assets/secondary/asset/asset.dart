@@ -217,14 +217,16 @@ class _AssetPageState extends State<AssetPage>
   }
 
   @override
-  Widget build(BuildContext context) => Observer(
-        builder: (_) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(store.settings.networkState.tokenSymbol),
-              centerTitle: true,
-            ),
-            body: Column(
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(store.settings.networkState.tokenSymbol),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Observer(
+          builder: (_) {
+            return Column(
               children: <Widget>[
                 Expanded(
                   child: Container(
@@ -294,8 +296,10 @@ class _AssetPageState extends State<AssetPage>
                   ],
                 )
               ],
-            ),
-          );
-        },
-      );
+            );
+          },
+        ),
+      ),
+    );
+  }
 }

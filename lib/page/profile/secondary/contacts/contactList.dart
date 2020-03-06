@@ -21,16 +21,18 @@ class ContactList extends StatelessWidget {
             ),
             body: Padding(
               padding: EdgeInsets.only(top: 8, left: 8),
-              child: ListView(
-                children: store.contactList.map((i) {
-                  return ListTile(
-                    leading: AddressIcon(address: i.address),
-                    title: Text(i.name),
-                    subtitle: Text(Fmt.address(i.address)),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () => Navigator.of(context).pop(i.address),
-                  );
-                }).toList(),
+              child: SafeArea(
+                child: ListView(
+                  children: store.contactList.map((i) {
+                    return ListTile(
+                      leading: AddressIcon(address: i.address),
+                      title: Text(i.name),
+                      subtitle: Text(Fmt.address(i.address)),
+                      trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () => Navigator.of(context).pop(i.address),
+                    );
+                  }).toList(),
+                ),
               ),
             ),
           );

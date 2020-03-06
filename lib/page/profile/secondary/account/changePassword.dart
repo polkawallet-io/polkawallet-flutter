@@ -81,16 +81,16 @@ class _ChangePassword extends State<ChangePassword> {
         title: Text(dic['pass.change']),
         centerTitle: true,
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
-                    child: TextFormField(
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  children: <Widget>[
+                    TextFormField(
                       decoration: InputDecoration(
                         icon: Icon(Icons.lock),
                         hintText: dic['pass.old'],
@@ -115,10 +115,7 @@ class _ChangePassword extends State<ChangePassword> {
                       },
                       obscureText: true,
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
-                    child: TextFormField(
+                    TextFormField(
                       decoration: InputDecoration(
                         icon: Icon(Icons.lock),
                         hintText: dic['pass.new'],
@@ -132,10 +129,7 @@ class _ChangePassword extends State<ChangePassword> {
                       },
                       obscureText: true,
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
-                    child: TextFormField(
+                    TextFormField(
                       decoration: InputDecoration(
                         icon: Icon(Icons.lock),
                         hintText: dic['pass.new2'],
@@ -149,16 +143,17 @@ class _ChangePassword extends State<ChangePassword> {
                       },
                       obscureText: true,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Container(
-            margin: EdgeInsets.fromLTRB(24, 8, 24, 24),
-            child: RoundedButton(text: dic['contact.save'], onPressed: _onSave),
-          ),
-        ],
+            Container(
+              margin: EdgeInsets.all(16),
+              child:
+                  RoundedButton(text: dic['contact.save'], onPressed: _onSave),
+            ),
+          ],
+        ),
       ),
     );
   }

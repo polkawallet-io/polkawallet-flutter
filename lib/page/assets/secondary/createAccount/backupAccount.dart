@@ -37,54 +37,56 @@ class _BackupAccountState extends State<BackupAccount> {
     return Observer(
       builder: (_) => Scaffold(
         appBar: AppBar(title: const Text('Create Account')),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              child: ListView(
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.all(16),
+                  children: <Widget>[
+                    Text(
+                      i18n['create.warn3'],
+                      style: Theme.of(context).textTheme.display4,
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top: 16, bottom: 32),
+                      child: Text(
+                        i18n['create.warn4'],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Colors.black12,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(4))),
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        store.account.newAccount.key ?? '',
+                        style: Theme.of(context).textTheme.display3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
                 padding: EdgeInsets.all(16),
-                children: <Widget>[
-                  Text(
-                    i18n['create.warn3'],
-                    style: Theme.of(context).textTheme.display4,
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 16, bottom: 32),
-                    child: Text(
-                      i18n['create.warn4'],
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: Colors.black12,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(4))),
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                      store.account.newAccount.key ?? '',
-                      style: Theme.of(context).textTheme.display3,
-                    ),
-                  ),
-                ],
+                child: RoundedButton(
+                  text: I18n.of(context).home['next'],
+                  onPressed: () {
+                    setState(() {
+                      _step = 1;
+                      _wordsSelected = <String>[];
+                      _wordsLeft = store.account.newAccount.key.split(' ');
+                    });
+                  },
+                ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
-              child: RoundedButton(
-                text: I18n.of(context).home['next'],
-                onPressed: () {
-                  setState(() {
-                    _step = 1;
-                    _wordsSelected = <String>[];
-                    _wordsLeft = store.account.newAccount.key.split(' ');
-                  });
-                },
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -105,75 +107,78 @@ class _BackupAccountState extends State<BackupAccount> {
           },
         ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(16),
-              children: <Widget>[
-                Text(
-                  i18n['backup'],
-                  style: Theme.of(context).textTheme.display4,
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 16),
-                  child: Text(
-                    i18n['backup.confirm'],
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.all(16),
+                children: <Widget>[
+                  Text(
+                    i18n['backup'],
+                    style: Theme.of(context).textTheme.display4,
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    GestureDetector(
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        child: Text(
-                          i18n['backup.reset'],
-                          style: TextStyle(fontSize: 14, color: Colors.pink),
+                  Container(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Text(
+                      i18n['backup.confirm'],
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      GestureDetector(
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Text(
+                            i18n['backup.reset'],
+                            style: TextStyle(fontSize: 14, color: Colors.pink),
+                          ),
                         ),
-                      ),
-                      onTap: () {
-                        setState(() {
-                          _wordsLeft = store.account.newAccount.key.split(' ');
-                          _wordsSelected = [];
-                        });
-                      },
-                    )
-                  ],
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.black12,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(4))),
-                  padding: EdgeInsets.all(16),
-                  child: Text(
-                    _wordsSelected.join(' ') ?? '',
-                    style: Theme.of(context).textTheme.display3,
+                        onTap: () {
+                          setState(() {
+                            _wordsLeft =
+                                store.account.newAccount.key.split(' ');
+                            _wordsSelected = [];
+                          });
+                        },
+                      )
+                    ],
                   ),
-                ),
-                _buildWordsButtons(),
-              ],
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(
+                          color: Colors.black12,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(4))),
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      _wordsSelected.join(' ') ?? '',
+                      style: Theme.of(context).textTheme.display3,
+                    ),
+                  ),
+                  _buildWordsButtons(),
+                ],
+              ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
-            child: RoundedButton(
-              text: I18n.of(context).home['next'],
-              onPressed:
-                  _wordsSelected.join(' ') == store.account.newAccount.key
-                      ? () async {
-                          webApi.account.importAccount();
-                          Navigator.popUntil(context, ModalRoute.withName('/'));
-                        }
-                      : null,
+            Container(
+              padding: EdgeInsets.all(16),
+              child: RoundedButton(
+                text: I18n.of(context).home['next'],
+                onPressed: _wordsSelected.join(' ') ==
+                        store.account.newAccount.key
+                    ? () async {
+                        webApi.account.importAccount();
+                        Navigator.popUntil(context, ModalRoute.withName('/'));
+                      }
+                    : null,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

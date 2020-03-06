@@ -92,17 +92,19 @@ class Contacts extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(right: 8),
                   child: IconButton(
-                    icon: Icon(Icons.add),
+                    icon: Icon(Icons.add, size: 28),
                     onPressed: () =>
                         Navigator.of(context).pushNamed('/profile/contact'),
                   ),
                 )
               ],
             ),
-            body: Padding(
-              padding: EdgeInsets.only(top: 8, left: 8),
-              child: ListView(
-                children: ls,
+            body: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(top: 8, left: 8),
+                child: ListView(
+                  children: ls,
+                ),
               ),
             ),
           );
