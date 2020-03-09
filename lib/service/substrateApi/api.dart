@@ -145,20 +145,12 @@ class Api {
     store.settings.setNetworkName(info[2]);
 
     if (store.settings.customSS58Format['info'] == 'default') {
-      setSS58Format(info[1]['ss58Format']);
+      account.setSS58Format(info[1]['ss58Format']);
     }
 
     List addresses = store.account.accountList.map((i) => i.address).toList();
     account.fetchAccountsIndex(addresses);
     account.getAddressIcons(addresses);
-  }
-
-  Future<void> setSS58Format(int value) async {
-    print('set ss58: $value');
-    // setSS58Format and reload new addresses
-    List res = await evalJavascript('settings.resetSS58Format($value)');
-    store.account.setPubKeyAddressMap(res);
-    account.getAddressIcons(res.map((i) => i['address']).toList());
   }
 
   Future<void> updateBlocks() async {

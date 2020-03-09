@@ -13,6 +13,14 @@ class ApiAccount {
   final Api apiRoot;
   final store = globalAppStore;
 
+  Future<void> setSS58Format(int value) async {
+    print('set ss58: $value');
+    // setSS58Format and reload new addresses
+    List res = await apiRoot.evalJavascript('account.resetSS58Format($value)');
+    store.account.setPubKeyAddressMap(res);
+    getAddressIcons(res.map((i) => i['address']).toList());
+  }
+
   Future<void> initAccounts() async {
     String accounts = jsonEncode(
         store.account.accountList.map((i) => AccountData.toJson(i)).toList());
@@ -59,11 +67,14 @@ class ApiAccount {
   }
 
   Future<Map<String, dynamic>> importAccount(
-      {String keyType = 'Mnemonic', String cryptoType = 'sr25519'}) async {
+      {String keyType = 'Mnemonic',
+      String cryptoType = 'sr25519',
+      String derivePath = ''}) async {
     String key = store.account.newAccount.key;
     String pass = store.account.newAccount.password;
     String code =
-        'account.recover("$keyType", "$cryptoType", \'$key\', "$pass")';
+        'account.recover("$keyType", "$cryptoType", \'$key$derivePath\', "$pass")';
+    print(derivePath);
     print(code);
     Map<String, dynamic> acc = await apiRoot.evalJavascript(code);
     if (acc != null) {
@@ -73,10 +84,9 @@ class ApiAccount {
       store.gov.clearSate();
 
       if (store.settings.customSS58Format['info'] == 'default') {
-        await apiRoot
-            .setSS58Format(default_ss58_map[store.settings.endpoint.info]);
+        await setSS58Format(default_ss58_map[store.settings.endpoint.info]);
       } else {
-        await apiRoot.setSS58Format(store.settings.customSS58Format['value']);
+        await setSS58Format(store.settings.customSS58Format['value']);
       }
 
       apiRoot.assets.fetchBalance(acc['address']);
@@ -115,6 +125,13 @@ class ApiAccount {
     List res = await apiRoot
         .evalJavascript('account.genIcons(${jsonEncode(addresses)})');
     store.account.setAccountIconsMap(res);
+    return res;
+  }
+
+  Future<String> checkDerivePath(
+      String seed, String path, String pairType) async {
+    String res = await apiRoot.evalJavascript(
+        'account.checkDerivePath("$seed", "$path", "$pairType")');
     return res;
   }
 }

@@ -38,9 +38,10 @@ class SS58Prefix extends StatelessWidget {
               onTap: () {
                 store.setCustomSS58Format(i);
                 if (i['info'] == 'default') {
-                  api.setSS58Format(default_ss58_map[store.endpoint.info]);
+                  api.account
+                      .setSS58Format(default_ss58_map[store.endpoint.info]);
                 } else {
-                  api.setSS58Format(i['value']);
+                  api.account.setSS58Format(i['value']);
                 }
                 Navigator.of(context).pop();
               },

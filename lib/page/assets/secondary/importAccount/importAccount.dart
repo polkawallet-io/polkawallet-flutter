@@ -23,11 +23,13 @@ class _ImportAccountState extends State<ImportAccount> {
   int _step = 0;
   String _keyType = '';
   String _cryptoType = '';
+  String _derivePath = '';
 
   Future<void> _importAccount() async {
     var acc = await webApi.account.importAccount(
       keyType: _keyType,
       cryptoType: _cryptoType,
+      derivePath: _derivePath,
     );
     if (acc != null) {
       Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -81,12 +83,14 @@ class _ImportAccountState extends State<ImportAccount> {
             setState(() {
               _keyType = data['keyType'];
               _cryptoType = data['cryptoType'];
+              _derivePath = data['derivePath'];
               _step = 1;
             });
           } else {
             setState(() {
               _keyType = data['keyType'];
               _cryptoType = data['cryptoType'];
+              _derivePath = data['derivePath'];
             });
             _importAccount();
           }
