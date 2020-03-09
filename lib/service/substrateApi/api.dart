@@ -103,12 +103,11 @@ class Api {
   }
 
   Future<void> connectNode() async {
-//    // TODO: use polkawallet node
-//    var defaultNode = Locale.cachedLocaleString.contains('zh')
-//        ? default_node_zh
-//        : default_node;
-//    String value = settingsStore.endpoint.value ?? defaultNode['value'];
-    String value = store.settings.endpoint.value ?? default_node['value'];
+    var defaultNode = Locale.cachedLocaleString.contains('zh')
+        ? default_node_zh
+        : default_node;
+    String value = store.settings.endpoint.value ?? defaultNode['value'];
+//    String value = store.settings.endpoint.value ?? default_node['value'];
     print(value);
     String res = await evalJavascript('settings.connect("$value")');
     if (res == null) {

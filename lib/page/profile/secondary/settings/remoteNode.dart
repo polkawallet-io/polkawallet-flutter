@@ -15,7 +15,7 @@ const default_node = {
   'value': 'wss://kusama-rpc.polkadot.io/',
 };
 const nodeList = [
-//  default_node_zh,
+  default_node_zh,
   default_node,
   {
     'info': 'kusama',
@@ -76,7 +76,7 @@ class RemoteNode extends StatelessWidget {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: ListView(children: list),
+        child: ListView(padding: EdgeInsets.only(top: 8), children: list),
       ),
     );
   }
