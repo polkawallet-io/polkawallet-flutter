@@ -141,12 +141,10 @@ class Api {
       evalJavascript('api.rpc.system.chain()'),
       assets.fetchBalance(store.account.currentAddress),
     ]);
-    print(info);
 
     store.settings.setNetworkConst(info[0]);
     store.settings.setNetworkState(info[1]);
     store.settings.setNetworkName(info[2]);
-    print(info);
 
     if (store.settings.customSS58Format['info'] == 'default') {
       account.setSS58Format(info[1]['ss58Format']);
