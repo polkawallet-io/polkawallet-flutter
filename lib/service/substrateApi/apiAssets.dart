@@ -10,11 +10,13 @@ class ApiAssets {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<void> fetchBalance(String address) async {
-    if (address != null) {
-      var res = await apiRoot.evalJavascript('account.getBalance("$address")');
+  Future<String> fetchBalance(String address) async {
+    String res = '0';
+    if (address != null && address.length > 0) {
+      res = await apiRoot.evalJavascript('account.getBalance("$address")');
       store.assets.setAccountBalance(res);
     }
+    return res;
   }
 
   Future<List> updateTxs(int page) async {

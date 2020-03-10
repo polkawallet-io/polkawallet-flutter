@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
@@ -60,16 +61,18 @@ class Api {
             name: 'PolkaWallet',
             onMessageReceived: (JavascriptMessage message) {
               print('received msg: ${message.message}');
-              final msg = jsonDecode(message.message);
-              final String path = msg['path'];
-              var handler = _msgHandlers[path];
-              if (handler == null) {
-                return;
-              }
-              handler(msg['data']);
-              if (path.contains('uid=')) {
-                _msgHandlers.remove(path);
-              }
+              compute(jsonDecode, message.message).then((msg) {
+                final msg = jsonDecode(message.message);
+                final String path = msg['path'];
+                var handler = _msgHandlers[path];
+                if (handler == null) {
+                  return;
+                }
+                handler(msg['data']);
+                if (path.contains('uid=')) {
+                  _msgHandlers.remove(path);
+                }
+              });
             }),
       ].toSet(),
       ignoreSSLErrors: true,
@@ -138,10 +141,12 @@ class Api {
       evalJavascript('api.rpc.system.chain()'),
       assets.fetchBalance(store.account.currentAddress),
     ]);
+    print(info);
 
     store.settings.setNetworkConst(info[0]);
     store.settings.setNetworkState(info[1]);
     store.settings.setNetworkName(info[2]);
+    print(info);
 
     if (store.settings.customSS58Format['info'] == 'default') {
       account.setSS58Format(info[1]['ss58Format']);
