@@ -22,10 +22,8 @@ class Validator extends StatelessWidget {
       color: Colors.white,
       child: ListTile(
         leading: AddressIcon(address: validator.accountId),
-        title: Text(accInfo != null
-            ? accInfo['identity']['display'] != null
-                ? accInfo['identity']['display'].toString().toUpperCase()
-                : accInfo['accountIndex']
+        title: Text(accInfo != null && accInfo['identity']['display'] != null
+            ? accInfo['identity']['display'].toString().toUpperCase()
             : Fmt.address(validator.accountId, pad: 6)),
         subtitle: Text('${dic['total']}: ${Fmt.token(validator.total)}'),
         trailing: Container(

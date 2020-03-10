@@ -184,9 +184,7 @@ class _StakingActions extends State<StakingActions>
                       store.account.currentAccount.name,
                       style: Theme.of(context).textTheme.display4,
                     ),
-                    Text(accIndex != null
-                        ? accIndex
-                        : Fmt.address(store.account.currentAddress))
+                    Text(accIndex ?? Fmt.address(store.account.currentAddress))
                   ],
                 ),
               ),

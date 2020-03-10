@@ -145,14 +145,21 @@ class _TransferState extends State<Transfer> {
                             Padding(
                               padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                               child: Text(
-                                  'TransferFee: ${store.settings.transferFeeView} $symbol',
+                                  'existentialDeposit: ${store.settings.existentialDeposit} $symbol',
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black54)),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                              child: Text(
+                                  'TransferFee: ${store.settings.transactionBaseFee} $symbol',
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.black54)),
                             ),
                             Padding(
                               padding: EdgeInsets.all(16),
                               child: Text(
-                                  'CreationFee: ${store.settings.creationFeeView} $symbol',
+                                  'transactionByteFee: ${store.settings.transactionByteFee} $symbol',
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.black54)),
                             ),

@@ -29,21 +29,27 @@ abstract class _SettingsStore with Store {
   NetworkState networkState = NetworkState();
 
   @observable
-  NetworkConst networkConst = NetworkConst();
+  Map networkConst = Map();
 
   @observable
   ObservableList<ContactData> contactList = ObservableList<ContactData>();
 
   @computed
-  String get creationFeeView {
-    return Fmt.token(networkConst.creationFee,
+  String get existentialDeposit {
+    return Fmt.token(networkConst['balances']['existentialDeposit'],
         decimals: networkState.tokenDecimals);
   }
 
   @computed
-  String get transferFeeView {
-    return Fmt.token(networkConst.transferFee,
+  String get transactionBaseFee {
+    return Fmt.token(networkConst['transactionPayment']['transactionBaseFee'],
         decimals: networkState.tokenDecimals);
+  }
+
+  @computed
+  String get transactionByteFee {
+    return Fmt.token(networkConst['transactionPayment']['transactionByteFee'],
+        decimals: networkState.tokenDecimals, fullLength: true);
   }
 
   @action
@@ -84,7 +90,7 @@ abstract class _SettingsStore with Store {
 
   @action
   Future<void> setNetworkConst(Map<String, dynamic> data) async {
-    networkConst = NetworkConst.fromJson(data);
+    networkConst = data;
   }
 
   @action
@@ -155,22 +161,6 @@ abstract class _NetworkState with Store {
 
   @observable
   String tokenSymbol = '';
-}
-
-@JsonSerializable()
-class NetworkConst extends _NetworkConst with _$NetworkConst {
-  static NetworkConst fromJson(Map<String, dynamic> json) =>
-      _$NetworkConstFromJson(json);
-  static Map<String, dynamic> toJson(NetworkConst net) =>
-      _$NetworkConstToJson(net);
-}
-
-abstract class _NetworkConst with Store {
-  @observable
-  int creationFee = 0;
-
-  @observable
-  int transferFee = 0;
 }
 
 @JsonSerializable()

@@ -22,18 +22,6 @@ Map<String, dynamic> _$NetworkStateToJson(NetworkState instance) =>
       'tokenSymbol': instance.tokenSymbol,
     };
 
-NetworkConst _$NetworkConstFromJson(Map<String, dynamic> json) {
-  return NetworkConst()
-    ..creationFee = json['creationFee'] as int
-    ..transferFee = json['transferFee'] as int;
-}
-
-Map<String, dynamic> _$NetworkConstToJson(NetworkConst instance) =>
-    <String, dynamic>{
-      'creationFee': instance.creationFee,
-      'transferFee': instance.transferFee,
-    };
-
 ContactData _$ContactDataFromJson(Map<String, dynamic> json) {
   return ContactData()
     ..name = json['name'] as String
@@ -69,17 +57,23 @@ Map<String, dynamic> _$EndpointDataToJson(EndpointData instance) =>
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$SettingsStore on _SettingsStore, Store {
-  Computed<String> _$creationFeeViewComputed;
+  Computed<String> _$existentialDepositComputed;
 
   @override
-  String get creationFeeView => (_$creationFeeViewComputed ??=
-          Computed<String>(() => super.creationFeeView))
+  String get existentialDeposit => (_$existentialDepositComputed ??=
+          Computed<String>(() => super.existentialDeposit))
       .value;
-  Computed<String> _$transferFeeViewComputed;
+  Computed<String> _$transactionBaseFeeComputed;
 
   @override
-  String get transferFeeView => (_$transferFeeViewComputed ??=
-          Computed<String>(() => super.transferFeeView))
+  String get transactionBaseFee => (_$transactionBaseFeeComputed ??=
+          Computed<String>(() => super.transactionBaseFee))
+      .value;
+  Computed<String> _$transactionByteFeeComputed;
+
+  @override
+  String get transactionByteFee => (_$transactionByteFeeComputed ??=
+          Computed<String>(() => super.transactionByteFee))
       .value;
 
   final _$loadingAtom = Atom(name: '_SettingsStore.loading');
@@ -187,14 +181,14 @@ mixin _$SettingsStore on _SettingsStore, Store {
   final _$networkConstAtom = Atom(name: '_SettingsStore.networkConst');
 
   @override
-  NetworkConst get networkConst {
+  Map get networkConst {
     _$networkConstAtom.context.enforceReadPolicy(_$networkConstAtom);
     _$networkConstAtom.reportObserved();
     return super.networkConst;
   }
 
   @override
-  set networkConst(NetworkConst value) {
+  set networkConst(Map value) {
     _$networkConstAtom.context.conditionallyRunInAction(() {
       super.networkConst = value;
       _$networkConstAtom.reportChanged();
@@ -410,42 +404,6 @@ mixin _$NetworkState on _NetworkState, Store {
       super.tokenSymbol = value;
       _$tokenSymbolAtom.reportChanged();
     }, _$tokenSymbolAtom, name: '${_$tokenSymbolAtom.name}_set');
-  }
-}
-
-mixin _$NetworkConst on _NetworkConst, Store {
-  final _$creationFeeAtom = Atom(name: '_NetworkConst.creationFee');
-
-  @override
-  int get creationFee {
-    _$creationFeeAtom.context.enforceReadPolicy(_$creationFeeAtom);
-    _$creationFeeAtom.reportObserved();
-    return super.creationFee;
-  }
-
-  @override
-  set creationFee(int value) {
-    _$creationFeeAtom.context.conditionallyRunInAction(() {
-      super.creationFee = value;
-      _$creationFeeAtom.reportChanged();
-    }, _$creationFeeAtom, name: '${_$creationFeeAtom.name}_set');
-  }
-
-  final _$transferFeeAtom = Atom(name: '_NetworkConst.transferFee');
-
-  @override
-  int get transferFee {
-    _$transferFeeAtom.context.enforceReadPolicy(_$transferFeeAtom);
-    _$transferFeeAtom.reportObserved();
-    return super.transferFee;
-  }
-
-  @override
-  set transferFee(int value) {
-    _$transferFeeAtom.context.conditionallyRunInAction(() {
-      super.transferFee = value;
-      _$transferFeeAtom.reportChanged();
-    }, _$transferFeeAtom, name: '${_$transferFeeAtom.name}_set');
   }
 }
 

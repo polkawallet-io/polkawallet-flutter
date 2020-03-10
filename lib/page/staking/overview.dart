@@ -206,11 +206,10 @@ class _StakingOverviewState extends State<StakingOverview> {
             child: ListTile(
               leading: AddressIcon(address: id),
               title: Text('${Fmt.token(meStaked)} $symbol'),
-              subtitle: Text(accInfo != null
-                  ? accInfo['identity']['display'] != null
+              subtitle: Text(
+                  accInfo != null && accInfo['identity']['display'] != null
                       ? accInfo['identity']['display'].toString().toUpperCase()
-                      : accInfo['accountIndex']
-                  : Fmt.address(validator.accountId, pad: 6)),
+                      : Fmt.address(validator.accountId, pad: 6)),
               trailing: Container(
                 width: 120,
                 height: 40,

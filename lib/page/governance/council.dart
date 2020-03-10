@@ -176,10 +176,8 @@ class CandidateItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: AddressIcon(address: balance[0]),
-      title: Text(accInfo != null
-          ? accInfo['identity']['display'] != null
-              ? accInfo['identity']['display'].toString().toUpperCase()
-              : accInfo['accountIndex']
+      title: Text(accInfo != null && accInfo['identity']['display'] != null
+          ? accInfo['identity']['display'].toString().toUpperCase()
           : Fmt.address(balance[0], pad: 6)),
       subtitle: balance.length == 1
           ? null

@@ -71,15 +71,12 @@ class Fmt {
       List<ValidatorData> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
       String value = filter.toLowerCase();
-      String accIndex = '';
       String accName = '';
       Map accInfo = accIndexMap[i.accountId];
       if (accInfo != null) {
-        accIndex = accInfo['accountIndex'];
         accName = accInfo['identity']['display'] ?? '';
       }
       return i.accountId.toLowerCase().contains(value) ||
-          accIndex.toLowerCase().contains(value) ||
           accName.toLowerCase().contains(value);
     });
     return ls;
@@ -89,15 +86,12 @@ class Fmt {
       List<List<String>> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
       String value = filter.toLowerCase();
-      String accIndex = '';
       String accName = '';
       Map accInfo = accIndexMap[i[0]];
       if (accInfo != null) {
-        accIndex = accInfo['accountIndex'];
         accName = accInfo['identity']['display'] ?? '';
       }
       return i[0].toLowerCase().contains(value) ||
-          accIndex.toLowerCase().contains(value) ||
           accName.toLowerCase().contains(value);
     });
     return ls;

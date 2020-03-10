@@ -78,10 +78,8 @@ class _NominateState extends State<Nominate> {
 
     return ListTile(
       leading: AddressIcon(address: list[i].accountId),
-      title: Text(accInfo != null
-          ? accInfo['identity']['display'] != null
-              ? accInfo['identity']['display'].toString().toUpperCase()
-              : accInfo['accountIndex']
+      title: Text(accInfo != null && accInfo['identity']['display'] != null
+          ? accInfo['identity']['display'].toString().toUpperCase()
           : Fmt.address(list[i].accountId, pad: 6)),
       subtitle: Text(
           '${I18n.of(context).staking['total']}: ${Fmt.token(list[i].total)}'),
