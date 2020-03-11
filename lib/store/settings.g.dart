@@ -268,13 +268,6 @@ mixin _$SettingsStore on _SettingsStore, Store {
     return _$updateContactAsyncAction.run(() => super.updateContact(con));
   }
 
-  final _$loadEndpointAsyncAction = AsyncAction('loadEndpoint');
-
-  @override
-  Future<void> loadEndpoint() {
-    return _$loadEndpointAsyncAction.run(() => super.loadEndpoint());
-  }
-
   final _$loadCustomSS58FormatAsyncAction = AsyncAction('loadCustomSS58Format');
 
   @override

@@ -9,6 +9,7 @@ import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiGov.dart';
 import 'package:polka_wallet/service/substrateApi/apiStaking.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 // global api instance
 Api webApi;
@@ -109,10 +110,18 @@ class Api {
     var defaultNode = Locale.cachedLocaleString.contains('zh')
         ? default_node_zh
         : default_node;
-    String value = store.settings.endpoint.value ?? defaultNode['value'];
-//    String value = store.settings.endpoint.value ?? default_node['value'];
-    print(value);
-    String res = await evalJavascript('settings.connect("$value")');
+
+    String endpoint = defaultNode['value'];
+    // load customNode, and set a default node if storage data is empty
+    Map<String, dynamic> customNode = await LocalStorage.getEndpoint();
+    if (customNode != null) {
+      endpoint = customNode['value'];
+    } else {
+      store.settings.setEndpoint(defaultNode);
+    }
+    print(endpoint);
+    // do connect
+    String res = await evalJavascript('settings.connect("$endpoint")');
     if (res == null) {
       print('connect failed');
       store.settings.setNetworkName(null);

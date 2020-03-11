@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
-import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
@@ -82,8 +81,11 @@ class _AssetsState extends State<Assets> {
   }
 
   @override
-  Widget build(BuildContext context) => Observer(
-        builder: (_) => RefreshIndicator(
+  Widget build(BuildContext context) {
+    return Observer(
+      builder: (_) {
+        String symbol = store.settings.networkState.tokenSymbol;
+        return RefreshIndicator(
           key: globalBalanceRefreshKey,
           onRefresh: _fetchBalance,
           child: ListView(
@@ -138,10 +140,9 @@ class _AssetsState extends State<Assets> {
                               width: 40,
                               height: 40,
                               child: Image.asset(
-                                  'assets/images/public/${store.settings.endpoint.info}.png'),
+                                  'assets/images/assets/$symbol.png'),
                             ),
-                            title: Text(
-                                store.settings.networkState.tokenSymbol ?? ''),
+                            title: Text(symbol ?? ''),
                             subtitle: Text(store.settings.networkName ?? ''),
                             trailing: Text(
                               Fmt.balance(store.assets.balance),
@@ -157,6 +158,8 @@ class _AssetsState extends State<Assets> {
                         ),
             ],
           ),
-        ),
-      );
+        );
+      },
+    );
+  }
 }

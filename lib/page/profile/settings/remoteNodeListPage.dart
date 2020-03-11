@@ -23,11 +23,6 @@ const nodeList = [
     'value': 'wss://cc3-5.kusama.network/',
   },
   {
-    'info': 'westend',
-    'text': 'Westend (Polkadot Testnet, hosted by Parity)',
-    'value': 'wss://westend-rpc.polkadot.io',
-  },
-  {
     'info': 'substrate',
     'text': 'Flaming Fir (Substrate Testnet, hosted by Parity)',
     'value': 'wss://substrate-rpc.parity.io/',

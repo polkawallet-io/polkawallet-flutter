@@ -54,7 +54,6 @@ abstract class _SettingsStore with Store {
   @action
   void init() {
     loadLocalCode();
-    loadEndpoint();
     loadCustomSS58Format();
     loadContacts();
   }
@@ -120,14 +119,6 @@ abstract class _SettingsStore with Store {
   void setEndpoint(Map<String, dynamic> value) {
     endpoint = EndpointData.fromJson(value);
     LocalStorage.setEndpoint(value);
-  }
-
-  @action
-  Future<void> loadEndpoint() async {
-    Map<String, dynamic> value = await LocalStorage.getEndpoint();
-    if (value != null) {
-      endpoint = EndpointData.fromJson(value);
-    }
   }
 
   @action
