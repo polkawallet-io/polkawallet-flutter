@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/page/profile/aboutPage.dart';
+import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
+import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
+import 'package:polka_wallet/page/profile/settings/settingsPage.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -51,7 +55,7 @@ class Profile extends StatelessWidget {
                       style: Theme.of(context).textTheme.button,
                     ),
                     onPressed: () =>
-                        Navigator.pushNamed(context, '/profile/account'),
+                        Navigator.pushNamed(context, AccountManagePage.route),
                   )
                 ],
               ),
@@ -60,19 +64,19 @@ class Profile extends StatelessWidget {
               leading: Image.asset('assets/images/profile/address.png'),
               title: Text(dic['contact']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
-              onTap: () => Navigator.of(context).pushNamed('/profile/contacts'),
+              onTap: () => Navigator.of(context).pushNamed(ContactsPage.route),
             ),
             ListTile(
               leading: Image.asset('assets/images/profile/setting.png'),
               title: Text(dic['setting']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
-              onTap: () => Navigator.of(context).pushNamed('/profile/settings'),
+              onTap: () => Navigator.of(context).pushNamed(SettingsPage.route),
             ),
             ListTile(
               leading: Image.asset('assets/images/profile/about.png'),
               title: Text(dic['about']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
-              onTap: () => Navigator.of(context).pushNamed('/profile/about'),
+              onTap: () => Navigator.of(context).pushNamed(AboutPage.route),
             ),
           ],
         ),

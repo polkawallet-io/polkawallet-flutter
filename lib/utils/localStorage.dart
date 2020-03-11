@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
-import 'package:polka_wallet/page/profile/secondary/settings/ss58Prefix.dart';
+import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
@@ -69,7 +68,7 @@ class LocalStorage {
     if (value != null) {
       return jsonDecode(value);
     }
-    return default_node;
+    return null;
   }
 
   static Future<void> setCustomSS58(Map<String, dynamic> value) async {

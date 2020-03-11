@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
+import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -86,8 +88,8 @@ class DrawerMenu extends StatelessWidget {
               ),
               title: Text(I18n.of(context).home['scan'],
                   style: TextStyle(fontSize: 16, color: Colors.white)),
-              onTap: () => Navigator.pushNamed(context, '/account/scan',
-                  arguments: 'tx'),
+              onTap: () =>
+                  Navigator.pushNamed(context, ScanPage.route, arguments: 'tx'),
             ),
             ListTile(
               leading: Container(
@@ -99,7 +101,7 @@ class DrawerMenu extends StatelessWidget {
                   style: TextStyle(fontSize: 16, color: Colors.white)),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, '/account/entry');
+                Navigator.pushNamed(context, CreateAccountEntryPage.route);
               },
             )
           ],

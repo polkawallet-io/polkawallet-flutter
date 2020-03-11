@@ -20,14 +20,14 @@ class ApiAssets {
   }
 
   Future<List> updateTxs(int page) async {
-    if (page == 1) {
-      store.assets.clearTxs();
-      store.assets.setTxsLoading(true);
-    }
     String data =
         await PolkaScanApi.fetchTxs(store.account.currentAddress, page);
     List ls = jsonDecode(data)['data'];
 
+    if (page == 1) {
+      store.assets.clearTxs();
+      store.assets.setTxsLoading(true);
+    }
     await store.assets.addTxs(ls);
 
     await apiRoot.updateBlocks();

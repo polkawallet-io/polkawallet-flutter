@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account.dart';
@@ -49,9 +49,9 @@ class ApiAccount {
 
   Future<dynamic> sendTx(
       Map txInfo, List params, String notificationTitle) async {
-//    var res = await _testSendTx();
-    var res = await apiRoot.evalJavascript(
-        'account.sendTx(${jsonEncode(txInfo)}, ${jsonEncode(params)})');
+    var res = await _testSendTx();
+//    var res = await apiRoot.evalJavascript(
+//        'account.sendTx(${jsonEncode(txInfo)}, ${jsonEncode(params)})');
 
     if (res != null) {
       String hash = res['hash'];

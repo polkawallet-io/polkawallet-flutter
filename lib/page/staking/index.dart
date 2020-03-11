@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/topTaps.dart';
-import 'package:polka_wallet/page/staking/actions.dart';
-import 'package:polka_wallet/page/staking/overview.dart';
+import 'package:polka_wallet/page/staking/actions/actions.dart';
+import 'package:polka_wallet/page/staking/validators/overview.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -63,7 +63,7 @@ class _StakingState extends State<Staking> {
               ),
               Expanded(
                 child: _tab == 1
-                    ? StakingOverview(store, _fetchOverviewInfo)
+                    ? StakingOverviewPage(store, _fetchOverviewInfo)
                     : StakingActions(store),
               ),
             ],

@@ -1,7 +1,6 @@
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
@@ -17,7 +16,7 @@ abstract class _SettingsStore with Store {
   String localeCode = '';
 
   @observable
-  EndpointData endpoint = EndpointData.fromJson(default_node);
+  EndpointData endpoint = EndpointData();
 
   @observable
   Map<String, dynamic> customSS58Format = Map<String, dynamic>();
@@ -126,7 +125,9 @@ abstract class _SettingsStore with Store {
   @action
   Future<void> loadEndpoint() async {
     Map<String, dynamic> value = await LocalStorage.getEndpoint();
-    endpoint = EndpointData.fromJson(value);
+    if (value != null) {
+      endpoint = EndpointData.fromJson(value);
+    }
   }
 
   @action

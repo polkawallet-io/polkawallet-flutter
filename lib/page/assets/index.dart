@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/page/assets/asset/assetPage.dart';
+import 'package:polka_wallet/page/assets/receive/receivePage.dart';
+import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
@@ -26,7 +29,12 @@ class _AssetsState extends State<Assets> {
 
   final AppStore store;
 
-  bool _test = true;
+  Future<void> _fetchBalance() async {
+    await Future.wait([
+      webApi.assets.fetchBalance(store.account.currentAddress),
+      webApi.staking.fetchAccountStaking(store.account.currentAddress),
+    ]);
+  }
 
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).assets;
@@ -54,7 +62,7 @@ class _AssetsState extends State<Assets> {
               icon: Image.asset('assets/images/assets/Assets_nav_code.png'),
               onPressed: () {
                 if (acc.address != '') {
-                  Navigator.pushNamed(context, '/assets/receive');
+                  Navigator.pushNamed(context, ReceivePage.route);
                 }
               },
             ),
@@ -77,8 +85,7 @@ class _AssetsState extends State<Assets> {
   Widget build(BuildContext context) => Observer(
         builder: (_) => RefreshIndicator(
           key: globalBalanceRefreshKey,
-          onRefresh: () async =>
-              webApi.assets.fetchBalance(store.account.currentAddress),
+          onRefresh: _fetchBalance,
           child: ListView(
             padding: EdgeInsets.only(left: 16, right: 16),
             children: <Widget>[
@@ -144,7 +151,7 @@ class _AssetsState extends State<Assets> {
                                   color: Colors.black54),
                             ),
                             onTap: () {
-                              Navigator.pushNamed(context, '/assets/detail');
+                              Navigator.pushNamed(context, AssetPage.route);
                             },
                           ),
                         ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/topTaps.dart';
-import 'package:polka_wallet/page/governance/council.dart';
+import 'package:polka_wallet/page/governance/council/council.dart';
 import 'package:polka_wallet/page/governance/democracy/democracy.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';

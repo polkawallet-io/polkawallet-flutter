@@ -36,13 +36,8 @@ class ApiStaking {
   }
 
   Future<List> updateStaking(int page) async {
-    if (page == 1) {
-      store.staking.clearTxs();
-    }
     String data =
         await PolkaScanApi.fetchStaking(store.account.currentAddress, page);
-//    String data = await PolkaScanApi.fetchStaking(
-//        'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n', page);
     var ls = jsonDecode(data)['data'];
     var detailReqs = List<Future<dynamic>>();
     ls.forEach((i) => detailReqs
@@ -53,6 +48,9 @@ class ApiStaking {
       i['detail'] = jsonDecode(details[index])['data']['attributes'];
       index++;
     });
+    if (page == 1) {
+      store.staking.clearTxs();
+    }
     await store.staking.addTxs(List<Map<String, dynamic>>.from(ls));
 
     Map<int, bool> blocksNeedUpdate = Map<int, bool>();

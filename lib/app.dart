@@ -3,46 +3,46 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/page/governance/sencondary/candidateDetail.dart';
-import 'package:polka_wallet/page/governance/sencondary/candidateList.dart';
-import 'package:polka_wallet/page/governance/sencondary/councilVote.dart';
-import 'package:polka_wallet/page/profile/secondary/account/exportAccount.dart';
-import 'package:polka_wallet/page/profile/secondary/settings/ss58Prefix.dart';
+import 'package:polka_wallet/page/account/scanPage.dart';
+import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/assets/asset/assetPage.dart';
+import 'package:polka_wallet/page/assets/receive/receivePage.dart';
+import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
+import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
+import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
+import 'package:polka_wallet/page/governance/council/candidateListPage.dart';
+import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
+import 'package:polka_wallet/page/profile/aboutPage.dart';
+import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
+import 'package:polka_wallet/page/profile/account/changeNamePage.dart';
+import 'package:polka_wallet/page/profile/account/changePasswordPage.dart';
+import 'package:polka_wallet/page/profile/account/exportAccountPage.dart';
+import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
+import 'package:polka_wallet/page/profile/contacts/contactPage.dart';
+import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
+import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
+import 'package:polka_wallet/page/profile/settings/settingsPage.dart';
+import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
+import 'package:polka_wallet/page/staking/actions/bondExtraPage.dart';
+import 'package:polka_wallet/page/staking/actions/bondPage.dart';
+import 'package:polka_wallet/page/staking/actions/nominatePage.dart';
+import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
+import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
+import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
+import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
-import 'package:polka_wallet/page/assets/secondary/asset/asset.dart';
-import 'package:polka_wallet/page/assets/secondary/receive/receive.dart';
-import 'package:polka_wallet/page/assets/secondary/scan.dart';
-import 'package:polka_wallet/page/assets/secondary/transfer/detail.dart';
-import 'package:polka_wallet/page/assets/secondary/transfer/transfer.dart';
-import 'package:polka_wallet/page/profile/secondary/about.dart';
-import 'package:polka_wallet/page/profile/secondary/account/changeName.dart';
-import 'package:polka_wallet/page/profile/secondary/account/changePassword.dart';
-import 'package:polka_wallet/page/profile/secondary/contacts/contact.dart';
-import 'package:polka_wallet/page/profile/secondary/contacts/contactList.dart';
-import 'package:polka_wallet/page/profile/secondary/contacts/contacts.dart';
-import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
-import 'package:polka_wallet/page/profile/secondary/settings/settings.dart';
-import 'package:polka_wallet/page/staking/secondary/bond.dart';
-import 'package:polka_wallet/page/staking/secondary/bondExtra.dart';
-import 'package:polka_wallet/page/staking/secondary/detail.dart';
-import 'package:polka_wallet/page/staking/secondary/nominate.dart';
-import 'package:polka_wallet/page/staking/secondary/payee.dart';
-import 'package:polka_wallet/page/staking/secondary/txConfirm.dart';
-import 'package:polka_wallet/page/staking/secondary/unbond.dart';
-import 'package:polka_wallet/page/staking/secondary/validatorDetail.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
 import 'utils/i18n/index.dart';
 import 'common/theme.dart';
 
-import 'package:polka_wallet/page/home.dart';
-import 'package:polka_wallet/page/assets/secondary/createAccount/createAccount.dart';
-import 'package:polka_wallet/page/assets/secondary/createAccount/backupAccount.dart';
-import 'package:polka_wallet/page/assets/secondary/importAccount/importAccount.dart';
-import 'package:polka_wallet/page/assets/secondary/createAccountEntry.dart';
-import 'package:polka_wallet/page/profile/secondary/account/Account.dart';
+import 'package:polka_wallet/page/homePage.dart';
+import 'package:polka_wallet/page/account/create/createAccountPage.dart';
+import 'package:polka_wallet/page/account/create/backupAccountPage.dart';
+import 'package:polka_wallet/page/account/import/importAccountPage.dart';
+import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
 
 class WalletApp extends StatefulWidget {
   const WalletApp();
@@ -116,48 +116,49 @@ class _WalletAppState extends State<WalletApp> {
         const Locale('en', ''),
         const Locale('zh', ''),
       ],
-      initialRoute: '/',
+      initialRoute: HomePage.route,
       theme: appTheme,
 //      darkTheme: darkTheme,
       routes: {
-        '/': (_) => Observer(
+        HomePage.route: (_) => Observer(
             builder: (_) => _appStore.account.loading
                 ? Container()
                 : _appStore.account.accountList.length > 0
-                    ? Home(_appStore)
-                    : CreateAccountEntry()),
-        '/account/entry': (_) => CreateAccountEntry(),
-        '/account/create': (_) =>
-            CreateAccount(_appStore.account.setNewAccount),
-        '/account/backup': (_) => BackupAccount(_appStore),
-        '/account/import': (_) => ImportAccount(_appStore),
-        '/account/scan': (_) => Scan(),
-        '/assets/detail': (_) => AssetPage(_appStore),
-        '/assets/transfer': (_) => Transfer(_appStore),
-        '/assets/receive': (_) => Receive(_appStore.account),
-        '/assets/tx': (_) => TransferDetail(_appStore),
-        '/staking/tx': (_) => StakingDetail(_appStore),
-        '/staking/validator': (_) => ValidatorDetail(_appStore),
-        '/staking/bond': (_) => Bond(_appStore),
-        '/staking/bondExtra': (_) => BondExtra(_appStore),
-        '/staking/unbond': (_) => UnBond(_appStore),
-        '/staking/nominate': (_) => Nominate(_appStore),
-        '/staking/payee': (_) => SetPayee(_appStore),
-        '/staking/confirm': (_) => TxConfirm(_appStore),
-        '/gov/candidate': (_) => CandidateDetail(_appStore),
-        '/gov/vote': (_) => CouncilVote(_appStore),
-        '/gov/candidates': (_) => CandidateList(_appStore),
-        '/profile/account': (_) => AccountManage(_appStore.account),
-        '/profile/contacts': (_) => Contacts(_appStore.settings),
-        '/contacts/list': (_) => ContactList(_appStore.settings),
-        '/profile/contact': (_) => Contact(_appStore.settings),
-        '/profile/name': (_) => ChangeName(_appStore.account),
-        '/profile/password': (_) => ChangePassword(_appStore.account),
-        '/profile/settings': (_) => Settings(_appStore.settings, _changeLang),
-        '/profile/export': (_) => ExportAccount(_appStore.account),
-        '/profile/endpoint': (_) => RemoteNode(_appStore.settings),
-        '/profile/ss58': (_) => SS58Prefix(_appStore.settings),
-        '/profile/about': (_) => About(),
+                    ? HomePage(_appStore)
+                    : CreateAccountEntryPage()),
+        CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
+        CreateAccountPage.route: (_) =>
+            CreateAccountPage(_appStore.account.setNewAccount),
+        BackupAccountPage.route: (_) => BackupAccountPage(_appStore),
+        ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
+        ScanPage.route: (_) => ScanPage(),
+        AssetPage.route: (_) => AssetPage(_appStore),
+        TransferPage.route: (_) => TransferPage(_appStore),
+        ReceivePage.route: (_) => ReceivePage(_appStore.account),
+        TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
+        StakingDetailPage.route: (_) => StakingDetailPage(_appStore),
+        ValidatorDetailPage.route: (_) => ValidatorDetailPage(_appStore),
+        BondPage.route: (_) => BondPage(_appStore),
+        BondExtraPage.route: (_) => BondExtraPage(_appStore),
+        UnBondPage.route: (_) => UnBondPage(_appStore),
+        NominatePage.route: (_) => NominatePage(_appStore),
+        SetPayeePage.route: (_) => SetPayeePage(_appStore),
+        TxConfirmPage.route: (_) => TxConfirmPage(_appStore),
+        CandidateDetailPage.route: (_) => CandidateDetailPage(_appStore),
+        CouncilVotePage.route: (_) => CouncilVotePage(_appStore),
+        CandidateListPage.route: (_) => CandidateListPage(_appStore),
+        AccountManagePage.route: (_) => AccountManagePage(_appStore.account),
+        ContactsPage.route: (_) => ContactsPage(_appStore.settings),
+        ContactListPage.route: (_) => ContactListPage(_appStore.settings),
+        ContactPage.route: (_) => ContactPage(_appStore.settings),
+        ChangeNamePage.route: (_) => ChangeNamePage(_appStore.account),
+        ChangePasswordPage.route: (_) => ChangePasswordPage(_appStore.account),
+        SettingsPage.route: (_) =>
+            SettingsPage(_appStore.settings, _changeLang),
+        ExportAccountPage.route: (_) => ExportAccountPage(_appStore.account),
+        RemoteNodeListPage.route: (_) => RemoteNodeListPage(_appStore.settings),
+        SS58PrefixListPage.route: (_) => SS58PrefixListPage(_appStore.settings),
+        AboutPage.route: (_) => AboutPage(),
       },
     );
   }
