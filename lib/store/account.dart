@@ -87,7 +87,7 @@ abstract class _AccountStore with Store {
   @action
   Future<void> addAccount(Map<String, dynamic> acc, String password) async {
     // save mnemonic and remove it before add account
-    if (acc['mnemonic'].length > 0) {
+    if (acc['mnemonic'] != null) {
       encryptMnemonic(acc['pubKey'], acc['mnemonic'], password);
       acc.remove(acc['mnemonic']);
     }

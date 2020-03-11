@@ -61,6 +61,8 @@ class Fmt {
       case 0:
         return a.total != b.total ? cmpStake : comA > comB ? 1 : -1;
       case 1:
+        return a.points == b.points ? cmpStake : a.points < b.points ? 1 : -1;
+      case 2:
         return comA == comB ? cmpStake : comA > comB ? 1 : -1;
       default:
         return 1;

@@ -19,30 +19,69 @@ class Validator extends StatelessWidget {
     var dic = I18n.of(context).staking;
     Map accInfo = store.account.accountIndexMap[validator.accountId];
 //    print(accInfo['identity']);
-    return Container(
-      color: Colors.white,
-      child: ListTile(
-        leading: AddressIcon(address: validator.accountId),
-        title: Text(accInfo != null && accInfo['identity']['display'] != null
-            ? accInfo['identity']['display'].toString().toUpperCase()
-            : Fmt.address(validator.accountId, pad: 6)),
-        subtitle: Text('${dic['total']}: ${Fmt.token(validator.total)}'),
-        trailing: Container(
-          width: 120,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(dic['commission']),
-              Text(validator.commission)
-            ],
-          ),
+    List judgements = accInfo['identity']['judgements'];
+    return GestureDetector(
+      child: Container(
+        color: Colors.white,
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+        child: Row(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: AddressIcon(address: validator.accountId),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      judgements.length > 0
+                          ? Container(
+                              width: 14,
+                              margin: EdgeInsets.only(right: 4),
+                              child: Image.asset(
+                                  'assets/images/assets/success.png'),
+                            )
+                          : Container(),
+                      Text(accInfo != null &&
+                              accInfo['identity']['display'] != null
+                          ? accInfo['identity']['display']
+                              .toString()
+                              .toUpperCase()
+                          : Fmt.address(validator.accountId, pad: 6)),
+                    ],
+                  ),
+                  Text(
+                    '${dic['total']}: ${Fmt.token(validator.total)}',
+                    style: TextStyle(
+                      color: Theme.of(context).unselectedWidgetColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                  Text('${dic['commission']}: ${validator.commission}',
+                      style: TextStyle(
+                        color: Theme.of(context).unselectedWidgetColor,
+                        fontSize: 12,
+                      ))
+                ],
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(dic['points']),
+                Text(validator.points.toString())
+              ],
+            )
+          ],
         ),
-        onTap: () {
-          webApi.staking.queryValidatorRewards(validator.accountId);
-          Navigator.of(context)
-              .pushNamed(ValidatorDetailPage.route, arguments: validator);
-        },
       ),
+      onTap: () {
+        webApi.staking.queryValidatorRewards(validator.accountId);
+        Navigator.of(context)
+            .pushNamed(ValidatorDetailPage.route, arguments: validator);
+      },
     );
   }
 }

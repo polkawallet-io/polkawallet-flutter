@@ -152,7 +152,7 @@ class ValidatorData extends _ValidatorData with _$ValidatorData {
       data.bondOwn = own;
     }
     data.bondOther = data.total - data.bondOwn;
-    data.points = json['points'];
+    data.points = json['points'] ?? 0;
     data.commission = NumberFormat('0.00%')
         .format(json['validatorPrefs']['commission'] / pow(10, 9));
     data.nominators =

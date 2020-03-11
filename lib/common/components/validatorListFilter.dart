@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-enum ValidatorSortOptions { staked, commission }
+enum ValidatorSortOptions { staked, points, commission }
 
 class ValidatorListFilter extends StatefulWidget {
   ValidatorListFilter({this.onFilterChange, this.onSortChange});
@@ -21,12 +21,13 @@ class _ValidatorListFilterState extends State<ValidatorListFilter> {
   int _sort = 0;
 
   void _showActions() {
+    var dic = I18n.of(context).staking;
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) => CupertinoActionSheet(
         actions: ValidatorSortOptions.values
             .map((i) => CupertinoActionSheetAction(
-                  child: Text(i.toString().split('.')[1]),
+                  child: Text(dic[i.toString().split('.')[1]]),
                   onPressed: () {
                     setState(() {
                       _sort = i.index;
@@ -80,9 +81,9 @@ class _ValidatorListFilterState extends State<ValidatorListFilter> {
                     borderRadius: BorderRadius.all(Radius.circular(24)),
                     border: Border.all(width: 0.5, color: theme.dividerColor),
                   ),
-                  child: Text(ValidatorSortOptions.values[_sort]
+                  child: Text(dic[ValidatorSortOptions.values[_sort]
                       .toString()
-                      .split('.')[1]),
+                      .split('.')[1]]),
                 ),
                 onTap: _showActions,
               )

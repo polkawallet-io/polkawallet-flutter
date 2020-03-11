@@ -177,11 +177,23 @@ class CandidateItem extends StatelessWidget {
   final Function(bool) onSwitch;
   @override
   Widget build(BuildContext context) {
+    List judgements = accInfo['identity']['judgements'];
     return ListTile(
       leading: AddressIcon(address: balance[0]),
-      title: Text(accInfo != null && accInfo['identity']['display'] != null
-          ? accInfo['identity']['display'].toString().toUpperCase()
-          : Fmt.address(balance[0], pad: 6)),
+      title: Row(
+        children: <Widget>[
+          judgements.length > 0
+              ? Container(
+                  width: 14,
+                  margin: EdgeInsets.only(right: 4),
+                  child: Image.asset('assets/images/assets/success.png'),
+                )
+              : Container(),
+          Text(accInfo != null && accInfo['identity']['display'] != null
+              ? accInfo['identity']['display'].toString().toUpperCase()
+              : Fmt.address(balance[0], pad: 6))
+        ],
+      ),
       subtitle: balance.length == 1
           ? null
           : Text(

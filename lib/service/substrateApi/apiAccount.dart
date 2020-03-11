@@ -49,9 +49,9 @@ class ApiAccount {
 
   Future<dynamic> sendTx(
       Map txInfo, List params, String notificationTitle) async {
-    var res = await _testSendTx();
-//    var res = await apiRoot.evalJavascript(
-//        'account.sendTx(${jsonEncode(txInfo)}, ${jsonEncode(params)})');
+//    var res = await _testSendTx();
+    var res = await apiRoot.evalJavascript(
+        'account.sendTx(${jsonEncode(txInfo)}, ${jsonEncode(params)})');
 
     if (res != null) {
       String hash = res['hash'];
@@ -74,8 +74,6 @@ class ApiAccount {
     String pass = store.account.newAccount.password;
     String code =
         'account.recover("$keyType", "$cryptoType", \'$key$derivePath\', "$pass")';
-    print(derivePath);
-    print(code);
     Map<String, dynamic> acc = await apiRoot.evalJavascript(code);
     if (acc != null) {
       acc['name'] = store.account.newAccount.name;

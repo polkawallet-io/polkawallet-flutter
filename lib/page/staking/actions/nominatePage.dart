@@ -79,33 +79,85 @@ class _NominatePageState extends State<NominatePage> {
   Widget _buildListItem(BuildContext context, int i, List<ValidatorData> list) {
     Map accInfo = store.account.accountIndexMap[list[i].accountId];
 
-    return ListTile(
-      leading: AddressIcon(address: list[i].accountId),
-      title: Text(accInfo != null && accInfo['identity']['display'] != null
-          ? accInfo['identity']['display'].toString().toUpperCase()
-          : Fmt.address(list[i].accountId, pad: 6)),
-      subtitle: Text(
-          '${I18n.of(context).staking['total']}: ${Fmt.token(list[i].total)}'),
-      trailing: CupertinoSwitch(
-        value: _selectedMap[list[i].accountId],
-        onChanged: (bool value) {
-          setState(() {
-            _selectedMap[list[i].accountId] = value;
-          });
-          Timer(Duration(milliseconds: 300), () {
-            setState(() {
-              if (value) {
-                _selected.add(list[i]);
-                _notSelected
-                    .removeWhere((item) => item.accountId == list[i].accountId);
-              } else {
-                _selected
-                    .removeWhere((item) => item.accountId == list[i].accountId);
-                _notSelected.add(list[i]);
-              }
-            });
-          });
-        },
+    List judgements = accInfo['identity']['judgements'];
+    return GestureDetector(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+        child: Row(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(right: 16),
+              child: AddressIcon(address: list[i].accountId),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      judgements.length > 0
+                          ? Container(
+                              width: 14,
+                              margin: EdgeInsets.only(right: 4),
+                              child: Image.asset(
+                                  'assets/images/assets/success.png'),
+                            )
+                          : Container(),
+                      Text(accInfo != null &&
+                              accInfo['identity']['display'] != null
+                          ? accInfo['identity']['display']
+                              .toString()
+                              .toUpperCase()
+                          : Fmt.address(list[i].accountId, pad: 6)),
+                    ],
+                  ),
+                  Text(
+                    '${I18n.of(context).staking['total']}: ${Fmt.token(list[i].total)}',
+                    style: TextStyle(
+                      color: Theme.of(context).unselectedWidgetColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                  Text(
+                    '${I18n.of(context).staking['commission']}: ${list[i].commission}',
+                    style: TextStyle(
+                      color: Theme.of(context).unselectedWidgetColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                  Text(
+                    '${I18n.of(context).staking['points']}: ${list[i].points}',
+                    style: TextStyle(
+                      color: Theme.of(context).unselectedWidgetColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            CupertinoSwitch(
+              value: _selectedMap[list[i].accountId],
+              onChanged: (bool value) {
+                setState(() {
+                  _selectedMap[list[i].accountId] = value;
+                });
+                Timer(Duration(milliseconds: 300), () {
+                  setState(() {
+                    if (value) {
+                      _selected.add(list[i]);
+                      _notSelected.removeWhere(
+                          (item) => item.accountId == list[i].accountId);
+                    } else {
+                      _selected.removeWhere(
+                          (item) => item.accountId == list[i].accountId);
+                      _notSelected.add(list[i]);
+                    }
+                  });
+                });
+              },
+            ),
+          ],
+        ),
       ),
       onTap: () => Navigator.of(context)
           .pushNamed(ValidatorDetailPage.route, arguments: list[i]),

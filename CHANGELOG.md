@@ -1,3 +1,15 @@
+# 0.5.0
+- Refactored page routes
+- Fix redirect bug after transfer
+- Fix import account from keystore bug
+- Add points ranking of validators
+
+# 0.4.2
+- Update polkadot-js/api to 1.6.0-beta.6
+- Add polkawallet hosted Kusama node
+- Add ios building files
+- Add advanced account import options: derive path
+
 # 0.4.1
 - Add encrypted mnemonic storage and export
 
