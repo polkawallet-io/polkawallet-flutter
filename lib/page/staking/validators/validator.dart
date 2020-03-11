@@ -19,7 +19,6 @@ class Validator extends StatelessWidget {
     var dic = I18n.of(context).staking;
     Map accInfo = store.account.accountIndexMap[validator.accountId];
 //    print(accInfo['identity']);
-    List judgements = accInfo['identity']['judgements'];
     return GestureDetector(
       child: Container(
         color: Colors.white,
@@ -36,7 +35,8 @@ class Validator extends StatelessWidget {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      judgements.length > 0
+                      accInfo != null &&
+                              accInfo['identity']['judgements'].length > 0
                           ? Container(
                               width: 14,
                               margin: EdgeInsets.only(right: 4),

@@ -65,7 +65,6 @@ class ExportAccountPage extends StatelessWidget {
 
     Future<void> onOk() async {
       var res = await webApi.account.checkAccountPassword(_passCtrl.text);
-      print(res);
       if (res == null) {
         showCupertinoDialog(
           context: context,

@@ -75,7 +75,7 @@ const Map<String, String> zhProfile = {
   'export.keystore.ok': 'Keystore 已经复制到剪切板',
   'export.mnemonic.ok': 'Mnemonic 已经复制到剪切板',
   'delete': '删除账户',
-  'delete.confirm': '输入密码确认删除',
+  'delete.confirm': '输入密码确认操作',
   'about.brif': 'Mobile Wallet for Polkadot',
   'about.version': '版本',
 };

@@ -78,11 +78,10 @@ class _NominatePageState extends State<NominatePage> {
 
   Widget _buildListItem(BuildContext context, int i, List<ValidatorData> list) {
     Map accInfo = store.account.accountIndexMap[list[i].accountId];
-
-    List judgements = accInfo['identity']['judgements'];
     return GestureDetector(
       child: Container(
         padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+        color: Theme.of(context).cardColor,
         child: Row(
           children: <Widget>[
             Container(
@@ -95,7 +94,8 @@ class _NominatePageState extends State<NominatePage> {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      judgements.length > 0
+                      accInfo != null &&
+                              accInfo['identity']['judgements'].length > 0
                           ? Container(
                               width: 14,
                               margin: EdgeInsets.only(right: 4),
