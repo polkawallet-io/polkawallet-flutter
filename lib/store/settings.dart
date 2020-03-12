@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
@@ -52,10 +54,13 @@ abstract class _SettingsStore with Store {
   }
 
   @action
-  void init() {
-    loadLocalCode();
-    loadCustomSS58Format();
-    loadContacts();
+  Future<void> init() async {
+    await Future.wait([
+      loadLocalCode(),
+      loadEndpoint(),
+      loadCustomSS58Format(),
+      loadContacts(),
+    ]);
   }
 
   @action
@@ -119,6 +124,17 @@ abstract class _SettingsStore with Store {
   void setEndpoint(Map<String, dynamic> value) {
     endpoint = EndpointData.fromJson(value);
     LocalStorage.setEndpoint(value);
+  }
+
+  @action
+  Future<void> loadEndpoint() async {
+    Map<String, dynamic> value = await LocalStorage.getEndpoint();
+    if (value == null) {
+      value = Locale.cachedLocaleString.contains('zh')
+          ? default_node_zh
+          : default_node;
+    }
+    endpoint = EndpointData.fromJson(value);
   }
 
   @action

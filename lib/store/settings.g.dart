@@ -212,6 +212,13 @@ mixin _$SettingsStore on _SettingsStore, Store {
     }, _$contactListAtom, name: '${_$contactListAtom.name}_set');
   }
 
+  final _$initAsyncAction = AsyncAction('init');
+
+  @override
+  Future<void> init() {
+    return _$initAsyncAction.run(() => super.init());
+  }
+
   final _$setLocalCodeAsyncAction = AsyncAction('setLocalCode');
 
   @override
@@ -268,6 +275,13 @@ mixin _$SettingsStore on _SettingsStore, Store {
     return _$updateContactAsyncAction.run(() => super.updateContact(con));
   }
 
+  final _$loadEndpointAsyncAction = AsyncAction('loadEndpoint');
+
+  @override
+  Future<void> loadEndpoint() {
+    return _$loadEndpointAsyncAction.run(() => super.loadEndpoint());
+  }
+
   final _$loadCustomSS58FormatAsyncAction = AsyncAction('loadCustomSS58Format');
 
   @override
@@ -278,16 +292,6 @@ mixin _$SettingsStore on _SettingsStore, Store {
 
   final _$_SettingsStoreActionController =
       ActionController(name: '_SettingsStore');
-
-  @override
-  void init() {
-    final _$actionInfo = _$_SettingsStoreActionController.startAction();
-    try {
-      return super.init();
-    } finally {
-      _$_SettingsStoreActionController.endAction(_$actionInfo);
-    }
-  }
 
   @override
   void setNetworkLoading(bool isLoading) {

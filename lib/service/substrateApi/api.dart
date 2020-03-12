@@ -3,13 +3,11 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiGov.dart';
 import 'package:polka_wallet/service/substrateApi/apiStaking.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 // global api instance
 Api webApi;
@@ -107,18 +105,7 @@ class Api {
   }
 
   Future<void> connectNode() async {
-    var defaultNode = Locale.cachedLocaleString.contains('zh')
-        ? default_node_zh
-        : default_node;
-
-    String endpoint = defaultNode['value'];
-    // load customNode, and set a default node if storage data is empty
-    Map<String, dynamic> customNode = await LocalStorage.getEndpoint();
-    if (customNode != null) {
-      endpoint = customNode['value'];
-    } else {
-      store.settings.setEndpoint(defaultNode);
-    }
+    String endpoint = store.settings.endpoint.value;
     print(endpoint);
     // do connect
     String res = await evalJavascript('settings.connect("$endpoint")');

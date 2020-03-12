@@ -33,7 +33,6 @@ import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 import 'utils/i18n/index.dart';
 import 'common/theme.dart';
@@ -73,21 +72,17 @@ class _WalletAppState extends State<WalletApp> {
     });
   }
 
-  Future<void> _initLocaleFromLocalStorage() async {
-    String value = await LocalStorage.getLocale();
-    _changeLang(value);
-  }
-
   @override
   void initState() {
     if (!_appStore.isReady) {
       print('initailizing app state');
-      _appStore.init(context);
+      _appStore.init().then((_) {
+        // init webApi after store inited
+        webApi = Api(context, _appStore);
+        webApi.init();
 
-      webApi = Api(context, _appStore);
-      webApi.init();
-
-      _initLocaleFromLocalStorage();
+        _changeLang(_appStore.settings.localeCode);
+      });
     } else {
       print('app state exists');
     }

@@ -32,8 +32,10 @@ abstract class _AppStore with Store {
   bool isReady = false;
 
   @action
-  void init(BuildContext context) {
-    settings.init();
+  Future<void> init() async {
+    // wait settings store loaded
+    await settings.init();
+
     account.loadAccount();
     assets = AssetsStore(account);
     staking = StakingStore(account);
