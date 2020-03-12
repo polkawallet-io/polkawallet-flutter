@@ -1,4 +1,8 @@
 # 0.5.0
+- Add staking rewards payout
+- Add staking unbond withdraw
+
+# 0.5.0
 - Refactored page routes
 - Fix redirect bug after transfer
 - Fix import account from keystore bug

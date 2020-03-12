@@ -29,6 +29,38 @@ class _BondPageState extends State<BondPage> {
 
   int _rewardTo = 0;
 
+  void _onSubmit() {
+    var dic = I18n.of(context).staking;
+    var rewardToOptions = [dic['reward.bond'], dic['reward.stash']];
+    int decimals = store.settings.networkState.tokenDecimals;
+    if (_formKey.currentState.validate()) {
+      var args = {
+        "title": dic['action.bond'],
+        "txInfo": {
+          "module": 'staking',
+          "call": 'bond',
+        },
+        "detail": jsonEncode({
+          "amount": _amountCtrl.text.trim(),
+          "reward_destination": rewardToOptions[_rewardTo],
+        }),
+        "params": [
+          // "from":
+          store.account.currentAddress,
+          // "amount":
+          (double.parse(_amountCtrl.text.trim()) * pow(10, decimals)).toInt(),
+          // "to"
+          _rewardTo,
+        ],
+        'onFinish': (BuildContext txPageContext) {
+          Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+          globalBondingRefreshKey.currentState.show();
+        }
+      };
+      Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
@@ -56,21 +88,17 @@ class _BondPageState extends State<BondPage> {
                   child: ListView(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.only(left: 16, right: 16),
                         child: TextFormField(
-                          decoration: InputDecoration(
-                            hintText: dic['stash'],
-                            labelText: dic['stash'],
-                          ),
+                          decoration: InputDecoration(labelText: dic['stash']),
                           initialValue: address,
                           readOnly: true,
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.only(left: 16, right: 16),
                         child: TextFormField(
                           decoration: InputDecoration(
-                            hintText: dic['controller'],
                             labelText: dic['controller'],
                           ),
                           initialValue: address,
@@ -78,7 +106,7 @@ class _BondPageState extends State<BondPage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.only(left: 16, right: 16),
                         child: TextFormField(
                           decoration: InputDecoration(
                             hintText: assetDic['amount'],
@@ -145,38 +173,7 @@ class _BondPageState extends State<BondPage> {
                 padding: EdgeInsets.all(16),
                 child: RoundedButton(
                   text: I18n.of(context).home['submit.tx'],
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      var args = {
-                        "title": dic['action.bond'],
-                        "txInfo": {
-                          "module": 'staking',
-                          "call": 'bond',
-                        },
-                        "detail": jsonEncode({
-                          "amount": _amountCtrl.text.trim(),
-                          "reward_destination": rewardToOptions[_rewardTo],
-                        }),
-                        "params": [
-                          // "from":
-                          store.account.currentAddress,
-                          // "amount":
-                          (double.parse(_amountCtrl.text.trim()) *
-                                  pow(10, decimals))
-                              .toInt(),
-                          // "to"
-                          _rewardTo,
-                        ],
-                        'onFinish': (BuildContext txPageContext) {
-                          Navigator.popUntil(
-                              txPageContext, ModalRoute.withName('/'));
-                          globalBondingRefreshKey.currentState.show();
-                        }
-                      };
-                      Navigator.of(context)
-                          .pushNamed(TxConfirmPage.route, arguments: args);
-                    }
-                  },
+                  onPressed: _onSubmit,
                 ),
               ),
             ],

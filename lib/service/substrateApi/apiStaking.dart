@@ -22,6 +22,14 @@ class ApiStaking {
     }
   }
 
+  Future<void> fetchAccountRewards(String address) async {
+    if (address != null) {
+      List res = await apiRoot
+          .evalJavascript('staking.loadAccountRewardsData("$address")');
+      store.staking.setLedger({'rewards': res});
+    }
+  }
+
   Future<Map> fetchStakingOverview() async {
     var overview =
         await apiRoot.evalJavascript('api.derive.staking.overview()');

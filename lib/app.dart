@@ -26,6 +26,8 @@ import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondExtraPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondPage.dart';
 import 'package:polka_wallet/page/staking/actions/nominatePage.dart';
+import 'package:polka_wallet/page/staking/actions/payoutPage.dart';
+import 'package:polka_wallet/page/staking/actions/redeemPage.dart';
 import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
 import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
@@ -121,16 +123,20 @@ class _WalletAppState extends State<WalletApp> {
                 : _appStore.account.accountList.length > 0
                     ? HomePage(_appStore)
                     : CreateAccountEntryPage()),
+        // account
         CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
         CreateAccountPage.route: (_) =>
             CreateAccountPage(_appStore.account.setNewAccount),
         BackupAccountPage.route: (_) => BackupAccountPage(_appStore),
         ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
         ScanPage.route: (_) => ScanPage(),
+        TxConfirmPage.route: (_) => TxConfirmPage(_appStore),
+        // assets
         AssetPage.route: (_) => AssetPage(_appStore),
         TransferPage.route: (_) => TransferPage(_appStore),
         ReceivePage.route: (_) => ReceivePage(_appStore.account),
         TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
+        // staking
         StakingDetailPage.route: (_) => StakingDetailPage(_appStore),
         ValidatorDetailPage.route: (_) => ValidatorDetailPage(_appStore),
         BondPage.route: (_) => BondPage(_appStore),
@@ -138,10 +144,13 @@ class _WalletAppState extends State<WalletApp> {
         UnBondPage.route: (_) => UnBondPage(_appStore),
         NominatePage.route: (_) => NominatePage(_appStore),
         SetPayeePage.route: (_) => SetPayeePage(_appStore),
-        TxConfirmPage.route: (_) => TxConfirmPage(_appStore),
+        RedeemPage.route: (_) => RedeemPage(_appStore),
+        PayoutPage.route: (_) => PayoutPage(_appStore),
+        // governance
         CandidateDetailPage.route: (_) => CandidateDetailPage(_appStore),
         CouncilVotePage.route: (_) => CouncilVotePage(_appStore),
         CandidateListPage.route: (_) => CandidateListPage(_appStore),
+        // profile
         AccountManagePage.route: (_) => AccountManagePage(_appStore.account),
         ContactsPage.route: (_) => ContactsPage(_appStore.settings),
         ContactListPage.route: (_) => ContactListPage(_appStore.settings),

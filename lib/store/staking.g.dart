@@ -22,6 +22,12 @@ mixin _$StakingStore on _StakingStore, Store {
       (_$nominatingListComputed ??= Computed<ObservableList<ValidatorData>>(
               () => super.nominatingList))
           .value;
+  Computed<int> _$accountRewardTotalComputed;
+
+  @override
+  int get accountRewardTotal => (_$accountRewardTotalComputed ??=
+          Computed<int>(() => super.accountRewardTotal))
+      .value;
 
   final _$overviewAtom = Atom(name: '_StakingStore.overview');
 

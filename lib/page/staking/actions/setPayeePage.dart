@@ -22,6 +22,49 @@ class _SetPayeePageState extends State<SetPayeePage> {
 
   int _rewardTo = 0;
 
+  void _onSubmit(int currentPayee) {
+    var dic = I18n.of(context).staking;
+    var rewardToOptions = [dic['reward.bond'], dic['reward.stash']];
+
+    if (currentPayee == _rewardTo) {
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Container(),
+            content: Text('${dic['reward.warn']}'),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['cancel']),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+    var args = {
+      "title": dic['action.setting'],
+      "txInfo": {
+        "module": 'staking',
+        "call": 'setPayee',
+      },
+      "detail": jsonEncode({
+        "reward_destination": rewardToOptions[_rewardTo],
+      }),
+      "params": [
+        // "to"
+        _rewardTo,
+      ],
+      'onFinish': (BuildContext txPageContext) {
+        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        globalBondingRefreshKey.currentState.show();
+      }
+    };
+    Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
+  }
+
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
@@ -47,21 +90,17 @@ class _SetPayeePageState extends State<SetPayeePage> {
                 child: ListView(
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.only(left: 16, right: 16),
                       child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: dic['stash'],
-                          labelText: dic['stash'],
-                        ),
+                        decoration: InputDecoration(labelText: dic['stash']),
                         initialValue: address,
                         readOnly: true,
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.only(left: 16, right: 16),
                       child: TextFormField(
                         decoration: InputDecoration(
-                          hintText: dic['controller'],
                           labelText: dic['controller'],
                         ),
                         initialValue: address,
@@ -106,47 +145,7 @@ class _SetPayeePageState extends State<SetPayeePage> {
                 padding: EdgeInsets.all(16),
                 child: RoundedButton(
                   text: I18n.of(context).home['submit.tx'],
-                  onPressed: () {
-                    if (currentPayee == _rewardTo) {
-                      showCupertinoDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return CupertinoAlertDialog(
-                            title: Container(),
-                            content: Text('${dic['reward.warn']}'),
-                            actions: <Widget>[
-                              CupertinoButton(
-                                child: Text(I18n.of(context).home['cancel']),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                      return;
-                    }
-                    var args = {
-                      "title": dic['action.setting'],
-                      "txInfo": {
-                        "module": 'staking',
-                        "call": 'setPayee',
-                      },
-                      "detail": jsonEncode({
-                        "reward_destination": rewardToOptions[_rewardTo],
-                      }),
-                      "params": [
-                        // "to"
-                        _rewardTo,
-                      ],
-                      'onFinish': (BuildContext txPageContext) {
-                        Navigator.popUntil(
-                            txPageContext, ModalRoute.withName('/'));
-                        globalBondingRefreshKey.currentState.show();
-                      }
-                    };
-                    Navigator.of(context)
-                        .pushNamed(TxConfirmPage.route, arguments: args);
-                  },
+                  onPressed: () => _onSubmit(currentPayee),
                 ),
               ),
             ],

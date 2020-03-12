@@ -136,6 +136,7 @@ class _CouncilVote extends State<CouncilVotePage> {
                             decoration:
                                 InputDecoration(labelText: dic['address']),
                             initialValue: store.account.currentAddress,
+                            readOnly: true,
                           ),
                         ),
                         Padding(

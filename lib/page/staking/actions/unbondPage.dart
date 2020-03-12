@@ -53,55 +53,42 @@ class _UnBondPageState extends State<UnBondPage> {
                 child: Form(
                   key: _formKey,
                   child: ListView(
+                    padding: EdgeInsets.all(16),
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            hintText: dic['stash'],
-                            labelText: dic['stash'],
-                          ),
-                          initialValue: address,
-                          readOnly: true,
-                        ),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: dic['stash']),
+                        initialValue: address,
+                        readOnly: true,
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            hintText: dic['controller'],
-                            labelText: dic['controller'],
-                          ),
-                          initialValue: address,
-                          readOnly: true,
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: dic['controller'],
                         ),
+                        initialValue: address,
+                        readOnly: true,
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            hintText: assetDic['amount'],
-                            labelText:
-                                '${assetDic['amount']} (${dic['bonded']}: $bonded $symbol)',
-                          ),
-                          inputFormatters: [
-                            RegExInputFormatter.withRegex(
-                                '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                          ],
-                          controller: _amountCtrl,
-                          keyboardType:
-                              TextInputType.numberWithOptions(decimal: true),
-                          validator: (v) {
-                            if (v.isEmpty) {
-                              return assetDic['amount.error'];
-                            }
-                            if (double.parse(v.trim()) >=
-                                double.parse(bonded)) {
-                              return assetDic['amount.low'];
-                            }
-                            return null;
-                          },
+                      TextFormField(
+                        decoration: InputDecoration(
+                          hintText: assetDic['amount'],
+                          labelText:
+                              '${assetDic['amount']} (${dic['bonded']}: $bonded $symbol)',
                         ),
+                        inputFormatters: [
+                          RegExInputFormatter.withRegex(
+                              '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                        ],
+                        controller: _amountCtrl,
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
+                        validator: (v) {
+                          if (v.isEmpty) {
+                            return assetDic['amount.error'];
+                          }
+                          if (double.parse(v.trim()) >= double.parse(bonded)) {
+                            return assetDic['amount.low'];
+                          }
+                          return null;
+                        },
                       ),
                     ],
                   ),

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/page/staking/actions/bondExtraPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondPage.dart';
+import 'package:polka_wallet/page/staking/actions/payoutPage.dart';
+import 'package:polka_wallet/page/staking/actions/redeemPage.dart';
 import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
 import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
@@ -48,6 +50,7 @@ class _StakingActions extends State<StakingActions>
       webApi.assets.fetchBalance(address),
       webApi.staking.fetchAccountStaking(address),
     ]);
+    webApi.staking.fetchAccountRewards(address);
   }
 
   List<Widget> _buildTxList() {
@@ -139,10 +142,13 @@ class _StakingActions extends State<StakingActions>
     int balance = Fmt.balanceInt(store.assets.balance);
     int bonded = 0;
     int unlocking = 0;
+    int redeemable = 0;
     if (hasData) {
       List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
       unlockingList.forEach((i) => unlocking += i['value']);
       bonded = store.staking.ledger['stakingLedger']['active'];
+      redeemable = store.staking.ledger['redeemable'];
+      unlocking -= redeemable;
     }
     int available = balance - bonded - unlocking;
 
@@ -150,6 +156,7 @@ class _StakingActions extends State<StakingActions>
     Color actionButtonColor = Theme.of(context).primaryColor;
     Color disabledColor = Theme.of(context).disabledColor;
 
+//    print(store.staking.accountRewardTotal);
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
       padding: EdgeInsets.all(16),
@@ -198,14 +205,47 @@ class _StakingActions extends State<StakingActions>
           Row(
             children: <Widget>[
               InfoItem(
-                title: dic['available'],
-                content: Fmt.balance(available.toString()),
+                title: dic['bonded'],
+                content: Fmt.token(bonded),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               InfoItem(
-                title: dic['bonded'],
-                content: Fmt.balance(bonded.toString()),
+                title: dic['bond.unlocking'],
+                content: Fmt.token(unlocking),
                 crossAxisAlignment: CrossAxisAlignment.center,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(dic['bond.redeemable']),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          Fmt.token(redeemable),
+                          style: Theme.of(context).textTheme.display4,
+                        ),
+                        redeemable > 0
+                            ? GestureDetector(
+                                child: Container(
+                                  padding: EdgeInsets.only(left: 4),
+                                  child: Icon(
+                                    Icons.lock_open,
+                                    size: 16,
+                                    color: actionButtonColor,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .pushNamed(RedeemPage.route);
+                                },
+                              )
+                            : Container()
+                      ],
+                    )
+                  ],
+                ),
               ),
             ],
           ),
@@ -215,14 +255,47 @@ class _StakingActions extends State<StakingActions>
           Row(
             children: <Widget>[
               InfoItem(
-                title: dic['unlocking'],
-                content: Fmt.token(unlocking),
+                title: dic['available'],
+                content: Fmt.token(available),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               InfoItem(
                 title: dic['bond.reward'],
                 content: payee,
                 crossAxisAlignment: CrossAxisAlignment.center,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(dic['payout']),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          Fmt.token(store.staking.accountRewardTotal),
+                          style: Theme.of(context).textTheme.display4,
+                        ),
+                        store.staking.accountRewardTotal > 0
+                            ? GestureDetector(
+                                child: Container(
+                                  padding: EdgeInsets.only(left: 4),
+                                  child: Icon(
+                                    Icons.file_download,
+                                    size: 16,
+                                    color: actionButtonColor,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .pushNamed(PayoutPage.route);
+                                },
+                              )
+                            : Container()
+                      ],
+                    )
+                  ],
+                ),
               ),
             ],
           ),

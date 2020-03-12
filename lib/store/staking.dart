@@ -71,6 +71,18 @@ abstract class _StakingStore with Store {
     }));
   }
 
+  @computed
+  int get accountRewardTotal {
+    if (ledger['rewards'] == null) {
+      return 0;
+    }
+    int res = 0;
+    List.of(ledger['rewards']).forEach((i) {
+      res += i['total'];
+    });
+    return res;
+  }
+
   @action
   void setValidatorsInfo(Map<String, dynamic> data) {
     int totalStaked = 0;
@@ -144,7 +156,7 @@ class ValidatorData extends _ValidatorData with _$ValidatorData {
   static ValidatorData fromJson(Map<String, dynamic> json) {
     ValidatorData data = ValidatorData();
     data.accountId = json['accountId'];
-    data.total = int.parse(json['exposure']['total']);
+    data.total = int.parse(json['exposure']['total'].toString());
     var own = json['exposure']['own'];
     if (own.runtimeType == String) {
       data.bondOwn = int.parse(own);
