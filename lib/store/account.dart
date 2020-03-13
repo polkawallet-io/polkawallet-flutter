@@ -96,6 +96,9 @@ abstract class _AccountStore with Store {
     await LocalStorage.setCurrentAccount(acc['pubKey']);
 
     await loadAccount();
+
+    // clear the temp account after addAccount finished
+    newAccount = AccountCreate();
   }
 
   @action
@@ -105,7 +108,7 @@ abstract class _AccountStore with Store {
     // remove mnemonic after removing account
     Map stored = await LocalStorage.getMnemonic();
     if (stored[acc.pubKey] != null) {
-      stored.remove([acc.pubKey]);
+      stored.remove(acc.pubKey);
       LocalStorage.setMnemonic(stored);
     }
 

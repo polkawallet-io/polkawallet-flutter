@@ -60,6 +60,10 @@ class RemoteNodeListPage extends StatelessWidget {
               subtitle: Text(i['text']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
               onTap: () {
+                if (store.endpoint.value == i['value']) {
+                  Navigator.of(context).pop();
+                  return;
+                }
                 store.setEndpoint(i);
                 api.changeNode(i['value']);
                 Navigator.of(context).pop();

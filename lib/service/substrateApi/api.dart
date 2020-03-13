@@ -143,7 +143,7 @@ class Api {
     store.settings.setNetworkName(info[2]);
 
     if (store.settings.customSS58Format['info'] == 'default') {
-      account.setSS58Format(info[1]['ss58Format']);
+      account.setSS58Format(info[1]['ss58Format'] ?? 42);
     }
 
     List addresses = store.account.accountList.map((i) => i.address).toList();

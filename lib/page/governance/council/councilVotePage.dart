@@ -76,7 +76,7 @@ class _CouncilVote extends State<CouncilVotePage> {
       children: List<Widget>.from(_selected.map((i) {
         var accInfo = store.account.accountIndexMap[i[0]];
         return Container(
-          margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
+          margin: EdgeInsets.fromLTRB(16, 0, 16, 0),
           child: Row(
             children: <Widget>[
               Container(
@@ -131,7 +131,7 @@ class _CouncilVote extends State<CouncilVotePage> {
                     child: ListView(
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.all(16),
+                          padding: EdgeInsets.only(left: 16, right: 16),
                           child: TextFormField(
                             decoration:
                                 InputDecoration(labelText: dic['address']),
@@ -140,7 +140,8 @@ class _CouncilVote extends State<CouncilVotePage> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.all(16),
+                          padding:
+                              EdgeInsets.only(left: 16, right: 16, bottom: 16),
                           child: TextFormField(
                             decoration: InputDecoration(
                               hintText: dic['amount'],

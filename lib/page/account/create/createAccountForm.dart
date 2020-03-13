@@ -24,55 +24,54 @@ class CreateAccountForm extends StatelessWidget {
       key: _formKey,
       child: Column(
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(left: 16, right: 16),
-            child: TextFormField(
-              decoration: InputDecoration(
-                icon: Icon(Icons.person),
-                hintText: dic['create.name'],
-                labelText: dic['create.name'],
-              ),
-              controller: _nameCtrl,
-              validator: (v) {
-                return v.trim().length > 0 ? null : dic['create.name.error'];
-              },
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+              children: <Widget>[
+                TextFormField(
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.person),
+                    hintText: dic['create.name'],
+                    labelText: dic['create.name'],
+                  ),
+                  controller: _nameCtrl,
+                  validator: (v) {
+                    return v.trim().length > 0
+                        ? null
+                        : dic['create.name.error'];
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.lock),
+                    hintText: dic['create.password'],
+                    labelText: dic['create.password'],
+                  ),
+                  controller: _passCtrl,
+                  validator: (v) {
+                    return Fmt.checkPassword(v.trim())
+                        ? null
+                        : dic['create.password.error'];
+                  },
+                  obscureText: true,
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.lock),
+                    hintText: dic['create.password2'],
+                    labelText: dic['create.password2'],
+                  ),
+                  controller: _pass2Ctrl,
+                  obscureText: true,
+                  validator: (v) {
+                    return _passCtrl.text != v
+                        ? dic['create.password2.error']
+                        : null;
+                  },
+                ),
+              ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(left: 16, right: 16),
-            child: TextFormField(
-              decoration: InputDecoration(
-                icon: Icon(Icons.lock),
-                hintText: dic['create.password'],
-                labelText: dic['create.password'],
-              ),
-              controller: _passCtrl,
-              validator: (v) {
-                return Fmt.checkPassword(v.trim())
-                    ? null
-                    : dic['create.password.error'];
-              },
-              obscureText: true,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 16, right: 16),
-            child: TextFormField(
-              decoration: InputDecoration(
-                icon: Icon(Icons.lock),
-                hintText: dic['create.password2'],
-                labelText: dic['create.password2'],
-              ),
-              controller: _pass2Ctrl,
-              obscureText: true,
-              validator: (v) {
-                return _passCtrl.text != v
-                    ? dic['create.password2.error']
-                    : null;
-              },
-            ),
-          ),
-          Expanded(child: Container()),
           Container(
             padding: EdgeInsets.all(16),
             child: RoundedButton(

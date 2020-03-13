@@ -10,7 +10,7 @@ import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
-import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
+import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -131,75 +131,70 @@ class _TransferPageState extends State<TransferPage> {
                       child: Form(
                         key: _formKey,
                         child: ListView(
+                          padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                           children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.all(16),
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                    hintText: dic['address'],
-                                    labelText: dic['address'],
-                                    suffix: IconButton(
-                                      icon: Image.asset(
-                                          'assets/images/profile/address.png'),
-                                      onPressed: () async {
-                                        var to = await Navigator.of(context)
-                                            .pushNamed(ContactsPage.route);
-                                        setState(() {
-                                          _addressCtrl.text = to;
-                                        });
-                                      },
-                                    )),
-                                controller: _addressCtrl,
-                                validator: (v) {
-                                  return Fmt.isAddress(v.trim())
-                                      ? null
-                                      : dic['address.error'];
-                                },
+                            TextFormField(
+                              decoration: InputDecoration(
+                                  hintText: dic['address'],
+                                  labelText: dic['address'],
+                                  suffix: IconButton(
+                                    icon: Image.asset(
+                                        'assets/images/profile/address.png'),
+                                    onPressed: () async {
+                                      var to = await Navigator.of(context)
+                                          .pushNamed(ContactListPage.route);
+                                      setState(() {
+                                        _addressCtrl.text = to;
+                                      });
+                                    },
+                                  )),
+                              controller: _addressCtrl,
+                              validator: (v) {
+                                return Fmt.isAddress(v.trim())
+                                    ? null
+                                    : dic['address.error'];
+                              },
+                            ),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                hintText: dic['amount'],
+                                labelText:
+                                    '${dic['amount']} (${dic['balance']}: ${Fmt.token(available)})',
                               ),
+                              inputFormatters: [
+                                RegExInputFormatter.withRegex(
+                                    '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                              ],
+                              controller: _amountCtrl,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              validator: (v) {
+                                if (v.isEmpty) {
+                                  return dic['amount.error'];
+                                }
+                                if (double.parse(v.trim()) >=
+                                    available / pow(10, decimals) - 0.02) {
+                                  return dic['amount.low'];
+                                }
+                                return null;
+                              },
                             ),
                             Padding(
-                              padding: EdgeInsets.all(16),
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  hintText: dic['amount'],
-                                  labelText:
-                                      '${dic['amount']} (${dic['balance']}: ${Fmt.token(available)})',
-                                ),
-                                inputFormatters: [
-                                  RegExInputFormatter.withRegex(
-                                      '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                                ],
-                                controller: _amountCtrl,
-                                keyboardType: TextInputType.numberWithOptions(
-                                    decimal: true),
-                                validator: (v) {
-                                  if (v.isEmpty) {
-                                    return dic['amount.error'];
-                                  }
-                                  if (double.parse(v.trim()) >=
-                                      available / pow(10, decimals) - 0.02) {
-                                    return dic['amount.low'];
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                              padding: EdgeInsets.only(top: 16),
                               child: Text(
                                   'existentialDeposit: ${store.settings.existentialDeposit} $symbol',
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.black54)),
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                              padding: EdgeInsets.only(top: 16),
                               child: Text(
                                   'TransferFee: ${store.settings.transactionBaseFee} $symbol',
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.black54)),
                             ),
                             Padding(
-                              padding: EdgeInsets.all(16),
+                              padding: EdgeInsets.only(top: 16),
                               child: Text(
                                   'transactionByteFee: ${store.settings.transactionByteFee} $symbol',
                                   style: TextStyle(

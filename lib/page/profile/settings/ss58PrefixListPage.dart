@@ -37,6 +37,10 @@ class SS58PrefixListPage extends StatelessWidget {
               subtitle: Text(i['text']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
               onTap: () {
+                if (store.customSS58Format['info'] == i['info']) {
+                  Navigator.of(context).pop();
+                  return;
+                }
                 store.setCustomSS58Format(i);
                 if (i['info'] == 'default') {
                   api.account
