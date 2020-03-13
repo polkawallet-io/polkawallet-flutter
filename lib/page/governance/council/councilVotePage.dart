@@ -133,8 +133,9 @@ class _CouncilVote extends State<CouncilVotePage> {
                         Padding(
                           padding: EdgeInsets.only(left: 16, right: 16),
                           child: TextFormField(
-                            decoration:
-                                InputDecoration(labelText: dic['address']),
+                            decoration: InputDecoration(
+                                labelText:
+                                    I18n.of(context).staking['controller']),
                             initialValue: store.account.currentAddress,
                             readOnly: true,
                           ),

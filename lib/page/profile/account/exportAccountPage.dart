@@ -37,17 +37,18 @@ class ExportAccountPage extends StatelessWidget {
     );
   }
 
-  Future<void> _onExportMnemonic(BuildContext context) async {
+  Future<void> _onExportSeed(BuildContext context, String seedType) async {
     var dic = I18n.of(context).profile;
-    String mnemonic = await store.decryptMnemonic(
-        store.currentAccount.pubKey, _passCtrl.text);
+    String mnemonic = await store.decryptSeed(
+        store.currentAccount.pubKey, seedType, _passCtrl.text.trim());
     Clipboard.setData(ClipboardData(text: mnemonic));
+    _passCtrl.clear();
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: Text(dic['export']),
-          content: Text(dic['export.mnemonic.ok']),
+          content: Text(dic['export.$seedType.ok']),
           actions: <Widget>[
             CupertinoButton(
               child: Text(I18n.of(context).home['ok']),
@@ -59,7 +60,7 @@ class ExportAccountPage extends StatelessWidget {
     );
   }
 
-  void _showPasswordDialog(BuildContext context) {
+  void _showPasswordDialog(BuildContext context, String seedType) {
     final Map<String, String> dic = I18n.of(context).profile;
     final Map<String, String> accDic = I18n.of(context).account;
 
@@ -83,7 +84,7 @@ class ExportAccountPage extends StatelessWidget {
         );
       } else {
         Navigator.of(context).pop();
-        _onExportMnemonic(context);
+        _onExportSeed(context, seedType);
       }
     }
 
@@ -139,13 +140,30 @@ class ExportAccountPage extends StatelessWidget {
             onTap: () => _onExportKeystore(context),
           ),
           FutureBuilder(
-            future: store.checkMnemonicExist(store.currentAccount.pubKey),
+            future: store.checkSeedExist(
+                store.seedTypeMnemonic, store.currentAccount.pubKey),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.hasData && snapshot.data == true) {
                 return ListTile(
                   title: Text('Mnemonic'),
                   trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                  onTap: () => _showPasswordDialog(context),
+                  onTap: () =>
+                      _showPasswordDialog(context, store.seedTypeMnemonic),
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
+          FutureBuilder(
+            future: store.checkSeedExist(
+                store.seedTypeRaw, store.currentAccount.pubKey),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              if (snapshot.hasData && snapshot.data == true) {
+                return ListTile(
+                  title: Text('Raw Seed'),
+                  trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                  onTap: () => _showPasswordDialog(context, store.seedTypeRaw),
                 );
               } else {
                 return Container();

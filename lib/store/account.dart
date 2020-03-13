@@ -10,6 +10,9 @@ part 'account.g.dart';
 class AccountStore extends _AccountStore with _$AccountStore {}
 
 abstract class _AccountStore with Store {
+  final String seedTypeMnemonic = 'mnemonic';
+  final String seedTypeRaw = 'rawSeed';
+
   @observable
   bool loading = true;
 
@@ -86,11 +89,16 @@ abstract class _AccountStore with Store {
 
   @action
   Future<void> addAccount(Map<String, dynamic> acc, String password) async {
-    // save mnemonic and remove it before add account
-    if (acc['mnemonic'] != null) {
-      encryptMnemonic(acc['pubKey'], acc['mnemonic'], password);
-      acc.remove(acc['mnemonic']);
+    // save seed and remove it before add account
+    void saveSeed(String seedType) {
+      if ((acc[seedType] as String).isNotEmpty) {
+        encryptSeed(acc['pubKey'], acc[seedType], seedType, password);
+        acc.remove(acc[seedType]);
+      }
     }
+
+    saveSeed(seedTypeMnemonic);
+    saveSeed(seedTypeRaw);
 
     await LocalStorage.addAccount(acc);
     await LocalStorage.setCurrentAccount(acc['pubKey']);
@@ -105,12 +113,9 @@ abstract class _AccountStore with Store {
   Future<void> removeAccount(AccountData acc) async {
     await LocalStorage.removeAccount(acc.pubKey);
 
-    // remove mnemonic after removing account
-    Map stored = await LocalStorage.getMnemonic();
-    if (stored[acc.pubKey] != null) {
-      stored.remove(acc.pubKey);
-      LocalStorage.setMnemonic(stored);
-    }
+    // remove encrypted seed after removing account
+    deleteSeed(seedTypeMnemonic, acc.pubKey);
+    deleteSeed(seedTypeRaw, acc.pubKey);
 
     // set new currentAccount after currentAccount was removed
     List<Map<String, dynamic>> accounts = await LocalStorage.getAccountList();
@@ -141,18 +146,19 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  Future<void> encryptMnemonic(
-      String pubKey, String mnemonic, String password) async {
+  Future<void> encryptSeed(
+      String pubKey, String seed, String seedType, String password) async {
     String key = Fmt.passwordToEncryptKey(password);
-    String encrypted = await FlutterAesEcbPkcs5.encryptString(mnemonic, key);
-    Map stored = await LocalStorage.getMnemonic();
+    String encrypted = await FlutterAesEcbPkcs5.encryptString(seed, key);
+    Map stored = await LocalStorage.getSeeds(seedType);
     stored[pubKey] = encrypted;
-    LocalStorage.setMnemonic(stored);
+    LocalStorage.setSeeds(seedType, stored);
   }
 
   @action
-  Future<String> decryptMnemonic(String pubKey, String password) async {
-    Map stored = await LocalStorage.getMnemonic();
+  Future<String> decryptSeed(
+      String pubKey, String seedType, String password) async {
+    Map stored = await LocalStorage.getSeeds(seedType);
     String encrypted = stored[pubKey];
     if (encrypted == null) {
       return null;
@@ -162,22 +168,41 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  Future<bool> checkMnemonicExist(String pubKey) async {
-    Map stored = await LocalStorage.getMnemonic();
+  Future<bool> checkSeedExist(String seedType, String pubKey) async {
+    Map stored = await LocalStorage.getSeeds(seedType);
     String encrypted = stored[pubKey];
     return encrypted != null;
   }
 
   @action
-  Future<void> updateMnemonic(
+  Future<void> updateSeed(
       String pubKey, String passwordOld, String passwordNew) async {
-    Map stored = await LocalStorage.getMnemonic();
-    if (stored[pubKey] == null) {
+    Map storedMnemonics = await LocalStorage.getSeeds(seedTypeMnemonic);
+    Map storedRawSeeds = await LocalStorage.getSeeds(seedTypeRaw);
+    String encryptedSeed = '';
+    String seedType = '';
+    if (storedMnemonics[pubKey] != null) {
+      encryptedSeed = storedMnemonics[pubKey];
+      seedType = seedTypeMnemonic;
+    } else if (storedMnemonics[pubKey] != null) {
+      encryptedSeed = storedRawSeeds[pubKey];
+      seedType = seedTypeRaw;
+    } else {
       return;
     }
-    String mnemonic = await FlutterAesEcbPkcs5.decryptString(
-        stored[pubKey], Fmt.passwordToEncryptKey(passwordOld));
-    encryptMnemonic(pubKey, mnemonic, passwordNew);
+
+    String seed = await FlutterAesEcbPkcs5.decryptString(
+        encryptedSeed, Fmt.passwordToEncryptKey(passwordOld));
+    encryptSeed(pubKey, seed, seedType, passwordNew);
+  }
+
+  @action
+  Future<void> deleteSeed(String seedType, String pubKey) async {
+    Map stored = await LocalStorage.getSeeds(seedType);
+    if (stored[pubKey] != null) {
+      stored.remove(pubKey);
+      LocalStorage.setSeeds(seedType, stored);
+    }
   }
 
   @action

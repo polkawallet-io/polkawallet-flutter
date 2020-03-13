@@ -194,38 +194,46 @@ mixin _$AccountStore on _AccountStore, Store {
     return _$loadAccountAsyncAction.run(() => super.loadAccount());
   }
 
-  final _$encryptMnemonicAsyncAction = AsyncAction('encryptMnemonic');
+  final _$encryptSeedAsyncAction = AsyncAction('encryptSeed');
 
   @override
-  Future<void> encryptMnemonic(
-      String pubKey, String mnemonic, String password) {
-    return _$encryptMnemonicAsyncAction
-        .run(() => super.encryptMnemonic(pubKey, mnemonic, password));
+  Future<void> encryptSeed(
+      String pubKey, String seed, String seedType, String password) {
+    return _$encryptSeedAsyncAction
+        .run(() => super.encryptSeed(pubKey, seed, seedType, password));
   }
 
-  final _$decryptMnemonicAsyncAction = AsyncAction('decryptMnemonic');
+  final _$decryptSeedAsyncAction = AsyncAction('decryptSeed');
 
   @override
-  Future<String> decryptMnemonic(String pubKey, String password) {
-    return _$decryptMnemonicAsyncAction
-        .run(() => super.decryptMnemonic(pubKey, password));
+  Future<String> decryptSeed(String pubKey, String seedType, String password) {
+    return _$decryptSeedAsyncAction
+        .run(() => super.decryptSeed(pubKey, seedType, password));
   }
 
-  final _$checkMnemonicExistAsyncAction = AsyncAction('checkMnemonicExist');
+  final _$checkSeedExistAsyncAction = AsyncAction('checkSeedExist');
 
   @override
-  Future<bool> checkMnemonicExist(String pubKey) {
-    return _$checkMnemonicExistAsyncAction
-        .run(() => super.checkMnemonicExist(pubKey));
+  Future<bool> checkSeedExist(String seedType, String pubKey) {
+    return _$checkSeedExistAsyncAction
+        .run(() => super.checkSeedExist(seedType, pubKey));
   }
 
-  final _$updateMnemonicAsyncAction = AsyncAction('updateMnemonic');
+  final _$updateSeedAsyncAction = AsyncAction('updateSeed');
 
   @override
-  Future<void> updateMnemonic(
+  Future<void> updateSeed(
       String pubKey, String passwordOld, String passwordNew) {
-    return _$updateMnemonicAsyncAction
-        .run(() => super.updateMnemonic(pubKey, passwordOld, passwordNew));
+    return _$updateSeedAsyncAction
+        .run(() => super.updateSeed(pubKey, passwordOld, passwordNew));
+  }
+
+  final _$deleteSeedAsyncAction = AsyncAction('deleteSeed');
+
+  @override
+  Future<void> deleteSeed(String seedType, String pubKey) {
+    return _$deleteSeedAsyncAction
+        .run(() => super.deleteSeed(seedType, pubKey));
   }
 
   final _$_AccountStoreActionController =

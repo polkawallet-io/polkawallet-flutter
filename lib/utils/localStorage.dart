@@ -10,7 +10,7 @@ class LocalStorage {
   static const localeKey = 'wallet_locale';
   static const endpointKey = 'wallet_endpoint';
   static const customSS58Key = 'wallet_custom_ss58';
-  static const mnemonicKey = 'wallet_mnemonic';
+  static const seedKey = 'wallet_seed';
 
   static final storage = new _LocalStorage();
 
@@ -83,12 +83,12 @@ class LocalStorage {
     return default_ss58_prefix;
   }
 
-  static Future<void> setMnemonic(Map value) async {
-    return storage.setKV(mnemonicKey, jsonEncode(value));
+  static Future<void> setSeeds(String seedType, Map value) async {
+    return storage.setKV('${seedKey}_$seedType', jsonEncode(value));
   }
 
-  static Future<Map> getMnemonic() async {
-    String value = await storage.getKV(mnemonicKey);
+  static Future<Map> getSeeds(String seedType) async {
+    String value = await storage.getKV('${seedKey}_$seedType');
     if (value != null) {
       return jsonDecode(value);
     }

@@ -64,29 +64,32 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
       children: <Widget>[
         Padding(
           padding: EdgeInsets.only(top: 8),
-          child: Row(
-            children: <Widget>[
-              IconButton(
-                icon: Icon(
-                  _expanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                  size: 30,
-                  color: Theme.of(context).unselectedWidgetColor,
-                ),
-                onPressed: () {
-                  // clear state while form closed
-                  if (_expanded) {
-                    setState(() {
-                      _typeSelection = 0;
-                      _pathCtrl.text = '';
-                    });
-                  }
-                  setState(() {
-                    _expanded = !_expanded;
-                  });
-                },
+          child: GestureDetector(
+            child: Padding(
+              padding: EdgeInsets.only(left: 8, top: 8),
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    _expanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                    size: 30,
+                    color: Theme.of(context).unselectedWidgetColor,
+                  ),
+                  Text(dic['advanced'])
+                ],
               ),
-              Text(dic['advanced'])
-            ],
+            ),
+            onTap: () {
+              // clear state while advanced options closed
+              if (_expanded) {
+                setState(() {
+                  _typeSelection = 0;
+                  _pathCtrl.text = '';
+                });
+              }
+              setState(() {
+                _expanded = !_expanded;
+              });
+            },
           ),
         ),
         _expanded
@@ -187,21 +190,22 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
     String validateInput(String v) {
       bool passed = false;
       Map<String, String> dic = I18n.of(context).account;
+      String input = v.trim();
       switch (_keySelection) {
         case 0:
-          int len = v.trim().split(' ').length;
+          int len = input.split(' ').length;
           if (len == 12 || len == 24) {
             passed = true;
           }
           break;
         case 1:
-          if (v.trim().length == 34) {
+          if (input.length <= 32 || input.length == 66) {
             passed = true;
           }
           break;
         case 2:
           try {
-            jsonDecode(v.trim());
+            jsonDecode(input);
             passed = true;
           } catch (_) {
             // ignore

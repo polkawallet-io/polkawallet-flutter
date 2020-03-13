@@ -1,6 +1,8 @@
-# 0.5.0
+# 0.5.1
 - Add staking rewards payout
 - Add staking unbond withdraw
+- Import account with raw seed bug fix
+- Update launch image
 
 # 0.5.0
 - Refactored page routes

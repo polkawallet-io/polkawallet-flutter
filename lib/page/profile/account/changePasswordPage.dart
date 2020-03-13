@@ -52,7 +52,7 @@ class _ChangePassword extends State<ChangePasswordPage> {
       } else {
         acc['name'] = store.currentAccount.name;
         store.updateAccount(acc);
-        store.updateMnemonic(
+        store.updateSeed(
             store.currentAccount.pubKey, _passOldCtrl.text, _passCtrl.text);
         showCupertinoDialog(
           context: context,
