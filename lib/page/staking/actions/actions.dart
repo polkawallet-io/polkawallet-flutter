@@ -156,7 +156,6 @@ class _StakingActions extends State<StakingActions>
     Color actionButtonColor = Theme.of(context).primaryColor;
     Color disabledColor = Theme.of(context).disabledColor;
 
-//    print(store.staking.accountRewardTotal);
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
       padding: EdgeInsets.all(16),

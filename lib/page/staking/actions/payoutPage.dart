@@ -53,6 +53,11 @@ class _PayoutPageState extends State<PayoutPage> {
       return;
     }
 
+    var params = rewards
+        .map((i) =>
+            'api.tx.staking.payoutNominator(${i['era']}, ${jsonEncode(i['nominating'])})')
+        .toList()
+        .join(',');
     var args = {
       "title": dic['action.payout'],
       "txInfo": {
@@ -65,19 +70,14 @@ class _PayoutPageState extends State<PayoutPage> {
             .map((i) => {'era': i['era'], 'nominating': i['nominating']})
             .toList(),
       }),
-      // TODO: params error
-      "params": [
-        // txList
-        rewards
-            .map((i) =>
-                '\'api.tx.staking.payoutNominator(${i['era']}, ${jsonEncode(i['nominating'])})\'')
-            .toList(),
-      ],
+      "params": [],
+      "rawParam": '[[$params]]',
       'onFinish': (BuildContext txPageContext) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalBondingRefreshKey.currentState.show();
       }
     };
+    print(args['rawParam']);
     Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
   }
 

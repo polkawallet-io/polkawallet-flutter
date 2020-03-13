@@ -47,11 +47,12 @@ class ApiAccount {
     return c.future;
   }
 
-  Future<dynamic> sendTx(
-      Map txInfo, List params, String notificationTitle) async {
+  Future<dynamic> sendTx(Map txInfo, List params, String notificationTitle,
+      {String rawParam}) async {
+    String param = rawParam != null ? rawParam : jsonEncode(params);
 //    var res = await _testSendTx();
-    var res = await apiRoot.evalJavascript(
-        'account.sendTx(${jsonEncode(txInfo)}, ${jsonEncode(params)})');
+    var res = await apiRoot
+        .evalJavascript('account.sendTx(${jsonEncode(txInfo)}, $param)');
 
     if (res != null) {
       String hash = res['hash'];
