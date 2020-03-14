@@ -17,8 +17,10 @@ class ExportAccountPage extends StatelessWidget {
 
   void _onExportKeystore(BuildContext context) {
     var dic = I18n.of(context).profile;
+    Map json = AccountData.toJson(store.currentAccount);
+    json.remove('name');
     Clipboard.setData(ClipboardData(
-      text: jsonEncode(AccountData.toJson(store.currentAccount)),
+      text: jsonEncode(json),
     ));
     showCupertinoDialog(
       context: context,

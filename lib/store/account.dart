@@ -13,6 +13,15 @@ abstract class _AccountStore with Store {
   final String seedTypeMnemonic = 'mnemonic';
   final String seedTypeRaw = 'rawSeed';
 
+  Map<String, dynamic> _formatMetaData(Map<String, dynamic> acc) {
+    acc['meta']['name'] = acc['name'];
+    if (acc['meta']['whenCreated'] == null) {
+      acc['meta']['whenCreated'] = DateTime.now().millisecond;
+    }
+    acc['meta']['whenEdited'] = DateTime.now().millisecond;
+    return acc;
+  }
+
   @observable
   bool loading = true;
 
@@ -80,6 +89,8 @@ abstract class _AccountStore with Store {
 
   @action
   Future<void> updateAccount(Map<String, dynamic> acc) async {
+    acc = _formatMetaData(acc);
+
     AccountData accNew = AccountData.fromJson(acc);
     await LocalStorage.removeAccount(accNew.pubKey);
     await LocalStorage.addAccount(acc);
@@ -91,7 +102,8 @@ abstract class _AccountStore with Store {
   Future<void> addAccount(Map<String, dynamic> acc, String password) async {
     // save seed and remove it before add account
     void saveSeed(String seedType) {
-      if ((acc[seedType] as String).isNotEmpty) {
+      String seed = acc[seedType];
+      if (seed != null && seed.isNotEmpty) {
         encryptSeed(acc['pubKey'], acc[seedType], seedType, password);
         acc.remove(acc[seedType]);
       }
@@ -99,6 +111,9 @@ abstract class _AccountStore with Store {
 
     saveSeed(seedTypeMnemonic);
     saveSeed(seedTypeRaw);
+
+    // format meta data of acc
+    acc = _formatMetaData(acc);
 
     await LocalStorage.addAccount(acc);
     await LocalStorage.setCurrentAccount(acc['pubKey']);
