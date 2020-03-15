@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:polka_wallet/page/profile/account/exportResultPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -11,56 +11,10 @@ import 'package:polka_wallet/utils/i18n/index.dart';
 class ExportAccountPage extends StatelessWidget {
   ExportAccountPage(this.store);
   static final String route = '/profile/export';
+  static final String exportTypeKeystore = 'keystore';
   final AccountStore store;
 
   final TextEditingController _passCtrl = new TextEditingController();
-
-  void _onExportKeystore(BuildContext context) {
-    var dic = I18n.of(context).profile;
-    Map json = AccountData.toJson(store.currentAccount);
-    json.remove('name');
-    Clipboard.setData(ClipboardData(
-      text: jsonEncode(json),
-    ));
-    showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text(dic['export']),
-          content: Text(dic['export.keystore.ok']),
-          actions: <Widget>[
-            CupertinoButton(
-              child: Text(I18n.of(context).home['ok']),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _onExportSeed(BuildContext context, String seedType) async {
-    var dic = I18n.of(context).profile;
-    String mnemonic = await store.decryptSeed(
-        store.currentAccount.pubKey, seedType, _passCtrl.text.trim());
-    Clipboard.setData(ClipboardData(text: mnemonic));
-    _passCtrl.clear();
-    showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text(dic['export']),
-          content: Text(dic['export.$seedType.ok']),
-          actions: <Widget>[
-            CupertinoButton(
-              child: Text(I18n.of(context).home['ok']),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   void _showPasswordDialog(BuildContext context, String seedType) {
     final Map<String, String> dic = I18n.of(context).profile;
@@ -86,7 +40,12 @@ class ExportAccountPage extends StatelessWidget {
         );
       } else {
         Navigator.of(context).pop();
-        _onExportSeed(context, seedType);
+        String seed = await store.decryptSeed(
+            store.currentAccount.pubKey, seedType, _passCtrl.text.trim());
+        Navigator.of(context).pushNamed(ExportResultPage.route, arguments: {
+          'key': seed,
+          'type': seedType,
+        });
       }
     }
 
@@ -139,7 +98,15 @@ class ExportAccountPage extends StatelessWidget {
           ListTile(
             title: Text('Keystore'),
             trailing: Icon(Icons.arrow_forward_ios, size: 18),
-            onTap: () => _onExportKeystore(context),
+            onTap: () {
+              Map json = AccountData.toJson(store.currentAccount);
+              json.remove('name');
+              Navigator.of(context)
+                  .pushNamed(ExportResultPage.route, arguments: {
+                'key': jsonEncode(json),
+                'type': exportTypeKeystore,
+              });
+            },
           ),
           FutureBuilder(
             future: store.checkSeedExist(

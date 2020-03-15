@@ -31,6 +31,8 @@ const Map<String, String> enProfile = {
   'pass.error': 'Wrong Password',
   'pass.error.txt': 'Failed to unlock account, please check password.',
   'export': 'Export Account',
+  'export.warn': 'Write these words down on paper. Keep the backup paper safe. '
+      'These words allows anyone to recover this account and access its funds.',
   'export.keystore.ok': 'Keystore was copied to clipboard.',
   'export.mnemonic.ok': 'Mnemonic was copied to clipboard.',
   'export.rawSeed.ok': 'Raw Seed was copied to clipboard.',
@@ -73,6 +75,7 @@ const Map<String, String> zhProfile = {
   'pass.error': '密码错误',
   'pass.error.txt': '解锁账户失败，请检查密码',
   'export': '导出账户',
+  'export.warn': '请把以下文字抄写到纸条上并妥善保存，以下文字允许任何人恢复当前账户并获取其中的数字资产。',
   'export.keystore.ok': 'Keystore 已经复制到剪切板',
   'export.mnemonic.ok': 'Mnemonic 已经复制到剪切板',
   'export.rawSeed.ok': 'Raw Seed 已经复制到剪切板',

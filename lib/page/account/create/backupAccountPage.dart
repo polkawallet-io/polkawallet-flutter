@@ -37,7 +37,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
 
     return Observer(
       builder: (_) => Scaffold(
-        appBar: AppBar(title: const Text('Create Account')),
+        appBar: AppBar(title: Text(I18n.of(context).home['create'])),
         body: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -98,7 +98,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Account'),
+        title: Text(I18n.of(context).home['create']),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {

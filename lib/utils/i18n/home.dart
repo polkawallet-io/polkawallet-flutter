@@ -24,6 +24,7 @@ const Map<String, String> enHome = {
   'detail': 'Detail',
   'notify.submitted': 'Tx submitted in block',
   'data.empty': 'No Data',
+  'copy': 'Copy to clipboard',
 };
 
 const Map<String, String> zhHome = {
@@ -49,4 +50,5 @@ const Map<String, String> zhHome = {
   'detail': '详情',
   'notify.finish': '交易已被打包',
   'data.empty': '暂无数据',
+  'copy': '复制到剪贴板',
 };
