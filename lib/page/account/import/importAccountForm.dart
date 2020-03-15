@@ -205,8 +205,14 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
           break;
         case 2:
           try {
-            jsonDecode(input);
+            Map json = jsonDecode(input);
             passed = true;
+            // auto set account name
+            if (json['meta']['name'] != null) {
+              setState(() {
+                _nameCtrl.text = json['meta']['name'];
+              });
+            }
           } catch (_) {
             // ignore
           }

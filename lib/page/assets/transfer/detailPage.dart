@@ -42,14 +42,12 @@ class TransferDetailPage extends StatelessWidget {
         ),
         DetailInfoItem(
           label: dic['from'],
-          title: tx.senderId,
-          subtitle: Fmt.address(tx.sender),
+          title: Fmt.address(tx.sender),
           address: tx.sender,
         ),
         DetailInfoItem(
           label: dic['to'],
-          title: tx.destinationId,
-          subtitle: Fmt.address(tx.destination),
+          title: Fmt.address(tx.destination),
           address: tx.destination,
         )
       ],

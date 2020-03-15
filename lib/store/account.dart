@@ -14,7 +14,8 @@ abstract class _AccountStore with Store {
   final String seedTypeRaw = 'rawSeed';
 
   Map<String, dynamic> _formatMetaData(Map<String, dynamic> acc) {
-    acc['meta']['name'] = acc['name'];
+    acc['name'] = newAccount.name;
+    acc['meta']['name'] = newAccount.name;
     if (acc['meta']['whenCreated'] == null) {
       acc['meta']['whenCreated'] = DateTime.now().millisecond;
     }
@@ -83,6 +84,7 @@ abstract class _AccountStore with Store {
   void updateAccountName(String name) {
     Map<String, dynamic> acc = AccountData.toJson(currentAccount);
     acc['name'] = name;
+    acc['meta']['name'] = name;
 
     updateAccount(acc);
   }

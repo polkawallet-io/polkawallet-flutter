@@ -77,7 +77,6 @@ class ApiAccount {
         'account.recover("$keyType", "$cryptoType", \'$key$derivePath\', "$pass")';
     Map<String, dynamic> acc = await apiRoot.evalJavascript(code);
     if (acc != null) {
-      acc['name'] = store.account.newAccount.name;
       await store.account.addAccount(acc, pass);
       store.staking.clearSate();
       store.gov.clearSate();
