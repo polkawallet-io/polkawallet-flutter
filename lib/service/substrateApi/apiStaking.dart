@@ -17,13 +17,14 @@ class ApiStaking {
           .evalJavascript('api.derive.staking.account("$address")');
       store.staking.setLedger(res);
       if (res['nominators'] != null) {
-        apiRoot.account.getAddressIcons(List.of(res['nominators']));
+        await apiRoot.account.getAddressIcons(List.of(res['nominators']));
       }
     }
   }
 
   Future<void> fetchAccountRewards(String address) async {
     if (address != null) {
+      print('fetching staking rewards...');
       List res = await apiRoot
           .evalJavascript('staking.loadAccountRewardsData("$address")');
       store.staking.setLedger({'rewards': res});
@@ -35,11 +36,8 @@ class ApiStaking {
         await apiRoot.evalJavascript('api.derive.staking.overview()');
     store.staking.setOverview(overview);
 
-    // fetch all validators details
-    fetchElectedInfo();
     List validatorAddressList = List.of(overview['validators']);
     apiRoot.account.fetchAccountsIndex(validatorAddressList);
-    apiRoot.account.getAddressIcons(validatorAddressList);
     return overview;
   }
 
@@ -61,24 +59,16 @@ class ApiStaking {
     }
     await store.staking.addTxs(List<Map<String, dynamic>>.from(ls));
 
-    Map<int, bool> blocksNeedUpdate = Map<int, bool>();
-    ls.forEach((i) {
-      int block = i['attributes']['block_id'];
-      if (store.assets.blockMap[block] == null) {
-        blocksNeedUpdate[block] = true;
-      }
-    });
-    String blocks = blocksNeedUpdate.keys.join(',');
-    var blockData =
-        await apiRoot.evalJavascript('account.getBlockTime([$blocks])');
-
-    store.assets.setBlockMap(blockData);
+    await apiRoot.updateBlocks(ls);
     return ls;
   }
 
   Future<void> fetchElectedInfo() async {
+    // fetch all validators details
     var res = await apiRoot.evalJavascript('api.derive.staking.electedInfo()');
     store.staking.setValidatorsInfo(res);
+    apiRoot.account.getAddressIcons(
+        List<String>.from(res['info'].map((i) => i['accountId'])));
   }
 
   Future<Map> queryValidatorRewards(String accountId) async {

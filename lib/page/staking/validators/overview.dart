@@ -19,21 +19,18 @@ import 'package:polka_wallet/utils/i18n/index.dart';
 const validator_list_page_size = 100;
 
 class StakingOverviewPage extends StatefulWidget {
-  StakingOverviewPage(this.store, this.reloadStakingOverview);
+  StakingOverviewPage(this.store);
 
   final AppStore store;
-  final Function reloadStakingOverview;
 
   @override
-  _StakingOverviewPageState createState() =>
-      _StakingOverviewPageState(store, reloadStakingOverview);
+  _StakingOverviewPageState createState() => _StakingOverviewPageState(store);
 }
 
 class _StakingOverviewPageState extends State<StakingOverviewPage> {
-  _StakingOverviewPageState(this.store, this.reloadStakingOverview);
+  _StakingOverviewPageState(this.store);
 
   final AppStore store;
-  final Function reloadStakingOverview;
 
   bool _expanded = false;
 
@@ -45,7 +42,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
       return;
     }
     await webApi.staking.fetchAccountStaking(store.account.currentAddress);
-    reloadStakingOverview();
+    webApi.staking.fetchElectedInfo();
   }
 
   Widget _buildTopCard(BuildContext context) {
@@ -215,7 +212,6 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
               trailing: Container(
                 width: 120,
                 height: 40,
-//                color: Colors.grey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -245,7 +241,8 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (store.staking.ledger['stakingLedger'] == null) {
+      List<ValidatorData> validators = store.staking.validatorsInfo;
+      if (validators.length == 0 || validators[0].commission.isEmpty) {
         globalNominatingRefreshKey.currentState.show();
       }
     });
@@ -299,7 +296,6 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
           list.addAll(ls);
         } else {
           list.add(Container(
-            color: Theme.of(context).cardColor,
             height: 160,
             child: CupertinoActivityIndicator(),
           ));

@@ -30,7 +30,7 @@ class ApiAssets {
     }
     await store.assets.addTxs(ls);
 
-    await apiRoot.updateBlocks();
+    await apiRoot.updateBlocks(ls);
     store.assets.setTxsLoading(false);
     return ls;
   }

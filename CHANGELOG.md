@@ -1,3 +1,9 @@
+# 0.5.2
+- Removed account index from transfer detail page
+- Add account export result pages
+- Change keystore json format to match with polkadot-js/apps
+- Adjust staking data fetching orders
+
 # 0.5.1
 - Add staking rewards payout
 - Add staking unbond withdraw

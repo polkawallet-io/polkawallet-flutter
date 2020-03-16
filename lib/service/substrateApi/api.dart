@@ -24,6 +24,7 @@ class Api {
   ApiGovernance gov;
 
   Map<String, Function> _msgHandlers = {};
+  Map<String, Completer> _msgCompleters = {};
   FlutterWebviewPlugin _web;
   int _evalJavascriptUID = 0;
 
@@ -63,13 +64,19 @@ class Api {
               compute(jsonDecode, message.message).then((msg) {
                 final msg = jsonDecode(message.message);
                 final String path = msg['path'];
-                var handler = _msgHandlers[path];
-                if (handler == null) {
-                  return;
+                if (_msgCompleters[path] != null) {
+                  Completer handler = _msgCompleters[path];
+                  handler.complete(msg['data']);
+                  if (path.contains('uid=')) {
+                    _msgCompleters.remove(path);
+                  }
                 }
-                handler(msg['data']);
-                if (path.contains('uid=')) {
-                  _msgHandlers.remove(path);
+                if (_msgHandlers[path] != null) {
+                  Function handler = _msgHandlers[path];
+                  handler(msg['data']);
+                  if (path.contains('uid=')) {
+                    _msgHandlers.remove(path);
+                  }
                 }
               });
             }),
@@ -81,18 +88,24 @@ class Api {
     );
   }
 
-  int getEvalJavascriptUID() {
+  int _getEvalJavascriptUID() {
     return _evalJavascriptUID++;
   }
 
   Future<dynamic> evalJavascript(String code) async {
-    Completer c = new Completer();
-    void onComplete(res) {
-      c.complete(res);
+    // check if there's a same request loading
+    for (String i in _msgCompleters.keys) {
+      String call = code.split('(')[0];
+      if (i.contains(call)) {
+        print('request $call loading');
+        return _msgCompleters[i].future;
+      }
     }
 
-    String method = 'uid=${getEvalJavascriptUID()};${code.split('(')[0]}';
-    _msgHandlers[method] = onComplete;
+    Completer c = new Completer();
+
+    String method = 'uid=${_getEvalJavascriptUID()};${code.split('(')[0]}';
+    _msgCompleters[method] = c;
 
     String script = '$code.then(function(res) {'
         '  PolkaWallet.postMessage(JSON.stringify({ path: "$method", data: res }));'
@@ -147,15 +160,19 @@ class Api {
     }
 
     List addresses = store.account.accountList.map((i) => i.address).toList();
-    account.fetchAccountsIndex(addresses);
-    account.getAddressIcons(addresses);
+//    account.fetchAccountsIndex(addresses);
+    await account.getAddressIcons(addresses);
+
+    // fetch staking overview data as initializing
+    staking.fetchStakingOverview();
   }
 
-  Future<void> updateBlocks() async {
+  Future<void> updateBlocks(List txs) async {
     Map<int, bool> blocksNeedUpdate = Map<int, bool>();
-    store.assets.txs.forEach((i) {
-      if (store.assets.blockMap[i.block] == null) {
-        blocksNeedUpdate[i.block] = true;
+    txs.forEach((i) {
+      int block = i['attributes']['block_id'];
+      if (store.assets.blockMap[block] == null) {
+        blocksNeedUpdate[block] = true;
       }
     });
     String blocks = blocksNeedUpdate.keys.join(',');

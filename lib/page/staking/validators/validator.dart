@@ -59,7 +59,8 @@ class Validator extends StatelessWidget {
                       fontSize: 12,
                     ),
                   ),
-                  Text('${dic['commission']}: ${validator.commission}',
+                  Text(
+                      '${dic['commission']}: ${validator.commission.isEmpty ? '--' : validator.commission}',
                       style: TextStyle(
                         color: Theme.of(context).unselectedWidgetColor,
                         fontSize: 12,
@@ -77,11 +78,13 @@ class Validator extends StatelessWidget {
           ],
         ),
       ),
-      onTap: () {
-        webApi.staking.queryValidatorRewards(validator.accountId);
-        Navigator.of(context)
-            .pushNamed(ValidatorDetailPage.route, arguments: validator);
-      },
+      onTap: validator.commission.isNotEmpty
+          ? () {
+              webApi.staking.queryValidatorRewards(validator.accountId);
+              Navigator.of(context)
+                  .pushNamed(ValidatorDetailPage.route, arguments: validator);
+            }
+          : null,
     );
   }
 }

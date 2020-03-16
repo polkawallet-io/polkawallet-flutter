@@ -118,6 +118,16 @@ abstract class _StakingStore with Store {
   @action
   void setOverview(Map<String, dynamic> data) {
     data.keys.forEach((key) => overview[key] = data[key]);
+
+    // show validator's address before we got elected detail info
+    if (validatorsInfo.length == 0 && data['validators'] != null) {
+      List<ValidatorData> list = List.of(data['validators']).map((i) {
+        ValidatorData validator = ValidatorData();
+        validator.accountId = i;
+        return validator;
+      }).toList();
+      validatorsInfo = ObservableList.of(list);
+    }
   }
 
   @action

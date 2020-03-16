@@ -54,6 +54,9 @@ class Fmt {
   }
 
   static int sortValidatorList(ValidatorData a, ValidatorData b, int sortType) {
+    if (a.commission == null || a.commission.isEmpty) {
+      return 1;
+    }
     double comA = double.parse(a.commission.split('%')[0]);
     double comB = double.parse(b.commission.split('%')[0]);
     var cmpStake = a.total < b.total ? 1 : -1;

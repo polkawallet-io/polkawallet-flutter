@@ -32,9 +32,10 @@ class ApiAccount {
         await apiRoot.evalJavascript('account.initKeys($accounts, $ss58)');
     store.account.setPubKeyAddressMap(keys);
     // get accounts icons
-    getAddressIcons(keys.map((i) => i['address']).toList());
-    // get settings.contacts icons
-    getAddressIcons(store.settings.contactList.map((i) => i.address).toList());
+    // and contracts icons
+    List addresses = keys.map((i) => i['address']).toList();
+    addresses.addAll(store.settings.contactList.map((i) => i.address));
+    getAddressIcons(addresses);
   }
 
   Future<dynamic> _testSendTx() async {
