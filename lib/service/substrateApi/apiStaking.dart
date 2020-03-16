@@ -22,6 +22,7 @@ class ApiStaking {
     }
   }
 
+  // this query takes extremely long time
   Future<void> fetchAccountRewards(String address) async {
     if (address != null) {
       print('fetching staking rewards...');
@@ -36,8 +37,11 @@ class ApiStaking {
         await apiRoot.evalJavascript('api.derive.staking.overview()');
     store.staking.setOverview(overview);
 
+    fetchElectedInfo();
+
     List validatorAddressList = List.of(overview['validators']);
-    apiRoot.account.fetchAccountsIndex(validatorAddressList);
+    await apiRoot.account.fetchAccountsIndex(validatorAddressList);
+    apiRoot.account.getAddressIcons(validatorAddressList);
     return overview;
   }
 
@@ -63,12 +67,11 @@ class ApiStaking {
     return ls;
   }
 
+  // this query takes a long time
   Future<void> fetchElectedInfo() async {
     // fetch all validators details
     var res = await apiRoot.evalJavascript('api.derive.staking.electedInfo()');
     store.staking.setValidatorsInfo(res);
-    apiRoot.account.getAddressIcons(
-        List<String>.from(res['info'].map((i) => i['accountId'])));
   }
 
   Future<Map> queryValidatorRewards(String accountId) async {

@@ -151,6 +151,7 @@ class _StakingActions extends State<StakingActions>
       unlocking -= redeemable;
     }
     int available = balance - bonded - unlocking;
+    int rewards = store.staking.accountRewardTotal;
 
     num actionButtonWidth = MediaQuery.of(context).size.width / 4;
     Color actionButtonColor = Theme.of(context).primaryColor;
@@ -272,10 +273,10 @@ class _StakingActions extends State<StakingActions>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          Fmt.token(store.staking.accountRewardTotal),
+                          rewards != null ? Fmt.token(rewards) : '~',
                           style: Theme.of(context).textTheme.display4,
                         ),
-                        store.staking.accountRewardTotal > 0
+                        rewards != null && rewards > 0
                             ? GestureDetector(
                                 child: Container(
                                   padding: EdgeInsets.only(left: 4),

@@ -42,7 +42,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
       return;
     }
     await webApi.staking.fetchAccountStaking(store.account.currentAddress);
-    webApi.staking.fetchElectedInfo();
+    webApi.staking.fetchStakingOverview();
   }
 
   Widget _buildTopCard(BuildContext context) {
@@ -194,7 +194,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
           }
           validator = store.staking.validatorsInfo[validatorIndex];
 
-          int meStaked = 0;
+          int meStaked;
           int meIndex =
               validator.nominators.indexWhere((i) => i['who'] == address);
           if (meIndex >= 0) {
@@ -204,7 +204,8 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
           return Expanded(
             child: ListTile(
               leading: AddressIcon(address: id),
-              title: Text('${Fmt.token(meStaked)} $symbol'),
+              title: Text(
+                  '${meStaked != null ? Fmt.token(meStaked) : '~'} $symbol'),
               subtitle: Text(
                   accInfo != null && accInfo['identity']['display'] != null
                       ? accInfo['identity']['display'].toString().toUpperCase()
@@ -219,7 +220,9 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
                       child: Text('commission'),
                     ),
                     Expanded(
-                      child: Text(validator.commission),
+                      child: Text(validator.commission.isNotEmpty
+                          ? validator.commission
+                          : '~'),
                     )
                   ],
                 ),
@@ -242,7 +245,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       List<ValidatorData> validators = store.staking.validatorsInfo;
-      if (validators.length == 0 || validators[0].commission.isEmpty) {
+      if (validators.length == 0) {
         globalNominatingRefreshKey.currentState.show();
       }
     });

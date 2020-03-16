@@ -74,7 +74,7 @@ abstract class _StakingStore with Store {
   @computed
   int get accountRewardTotal {
     if (ledger['rewards'] == null) {
-      return 0;
+      return null;
     }
     int res = 0;
     List.of(ledger['rewards']).forEach((i) {

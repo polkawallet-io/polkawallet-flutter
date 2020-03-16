@@ -19,6 +19,7 @@ class Validator extends StatelessWidget {
     var dic = I18n.of(context).staking;
     Map accInfo = store.account.accountIndexMap[validator.accountId];
 //    print(accInfo['identity']);
+    bool hasDetail = validator.commission.isNotEmpty;
     return GestureDetector(
       child: Container(
         color: Colors.white,
@@ -53,14 +54,14 @@ class Validator extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    '${dic['total']}: ${Fmt.token(validator.total)}',
+                    '${dic['total']}: ${hasDetail ? Fmt.token(validator.total) : '~'}',
                     style: TextStyle(
                       color: Theme.of(context).unselectedWidgetColor,
                       fontSize: 12,
                     ),
                   ),
                   Text(
-                      '${dic['commission']}: ${validator.commission.isEmpty ? '--' : validator.commission}',
+                      '${dic['commission']}: ${hasDetail ? validator.commission : '~'}',
                       style: TextStyle(
                         color: Theme.of(context).unselectedWidgetColor,
                         fontSize: 12,
@@ -72,13 +73,13 @@ class Validator extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(dic['points']),
-                Text(validator.points.toString())
+                Text(hasDetail ? validator.points.toString() : '~')
               ],
             )
           ],
         ),
       ),
-      onTap: validator.commission.isNotEmpty
+      onTap: hasDetail
           ? () {
               webApi.staking.queryValidatorRewards(validator.accountId);
               Navigator.of(context)
