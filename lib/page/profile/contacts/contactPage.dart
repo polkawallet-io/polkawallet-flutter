@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -27,7 +28,7 @@ class _Contact extends State<ContactPage> {
   final TextEditingController _nameCtrl = new TextEditingController();
   final TextEditingController _memoCtrl = new TextEditingController();
 
-  ContactData _args;
+  AccountData _args;
 
   @override
   void didChangeDependencies() {

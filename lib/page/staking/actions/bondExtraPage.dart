@@ -64,13 +64,6 @@ class _BondExtraPageState extends State<BondExtraPage> {
                       ),
                       TextFormField(
                         decoration: InputDecoration(
-                          labelText: dic['controller'],
-                        ),
-                        initialValue: address,
-                        readOnly: true,
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(
                           hintText: assetDic['amount'],
                           labelText:
                               '${assetDic['amount']} (${dic['available']}: ${Fmt.token(available)} $symbol)',

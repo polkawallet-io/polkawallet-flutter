@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/page/profile/contacts/contactPage.dart';
+import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -13,7 +14,7 @@ class ContactsPage extends StatelessWidget {
   static final String route = '/profile/contacts';
   final SettingsStore store;
 
-  void _showActions(BuildContext pageContext, ContactData i) {
+  void _showActions(BuildContext pageContext, AccountData i) {
     showCupertinoModalPopup(
       context: pageContext,
       builder: (BuildContext context) => CupertinoActionSheet(
@@ -47,7 +48,7 @@ class ContactsPage extends StatelessWidget {
     );
   }
 
-  void _removeItem(BuildContext context, ContactData i) {
+  void _removeItem(BuildContext context, AccountData i) {
     var dic = I18n.of(context).profile;
     showCupertinoDialog(
       context: context,

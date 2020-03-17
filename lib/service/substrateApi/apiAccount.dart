@@ -38,6 +38,14 @@ class ApiAccount {
     getAddressIcons(addresses);
   }
 
+  Future<void> decodeAddress(List<String> addresses) async {
+    List res = await apiRoot
+        .evalJavascript('account.decodeAddress(${jsonEncode(addresses)})');
+    if (res != null) {
+      store.account.setPubKeyAddressMap(res);
+    }
+  }
+
   Future<dynamic> _testSendTx() async {
     Completer c = new Completer();
     void onComplete(res) {
@@ -116,6 +124,18 @@ class ApiAccount {
   }
 
   Future<List> getAddressIcons(List addresses) async {
+    addresses
+        .retainWhere((i) => !store.account.accountIconsMap.keys.contains(i));
+    if (addresses.length == 0) {
+      return [];
+    }
+    List res = await apiRoot
+        .evalJavascript('account.genIcons(${jsonEncode(addresses)})');
+    store.account.setAccountIconsMap(res);
+    return res;
+  }
+
+  Future<List> getAddressPubKeys(List addresses) async {
     addresses
         .retainWhere((i) => !store.account.accountIconsMap.keys.contains(i));
     if (addresses.length == 0) {

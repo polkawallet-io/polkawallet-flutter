@@ -283,4 +283,7 @@ abstract class _AccountData with Store {
 
   @observable
   Map<String, dynamic> meta = Map<String, dynamic>();
+
+  @observable
+  String memo = '';
 }

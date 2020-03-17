@@ -13,7 +13,8 @@ AccountData _$AccountDataFromJson(Map<String, dynamic> json) {
     ..encoded = json['encoded'] as String
     ..pubKey = json['pubKey'] as String
     ..encoding = json['encoding'] as Map<String, dynamic>
-    ..meta = json['meta'] as Map<String, dynamic>;
+    ..meta = json['meta'] as Map<String, dynamic>
+    ..memo = json['memo'] as String;
 }
 
 Map<String, dynamic> _$AccountDataToJson(AccountData instance) =>
@@ -24,6 +25,7 @@ Map<String, dynamic> _$AccountDataToJson(AccountData instance) =>
       'pubKey': instance.pubKey,
       'encoding': instance.encoding,
       'meta': instance.meta,
+      'memo': instance.memo,
     };
 
 // **************************************************************************
@@ -474,5 +476,22 @@ mixin _$AccountData on _AccountData, Store {
       super.meta = value;
       _$metaAtom.reportChanged();
     }, _$metaAtom, name: '${_$metaAtom.name}_set');
+  }
+
+  final _$memoAtom = Atom(name: '_AccountData.memo');
+
+  @override
+  String get memo {
+    _$memoAtom.context.enforceReadPolicy(_$memoAtom);
+    _$memoAtom.reportObserved();
+    return super.memo;
+  }
+
+  @override
+  set memo(String value) {
+    _$memoAtom.context.conditionallyRunInAction(() {
+      super.memo = value;
+      _$memoAtom.reportChanged();
+    }, _$memoAtom, name: '${_$memoAtom.name}_set');
   }
 }

@@ -3,6 +3,7 @@ import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
+import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
@@ -33,7 +34,7 @@ abstract class _SettingsStore with Store {
   Map networkConst = Map();
 
   @observable
-  ObservableList<ContactData> contactList = ObservableList<ContactData>();
+  ObservableList<AccountData> contactList = ObservableList<AccountData>();
 
   @computed
   String get existentialDeposit {
@@ -99,7 +100,7 @@ abstract class _SettingsStore with Store {
   @action
   Future<void> loadContacts() async {
     List<Map<String, dynamic>> ls = await LocalStorage.getContractList();
-    contactList = ObservableList.of(ls.map((i) => ContactData.fromJson(i)));
+    contactList = ObservableList.of(ls.map((i) => AccountData.fromJson(i)));
   }
 
   @action
@@ -109,7 +110,7 @@ abstract class _SettingsStore with Store {
   }
 
   @action
-  Future<void> removeContact(ContactData con) async {
+  Future<void> removeContact(AccountData con) async {
     await LocalStorage.removeContact(con.address);
     loadContacts();
   }
@@ -169,25 +170,6 @@ abstract class _NetworkState with Store {
 
   @observable
   String tokenSymbol = '';
-}
-
-@JsonSerializable()
-class ContactData extends _ContactData with _$ContactData {
-  static ContactData fromJson(Map<String, dynamic> json) =>
-      _$ContactDataFromJson(json);
-  static Map<String, dynamic> toJson(ContactData data) =>
-      _$ContactDataToJson(data);
-}
-
-abstract class _ContactData with Store {
-  @observable
-  String name = '';
-
-  @observable
-  String address = '';
-
-  @observable
-  String memo = '';
 }
 
 @JsonSerializable()

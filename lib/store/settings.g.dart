@@ -22,20 +22,6 @@ Map<String, dynamic> _$NetworkStateToJson(NetworkState instance) =>
       'tokenSymbol': instance.tokenSymbol,
     };
 
-ContactData _$ContactDataFromJson(Map<String, dynamic> json) {
-  return ContactData()
-    ..name = json['name'] as String
-    ..address = json['address'] as String
-    ..memo = json['memo'] as String;
-}
-
-Map<String, dynamic> _$ContactDataToJson(ContactData instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'address': instance.address,
-      'memo': instance.memo,
-    };
-
 EndpointData _$EndpointDataFromJson(Map<String, dynamic> json) {
   return EndpointData()
     ..info = json['info'] as String
@@ -198,14 +184,14 @@ mixin _$SettingsStore on _SettingsStore, Store {
   final _$contactListAtom = Atom(name: '_SettingsStore.contactList');
 
   @override
-  ObservableList<ContactData> get contactList {
+  ObservableList<AccountData> get contactList {
     _$contactListAtom.context.enforceReadPolicy(_$contactListAtom);
     _$contactListAtom.reportObserved();
     return super.contactList;
   }
 
   @override
-  set contactList(ObservableList<ContactData> value) {
+  set contactList(ObservableList<AccountData> value) {
     _$contactListAtom.context.conditionallyRunInAction(() {
       super.contactList = value;
       _$contactListAtom.reportChanged();
@@ -264,7 +250,7 @@ mixin _$SettingsStore on _SettingsStore, Store {
   final _$removeContactAsyncAction = AsyncAction('removeContact');
 
   @override
-  Future<void> removeContact(ContactData con) {
+  Future<void> removeContact(AccountData con) {
     return _$removeContactAsyncAction.run(() => super.removeContact(con));
   }
 
@@ -401,59 +387,6 @@ mixin _$NetworkState on _NetworkState, Store {
       super.tokenSymbol = value;
       _$tokenSymbolAtom.reportChanged();
     }, _$tokenSymbolAtom, name: '${_$tokenSymbolAtom.name}_set');
-  }
-}
-
-mixin _$ContactData on _ContactData, Store {
-  final _$nameAtom = Atom(name: '_ContactData.name');
-
-  @override
-  String get name {
-    _$nameAtom.context.enforceReadPolicy(_$nameAtom);
-    _$nameAtom.reportObserved();
-    return super.name;
-  }
-
-  @override
-  set name(String value) {
-    _$nameAtom.context.conditionallyRunInAction(() {
-      super.name = value;
-      _$nameAtom.reportChanged();
-    }, _$nameAtom, name: '${_$nameAtom.name}_set');
-  }
-
-  final _$addressAtom = Atom(name: '_ContactData.address');
-
-  @override
-  String get address {
-    _$addressAtom.context.enforceReadPolicy(_$addressAtom);
-    _$addressAtom.reportObserved();
-    return super.address;
-  }
-
-  @override
-  set address(String value) {
-    _$addressAtom.context.conditionallyRunInAction(() {
-      super.address = value;
-      _$addressAtom.reportChanged();
-    }, _$addressAtom, name: '${_$addressAtom.name}_set');
-  }
-
-  final _$memoAtom = Atom(name: '_ContactData.memo');
-
-  @override
-  String get memo {
-    _$memoAtom.context.enforceReadPolicy(_$memoAtom);
-    _$memoAtom.reportObserved();
-    return super.memo;
-  }
-
-  @override
-  set memo(String value) {
-    _$memoAtom.context.conditionallyRunInAction(() {
-      super.memo = value;
-      _$memoAtom.reportChanged();
-    }, _$memoAtom, name: '${_$memoAtom.name}_set');
   }
 }
 

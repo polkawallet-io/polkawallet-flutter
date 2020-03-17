@@ -1,3 +1,6 @@
+# 0.6.0
+- Show different UI for stash/controller account of staking
+
 # 0.5.2
 - Removed account index from transfer detail page
 - Add account export result pages
