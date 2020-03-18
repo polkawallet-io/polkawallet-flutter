@@ -24,7 +24,6 @@ class _ChangeName extends State<ChangeNamePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     _nameCtrl.text = store.currentAccount.name;
   }
 
@@ -76,7 +75,7 @@ class _ChangeName extends State<ChangeNamePage> {
                 text: dic['contact.save'],
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
-                    store.updateAccountName(_nameCtrl.text);
+                    store.updateAccountName(_nameCtrl.text.trim());
                     Navigator.of(context).pop();
                   }
                 },
