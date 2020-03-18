@@ -31,7 +31,7 @@ class ApiStaking {
         apiRoot.account.decodeAddress([stakingLedger[0]['stash']]);
       } else {
         // get controller's pubKey
-        apiRoot.account.decodeAddress([res['stakingLedger']['controllerId']]);
+        apiRoot.account.decodeAddress([res['controllerId']]);
       }
 
       // get nominators' icons

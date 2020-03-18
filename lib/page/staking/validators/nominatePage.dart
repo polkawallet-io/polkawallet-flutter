@@ -86,7 +86,7 @@ class _NominatePageState extends State<NominatePage> {
           children: <Widget>[
             Container(
               margin: EdgeInsets.only(right: 16),
-              child: AddressIcon(address: list[i].accountId),
+              child: AddressIcon(list[i].accountId),
             ),
             Expanded(
               child: Column(

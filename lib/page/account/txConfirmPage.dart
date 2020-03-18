@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -134,7 +135,6 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
       ),
       body: SafeArea(
         child: Builder(builder: (BuildContext context) {
-          String address = store.account.currentAddress;
           return Observer(
             builder: (_) => Column(
               children: <Widget>[
@@ -149,9 +149,11 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Text(
-                          '${dic["submit.from"]}$address',
+                        padding: EdgeInsets.only(left: 16, right: 16),
+                        child: AddressFormItem(
+                          dic["submit.from"],
+                          store.account.currentAccount.name,
+                          store.account.currentAddress,
                         ),
                       ),
                       Padding(
@@ -171,7 +173,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.only(left: 16, right: 16),
                         child: Row(
                           children: <Widget>[
                             Container(

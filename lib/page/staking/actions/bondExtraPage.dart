@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
@@ -57,10 +58,10 @@ class _BondExtraPageState extends State<BondExtraPage> {
                   child: ListView(
                     padding: EdgeInsets.all(16),
                     children: <Widget>[
-                      TextFormField(
-                        decoration: InputDecoration(labelText: dic['stash']),
-                        initialValue: address,
-                        readOnly: true,
+                      AddressFormItem(
+                        dic['stash'],
+                        store.account.currentAccount.name,
+                        address,
                       ),
                       TextFormField(
                         decoration: InputDecoration(

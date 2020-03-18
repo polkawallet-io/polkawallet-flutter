@@ -28,7 +28,7 @@ class Validator extends StatelessWidget {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(right: 16),
-              child: AddressIcon(address: validator.accountId),
+              child: AddressIcon(validator.accountId),
             ),
             Expanded(
               child: Column(

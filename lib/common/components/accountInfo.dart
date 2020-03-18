@@ -41,7 +41,7 @@ class AccountInfo extends StatelessWidget {
       children: <Widget>[
         Padding(
           padding: EdgeInsets.only(top: 16, bottom: 8),
-          child: AddressIcon(address: address),
+          child: AddressIcon(address),
         ),
 //        accInfo != null ? Text(accInfo['accountIndex']) : Container(),
         Row(

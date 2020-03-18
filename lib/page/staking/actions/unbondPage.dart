@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
@@ -55,17 +56,10 @@ class _UnBondPageState extends State<UnBondPage> {
                   child: ListView(
                     padding: EdgeInsets.all(16),
                     children: <Widget>[
-                      TextFormField(
-                        decoration: InputDecoration(labelText: dic['stash']),
-                        initialValue: address,
-                        readOnly: true,
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: dic['controller'],
-                        ),
-                        initialValue: address,
-                        readOnly: true,
+                      AddressFormItem(
+                        dic['controller'],
+                        store.account.currentAccount.name,
+                        address,
                       ),
                       TextFormField(
                         decoration: InputDecoration(
@@ -84,7 +78,7 @@ class _UnBondPageState extends State<UnBondPage> {
                           if (v.isEmpty) {
                             return assetDic['amount.error'];
                           }
-                          if (double.parse(v.trim()) >= double.parse(bonded)) {
+                          if (double.parse(v.trim()) > double.parse(bonded)) {
                             return assetDic['amount.low'];
                           }
                           return null;

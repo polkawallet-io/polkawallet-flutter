@@ -50,7 +50,7 @@ class _AssetsState extends State<Assets> {
       child: Column(
         children: <Widget>[
           ListTile(
-            leading: AddressIcon(address: address),
+            leading: AddressIcon(address),
             title: Text(acc.name ?? ''),
             subtitle: Text(
                 accInfo == null ? network : accInfo['accountIndex'] ?? network),

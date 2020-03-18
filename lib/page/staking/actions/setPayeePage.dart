@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -20,11 +21,16 @@ class _SetPayeePageState extends State<SetPayeePage> {
   _SetPayeePageState(this.store);
   final AppStore store;
 
+  final _rewardToOptions = ['Staked', 'Stash', 'Controller'];
+
   int _rewardTo = 0;
 
-  void _onSubmit(int currentPayee) {
+  void _onSubmit() {
     var dic = I18n.of(context).staking;
-    var rewardToOptions = [dic['reward.bond'], dic['reward.stash']];
+    var rewardToOptions =
+        _rewardToOptions.map((i) => dic['reward.$i']).toList();
+    int currentPayee = _rewardToOptions
+        .indexOf(store.staking.ledger['stakingLedger']['payee']);
 
     if (currentPayee == _rewardTo) {
       showCupertinoDialog(
@@ -70,12 +76,8 @@ class _SetPayeePageState extends State<SetPayeePage> {
     var dic = I18n.of(context).staking;
     String address = store.account.currentAddress;
 
-    var rewardToOptions = [dic['reward.bond'], dic['reward.stash']];
-
-    int currentPayee = 0;
-    if (store.staking.ledger['rewardDestination'] != 'Staked') {
-      currentPayee = 1;
-    }
+    var rewardToOptions =
+        _rewardToOptions.map((i) => dic['reward.$i']).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -90,21 +92,11 @@ class _SetPayeePageState extends State<SetPayeePage> {
                 child: ListView(
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(left: 16, right: 16),
-                      child: TextFormField(
-                        decoration: InputDecoration(labelText: dic['stash']),
-                        initialValue: address,
-                        readOnly: true,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 16, right: 16),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          labelText: dic['controller'],
-                        ),
-                        initialValue: address,
-                        readOnly: true,
+                      padding: EdgeInsets.only(left: 16, right: 16, top: 8),
+                      child: AddressFormItem(
+                        dic['controller'],
+                        store.account.currentAccount.name,
+                        address,
                       ),
                     ),
                     ListTile(
@@ -145,7 +137,7 @@ class _SetPayeePageState extends State<SetPayeePage> {
                 padding: EdgeInsets.all(16),
                 child: RoundedButton(
                   text: I18n.of(context).home['submit.tx'],
-                  onPressed: () => _onSubmit(currentPayee),
+                  onPressed: () => _onSubmit(),
                 ),
               ),
             ],

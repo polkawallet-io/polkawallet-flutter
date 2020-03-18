@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/page/account/import/importAccountPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondExtraPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondPage.dart';
+import 'package:polka_wallet/page/staking/actions/setControllerPage.dart';
 import 'package:polka_wallet/page/staking/actions/payoutPage.dart';
 import 'package:polka_wallet/page/staking/actions/redeemPage.dart';
 import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
@@ -195,9 +196,7 @@ class _StakingActions extends State<StakingActions>
             children: <Widget>[
               Container(
                 margin: EdgeInsets.only(right: 16),
-                child: AddressIcon(
-                  address: store.account.currentAddress,
-                ),
+                child: AddressIcon(store.account.currentAddress),
               ),
               Expanded(
                 child: Column(
@@ -246,7 +245,8 @@ class _StakingActions extends State<StakingActions>
               payee: payee,
               rewards: rewards),
           Divider(),
-          StakingActionsPanel(isStash: isStash, bonded: bonded),
+          StakingActionsPanel(
+              isStash: isStash, bonded: bonded, controller: acc02),
         ],
       ),
     );
@@ -381,10 +381,8 @@ class RowAccount02 extends StatelessWidget {
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(left: 4, right: 20),
-                  child: AddressIcon(
-                    address: isStash ? stashId : controllerId,
-                    size: 32,
-                  ),
+                  child:
+                      AddressIcon(isStash ? controllerId : stashId, size: 32),
                 ),
                 Expanded(
                   child: Column(
@@ -577,10 +575,11 @@ class StakingInfoPanel extends StatelessWidget {
 }
 
 class StakingActionsPanel extends StatelessWidget {
-  StakingActionsPanel({this.isStash, this.bonded});
+  StakingActionsPanel({this.isStash, this.bonded, this.controller});
 
   final bool isStash;
   final int bonded;
+  final AccountData controller;
 
   @override
   Widget build(BuildContext context) {
@@ -588,7 +587,7 @@ class StakingActionsPanel extends StatelessWidget {
 
     num actionButtonWidth = MediaQuery.of(context).size.width / 4;
     Color actionButtonColor = Theme.of(context).primaryColor;
-    Color disabledColor = Theme.of(context).disabledColor;
+    Color disabledColor = Theme.of(context).unselectedWidgetColor;
 
     String bondButtonString;
     bool unbondDisabled = false;
@@ -603,8 +602,8 @@ class StakingActionsPanel extends StatelessWidget {
         onBondTap = () => Navigator.of(context).pushNamed(BondExtraPage.route);
 
         setControllerDisabled = false;
-        onSetControllerTap =
-            () => Navigator.of(context).pushNamed(BondExtraPage.route);
+        onSetControllerTap = () => Navigator.of(context)
+            .pushNamed(SetControllerPage.route, arguments: controller);
       } else {
         bondButtonString = dic['action.bond'];
         onBondTap = () => Navigator.of(context).pushNamed(BondPage.route);
@@ -612,7 +611,7 @@ class StakingActionsPanel extends StatelessWidget {
     } else {
       bondButtonString = dic['action.unbond'];
       if (bonded > 0) {
-        onBondTap = () => Navigator.of(context).pushNamed(BondPage.route);
+        onBondTap = () => Navigator.of(context).pushNamed(UnBondPage.route);
 
         setPayeeDisabled = false;
         onSetPayeeTap =

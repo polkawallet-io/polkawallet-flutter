@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/page/staking/actions/nominatePage.dart';
+import 'package:polka_wallet/page/staking/validators/nominatePage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
@@ -48,16 +48,19 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).staking;
     bool hashData = store.staking.ledger['stakingLedger'] != null;
+    String stashId = store.staking.ledger['stashId'];
     int bonded = 0;
     List nominators = [];
     double nominatorListHeight = 48;
     if (hashData) {
+      stashId = store.staking.ledger['stakingLedger']['stash'];
       bonded = store.staking.ledger['stakingLedger']['active'];
       nominators = store.staking.ledger['nominators'];
       if (nominators.length > 0) {
         nominatorListHeight = double.parse((nominators.length * 60).toString());
       }
     }
+    bool isStash = store.staking.ledger['accountId'] == stashId;
 
     Color actionButtonColor = Theme.of(context).primaryColor;
     Color disabledColor = Theme.of(context).disabledColor;
@@ -93,7 +96,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
             subtitle: Text(dic['nominating']),
             trailing: Container(
               width: 100,
-              child: bonded > 0
+              child: !isStash && bonded > 0
                   ? GestureDetector(
                       child: nominators.length > 0
                           ? Column(
@@ -187,7 +190,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
           if (validatorIndex < 0) {
             return Expanded(
               child: ListTile(
-                  leading: AddressIcon(address: id),
+                  leading: AddressIcon(id),
                   title: Text(I18n.of(context).staking['notElected']),
                   subtitle: Text(Fmt.address(id, pad: 6))),
             );
@@ -203,7 +206,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
           Map accInfo = store.account.accountIndexMap[id];
           return Expanded(
             child: ListTile(
-              leading: AddressIcon(address: id),
+              leading: AddressIcon(id),
               title: Text(
                   '${meStaked != null ? Fmt.token(meStaked) : '~'} $symbol'),
               subtitle: Text(

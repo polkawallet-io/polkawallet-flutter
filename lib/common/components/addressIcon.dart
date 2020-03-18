@@ -4,9 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:polka_wallet/store/app.dart';
 
 class AddressIcon extends StatelessWidget {
-  AddressIcon({this.address, this.rawSvg, this.size});
+  AddressIcon(this.address, {this.size});
   final String address;
-  final String rawSvg;
   final double size;
 
   @override

@@ -79,7 +79,7 @@ class ContactsPage extends StatelessWidget {
         builder: (_) {
           List<Widget> ls = store.contactList.map((i) {
             return ListTile(
-              leading: AddressIcon(address: i.address),
+              leading: AddressIcon(i.address),
               title: Text(i.name),
               subtitle: Text(Fmt.address(i.address)),
               trailing: IconButton(

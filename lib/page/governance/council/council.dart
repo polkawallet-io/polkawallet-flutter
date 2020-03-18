@@ -178,7 +178,7 @@ class CandidateItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: AddressIcon(address: balance[0]),
+      leading: AddressIcon(balance[0]),
       title: Row(
         children: <Widget>[
           accInfo != null && accInfo['identity']['judgements'].length > 0

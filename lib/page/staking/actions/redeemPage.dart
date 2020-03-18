@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -61,15 +62,10 @@ class _RedeemPageState extends State<RedeemPage> {
                 child: ListView(
                   padding: EdgeInsets.all(16),
                   children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(labelText: dic['stash']),
-                      initialValue: address,
-                      readOnly: true,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: dic['controller']),
-                      initialValue: address,
-                      readOnly: true,
+                    AddressFormItem(
+                      dic['controller'],
+                      store.account.currentAccount.name,
+                      address,
                     ),
                     TextFormField(
                       decoration: InputDecoration(

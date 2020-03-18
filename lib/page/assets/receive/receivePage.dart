@@ -46,9 +46,7 @@ class ReceivePage extends StatelessWidget {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.all(16),
-                        child: AddressIcon(
-                          address: store.currentAccount.address,
-                        ),
+                        child: AddressIcon(store.currentAccount.address),
                       ),
                       Text(
                         store.currentAccount.name,

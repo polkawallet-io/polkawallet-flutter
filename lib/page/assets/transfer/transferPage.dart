@@ -11,6 +11,7 @@ import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
+import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -143,9 +144,12 @@ class _TransferPageState extends State<TransferPage> {
                                     onPressed: () async {
                                       var to = await Navigator.of(context)
                                           .pushNamed(ContactListPage.route);
-                                      setState(() {
-                                        _addressCtrl.text = to;
-                                      });
+                                      if (to != null) {
+                                        setState(() {
+                                          _addressCtrl.text =
+                                              (to as AccountData).address;
+                                        });
+                                      }
                                     },
                                   )),
                               controller: _addressCtrl,

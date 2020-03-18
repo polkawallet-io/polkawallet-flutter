@@ -105,9 +105,7 @@ class AccountManagePage extends StatelessWidget {
                       color: Colors.pink,
                       padding: EdgeInsets.only(bottom: 16),
                       child: ListTile(
-                        leading: AddressIcon(
-                          address: store.currentAddress,
-                        ),
+                        leading: AddressIcon(store.currentAddress),
                         title: Text(store.currentAccount.name ?? 'name',
                             style:
                                 TextStyle(fontSize: 16, color: Colors.white)),

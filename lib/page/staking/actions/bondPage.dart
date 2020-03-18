@@ -3,9 +3,12 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/staking/actions/accountSelectPage.dart';
+import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -24,16 +27,25 @@ class _BondPageState extends State<BondPage> {
   final AppStore store;
 
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController _amountCtrl = new TextEditingController();
+
+  final _rewardToOptions = ['Staked', 'Stash', 'Controller'];
+
+  AccountData _controller;
 
   int _rewardTo = 0;
 
   void _onSubmit() {
     var dic = I18n.of(context).staking;
-    var rewardToOptions = [dic['reward.bond'], dic['reward.stash']];
+    var rewardToOptions =
+        _rewardToOptions.map((i) => dic['reward.$i']).toList();
     int decimals = store.settings.networkState.tokenDecimals;
     if (_formKey.currentState.validate()) {
+      String controllerId = store.account.currentAddress;
+      if (_controller != null) {
+        controllerId = store.account.pubKeyAddressMap[_controller.pubKey];
+      }
+
       var args = {
         "title": dic['action.bond'],
         "txInfo": {
@@ -45,8 +57,8 @@ class _BondPageState extends State<BondPage> {
           "reward_destination": rewardToOptions[_rewardTo],
         }),
         "params": [
-          // "from":
-          store.account.currentAddress,
+          // "controllerId":
+          controllerId,
           // "amount":
           (double.parse(_amountCtrl.text.trim()) * pow(10, decimals)).toInt(),
           // "to"
@@ -61,6 +73,15 @@ class _BondPageState extends State<BondPage> {
     }
   }
 
+  Future<void> _changeControllerId(BuildContext context) async {
+    var acc = await Navigator.of(context).pushNamed(AccountSelectPage.route);
+    if (acc != null) {
+      setState(() {
+        _controller = acc;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
@@ -71,7 +92,15 @@ class _BondPageState extends State<BondPage> {
     String balance = Fmt.balance(store.assets.balance);
     String address = store.account.currentAddress;
 
-    var rewardToOptions = [dic['reward.bond'], dic['reward.stash']];
+    String controllerName = store.account.currentAccount.name;
+    String controllerAddress = address;
+    if (_controller != null) {
+      controllerName = _controller.name;
+      controllerAddress = store.account.pubKeyAddressMap[_controller.pubKey];
+    }
+
+    var rewardToOptions =
+        _rewardToOptions.map((i) => dic['reward.$i']).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -88,21 +117,20 @@ class _BondPageState extends State<BondPage> {
                   child: ListView(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: TextFormField(
-                          decoration: InputDecoration(labelText: dic['stash']),
-                          initialValue: address,
-                          readOnly: true,
+                        padding: EdgeInsets.only(left: 16, right: 16, top: 8),
+                        child: AddressFormItem(
+                          dic['stash'],
+                          store.account.currentAccount.name,
+                          address,
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 16, right: 16),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            labelText: dic['controller'],
-                          ),
-                          initialValue: address,
-                          readOnly: true,
+                        child: AddressFormItem(
+                          dic['controller'],
+                          controllerName,
+                          controllerAddress,
+                          onTap: () => _changeControllerId(context),
                         ),
                       ),
                       Padding(
