@@ -95,8 +95,7 @@ class _SetPayeePageState extends State<SetPayeePage> {
                       padding: EdgeInsets.only(left: 16, right: 16, top: 8),
                       child: AddressFormItem(
                         dic['controller'],
-                        store.account.currentAccount.name,
-                        address,
+                        store.account.currentAccount,
                       ),
                     ),
                     ListTile(
@@ -117,8 +116,12 @@ class _SetPayeePageState extends State<SetPayeePage> {
                                   initialItem: _rewardTo),
                               children: rewardToOptions
                                   .map((i) => Padding(
-                                      padding: EdgeInsets.all(12),
-                                      child: Text(i)))
+                                        padding: EdgeInsets.all(12),
+                                        child: Text(
+                                          i,
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                      ))
                                   .toList(),
                               onSelectedItemChanged: (v) {
                                 setState(() {

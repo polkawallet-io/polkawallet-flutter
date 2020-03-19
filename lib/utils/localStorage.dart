@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,6 +12,7 @@ class LocalStorage {
   static const endpointKey = 'wallet_endpoint';
   static const customSS58Key = 'wallet_custom_ss58';
   static const seedKey = 'wallet_seed';
+  static const customKVKey = 'wallet_custom_kv';
 
   static final storage = new _LocalStorage();
 
@@ -93,6 +95,27 @@ class LocalStorage {
       return jsonDecode(value);
     }
     return {};
+  }
+
+  static Future<void> setKV(String key, Object value) async {
+    String str = await compute(jsonEncode, value);
+    return storage.setKV('${customKVKey}_$key', str);
+  }
+
+  static Future<Object> getKV(String key) async {
+    String value = await storage.getKV('${customKVKey}_$key');
+    if (value != null) {
+      Object data = await compute(jsonDecode, value);
+      return data;
+    }
+    return null;
+  }
+
+  static const int customCacheTimeLength = 5 * 50 * 1000;
+
+  static bool checkCacheTimeout(int cacheTime) {
+    return DateTime.now().millisecondsSinceEpoch - customCacheTimeLength >
+        cacheTime;
   }
 }
 

@@ -10,8 +10,6 @@ class CreateAccountEntryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var buttonStyle = Theme.of(context).textTheme.button;
-
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['create'])),
       body: SafeArea(

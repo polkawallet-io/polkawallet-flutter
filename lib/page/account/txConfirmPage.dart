@@ -152,8 +152,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                         padding: EdgeInsets.only(left: 16, right: 16),
                         child: AddressFormItem(
                           dic["submit.from"],
-                          store.account.currentAccount.name,
-                          store.account.currentAddress,
+                          store.account.currentAccount,
                         ),
                       ),
                       Padding(

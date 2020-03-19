@@ -12,7 +12,7 @@ class ApiStaking {
   final store = globalAppStore;
 
   Future<void> fetchAccountStaking(String address) async {
-    if (address != null) {
+    if (address != null && address.isNotEmpty) {
       var res = await apiRoot
           .evalJavascript('api.derive.staking.account("$address")');
       store.staking.setLedger(res);
@@ -29,9 +29,15 @@ class ApiStaking {
 
         // get stash's pubKey
         apiRoot.account.decodeAddress([stakingLedger[0]['stash']]);
+        // get stash's icon
+        apiRoot.account.getAddressIcons([stakingLedger[0]['stash']]);
       } else {
+        // get controller address info for a stash account
+
         // get controller's pubKey
         apiRoot.account.decodeAddress([res['controllerId']]);
+        // get controller's icon
+        apiRoot.account.getAddressIcons([res['controllerId']]);
       }
 
       // get nominators' icons

@@ -12,7 +12,7 @@ class ApiAssets {
 
   Future<String> fetchBalance(String address) async {
     String res = '0';
-    if (address != null && address.length > 0) {
+    if (address != null && address.isNotEmpty) {
       res = await apiRoot.evalJavascript('account.getBalance("$address")');
       store.assets.setAccountBalance(res);
     }

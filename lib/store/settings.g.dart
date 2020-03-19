@@ -226,6 +226,15 @@ mixin _$SettingsStore on _SettingsStore, Store {
     return _$setNetworkStateAsyncAction.run(() => super.setNetworkState(data));
   }
 
+  final _$loadNetworkStateCacheAsyncAction =
+      AsyncAction('loadNetworkStateCache');
+
+  @override
+  Future<void> loadNetworkStateCache() {
+    return _$loadNetworkStateCacheAsyncAction
+        .run(() => super.loadNetworkStateCache());
+  }
+
   final _$setNetworkConstAsyncAction = AsyncAction('setNetworkConst');
 
   @override

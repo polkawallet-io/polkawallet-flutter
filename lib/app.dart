@@ -82,7 +82,7 @@ class _WalletAppState extends State<WalletApp> {
     if (!_appStore.isReady) {
       print('initailizing app state');
       _appStore.init().then((_) {
-        // init webApi after store inited
+        // init webApi after store initiated
         webApi = Api(context, _appStore);
         webApi.init();
 

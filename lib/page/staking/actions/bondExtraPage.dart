@@ -60,8 +60,7 @@ class _BondExtraPageState extends State<BondExtraPage> {
                     children: <Widget>[
                       AddressFormItem(
                         dic['stash'],
-                        store.account.currentAccount.name,
-                        address,
+                        store.account.currentAccount,
                       ),
                       TextFormField(
                         decoration: InputDecoration(

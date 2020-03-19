@@ -42,21 +42,18 @@ class _AssetsState extends State<Assets> {
         : store.settings.networkName ?? dic['node.failed'];
 
     AccountData acc = store.account.currentAccount;
-    String address = store.account.currentAddress;
-    Map accInfo = store.account.accountIndexMap[address];
 
     return RoundedCard(
       padding: EdgeInsets.all(8),
       child: Column(
         children: <Widget>[
           ListTile(
-            leading: AddressIcon(address),
+            leading: AddressIcon('', pubKey: acc.pubKey),
             title: Text(acc.name ?? ''),
-            subtitle: Text(
-                accInfo == null ? network : accInfo['accountIndex'] ?? network),
+            subtitle: Text(network),
           ),
           ListTile(
-            title: Text(Fmt.address(address) ?? ''),
+            title: Text(Fmt.address(store.account.currentAddress)),
             trailing: IconButton(
               icon: Image.asset('assets/images/assets/Assets_nav_code.png'),
               onPressed: () {
@@ -73,6 +70,7 @@ class _AssetsState extends State<Assets> {
 
   @override
   void initState() {
+    // if network connected failed, reconnect
     if (!store.settings.loading && store.settings.networkName == null) {
       store.settings.setNetworkLoading(true);
       webApi.connectNode();
@@ -85,6 +83,7 @@ class _AssetsState extends State<Assets> {
     return Observer(
       builder: (_) {
         String symbol = store.settings.networkState.tokenSymbol;
+        String networkName = store.settings.networkName;
         return RefreshIndicator(
           key: globalBalanceRefreshKey,
           onRefresh: _fetchBalance,
@@ -98,64 +97,29 @@ class _AssetsState extends State<Assets> {
                   title: I18n.of(context).home['assets'],
                 ),
               ),
-              store.settings.loading
-                  ? Padding(
-                      padding: EdgeInsets.all(24),
-                      child: CupertinoActivityIndicator())
-                  : store.settings.networkName == null
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.all(24),
-                              child: Text(
-                                I18n.of(context).home['data.empty'],
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.black38),
-                              ),
-                            )
-                          ],
-                        )
-                      : Container(
-                          margin: EdgeInsets.fromLTRB(0, 16, 0, 16),
-                          decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.all(
-                                  const Radius.circular(8)),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius:
-                                      32.0, // has the effect of softening the shadow
-                                  spreadRadius:
-                                      2.0, // has the effect of extending the shadow
-                                  offset: Offset(
-                                    2.0, // horizontal, move right 10
-                                    2.0, // vertical, move down 10
-                                  ),
-                                )
-                              ]),
-                          child: ListTile(
-                            leading: Container(
-                              width: 40,
-                              height: 40,
-                              child: Image.asset(
-                                  'assets/images/assets/$symbol.png'),
-                            ),
-                            title: Text(symbol ?? ''),
-                            subtitle: Text(store.settings.networkName ?? ''),
-                            trailing: Text(
-                              Fmt.balance(store.assets.balance),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black54),
-                            ),
-                            onTap: () {
-                              Navigator.pushNamed(context, AssetPage.route);
-                            },
-                          ),
-                        ),
+              RoundedCard(
+                margin: EdgeInsets.only(top: 16),
+                child: ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    child: Image.asset(
+                        'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
+                  ),
+                  title: Text(symbol ?? ''),
+                  subtitle: Text(networkName.isNotEmpty ? networkName : '~'),
+                  trailing: Text(
+                    Fmt.balance(store.assets.balance),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.black54),
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(context, AssetPage.route);
+                  },
+                ),
+              ),
             ],
           ),
         );

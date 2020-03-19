@@ -151,21 +151,38 @@ mixin _$AccountStore on _AccountStore, Store {
     }, _$pubKeyAddressMapAtom, name: '${_$pubKeyAddressMapAtom.name}_set');
   }
 
-  final _$accountIconsMapAtom = Atom(name: '_AccountStore.accountIconsMap');
+  final _$pubKeyIconsMapAtom = Atom(name: '_AccountStore.pubKeyIconsMap');
 
   @override
-  ObservableMap<String, String> get accountIconsMap {
-    _$accountIconsMapAtom.context.enforceReadPolicy(_$accountIconsMapAtom);
-    _$accountIconsMapAtom.reportObserved();
-    return super.accountIconsMap;
+  ObservableMap<String, String> get pubKeyIconsMap {
+    _$pubKeyIconsMapAtom.context.enforceReadPolicy(_$pubKeyIconsMapAtom);
+    _$pubKeyIconsMapAtom.reportObserved();
+    return super.pubKeyIconsMap;
   }
 
   @override
-  set accountIconsMap(ObservableMap<String, String> value) {
-    _$accountIconsMapAtom.context.conditionallyRunInAction(() {
-      super.accountIconsMap = value;
-      _$accountIconsMapAtom.reportChanged();
-    }, _$accountIconsMapAtom, name: '${_$accountIconsMapAtom.name}_set');
+  set pubKeyIconsMap(ObservableMap<String, String> value) {
+    _$pubKeyIconsMapAtom.context.conditionallyRunInAction(() {
+      super.pubKeyIconsMap = value;
+      _$pubKeyIconsMapAtom.reportChanged();
+    }, _$pubKeyIconsMapAtom, name: '${_$pubKeyIconsMapAtom.name}_set');
+  }
+
+  final _$addressIconsMapAtom = Atom(name: '_AccountStore.addressIconsMap');
+
+  @override
+  ObservableMap<String, String> get addressIconsMap {
+    _$addressIconsMapAtom.context.enforceReadPolicy(_$addressIconsMapAtom);
+    _$addressIconsMapAtom.reportObserved();
+    return super.addressIconsMap;
+  }
+
+  @override
+  set addressIconsMap(ObservableMap<String, String> value) {
+    _$addressIconsMapAtom.context.conditionallyRunInAction(() {
+      super.addressIconsMap = value;
+      _$addressIconsMapAtom.reportChanged();
+    }, _$addressIconsMapAtom, name: '${_$addressIconsMapAtom.name}_set');
   }
 
   final _$updateAccountAsyncAction = AsyncAction('updateAccount');
@@ -302,10 +319,20 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void setAccountIconsMap(List list) {
+  void setPubKeyIconsMap(List list) {
     final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
-      return super.setAccountIconsMap(list);
+      return super.setPubKeyIconsMap(list);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setAddressIconsMap(List list) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    try {
+      return super.setAddressIconsMap(list);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }

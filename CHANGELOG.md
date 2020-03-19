@@ -1,5 +1,7 @@
 # 0.6.0
 - Show different UI for stash/controller account of staking
+- Refactor address form item in tx form
+- Cache user's assets data & staking data
 
 # 0.5.2
 - Removed account index from transfer detail page

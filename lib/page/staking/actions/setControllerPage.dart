@@ -87,13 +87,6 @@ class _SetControllerPageState extends State<SetControllerPage> {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).staking;
-    String address = store.account.currentAddress;
-    String controllerName = store.account.currentAccount.name;
-    String controllerAddress = store.account.currentAddress;
-    if (_controller != null) {
-      controllerName = _controller.name;
-      controllerAddress = store.account.pubKeyAddressMap[_controller.pubKey];
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -110,13 +103,11 @@ class _SetControllerPageState extends State<SetControllerPage> {
                   children: <Widget>[
                     AddressFormItem(
                       dic['stash'],
-                      store.account.currentAccount.name,
-                      address,
+                      store.account.currentAccount,
                     ),
                     AddressFormItem(
                       dic['controller'],
-                      controllerName,
-                      controllerAddress,
+                      _controller ?? store.account.currentAccount,
                       onTap: () => _changeControllerId(context),
                     ),
                   ],

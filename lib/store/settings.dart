@@ -12,6 +12,8 @@ part 'settings.g.dart';
 class SettingsStore = _SettingsStore with _$SettingsStore;
 
 abstract class _SettingsStore with Store {
+  final String cacheNetworkStateKey = 'network';
+
   @observable
   bool loading = true;
 
@@ -60,6 +62,7 @@ abstract class _SettingsStore with Store {
       loadLocalCode(),
       loadEndpoint(),
       loadCustomSS58Format(),
+      loadNetworkStateCache(),
       loadContacts(),
     ]);
   }
@@ -89,7 +92,17 @@ abstract class _SettingsStore with Store {
 
   @action
   Future<void> setNetworkState(Map<String, dynamic> data) async {
+    LocalStorage.setKV(cacheNetworkStateKey, data);
+
     networkState = NetworkState.fromJson(data);
+  }
+
+  @action
+  Future<void> loadNetworkStateCache() async {
+    var data = await LocalStorage.getKV(cacheNetworkStateKey);
+    if (data != null) {
+      networkState = NetworkState.fromJson(data);
+    }
   }
 
   @action

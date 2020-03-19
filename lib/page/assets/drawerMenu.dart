@@ -18,7 +18,7 @@ class DrawerMenu extends StatelessWidget {
     return store.account.optionalAccounts.map((i) {
       String address = store.account.pubKeyAddressMap[i.pubKey];
       return ListTile(
-        leading: AddressIcon(address ?? i.address, size: 36),
+        leading: AddressIcon(i.address, pubKey: i.pubKey, size: 36),
         title: Text(i.name ?? 'name',
             style: TextStyle(fontSize: 16, color: Colors.white)),
         subtitle: Text(
@@ -66,7 +66,8 @@ class DrawerMenu extends StatelessWidget {
             Container(
               color: Colors.indigo,
               child: ListTile(
-                leading: AddressIcon(store.account.currentAddress, size: 36),
+                leading: AddressIcon('',
+                    pubKey: store.account.currentAccount.pubKey, size: 36),
                 title: Text(store.account.currentAccount.name ?? 'name',
                     style: TextStyle(fontSize: 16, color: Colors.white)),
                 subtitle: Text(

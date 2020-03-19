@@ -1,18 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 class AddressFormItem extends StatelessWidget {
-  AddressFormItem(this.label, this.name, this.address, {this.onTap});
+  AddressFormItem(this.label, this.account, {this.onTap});
   final String label;
-  final String name;
-  final String address;
+  final AccountData account;
   final Future<void> Function() onTap;
 
   @override
   Widget build(BuildContext context) {
     Color grey = Theme.of(context).unselectedWidgetColor;
+
+    String address = globalAppStore.account.pubKeyAddressMap[account.pubKey];
+
     Column content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -35,13 +39,13 @@ class AddressFormItem extends StatelessWidget {
             children: <Widget>[
               Container(
                 margin: EdgeInsets.only(right: 8),
-                child: AddressIcon(address, size: 32),
+                child: AddressIcon(address, pubKey: account.pubKey, size: 32),
               ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(name),
+                    Text(account.name),
                     Text(
                       Fmt.address(address),
                       style: TextStyle(fontSize: 14, color: grey),

@@ -12,6 +12,7 @@ import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 class AssetPage extends StatefulWidget {
   AssetPage(this.store);
@@ -74,7 +75,7 @@ class _AssetPageState extends State<AssetPage>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (store.assets.txsView.length == 0) {
+      if (LocalStorage.checkCacheTimeout(store.assets.cacheTxsTimestamp)) {
         globalAssetRefreshKey.currentState.show();
       }
     });

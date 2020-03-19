@@ -20,9 +20,9 @@ abstract class _AccountStore with Store {
     }
     acc['name'] = name;
     if (acc['meta']['whenCreated'] == null) {
-      acc['meta']['whenCreated'] = DateTime.now().millisecond;
+      acc['meta']['whenCreated'] = DateTime.now().millisecondsSinceEpoch;
     }
-    acc['meta']['whenEdited'] = DateTime.now().millisecond;
+    acc['meta']['whenEdited'] = DateTime.now().millisecondsSinceEpoch;
     return acc;
   }
 
@@ -46,7 +46,11 @@ abstract class _AccountStore with Store {
       ObservableMap<String, String>();
 
   @observable
-  ObservableMap<String, String> accountIconsMap =
+  ObservableMap<String, String> pubKeyIconsMap =
+      ObservableMap<String, String>();
+
+  @observable
+  ObservableMap<String, String> addressIconsMap =
       ObservableMap<String, String>();
 
   @computed
@@ -232,9 +236,16 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  void setAccountIconsMap(List list) {
+  void setPubKeyIconsMap(List list) {
     list.forEach((i) {
-      accountIconsMap[i[0]] = i[1];
+      pubKeyIconsMap[i[0]] = i[1];
+    });
+  }
+
+  @action
+  void setAddressIconsMap(List list) {
+    list.forEach((i) {
+      addressIconsMap[i[0]] = i[1];
     });
   }
 

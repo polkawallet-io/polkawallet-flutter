@@ -102,8 +102,7 @@ class _PayoutPageState extends State<PayoutPage> {
                   children: <Widget>[
                     AddressFormItem(
                       dic['controller'],
-                      store.account.currentAccount.name,
-                      address,
+                      store.account.currentAccount,
                     ),
                     TextFormField(
                       decoration: InputDecoration(

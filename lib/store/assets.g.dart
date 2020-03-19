@@ -24,6 +24,23 @@ mixin _$AssetsStore on _AssetsStore, Store {
                   () => super.balanceHistory))
           .value;
 
+  final _$cacheTxsTimestampAtom = Atom(name: '_AssetsStore.cacheTxsTimestamp');
+
+  @override
+  int get cacheTxsTimestamp {
+    _$cacheTxsTimestampAtom.context.enforceReadPolicy(_$cacheTxsTimestampAtom);
+    _$cacheTxsTimestampAtom.reportObserved();
+    return super.cacheTxsTimestamp;
+  }
+
+  @override
+  set cacheTxsTimestamp(int value) {
+    _$cacheTxsTimestampAtom.context.conditionallyRunInAction(() {
+      super.cacheTxsTimestamp = value;
+      _$cacheTxsTimestampAtom.reportChanged();
+    }, _$cacheTxsTimestampAtom, name: '${_$cacheTxsTimestampAtom.name}_set');
+  }
+
   final _$isTxsLoadingAtom = Atom(name: '_AssetsStore.isTxsLoading');
 
   @override
@@ -157,6 +174,20 @@ mixin _$AssetsStore on _AssetsStore, Store {
     return _$addTxsAsyncAction.run(() => super.addTxs(ls));
   }
 
+  final _$setBlockMapAsyncAction = AsyncAction('setBlockMap');
+
+  @override
+  Future<void> setBlockMap(String data) {
+    return _$setBlockMapAsyncAction.run(() => super.setBlockMap(data));
+  }
+
+  final _$loadCacheAsyncAction = AsyncAction('loadCache');
+
+  @override
+  Future<void> loadCache() {
+    return _$loadCacheAsyncAction.run(() => super.loadCache());
+  }
+
   final _$_AssetsStoreActionController = ActionController(name: '_AssetsStore');
 
   @override
@@ -184,16 +215,6 @@ mixin _$AssetsStore on _AssetsStore, Store {
     final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
       return super.setTxsFilter(filter);
-    } finally {
-      _$_AssetsStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setBlockMap(String data) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction();
-    try {
-      return super.setBlockMap(data);
     } finally {
       _$_AssetsStoreActionController.endAction(_$actionInfo);
     }

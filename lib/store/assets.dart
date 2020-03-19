@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'assets.g.dart';
 
@@ -14,7 +16,13 @@ class AssetsStore extends _AssetsStore with _$AssetsStore {
 abstract class _AssetsStore with Store {
   _AssetsStore(this.account);
 
-  AccountStore account;
+  final AccountStore account;
+
+  final String cacheBalanceKey = 'balance';
+  final String cacheTxsKey = 'txs';
+  final String cacheBlocksKey = 'blocks';
+  @observable
+  int cacheTxsTimestamp = 0;
 
   @observable
   bool isTxsLoading = true;
@@ -81,6 +89,8 @@ abstract class _AssetsStore with Store {
   @action
   void setAccountBalance(String amt) {
     balance = amt;
+
+    LocalStorage.setKV(cacheBalanceKey, {'balance': amt});
   }
 
   @action
@@ -90,6 +100,13 @@ abstract class _AssetsStore with Store {
 
   @action
   Future<void> addTxs(List ls) async {
+    // cache first page of txs
+    if (txs.length == 0) {
+      cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
+      LocalStorage.setKV(
+          cacheTxsKey, {'txs': ls, 'cacheTime': cacheTxsTimestamp});
+    }
+
     ls.forEach((i) {
       TransferData tx = TransferData.fromJson(i);
       txs.add(tx);
@@ -102,12 +119,18 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  void setBlockMap(String data) {
-    jsonDecode(data).forEach((i) {
+  Future<void> setBlockMap(String data) async {
+    var ls = await compute(jsonDecode, data);
+    List.of(ls).forEach((i) {
       if (blockMap[i['id']] == null) {
         blockMap[i['id']] = BlockData.fromJson(i);
       }
     });
+
+    if (List.of(ls).length > 0) {
+      LocalStorage.setKV(cacheBlocksKey,
+          blockMap.values.map((i) => BlockData.toJson(i)).toList());
+    }
   }
 
   @action
@@ -118,6 +141,31 @@ abstract class _AssetsStore with Store {
   @action
   void setSubmitting(bool isSubmitting) {
     submitting = isSubmitting;
+  }
+
+  @action
+  Future<void> loadCache() async {
+    List cache = await Future.wait([
+      LocalStorage.getKV(cacheBalanceKey),
+      LocalStorage.getKV(cacheTxsKey),
+      LocalStorage.getKV(cacheBlocksKey),
+    ]);
+    if (cache[0] != null) {
+      balance = cache[0]['balance'];
+    }
+    if (cache[1] != null) {
+      txs = ObservableList.of(List.of(cache[1]['txs'])
+          .map((i) => TransferData.fromJson(i))
+          .toList());
+      cacheTxsTimestamp = cache[1]['cacheTime'];
+    }
+    if (cache[2] != null) {
+      List.of(cache[2]).forEach((i) {
+        if (blockMap[i['id']] == null) {
+          blockMap[i['id']] = BlockData.fromJson(i);
+        }
+      });
+    }
   }
 }
 
@@ -174,6 +222,14 @@ class BlockData extends _BlockData with _$BlockData {
     block.hash = json['hash'];
     block.time = DateTime.fromMillisecondsSinceEpoch(json['timestamp']);
     return block;
+  }
+
+  static Map<String, dynamic> toJson(BlockData block) {
+    return {
+      'id': block.id,
+      'hash': block.hash,
+      'timestamp': block.time.millisecondsSinceEpoch,
+    };
   }
 }
 

@@ -144,13 +144,12 @@ class Api {
   }
 
   Future<void> fetchNetworkProps() async {
+    // fetch network info
     List<dynamic> info = await Future.wait([
       evalJavascript('settings.getNetworkConst()'),
       evalJavascript('api.rpc.system.properties()'),
       evalJavascript('api.rpc.system.chain()'),
-      assets.fetchBalance(store.account.currentAddress),
     ]);
-
     store.settings.setNetworkConst(info[0]);
     store.settings.setNetworkState(info[1]);
     store.settings.setNetworkName(info[2]);
@@ -159,9 +158,11 @@ class Api {
       account.setSS58Format(info[1]['ss58Format'] ?? 42);
     }
 
-    List addresses = store.account.accountList.map((i) => i.address).toList();
-//    account.fetchAccountsIndex(addresses);
-    await account.getAddressIcons(addresses);
+    // fetch account balance
+    await Future.wait([
+      assets.fetchBalance(store.account.currentAddress),
+      staking.fetchAccountStaking(store.account.currentAddress),
+    ]);
 
     // fetch staking overview data as initializing
     staking.fetchStakingOverview();

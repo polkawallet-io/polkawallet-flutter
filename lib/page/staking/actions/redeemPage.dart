@@ -64,8 +64,7 @@ class _RedeemPageState extends State<RedeemPage> {
                   children: <Widget>[
                     AddressFormItem(
                       dic['controller'],
-                      store.account.currentAccount.name,
-                      address,
+                      store.account.currentAccount,
                     ),
                     TextFormField(
                       decoration: InputDecoration(

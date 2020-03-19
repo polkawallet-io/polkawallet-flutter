@@ -19,7 +19,7 @@ class AccountSelectList extends StatelessWidget {
           address = globalAppStore.account.pubKeyAddressMap[i.pubKey];
         }
         return ListTile(
-          leading: AddressIcon(address),
+          leading: AddressIcon(address, pubKey: i.pubKey),
           title: Text(i.name),
           subtitle: Text(Fmt.address(address)),
           trailing: Icon(Icons.arrow_forward_ios, size: 16),

@@ -18,7 +18,6 @@ class ApiAccount {
     // setSS58Format and reload new addresses
     List res = await apiRoot.evalJavascript('account.resetSS58Format($value)');
     store.account.setPubKeyAddressMap(res);
-    getAddressIcons(res.map((i) => i['address']).toList());
   }
 
   Future<void> initAccounts() async {
@@ -31,11 +30,12 @@ class ApiAccount {
     List keys =
         await apiRoot.evalJavascript('account.initKeys($accounts, $ss58)');
     store.account.setPubKeyAddressMap(keys);
+
     // get accounts icons
-    // and contracts icons
-    List addresses = keys.map((i) => i['address']).toList();
-    addresses.addAll(store.settings.contactList.map((i) => i.address));
-    getAddressIcons(addresses);
+    getPubKeyIcons(store.account.accountList.map((i) => i.pubKey).toList());
+
+    // and contacts icons
+    getAddressIcons(store.settings.contactList.map((i) => i.address).toList());
   }
 
   Future<void> decodeAddress(List<String> addresses) async {
@@ -123,27 +123,26 @@ class ApiAccount {
     return res;
   }
 
-  Future<List> getAddressIcons(List addresses) async {
-    addresses
-        .retainWhere((i) => !store.account.accountIconsMap.keys.contains(i));
-    if (addresses.length == 0) {
+  Future<List> getPubKeyIcons(List keys) async {
+    keys.retainWhere((i) => !store.account.pubKeyIconsMap.keys.contains(i));
+    if (keys.length == 0) {
       return [];
     }
     List res = await apiRoot
-        .evalJavascript('account.genIcons(${jsonEncode(addresses)})');
-    store.account.setAccountIconsMap(res);
+        .evalJavascript('account.genPubKeyIcons(${jsonEncode(keys)})');
+    store.account.setPubKeyIconsMap(res);
     return res;
   }
 
-  Future<List> getAddressPubKeys(List addresses) async {
+  Future<List> getAddressIcons(List addresses) async {
     addresses
-        .retainWhere((i) => !store.account.accountIconsMap.keys.contains(i));
+        .retainWhere((i) => !store.account.addressIconsMap.keys.contains(i));
     if (addresses.length == 0) {
       return [];
     }
     List res = await apiRoot
         .evalJavascript('account.genIcons(${jsonEncode(addresses)})');
-    store.account.setAccountIconsMap(res);
+    store.account.setAddressIconsMap(res);
     return res;
   }
 

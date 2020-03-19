@@ -92,13 +92,6 @@ class _BondPageState extends State<BondPage> {
     String balance = Fmt.balance(store.assets.balance);
     String address = store.account.currentAddress;
 
-    String controllerName = store.account.currentAccount.name;
-    String controllerAddress = address;
-    if (_controller != null) {
-      controllerName = _controller.name;
-      controllerAddress = store.account.pubKeyAddressMap[_controller.pubKey];
-    }
-
     var rewardToOptions =
         _rewardToOptions.map((i) => dic['reward.$i']).toList();
 
@@ -120,16 +113,14 @@ class _BondPageState extends State<BondPage> {
                         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
                         child: AddressFormItem(
                           dic['stash'],
-                          store.account.currentAccount.name,
-                          address,
+                          store.account.currentAccount,
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 16, right: 16),
                         child: AddressFormItem(
                           dic['controller'],
-                          controllerName,
-                          controllerAddress,
+                          _controller ?? store.account.currentAccount,
                           onTap: () => _changeControllerId(context),
                         ),
                       ),
