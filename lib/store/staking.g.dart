@@ -268,10 +268,10 @@ mixin _$StakingStore on _StakingStore, Store {
   }
 
   @override
-  void setOverview(Map<String, dynamic> data) {
+  void setOverview(Map<String, dynamic> data, {bool shouldCache = true}) {
     final _$actionInfo = _$_StakingStoreActionController.startAction();
     try {
-      return super.setOverview(data);
+      return super.setOverview(data, shouldCache: shouldCache);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }

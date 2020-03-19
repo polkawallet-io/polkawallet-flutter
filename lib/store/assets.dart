@@ -144,6 +144,11 @@ abstract class _AssetsStore with Store {
 
   @action
   Future<void> loadCache() async {
+    // loadCache if currentAccount exist
+    if (account.currentAccount.pubKey == null) {
+      return;
+    }
+
     List cache = await Future.wait([
       LocalStorage.getKV(cacheBalanceKey),
       LocalStorage.getKV(cacheTxsKey),

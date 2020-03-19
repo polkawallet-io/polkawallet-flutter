@@ -18,6 +18,7 @@ abstract class _StakingStore with Store {
 
   final String cacheAccountStakingKey = 'account_staking';
   final String cacheStakingTxsKey = 'staking_txs';
+  final String cacheOverviewKey = 'staking_overview';
   final String cacheValidatorsKey = 'validators';
 
   @observable
@@ -128,7 +129,7 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void setOverview(Map<String, dynamic> data) {
+  void setOverview(Map<String, dynamic> data, {bool shouldCache = true}) {
     data.keys.forEach((key) => overview[key] = data[key]);
 
     // show validator's address before we got elected detail info
@@ -139,6 +140,10 @@ abstract class _StakingStore with Store {
         return validator;
       }).toList();
       validatorsInfo = ObservableList.of(list);
+    }
+
+    if (shouldCache) {
+      LocalStorage.setKV(cacheOverviewKey, data);
     }
   }
 
@@ -189,10 +194,25 @@ abstract class _StakingStore with Store {
 
   @action
   Future<void> loadCache() async {
+    List cacheOverview = await Future.wait([
+      LocalStorage.getKV(cacheOverviewKey),
+      LocalStorage.getKV(cacheValidatorsKey),
+    ]);
+    if (cacheOverview[0] != null) {
+      setOverview(cacheOverview[0], shouldCache: false);
+    }
+    if (cacheOverview[1] != null) {
+      setValidatorsInfo(cacheOverview[1], shouldCache: false);
+    }
+
+    // return if currentAccount not exist
+    if (account.currentAccount.pubKey == null) {
+      return;
+    }
+
     List cache = await Future.wait([
       LocalStorage.getKV(cacheAccountStakingKey),
       LocalStorage.getKV(cacheStakingTxsKey),
-      LocalStorage.getKV(cacheValidatorsKey),
     ]);
     if (cache[0] != null) {
       setLedger(cache[0], shouldCache: false);
@@ -200,10 +220,6 @@ abstract class _StakingStore with Store {
     if (cache[1] != null) {
       addTxs(List<Map>.from(cache[1]['txs']));
       cacheTxsTimestamp = cache[1]['cacheTime'];
-    }
-    if (cache[2] != null) {
-      print(cache[2]);
-      setValidatorsInfo(cache[2], shouldCache: false);
     }
   }
 }

@@ -41,11 +41,9 @@ abstract class _AppStore with Store {
     staking = StakingStore(account);
     gov = GovernanceStore(account);
 
-    // loadCache if currentAccount exist
-    if (account.currentAccount.pubKey != null) {
-      assets.loadCache();
-      staking.loadCache();
-    }
+    assets.loadCache();
+    staking.loadCache();
+    gov.loadCache();
 
     isReady = true;
   }

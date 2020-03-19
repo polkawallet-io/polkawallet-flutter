@@ -1,6 +1,7 @@
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'governance.g.dart';
 
@@ -10,6 +11,11 @@ class GovernanceStore extends _GovernanceStore with _$GovernanceStore {
 
 abstract class _GovernanceStore with Store {
   _GovernanceStore(AccountStore store);
+
+  final String cacheCouncilKey = 'council';
+
+  @observable
+  int cacheCouncilTimestamp = 0;
 
   @observable
   int bestNumber = 0;
@@ -40,8 +46,14 @@ abstract class _GovernanceStore with Store {
   }
 
   @action
-  void setCouncilInfo(Map info) {
+  void setCouncilInfo(Map info, {bool shouldCache = true}) {
     council = CouncilInfo.fromJson(info);
+
+    if (shouldCache) {
+      cacheCouncilTimestamp = DateTime.now().millisecondsSinceEpoch;
+      LocalStorage.setKV(
+          cacheCouncilKey, {'data': info, 'cacheTime': cacheCouncilTimestamp});
+    }
   }
 
   @action
@@ -68,6 +80,15 @@ abstract class _GovernanceStore with Store {
   @action
   void clearSate() {
     userReferendumVotes = ObservableList<Map>();
+  }
+
+  @action
+  Future<void> loadCache() async {
+    Map data = await LocalStorage.getKV(cacheCouncilKey);
+    if (data != null) {
+      setCouncilInfo(data['data'], shouldCache: false);
+      cacheCouncilTimestamp = data['cacheTime'];
+    }
   }
 }
 

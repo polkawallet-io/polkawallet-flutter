@@ -13,6 +13,7 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 class Council extends StatefulWidget {
   Council(this.store);
@@ -39,7 +40,7 @@ class _CouncilState extends State<Council> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (store.gov.council == null) {
+      if (LocalStorage.checkCacheTimeout(store.gov.cacheCouncilTimestamp)) {
         globalCouncilRefreshKey.currentState.show();
       }
     });
