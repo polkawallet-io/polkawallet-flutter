@@ -15,6 +15,7 @@ import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 const validator_list_page_size = 100;
 
@@ -247,8 +248,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      List<ValidatorData> validators = store.staking.validatorsInfo;
-      if (validators.length == 0) {
+      if (LocalStorage.checkCacheTimeout(store.staking.cacheTxsTimestamp)) {
         globalNominatingRefreshKey.currentState.show();
       }
     });

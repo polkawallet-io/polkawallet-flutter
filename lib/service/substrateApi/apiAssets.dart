@@ -28,7 +28,8 @@ class ApiAssets {
       store.assets.clearTxs();
       store.assets.setTxsLoading(true);
     }
-    await store.assets.addTxs(ls);
+    // cache first page of txs
+    await store.assets.addTxs(ls, shouldCache: page == 1);
 
     await apiRoot.updateBlocks(ls);
     store.assets.setTxsLoading(false);

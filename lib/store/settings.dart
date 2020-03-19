@@ -3,6 +3,7 @@ import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
+import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
@@ -12,6 +13,10 @@ part 'settings.g.dart';
 class SettingsStore = _SettingsStore with _$SettingsStore;
 
 abstract class _SettingsStore with Store {
+  final String localStorageLocaleKey = 'locale';
+  final String localStorageEndpointKey = 'endpoint';
+  final String localStorageSS58Key = 'custom_ss58';
+
   final String cacheNetworkStateKey = 'network';
 
   @observable
@@ -69,13 +74,13 @@ abstract class _SettingsStore with Store {
 
   @action
   Future<void> setLocalCode(String code) async {
-    await LocalStorage.setLocale(code);
+    await LocalStorage.setKV(localStorageLocaleKey, code);
     loadLocalCode();
   }
 
   @action
   Future<void> loadLocalCode() async {
-    localeCode = await LocalStorage.getLocale();
+    localeCode = await LocalStorage.getKV(localStorageLocaleKey);
   }
 
   @action
@@ -137,12 +142,13 @@ abstract class _SettingsStore with Store {
   @action
   void setEndpoint(Map<String, dynamic> value) {
     endpoint = EndpointData.fromJson(value);
-    LocalStorage.setEndpoint(value);
+    LocalStorage.setKV(localStorageEndpointKey, value);
   }
 
   @action
   Future<void> loadEndpoint() async {
-    Map<String, dynamic> value = await LocalStorage.getEndpoint();
+    Map<String, dynamic> value =
+        await LocalStorage.getKV(localStorageEndpointKey);
     if (value == null) {
       value = Locale.cachedLocaleString.contains('zh')
           ? default_node_zh
@@ -154,12 +160,14 @@ abstract class _SettingsStore with Store {
   @action
   void setCustomSS58Format(Map<String, dynamic> value) {
     customSS58Format = value;
-    LocalStorage.setCustomSS58(value);
+    LocalStorage.setKV(localStorageSS58Key, value);
   }
 
   @action
   Future<void> loadCustomSS58Format() async {
-    customSS58Format = await LocalStorage.getCustomSS58();
+    Map<String, dynamic> ss58 = await LocalStorage.getKV(localStorageSS58Key);
+
+    customSS58Format = ss58 ?? default_ss58_prefix;
   }
 }
 

@@ -99,9 +99,8 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  Future<void> addTxs(List ls) async {
-    // cache first page of txs
-    if (txs.length == 0) {
+  Future<void> addTxs(List ls, {bool shouldCache = false}) async {
+    if (shouldCache) {
       cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
       LocalStorage.setKV(
           cacheTxsKey, {'txs': ls, 'cacheTime': cacheTxsTimestamp});

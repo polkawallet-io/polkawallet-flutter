@@ -44,7 +44,7 @@ abstract class _AppStore with Store {
     // loadCache if currentAccount exist
     if (account.currentAccount.pubKey != null) {
       assets.loadCache();
-//      staking.loadCache();
+      staking.loadCache();
     }
 
     isReady = true;

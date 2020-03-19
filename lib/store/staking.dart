@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'staking.g.dart';
 
@@ -14,6 +15,13 @@ abstract class _StakingStore with Store {
   _StakingStore(this.account);
 
   final AccountStore account;
+
+  final String cacheAccountStakingKey = 'account_staking';
+  final String cacheStakingTxsKey = 'staking_txs';
+  final String cacheValidatorsKey = 'validators';
+
+  @observable
+  int cacheTxsTimestamp = 0;
 
   @observable
   ObservableMap<String, dynamic> overview = ObservableMap<String, dynamic>();
@@ -38,8 +46,7 @@ abstract class _StakingStore with Store {
   ObservableMap<String, dynamic> ledger = ObservableMap<String, dynamic>();
 
   @observable
-  ObservableList<Map<String, dynamic>> txs =
-      ObservableList<Map<String, dynamic>>();
+  ObservableList<Map> txs = ObservableList<Map>();
 
   @observable
   ObservableMap<String, dynamic> rewardsChartDataCache =
@@ -84,7 +91,7 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void setValidatorsInfo(Map<String, dynamic> data) {
+  void setValidatorsInfo(Map<String, dynamic> data, {bool shouldCache = true}) {
     int totalStaked = 0;
     var nominators = {};
     List<ValidatorData> ls = List<ValidatorData>();
@@ -102,6 +109,11 @@ abstract class _StakingStore with Store {
     validatorsInfo = ObservableList.of(ls);
     staked = totalStaked;
     nominatorCount = nominators.keys.length;
+
+    // cache data
+    if (shouldCache) {
+      LocalStorage.setKV(cacheValidatorsKey, data);
+    }
   }
 
   @action
@@ -131,8 +143,16 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void setLedger(Map<String, dynamic> data) {
+  void setLedger(Map<String, dynamic> data, {bool shouldCache = true}) {
     data.keys.forEach((key) => ledger[key] = data[key]);
+
+    if (!shouldCache) return;
+
+    Map cache = {};
+    ledger.keys.forEach((key) {
+      cache[key] = ledger[key];
+    });
+    LocalStorage.setKV(cacheAccountStakingKey, cache);
   }
 
   @action
@@ -141,7 +161,13 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  Future<void> addTxs(List<Map<String, dynamic>> ls) async {
+  Future<void> addTxs(List<Map> ls, {bool shouldCache = false}) async {
+    if (shouldCache) {
+      cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
+      LocalStorage.setKV(
+          cacheStakingTxsKey, {'txs': ls, 'cacheTime': cacheTxsTimestamp});
+    }
+
     txs.addAll(ls);
   }
 
@@ -159,6 +185,26 @@ abstract class _StakingStore with Store {
   @action
   void setStakesChartData(String validatorId, Map data) {
     stakesChartDataCache[validatorId] = data;
+  }
+
+  @action
+  Future<void> loadCache() async {
+    List cache = await Future.wait([
+      LocalStorage.getKV(cacheAccountStakingKey),
+      LocalStorage.getKV(cacheStakingTxsKey),
+      LocalStorage.getKV(cacheValidatorsKey),
+    ]);
+    if (cache[0] != null) {
+      setLedger(cache[0], shouldCache: false);
+    }
+    if (cache[1] != null) {
+      addTxs(List<Map>.from(cache[1]['txs']));
+      cacheTxsTimestamp = cache[1]['cacheTime'];
+    }
+    if (cache[2] != null) {
+      print(cache[2]);
+      setValidatorsInfo(cache[2], shouldCache: false);
+    }
   }
 }
 

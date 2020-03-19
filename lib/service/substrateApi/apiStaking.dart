@@ -86,7 +86,8 @@ class ApiStaking {
     if (page == 1) {
       store.staking.clearTxs();
     }
-    await store.staking.addTxs(List<Map<String, dynamic>>.from(ls));
+    await store.staking
+        .addTxs(List<Map<String, dynamic>>.from(ls), shouldCache: page == 1);
 
     await apiRoot.updateBlocks(ls);
     return ls;

@@ -29,6 +29,23 @@ mixin _$StakingStore on _StakingStore, Store {
           Computed<int>(() => super.accountRewardTotal))
       .value;
 
+  final _$cacheTxsTimestampAtom = Atom(name: '_StakingStore.cacheTxsTimestamp');
+
+  @override
+  int get cacheTxsTimestamp {
+    _$cacheTxsTimestampAtom.context.enforceReadPolicy(_$cacheTxsTimestampAtom);
+    _$cacheTxsTimestampAtom.reportObserved();
+    return super.cacheTxsTimestamp;
+  }
+
+  @override
+  set cacheTxsTimestamp(int value) {
+    _$cacheTxsTimestampAtom.context.conditionallyRunInAction(() {
+      super.cacheTxsTimestamp = value;
+      _$cacheTxsTimestampAtom.reportChanged();
+    }, _$cacheTxsTimestampAtom, name: '${_$cacheTxsTimestampAtom.name}_set');
+  }
+
   final _$overviewAtom = Atom(name: '_StakingStore.overview');
 
   @override
@@ -151,14 +168,14 @@ mixin _$StakingStore on _StakingStore, Store {
   final _$txsAtom = Atom(name: '_StakingStore.txs');
 
   @override
-  ObservableList<Map<String, dynamic>> get txs {
+  ObservableList<Map> get txs {
     _$txsAtom.context.enforceReadPolicy(_$txsAtom);
     _$txsAtom.reportObserved();
     return super.txs;
   }
 
   @override
-  set txs(ObservableList<Map<String, dynamic>> value) {
+  set txs(ObservableList<Map> value) {
     _$txsAtom.context.conditionallyRunInAction(() {
       super.txs = value;
       _$txsAtom.reportChanged();
@@ -215,18 +232,26 @@ mixin _$StakingStore on _StakingStore, Store {
   final _$addTxsAsyncAction = AsyncAction('addTxs');
 
   @override
-  Future<void> addTxs(List<Map<String, dynamic>> ls) {
-    return _$addTxsAsyncAction.run(() => super.addTxs(ls));
+  Future<void> addTxs(List<Map> ls, {bool shouldCache = false}) {
+    return _$addTxsAsyncAction
+        .run(() => super.addTxs(ls, shouldCache: shouldCache));
+  }
+
+  final _$loadCacheAsyncAction = AsyncAction('loadCache');
+
+  @override
+  Future<void> loadCache() {
+    return _$loadCacheAsyncAction.run(() => super.loadCache());
   }
 
   final _$_StakingStoreActionController =
       ActionController(name: '_StakingStore');
 
   @override
-  void setValidatorsInfo(Map<String, dynamic> data) {
+  void setValidatorsInfo(Map<String, dynamic> data, {bool shouldCache = true}) {
     final _$actionInfo = _$_StakingStoreActionController.startAction();
     try {
-      return super.setValidatorsInfo(data);
+      return super.setValidatorsInfo(data, shouldCache: shouldCache);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }
@@ -253,10 +278,10 @@ mixin _$StakingStore on _StakingStore, Store {
   }
 
   @override
-  void setLedger(Map<String, dynamic> data) {
+  void setLedger(Map<String, dynamic> data, {bool shouldCache = true}) {
     final _$actionInfo = _$_StakingStoreActionController.startAction();
     try {
-      return super.setLedger(data);
+      return super.setLedger(data, shouldCache: shouldCache);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }

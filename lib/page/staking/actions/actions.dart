@@ -21,6 +21,7 @@ import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 class StakingActions extends StatefulWidget {
   StakingActions(this.store);
@@ -156,7 +157,6 @@ class _StakingActions extends State<StakingActions>
         store.staking.ledger['accountId'];
     bool isStash = store.staking.ledger['accountId'] == stashId;
     bool controllerEqualStash = controllerId == stashId;
-    print(controllerEqualStash);
     String account02 = isStash ? controllerId : stashId;
     String account02PubKey;
     store.account.pubKeyAddressMap.forEach((k, v) {
@@ -263,7 +263,7 @@ class _StakingActions extends State<StakingActions>
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (store.staking.ledger['stakingLedger'] == null) {
+      if (LocalStorage.checkCacheTimeout(store.staking.cacheTxsTimestamp)) {
         globalBondingRefreshKey.currentState.show();
       }
     });

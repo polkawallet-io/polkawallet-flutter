@@ -170,8 +170,9 @@ mixin _$AssetsStore on _AssetsStore, Store {
   final _$addTxsAsyncAction = AsyncAction('addTxs');
 
   @override
-  Future<void> addTxs(List ls) {
-    return _$addTxsAsyncAction.run(() => super.addTxs(ls));
+  Future<void> addTxs(List ls, {bool shouldCache = false}) {
+    return _$addTxsAsyncAction
+        .run(() => super.addTxs(ls, shouldCache: shouldCache));
   }
 
   final _$setBlockMapAsyncAction = AsyncAction('setBlockMap');

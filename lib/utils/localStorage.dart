@@ -8,11 +8,8 @@ class LocalStorage {
   static const accountsKey = 'wallet_account_list';
   static const currentAccountKey = 'wallet_current_account';
   static const contactsKey = 'wallet_contact_list';
-  static const localeKey = 'wallet_locale';
-  static const endpointKey = 'wallet_endpoint';
-  static const customSS58Key = 'wallet_custom_ss58';
   static const seedKey = 'wallet_seed';
-  static const customKVKey = 'wallet_custom_kv';
+  static const customKVKey = 'wallet_kv';
 
   static final storage = new _LocalStorage();
 
@@ -51,38 +48,6 @@ class LocalStorage {
 
   static Future<List<Map<String, dynamic>>> getContractList() async {
     return storage.getList(contactsKey);
-  }
-
-  static Future<void> setLocale(String value) async {
-    return storage.setKV(localeKey, value);
-  }
-
-  static Future<String> getLocale() async {
-    return storage.getKV(localeKey);
-  }
-
-  static Future<void> setEndpoint(Map<String, dynamic> value) async {
-    return storage.setKV(endpointKey, jsonEncode(value));
-  }
-
-  static Future<Map<String, dynamic>> getEndpoint() async {
-    String value = await storage.getKV(endpointKey);
-    if (value != null) {
-      return jsonDecode(value);
-    }
-    return null;
-  }
-
-  static Future<void> setCustomSS58(Map<String, dynamic> value) async {
-    return storage.setKV(customSS58Key, jsonEncode(value));
-  }
-
-  static Future<Map<String, dynamic>> getCustomSS58() async {
-    String value = await storage.getKV(customSS58Key);
-    if (value != null) {
-      return jsonDecode(value);
-    }
-    return default_ss58_prefix;
   }
 
   static Future<void> setSeeds(String seedType, Map value) async {
