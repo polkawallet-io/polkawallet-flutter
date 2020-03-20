@@ -165,10 +165,10 @@ class _StakingActions extends State<StakingActions>
       }
     });
     AccountData acc02;
-    int acc02Index = store.account.optionalAccounts
+    int acc02Index = store.account.accountList
         .indexWhere((i) => i.pubKey == account02PubKey);
     if (acc02Index >= 0) {
-      acc02 = store.account.optionalAccounts[acc02Index];
+      acc02 = store.account.accountList[acc02Index];
     }
 
     int balance = Fmt.balanceInt(store.assets.balance);

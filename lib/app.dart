@@ -60,7 +60,7 @@ class _WalletAppState extends State<WalletApp> {
 
   Locale _locale = const Locale('en', '');
 
-  void _changeLang(String code) {
+  void _changeLang(BuildContext context, String code) {
     Locale res;
     switch (code) {
       case 'zh':
@@ -70,29 +70,24 @@ class _WalletAppState extends State<WalletApp> {
         res = const Locale('en', '');
         break;
       default:
-        res = Locale.cachedLocale;
+        res = Localizations.localeOf(context);
     }
     setState(() {
       _locale = res;
     });
   }
 
-  @override
-  void initState() {
+  Future<void> _initStore(BuildContext context) async {
     if (!_appStore.isReady) {
       print('initailizing app state');
-      _appStore.init().then((_) {
+      _appStore.init(Localizations.localeOf(context).toString()).then((_) {
         // init webApi after store initiated
         webApi = Api(context, _appStore);
         webApi.init();
 
-        _changeLang(_appStore.settings.localeCode);
+        _changeLang(context, _appStore.settings.localeCode);
       });
-    } else {
-      print('app state exists');
     }
-
-    super.initState();
   }
 
   @override
@@ -120,12 +115,18 @@ class _WalletAppState extends State<WalletApp> {
       theme: appTheme,
 //      darkTheme: darkTheme,
       routes: {
-        HomePage.route: (_) => Observer(
-            builder: (_) => _appStore.account.loading
-                ? Container()
-                : _appStore.account.accountList.length > 0
-                    ? HomePage(_appStore)
-                    : CreateAccountEntryPage()),
+        HomePage.route: (context) => FutureBuilder<void>(
+              future: _initStore(context),
+              builder: (_, __) {
+                return Observer(
+                  builder: (_) => _appStore.account.loading
+                      ? Container()
+                      : _appStore.account.accountList.length > 0
+                          ? HomePage(_appStore)
+                          : CreateAccountEntryPage(),
+                );
+              },
+            ),
         // account
         CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
         CreateAccountPage.route: (_) =>

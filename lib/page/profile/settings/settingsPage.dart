@@ -65,7 +65,7 @@ class _Settings extends State<SettingsPage> {
               String code = _langOptions[_selected];
               if (code != store.localeCode) {
                 store.setLocalCode(code);
-                changeLang(code);
+                changeLang(context, code);
               }
               return true;
             },

@@ -32,9 +32,9 @@ abstract class _AppStore with Store {
   bool isReady = false;
 
   @action
-  Future<void> init() async {
+  Future<void> init(String sysLocaleCode) async {
     // wait settings store loaded
-    await settings.init();
+    await settings.init(sysLocaleCode);
 
     await account.loadAccount();
     assets = AssetsStore(account);

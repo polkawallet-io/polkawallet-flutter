@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
@@ -62,10 +61,10 @@ abstract class _SettingsStore with Store {
   }
 
   @action
-  Future<void> init() async {
+  Future<void> init(String sysLocaleCode) async {
+    await loadLocalCode();
     await Future.wait([
-      loadLocalCode(),
-      loadEndpoint(),
+      loadEndpoint(sysLocaleCode),
       loadCustomSS58Format(),
       loadNetworkStateCache(),
       loadContacts(),
@@ -80,7 +79,10 @@ abstract class _SettingsStore with Store {
 
   @action
   Future<void> loadLocalCode() async {
-    localeCode = await LocalStorage.getKV(localStorageLocaleKey);
+    String stored = await LocalStorage.getKV(localStorageLocaleKey);
+    if (stored != null) {
+      localeCode = stored;
+    }
   }
 
   @action
@@ -146,13 +148,11 @@ abstract class _SettingsStore with Store {
   }
 
   @action
-  Future<void> loadEndpoint() async {
+  Future<void> loadEndpoint(String sysLocaleCode) async {
     Map<String, dynamic> value =
         await LocalStorage.getKV(localStorageEndpointKey);
     if (value == null) {
-      value = Locale.cachedLocaleString.contains('zh')
-          ? default_node_zh
-          : default_node;
+      value = sysLocaleCode.contains('zh') ? default_node_zh : default_node;
     }
     endpoint = EndpointData.fromJson(value);
   }

@@ -201,8 +201,8 @@ mixin _$SettingsStore on _SettingsStore, Store {
   final _$initAsyncAction = AsyncAction('init');
 
   @override
-  Future<void> init() {
-    return _$initAsyncAction.run(() => super.init());
+  Future<void> init(String sysLocaleCode) {
+    return _$initAsyncAction.run(() => super.init(sysLocaleCode));
   }
 
   final _$setLocalCodeAsyncAction = AsyncAction('setLocalCode');
@@ -273,8 +273,9 @@ mixin _$SettingsStore on _SettingsStore, Store {
   final _$loadEndpointAsyncAction = AsyncAction('loadEndpoint');
 
   @override
-  Future<void> loadEndpoint() {
-    return _$loadEndpointAsyncAction.run(() => super.loadEndpoint());
+  Future<void> loadEndpoint(String sysLocaleCode) {
+    return _$loadEndpointAsyncAction
+        .run(() => super.loadEndpoint(sysLocaleCode));
   }
 
   final _$loadCustomSS58FormatAsyncAction = AsyncAction('loadCustomSS58Format');
