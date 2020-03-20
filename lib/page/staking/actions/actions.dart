@@ -173,16 +173,15 @@ class _StakingActions extends State<StakingActions>
 
     int balance = Fmt.balanceInt(store.assets.balance);
     int bonded = 0;
-    int unlocking = 0;
     int redeemable = 0;
     if (hasData) {
-      List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
-      unlockingList.forEach((i) => unlocking += i['value']);
       bonded = store.staking.ledger['stakingLedger']['active'];
       redeemable = store.staking.ledger['redeemable'];
-      unlocking -= redeemable;
     }
-    int available = balance - bonded - unlocking;
+    int unlocking = store.staking.accountUnlockingTotal;
+    unlocking -= redeemable;
+
+    int available = isStash ? balance - bonded - unlocking : balance;
     int rewards = store.staking.accountRewardTotal;
 
     return RoundedCard(

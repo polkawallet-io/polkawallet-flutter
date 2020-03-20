@@ -6,7 +6,7 @@ import 'package:polka_wallet/page/profile/account/changeNamePage.dart';
 import 'package:polka_wallet/page/profile/account/changePasswordPage.dart';
 import 'package:polka_wallet/page/profile/account/exportAccountPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -15,7 +15,7 @@ class AccountManagePage extends StatelessWidget {
 
   static final String route = '/profile/account';
   final Api api = webApi;
-  final AccountStore store;
+  final AppStore store;
 
   final TextEditingController _passCtrl = new TextEditingController();
 
@@ -42,7 +42,17 @@ class AccountManagePage extends StatelessWidget {
           },
         );
       } else {
-        store.removeAccount(store.currentAccount);
+        store.account.removeAccount(store.account.currentAccount).then((_) {
+          String addressNew = store.account.currentAddress;
+          // refresh balance
+          store.assets.loadCache();
+          webApi.assets.fetchBalance(addressNew);
+          // refresh user's staking & gov info
+          store.staking.clearSate();
+          store.gov.clearSate();
+          store.staking.loadCache();
+          webApi.staking.fetchAccountStaking(addressNew);
+        });
         Navigator.popUntil(context, ModalRoute.withName('/'));
       }
     }
@@ -107,13 +117,13 @@ class AccountManagePage extends StatelessWidget {
                       child: ListTile(
                         leading: AddressIcon(
                           '',
-                          pubKey: store.currentAccount.pubKey,
+                          pubKey: store.account.currentAccount.pubKey,
                         ),
-                        title: Text(store.currentAccount.name ?? 'name',
+                        title: Text(store.account.currentAccount.name ?? 'name',
                             style:
                                 TextStyle(fontSize: 16, color: Colors.white)),
                         subtitle: Text(
-                          Fmt.address(store.currentAddress) ?? '',
+                          Fmt.address(store.account.currentAddress) ?? '',
                           style: TextStyle(fontSize: 16, color: Colors.white70),
                         ),
                       ),

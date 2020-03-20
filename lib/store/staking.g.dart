@@ -22,6 +22,12 @@ mixin _$StakingStore on _StakingStore, Store {
       (_$nominatingListComputed ??= Computed<ObservableList<ValidatorData>>(
               () => super.nominatingList))
           .value;
+  Computed<int> _$accountUnlockingTotalComputed;
+
+  @override
+  int get accountUnlockingTotal => (_$accountUnlockingTotalComputed ??=
+          Computed<int>(() => super.accountUnlockingTotal))
+      .value;
   Computed<int> _$accountRewardTotalComputed;
 
   @override
@@ -279,10 +285,11 @@ mixin _$StakingStore on _StakingStore, Store {
 
   @override
   void setLedger(String address, Map<String, dynamic> data,
-      {bool shouldCache = true}) {
+      {bool shouldCache = true, bool reset = false}) {
     final _$actionInfo = _$_StakingStoreActionController.startAction();
     try {
-      return super.setLedger(address, data, shouldCache: shouldCache);
+      return super
+          .setLedger(address, data, shouldCache: shouldCache, reset: reset);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }

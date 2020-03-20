@@ -149,16 +149,17 @@ class _AssetPageState extends State<AssetPage>
 
     int balance = Fmt.balanceInt(store.assets.balance);
     int bonded = 0;
-    int unlocking = 0;
+    bool isStash = false;
     bool hasData = store.staking.ledger['stakingLedger'] != null;
     if (hasData) {
-      List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
-      unlockingList.forEach((i) => unlocking += i['value']);
       bonded = store.staking.ledger['stakingLedger']['active'];
+      String stashId = store.staking.ledger['stakingLedger']['stash'];
+      isStash = store.staking.ledger['accountId'] == stashId;
     }
+    int unlocking = store.staking.accountUnlockingTotal;
 
     int locked = bonded + unlocking;
-    int available = balance - locked;
+    int available = isStash ? balance - locked : balance;
 
     final List<Tab> _myTabs = <Tab>[
       Tab(text: dic['all']),
@@ -177,7 +178,9 @@ class _AssetPageState extends State<AssetPage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('${dic['balance']}: ${Fmt.token(balance)}'),
-            Text('${dic['locked']}: ${Fmt.token(locked)}'),
+            isStash
+                ? Text('${dic['locked']}: ${Fmt.token(locked)}')
+                : Container(),
             Text('${dic['available']}: ${Fmt.token(available)}'),
           ],
         ),

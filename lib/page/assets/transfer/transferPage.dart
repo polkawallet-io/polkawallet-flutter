@@ -98,12 +98,13 @@ class _TransferPageState extends State<TransferPage> {
         int available = balance;
         bool hasStakingData = store.staking.ledger['stakingLedger'] != null;
         if (hasStakingData) {
-          int bonded = store.staking.ledger['stakingLedger']['active'];
-          int unlocking = 0;
-          List unlockingList =
-              store.staking.ledger['stakingLedger']['unlocking'];
-          unlockingList.forEach((i) => unlocking += i['value']);
-          available = balance - bonded - unlocking;
+          String stashId = store.staking.ledger['stakingLedger']['stash'];
+          bool isStash = store.staking.ledger['accountId'] == stashId;
+          if (isStash) {
+            int bonded = store.staking.ledger['stakingLedger']['active'];
+            int unlocking = store.staking.accountUnlockingTotal;
+            available = balance - bonded - unlocking;
+          }
         }
 
         return Scaffold(

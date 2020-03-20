@@ -77,17 +77,19 @@ class _WalletAppState extends State<WalletApp> {
     });
   }
 
-  Future<void> _initStore(BuildContext context) async {
+  Future<int> _initStore(BuildContext context) async {
     if (!_appStore.isReady) {
       print('initailizing app state');
-      _appStore.init(Localizations.localeOf(context).toString()).then((_) {
-        // init webApi after store initiated
-        webApi = Api(context, _appStore);
-        webApi.init();
+      await _appStore.init(Localizations.localeOf(context).toString());
 
-        _changeLang(context, _appStore.settings.localeCode);
-      });
+      // init webApi after store initiated
+      webApi = Api(context, _appStore);
+      webApi.init();
+
+      _changeLang(context, _appStore.settings.localeCode);
     }
+
+    return _appStore.account.accountList.length;
   }
 
   @override
@@ -115,15 +117,17 @@ class _WalletAppState extends State<WalletApp> {
       theme: appTheme,
 //      darkTheme: darkTheme,
       routes: {
-        HomePage.route: (context) => FutureBuilder<void>(
-              future: _initStore(context),
-              builder: (_, __) {
-                return Observer(
-                  builder: (_) => _appStore.account.loading
-                      ? Container()
-                      : _appStore.account.accountList.length > 0
-                          ? HomePage(_appStore)
-                          : CreateAccountEntryPage(),
+        HomePage.route: (context) => Observer(
+              builder: (_) {
+                return FutureBuilder<int>(
+                  future: _initStore(context),
+                  builder: (_, AsyncSnapshot<int> snapshot) {
+                    if (snapshot.hasData && snapshot.data > 0) {
+                      return HomePage(_appStore);
+                    } else {
+                      return CreateAccountEntryPage();
+                    }
+                  },
                 );
               },
             ),
@@ -157,7 +161,7 @@ class _WalletAppState extends State<WalletApp> {
         CouncilVotePage.route: (_) => CouncilVotePage(_appStore),
         CandidateListPage.route: (_) => CandidateListPage(_appStore),
         // profile
-        AccountManagePage.route: (_) => AccountManagePage(_appStore.account),
+        AccountManagePage.route: (_) => AccountManagePage(_appStore),
         ContactsPage.route: (_) => ContactsPage(_appStore.settings),
         ContactListPage.route: (_) => ContactListPage(_appStore.settings),
         ContactPage.route: (_) => ContactPage(_appStore.settings),

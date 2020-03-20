@@ -21,6 +21,8 @@ class ApiAccount {
   }
 
   Future<void> initAccounts() async {
+    if (store.account.accountList.length < 1) return;
+
     String accounts = jsonEncode(
         store.account.accountList.map((i) => AccountData.toJson(i)).toList());
     int ss58 = default_ss58_map[store.settings.endpoint.info];

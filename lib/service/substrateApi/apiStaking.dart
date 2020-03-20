@@ -15,7 +15,10 @@ class ApiStaking {
     if (address != null && address.isNotEmpty) {
       var res = await apiRoot
           .evalJavascript('api.derive.staking.account("$address")');
-      store.staking.setLedger(address, res);
+      store.staking.setLedger(address, res, reset: true);
+
+      List addressesNeedIcons = res['nominators'] ?? List();
+
       if (res['stakingLedger'] == null) {
         // get stash account info for a controller address
         var stakingLedger = await Future.wait([
@@ -29,7 +32,7 @@ class ApiStaking {
           // get stash's pubKey
           apiRoot.account.decodeAddress([stakingLedger[0]['stash']]);
           // get stash's icon
-          apiRoot.account.getAddressIcons([stakingLedger[0]['stash']]);
+          addressesNeedIcons.add(stakingLedger[0]['stash']);
         }
       } else {
         // get controller address info for a stash account
@@ -37,24 +40,30 @@ class ApiStaking {
         // get controller's pubKey
         apiRoot.account.decodeAddress([res['controllerId']]);
         // get controller's icon
-        apiRoot.account.getAddressIcons([res['controllerId']]);
+        addressesNeedIcons.add(res['controllerId']);
       }
 
       // get nominators' icons
-      if (res['nominators'] != null) {
-        await apiRoot.account.getAddressIcons(List.of(res['nominators']));
+      if (addressesNeedIcons.length > 0) {
+        await apiRoot.account.getAddressIcons(addressesNeedIcons);
       }
     }
   }
 
   // this query takes extremely long time
   Future<void> fetchAccountRewards(String address) async {
-    if (address != null) {
-      print('fetching staking rewards...');
-      List res = await apiRoot
-          .evalJavascript('staking.loadAccountRewardsData("$address")');
-      store.staking.setLedger(address, {'rewards': res});
+    if (store.staking.ledger['stakingLedger'] != null) {
+      int bonded = store.staking.ledger['stakingLedger']['active'];
+      List unlocking = store.staking.ledger['stakingLedger']['unlocking'];
+      if (address != null && (bonded > 0 || unlocking.length > 0)) {
+        print('fetching staking rewards...');
+        List res = await apiRoot
+            .evalJavascript('staking.loadAccountRewardsData("$address")');
+        store.staking.setLedger(address, {'rewards': res});
+        return;
+      }
     }
+    store.staking.setLedger(address, {'rewards': []});
   }
 
   Future<Map> fetchStakingOverview() async {

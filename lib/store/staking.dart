@@ -81,6 +81,19 @@ abstract class _StakingStore with Store {
   }
 
   @computed
+  int get accountUnlockingTotal {
+    int res = 0;
+    if (ledger['stakingLedger'] == null) {
+      return res;
+    }
+
+    List.of(ledger['stakingLedger']['unlocking']).forEach((i) {
+      res += i['value'];
+    });
+    return res;
+  }
+
+  @computed
   int get accountRewardTotal {
     if (ledger['rewards'] == null) {
       return null;
@@ -149,11 +162,19 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void setLedger(String address, Map<String, dynamic> data,
-      {bool shouldCache = true}) {
+  void setLedger(
+    String address,
+    Map<String, dynamic> data, {
+    bool shouldCache = true,
+    bool reset = false,
+  }) {
     if (account.currentAddress != address) return;
 
-    data.keys.forEach((key) => ledger[key] = data[key]);
+    if (reset) {
+      ledger = ObservableMap.of(data);
+    } else {
+      data.keys.forEach((key) => ledger[key] = data[key]);
+    }
 
     if (shouldCache) {
       Map cache = {};

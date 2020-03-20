@@ -154,17 +154,21 @@ class Api {
     store.settings.setNetworkState(info[1]);
     store.settings.setNetworkName(info[2]);
 
-    if (store.settings.customSS58Format['info'] == 'default') {
-      account.setSS58Format(info[1]['ss58Format'] ?? 42);
-    }
-
     // fetch account balance
-    await Future.wait([
-      assets.fetchBalance(store.account.currentAddress),
-      staking.fetchAccountStaking(store.account.currentAddress),
-      account.fetchAccountsBonded(
-          store.account.accountList.map((i) => i.pubKey).toList()),
-    ]);
+    if (store.account.accountList.length > 0) {
+      // reset account address format
+      if (store.settings.customSS58Format['info'] == 'default') {
+        account.setSS58Format(info[1]['ss58Format'] ?? 42);
+      }
+
+      // fetch account balance
+      await Future.wait([
+        assets.fetchBalance(store.account.currentAddress),
+        staking.fetchAccountStaking(store.account.currentAddress),
+        account.fetchAccountsBonded(
+            store.account.accountList.map((i) => i.pubKey).toList()),
+      ]);
+    }
 
     // fetch staking overview data as initializing
     staking.fetchStakingOverview();

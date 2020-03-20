@@ -110,6 +110,7 @@ flutter:
     - assets/images/assets/assets_fail.png
     - assets/images/assets/success.png
     - assets/images/assets/sweep_code_line.png
+    - assets/images/assets/DOT.png
     - assets/images/assets/KSM.png
     - assets/images/assets/FIR.png
     - assets/images/staking/top_bg.png
