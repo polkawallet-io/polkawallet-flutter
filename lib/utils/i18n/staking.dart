@@ -47,6 +47,8 @@ const Map<String, String> enStaking = {
   'reward.Controller':
       'Controller account (do not increase the amount at stake)',
   'reward.warn': 'Reward destination is not changed',
+  'controller.stashOf': 'Unavailable, stash account of ',
+  'controller.controllerOf': 'Unavailable, controller account of ',
   'controller.warn': 'Controller account is not changed',
   'filter': 'Filter with Address/Name',
   'sort': 'Sort by',
@@ -102,6 +104,8 @@ const Map<String, String> zhStaking = {
   'reward.Controller': '控制账户(收益不再质押)',
   'reward.warn': '分红方式未修改',
   'controller.warn': '控制账户未修改',
+  'controller.stashOf': '不可用，已关联控制账户：',
+  'controller.controllerOf': '不可用，已关联储值账户：',
   'filter': '地址/名称筛选',
   'sort': '排序',
   'notElected': '未选中',

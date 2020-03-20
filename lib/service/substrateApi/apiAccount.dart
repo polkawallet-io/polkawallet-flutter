@@ -46,6 +46,14 @@ class ApiAccount {
     }
   }
 
+  Future<void> fetchAccountsBonded(List<String> pubKeys) async {
+    if (pubKeys.length > 0) {
+      List res = await apiRoot.evalJavascript(
+          'account.queryAccountsBonded(${jsonEncode(pubKeys)})');
+      store.account.setAccountsBonded(res);
+    }
+  }
+
   Future<dynamic> _testSendTx() async {
     Completer c = new Completer();
     void onComplete(res) {
@@ -87,8 +95,12 @@ class ApiAccount {
     Map<String, dynamic> acc = await apiRoot.evalJavascript(code);
     if (acc != null) {
       await store.account.addAccount(acc, pass);
+
       store.staking.clearSate();
       store.gov.clearSate();
+
+      store.assets.loadCache();
+      store.staking.loadCache();
 
       if (store.settings.customSS58Format['info'] == 'default') {
         await setSS58Format(default_ss58_map[store.settings.endpoint.info]);
@@ -96,8 +108,11 @@ class ApiAccount {
         await setSS58Format(store.settings.customSS58Format['value']);
       }
 
+      // fetch info for the imported account
       apiRoot.assets.fetchBalance(acc['address']);
       apiRoot.staking.fetchAccountStaking(acc['address']);
+      fetchAccountsBonded([acc['pubKey']]);
+      getPubKeyIcons([acc['pubKey']]);
     }
     return acc;
   }

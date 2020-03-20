@@ -162,6 +162,8 @@ class Api {
     await Future.wait([
       assets.fetchBalance(store.account.currentAddress),
       staking.fetchAccountStaking(store.account.currentAddress),
+      account.fetchAccountsBonded(
+          store.account.accountList.map((i) => i.pubKey).toList()),
     ]);
 
     // fetch staking overview data as initializing

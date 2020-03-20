@@ -16,11 +16,12 @@ abstract class _StakingStore with Store {
 
   final AccountStore account;
 
+  final String localStorageOverviewKey = 'staking_overview';
+  final String localStorageValidatorsKey = 'validators';
+
   final String cacheAccountStakingKey = 'account_staking';
   final String cacheStakingTxsKey = 'staking_txs';
-  final String cacheOverviewKey = 'staking_overview';
-  final String cacheValidatorsKey = 'validators';
-
+  final String cacheTimeKey = 'staking_cache_time';
   @observable
   int cacheTxsTimestamp = 0;
 
@@ -113,7 +114,7 @@ abstract class _StakingStore with Store {
 
     // cache data
     if (shouldCache) {
-      LocalStorage.setKV(cacheValidatorsKey, data);
+      LocalStorage.setKV(localStorageValidatorsKey, data);
     }
   }
 
@@ -143,7 +144,7 @@ abstract class _StakingStore with Store {
     }
 
     if (shouldCache) {
-      LocalStorage.setKV(cacheOverviewKey, data);
+      LocalStorage.setKV(localStorageOverviewKey, data);
     }
   }
 
@@ -151,13 +152,14 @@ abstract class _StakingStore with Store {
   void setLedger(Map<String, dynamic> data, {bool shouldCache = true}) {
     data.keys.forEach((key) => ledger[key] = data[key]);
 
-    if (!shouldCache) return;
-
-    Map cache = {};
-    ledger.keys.forEach((key) {
-      cache[key] = ledger[key];
-    });
-    LocalStorage.setKV(cacheAccountStakingKey, cache);
+    if (shouldCache) {
+      Map cache = {};
+      ledger.keys.forEach((key) {
+        cache[key] = ledger[key];
+      });
+      LocalStorage.setAccountCache(
+          account.currentAccount.pubKey, cacheAccountStakingKey, cache);
+    }
   }
 
   @action
@@ -167,13 +169,16 @@ abstract class _StakingStore with Store {
 
   @action
   Future<void> addTxs(List<Map> ls, {bool shouldCache = false}) async {
-    if (shouldCache) {
-      cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
-      LocalStorage.setKV(
-          cacheStakingTxsKey, {'txs': ls, 'cacheTime': cacheTxsTimestamp});
-    }
-
     txs.addAll(ls);
+
+    if (shouldCache) {
+      LocalStorage.setAccountCache(
+          account.currentAccount.pubKey, cacheStakingTxsKey, ls);
+
+      cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
+      LocalStorage.setAccountCache(
+          account.currentAccount.pubKey, cacheTimeKey, cacheTxsTimestamp);
+    }
   }
 
   @action
@@ -195,8 +200,8 @@ abstract class _StakingStore with Store {
   @action
   Future<void> loadCache() async {
     List cacheOverview = await Future.wait([
-      LocalStorage.getKV(cacheOverviewKey),
-      LocalStorage.getKV(cacheValidatorsKey),
+      LocalStorage.getKV(localStorageOverviewKey),
+      LocalStorage.getKV(localStorageValidatorsKey),
     ]);
     if (cacheOverview[0] != null) {
       setOverview(cacheOverview[0], shouldCache: false);
@@ -206,20 +211,24 @@ abstract class _StakingStore with Store {
     }
 
     // return if currentAccount not exist
-    if (account.currentAccount.pubKey == null) {
+    String pubKey = account.currentAccount.pubKey;
+    if (pubKey == null) {
       return;
     }
 
     List cache = await Future.wait([
-      LocalStorage.getKV(cacheAccountStakingKey),
-      LocalStorage.getKV(cacheStakingTxsKey),
+      LocalStorage.getAccountCache(pubKey, cacheAccountStakingKey),
+      LocalStorage.getAccountCache(pubKey, cacheStakingTxsKey),
+      LocalStorage.getAccountCache(pubKey, cacheTimeKey),
     ]);
     if (cache[0] != null) {
       setLedger(cache[0], shouldCache: false);
     }
     if (cache[1] != null) {
-      addTxs(List<Map>.from(cache[1]['txs']));
-      cacheTxsTimestamp = cache[1]['cacheTime'];
+      addTxs(List<Map>.from(cache[1]));
+    }
+    if (cache[2] != null) {
+      cacheTxsTimestamp = cache[2];
     }
   }
 }

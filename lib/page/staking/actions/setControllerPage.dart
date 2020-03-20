@@ -26,9 +26,9 @@ class _SetControllerPageState extends State<SetControllerPage> {
   AccountData _controller;
 
   void _onSubmit(BuildContext context) {
-    var current = ModalRoute.of(context).settings.arguments;
-    if (_controller == null ||
-        _controller.pubKey == (current as AccountData).pubKey) {
+    var currentController = ModalRoute.of(context).settings.arguments;
+    if (currentController != null &&
+        _controller.pubKey == (currentController as AccountData).pubKey) {
       showCupertinoDialog(
         context: context,
         builder: (BuildContext context) {
@@ -47,7 +47,10 @@ class _SetControllerPageState extends State<SetControllerPage> {
       return;
     }
 
-    String address = store.account.pubKeyAddressMap[_controller.pubKey];
+    String controllerPubKey = _controller != null
+        ? _controller.pubKey
+        : store.account.currentAccount.pubKey;
+    String address = store.account.pubKeyAddressMap[controllerPubKey];
     Map<String, dynamic> args = {
       "title": I18n.of(context).staking['action.control'],
       "txInfo": {

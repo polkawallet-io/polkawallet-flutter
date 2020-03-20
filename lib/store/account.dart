@@ -42,6 +42,10 @@ abstract class _AccountStore with Store {
   ObservableMap<String, Map> accountIndexMap = ObservableMap<String, Map>();
 
   @observable
+  ObservableMap<String, AccountBondedInfo> pubKeyBondedMap =
+      ObservableMap<String, AccountBondedInfo>();
+
+  @observable
   ObservableMap<String, String> pubKeyAddressMap =
       ObservableMap<String, String>();
 
@@ -166,6 +170,13 @@ abstract class _AccountStore with Store {
       }
     }
     loading = false;
+  }
+
+  @action
+  Future<void> setAccountsBonded(List ls) async {
+    ls.forEach((i) {
+      pubKeyBondedMap[i[0]] = AccountBondedInfo(i[0], i[1], i[2]);
+    });
   }
 
   @action
@@ -299,4 +310,13 @@ abstract class _AccountData with Store {
 
   @observable
   String memo = '';
+}
+
+class AccountBondedInfo {
+  AccountBondedInfo(this.pubKey, this.controllerId, this.stashId);
+  final String pubKey;
+  // controllerId != null, means the account is a stash
+  final String controllerId;
+  // stashId != null, means the account is a controller
+  final String stashId;
 }

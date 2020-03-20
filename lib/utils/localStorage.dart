@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
@@ -74,6 +73,24 @@ class LocalStorage {
       return data;
     }
     return null;
+  }
+
+  static Future<void> setAccountCache(
+      String accPubKey, String key, Object value) async {
+    Map data = await getKV(key);
+    if (data == null) {
+      data = {};
+    }
+    data[accPubKey] = value;
+    setKV(key, data);
+  }
+
+  static Future<Object> getAccountCache(String accPubKey, String key) async {
+    Map data = await getKV(key);
+    if (data == null) {
+      return null;
+    }
+    return data[accPubKey];
   }
 
   static const int customCacheTimeLength = 5 * 50 * 1000;

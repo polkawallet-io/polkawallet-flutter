@@ -134,6 +134,23 @@ mixin _$AccountStore on _AccountStore, Store {
     }, _$accountIndexMapAtom, name: '${_$accountIndexMapAtom.name}_set');
   }
 
+  final _$pubKeyBondedMapAtom = Atom(name: '_AccountStore.pubKeyBondedMap');
+
+  @override
+  ObservableMap<String, AccountBondedInfo> get pubKeyBondedMap {
+    _$pubKeyBondedMapAtom.context.enforceReadPolicy(_$pubKeyBondedMapAtom);
+    _$pubKeyBondedMapAtom.reportObserved();
+    return super.pubKeyBondedMap;
+  }
+
+  @override
+  set pubKeyBondedMap(ObservableMap<String, AccountBondedInfo> value) {
+    _$pubKeyBondedMapAtom.context.conditionallyRunInAction(() {
+      super.pubKeyBondedMap = value;
+      _$pubKeyBondedMapAtom.reportChanged();
+    }, _$pubKeyBondedMapAtom, name: '${_$pubKeyBondedMapAtom.name}_set');
+  }
+
   final _$pubKeyAddressMapAtom = Atom(name: '_AccountStore.pubKeyAddressMap');
 
   @override
@@ -211,6 +228,14 @@ mixin _$AccountStore on _AccountStore, Store {
   @override
   Future<void> loadAccount() {
     return _$loadAccountAsyncAction.run(() => super.loadAccount());
+  }
+
+  final _$setAccountsBondedAsyncAction = AsyncAction('setAccountsBonded');
+
+  @override
+  Future<void> setAccountsBonded(List ls) {
+    return _$setAccountsBondedAsyncAction
+        .run(() => super.setAccountsBonded(ls));
   }
 
   final _$encryptSeedAsyncAction = AsyncAction('encryptSeed');

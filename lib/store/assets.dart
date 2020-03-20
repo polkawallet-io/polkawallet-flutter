@@ -18,9 +18,11 @@ abstract class _AssetsStore with Store {
 
   final AccountStore account;
 
+  final String localStorageBlocksKey = 'blocks';
+
   final String cacheBalanceKey = 'balance';
   final String cacheTxsKey = 'txs';
-  final String cacheBlocksKey = 'blocks';
+  final String cacheTimeKey = 'assets_cache_time';
   @observable
   int cacheTxsTimestamp = 0;
 
@@ -90,7 +92,8 @@ abstract class _AssetsStore with Store {
   void setAccountBalance(String amt) {
     balance = amt;
 
-    LocalStorage.setKV(cacheBalanceKey, {'balance': amt});
+    LocalStorage.setAccountCache(
+        account.currentAccount.pubKey, cacheBalanceKey, amt);
   }
 
   @action
@@ -100,16 +103,19 @@ abstract class _AssetsStore with Store {
 
   @action
   Future<void> addTxs(List ls, {bool shouldCache = false}) async {
-    if (shouldCache) {
-      cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
-      LocalStorage.setKV(
-          cacheTxsKey, {'txs': ls, 'cacheTime': cacheTxsTimestamp});
-    }
-
     ls.forEach((i) {
       TransferData tx = TransferData.fromJson(i);
       txs.add(tx);
     });
+
+    if (shouldCache) {
+      LocalStorage.setAccountCache(
+          account.currentAccount.pubKey, cacheTxsKey, ls);
+
+      cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
+      LocalStorage.setAccountCache(
+          account.currentAccount.pubKey, cacheTimeKey, cacheTxsTimestamp);
+    }
   }
 
   @action
@@ -127,7 +133,7 @@ abstract class _AssetsStore with Store {
     });
 
     if (List.of(ls).length > 0) {
-      LocalStorage.setKV(cacheBlocksKey,
+      LocalStorage.setKV(localStorageBlocksKey,
           blockMap.values.map((i) => BlockData.toJson(i)).toList());
     }
   }
@@ -144,31 +150,35 @@ abstract class _AssetsStore with Store {
 
   @action
   Future<void> loadCache() async {
-    // loadCache if currentAccount exist
-    if (account.currentAccount.pubKey == null) {
-      return;
-    }
-
-    List cache = await Future.wait([
-      LocalStorage.getKV(cacheBalanceKey),
-      LocalStorage.getKV(cacheTxsKey),
-      LocalStorage.getKV(cacheBlocksKey),
-    ]);
-    if (cache[0] != null) {
-      balance = cache[0]['balance'];
-    }
-    if (cache[1] != null) {
-      txs = ObservableList.of(List.of(cache[1]['txs'])
-          .map((i) => TransferData.fromJson(i))
-          .toList());
-      cacheTxsTimestamp = cache[1]['cacheTime'];
-    }
-    if (cache[2] != null) {
-      List.of(cache[2]).forEach((i) {
+    List ls = await LocalStorage.getKV(localStorageBlocksKey);
+    if (ls != null) {
+      ls.forEach((i) {
         if (blockMap[i['id']] == null) {
           blockMap[i['id']] = BlockData.fromJson(i);
         }
       });
+    }
+
+    // loadCache if currentAccount exist
+    String pubKey = account.currentAccount.pubKey;
+    if (pubKey == null) {
+      return;
+    }
+
+    List cache = await Future.wait([
+      LocalStorage.getAccountCache(pubKey, cacheBalanceKey),
+      LocalStorage.getAccountCache(pubKey, cacheTxsKey),
+      LocalStorage.getAccountCache(pubKey, cacheTimeKey),
+    ]);
+    if (cache[0] != null) {
+      balance = cache[0] ?? '0';
+    }
+    if (cache[1] != null) {
+      txs = ObservableList.of(
+          List.of(cache[1]).map((i) => TransferData.fromJson(i)).toList());
+    }
+    if (cache[2] != null) {
+      cacheTxsTimestamp = cache[2];
     }
   }
 }
