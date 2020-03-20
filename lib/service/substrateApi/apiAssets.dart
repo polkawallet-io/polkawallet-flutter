@@ -10,18 +10,17 @@ class ApiAssets {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<String> fetchBalance(String address) async {
-    String res = '0';
+  Future<void> fetchBalance(String address) async {
     if (address != null && address.isNotEmpty) {
-      res = await apiRoot.evalJavascript('account.getBalance("$address")');
-      store.assets.setAccountBalance(res);
+      String res =
+          await apiRoot.evalJavascript('account.getBalance("$address")');
+      store.assets.setAccountBalance(address, res);
     }
-    return res;
   }
 
   Future<List> updateTxs(int page) async {
-    String data =
-        await PolkaScanApi.fetchTxs(store.account.currentAddress, page);
+    String address = store.account.currentAddress;
+    String data = await PolkaScanApi.fetchTxs(address, page);
     List ls = jsonDecode(data)['data'];
 
     if (page == 1) {
@@ -29,7 +28,7 @@ class ApiAssets {
       store.assets.setTxsLoading(true);
     }
     // cache first page of txs
-    await store.assets.addTxs(ls, shouldCache: page == 1);
+    await store.assets.addTxs(ls, address, shouldCache: page == 1);
 
     await apiRoot.updateBlocks(ls);
     store.assets.setTxsLoading(false);

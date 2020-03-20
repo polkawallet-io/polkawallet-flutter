@@ -149,7 +149,10 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void setLedger(Map<String, dynamic> data, {bool shouldCache = true}) {
+  void setLedger(String address, Map<String, dynamic> data,
+      {bool shouldCache = true}) {
+    if (account.currentAddress != address) return;
+
     data.keys.forEach((key) => ledger[key] = data[key]);
 
     if (shouldCache) {
@@ -222,7 +225,7 @@ abstract class _StakingStore with Store {
       LocalStorage.getAccountCache(pubKey, cacheTimeKey),
     ]);
     if (cache[0] != null) {
-      setLedger(cache[0], shouldCache: false);
+      setLedger(account.currentAddress, cache[0], shouldCache: false);
     }
     if (cache[1] != null) {
       addTxs(List<Map>.from(cache[1]));

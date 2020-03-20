@@ -54,7 +54,7 @@ class _StakingActions extends State<StakingActions>
       webApi.assets.fetchBalance(address),
       webApi.staking.fetchAccountStaking(address),
     ]);
-//    webApi.staking.fetchAccountRewards(address);
+    webApi.staking.fetchAccountRewards(address);
   }
 
   void _changeCurrentAccount(AccountData acc) {
@@ -240,6 +240,7 @@ class _StakingActions extends State<StakingActions>
           StakingInfoPanel(
               hasData: hasData,
               isStash: isStash,
+              controllerEqualStash: controllerEqualStash,
               bonded: bonded,
               unlocking: unlocking,
               redeemable: redeemable,
@@ -265,6 +266,11 @@ class _StakingActions extends State<StakingActions>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (LocalStorage.checkCacheTimeout(store.staking.cacheTxsTimestamp)) {
         globalBondingRefreshKey.currentState.show();
+      } else {
+        // if we don't need to reload data, do we need to reload reward data?
+        if (store.staking.accountRewardTotal == null) {
+          webApi.staking.fetchAccountRewards(store.account.currentAddress);
+        }
       }
     });
   }
@@ -458,6 +464,7 @@ class StakingInfoPanel extends StatelessWidget {
   StakingInfoPanel({
     this.hasData,
     this.isStash,
+    this.controllerEqualStash,
     this.bonded,
     this.unlocking,
     this.redeemable,
@@ -468,6 +475,7 @@ class StakingInfoPanel extends StatelessWidget {
 
   final bool hasData;
   final bool isStash;
+  final bool controllerEqualStash;
   final int bonded;
   final int unlocking;
   final int redeemable;
@@ -561,7 +569,10 @@ class StakingInfoPanel extends StatelessWidget {
                                 style: Theme.of(context).textTheme.display4,
                               )
                             : CupertinoActivityIndicator(),
-                        !isStash && rewards != null && rewards > 0
+                        // only controller account can request payout
+                        (!isStash || controllerEqualStash) &&
+                                rewards != null &&
+                                rewards > 0
                             ? GestureDetector(
                                 child: Container(
                                   padding: EdgeInsets.only(left: 4),

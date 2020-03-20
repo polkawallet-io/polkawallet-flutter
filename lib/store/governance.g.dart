@@ -228,10 +228,10 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
   }
 
   @override
-  void setUserReferendumVotes(List ls) {
+  void setUserReferendumVotes(String address, List ls) {
     final _$actionInfo = _$_GovernanceStoreActionController.startAction();
     try {
-      return super.setUserReferendumVotes(ls);
+      return super.setUserReferendumVotes(address, ls);
     } finally {
       _$_GovernanceStoreActionController.endAction(_$actionInfo);
     }

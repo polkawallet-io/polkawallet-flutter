@@ -26,6 +26,7 @@ class AccountSelectPage extends StatelessWidget {
                 child: ListView(
                   padding: EdgeInsets.all(16),
                   children: store.accountList.map((i) {
+                    String address = store.pubKeyAddressMap[i.pubKey];
                     String unavailable;
                     String stashOf =
                         store.pubKeyBondedMap[i.pubKey].controllerId;
@@ -63,7 +64,7 @@ class AccountSelectPage extends StatelessWidget {
                                           style: TextStyle(color: grey),
                                         ),
                                         Text(
-                                          Fmt.address(store.currentAddress),
+                                          Fmt.address(address),
                                           style: TextStyle(color: grey),
                                         ),
                                         Text(
@@ -80,7 +81,7 @@ class AccountSelectPage extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(i.name),
-                                        Text(Fmt.address(store.currentAddress)),
+                                        Text(Fmt.address(address)),
                                       ],
                                     ),
                             ),

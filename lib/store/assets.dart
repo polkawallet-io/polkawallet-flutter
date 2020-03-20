@@ -89,7 +89,9 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  void setAccountBalance(String amt) {
+  void setAccountBalance(String address, String amt) {
+    if (account.currentAddress != address) return;
+
     balance = amt;
 
     LocalStorage.setAccountCache(
@@ -102,7 +104,10 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  Future<void> addTxs(List ls, {bool shouldCache = false}) async {
+  Future<void> addTxs(List ls, String address,
+      {bool shouldCache = false}) async {
+    if (account.currentAddress != address) return;
+
     ls.forEach((i) {
       TransferData tx = TransferData.fromJson(i);
       txs.add(tx);

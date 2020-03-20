@@ -15,22 +15,22 @@ class ApiStaking {
     if (address != null && address.isNotEmpty) {
       var res = await apiRoot
           .evalJavascript('api.derive.staking.account("$address")');
-      store.staking.setLedger(res);
+      store.staking.setLedger(address, res);
       if (res['stakingLedger'] == null) {
         // get stash account info for a controller address
         var stakingLedger = await Future.wait([
           apiRoot.evalJavascript('api.query.staking.ledger("$address")'),
           apiRoot.evalJavascript('api.query.staking.payee("$address")')
         ]);
-        if (stakingLedger[0] != null && stakingLedger[1] != null) {
+        if (stakingLedger[0] != null) {
           stakingLedger[0]['payee'] = stakingLedger[1];
-          store.staking.setLedger({'stakingLedger': stakingLedger[0]});
-        }
+          store.staking.setLedger(address, {'stakingLedger': stakingLedger[0]});
 
-        // get stash's pubKey
-        apiRoot.account.decodeAddress([stakingLedger[0]['stash']]);
-        // get stash's icon
-        apiRoot.account.getAddressIcons([stakingLedger[0]['stash']]);
+          // get stash's pubKey
+          apiRoot.account.decodeAddress([stakingLedger[0]['stash']]);
+          // get stash's icon
+          apiRoot.account.getAddressIcons([stakingLedger[0]['stash']]);
+        }
       } else {
         // get controller address info for a stash account
 
@@ -53,7 +53,7 @@ class ApiStaking {
       print('fetching staking rewards...');
       List res = await apiRoot
           .evalJavascript('staking.loadAccountRewardsData("$address")');
-      store.staking.setLedger({'rewards': res});
+      store.staking.setLedger(address, {'rewards': res});
     }
   }
 

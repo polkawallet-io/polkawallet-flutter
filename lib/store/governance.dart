@@ -10,7 +10,9 @@ class GovernanceStore extends _GovernanceStore with _$GovernanceStore {
 }
 
 abstract class _GovernanceStore with Store {
-  _GovernanceStore(AccountStore store);
+  _GovernanceStore(this.account);
+
+  final AccountStore account;
 
   final String cacheCouncilKey = 'council';
 
@@ -73,7 +75,9 @@ abstract class _GovernanceStore with Store {
   }
 
   @action
-  void setUserReferendumVotes(List ls) {
+  void setUserReferendumVotes(String address, List ls) {
+    if (account.currentAddress != address) return;
+
     userReferendumVotes.addAll(List<Map>.from(ls));
   }
 

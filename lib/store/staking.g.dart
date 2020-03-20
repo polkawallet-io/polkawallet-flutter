@@ -278,10 +278,11 @@ mixin _$StakingStore on _StakingStore, Store {
   }
 
   @override
-  void setLedger(Map<String, dynamic> data, {bool shouldCache = true}) {
+  void setLedger(String address, Map<String, dynamic> data,
+      {bool shouldCache = true}) {
     final _$actionInfo = _$_StakingStoreActionController.startAction();
     try {
-      return super.setLedger(data, shouldCache: shouldCache);
+      return super.setLedger(address, data, shouldCache: shouldCache);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }

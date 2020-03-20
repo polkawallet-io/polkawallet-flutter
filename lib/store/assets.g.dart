@@ -170,9 +170,9 @@ mixin _$AssetsStore on _AssetsStore, Store {
   final _$addTxsAsyncAction = AsyncAction('addTxs');
 
   @override
-  Future<void> addTxs(List ls, {bool shouldCache = false}) {
+  Future<void> addTxs(List ls, String address, {bool shouldCache = false}) {
     return _$addTxsAsyncAction
-        .run(() => super.addTxs(ls, shouldCache: shouldCache));
+        .run(() => super.addTxs(ls, address, shouldCache: shouldCache));
   }
 
   final _$setBlockMapAsyncAction = AsyncAction('setBlockMap');
@@ -202,10 +202,10 @@ mixin _$AssetsStore on _AssetsStore, Store {
   }
 
   @override
-  void setAccountBalance(String amt) {
+  void setAccountBalance(String address, String amt) {
     final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
-      return super.setAccountBalance(amt);
+      return super.setAccountBalance(address, amt);
     } finally {
       _$_AssetsStoreActionController.endAction(_$actionInfo);
     }

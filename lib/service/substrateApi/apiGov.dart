@@ -18,7 +18,7 @@ class ApiGovernance {
         .toList());
     ls.asMap().forEach(
         (k, v) => v['detail'] = jsonDecode(details[k])['data']['attributes']);
-    store.gov.setUserReferendumVotes(ls);
+    store.gov.setUserReferendumVotes(address, ls);
     return ls;
   }
 
