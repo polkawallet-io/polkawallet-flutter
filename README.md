@@ -10,7 +10,7 @@ Polkawallet Flutter Implementation, https://polkawallet.io
 
 {TODO}
 
-### Project introduce:
+### Project introduce
 
  [Polkawallet](http://polkawallet.io) provide Cross-chain asset one-stop management, convenient staking and governance, the private key is self-owned. 
 
@@ -39,7 +39,7 @@ In order to give users a more humane and more convenient experience, as the entr
 
 - Available for all major mobile platforms. Currently Flutter is used as a cross-platform solution.
 
-### Let's see what this version can do:
+### Let's see what this version can do
 - [x] We redeveloped Polkawallet with Flutter, which greatly improved the fluency.
 - [x] You can create Kusama Network account and use Sr25519 by default.
 - [x] Import account support Mnemonics, Raw Seed, Keystore.
@@ -52,19 +52,27 @@ In order to give users a more humane and more convenient experience, as the entr
 - [x] Governance module, Democracy can view the referendum information, and can cast your vote in addition to the lock-up period.
 - [x] Some basic account settings, such as changing name, password. And can choose network nodes, address prefix, Language.
 
-### Next Plan:
+### Next Plan
 
 - Support for the Acala Network account module.
 - Integrated Acala Network Honzon operating platform.
 - Support for other Parachain accounts and functional modules.
 
-> What are the business barriers of Polkawallet?  
+### Questions
 
-No, only named Polkawallet, it's a brand effect. This means that there may be countless better competitors. We also want to see more excellent competitors.
+> Why use Flutter to develop?
+
+The previous version tried to develop Polkawallet with React Native, we want to try different frameworks and explore different solutions. Through exploration, we saw that the fluency of the Flutter version has greatly improved, which is a good attempt.
+
+> Can other teams make secondary development based on Polkawallet?
+
+Of course, we use a very loose Apache License 2.0, you can make free changes based on Polkawallet. We have contacted some projects to help them carry out secondary development. Such as datahighway.com
+There have the link of Github repository: https://github.com/polkawallet-io/polkawallet-flutter/tree/develop
 
 > How can Polkawallet maintain development?
 
 We got grants from Web3 Foundation, at the same time, we are helping Acala Network to develop convenient mobile interactions. In the future we want to actively join the ParaDAO that Acala Network is launching, this can be a way for many ecological projects to come together. Through ParaDAO, infrastructures such as Polkawallet and Parachain projects all have clear maintenance development plans.
+
 
 ### View more info of Polkawallet
 `Website:` https://polkawallet.io  
