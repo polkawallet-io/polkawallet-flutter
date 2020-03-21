@@ -98,11 +98,10 @@ class ApiAccount {
     if (acc != null) {
       await store.account.addAccount(acc, pass);
 
-      store.staking.clearSate();
       store.gov.clearSate();
 
-      store.assets.loadCache();
-      store.staking.loadCache();
+      store.assets.loadAccountCache();
+      store.staking.loadAccountCache();
 
       if (store.settings.customSS58Format['info'] == 'default') {
         await setSS58Format(default_ss58_map[store.settings.endpoint.info]);

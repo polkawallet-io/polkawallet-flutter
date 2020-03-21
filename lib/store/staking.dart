@@ -206,7 +206,7 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void clearSate() {
+  void clearState() {
     txs.clear();
     ledger = ObservableMap<String, dynamic>();
   }
@@ -222,18 +222,7 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  Future<void> loadCache() async {
-    List cacheOverview = await Future.wait([
-      LocalStorage.getKV(localStorageOverviewKey),
-      LocalStorage.getKV(localStorageValidatorsKey),
-    ]);
-    if (cacheOverview[0] != null) {
-      setOverview(cacheOverview[0], shouldCache: false);
-    }
-    if (cacheOverview[1] != null) {
-      setValidatorsInfo(cacheOverview[1], shouldCache: false);
-    }
-
+  Future<void> loadAccountCache() async {
     // return if currentAccount not exist
     String pubKey = account.currentAccount.pubKey;
     if (pubKey == null) {
@@ -247,13 +236,33 @@ abstract class _StakingStore with Store {
     ]);
     if (cache[0] != null) {
       setLedger(account.currentAddress, cache[0], shouldCache: false);
+    } else {
+      ledger = ObservableMap<String, dynamic>();
     }
     if (cache[1] != null) {
       addTxs(List<Map>.from(cache[1]));
+    } else {
+      txs.clear();
     }
     if (cache[2] != null) {
       cacheTxsTimestamp = cache[2];
     }
+  }
+
+  @action
+  Future<void> loadCache() async {
+    List cacheOverview = await Future.wait([
+      LocalStorage.getKV(localStorageOverviewKey),
+      LocalStorage.getKV(localStorageValidatorsKey),
+    ]);
+    if (cacheOverview[0] != null) {
+      setOverview(cacheOverview[0], shouldCache: false);
+    }
+    if (cacheOverview[1] != null) {
+      setValidatorsInfo(cacheOverview[1], shouldCache: false);
+    }
+
+    loadAccountCache();
   }
 }
 

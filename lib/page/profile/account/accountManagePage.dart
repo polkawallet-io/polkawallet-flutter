@@ -45,12 +45,11 @@ class AccountManagePage extends StatelessWidget {
         store.account.removeAccount(store.account.currentAccount).then((_) {
           String addressNew = store.account.currentAddress;
           // refresh balance
-          store.assets.loadCache();
+          store.assets.loadAccountCache();
           webApi.assets.fetchBalance(addressNew);
           // refresh user's staking & gov info
-          store.staking.clearSate();
           store.gov.clearSate();
-          store.staking.loadCache();
+          store.staking.loadAccountCache();
           webApi.staking.fetchAccountStaking(addressNew);
         });
         Navigator.popUntil(context, ModalRoute.withName('/'));

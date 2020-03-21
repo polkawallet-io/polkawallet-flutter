@@ -154,16 +154,7 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  Future<void> loadCache() async {
-    List ls = await LocalStorage.getKV(localStorageBlocksKey);
-    if (ls != null) {
-      ls.forEach((i) {
-        if (blockMap[i['id']] == null) {
-          blockMap[i['id']] = BlockData.fromJson(i);
-        }
-      });
-    }
-
+  Future<void> loadAccountCache() async {
     // loadCache if currentAccount exist
     String pubKey = account.currentAccount.pubKey;
     if (pubKey == null) {
@@ -185,6 +176,20 @@ abstract class _AssetsStore with Store {
     if (cache[2] != null) {
       cacheTxsTimestamp = cache[2];
     }
+  }
+
+  @action
+  Future<void> loadCache() async {
+    List ls = await LocalStorage.getKV(localStorageBlocksKey);
+    if (ls != null) {
+      ls.forEach((i) {
+        if (blockMap[i['id']] == null) {
+          blockMap[i['id']] = BlockData.fromJson(i);
+        }
+      });
+    }
+
+    loadAccountCache();
   }
 }
 

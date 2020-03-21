@@ -13,13 +13,12 @@ class ApiStaking {
 
   Future<void> fetchAccountStaking(String address) async {
     if (address != null && address.isNotEmpty) {
-      var res = await apiRoot
+      Map ledger = await apiRoot
           .evalJavascript('api.derive.staking.account("$address")');
-      store.staking.setLedger(address, res, reset: true);
 
-      List addressesNeedIcons = res['nominators'] ?? List();
+      List addressesNeedIcons = ledger['nominators'] ?? List();
 
-      if (res['stakingLedger'] == null) {
+      if (ledger['stakingLedger'] == null) {
         // get stash account info for a controller address
         var stakingLedger = await Future.wait([
           apiRoot.evalJavascript('api.query.staking.ledger("$address")'),
@@ -27,7 +26,7 @@ class ApiStaking {
         ]);
         if (stakingLedger[0] != null) {
           stakingLedger[0]['payee'] = stakingLedger[1];
-          store.staking.setLedger(address, {'stakingLedger': stakingLedger[0]});
+          ledger['stakingLedger'] = stakingLedger[0];
 
           // get stash's pubKey
           apiRoot.account.decodeAddress([stakingLedger[0]['stash']]);
@@ -38,10 +37,13 @@ class ApiStaking {
         // get controller address info for a stash account
 
         // get controller's pubKey
-        apiRoot.account.decodeAddress([res['controllerId']]);
+        apiRoot.account.decodeAddress([ledger['controllerId']]);
         // get controller's icon
-        addressesNeedIcons.add(res['controllerId']);
+        addressesNeedIcons.add(ledger['controllerId']);
       }
+
+      store.staking
+          .setLedger(address, Map<String, dynamic>.of(ledger), reset: true);
 
       // get nominators' icons
       if (addressesNeedIcons.length > 0) {

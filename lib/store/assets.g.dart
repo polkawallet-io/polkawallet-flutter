@@ -182,6 +182,13 @@ mixin _$AssetsStore on _AssetsStore, Store {
     return _$setBlockMapAsyncAction.run(() => super.setBlockMap(data));
   }
 
+  final _$loadAccountCacheAsyncAction = AsyncAction('loadAccountCache');
+
+  @override
+  Future<void> loadAccountCache() {
+    return _$loadAccountCacheAsyncAction.run(() => super.loadAccountCache());
+  }
+
   final _$loadCacheAsyncAction = AsyncAction('loadCache');
 
   @override

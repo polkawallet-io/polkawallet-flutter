@@ -243,6 +243,13 @@ mixin _$StakingStore on _StakingStore, Store {
         .run(() => super.addTxs(ls, shouldCache: shouldCache));
   }
 
+  final _$loadAccountCacheAsyncAction = AsyncAction('loadAccountCache');
+
+  @override
+  Future<void> loadAccountCache() {
+    return _$loadAccountCacheAsyncAction.run(() => super.loadAccountCache());
+  }
+
   final _$loadCacheAsyncAction = AsyncAction('loadCache');
 
   @override
@@ -296,10 +303,10 @@ mixin _$StakingStore on _StakingStore, Store {
   }
 
   @override
-  void clearSate() {
+  void clearState() {
     final _$actionInfo = _$_StakingStoreActionController.startAction();
     try {
-      return super.clearSate();
+      return super.clearState();
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }

@@ -42,7 +42,6 @@ class ApiGovernance {
       List list = data['referendums'];
       if (list.length > 0) {
         list.asMap().forEach((k, v) => v['detail'] = data['details'][k]);
-        print(list[0]['detail']);
         store.gov.setReferendums(List<Map<String, dynamic>>.from(list));
         fetchReferendumVotes(List<int>.from(list.map((i) => i['index'])));
       }

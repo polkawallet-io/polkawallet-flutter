@@ -132,7 +132,7 @@ class Api {
 
   Future<void> changeNode(String endpoint) async {
     store.settings.setNetworkLoading(true);
-    store.staking.clearSate();
+    store.staking.clearState();
     store.gov.clearSate();
     String res = await evalJavascript('settings.changeEndpoint("$endpoint")');
     if (res == null) {

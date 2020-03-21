@@ -59,8 +59,11 @@ class _StakingActions extends State<StakingActions>
 
   void _changeCurrentAccount(AccountData acc) {
     store.account.setCurrentAccount(acc);
+    // refresh user's assets info
+    store.assets.loadAccountCache();
     // refresh user's staking & gov info
     store.gov.clearSate();
+    store.staking.loadAccountCache();
     globalBondingRefreshKey.currentState.show();
   }
 
