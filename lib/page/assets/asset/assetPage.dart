@@ -37,9 +37,9 @@ class _AssetPageState extends State<AssetPage>
   ScrollController _scrollController;
 
   Future<void> _updateData() async {
-    String address = store.account.currentAddress;
-    webApi.assets.fetchBalance(address);
-    webApi.staking.fetchAccountStaking(address);
+    String pubKey = store.account.currentAccount.pubKey;
+    webApi.assets.fetchBalance(pubKey);
+    webApi.staking.fetchAccountStaking(pubKey);
     List res = await webApi.assets.updateTxs(_txsPage);
     if (res.length < tx_list_page_size) {
       setState(() {

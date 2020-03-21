@@ -89,8 +89,8 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  void setAccountBalance(String address, String amt) {
-    if (account.currentAddress != address) return;
+  void setAccountBalance(String pubKey, String amt) {
+    if (account.currentAccount.pubKey != pubKey) return;
 
     balance = amt;
 

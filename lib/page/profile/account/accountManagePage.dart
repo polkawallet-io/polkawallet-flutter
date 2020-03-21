@@ -43,14 +43,14 @@ class AccountManagePage extends StatelessWidget {
         );
       } else {
         store.account.removeAccount(store.account.currentAccount).then((_) {
-          String addressNew = store.account.currentAddress;
+          String pubKey = store.account.currentAccount.pubKey;
           // refresh balance
           store.assets.loadAccountCache();
-          webApi.assets.fetchBalance(addressNew);
+          webApi.assets.fetchBalance(pubKey);
           // refresh user's staking & gov info
           store.gov.clearSate();
           store.staking.loadAccountCache();
-          webApi.staking.fetchAccountStaking(addressNew);
+          webApi.staking.fetchAccountStaking(pubKey);
         });
         Navigator.popUntil(context, ModalRoute.withName('/'));
       }

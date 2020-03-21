@@ -30,8 +30,8 @@ class _AssetsState extends State<Assets> {
 
   Future<void> _fetchBalance() async {
     await Future.wait([
-      webApi.assets.fetchBalance(store.account.currentAddress),
-      webApi.staking.fetchAccountStaking(store.account.currentAddress),
+      webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
+      webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
     ]);
   }
 

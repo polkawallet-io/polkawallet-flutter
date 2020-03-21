@@ -11,8 +11,9 @@ class ApiStaking {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<void> fetchAccountStaking(String address) async {
-    if (address != null && address.isNotEmpty) {
+  Future<void> fetchAccountStaking(String pubKey) async {
+    if (pubKey != null && pubKey.isNotEmpty) {
+      String address = store.account.pubKeyAddressMap[pubKey];
       Map ledger = await apiRoot
           .evalJavascript('api.derive.staking.account("$address")');
 
@@ -43,7 +44,7 @@ class ApiStaking {
       }
 
       store.staking
-          .setLedger(address, Map<String, dynamic>.of(ledger), reset: true);
+          .setLedger(pubKey, Map<String, dynamic>.of(ledger), reset: true);
 
       // get nominators' icons
       if (addressesNeedIcons.length > 0) {

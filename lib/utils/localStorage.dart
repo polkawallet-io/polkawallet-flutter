@@ -93,7 +93,8 @@ class LocalStorage {
     return data[accPubKey];
   }
 
-  static const int customCacheTimeLength = 5 * 50 * 1000;
+  // cache timeout 10 minutes
+  static const int customCacheTimeLength = 10 * 60 * 1000;
 
   static bool checkCacheTimeout(int cacheTime) {
     return DateTime.now().millisecondsSinceEpoch - customCacheTimeLength >

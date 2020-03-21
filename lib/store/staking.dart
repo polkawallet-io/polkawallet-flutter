@@ -163,12 +163,12 @@ abstract class _StakingStore with Store {
 
   @action
   void setLedger(
-    String address,
+    String pubKey,
     Map<String, dynamic> data, {
     bool shouldCache = true,
     bool reset = false,
   }) {
-    if (account.currentAddress != address) return;
+    if (account.currentAccount.pubKey != pubKey) return;
 
     if (reset) {
       ledger = ObservableMap.of(data);

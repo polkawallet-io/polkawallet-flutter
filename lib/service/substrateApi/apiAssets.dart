@@ -10,11 +10,12 @@ class ApiAssets {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<void> fetchBalance(String address) async {
-    if (address != null && address.isNotEmpty) {
+  Future<void> fetchBalance(String pubKey) async {
+    if (pubKey != null && pubKey.isNotEmpty) {
+      String address = store.account.pubKeyAddressMap[pubKey];
       String res =
           await apiRoot.evalJavascript('account.getBalance("$address")');
-      store.assets.setAccountBalance(address, res);
+      store.assets.setAccountBalance(pubKey, res);
     }
   }
 

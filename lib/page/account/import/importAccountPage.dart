@@ -63,7 +63,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
         appBar: AppBar(
           title: Text(I18n.of(context).home['import']),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back_ios),
             onPressed: () {
               setState(() {
                 _step = 0;

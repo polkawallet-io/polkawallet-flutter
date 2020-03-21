@@ -110,10 +110,11 @@ class ApiAccount {
       }
 
       // fetch info for the imported account
-      apiRoot.assets.fetchBalance(acc['address']);
-      apiRoot.staking.fetchAccountStaking(acc['address']);
-      fetchAccountsBonded([acc['pubKey']]);
-      getPubKeyIcons([acc['pubKey']]);
+      String pubKey = acc['pubKey'];
+      apiRoot.assets.fetchBalance(pubKey);
+      apiRoot.staking.fetchAccountStaking(pubKey);
+      fetchAccountsBonded([pubKey]);
+      getPubKeyIcons([pubKey]);
     }
     return acc;
   }

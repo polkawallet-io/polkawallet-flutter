@@ -49,12 +49,11 @@ class _StakingActions extends State<StakingActions>
     if (store.settings.loading) {
       return;
     }
-    String address = store.account.currentAddress;
     await Future.wait([
-      webApi.assets.fetchBalance(address),
-      webApi.staking.fetchAccountStaking(address),
+      webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
+      webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
     ]);
-    webApi.staking.fetchAccountRewards(address);
+    webApi.staking.fetchAccountRewards(store.account.currentAddress);
   }
 
   void _changeCurrentAccount(AccountData acc) {

@@ -80,6 +80,7 @@ class _WalletAppState extends State<WalletApp> {
   Future<int> _initStore(BuildContext context) async {
     if (!_appStore.isReady) {
       print('initailizing app state');
+      print('sys locale: ${Localizations.localeOf(context)}');
       await _appStore.init(Localizations.localeOf(context).toString());
 
       // init webApi after store initiated

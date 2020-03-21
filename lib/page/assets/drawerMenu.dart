@@ -34,7 +34,7 @@ class DrawerMenu extends StatelessWidget {
           // refresh user's staking & gov info
           store.gov.clearSate();
           store.staking.loadAccountCache();
-          webApi.staking.fetchAccountStaking(address);
+          webApi.staking.fetchAccountStaking(i.pubKey);
         },
       );
     }).toList();

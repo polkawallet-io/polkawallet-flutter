@@ -37,7 +37,10 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
 
     return Observer(
       builder: (_) => Scaffold(
-        appBar: AppBar(title: Text(I18n.of(context).home['create'])),
+        appBar: AppBar(
+          title: Text(I18n.of(context).home['create']),
+          centerTitle: true,
+        ),
         body: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -100,7 +103,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
       appBar: AppBar(
         title: Text(I18n.of(context).home['create']),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
             setState(() {
               _step = 0;

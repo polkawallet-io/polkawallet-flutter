@@ -163,8 +163,8 @@ class Api {
 
       // fetch account balance
       await Future.wait([
-        assets.fetchBalance(store.account.currentAddress),
-        staking.fetchAccountStaking(store.account.currentAddress),
+        assets.fetchBalance(store.account.currentAccount.pubKey),
+        staking.fetchAccountStaking(store.account.currentAccount.pubKey),
         account.fetchAccountsBonded(
             store.account.accountList.map((i) => i.pubKey).toList()),
       ]);
