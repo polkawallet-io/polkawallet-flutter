@@ -11,7 +11,8 @@ class ApiGovernance {
   final store = globalAppStore;
 
   Future<List> updateDemocracyVotes(String address) async {
-    String data = await PolkaScanApi.fetchDemocracyVotes(address);
+    String data = await PolkaScanApi.fetchTxs(address,
+        module: PolkaScanApi.module_democracy);
     List ls = jsonDecode(data)['data'];
     var details = await Future.wait(ls
         .map((i) => PolkaScanApi.fetchTx(i['attributes']['extrinsic_hash']))

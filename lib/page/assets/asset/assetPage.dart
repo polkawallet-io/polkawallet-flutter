@@ -136,10 +136,10 @@ class _AssetPageState extends State<AssetPage>
                 ],
               ),
             ),
-            onTap: () {
-              store.assets.setTxDetail(i);
-              Navigator.pushNamed(context, TransferDetailPage.route);
-            }),
+            onTap: block != null ? () {
+              Navigator.pushNamed(context, TransferDetailPage.route,
+                  arguments: i);
+            }: null,),
       );
     }).toList();
   }

@@ -107,7 +107,7 @@ class _AssetsState extends State<Assets> {
                         'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
                   ),
                   title: Text(symbol ?? ''),
-                  subtitle: Text(networkName.isNotEmpty ? networkName : '~'),
+                  subtitle: Text(networkName ?? '~'),
                   trailing: Text(
                     Fmt.balance(store.assets.balance),
                     style: TextStyle(

@@ -42,9 +42,6 @@ abstract class _AssetsStore with Store {
   int txsFilter = 0;
 
   @observable
-  TransferData txDetail = TransferData();
-
-  @observable
   ObservableMap<int, BlockData> blockMap = ObservableMap<int, BlockData>();
 
   @computed
@@ -144,11 +141,6 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  void setTxDetail(TransferData tx) {
-    txDetail = tx;
-  }
-
-  @action
   void setSubmitting(bool isSubmitting) {
     submitting = isSubmitting;
   }
@@ -198,6 +190,7 @@ class TransferData extends _TransferData with _$TransferData {
     TransferData tx = TransferData();
     tx.type = json['type'];
     tx.id = json['id'];
+    tx.hash = json['hash'];
     tx.block = json['attributes']['block_id'];
     tx.value = json['attributes']['value'];
     tx.fee = json['attributes']['fee'];
@@ -216,6 +209,9 @@ abstract class _TransferData with Store {
 
   @observable
   String id = '';
+
+  @observable
+  String hash = '';
 
   @observable
   int block = 0;

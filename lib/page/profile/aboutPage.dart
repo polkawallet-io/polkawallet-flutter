@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
+import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class AboutPage extends StatelessWidget {
@@ -10,6 +11,7 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var dic = I18n.of(context).profile;
     return Scaffold(
+      backgroundColor: Theme.of(context).cardColor,
       appBar: AppBar(
         title: Text(dic['about']),
         centerTitle: true,
@@ -32,9 +34,9 @@ class AboutPage extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: Text(
-                'https://polkawallet.io',
-                style: Theme.of(context).textTheme.display4,
+              child: Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: JumpToBrowserLink('https://polkawallet.io'),
               ),
             ),
             FutureBuilder<PackageInfo>(

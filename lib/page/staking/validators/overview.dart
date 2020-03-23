@@ -176,6 +176,8 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     String address = store.account.currentAddress;
 
+    List nominators = store.staking.ledger['nominators'];
+
     return Container(
       padding: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
@@ -184,8 +186,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
         ),
       ),
       child: Column(
-        children:
-            List<Widget>.from(store.staking.ledger['nominators'].map((id) {
+        children: List<Widget>.from(nominators.map((id) {
           ValidatorData validator;
           int validatorIndex =
               store.staking.validatorsInfo.indexWhere((i) => i.accountId == id);

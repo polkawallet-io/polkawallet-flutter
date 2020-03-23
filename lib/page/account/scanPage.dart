@@ -54,7 +54,18 @@ class ScanPage extends StatelessWidget {
         future: canOpenCamera(),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasData && snapshot.data == true) {
-            return QrcodeReaderView(key: _qrViewKey, onScan: onScan);
+            return QrcodeReaderView(
+                key: _qrViewKey,
+                headerWidget: SafeArea(
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios,
+                      color: Theme.of(context).cardColor,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+                onScan: onScan);
           } else {
             return Container();
           }

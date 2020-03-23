@@ -17,7 +17,8 @@ class TransferDetailPage extends StatelessWidget {
     final Map<String, String> dic = I18n.of(context).assets;
     final String symbol = store.settings.networkState.tokenSymbol;
     final int decimals = store.settings.networkState.tokenDecimals;
-    final TransferData tx = store.assets.txDetail;
+
+    final TransferData tx = ModalRoute.of(context).settings.arguments;
     final BlockData block = store.assets.blockMap[tx.block];
 
     final String txType = tx.sender == store.account.currentAddress
@@ -28,7 +29,9 @@ class TransferDetailPage extends StatelessWidget {
       success: true,
       action: txType,
       eventId: tx.id,
+      hash: tx.hash,
       block: block,
+      networkName: store.settings.networkName,
       info: <DetailInfoItem>[
         DetailInfoItem(
           label: dic['value'],

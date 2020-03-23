@@ -56,7 +56,7 @@ class WalletApp extends StatefulWidget {
 }
 
 class _WalletAppState extends State<WalletApp> {
-  final _appStore = globalAppStore;
+  AppStore _appStore;
 
   Locale _locale = const Locale('en', '');
 
@@ -78,7 +78,8 @@ class _WalletAppState extends State<WalletApp> {
   }
 
   Future<int> _initStore(BuildContext context) async {
-    if (!_appStore.isReady) {
+    if (_appStore == null) {
+      _appStore = globalAppStore;
       print('initailizing app state');
       print('sys locale: ${Localizations.localeOf(context)}');
       await _appStore.init(Localizations.localeOf(context).toString());

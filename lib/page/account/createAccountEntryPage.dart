@@ -11,6 +11,7 @@ class CreateAccountEntryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).cardColor,
       appBar: AppBar(title: Text(I18n.of(context).home['create'])),
       body: SafeArea(
         child: Column(

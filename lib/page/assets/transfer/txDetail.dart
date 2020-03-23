@@ -1,22 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TxDetail extends StatelessWidget {
   TxDetail({
     this.success,
+    this.networkName,
     this.action,
     this.eventId,
+    this.hash,
     this.block,
     this.info,
   });
 
   final bool success;
+  final String networkName;
   final String action;
   final String eventId;
+  final String hash;
   final BlockData block;
   final List<DetailInfoItem> info;
 
@@ -71,16 +77,24 @@ class TxDetail extends StatelessWidget {
         leading: buildLabel(dic['event']),
         title: Text(eventId),
       ),
-      ListTile(
-        leading: buildLabel(dic['block']),
-        title: Text('#${block.id}'),
-      ),
-      ListTile(
-        leading: buildLabel(dic['hash']),
-        title: Text(Fmt.address(block.hash)),
-      ),
-      Container(
-        height: 16,
+      block != null
+          ? ListTile(
+              leading: buildLabel(dic['block']),
+              title: Text('#${block.id}'),
+            )
+          : Container(),
+      block != null
+          ? ListTile(
+              leading: buildLabel(dic['hash']),
+              title: Text(Fmt.address(block.hash)),
+            )
+          : Container(),
+      Padding(
+        padding: EdgeInsets.only(top: 8, bottom: 32),
+        child: JumpToBrowserLink(
+          'https://polkascan.io/pre/${networkName.toLowerCase()}/transaction/0x$hash',
+          text: dic['polkascan'],
+        ),
       )
     ]);
     return list;

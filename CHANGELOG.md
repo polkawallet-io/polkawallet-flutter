@@ -1,3 +1,9 @@
+# 0.6.1
+- fix nominator list bug
+- Refactor pending payouts query
+- Add polkascan links
+- Add back button in QRCode scan page
+
 # 0.6.0
 - Show different UI for stash/controller account of staking
 - Refactor address form item in tx form

@@ -17,15 +17,25 @@ class ApiStaking {
       Map ledger = await apiRoot
           .evalJavascript('api.derive.staking.account("$address")');
 
-      List addressesNeedIcons = ledger['nominators'] ?? List();
+      List addressesNeedIcons =
+          ledger['nominators'] != null ? List.of(ledger['nominators']) : List();
 
       if (ledger['stakingLedger'] == null) {
         // get stash account info for a controller address
         var stakingLedger = await Future.wait([
           apiRoot.evalJavascript('api.query.staking.ledger("$address")'),
-          apiRoot.evalJavascript('api.query.staking.payee("$address")')
+          apiRoot.evalJavascript('api.query.staking.payee("$address")'),
         ]);
         if (stakingLedger[0] != null) {
+          var nominators = await apiRoot.evalJavascript(
+              'api.query.staking.nominators("${stakingLedger[0]['stash']}")');
+          if (nominators != null) {
+            ledger['nominators'] = nominators['targets'];
+            addressesNeedIcons.addAll(List.of(nominators['targets']));
+          } else {
+            ledger['nominators'] = [];
+          }
+
           stakingLedger[0]['payee'] = stakingLedger[1];
           ledger['stakingLedger'] = stakingLedger[0];
 
@@ -83,8 +93,8 @@ class ApiStaking {
   }
 
   Future<List> updateStaking(int page) async {
-    String data =
-        await PolkaScanApi.fetchStaking(store.account.currentAddress, page);
+    String data = await PolkaScanApi.fetchTxs(store.account.currentAddress,
+        page: page, module: PolkaScanApi.module_staking);
     var ls = jsonDecode(data)['data'];
     var detailReqs = List<Future<dynamic>>();
     ls.forEach((i) => detailReqs

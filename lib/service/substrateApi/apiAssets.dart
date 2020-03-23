@@ -21,18 +21,26 @@ class ApiAssets {
 
   Future<List> updateTxs(int page) async {
     String address = store.account.currentAddress;
-    String data = await PolkaScanApi.fetchTxs(address, page);
-    List ls = jsonDecode(data)['data'];
+    List<String> data = await Future.wait([
+      PolkaScanApi.fetchTransfers(address, page),
+      PolkaScanApi.fetchTxs(address,
+          page: page, module: PolkaScanApi.module_balances),
+    ]);
+    List transfers = jsonDecode(data[0])['data'];
+    List txs = jsonDecode(data[1])['data'];
+    transfers.asMap().forEach((k, v) {
+      v['hash'] = txs[k]['attributes']['extrinsic_hash'];
+    });
 
     if (page == 1) {
       store.assets.clearTxs();
       store.assets.setTxsLoading(true);
     }
     // cache first page of txs
-    await store.assets.addTxs(ls, address, shouldCache: page == 1);
+    await store.assets.addTxs(transfers, address, shouldCache: page == 1);
 
-    await apiRoot.updateBlocks(ls);
+    await apiRoot.updateBlocks(transfers);
     store.assets.setTxsLoading(false);
-    return ls;
+    return transfers;
   }
 }

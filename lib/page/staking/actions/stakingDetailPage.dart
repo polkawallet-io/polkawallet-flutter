@@ -59,8 +59,10 @@ class StakingDetailPage extends StatelessWidget {
     return block == null
         ? Container()
         : TxDetail(
+            networkName: store.settings.networkName,
             success: detail['attributes']['success'] > 0,
             action: action,
+            hash: detail['attributes']['extrinsic_hash'],
             eventId: detail['id'],
             block: store.assets.blockMap[detail['attributes']['block_id']],
             info: info,

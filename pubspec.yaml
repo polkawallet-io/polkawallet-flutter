@@ -11,7 +11,7 @@ description: PolkaWallet made with Flutter.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.6.0
+version: 0.6.1
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -50,6 +50,8 @@ dependencies:
   charts_flutter: ^0.8.1
   # svg renderer
   flutter_svg: ^0.17.2
+  # open link in browser
+  url_launcher: ^5.4.2
 
 dev_dependencies:
   flutter_launcher_icons: "^0.7.3"

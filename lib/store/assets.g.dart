@@ -126,23 +126,6 @@ mixin _$AssetsStore on _AssetsStore, Store {
     }, _$txsFilterAtom, name: '${_$txsFilterAtom.name}_set');
   }
 
-  final _$txDetailAtom = Atom(name: '_AssetsStore.txDetail');
-
-  @override
-  TransferData get txDetail {
-    _$txDetailAtom.context.enforceReadPolicy(_$txDetailAtom);
-    _$txDetailAtom.reportObserved();
-    return super.txDetail;
-  }
-
-  @override
-  set txDetail(TransferData value) {
-    _$txDetailAtom.context.conditionallyRunInAction(() {
-      super.txDetail = value;
-      _$txDetailAtom.reportChanged();
-    }, _$txDetailAtom, name: '${_$txDetailAtom.name}_set');
-  }
-
   final _$blockMapAtom = Atom(name: '_AssetsStore.blockMap');
 
   @override
@@ -209,10 +192,10 @@ mixin _$AssetsStore on _AssetsStore, Store {
   }
 
   @override
-  void setAccountBalance(String address, String amt) {
+  void setAccountBalance(String pubKey, String amt) {
     final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
-      return super.setAccountBalance(address, amt);
+      return super.setAccountBalance(pubKey, amt);
     } finally {
       _$_AssetsStoreActionController.endAction(_$actionInfo);
     }
@@ -223,16 +206,6 @@ mixin _$AssetsStore on _AssetsStore, Store {
     final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
       return super.setTxsFilter(filter);
-    } finally {
-      _$_AssetsStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setTxDetail(TransferData tx) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction();
-    try {
-      return super.setTxDetail(tx);
     } finally {
       _$_AssetsStoreActionController.endAction(_$actionInfo);
     }
@@ -282,6 +255,23 @@ mixin _$TransferData on _TransferData, Store {
       super.id = value;
       _$idAtom.reportChanged();
     }, _$idAtom, name: '${_$idAtom.name}_set');
+  }
+
+  final _$hashAtom = Atom(name: '_TransferData.hash');
+
+  @override
+  String get hash {
+    _$hashAtom.context.enforceReadPolicy(_$hashAtom);
+    _$hashAtom.reportObserved();
+    return super.hash;
+  }
+
+  @override
+  set hash(String value) {
+    _$hashAtom.context.conditionallyRunInAction(() {
+      super.hash = value;
+      _$hashAtom.reportChanged();
+    }, _$hashAtom, name: '${_$hashAtom.name}_set');
   }
 
   final _$blockAtom = Atom(name: '_TransferData.block');

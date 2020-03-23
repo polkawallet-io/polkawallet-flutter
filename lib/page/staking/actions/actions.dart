@@ -134,10 +134,12 @@ class _StakingActions extends State<StakingActions>
                     )
             ],
           ),
-          onTap: () {
-            Navigator.of(context)
-                .pushNamed(StakingDetailPage.route, arguments: i);
-          },
+          onTap: block != null
+              ? () {
+                  Navigator.of(context)
+                      .pushNamed(StakingDetailPage.route, arguments: i);
+                }
+              : null,
         ),
       );
     }).toList();
