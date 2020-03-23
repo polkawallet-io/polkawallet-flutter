@@ -13,7 +13,8 @@ AccountData _$AccountDataFromJson(Map<String, dynamic> json) {
     ..encoded = json['encoded'] as String
     ..pubKey = json['pubKey'] as String
     ..encoding = json['encoding'] as Map<String, dynamic>
-    ..meta = json['meta'] as Map<String, dynamic>;
+    ..meta = json['meta'] as Map<String, dynamic>
+    ..memo = json['memo'] as String;
 }
 
 Map<String, dynamic> _$AccountDataToJson(AccountData instance) =>
@@ -24,6 +25,7 @@ Map<String, dynamic> _$AccountDataToJson(AccountData instance) =>
       'pubKey': instance.pubKey,
       'encoding': instance.encoding,
       'meta': instance.meta,
+      'memo': instance.memo,
     };
 
 // **************************************************************************
@@ -132,6 +134,23 @@ mixin _$AccountStore on _AccountStore, Store {
     }, _$accountIndexMapAtom, name: '${_$accountIndexMapAtom.name}_set');
   }
 
+  final _$pubKeyBondedMapAtom = Atom(name: '_AccountStore.pubKeyBondedMap');
+
+  @override
+  ObservableMap<String, AccountBondedInfo> get pubKeyBondedMap {
+    _$pubKeyBondedMapAtom.context.enforceReadPolicy(_$pubKeyBondedMapAtom);
+    _$pubKeyBondedMapAtom.reportObserved();
+    return super.pubKeyBondedMap;
+  }
+
+  @override
+  set pubKeyBondedMap(ObservableMap<String, AccountBondedInfo> value) {
+    _$pubKeyBondedMapAtom.context.conditionallyRunInAction(() {
+      super.pubKeyBondedMap = value;
+      _$pubKeyBondedMapAtom.reportChanged();
+    }, _$pubKeyBondedMapAtom, name: '${_$pubKeyBondedMapAtom.name}_set');
+  }
+
   final _$pubKeyAddressMapAtom = Atom(name: '_AccountStore.pubKeyAddressMap');
 
   @override
@@ -149,21 +168,38 @@ mixin _$AccountStore on _AccountStore, Store {
     }, _$pubKeyAddressMapAtom, name: '${_$pubKeyAddressMapAtom.name}_set');
   }
 
-  final _$accountIconsMapAtom = Atom(name: '_AccountStore.accountIconsMap');
+  final _$pubKeyIconsMapAtom = Atom(name: '_AccountStore.pubKeyIconsMap');
 
   @override
-  ObservableMap<String, String> get accountIconsMap {
-    _$accountIconsMapAtom.context.enforceReadPolicy(_$accountIconsMapAtom);
-    _$accountIconsMapAtom.reportObserved();
-    return super.accountIconsMap;
+  ObservableMap<String, String> get pubKeyIconsMap {
+    _$pubKeyIconsMapAtom.context.enforceReadPolicy(_$pubKeyIconsMapAtom);
+    _$pubKeyIconsMapAtom.reportObserved();
+    return super.pubKeyIconsMap;
   }
 
   @override
-  set accountIconsMap(ObservableMap<String, String> value) {
-    _$accountIconsMapAtom.context.conditionallyRunInAction(() {
-      super.accountIconsMap = value;
-      _$accountIconsMapAtom.reportChanged();
-    }, _$accountIconsMapAtom, name: '${_$accountIconsMapAtom.name}_set');
+  set pubKeyIconsMap(ObservableMap<String, String> value) {
+    _$pubKeyIconsMapAtom.context.conditionallyRunInAction(() {
+      super.pubKeyIconsMap = value;
+      _$pubKeyIconsMapAtom.reportChanged();
+    }, _$pubKeyIconsMapAtom, name: '${_$pubKeyIconsMapAtom.name}_set');
+  }
+
+  final _$addressIconsMapAtom = Atom(name: '_AccountStore.addressIconsMap');
+
+  @override
+  ObservableMap<String, String> get addressIconsMap {
+    _$addressIconsMapAtom.context.enforceReadPolicy(_$addressIconsMapAtom);
+    _$addressIconsMapAtom.reportObserved();
+    return super.addressIconsMap;
+  }
+
+  @override
+  set addressIconsMap(ObservableMap<String, String> value) {
+    _$addressIconsMapAtom.context.conditionallyRunInAction(() {
+      super.addressIconsMap = value;
+      _$addressIconsMapAtom.reportChanged();
+    }, _$addressIconsMapAtom, name: '${_$addressIconsMapAtom.name}_set');
   }
 
   final _$updateAccountAsyncAction = AsyncAction('updateAccount');
@@ -194,38 +230,54 @@ mixin _$AccountStore on _AccountStore, Store {
     return _$loadAccountAsyncAction.run(() => super.loadAccount());
   }
 
-  final _$encryptMnemonicAsyncAction = AsyncAction('encryptMnemonic');
+  final _$setAccountsBondedAsyncAction = AsyncAction('setAccountsBonded');
 
   @override
-  Future<void> encryptMnemonic(
-      String pubKey, String mnemonic, String password) {
-    return _$encryptMnemonicAsyncAction
-        .run(() => super.encryptMnemonic(pubKey, mnemonic, password));
+  Future<void> setAccountsBonded(List ls) {
+    return _$setAccountsBondedAsyncAction
+        .run(() => super.setAccountsBonded(ls));
   }
 
-  final _$decryptMnemonicAsyncAction = AsyncAction('decryptMnemonic');
+  final _$encryptSeedAsyncAction = AsyncAction('encryptSeed');
 
   @override
-  Future<String> decryptMnemonic(String pubKey, String password) {
-    return _$decryptMnemonicAsyncAction
-        .run(() => super.decryptMnemonic(pubKey, password));
+  Future<void> encryptSeed(
+      String pubKey, String seed, String seedType, String password) {
+    return _$encryptSeedAsyncAction
+        .run(() => super.encryptSeed(pubKey, seed, seedType, password));
   }
 
-  final _$checkMnemonicExistAsyncAction = AsyncAction('checkMnemonicExist');
+  final _$decryptSeedAsyncAction = AsyncAction('decryptSeed');
 
   @override
-  Future<bool> checkMnemonicExist(String pubKey) {
-    return _$checkMnemonicExistAsyncAction
-        .run(() => super.checkMnemonicExist(pubKey));
+  Future<String> decryptSeed(String pubKey, String seedType, String password) {
+    return _$decryptSeedAsyncAction
+        .run(() => super.decryptSeed(pubKey, seedType, password));
   }
 
-  final _$updateMnemonicAsyncAction = AsyncAction('updateMnemonic');
+  final _$checkSeedExistAsyncAction = AsyncAction('checkSeedExist');
 
   @override
-  Future<void> updateMnemonic(
+  Future<bool> checkSeedExist(String seedType, String pubKey) {
+    return _$checkSeedExistAsyncAction
+        .run(() => super.checkSeedExist(seedType, pubKey));
+  }
+
+  final _$updateSeedAsyncAction = AsyncAction('updateSeed');
+
+  @override
+  Future<void> updateSeed(
       String pubKey, String passwordOld, String passwordNew) {
-    return _$updateMnemonicAsyncAction
-        .run(() => super.updateMnemonic(pubKey, passwordOld, passwordNew));
+    return _$updateSeedAsyncAction
+        .run(() => super.updateSeed(pubKey, passwordOld, passwordNew));
+  }
+
+  final _$deleteSeedAsyncAction = AsyncAction('deleteSeed');
+
+  @override
+  Future<void> deleteSeed(String seedType, String pubKey) {
+    return _$deleteSeedAsyncAction
+        .run(() => super.deleteSeed(seedType, pubKey));
   }
 
   final _$_AccountStoreActionController =
@@ -292,10 +344,20 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void setAccountIconsMap(List list) {
+  void setPubKeyIconsMap(List list) {
     final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
-      return super.setAccountIconsMap(list);
+      return super.setPubKeyIconsMap(list);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setAddressIconsMap(List list) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    try {
+      return super.setAddressIconsMap(list);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }
@@ -466,5 +528,22 @@ mixin _$AccountData on _AccountData, Store {
       super.meta = value;
       _$metaAtom.reportChanged();
     }, _$metaAtom, name: '${_$metaAtom.name}_set');
+  }
+
+  final _$memoAtom = Atom(name: '_AccountData.memo');
+
+  @override
+  String get memo {
+    _$memoAtom.context.enforceReadPolicy(_$memoAtom);
+    _$memoAtom.reportObserved();
+    return super.memo;
+  }
+
+  @override
+  set memo(String value) {
+    _$memoAtom.context.conditionallyRunInAction(() {
+      super.memo = value;
+      _$memoAtom.reportChanged();
+    }, _$memoAtom, name: '${_$memoAtom.name}_set');
   }
 }

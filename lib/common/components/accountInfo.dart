@@ -11,7 +11,7 @@ class AccountInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> list = [];
-
+    bool hasJudgements = false;
     if (accInfo != null) {
       List<Widget> ls = [];
       accInfo['identity'].keys.forEach((k) {
@@ -27,6 +27,8 @@ class AccountInfo extends StatelessWidget {
           ));
         }
       });
+      List judgements = accInfo['identity']['judgements'];
+      hasJudgements = judgements.length > 0;
 
       if (ls.length > 0) {
         list.add(Divider());
@@ -39,12 +41,19 @@ class AccountInfo extends StatelessWidget {
       children: <Widget>[
         Padding(
           padding: EdgeInsets.only(top: 16, bottom: 8),
-          child: AddressIcon(address: address),
+          child: AddressIcon(address),
         ),
-        accInfo != null ? Text(accInfo['accountIndex']) : Container(),
+//        accInfo != null ? Text(accInfo['accountIndex']) : Container(),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            hasJudgements
+                ? Container(
+                    width: 16,
+                    margin: EdgeInsets.only(right: 8),
+                    child: Image.asset('assets/images/assets/success.png'),
+                  )
+                : Container(),
             Text(Fmt.address(address)),
             IconButton(
               icon: Image.asset('assets/images/public/copy.png'),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
+import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -16,7 +18,7 @@ class DrawerMenu extends StatelessWidget {
     return store.account.optionalAccounts.map((i) {
       String address = store.account.pubKeyAddressMap[i.pubKey];
       return ListTile(
-        leading: AddressIcon(address: address ?? i.address, size: 36),
+        leading: AddressIcon(i.address, pubKey: i.pubKey, size: 36),
         title: Text(i.name ?? 'name',
             style: TextStyle(fontSize: 16, color: Colors.white)),
         subtitle: Text(
@@ -27,11 +29,12 @@ class DrawerMenu extends StatelessWidget {
           Navigator.pop(context);
           store.account.setCurrentAccount(i);
           // refresh balance
+          store.assets.loadAccountCache();
           globalBalanceRefreshKey.currentState.show();
           // refresh user's staking & gov info
-          store.staking.clearSate();
           store.gov.clearSate();
-          webApi.staking.fetchAccountStaking(address);
+          store.staking.loadAccountCache();
+          webApi.staking.fetchAccountStaking(i.pubKey);
         },
       );
     }).toList();
@@ -64,8 +67,8 @@ class DrawerMenu extends StatelessWidget {
             Container(
               color: Colors.indigo,
               child: ListTile(
-                leading: AddressIcon(
-                    address: store.account.currentAddress, size: 36),
+                leading: AddressIcon('',
+                    pubKey: store.account.currentAccount.pubKey, size: 36),
                 title: Text(store.account.currentAccount.name ?? 'name',
                     style: TextStyle(fontSize: 16, color: Colors.white)),
                 subtitle: Text(
@@ -86,8 +89,8 @@ class DrawerMenu extends StatelessWidget {
               ),
               title: Text(I18n.of(context).home['scan'],
                   style: TextStyle(fontSize: 16, color: Colors.white)),
-              onTap: () => Navigator.pushNamed(context, '/account/scan',
-                  arguments: 'tx'),
+              onTap: () =>
+                  Navigator.pushNamed(context, ScanPage.route, arguments: 'tx'),
             ),
             ListTile(
               leading: Container(
@@ -99,7 +102,7 @@ class DrawerMenu extends StatelessWidget {
                   style: TextStyle(fontSize: 16, color: Colors.white)),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, '/account/entry');
+                Navigator.pushNamed(context, CreateAccountEntryPage.route);
               },
             )
           ],

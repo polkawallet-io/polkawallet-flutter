@@ -32,12 +32,18 @@ abstract class _AppStore with Store {
   bool isReady = false;
 
   @action
-  void init(BuildContext context) {
-    settings.init();
-    account.loadAccount();
+  Future<void> init(String sysLocaleCode) async {
+    // wait settings store loaded
+    await settings.init(sysLocaleCode);
+
+    await account.loadAccount();
     assets = AssetsStore(account);
     staking = StakingStore(account);
     gov = GovernanceStore(account);
+
+    assets.loadCache();
+    staking.loadCache();
+    gov.loadCache();
 
     isReady = true;
   }

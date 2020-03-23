@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'staking.g.dart';
 
@@ -14,6 +15,15 @@ abstract class _StakingStore with Store {
   _StakingStore(this.account);
 
   final AccountStore account;
+
+  final String localStorageOverviewKey = 'staking_overview';
+  final String localStorageValidatorsKey = 'validators';
+
+  final String cacheAccountStakingKey = 'account_staking';
+  final String cacheStakingTxsKey = 'staking_txs';
+  final String cacheTimeKey = 'staking_cache_time';
+  @observable
+  int cacheTxsTimestamp = 0;
 
   @observable
   ObservableMap<String, dynamic> overview = ObservableMap<String, dynamic>();
@@ -38,8 +48,7 @@ abstract class _StakingStore with Store {
   ObservableMap<String, dynamic> ledger = ObservableMap<String, dynamic>();
 
   @observable
-  ObservableList<Map<String, dynamic>> txs =
-      ObservableList<Map<String, dynamic>>();
+  ObservableList<Map> txs = ObservableList<Map>();
 
   @observable
   ObservableMap<String, dynamic> rewardsChartDataCache =
@@ -71,8 +80,33 @@ abstract class _StakingStore with Store {
     }));
   }
 
+  @computed
+  int get accountUnlockingTotal {
+    int res = 0;
+    if (ledger['stakingLedger'] == null) {
+      return res;
+    }
+
+    List.of(ledger['stakingLedger']['unlocking']).forEach((i) {
+      res += i['value'];
+    });
+    return res;
+  }
+
+  @computed
+  int get accountRewardTotal {
+    if (ledger['rewards'] == null) {
+      return null;
+    }
+    int res = 0;
+    List.of(ledger['rewards']).forEach((i) {
+      res += i['total'];
+    });
+    return res;
+  }
+
   @action
-  void setValidatorsInfo(Map<String, dynamic> data) {
+  void setValidatorsInfo(Map<String, dynamic> data, {bool shouldCache = true}) {
     int totalStaked = 0;
     var nominators = {};
     List<ValidatorData> ls = List<ValidatorData>();
@@ -90,6 +124,11 @@ abstract class _StakingStore with Store {
     validatorsInfo = ObservableList.of(ls);
     staked = totalStaked;
     nominatorCount = nominators.keys.length;
+
+    // cache data
+    if (shouldCache) {
+      LocalStorage.setKV(localStorageValidatorsKey, data);
+    }
   }
 
   @action
@@ -104,13 +143,47 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void setOverview(Map<String, dynamic> data) {
+  void setOverview(Map<String, dynamic> data, {bool shouldCache = true}) {
     data.keys.forEach((key) => overview[key] = data[key]);
+
+    // show validator's address before we got elected detail info
+    if (validatorsInfo.length == 0 && data['validators'] != null) {
+      List<ValidatorData> list = List.of(data['validators']).map((i) {
+        ValidatorData validator = ValidatorData();
+        validator.accountId = i;
+        return validator;
+      }).toList();
+      validatorsInfo = ObservableList.of(list);
+    }
+
+    if (shouldCache) {
+      LocalStorage.setKV(localStorageOverviewKey, data);
+    }
   }
 
   @action
-  void setLedger(Map<String, dynamic> data) {
-    data.keys.forEach((key) => ledger[key] = data[key]);
+  void setLedger(
+    String pubKey,
+    Map<String, dynamic> data, {
+    bool shouldCache = true,
+    bool reset = false,
+  }) {
+    if (account.currentAccount.pubKey != pubKey) return;
+
+    if (reset) {
+      ledger = ObservableMap.of(data);
+    } else {
+      data.keys.forEach((key) => ledger[key] = data[key]);
+    }
+
+    if (shouldCache) {
+      Map cache = {};
+      ledger.keys.forEach((key) {
+        cache[key] = ledger[key];
+      });
+      LocalStorage.setAccountCache(
+          account.currentAccount.pubKey, cacheAccountStakingKey, cache);
+    }
   }
 
   @action
@@ -119,12 +192,21 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  Future<void> addTxs(List<Map<String, dynamic>> ls) async {
+  Future<void> addTxs(List<Map> ls, {bool shouldCache = false}) async {
     txs.addAll(ls);
+
+    if (shouldCache) {
+      LocalStorage.setAccountCache(
+          account.currentAccount.pubKey, cacheStakingTxsKey, ls);
+
+      cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
+      LocalStorage.setAccountCache(
+          account.currentAccount.pubKey, cacheTimeKey, cacheTxsTimestamp);
+    }
   }
 
   @action
-  void clearSate() {
+  void clearState() {
     txs.clear();
     ledger = ObservableMap<String, dynamic>();
   }
@@ -138,13 +220,57 @@ abstract class _StakingStore with Store {
   void setStakesChartData(String validatorId, Map data) {
     stakesChartDataCache[validatorId] = data;
   }
+
+  @action
+  Future<void> loadAccountCache() async {
+    // return if currentAccount not exist
+    String pubKey = account.currentAccount.pubKey;
+    if (pubKey == null) {
+      return;
+    }
+
+    List cache = await Future.wait([
+      LocalStorage.getAccountCache(pubKey, cacheAccountStakingKey),
+      LocalStorage.getAccountCache(pubKey, cacheStakingTxsKey),
+      LocalStorage.getAccountCache(pubKey, cacheTimeKey),
+    ]);
+    if (cache[0] != null) {
+      setLedger(account.currentAddress, cache[0], shouldCache: false);
+    } else {
+      ledger = ObservableMap<String, dynamic>();
+    }
+    if (cache[1] != null) {
+      addTxs(List<Map>.from(cache[1]));
+    } else {
+      txs.clear();
+    }
+    if (cache[2] != null) {
+      cacheTxsTimestamp = cache[2];
+    }
+  }
+
+  @action
+  Future<void> loadCache() async {
+    List cacheOverview = await Future.wait([
+      LocalStorage.getKV(localStorageOverviewKey),
+      LocalStorage.getKV(localStorageValidatorsKey),
+    ]);
+    if (cacheOverview[0] != null) {
+      setOverview(cacheOverview[0], shouldCache: false);
+    }
+    if (cacheOverview[1] != null) {
+      setValidatorsInfo(cacheOverview[1], shouldCache: false);
+    }
+
+    loadAccountCache();
+  }
 }
 
 class ValidatorData extends _ValidatorData with _$ValidatorData {
   static ValidatorData fromJson(Map<String, dynamic> json) {
     ValidatorData data = ValidatorData();
     data.accountId = json['accountId'];
-    data.total = int.parse(json['exposure']['total']);
+    data.total = int.parse(json['exposure']['total'].toString());
     var own = json['exposure']['own'];
     if (own.runtimeType == String) {
       data.bondOwn = int.parse(own);
@@ -152,7 +278,7 @@ class ValidatorData extends _ValidatorData with _$ValidatorData {
       data.bondOwn = own;
     }
     data.bondOther = data.total - data.bondOwn;
-    data.points = json['points'];
+    data.points = json['points'] ?? 0;
     data.commission = NumberFormat('0.00%')
         .format(json['validatorPrefs']['commission'] / pow(10, 9));
     data.nominators =

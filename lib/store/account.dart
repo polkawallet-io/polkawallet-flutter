@@ -10,6 +10,22 @@ part 'account.g.dart';
 class AccountStore extends _AccountStore with _$AccountStore {}
 
 abstract class _AccountStore with Store {
+  final String seedTypeMnemonic = 'mnemonic';
+  final String seedTypeRaw = 'rawSeed';
+
+  Map<String, dynamic> _formatMetaData(Map<String, dynamic> acc) {
+    String name = acc['meta']['name'];
+    if (name == null) {
+      name = newAccount.name;
+    }
+    acc['name'] = name;
+    if (acc['meta']['whenCreated'] == null) {
+      acc['meta']['whenCreated'] = DateTime.now().millisecondsSinceEpoch;
+    }
+    acc['meta']['whenEdited'] = DateTime.now().millisecondsSinceEpoch;
+    return acc;
+  }
+
   @observable
   bool loading = true;
 
@@ -26,11 +42,19 @@ abstract class _AccountStore with Store {
   ObservableMap<String, Map> accountIndexMap = ObservableMap<String, Map>();
 
   @observable
+  ObservableMap<String, AccountBondedInfo> pubKeyBondedMap =
+      ObservableMap<String, AccountBondedInfo>();
+
+  @observable
   ObservableMap<String, String> pubKeyAddressMap =
       ObservableMap<String, String>();
 
   @observable
-  ObservableMap<String, String> accountIconsMap =
+  ObservableMap<String, String> pubKeyIconsMap =
+      ObservableMap<String, String>();
+
+  @observable
+  ObservableMap<String, String> addressIconsMap =
       ObservableMap<String, String>();
 
   @computed
@@ -70,13 +94,15 @@ abstract class _AccountStore with Store {
   @action
   void updateAccountName(String name) {
     Map<String, dynamic> acc = AccountData.toJson(currentAccount);
-    acc['name'] = name;
+    acc['meta']['name'] = name;
 
     updateAccount(acc);
   }
 
   @action
   Future<void> updateAccount(Map<String, dynamic> acc) async {
+    acc = _formatMetaData(acc);
+
     AccountData accNew = AccountData.fromJson(acc);
     await LocalStorage.removeAccount(accNew.pubKey);
     await LocalStorage.addAccount(acc);
@@ -86,28 +112,37 @@ abstract class _AccountStore with Store {
 
   @action
   Future<void> addAccount(Map<String, dynamic> acc, String password) async {
-    // save mnemonic and remove it before add account
-    if (acc['mnemonic'].length > 0) {
-      encryptMnemonic(acc['pubKey'], acc['mnemonic'], password);
-      acc.remove(acc['mnemonic']);
+    // save seed and remove it before add account
+    void saveSeed(String seedType) {
+      String seed = acc[seedType];
+      if (seed != null && seed.isNotEmpty) {
+        encryptSeed(acc['pubKey'], acc[seedType], seedType, password);
+        acc.remove(acc[seedType]);
+      }
     }
+
+    saveSeed(seedTypeMnemonic);
+    saveSeed(seedTypeRaw);
+
+    // format meta data of acc
+    acc = _formatMetaData(acc);
 
     await LocalStorage.addAccount(acc);
     await LocalStorage.setCurrentAccount(acc['pubKey']);
 
     await loadAccount();
+
+    // clear the temp account after addAccount finished
+    newAccount = AccountCreate();
   }
 
   @action
   Future<void> removeAccount(AccountData acc) async {
     await LocalStorage.removeAccount(acc.pubKey);
 
-    // remove mnemonic after removing account
-    Map stored = await LocalStorage.getMnemonic();
-    if (stored[acc.pubKey] != null) {
-      stored.remove([acc.pubKey]);
-      LocalStorage.setMnemonic(stored);
-    }
+    // remove encrypted seed after removing account
+    deleteSeed(seedTypeMnemonic, acc.pubKey);
+    deleteSeed(seedTypeRaw, acc.pubKey);
 
     // set new currentAccount after currentAccount was removed
     List<Map<String, dynamic>> accounts = await LocalStorage.getAccountList();
@@ -138,18 +173,26 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  Future<void> encryptMnemonic(
-      String pubKey, String mnemonic, String password) async {
-    String key = Fmt.passwordToEncryptKey(password);
-    String encrypted = await FlutterAesEcbPkcs5.encryptString(mnemonic, key);
-    Map stored = await LocalStorage.getMnemonic();
-    stored[pubKey] = encrypted;
-    LocalStorage.setMnemonic(stored);
+  Future<void> setAccountsBonded(List ls) async {
+    ls.forEach((i) {
+      pubKeyBondedMap[i[0]] = AccountBondedInfo(i[0], i[1], i[2]);
+    });
   }
 
   @action
-  Future<String> decryptMnemonic(String pubKey, String password) async {
-    Map stored = await LocalStorage.getMnemonic();
+  Future<void> encryptSeed(
+      String pubKey, String seed, String seedType, String password) async {
+    String key = Fmt.passwordToEncryptKey(password);
+    String encrypted = await FlutterAesEcbPkcs5.encryptString(seed, key);
+    Map stored = await LocalStorage.getSeeds(seedType);
+    stored[pubKey] = encrypted;
+    LocalStorage.setSeeds(seedType, stored);
+  }
+
+  @action
+  Future<String> decryptSeed(
+      String pubKey, String seedType, String password) async {
+    Map stored = await LocalStorage.getSeeds(seedType);
     String encrypted = stored[pubKey];
     if (encrypted == null) {
       return null;
@@ -159,22 +202,41 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  Future<bool> checkMnemonicExist(String pubKey) async {
-    Map stored = await LocalStorage.getMnemonic();
+  Future<bool> checkSeedExist(String seedType, String pubKey) async {
+    Map stored = await LocalStorage.getSeeds(seedType);
     String encrypted = stored[pubKey];
     return encrypted != null;
   }
 
   @action
-  Future<void> updateMnemonic(
+  Future<void> updateSeed(
       String pubKey, String passwordOld, String passwordNew) async {
-    Map stored = await LocalStorage.getMnemonic();
-    if (stored[pubKey] == null) {
+    Map storedMnemonics = await LocalStorage.getSeeds(seedTypeMnemonic);
+    Map storedRawSeeds = await LocalStorage.getSeeds(seedTypeRaw);
+    String encryptedSeed = '';
+    String seedType = '';
+    if (storedMnemonics[pubKey] != null) {
+      encryptedSeed = storedMnemonics[pubKey];
+      seedType = seedTypeMnemonic;
+    } else if (storedMnemonics[pubKey] != null) {
+      encryptedSeed = storedRawSeeds[pubKey];
+      seedType = seedTypeRaw;
+    } else {
       return;
     }
-    String mnemonic = await FlutterAesEcbPkcs5.decryptString(
-        stored[pubKey], Fmt.passwordToEncryptKey(passwordOld));
-    encryptMnemonic(pubKey, mnemonic, passwordNew);
+
+    String seed = await FlutterAesEcbPkcs5.decryptString(
+        encryptedSeed, Fmt.passwordToEncryptKey(passwordOld));
+    encryptSeed(pubKey, seed, seedType, passwordNew);
+  }
+
+  @action
+  Future<void> deleteSeed(String seedType, String pubKey) async {
+    Map stored = await LocalStorage.getSeeds(seedType);
+    if (stored[pubKey] != null) {
+      stored.remove(pubKey);
+      LocalStorage.setSeeds(seedType, stored);
+    }
   }
 
   @action
@@ -185,9 +247,16 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  void setAccountIconsMap(List list) {
+  void setPubKeyIconsMap(List list) {
     list.forEach((i) {
-      accountIconsMap[i[0]] = i[1];
+      pubKeyIconsMap[i[0]] = i[1];
+    });
+  }
+
+  @action
+  void setAddressIconsMap(List list) {
+    list.forEach((i) {
+      addressIconsMap[i[0]] = i[1];
     });
   }
 
@@ -238,4 +307,16 @@ abstract class _AccountData with Store {
 
   @observable
   Map<String, dynamic> meta = Map<String, dynamic>();
+
+  @observable
+  String memo = '';
+}
+
+class AccountBondedInfo {
+  AccountBondedInfo(this.pubKey, this.controllerId, this.stashId);
+  final String pubKey;
+  // controllerId != null, means the account is a stash
+  final String controllerId;
+  // stashId != null, means the account is a controller
+  final String stashId;
 }

@@ -1,17 +1,14 @@
 import 'dart:convert';
 
-import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
-import 'package:polka_wallet/page/profile/secondary/settings/ss58Prefix.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
   static const accountsKey = 'wallet_account_list';
   static const currentAccountKey = 'wallet_current_account';
   static const contactsKey = 'wallet_contact_list';
-  static const localeKey = 'wallet_locale';
-  static const endpointKey = 'wallet_endpoint';
-  static const customSS58Key = 'wallet_custom_ss58';
-  static const mnemonicKey = 'wallet_mnemonic';
+  static const seedKey = 'wallet_seed';
+  static const customKVKey = 'wallet_kv';
 
   static final storage = new _LocalStorage();
 
@@ -52,48 +49,56 @@ class LocalStorage {
     return storage.getList(contactsKey);
   }
 
-  static Future<void> setLocale(String value) async {
-    return storage.setKV(localeKey, value);
+  static Future<void> setSeeds(String seedType, Map value) async {
+    return storage.setKV('${seedKey}_$seedType', jsonEncode(value));
   }
 
-  static Future<String> getLocale() async {
-    return storage.getKV(localeKey);
-  }
-
-  static Future<void> setEndpoint(Map<String, dynamic> value) async {
-    return storage.setKV(endpointKey, jsonEncode(value));
-  }
-
-  static Future<Map<String, dynamic>> getEndpoint() async {
-    String value = await storage.getKV(endpointKey);
-    if (value != null) {
-      return jsonDecode(value);
-    }
-    return default_node;
-  }
-
-  static Future<void> setCustomSS58(Map<String, dynamic> value) async {
-    return storage.setKV(customSS58Key, jsonEncode(value));
-  }
-
-  static Future<Map<String, dynamic>> getCustomSS58() async {
-    String value = await storage.getKV(customSS58Key);
-    if (value != null) {
-      return jsonDecode(value);
-    }
-    return default_ss58_prefix;
-  }
-
-  static Future<void> setMnemonic(Map value) async {
-    return storage.setKV(mnemonicKey, jsonEncode(value));
-  }
-
-  static Future<Map> getMnemonic() async {
-    String value = await storage.getKV(mnemonicKey);
+  static Future<Map> getSeeds(String seedType) async {
+    String value = await storage.getKV('${seedKey}_$seedType');
     if (value != null) {
       return jsonDecode(value);
     }
     return {};
+  }
+
+  static Future<void> setKV(String key, Object value) async {
+    String str = await compute(jsonEncode, value);
+    return storage.setKV('${customKVKey}_$key', str);
+  }
+
+  static Future<Object> getKV(String key) async {
+    String value = await storage.getKV('${customKVKey}_$key');
+    if (value != null) {
+      Object data = await compute(jsonDecode, value);
+      return data;
+    }
+    return null;
+  }
+
+  static Future<void> setAccountCache(
+      String accPubKey, String key, Object value) async {
+    Map data = await getKV(key);
+    if (data == null) {
+      data = {};
+    }
+    data[accPubKey] = value;
+    setKV(key, data);
+  }
+
+  static Future<Object> getAccountCache(String accPubKey, String key) async {
+    Map data = await getKV(key);
+    if (data == null) {
+      return null;
+    }
+    return data[accPubKey];
+  }
+
+  // cache timeout 10 minutes
+  static const int customCacheTimeLength = 10 * 60 * 1000;
+
+  static bool checkCacheTimeout(int cacheTime) {
+    return DateTime.now().millisecondsSinceEpoch - customCacheTimeLength >
+        cacheTime;
   }
 }
 

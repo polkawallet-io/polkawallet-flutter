@@ -10,26 +10,37 @@ class ApiAssets {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<void> fetchBalance(String address) async {
-    if (address != null) {
-      var res = await apiRoot.evalJavascript('account.getBalance("$address")');
-      store.assets.setAccountBalance(res);
+  Future<void> fetchBalance(String pubKey) async {
+    if (pubKey != null && pubKey.isNotEmpty) {
+      String address = store.account.pubKeyAddressMap[pubKey];
+      String res =
+          await apiRoot.evalJavascript('account.getBalance("$address")');
+      store.assets.setAccountBalance(pubKey, res);
     }
   }
 
   Future<List> updateTxs(int page) async {
+    String address = store.account.currentAddress;
+    List<String> data = await Future.wait([
+      PolkaScanApi.fetchTransfers(address, page),
+      PolkaScanApi.fetchTxs(address,
+          page: page, module: PolkaScanApi.module_balances),
+    ]);
+    List transfers = jsonDecode(data[0])['data'];
+    List txs = jsonDecode(data[1])['data'];
+    transfers.asMap().forEach((k, v) {
+      v['hash'] = txs[k]['attributes']['extrinsic_hash'];
+    });
+
     if (page == 1) {
       store.assets.clearTxs();
       store.assets.setTxsLoading(true);
     }
-    String data =
-        await PolkaScanApi.fetchTxs(store.account.currentAddress, page);
-    List ls = jsonDecode(data)['data'];
+    // cache first page of txs
+    await store.assets.addTxs(transfers, address, shouldCache: page == 1);
 
-    await store.assets.addTxs(ls);
-
-    await apiRoot.updateBlocks();
+    await apiRoot.updateBlocks(transfers);
     store.assets.setTxsLoading(false);
-    return ls;
+    return transfers;
   }
 }

@@ -22,32 +22,6 @@ Map<String, dynamic> _$NetworkStateToJson(NetworkState instance) =>
       'tokenSymbol': instance.tokenSymbol,
     };
 
-NetworkConst _$NetworkConstFromJson(Map<String, dynamic> json) {
-  return NetworkConst()
-    ..creationFee = json['creationFee'] as int
-    ..transferFee = json['transferFee'] as int;
-}
-
-Map<String, dynamic> _$NetworkConstToJson(NetworkConst instance) =>
-    <String, dynamic>{
-      'creationFee': instance.creationFee,
-      'transferFee': instance.transferFee,
-    };
-
-ContactData _$ContactDataFromJson(Map<String, dynamic> json) {
-  return ContactData()
-    ..name = json['name'] as String
-    ..address = json['address'] as String
-    ..memo = json['memo'] as String;
-}
-
-Map<String, dynamic> _$ContactDataToJson(ContactData instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'address': instance.address,
-      'memo': instance.memo,
-    };
-
 EndpointData _$EndpointDataFromJson(Map<String, dynamic> json) {
   return EndpointData()
     ..info = json['info'] as String
@@ -69,17 +43,23 @@ Map<String, dynamic> _$EndpointDataToJson(EndpointData instance) =>
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$SettingsStore on _SettingsStore, Store {
-  Computed<String> _$creationFeeViewComputed;
+  Computed<String> _$existentialDepositComputed;
 
   @override
-  String get creationFeeView => (_$creationFeeViewComputed ??=
-          Computed<String>(() => super.creationFeeView))
+  String get existentialDeposit => (_$existentialDepositComputed ??=
+          Computed<String>(() => super.existentialDeposit))
       .value;
-  Computed<String> _$transferFeeViewComputed;
+  Computed<String> _$transactionBaseFeeComputed;
 
   @override
-  String get transferFeeView => (_$transferFeeViewComputed ??=
-          Computed<String>(() => super.transferFeeView))
+  String get transactionBaseFee => (_$transactionBaseFeeComputed ??=
+          Computed<String>(() => super.transactionBaseFee))
+      .value;
+  Computed<String> _$transactionByteFeeComputed;
+
+  @override
+  String get transactionByteFee => (_$transactionByteFeeComputed ??=
+          Computed<String>(() => super.transactionByteFee))
       .value;
 
   final _$loadingAtom = Atom(name: '_SettingsStore.loading');
@@ -187,14 +167,14 @@ mixin _$SettingsStore on _SettingsStore, Store {
   final _$networkConstAtom = Atom(name: '_SettingsStore.networkConst');
 
   @override
-  NetworkConst get networkConst {
+  Map get networkConst {
     _$networkConstAtom.context.enforceReadPolicy(_$networkConstAtom);
     _$networkConstAtom.reportObserved();
     return super.networkConst;
   }
 
   @override
-  set networkConst(NetworkConst value) {
+  set networkConst(Map value) {
     _$networkConstAtom.context.conditionallyRunInAction(() {
       super.networkConst = value;
       _$networkConstAtom.reportChanged();
@@ -204,18 +184,25 @@ mixin _$SettingsStore on _SettingsStore, Store {
   final _$contactListAtom = Atom(name: '_SettingsStore.contactList');
 
   @override
-  ObservableList<ContactData> get contactList {
+  ObservableList<AccountData> get contactList {
     _$contactListAtom.context.enforceReadPolicy(_$contactListAtom);
     _$contactListAtom.reportObserved();
     return super.contactList;
   }
 
   @override
-  set contactList(ObservableList<ContactData> value) {
+  set contactList(ObservableList<AccountData> value) {
     _$contactListAtom.context.conditionallyRunInAction(() {
       super.contactList = value;
       _$contactListAtom.reportChanged();
     }, _$contactListAtom, name: '${_$contactListAtom.name}_set');
+  }
+
+  final _$initAsyncAction = AsyncAction('init');
+
+  @override
+  Future<void> init(String sysLocaleCode) {
+    return _$initAsyncAction.run(() => super.init(sysLocaleCode));
   }
 
   final _$setLocalCodeAsyncAction = AsyncAction('setLocalCode');
@@ -237,6 +224,15 @@ mixin _$SettingsStore on _SettingsStore, Store {
   @override
   Future<void> setNetworkState(Map<String, dynamic> data) {
     return _$setNetworkStateAsyncAction.run(() => super.setNetworkState(data));
+  }
+
+  final _$loadNetworkStateCacheAsyncAction =
+      AsyncAction('loadNetworkStateCache');
+
+  @override
+  Future<void> loadNetworkStateCache() {
+    return _$loadNetworkStateCacheAsyncAction
+        .run(() => super.loadNetworkStateCache());
   }
 
   final _$setNetworkConstAsyncAction = AsyncAction('setNetworkConst');
@@ -263,7 +259,7 @@ mixin _$SettingsStore on _SettingsStore, Store {
   final _$removeContactAsyncAction = AsyncAction('removeContact');
 
   @override
-  Future<void> removeContact(ContactData con) {
+  Future<void> removeContact(AccountData con) {
     return _$removeContactAsyncAction.run(() => super.removeContact(con));
   }
 
@@ -277,8 +273,9 @@ mixin _$SettingsStore on _SettingsStore, Store {
   final _$loadEndpointAsyncAction = AsyncAction('loadEndpoint');
 
   @override
-  Future<void> loadEndpoint() {
-    return _$loadEndpointAsyncAction.run(() => super.loadEndpoint());
+  Future<void> loadEndpoint(String sysLocaleCode) {
+    return _$loadEndpointAsyncAction
+        .run(() => super.loadEndpoint(sysLocaleCode));
   }
 
   final _$loadCustomSS58FormatAsyncAction = AsyncAction('loadCustomSS58Format');
@@ -291,16 +288,6 @@ mixin _$SettingsStore on _SettingsStore, Store {
 
   final _$_SettingsStoreActionController =
       ActionController(name: '_SettingsStore');
-
-  @override
-  void init() {
-    final _$actionInfo = _$_SettingsStoreActionController.startAction();
-    try {
-      return super.init();
-    } finally {
-      _$_SettingsStoreActionController.endAction(_$actionInfo);
-    }
-  }
 
   @override
   void setNetworkLoading(bool isLoading) {
@@ -410,95 +397,6 @@ mixin _$NetworkState on _NetworkState, Store {
       super.tokenSymbol = value;
       _$tokenSymbolAtom.reportChanged();
     }, _$tokenSymbolAtom, name: '${_$tokenSymbolAtom.name}_set');
-  }
-}
-
-mixin _$NetworkConst on _NetworkConst, Store {
-  final _$creationFeeAtom = Atom(name: '_NetworkConst.creationFee');
-
-  @override
-  int get creationFee {
-    _$creationFeeAtom.context.enforceReadPolicy(_$creationFeeAtom);
-    _$creationFeeAtom.reportObserved();
-    return super.creationFee;
-  }
-
-  @override
-  set creationFee(int value) {
-    _$creationFeeAtom.context.conditionallyRunInAction(() {
-      super.creationFee = value;
-      _$creationFeeAtom.reportChanged();
-    }, _$creationFeeAtom, name: '${_$creationFeeAtom.name}_set');
-  }
-
-  final _$transferFeeAtom = Atom(name: '_NetworkConst.transferFee');
-
-  @override
-  int get transferFee {
-    _$transferFeeAtom.context.enforceReadPolicy(_$transferFeeAtom);
-    _$transferFeeAtom.reportObserved();
-    return super.transferFee;
-  }
-
-  @override
-  set transferFee(int value) {
-    _$transferFeeAtom.context.conditionallyRunInAction(() {
-      super.transferFee = value;
-      _$transferFeeAtom.reportChanged();
-    }, _$transferFeeAtom, name: '${_$transferFeeAtom.name}_set');
-  }
-}
-
-mixin _$ContactData on _ContactData, Store {
-  final _$nameAtom = Atom(name: '_ContactData.name');
-
-  @override
-  String get name {
-    _$nameAtom.context.enforceReadPolicy(_$nameAtom);
-    _$nameAtom.reportObserved();
-    return super.name;
-  }
-
-  @override
-  set name(String value) {
-    _$nameAtom.context.conditionallyRunInAction(() {
-      super.name = value;
-      _$nameAtom.reportChanged();
-    }, _$nameAtom, name: '${_$nameAtom.name}_set');
-  }
-
-  final _$addressAtom = Atom(name: '_ContactData.address');
-
-  @override
-  String get address {
-    _$addressAtom.context.enforceReadPolicy(_$addressAtom);
-    _$addressAtom.reportObserved();
-    return super.address;
-  }
-
-  @override
-  set address(String value) {
-    _$addressAtom.context.conditionallyRunInAction(() {
-      super.address = value;
-      _$addressAtom.reportChanged();
-    }, _$addressAtom, name: '${_$addressAtom.name}_set');
-  }
-
-  final _$memoAtom = Atom(name: '_ContactData.memo');
-
-  @override
-  String get memo {
-    _$memoAtom.context.enforceReadPolicy(_$memoAtom);
-    _$memoAtom.reportObserved();
-    return super.memo;
-  }
-
-  @override
-  set memo(String value) {
-    _$memoAtom.context.conditionallyRunInAction(() {
-      super.memo = value;
-      _$memoAtom.reportChanged();
-    }, _$memoAtom, name: '${_$memoAtom.name}_set');
   }
 }
 

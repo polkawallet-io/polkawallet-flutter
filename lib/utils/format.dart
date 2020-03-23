@@ -54,6 +54,9 @@ class Fmt {
   }
 
   static int sortValidatorList(ValidatorData a, ValidatorData b, int sortType) {
+    if (a.commission == null || a.commission.isEmpty) {
+      return 1;
+    }
     double comA = double.parse(a.commission.split('%')[0]);
     double comB = double.parse(b.commission.split('%')[0]);
     var cmpStake = a.total < b.total ? 1 : -1;
@@ -61,6 +64,8 @@ class Fmt {
       case 0:
         return a.total != b.total ? cmpStake : comA > comB ? 1 : -1;
       case 1:
+        return a.points == b.points ? cmpStake : a.points < b.points ? 1 : -1;
+      case 2:
         return comA == comB ? cmpStake : comA > comB ? 1 : -1;
       default:
         return 1;
@@ -71,15 +76,12 @@ class Fmt {
       List<ValidatorData> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
       String value = filter.toLowerCase();
-      String accIndex = '';
       String accName = '';
       Map accInfo = accIndexMap[i.accountId];
       if (accInfo != null) {
-        accIndex = accInfo['accountIndex'];
         accName = accInfo['identity']['display'] ?? '';
       }
       return i.accountId.toLowerCase().contains(value) ||
-          accIndex.toLowerCase().contains(value) ||
           accName.toLowerCase().contains(value);
     });
     return ls;
@@ -89,15 +91,12 @@ class Fmt {
       List<List<String>> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
       String value = filter.toLowerCase();
-      String accIndex = '';
       String accName = '';
       Map accInfo = accIndexMap[i[0]];
       if (accInfo != null) {
-        accIndex = accInfo['accountIndex'];
         accName = accInfo['identity']['display'] ?? '';
       }
       return i[0].toLowerCase().contains(value) ||
-          accIndex.toLowerCase().contains(value) ||
           accName.toLowerCase().contains(value);
     });
     return ls;

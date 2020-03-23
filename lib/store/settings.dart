@@ -1,7 +1,9 @@
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
+import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
+import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
+import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
@@ -10,6 +12,12 @@ part 'settings.g.dart';
 class SettingsStore = _SettingsStore with _$SettingsStore;
 
 abstract class _SettingsStore with Store {
+  final String localStorageLocaleKey = 'locale';
+  final String localStorageEndpointKey = 'endpoint';
+  final String localStorageSS58Key = 'custom_ss58';
+
+  final String cacheNetworkStateKey = 'network';
+
   @observable
   bool loading = true;
 
@@ -17,7 +25,7 @@ abstract class _SettingsStore with Store {
   String localeCode = '';
 
   @observable
-  EndpointData endpoint = EndpointData.fromJson(default_node);
+  EndpointData endpoint = EndpointData();
 
   @observable
   Map<String, dynamic> customSS58Format = Map<String, dynamic>();
@@ -29,40 +37,52 @@ abstract class _SettingsStore with Store {
   NetworkState networkState = NetworkState();
 
   @observable
-  NetworkConst networkConst = NetworkConst();
+  Map networkConst = Map();
 
   @observable
-  ObservableList<ContactData> contactList = ObservableList<ContactData>();
+  ObservableList<AccountData> contactList = ObservableList<AccountData>();
 
   @computed
-  String get creationFeeView {
-    return Fmt.token(networkConst.creationFee,
+  String get existentialDeposit {
+    return Fmt.token(networkConst['balances']['existentialDeposit'],
         decimals: networkState.tokenDecimals);
   }
 
   @computed
-  String get transferFeeView {
-    return Fmt.token(networkConst.transferFee,
+  String get transactionBaseFee {
+    return Fmt.token(networkConst['transactionPayment']['transactionBaseFee'],
         decimals: networkState.tokenDecimals);
+  }
+
+  @computed
+  String get transactionByteFee {
+    return Fmt.token(networkConst['transactionPayment']['transactionByteFee'],
+        decimals: networkState.tokenDecimals, fullLength: true);
   }
 
   @action
-  void init() {
-    loadLocalCode();
-    loadEndpoint();
-    loadCustomSS58Format();
-    loadContacts();
+  Future<void> init(String sysLocaleCode) async {
+    await loadLocalCode();
+    await Future.wait([
+      loadEndpoint(sysLocaleCode),
+      loadCustomSS58Format(),
+      loadNetworkStateCache(),
+      loadContacts(),
+    ]);
   }
 
   @action
   Future<void> setLocalCode(String code) async {
-    await LocalStorage.setLocale(code);
+    await LocalStorage.setKV(localStorageLocaleKey, code);
     loadLocalCode();
   }
 
   @action
   Future<void> loadLocalCode() async {
-    localeCode = await LocalStorage.getLocale();
+    String stored = await LocalStorage.getKV(localStorageLocaleKey);
+    if (stored != null) {
+      localeCode = stored;
+    }
   }
 
   @action
@@ -72,24 +92,35 @@ abstract class _SettingsStore with Store {
 
   @action
   void setNetworkName(String name) {
+    print('set netwwork name: $name');
     networkName = name;
     loading = false;
   }
 
   @action
   Future<void> setNetworkState(Map<String, dynamic> data) async {
+    LocalStorage.setKV(cacheNetworkStateKey, data);
+
     networkState = NetworkState.fromJson(data);
   }
 
   @action
+  Future<void> loadNetworkStateCache() async {
+    var data = await LocalStorage.getKV(cacheNetworkStateKey);
+    if (data != null) {
+      networkState = NetworkState.fromJson(data);
+    }
+  }
+
+  @action
   Future<void> setNetworkConst(Map<String, dynamic> data) async {
-    networkConst = NetworkConst.fromJson(data);
+    networkConst = data;
   }
 
   @action
   Future<void> loadContacts() async {
     List<Map<String, dynamic>> ls = await LocalStorage.getContractList();
-    contactList = ObservableList.of(ls.map((i) => ContactData.fromJson(i)));
+    contactList = ObservableList.of(ls.map((i) => AccountData.fromJson(i)));
   }
 
   @action
@@ -99,7 +130,7 @@ abstract class _SettingsStore with Store {
   }
 
   @action
-  Future<void> removeContact(ContactData con) async {
+  Future<void> removeContact(AccountData con) async {
     await LocalStorage.removeContact(con.address);
     loadContacts();
   }
@@ -113,24 +144,30 @@ abstract class _SettingsStore with Store {
   @action
   void setEndpoint(Map<String, dynamic> value) {
     endpoint = EndpointData.fromJson(value);
-    LocalStorage.setEndpoint(value);
+    LocalStorage.setKV(localStorageEndpointKey, value);
   }
 
   @action
-  Future<void> loadEndpoint() async {
-    Map<String, dynamic> value = await LocalStorage.getEndpoint();
+  Future<void> loadEndpoint(String sysLocaleCode) async {
+    Map<String, dynamic> value =
+        await LocalStorage.getKV(localStorageEndpointKey);
+    if (value == null) {
+      value = sysLocaleCode.contains('zh') ? default_node_zh : default_node;
+    }
     endpoint = EndpointData.fromJson(value);
   }
 
   @action
   void setCustomSS58Format(Map<String, dynamic> value) {
     customSS58Format = value;
-    LocalStorage.setCustomSS58(value);
+    LocalStorage.setKV(localStorageSS58Key, value);
   }
 
   @action
   Future<void> loadCustomSS58Format() async {
-    customSS58Format = await LocalStorage.getCustomSS58();
+    Map<String, dynamic> ss58 = await LocalStorage.getKV(localStorageSS58Key);
+
+    customSS58Format = ss58 ?? default_ss58_prefix;
   }
 }
 
@@ -154,41 +191,6 @@ abstract class _NetworkState with Store {
 
   @observable
   String tokenSymbol = '';
-}
-
-@JsonSerializable()
-class NetworkConst extends _NetworkConst with _$NetworkConst {
-  static NetworkConst fromJson(Map<String, dynamic> json) =>
-      _$NetworkConstFromJson(json);
-  static Map<String, dynamic> toJson(NetworkConst net) =>
-      _$NetworkConstToJson(net);
-}
-
-abstract class _NetworkConst with Store {
-  @observable
-  int creationFee = 0;
-
-  @observable
-  int transferFee = 0;
-}
-
-@JsonSerializable()
-class ContactData extends _ContactData with _$ContactData {
-  static ContactData fromJson(Map<String, dynamic> json) =>
-      _$ContactDataFromJson(json);
-  static Map<String, dynamic> toJson(ContactData data) =>
-      _$ContactDataToJson(data);
-}
-
-abstract class _ContactData with Store {
-  @observable
-  String name = '';
-
-  @observable
-  String address = '';
-
-  @observable
-  String memo = '';
 }
 
 @JsonSerializable()

@@ -27,6 +27,7 @@ const Map<String, String> enAssets = {
   'block': 'Block',
   'event': 'Event ID',
   'hash': 'Block Hash',
+  'polkascan': 'Open in Browser',
 };
 
 const Map<String, String> zhAssets = {
@@ -58,4 +59,5 @@ const Map<String, String> zhAssets = {
   'block': '区块',
   'event': '交易ID',
   'hash': '区块Hash',
+  'polkascan': '在浏览器中查看',
 };

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UI {
   static void copyAndNotify(BuildContext context, String text) {
@@ -23,6 +24,18 @@ class UI {
     Timer(Duration(seconds: 2), () {
       Navigator.of(context).pop();
     });
+  }
+
+  static Future<void> launchURL(String url) async {
+    if (await canLaunch(url)) {
+      try {
+        await launch(url);
+      } catch (err) {
+        print(err);
+      }
+    } else {
+      print('Could not launch $url');
+    }
   }
 }
 

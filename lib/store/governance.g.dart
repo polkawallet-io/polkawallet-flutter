@@ -69,6 +69,26 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
       (_$votedMapComputed ??= Computed<Map<int, int>>(() => super.votedMap))
           .value;
 
+  final _$cacheCouncilTimestampAtom =
+      Atom(name: '_GovernanceStore.cacheCouncilTimestamp');
+
+  @override
+  int get cacheCouncilTimestamp {
+    _$cacheCouncilTimestampAtom.context
+        .enforceReadPolicy(_$cacheCouncilTimestampAtom);
+    _$cacheCouncilTimestampAtom.reportObserved();
+    return super.cacheCouncilTimestamp;
+  }
+
+  @override
+  set cacheCouncilTimestamp(int value) {
+    _$cacheCouncilTimestampAtom.context.conditionallyRunInAction(() {
+      super.cacheCouncilTimestamp = value;
+      _$cacheCouncilTimestampAtom.reportChanged();
+    }, _$cacheCouncilTimestampAtom,
+        name: '${_$cacheCouncilTimestampAtom.name}_set');
+  }
+
   final _$bestNumberAtom = Atom(name: '_GovernanceStore.bestNumber');
 
   @override
@@ -157,14 +177,21 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
         name: '${_$userReferendumVotesAtom.name}_set');
   }
 
+  final _$loadCacheAsyncAction = AsyncAction('loadCache');
+
+  @override
+  Future<void> loadCache() {
+    return _$loadCacheAsyncAction.run(() => super.loadCache());
+  }
+
   final _$_GovernanceStoreActionController =
       ActionController(name: '_GovernanceStore');
 
   @override
-  void setCouncilInfo(Map info) {
+  void setCouncilInfo(Map info, {bool shouldCache = true}) {
     final _$actionInfo = _$_GovernanceStoreActionController.startAction();
     try {
-      return super.setCouncilInfo(info);
+      return super.setCouncilInfo(info, shouldCache: shouldCache);
     } finally {
       _$_GovernanceStoreActionController.endAction(_$actionInfo);
     }
@@ -201,10 +228,10 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
   }
 
   @override
-  void setUserReferendumVotes(List ls) {
+  void setUserReferendumVotes(String address, List ls) {
     final _$actionInfo = _$_GovernanceStoreActionController.startAction();
     try {
-      return super.setUserReferendumVotes(ls);
+      return super.setUserReferendumVotes(address, ls);
     } finally {
       _$_GovernanceStoreActionController.endAction(_$actionInfo);
     }

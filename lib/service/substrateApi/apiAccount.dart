@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account.dart';
@@ -13,7 +13,16 @@ class ApiAccount {
   final Api apiRoot;
   final store = globalAppStore;
 
+  Future<void> setSS58Format(int value) async {
+    print('set ss58: $value');
+    // setSS58Format and reload new addresses
+    List res = await apiRoot.evalJavascript('account.resetSS58Format($value)');
+    store.account.setPubKeyAddressMap(res);
+  }
+
   Future<void> initAccounts() async {
+    if (store.account.accountList.length < 1) return;
+
     String accounts = jsonEncode(
         store.account.accountList.map((i) => AccountData.toJson(i)).toList());
     int ss58 = default_ss58_map[store.settings.endpoint.info];
@@ -23,10 +32,28 @@ class ApiAccount {
     List keys =
         await apiRoot.evalJavascript('account.initKeys($accounts, $ss58)');
     store.account.setPubKeyAddressMap(keys);
+
     // get accounts icons
-    getAddressIcons(keys.map((i) => i['address']).toList());
-    // get settings.contacts icons
+    getPubKeyIcons(store.account.accountList.map((i) => i.pubKey).toList());
+
+    // and contacts icons
     getAddressIcons(store.settings.contactList.map((i) => i.address).toList());
+  }
+
+  Future<void> decodeAddress(List<String> addresses) async {
+    List res = await apiRoot
+        .evalJavascript('account.decodeAddress(${jsonEncode(addresses)})');
+    if (res != null) {
+      store.account.setPubKeyAddressMap(res);
+    }
+  }
+
+  Future<void> fetchAccountsBonded(List<String> pubKeys) async {
+    if (pubKeys.length > 0) {
+      List res = await apiRoot.evalJavascript(
+          'account.queryAccountsBonded(${jsonEncode(pubKeys)})');
+      store.account.setAccountsBonded(res);
+    }
   }
 
   Future<dynamic> _testSendTx() async {
@@ -39,11 +66,12 @@ class ApiAccount {
     return c.future;
   }
 
-  Future<dynamic> sendTx(
-      Map txInfo, List params, String notificationTitle) async {
+  Future<dynamic> sendTx(Map txInfo, List params, String notificationTitle,
+      {String rawParam}) async {
+    String param = rawParam != null ? rawParam : jsonEncode(params);
 //    var res = await _testSendTx();
-    var res = await apiRoot.evalJavascript(
-        'account.sendTx(${jsonEncode(txInfo)}, ${jsonEncode(params)})');
+    var res = await apiRoot
+        .evalJavascript('account.sendTx(${jsonEncode(txInfo)}, $param)');
 
     if (res != null) {
       String hash = res['hash'];
@@ -59,28 +87,34 @@ class ApiAccount {
   }
 
   Future<Map<String, dynamic>> importAccount(
-      {String keyType = 'Mnemonic', String cryptoType = 'sr25519'}) async {
+      {String keyType = 'Mnemonic',
+      String cryptoType = 'sr25519',
+      String derivePath = ''}) async {
     String key = store.account.newAccount.key;
     String pass = store.account.newAccount.password;
     String code =
-        'account.recover("$keyType", "$cryptoType", \'$key\', "$pass")';
-    print(code);
+        'account.recover("$keyType", "$cryptoType", \'$key$derivePath\', "$pass")';
     Map<String, dynamic> acc = await apiRoot.evalJavascript(code);
     if (acc != null) {
-      acc['name'] = store.account.newAccount.name;
       await store.account.addAccount(acc, pass);
-      store.staking.clearSate();
+
       store.gov.clearSate();
 
+      store.assets.loadAccountCache();
+      store.staking.loadAccountCache();
+
       if (store.settings.customSS58Format['info'] == 'default') {
-        await apiRoot
-            .setSS58Format(default_ss58_map[store.settings.endpoint.info]);
+        await setSS58Format(default_ss58_map[store.settings.endpoint.info]);
       } else {
-        await apiRoot.setSS58Format(store.settings.customSS58Format['value']);
+        await setSS58Format(store.settings.customSS58Format['value']);
       }
 
-      apiRoot.assets.fetchBalance(acc['address']);
-      apiRoot.staking.fetchAccountStaking(acc['address']);
+      // fetch info for the imported account
+      String pubKey = acc['pubKey'];
+      apiRoot.assets.fetchBalance(pubKey);
+      apiRoot.staking.fetchAccountStaking(pubKey);
+      fetchAccountsBonded([pubKey]);
+      getPubKeyIcons([pubKey]);
     }
     return acc;
   }
@@ -106,15 +140,33 @@ class ApiAccount {
     return res;
   }
 
+  Future<List> getPubKeyIcons(List keys) async {
+    keys.retainWhere((i) => !store.account.pubKeyIconsMap.keys.contains(i));
+    if (keys.length == 0) {
+      return [];
+    }
+    List res = await apiRoot
+        .evalJavascript('account.genPubKeyIcons(${jsonEncode(keys)})');
+    store.account.setPubKeyIconsMap(res);
+    return res;
+  }
+
   Future<List> getAddressIcons(List addresses) async {
     addresses
-        .retainWhere((i) => !store.account.accountIconsMap.keys.contains(i));
+        .retainWhere((i) => !store.account.addressIconsMap.keys.contains(i));
     if (addresses.length == 0) {
       return [];
     }
     List res = await apiRoot
         .evalJavascript('account.genIcons(${jsonEncode(addresses)})');
-    store.account.setAccountIconsMap(res);
+    store.account.setAddressIconsMap(res);
+    return res;
+  }
+
+  Future<String> checkDerivePath(
+      String seed, String path, String pairType) async {
+    String res = await apiRoot.evalJavascript(
+        'account.checkDerivePath("$seed", "$path", "$pairType")');
     return res;
   }
 }

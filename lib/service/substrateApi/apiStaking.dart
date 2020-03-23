@@ -11,15 +11,72 @@ class ApiStaking {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<void> fetchAccountStaking(String address) async {
-    if (address != null) {
-      var res = await apiRoot
+  Future<void> fetchAccountStaking(String pubKey) async {
+    if (pubKey != null && pubKey.isNotEmpty) {
+      String address = store.account.pubKeyAddressMap[pubKey];
+      Map ledger = await apiRoot
           .evalJavascript('api.derive.staking.account("$address")');
-      store.staking.setLedger(res);
-      if (res['nominators'] != null) {
-        apiRoot.account.getAddressIcons(List.of(res['nominators']));
+
+      List addressesNeedIcons =
+          ledger['nominators'] != null ? List.of(ledger['nominators']) : List();
+
+      if (ledger['stakingLedger'] == null) {
+        // get stash account info for a controller address
+        var stakingLedger = await Future.wait([
+          apiRoot.evalJavascript('api.query.staking.ledger("$address")'),
+          apiRoot.evalJavascript('api.query.staking.payee("$address")'),
+        ]);
+        if (stakingLedger[0] != null) {
+          var nominators = await apiRoot.evalJavascript(
+              'api.query.staking.nominators("${stakingLedger[0]['stash']}")');
+          if (nominators != null) {
+            ledger['nominators'] = nominators['targets'];
+            addressesNeedIcons.addAll(List.of(nominators['targets']));
+          } else {
+            ledger['nominators'] = [];
+          }
+
+          stakingLedger[0]['payee'] = stakingLedger[1];
+          ledger['stakingLedger'] = stakingLedger[0];
+
+          // get stash's pubKey
+          apiRoot.account.decodeAddress([stakingLedger[0]['stash']]);
+          // get stash's icon
+          addressesNeedIcons.add(stakingLedger[0]['stash']);
+        }
+      } else {
+        // get controller address info for a stash account
+
+        // get controller's pubKey
+        apiRoot.account.decodeAddress([ledger['controllerId']]);
+        // get controller's icon
+        addressesNeedIcons.add(ledger['controllerId']);
+      }
+
+      store.staking
+          .setLedger(pubKey, Map<String, dynamic>.of(ledger), reset: true);
+
+      // get nominators' icons
+      if (addressesNeedIcons.length > 0) {
+        await apiRoot.account.getAddressIcons(addressesNeedIcons);
       }
     }
+  }
+
+  // this query takes extremely long time
+  Future<void> fetchAccountRewards(String address) async {
+    if (store.staking.ledger['stakingLedger'] != null) {
+      int bonded = store.staking.ledger['stakingLedger']['active'];
+      List unlocking = store.staking.ledger['stakingLedger']['unlocking'];
+      if (address != null && (bonded > 0 || unlocking.length > 0)) {
+        print('fetching staking rewards...');
+        List res = await apiRoot
+            .evalJavascript('staking.loadAccountRewardsData("$address")');
+        store.staking.setLedger(address, {'rewards': res});
+        return;
+      }
+    }
+    store.staking.setLedger(address, {'rewards': []});
   }
 
   Future<Map> fetchStakingOverview() async {
@@ -27,22 +84,17 @@ class ApiStaking {
         await apiRoot.evalJavascript('api.derive.staking.overview()');
     store.staking.setOverview(overview);
 
-    // fetch all validators details
     fetchElectedInfo();
+
     List validatorAddressList = List.of(overview['validators']);
-    apiRoot.account.fetchAccountsIndex(validatorAddressList);
+    await apiRoot.account.fetchAccountsIndex(validatorAddressList);
     apiRoot.account.getAddressIcons(validatorAddressList);
     return overview;
   }
 
   Future<List> updateStaking(int page) async {
-    if (page == 1) {
-      store.staking.clearTxs();
-    }
-    String data =
-        await PolkaScanApi.fetchStaking(store.account.currentAddress, page);
-//    String data = await PolkaScanApi.fetchStaking(
-//        'E4ukkmqUZv1noW1sq7uqEB2UVfzFjMEM73cVSp8roRtx14n', page);
+    String data = await PolkaScanApi.fetchTxs(store.account.currentAddress,
+        page: page, module: PolkaScanApi.module_staking);
     var ls = jsonDecode(data)['data'];
     var detailReqs = List<Future<dynamic>>();
     ls.forEach((i) => detailReqs
@@ -53,24 +105,19 @@ class ApiStaking {
       i['detail'] = jsonDecode(details[index])['data']['attributes'];
       index++;
     });
-    await store.staking.addTxs(List<Map<String, dynamic>>.from(ls));
+    if (page == 1) {
+      store.staking.clearTxs();
+    }
+    await store.staking
+        .addTxs(List<Map<String, dynamic>>.from(ls), shouldCache: page == 1);
 
-    Map<int, bool> blocksNeedUpdate = Map<int, bool>();
-    ls.forEach((i) {
-      int block = i['attributes']['block_id'];
-      if (store.assets.blockMap[block] == null) {
-        blocksNeedUpdate[block] = true;
-      }
-    });
-    String blocks = blocksNeedUpdate.keys.join(',');
-    var blockData =
-        await apiRoot.evalJavascript('account.getBlockTime([$blocks])');
-
-    store.assets.setBlockMap(blockData);
+    await apiRoot.updateBlocks(ls);
     return ls;
   }
 
+  // this query takes a long time
   Future<void> fetchElectedInfo() async {
+    // fetch all validators details
     var res = await apiRoot.evalJavascript('api.derive.staking.electedInfo()');
     store.staking.setValidatorsInfo(res);
   }

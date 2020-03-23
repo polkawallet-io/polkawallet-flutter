@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumPanel.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -84,7 +85,7 @@ class _DemocracyState extends State<Democracy> {
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context)
-                  .pushNamed('/staking/confirm', arguments: args);
+                  .pushNamed(TxConfirmPage.route, arguments: args);
             },
           );
         })),

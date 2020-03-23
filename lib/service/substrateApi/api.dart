@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:polka_wallet/page/profile/secondary/settings/remoteNode.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiGov.dart';
@@ -24,6 +24,7 @@ class Api {
   ApiGovernance gov;
 
   Map<String, Function> _msgHandlers = {};
+  Map<String, Completer> _msgCompleters = {};
   FlutterWebviewPlugin _web;
   int _evalJavascriptUID = 0;
 
@@ -60,16 +61,24 @@ class Api {
             name: 'PolkaWallet',
             onMessageReceived: (JavascriptMessage message) {
               print('received msg: ${message.message}');
-              final msg = jsonDecode(message.message);
-              final String path = msg['path'];
-              var handler = _msgHandlers[path];
-              if (handler == null) {
-                return;
-              }
-              handler(msg['data']);
-              if (path.contains('uid=')) {
-                _msgHandlers.remove(path);
-              }
+              compute(jsonDecode, message.message).then((msg) {
+                final msg = jsonDecode(message.message);
+                final String path = msg['path'];
+                if (_msgCompleters[path] != null) {
+                  Completer handler = _msgCompleters[path];
+                  handler.complete(msg['data']);
+                  if (path.contains('uid=')) {
+                    _msgCompleters.remove(path);
+                  }
+                }
+                if (_msgHandlers[path] != null) {
+                  Function handler = _msgHandlers[path];
+                  handler(msg['data']);
+                  if (path.contains('uid=')) {
+                    _msgHandlers.remove(path);
+                  }
+                }
+              });
             }),
       ].toSet(),
       ignoreSSLErrors: true,
@@ -79,18 +88,24 @@ class Api {
     );
   }
 
-  int getEvalJavascriptUID() {
+  int _getEvalJavascriptUID() {
     return _evalJavascriptUID++;
   }
 
   Future<dynamic> evalJavascript(String code) async {
-    Completer c = new Completer();
-    void onComplete(res) {
-      c.complete(res);
+    // check if there's a same request loading
+    for (String i in _msgCompleters.keys) {
+      String call = code.split('(')[0];
+      if (i.contains(call)) {
+        print('request $call loading');
+        return _msgCompleters[i].future;
+      }
     }
 
-    String method = 'uid=${getEvalJavascriptUID()};${code.split('(')[0]}';
-    _msgHandlers[method] = onComplete;
+    Completer c = new Completer();
+
+    String method = 'uid=${_getEvalJavascriptUID()};${code.split('(')[0]}';
+    _msgCompleters[method] = c;
 
     String script = '$code.then(function(res) {'
         '  PolkaWallet.postMessage(JSON.stringify({ path: "$method", data: res }));'
@@ -103,14 +118,10 @@ class Api {
   }
 
   Future<void> connectNode() async {
-//    // TODO: use polkawallet node
-//    var defaultNode = Locale.cachedLocaleString.contains('zh')
-//        ? default_node_zh
-//        : default_node;
-//    String value = settingsStore.endpoint.value ?? defaultNode['value'];
-    String value = store.settings.endpoint.value ?? default_node['value'];
-    print(value);
-    String res = await evalJavascript('settings.connect("$value")');
+    String endpoint = store.settings.endpoint.value;
+    print(endpoint);
+    // do connect
+    String res = await evalJavascript('settings.connect("$endpoint")');
     if (res == null) {
       print('connect failed');
       store.settings.setNetworkName(null);
@@ -121,7 +132,7 @@ class Api {
 
   Future<void> changeNode(String endpoint) async {
     store.settings.setNetworkLoading(true);
-    store.staking.clearSate();
+    store.staking.clearState();
     store.gov.clearSate();
     String res = await evalJavascript('settings.changeEndpoint("$endpoint")');
     if (res == null) {
@@ -133,39 +144,42 @@ class Api {
   }
 
   Future<void> fetchNetworkProps() async {
+    // fetch network info
     List<dynamic> info = await Future.wait([
       evalJavascript('settings.getNetworkConst()'),
       evalJavascript('api.rpc.system.properties()'),
       evalJavascript('api.rpc.system.chain()'),
-      assets.fetchBalance(store.account.currentAddress),
     ]);
-
     store.settings.setNetworkConst(info[0]);
     store.settings.setNetworkState(info[1]);
     store.settings.setNetworkName(info[2]);
 
-    if (store.settings.customSS58Format['info'] == 'default') {
-      setSS58Format(info[1]['ss58Format']);
+    // fetch account balance
+    if (store.account.accountList.length > 0) {
+      // reset account address format
+      if (store.settings.customSS58Format['info'] == 'default') {
+        account.setSS58Format(info[1]['ss58Format'] ?? 42);
+      }
+
+      // fetch account balance
+      await Future.wait([
+        assets.fetchBalance(store.account.currentAccount.pubKey),
+        staking.fetchAccountStaking(store.account.currentAccount.pubKey),
+        account.fetchAccountsBonded(
+            store.account.accountList.map((i) => i.pubKey).toList()),
+      ]);
     }
 
-    List addresses = store.account.accountList.map((i) => i.address).toList();
-    account.fetchAccountsIndex(addresses);
-    account.getAddressIcons(addresses);
+    // fetch staking overview data as initializing
+    staking.fetchStakingOverview();
   }
 
-  Future<void> setSS58Format(int value) async {
-    print('set ss58: $value');
-    // setSS58Format and reload new addresses
-    List res = await evalJavascript('settings.resetSS58Format($value)');
-    store.account.setPubKeyAddressMap(res);
-    account.getAddressIcons(res.map((i) => i['address']).toList());
-  }
-
-  Future<void> updateBlocks() async {
+  Future<void> updateBlocks(List txs) async {
     Map<int, bool> blocksNeedUpdate = Map<int, bool>();
-    store.assets.txs.forEach((i) {
-      if (store.assets.blockMap[i.block] == null) {
-        blocksNeedUpdate[i.block] = true;
+    txs.forEach((i) {
+      int block = i['attributes']['block_id'];
+      if (store.assets.blockMap[block] == null) {
+        blocksNeedUpdate[block] = true;
       }
     });
     String blocks = blocksNeedUpdate.keys.join(',');

@@ -11,14 +11,15 @@ class ApiGovernance {
   final store = globalAppStore;
 
   Future<List> updateDemocracyVotes(String address) async {
-    String data = await PolkaScanApi.fetchDemocracyVotes(address);
+    String data = await PolkaScanApi.fetchTxs(address,
+        module: PolkaScanApi.module_democracy);
     List ls = jsonDecode(data)['data'];
     var details = await Future.wait(ls
         .map((i) => PolkaScanApi.fetchTx(i['attributes']['extrinsic_hash']))
         .toList());
     ls.asMap().forEach(
         (k, v) => v['detail'] = jsonDecode(details[k])['data']['attributes']);
-    store.gov.setUserReferendumVotes(ls);
+    store.gov.setUserReferendumVotes(address, ls);
     return ls;
   }
 
@@ -42,7 +43,6 @@ class ApiGovernance {
       List list = data['referendums'];
       if (list.length > 0) {
         list.asMap().forEach((k, v) => v['detail'] = data['details'][k]);
-        print(list[0]['detail']);
         store.gov.setReferendums(List<Map<String, dynamic>>.from(list));
         fetchReferendumVotes(List<int>.from(list.map((i) => i['index'])));
       }

@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'assets.g.dart';
 
@@ -14,7 +16,15 @@ class AssetsStore extends _AssetsStore with _$AssetsStore {
 abstract class _AssetsStore with Store {
   _AssetsStore(this.account);
 
-  AccountStore account;
+  final AccountStore account;
+
+  final String localStorageBlocksKey = 'blocks';
+
+  final String cacheBalanceKey = 'balance';
+  final String cacheTxsKey = 'txs';
+  final String cacheTimeKey = 'assets_cache_time';
+  @observable
+  int cacheTxsTimestamp = 0;
 
   @observable
   bool isTxsLoading = true;
@@ -30,9 +40,6 @@ abstract class _AssetsStore with Store {
 
   @observable
   int txsFilter = 0;
-
-  @observable
-  TransferData txDetail = TransferData();
 
   @observable
   ObservableMap<int, BlockData> blockMap = ObservableMap<int, BlockData>();
@@ -79,8 +86,13 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  void setAccountBalance(String amt) {
+  void setAccountBalance(String pubKey, String amt) {
+    if (account.currentAccount.pubKey != pubKey) return;
+
     balance = amt;
+
+    LocalStorage.setAccountCache(
+        account.currentAccount.pubKey, cacheBalanceKey, amt);
   }
 
   @action
@@ -89,11 +101,23 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  Future<void> addTxs(List ls) async {
+  Future<void> addTxs(List ls, String address,
+      {bool shouldCache = false}) async {
+    if (account.currentAddress != address) return;
+
     ls.forEach((i) {
       TransferData tx = TransferData.fromJson(i);
       txs.add(tx);
     });
+
+    if (shouldCache) {
+      LocalStorage.setAccountCache(
+          account.currentAccount.pubKey, cacheTxsKey, ls);
+
+      cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
+      LocalStorage.setAccountCache(
+          account.currentAccount.pubKey, cacheTimeKey, cacheTxsTimestamp);
+    }
   }
 
   @action
@@ -102,22 +126,62 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  void setBlockMap(String data) {
-    jsonDecode(data).forEach((i) {
+  Future<void> setBlockMap(String data) async {
+    var ls = await compute(jsonDecode, data);
+    List.of(ls).forEach((i) {
       if (blockMap[i['id']] == null) {
         blockMap[i['id']] = BlockData.fromJson(i);
       }
     });
-  }
 
-  @action
-  void setTxDetail(TransferData tx) {
-    txDetail = tx;
+    if (List.of(ls).length > 0) {
+      LocalStorage.setKV(localStorageBlocksKey,
+          blockMap.values.map((i) => BlockData.toJson(i)).toList());
+    }
   }
 
   @action
   void setSubmitting(bool isSubmitting) {
     submitting = isSubmitting;
+  }
+
+  @action
+  Future<void> loadAccountCache() async {
+    // loadCache if currentAccount exist
+    String pubKey = account.currentAccount.pubKey;
+    if (pubKey == null) {
+      return;
+    }
+
+    List cache = await Future.wait([
+      LocalStorage.getAccountCache(pubKey, cacheBalanceKey),
+      LocalStorage.getAccountCache(pubKey, cacheTxsKey),
+      LocalStorage.getAccountCache(pubKey, cacheTimeKey),
+    ]);
+    if (cache[0] != null) {
+      balance = cache[0] ?? '0';
+    }
+    if (cache[1] != null) {
+      txs = ObservableList.of(
+          List.of(cache[1]).map((i) => TransferData.fromJson(i)).toList());
+    }
+    if (cache[2] != null) {
+      cacheTxsTimestamp = cache[2];
+    }
+  }
+
+  @action
+  Future<void> loadCache() async {
+    List ls = await LocalStorage.getKV(localStorageBlocksKey);
+    if (ls != null) {
+      ls.forEach((i) {
+        if (blockMap[i['id']] == null) {
+          blockMap[i['id']] = BlockData.fromJson(i);
+        }
+      });
+    }
+
+    loadAccountCache();
   }
 }
 
@@ -126,6 +190,7 @@ class TransferData extends _TransferData with _$TransferData {
     TransferData tx = TransferData();
     tx.type = json['type'];
     tx.id = json['id'];
+    tx.hash = json['hash'];
     tx.block = json['attributes']['block_id'];
     tx.value = json['attributes']['value'];
     tx.fee = json['attributes']['fee'];
@@ -144,6 +209,9 @@ abstract class _TransferData with Store {
 
   @observable
   String id = '';
+
+  @observable
+  String hash = '';
 
   @observable
   int block = 0;
@@ -174,6 +242,14 @@ class BlockData extends _BlockData with _$BlockData {
     block.hash = json['hash'];
     block.time = DateTime.fromMillisecondsSinceEpoch(json['timestamp']);
     return block;
+  }
+
+  static Map<String, dynamic> toJson(BlockData block) {
+    return {
+      'id': block.id,
+      'hash': block.hash,
+      'timestamp': block.time.millisecondsSinceEpoch,
+    };
   }
 }
 

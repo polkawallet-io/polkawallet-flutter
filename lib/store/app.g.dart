@@ -111,15 +111,10 @@ mixin _$AppStore on _AppStore, Store {
     }, _$isReadyAtom, name: '${_$isReadyAtom.name}_set');
   }
 
-  final _$_AppStoreActionController = ActionController(name: '_AppStore');
+  final _$initAsyncAction = AsyncAction('init');
 
   @override
-  void init(BuildContext context) {
-    final _$actionInfo = _$_AppStoreActionController.startAction();
-    try {
-      return super.init(context);
-    } finally {
-      _$_AppStoreActionController.endAction(_$actionInfo);
-    }
+  Future<void> init(String sysLocaleCode) {
+    return _$initAsyncAction.run(() => super.init(sysLocaleCode));
   }
 }
