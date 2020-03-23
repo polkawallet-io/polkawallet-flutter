@@ -5,7 +5,6 @@ import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class TxDetail extends StatelessWidget {
   TxDetail({
