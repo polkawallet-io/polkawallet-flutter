@@ -141,14 +141,12 @@ class _DemocracyState extends State<Democracy> {
                   : ListView.builder(
                       itemCount: list.length,
                       itemBuilder: (BuildContext context, int i) {
-                        int voted = store.gov.votedMap[list[i].index];
                         return ReferendumPanel(
                           data: list[i],
                           bestNumber: bestNumber,
-                          votes: store.gov.referendumVotes[list[i].index],
+                          votes: list[i].votes,
                           symbol: symbol,
-                          onVote: _onVote,
-                          voted: voted,
+                          voted: store.gov.votedMap[list[i].index],
                         );
                       },
                     ),

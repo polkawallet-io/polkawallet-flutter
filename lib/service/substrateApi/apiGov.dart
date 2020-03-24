@@ -42,19 +42,13 @@ class ApiGovernance {
     if (data != null) {
       List list = data['referendums'];
       if (list.length > 0) {
-        list.asMap().forEach((k, v) => v['detail'] = data['details'][k]);
+        list.asMap().forEach((k, v) {
+          v['detail'] = data['details'][k];
+          v['votes'] = data['votes'][k];
+        });
         store.gov.setReferendums(List<Map<String, dynamic>>.from(list));
-        fetchReferendumVotes(List<int>.from(list.map((i) => i['index'])));
       }
     }
     return data;
-  }
-
-  Future<void> fetchReferendumVotes(List<int> indexes) async {
-    String code = indexes.map((i) => 'gov.getReferendumVotes($i)').join(',');
-    List res = await apiRoot.evalJavascript('Promise.all([$code])');
-    res.asMap().forEach((k, v) {
-      store.gov.setReferendumVotes(indexes[k], v as Map);
-    });
   }
 }

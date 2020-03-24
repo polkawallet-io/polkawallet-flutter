@@ -34,6 +34,8 @@ class Api {
     staking = ApiStaking(this);
     gov = ApiGovernance(this);
 
+    _msgHandlers['txStatusChange'] = store.account.setTxStatus;
+
     _web = FlutterWebviewPlugin();
 
     _web.onStateChanged.listen((viewState) async {

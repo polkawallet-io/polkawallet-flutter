@@ -66,6 +66,23 @@ mixin _$AccountStore on _AccountStore, Store {
     }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
   }
 
+  final _$txStatusAtom = Atom(name: '_AccountStore.txStatus');
+
+  @override
+  String get txStatus {
+    _$txStatusAtom.context.enforceReadPolicy(_$txStatusAtom);
+    _$txStatusAtom.reportObserved();
+    return super.txStatus;
+  }
+
+  @override
+  set txStatus(String value) {
+    _$txStatusAtom.context.conditionallyRunInAction(() {
+      super.txStatus = value;
+      _$txStatusAtom.reportChanged();
+    }, _$txStatusAtom, name: '${_$txStatusAtom.name}_set');
+  }
+
   final _$newAccountAtom = Atom(name: '_AccountStore.newAccount');
 
   @override
@@ -282,6 +299,16 @@ mixin _$AccountStore on _AccountStore, Store {
 
   final _$_AccountStoreActionController =
       ActionController(name: '_AccountStore');
+
+  @override
+  void setTxStatus(String status) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    try {
+      return super.setTxStatus(status);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void setNewAccount(String name, String password) {

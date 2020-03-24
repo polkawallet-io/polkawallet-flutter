@@ -29,10 +29,6 @@ abstract class _GovernanceStore with Store {
   ObservableList<ReferendumInfo> referendums;
 
   @observable
-  ObservableMap<int, ReferendumVotes> referendumVotes =
-      ObservableMap<int, ReferendumVotes>();
-
-  @observable
   ObservableList<Map> userReferendumVotes = ObservableList<Map>();
 
   @computed
@@ -41,7 +37,12 @@ abstract class _GovernanceStore with Store {
     userReferendumVotes.forEach((i) {
       int id = i['detail']['params'][0]['value'];
       if (res[id] == null) {
-        res[id] = i['detail']['params'][1]['value'];
+        var value = i['detail']['params'][1]['value'];
+        if (value.runtimeType == int) {
+          res[id] = value;
+        } else {
+          res[id] = value['Standard']['vote'];
+        }
       }
     });
     return res;
@@ -70,14 +71,9 @@ abstract class _GovernanceStore with Store {
   }
 
   @action
-  void setReferendumVotes(int index, Map votes) {
-    referendumVotes[index] = ReferendumVotes.fromJson(votes);
-  }
-
-  @action
   void setUserReferendumVotes(String address, List ls) {
     if (account.currentAddress != address) return;
-
+    print(ls);
     userReferendumVotes.addAll(List<Map>.from(ls));
   }
 
@@ -129,30 +125,9 @@ abstract class _ReferendumInfo with Store {
   int index;
   String hash;
 
-  Map<String, dynamic> info;
+  Map<String, dynamic> status;
   Map<String, dynamic> proposal;
   Map<String, dynamic> preimage;
   Map<String, dynamic> detail;
-}
-
-class ReferendumVotes extends _ReferendumVotes {
-  static ReferendumVotes fromJson(Map<String, dynamic> json) {
-    ReferendumVotes res = ReferendumVotes();
-    res.voteCount = json['voteCount'];
-    res.voteCountAye = json['voteCountAye'];
-    res.voteCountNay = json['voteCountNay'];
-    res.votedAye = int.parse('0x${json['votedAye']}');
-    res.votedNay = int.parse('0x${json['votedNay']}');
-    res.votedTotal = int.parse('0x${json['votedTotal']}');
-    return res;
-  }
-}
-
-abstract class _ReferendumVotes {
-  int voteCount;
-  int voteCountAye;
-  int voteCountNay;
-  int votedAye;
-  int votedNay;
-  int votedTotal;
+  Map<String, dynamic> votes;
 }

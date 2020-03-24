@@ -39,20 +39,22 @@ ReferendumInfo _$ReferendumInfoFromJson(Map<String, dynamic> json) {
   return ReferendumInfo()
     ..index = json['index'] as int
     ..hash = json['hash'] as String
-    ..info = json['info'] as Map<String, dynamic>
+    ..status = json['status'] as Map<String, dynamic>
     ..proposal = json['proposal'] as Map<String, dynamic>
     ..preimage = json['preimage'] as Map<String, dynamic>
-    ..detail = json['detail'] as Map<String, dynamic>;
+    ..detail = json['detail'] as Map<String, dynamic>
+    ..votes = json['votes'] as Map<String, dynamic>;
 }
 
 Map<String, dynamic> _$ReferendumInfoToJson(ReferendumInfo instance) =>
     <String, dynamic>{
       'index': instance.index,
       'hash': instance.hash,
-      'info': instance.info,
+      'status': instance.status,
       'proposal': instance.proposal,
       'preimage': instance.preimage,
       'detail': instance.detail,
+      'votes': instance.votes,
     };
 
 // **************************************************************************
@@ -140,23 +142,6 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
     }, _$referendumsAtom, name: '${_$referendumsAtom.name}_set');
   }
 
-  final _$referendumVotesAtom = Atom(name: '_GovernanceStore.referendumVotes');
-
-  @override
-  ObservableMap<int, ReferendumVotes> get referendumVotes {
-    _$referendumVotesAtom.context.enforceReadPolicy(_$referendumVotesAtom);
-    _$referendumVotesAtom.reportObserved();
-    return super.referendumVotes;
-  }
-
-  @override
-  set referendumVotes(ObservableMap<int, ReferendumVotes> value) {
-    _$referendumVotesAtom.context.conditionallyRunInAction(() {
-      super.referendumVotes = value;
-      _$referendumVotesAtom.reportChanged();
-    }, _$referendumVotesAtom, name: '${_$referendumVotesAtom.name}_set');
-  }
-
   final _$userReferendumVotesAtom =
       Atom(name: '_GovernanceStore.userReferendumVotes');
 
@@ -212,16 +197,6 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
     final _$actionInfo = _$_GovernanceStoreActionController.startAction();
     try {
       return super.setReferendums(ls);
-    } finally {
-      _$_GovernanceStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setReferendumVotes(int index, Map votes) {
-    final _$actionInfo = _$_GovernanceStoreActionController.startAction();
-    try {
-      return super.setReferendumVotes(index, votes);
     } finally {
       _$_GovernanceStoreActionController.endAction(_$actionInfo);
     }
