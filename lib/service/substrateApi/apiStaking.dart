@@ -126,35 +126,16 @@ class ApiStaking {
     int timestamp = DateTime.now().second;
     Map cached = store.staking.rewardsChartDataCache[accountId];
     if (cached != null && cached['timestamp'] > timestamp - 1800) {
-      queryValidatorStakes(accountId);
       return cached;
     }
     print('fetching rewards chart data');
     Map data = await apiRoot
         .evalJavascript('staking.loadValidatorRewardsData(api, "$accountId")');
-    if (data != null && List.of(data['rewardsLabels']).length > 0) {
-      // fetch validator stakes data while rewards data query finished
-      queryValidatorStakes(accountId);
+    if (data != null) {
       // format rewards data & set cache
       Map chartData = Fmt.formatRewardsChartData(data);
       chartData['timestamp'] = timestamp;
       store.staking.setRewardsChartData(accountId, chartData);
-    }
-    return data;
-  }
-
-  Future<Map> queryValidatorStakes(String accountId) async {
-    int timestamp = DateTime.now().second;
-    Map cached = store.staking.stakesChartDataCache[accountId];
-    if (cached != null && cached['timestamp'] > timestamp - 1800) {
-      return cached;
-    }
-    print('fetching stakes chart data');
-    Map data = await apiRoot
-        .evalJavascript('staking.loadValidatorStakeData(api, "$accountId")');
-    if (data != null && List.of(data['stakeLabels']).length > 0) {
-      data['timestamp'] = timestamp;
-      store.staking.setStakesChartData(accountId, data);
     }
     return data;
   }

@@ -91,23 +91,21 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
       context: context,
       builder: (_) => Container(
         height: MediaQuery.of(context).copyWith().size.height / 3,
-        child: WillPopScope(
-          child: CupertinoPicker(
-            backgroundColor: Colors.white,
-            itemExtent: 58,
-            scrollController:
-                FixedExtentScrollController(initialItem: _voteConviction),
-            children: _voteConvictionOptions.map((i) {
-              return Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text(_getConvictionLabel(i)));
-            }).toList(),
-            onSelectedItemChanged: (v) {
-              setState(() {
-                _voteConviction = v;
-              });
-            },
-          ),
+        child: CupertinoPicker(
+          backgroundColor: Colors.white,
+          itemExtent: 58,
+          scrollController:
+              FixedExtentScrollController(initialItem: _voteConviction),
+          children: _voteConvictionOptions.map((i) {
+            return Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(_getConvictionLabel(i)));
+          }).toList(),
+          onSelectedItemChanged: (v) {
+            setState(() {
+              _voteConviction = v;
+            });
+          },
         ),
       ),
     );

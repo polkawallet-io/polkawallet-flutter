@@ -5,14 +5,12 @@ import 'package:polka_wallet/common/components/accountInfo.dart';
 import 'package:polka_wallet/common/components/chartLabel.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/staking/actions/actions.dart';
-import 'package:polka_wallet/page/staking/validators/blocksChart.dart';
 import 'package:polka_wallet/page/staking/validators/rewardsChart.dart';
-import 'package:polka_wallet/page/staking/validators/splitChart.dart';
-import 'package:polka_wallet/page/staking/validators/stakesChart.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class ValidatorDetailPage extends StatelessWidget {
   ValidatorDetailPage(this.store);
@@ -30,35 +28,25 @@ class ValidatorDetailPage extends StatelessWidget {
 
           Map rewardsChartData =
               store.staking.rewardsChartDataCache[detail.accountId];
-          List<List<num>> rewardsList = [[], [], []];
-          List<String> rewardsLabels = [];
-          List<List<num>> blocksList = [[], []];
-          List<String> blocksLabels = [];
-          if (rewardsChartData != null) {
-            rewardsList = List<List<num>>.from(rewardsChartData['rewards']);
-            rewardsLabels =
-                List<String>.from(rewardsChartData['rewardsLabels']);
 
-            blocksList = List<List<num>>.from(rewardsChartData['blocksList']);
-            blocksLabels = List<String>.from(rewardsChartData['blocksLabels']);
-          }
+          List<ChartLineInfo> pointsChartLines = [
+            ChartLineInfo(
+                'Era Points', charts.MaterialPalette.yellow.shadeDefault),
+            ChartLineInfo('Average', charts.MaterialPalette.gray.shadeDefault),
+          ];
 
-          Map stakesChartData =
-              store.staking.stakesChartDataCache[detail.accountId];
-          List<List<num>> stakesList = [];
-          List<String> stakesLabels = [];
-          if (stakesChartData != null) {
-            stakesList.add(List<num>.from(stakesChartData['stakeChart'][0]));
-            List<String>.from(stakesChartData['stakeLabels'])
-                .asMap()
-                .forEach((k, v) {
-              if ((k + 2) % 5 == 0) {
-                stakesLabels.add(v);
-              } else {
-                stakesLabels.add('');
-              }
-            });
-          }
+          List<ChartLineInfo> rewardChartLines = [
+            ChartLineInfo('Slashes', charts.MaterialPalette.red.shadeDefault),
+            ChartLineInfo('Rewards', charts.MaterialPalette.blue.shadeDefault),
+            ChartLineInfo('Average', charts.MaterialPalette.gray.shadeDefault),
+          ];
+
+          List<ChartLineInfo> stakesChartLines = [
+            ChartLineInfo(
+                'Elected Stake', charts.MaterialPalette.yellow.shadeDefault),
+            ChartLineInfo('Total', charts.MaterialPalette.cyan.shadeDefault),
+            ChartLineInfo('Average', charts.MaterialPalette.gray.shadeDefault),
+          ];
 
           return Scaffold(
             appBar: AppBar(
@@ -119,7 +107,7 @@ class ValidatorDetailPage extends StatelessWidget {
                           child: Column(
                             children: <Widget>[
                               ChartLabel(
-                                name: 'Blocks produced',
+                                name: 'Era Points',
                                 color: Colors.yellow,
                               ),
                               ChartLabel(
@@ -135,7 +123,11 @@ class ValidatorDetailPage extends StatelessWidget {
                           margin: EdgeInsets.only(bottom: 16),
                           child: rewardsChartData == null
                               ? CupertinoActivityIndicator()
-                              : BlocksChart.withData(blocksList, blocksLabels),
+                              : new RewardsChart.withData(
+                                  pointsChartLines,
+                                  rewardsChartData['points'][0],
+                                  rewardsChartData['points'][1],
+                                ),
                         ),
                         // Rewards labels & chart
                         Divider(),
@@ -164,8 +156,11 @@ class ValidatorDetailPage extends StatelessWidget {
                           margin: EdgeInsets.only(bottom: 16),
                           child: rewardsChartData == null
                               ? CupertinoActivityIndicator()
-                              : RewardsChart.withData(
-                                  rewardsList, rewardsLabels),
+                              : new RewardsChart.withData(
+                                  rewardChartLines,
+                                  rewardsChartData['rewards'][0],
+                                  rewardsChartData['rewards'][1],
+                                ),
                         ),
                         // Stakes labels & chart
                         Divider(),
@@ -177,6 +172,14 @@ class ValidatorDetailPage extends StatelessWidget {
                                 name: 'Elected Stake',
                                 color: Colors.yellow,
                               ),
+                              ChartLabel(
+                                name: 'Total',
+                                color: Colors.cyan,
+                              ),
+                              ChartLabel(
+                                name: 'Average',
+                                color: Colors.grey,
+                              ),
                             ],
                           ),
                         ),
@@ -184,36 +187,17 @@ class ValidatorDetailPage extends StatelessWidget {
                           height: 240,
                           padding: EdgeInsets.all(8),
                           margin: EdgeInsets.only(bottom: 16),
-                          child: stakesChartData == null
+                          child: rewardsChartData == null
                               ? CupertinoActivityIndicator()
-                              : StakesChart.withData(stakesList, stakesLabels),
-                        ),
-                        // Stakes labels & chart
-                        Divider(),
-                        Padding(
-                          padding: EdgeInsets.only(left: 16, top: 8),
-                          child: Column(
-                            children: <Widget>[
-                              ChartLabel(
-                                name: 'Staker Percentages (%)',
-                                color: Colors.yellow,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          height: stakesChartData == null
-                              ? 240
-                              : double.parse(
-                                  (stakesChartData['splitChart'].length * 24)
-                                      .toString()),
-                          padding: EdgeInsets.all(8),
-                          margin: EdgeInsets.only(bottom: 16),
-                          child: stakesChartData == null
-                              ? CupertinoActivityIndicator()
-                              : SplitChart.withData(
-                                  List<Map<String, dynamic>>.from(
-                                      stakesChartData['splitChart'])),
+                              : new RewardsChart.withData(
+                                  stakesChartLines,
+                                  List<List>.from([
+                                    rewardsChartData['stakes'][0][0],
+                                    rewardsChartData['stakes'][0][1],
+                                    rewardsChartData['stakes'][0][2],
+                                  ]),
+                                  rewardsChartData['stakes'][1],
+                                ),
                         ),
                       ],
                     ),

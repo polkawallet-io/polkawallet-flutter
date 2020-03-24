@@ -10,7 +10,7 @@ class BlocksChart extends StatelessWidget {
 
   final charts.BasicNumericTickFormatterSpec labelFormatter;
 
-  factory BlocksChart.withData(List<List<num>> ls, List<String> labels) {
+  factory BlocksChart.withData(List<List> ls, List<String> labels) {
     var formatter = charts.BasicNumericTickFormatterSpec((num value) {
       return labels[value.toInt()] ?? '';
     });
@@ -23,21 +23,21 @@ class BlocksChart extends StatelessWidget {
     );
   }
 
-  static List<charts.Series<num, num>> _formatData(List<List<num>> ls) {
+  static List<charts.Series<num, num>> _formatData(List<List> ls) {
     return [
       new charts.Series<num, num>(
         id: 'Blocks produced',
         colorFn: (_, __) => charts.MaterialPalette.yellow.shadeDefault,
         domainFn: (_, int index) => index,
         measureFn: (num item, _) => item,
-        data: ls[0],
+        data: List<num>.from(ls[0]),
       ),
       new charts.Series<num, num>(
         id: 'Average',
         colorFn: (_, __) => charts.MaterialPalette.gray.shadeDefault,
         domainFn: (_, int index) => index,
         measureFn: (num item, _) => item,
-        data: ls[1],
+        data: List<num>.from(ls[1]),
       ),
     ];
   }

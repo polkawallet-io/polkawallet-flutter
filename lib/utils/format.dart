@@ -103,48 +103,45 @@ class Fmt {
   }
 
   static Map formatRewardsChartData(Map chartData) {
-    List<List<num>> rewardsList = [];
-    List<String> rewardsLabels = [];
-    List.of(chartData['rewardsChart']).asMap().forEach((index, ls) {
-      if (index == 2) {
-        List<num> average = [];
-        List<num>.from(ls).asMap().forEach((i, v) {
-          average.add((v - chartData['rewardsChart'][1][i]));
-        });
-        rewardsList.add(average);
-      } else {
-        rewardsList.add(List<num>.from(ls));
-      }
-    });
-    List<String>.from(chartData['rewardsLabels']).asMap().forEach((k, v) {
-      if ((k + 2) % 3 == 0) {
-        rewardsLabels.add(v);
-      } else {
-        rewardsLabels.add('');
-      }
-    });
+    List<List> formatChart(String chartName, Map data) {
+      List<List> values = [];
+      List<String> labels = [];
+      List chartValues = data[chartName]['chart'];
 
-    List<List<num>> blocksList = [
-      List<num>.from(chartData['idxSet']).sublist(7),
-      <num>[]
-    ];
-    List<String> blocksLabels = [];
-    List<num>.from(chartData['avgSet']).sublist(7).asMap().forEach((i, v) {
-      blocksList[1].add(v - blocksList[0][i]);
-    });
-    List<String>.from(chartData['blocksLabels']).asMap().forEach((k, v) {
-      if ((k + 2) % 3 == 0) {
-        blocksLabels.add(v);
-      } else {
-        blocksLabels.add('');
-      }
-    });
+      chartValues.asMap().forEach((index, ls) {
+        if (index == chartValues.length - 1) {
+          List average = [];
+          List.of(ls).asMap().forEach((i, v) {
+            num avg = v - chartValues[chartValues.length - 2][i];
+            if (chartValues.length == 3) {
+              avg = avg - chartValues[chartValues.length - 3][i];
+            }
+            average.add(avg);
+          });
+          values.add(average);
+        } else {
+          values.add(ls);
+        }
+      });
 
+      List<String>.from(data[chartName]['labels']).asMap().forEach((k, v) {
+        if ((k - 2) % 10 == 0) {
+          labels.add(v);
+        } else {
+          labels.add('');
+        }
+      });
+      return [values, labels];
+    }
+
+    List<List> rewards = formatChart('rewards', chartData);
+    List<List> points = formatChart('points', chartData);
+
+    List<List> stakes = formatChart('stakes', chartData);
     return {
-      'rewards': rewardsList,
-      'rewardsLabels': rewardsLabels,
-      'blocksList': blocksList,
-      'blocksLabels': blocksLabels,
+      'rewards': rewards,
+      'stakes': stakes,
+      'points': points,
     };
   }
 }
