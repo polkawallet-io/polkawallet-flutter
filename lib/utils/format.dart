@@ -113,9 +113,6 @@ class Fmt {
           List average = [];
           List.of(ls).asMap().forEach((i, v) {
             num avg = v - chartValues[chartValues.length - 2][i];
-            if (chartValues.length == 3) {
-              avg = avg - chartValues[chartValues.length - 3][i];
-            }
             average.add(avg);
           });
           values.add(average);
@@ -136,8 +133,8 @@ class Fmt {
 
     List<List> rewards = formatChart('rewards', chartData);
     List<List> points = formatChart('points', chartData);
-
     List<List> stakes = formatChart('stakes', chartData);
+
     return {
       'rewards': rewards,
       'stakes': stakes,

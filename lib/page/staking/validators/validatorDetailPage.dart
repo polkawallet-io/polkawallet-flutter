@@ -44,7 +44,6 @@ class ValidatorDetailPage extends StatelessWidget {
           List<ChartLineInfo> stakesChartLines = [
             ChartLineInfo(
                 'Elected Stake', charts.MaterialPalette.yellow.shadeDefault),
-            ChartLineInfo('Total', charts.MaterialPalette.cyan.shadeDefault),
             ChartLineInfo('Average', charts.MaterialPalette.gray.shadeDefault),
           ];
 
@@ -173,10 +172,6 @@ class ValidatorDetailPage extends StatelessWidget {
                                 color: Colors.yellow,
                               ),
                               ChartLabel(
-                                name: 'Total',
-                                color: Colors.cyan,
-                              ),
-                              ChartLabel(
                                 name: 'Average',
                                 color: Colors.grey,
                               ),
@@ -192,7 +187,6 @@ class ValidatorDetailPage extends StatelessWidget {
                               : new RewardsChart.withData(
                                   stakesChartLines,
                                   List<List>.from([
-                                    rewardsChartData['stakes'][0][0],
                                     rewardsChartData['stakes'][0][1],
                                     rewardsChartData['stakes'][0][2],
                                   ]),
