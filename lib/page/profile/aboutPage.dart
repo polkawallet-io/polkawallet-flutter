@@ -22,7 +22,7 @@ class AboutPage extends StatelessWidget {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.all(48),
-              child: Image.asset('assets/images/public/About_logo.png'),
+              child: Image.asset('assets/images/public/logo_about.png'),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

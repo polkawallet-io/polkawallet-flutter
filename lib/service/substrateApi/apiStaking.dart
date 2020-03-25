@@ -64,19 +64,20 @@ class ApiStaking {
   }
 
   // this query takes extremely long time
-  Future<void> fetchAccountRewards(String address) async {
+  Future<void> fetchAccountRewards(String pubKey) async {
     if (store.staking.ledger['stakingLedger'] != null) {
       int bonded = store.staking.ledger['stakingLedger']['active'];
       List unlocking = store.staking.ledger['stakingLedger']['unlocking'];
-      if (address != null && (bonded > 0 || unlocking.length > 0)) {
+      if (pubKey != null && (bonded > 0 || unlocking.length > 0)) {
+        String address = store.account.pubKeyAddressMap[pubKey];
         print('fetching staking rewards...');
         List res = await apiRoot
             .evalJavascript('staking.loadAccountRewardsData("$address")');
-        store.staking.setLedger(address, {'rewards': res});
+        store.staking.setLedger(pubKey, {'rewards': res});
         return;
       }
     }
-    store.staking.setLedger(address, {'rewards': []});
+    store.staking.setLedger(pubKey, {'rewards': []});
   }
 
   Future<Map> fetchStakingOverview() async {

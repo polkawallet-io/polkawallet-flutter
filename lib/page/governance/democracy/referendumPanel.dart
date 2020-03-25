@@ -111,11 +111,12 @@ class ReferendumPanel extends StatelessWidget {
 
     if (votes != null) {
       double widthFull = MediaQuery.of(context).size.width - 72;
-      int votedTotal = int.parse(votes['votedTotal'].toString());
+//      int votedTotal = int.parse(votes['votedTotal'].toString());
       int votedAye = int.parse(votes['votedAye'].toString());
       int votedNay = int.parse(votes['votedNay'].toString());
-      double yes = int.parse(votes['votedAye'].toString()) / votedTotal;
-      double widthYes = votedTotal > 0 ? yes * widthFull : widthFull / 2;
+      int votedTotalCalc = votedAye + votedNay;
+      double yes = int.parse(votes['votedAye'].toString()) / votedTotalCalc;
+      double widthYes = votedTotalCalc > 0 ? yes * widthFull : widthFull / 2;
       double widthMin = 6;
       list.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
