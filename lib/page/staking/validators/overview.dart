@@ -174,8 +174,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
       return Container();
     }
     String symbol = store.settings.networkState.tokenSymbol;
-    String address = store.account.currentAddress;
-
+    String stashAddress = store.staking.ledger['stakingLedger']['stash'];
     List nominators = store.staking.ledger['nominators'];
 
     return Container(
@@ -202,10 +201,11 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
 
           int meStaked;
           int meIndex =
-              validator.nominators.indexWhere((i) => i['who'] == address);
+              validator.nominators.indexWhere((i) => i['who'] == stashAddress);
           if (meIndex >= 0) {
             meStaked = validator.nominators[meIndex]['value'];
           }
+
           Map accInfo = store.account.accountIndexMap[id];
           return Expanded(
             child: ListTile(

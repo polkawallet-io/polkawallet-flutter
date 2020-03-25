@@ -49,11 +49,12 @@ class _StakingActions extends State<StakingActions>
     if (store.settings.loading) {
       return;
     }
+    String pubKey = store.account.currentAccount.pubKey;
     await Future.wait([
-      webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
-      webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
+      webApi.assets.fetchBalance(pubKey),
+      webApi.staking.fetchAccountStaking(pubKey),
     ]);
-    webApi.staking.fetchAccountRewards(store.account.currentAddress);
+    webApi.staking.fetchAccountRewards(pubKey);
   }
 
   void _changeCurrentAccount(AccountData acc) {
@@ -272,7 +273,8 @@ class _StakingActions extends State<StakingActions>
       } else {
         // if we don't need to reload data, do we need to reload reward data?
         if (store.staking.accountRewardTotal == null) {
-          webApi.staking.fetchAccountRewards(store.account.currentAddress);
+          webApi.staking
+              .fetchAccountRewards(store.account.currentAccount.pubKey);
         }
       }
     });

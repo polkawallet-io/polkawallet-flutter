@@ -1,3 +1,6 @@
+# 0.6.2
+- Update polkadot-js/api to 1.9.0-beta.0
+
 # 0.6.1
 - fix nominator list bug
 - Refactor pending payouts query

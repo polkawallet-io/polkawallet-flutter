@@ -2,25 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
 import 'package:polka_wallet/store/governance.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ReferendumPanel extends StatelessWidget {
-  ReferendumPanel(
-      {this.symbol,
-      this.data,
-      this.bestNumber,
-      this.votes,
-      this.voted,
-      this.onVote});
+  ReferendumPanel({
+    this.symbol,
+    this.data,
+    this.bestNumber,
+    this.votes,
+    this.voted,
+  });
 
   final String symbol;
   final ReferendumInfo data;
   final int bestNumber;
-  final ReferendumVotes votes;
+  final Map votes;
   final int voted;
-  final Function(int, bool) onVote;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class ReferendumPanel extends StatelessWidget {
             child: Image.asset('assets/images/gov/time.png'),
           ),
           Text(
-            '${data.info['end'] + data.info['delay'] - bestNumber} blocks ${dic['end']}',
+            '${data.status['end'] + data.status['delay'] - bestNumber} blocks ${dic['end']}',
             style: TextStyle(color: Colors.lightGreen),
           )
         ],
@@ -111,8 +111,12 @@ class ReferendumPanel extends StatelessWidget {
 
     if (votes != null) {
       double widthFull = MediaQuery.of(context).size.width - 72;
-      double yes = votes.votedAye / votes.votedTotal;
-      double widthYes = votes.votedTotal > 0 ? yes * widthFull : widthFull / 2;
+//      int votedTotal = int.parse(votes['votedTotal'].toString());
+      int votedAye = int.parse(votes['votedAye'].toString());
+      int votedNay = int.parse(votes['votedNay'].toString());
+      int votedTotalCalc = votedAye + votedNay;
+      double yes = int.parse(votes['votedAye'].toString()) / votedTotalCalc;
+      double widthYes = votedTotalCalc > 0 ? yes * widthFull : widthFull / 2;
       double widthMin = 6;
       list.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -143,13 +147,13 @@ class ReferendumPanel extends StatelessWidget {
       list.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text('${Fmt.token(votes.votedNay)} $symbol'),
-          Text('${Fmt.token(votes.votedAye)} $symbol')
+          Text('${Fmt.token(votedNay)} $symbol'),
+          Text('${Fmt.token(votedAye)} $symbol')
         ],
       ));
     }
 
-    bool votedYes = voted ?? 0 > 6;
+    bool votedYes = (voted ?? 0) > 6;
     list.add(Container(
       margin: EdgeInsets.only(top: 16),
       child: Row(
@@ -160,7 +164,9 @@ class ReferendumPanel extends StatelessWidget {
               text:
                   '${voted != null && !votedYes ? dic['voted'] : ''} ${dic['no']}',
               onPressed: voted == null || votedYes
-                  ? () => onVote(data.index, false)
+                  ? () => Navigator.of(context).pushNamed(
+                      ReferendumVotePage.route,
+                      arguments: {'referenda': data, 'voteYes': false})
                   : null,
             ),
           ),
@@ -170,7 +176,9 @@ class ReferendumPanel extends StatelessWidget {
               text:
                   '${voted != null && votedYes ? dic['voted'] : ''} ${dic['yes']}',
               onPressed: voted == null || !votedYes
-                  ? () => onVote(data.index, true)
+                  ? () => Navigator.of(context).pushNamed(
+                      ReferendumVotePage.route,
+                      arguments: {'referenda': data, 'voteYes': true})
                   : null,
             ),
           )

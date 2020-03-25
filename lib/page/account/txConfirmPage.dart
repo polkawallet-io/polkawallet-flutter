@@ -89,12 +89,13 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     }
 
     store.assets.setSubmitting(true);
+    store.account.setTxStatus('queued');
     state.showSnackBar(SnackBar(
       backgroundColor: Theme.of(context).cardColor,
       content: ListTile(
         leading: CupertinoActivityIndicator(),
         title: Text(
-          dic['submit.tx'],
+          dic['tx.${store.account.txStatus}'] ?? dic['tx.queued'],
           style: TextStyle(color: Colors.black54),
         ),
       ),

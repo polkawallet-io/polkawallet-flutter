@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flutter/material.dart';
 
 class RewardsChart extends StatelessWidget {
   RewardsChart(this.data, this.labels, this.labelFormatter, {this.animate});
@@ -10,12 +10,13 @@ class RewardsChart extends StatelessWidget {
 
   final charts.BasicNumericTickFormatterSpec labelFormatter;
 
-  factory RewardsChart.withData(List<List<num>> ls, List<String> labels) {
+  factory RewardsChart.withData(
+      List<ChartLineInfo> lines, List<List> values, List<String> labels) {
     var formatter = charts.BasicNumericTickFormatterSpec((num value) {
       return labels[value.toInt()] ?? '';
     });
     return new RewardsChart(
-      _formatData(ls),
+      _formatData(lines, values),
       labels,
       formatter,
       // Disable animations for image tests.
@@ -23,30 +24,20 @@ class RewardsChart extends StatelessWidget {
     );
   }
 
-  static List<charts.Series<num, num>> _formatData(List<List<num>> ls) {
-    return [
-      new charts.Series<num, num>(
-        id: 'Slashes',
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
+  static List<charts.Series<num, num>> _formatData(
+      List<ChartLineInfo> lines, List<List> ls) {
+    int index = 0;
+    return lines.map((i) {
+      charts.Series<num, num> res = new charts.Series<num, num>(
+        id: i.name,
+        colorFn: (_, __) => i.color,
         domainFn: (_, int index) => index,
         measureFn: (num item, _) => item,
-        data: ls[0],
-      ),
-      new charts.Series<num, num>(
-        id: 'Rewards',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (_, int index) => index,
-        measureFn: (num item, _) => item,
-        data: ls[1],
-      ),
-      new charts.Series<num, num>(
-        id: 'Average',
-        colorFn: (_, __) => charts.MaterialPalette.gray.shadeDefault,
-        domainFn: (_, int index) => index,
-        measureFn: (num item, _) => item,
-        data: ls[2],
-      ),
-    ];
+        data: List<num>.from(ls[index]),
+      );
+      index++;
+      return res;
+    }).toList();
   }
 
   @override
@@ -63,4 +54,10 @@ class RewardsChart extends StatelessWidget {
       ),
     );
   }
+}
+
+class ChartLineInfo {
+  ChartLineInfo(this.name, this.color);
+  final String name;
+  final charts.Color color;
 }

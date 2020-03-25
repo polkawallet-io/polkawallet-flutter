@@ -30,6 +30,9 @@ abstract class _AccountStore with Store {
   bool loading = true;
 
   @observable
+  String txStatus = '';
+
+  @observable
   AccountCreate newAccount = AccountCreate();
 
   @observable
@@ -66,6 +69,11 @@ abstract class _AccountStore with Store {
   @computed
   String get currentAddress {
     return pubKeyAddressMap[currentAccount.pubKey] ?? currentAccount.address;
+  }
+
+  @action
+  void setTxStatus(String status) {
+    txStatus = status;
   }
 
   @action
