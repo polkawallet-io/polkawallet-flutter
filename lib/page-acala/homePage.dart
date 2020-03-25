@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/page/assets/drawerMenu.dart';
 import 'package:polka_wallet/page/assets/index.dart';
 import 'package:polka_wallet/page/staking/index.dart';
 import 'package:polka_wallet/page/governance/index.dart';
@@ -8,18 +9,18 @@ import 'package:polka_wallet/store/app.dart';
 
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-class HomePage extends StatefulWidget {
-  HomePage(this.store);
+class AcalaHomePage extends StatefulWidget {
+  AcalaHomePage(this.store);
 
   static final String route = '/';
   final AppStore store;
 
   @override
-  _HomePageState createState() => new _HomePageState(store);
+  _AcalaHomePageState createState() => new _AcalaHomePageState(store);
 }
 
-class _HomePageState extends State<HomePage> {
-  _HomePageState(this.store);
+class _AcalaHomePageState extends State<AcalaHomePage> {
+  _AcalaHomePageState(this.store);
 
   final AppStore store;
 

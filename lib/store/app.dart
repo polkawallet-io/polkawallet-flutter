@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
+import 'package:polka_wallet/store/acala/acala.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/store/account.dart';
@@ -13,6 +14,9 @@ final AppStore globalAppStore = AppStore();
 class AppStore extends _AppStore with _$AppStore {}
 
 abstract class _AppStore with Store {
+  @observable
+  AcalaStore acala = AcalaStore();
+
   @observable
   AccountStore account = AccountStore();
 

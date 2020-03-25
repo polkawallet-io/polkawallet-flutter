@@ -9,6 +9,23 @@ part of 'app.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AppStore on _AppStore, Store {
+  final _$acalaAtom = Atom(name: '_AppStore.acala');
+
+  @override
+  AcalaStore get acala {
+    _$acalaAtom.context.enforceReadPolicy(_$acalaAtom);
+    _$acalaAtom.reportObserved();
+    return super.acala;
+  }
+
+  @override
+  set acala(AcalaStore value) {
+    _$acalaAtom.context.conditionallyRunInAction(() {
+      super.acala = value;
+      _$acalaAtom.reportChanged();
+    }, _$acalaAtom, name: '${_$acalaAtom.name}_set');
+  }
+
   final _$accountAtom = Atom(name: '_AppStore.account');
 
   @override

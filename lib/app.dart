@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/page-acala/homePage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
@@ -13,6 +14,7 @@ import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateListPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
+import 'package:polka_wallet/page/networkSelectPage.dart';
 import 'package:polka_wallet/page/profile/aboutPage.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
 import 'package:polka_wallet/page/profile/account/changeNamePage.dart';
@@ -136,6 +138,7 @@ class _WalletAppState extends State<WalletApp> {
                 );
               },
             ),
+        NetworkSelectPage.route: (_) => NetworkSelectPage(_appStore),
         // account
         CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
         CreateAccountPage.route: (_) =>
@@ -180,6 +183,9 @@ class _WalletAppState extends State<WalletApp> {
         RemoteNodeListPage.route: (_) => RemoteNodeListPage(_appStore.settings),
         SS58PrefixListPage.route: (_) => SS58PrefixListPage(_appStore.settings),
         AboutPage.route: (_) => AboutPage(),
+
+        // acala-network
+//        AcalaHomePage.route: (_) => AcalaHomePage(_appStore),
       },
     );
   }
