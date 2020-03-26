@@ -1,15 +1,22 @@
 import 'package:flutter_aes_ecb_pkcs5/flutter_aes_ecb_pkcs5.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'account.g.dart';
 
-class AccountStore extends _AccountStore with _$AccountStore {}
+class AccountStore extends _AccountStore with _$AccountStore {
+  AccountStore(AppStore appStore) : super(appStore);
+}
 
 abstract class _AccountStore with Store {
+  _AccountStore(this.rootStore);
+
+  final AppStore rootStore;
+
   final String seedTypeMnemonic = 'mnemonic';
   final String seedTypeRaw = 'rawSeed';
 
@@ -49,8 +56,8 @@ abstract class _AccountStore with Store {
       ObservableMap<String, AccountBondedInfo>();
 
   @observable
-  ObservableMap<String, String> pubKeyAddressMap =
-      ObservableMap<String, String>();
+  ObservableMap<int, Map<String, String>> pubKeyAddressMap =
+      ObservableMap<int, Map<String, String>>();
 
   @observable
   ObservableMap<String, String> pubKeyIconsMap =
@@ -68,7 +75,11 @@ abstract class _AccountStore with Store {
 
   @computed
   String get currentAddress {
-    return pubKeyAddressMap[currentAccount.pubKey] ?? currentAccount.address;
+    String network = rootStore.settings.endpoint.info;
+    return pubKeyAddressMap[network] != null
+        ? pubKeyAddressMap[network][currentAccount.pubKey] ??
+            currentAccount.address
+        : currentAccount.address;
   }
 
   @action
@@ -248,9 +259,16 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  void setPubKeyAddressMap(List list) {
-    list.forEach((i) {
-      pubKeyAddressMap[i['pubKey']] = i['address'];
+  void setPubKeyAddressMap(Map data) {
+    data.keys.forEach((ss58) {
+      // get old data map
+      Map<String, String> addresses = Map.of(pubKeyAddressMap[ss58]);
+      // set new data
+      Map.of(data[ss58]).forEach((k, v) {
+        addresses[k] = v;
+      });
+      // update state
+      pubKeyAddressMap[ss58] = addresses;
     });
   }
 

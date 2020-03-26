@@ -18,7 +18,7 @@ abstract class _AppStore with Store {
   AcalaStore acala = AcalaStore();
 
   @observable
-  AccountStore account = AccountStore();
+  AccountStore account;
 
   @observable
   AssetsStore assets;
@@ -39,6 +39,8 @@ abstract class _AppStore with Store {
   Future<void> init(String sysLocaleCode) async {
     // wait settings store loaded
     await settings.init(sysLocaleCode);
+
+    account = AccountStore(this);
 
     await account.loadAccount();
     assets = AssetsStore(account);

@@ -49,17 +49,16 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         _selectedNetwork.info == store.settings.endpoint.info;
     List<AccountData> accounts =
         isCurrentNetwork ? [store.account.currentAccount] : [];
-    if (_selectedNetwork.info == networkEndpointAcala.info) {
-      accounts.addAll(store.acala.account.accountList);
-    } else {
-      accounts.addAll(store.account.optionalAccounts);
-    }
+
+    accounts.addAll(store.account.optionalAccounts);
     res.addAll(accounts.map((i) {
       return RoundedCard(
         margin: EdgeInsets.only(bottom: 16),
         child: ListTile(
           title: Text(i.name),
-          subtitle: Text(Fmt.address(i.address)),
+          subtitle: Text(Fmt.address(
+              store.account.pubKeyAddressMap[_selectedNetwork.info][i.pubKey] ??
+                  '')),
         ),
       );
     }).toList());

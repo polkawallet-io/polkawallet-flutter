@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:polka_wallet/service/substrateApi/acala/apiAcalaAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiGov.dart';
@@ -19,6 +20,9 @@ class Api {
   final AppStore store;
 
   ApiAccount account;
+
+  ApiAcalaAssets acalaAssets;
+
   ApiAssets assets;
   ApiStaking staking;
   ApiGovernance gov;
@@ -30,19 +34,35 @@ class Api {
 
   void init() {
     account = ApiAccount(this);
+
+    acalaAssets = ApiAcalaAssets(this);
+
     assets = ApiAssets(this);
     staking = ApiStaking(this);
     gov = ApiGovernance(this);
 
-    _msgHandlers['txStatusChange'] = store.account.setTxStatus;
+    _msgHandlers = {'txStatusChange': store.account.setTxStatus};
+
+    launchWebview();
+  }
+
+  Future<void> launchWebview() async {
+    _evalJavascriptUID = 0;
+    _msgCompleters = {};
+
+    if (_web != null) {
+      _web.reload();
+      return;
+    }
 
     _web = FlutterWebviewPlugin();
 
     _web.onStateChanged.listen((viewState) async {
       if (viewState.type == WebViewState.finishLoad) {
-        print('webview loaded');
+        String network = store.settings.endpoint.info;
+        print('webview loaded for network $network');
         DefaultAssetBundle.of(context)
-            .loadString('lib/polkadot_js_service/dist/main.js')
+            .loadString('lib/js_service_$network/dist/main.js')
             .then((String js) {
           print('js file loaded');
           // inject js file to webview
@@ -136,13 +156,14 @@ class Api {
     store.settings.setNetworkLoading(true);
     store.staking.clearState();
     store.gov.clearSate();
-    String res = await evalJavascript('settings.changeEndpoint("$endpoint")');
-    if (res == null) {
-      print('connect failed');
-      store.settings.setNetworkName(null);
-      return;
-    }
-    fetchNetworkProps();
+//    String res = await evalJavascript('settings.changeEndpoint("$endpoint")');
+//    if (res == null) {
+//      print('connect failed');
+//      store.settings.setNetworkName(null);
+//      return;
+//    }
+//    fetchNetworkProps();
+    launchWebview();
   }
 
   Future<void> fetchNetworkProps() async {
@@ -159,9 +180,9 @@ class Api {
     // fetch account balance
     if (store.account.accountList.length > 0) {
       // reset account address format
-      if (store.settings.customSS58Format['info'] == 'default') {
-        account.setSS58Format(info[1]['ss58Format'] ?? 42);
-      }
+//      if (store.settings.customSS58Format['info'] == 'default') {
+//        account.setSS58Format(info[1]['ss58Format'] ?? 42);
+//      }
 
       // fetch account balance
       await Future.wait([

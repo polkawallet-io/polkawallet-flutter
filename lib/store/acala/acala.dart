@@ -7,5 +7,5 @@ class AcalaStore = _AcalaStore with _$AcalaStore;
 
 abstract class _AcalaStore with Store {
   @observable
-  AccountStore account = AccountStore();
+  String test = '';
 }

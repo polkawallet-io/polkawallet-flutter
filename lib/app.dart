@@ -163,7 +163,7 @@ class _WalletAppState extends State<WalletApp> {
         RedeemPage.route: (_) => RedeemPage(_appStore),
         PayoutPage.route: (_) => PayoutPage(_appStore),
         SetControllerPage.route: (_) => SetControllerPage(_appStore),
-        AccountSelectPage.route: (_) => AccountSelectPage(_appStore.account),
+        AccountSelectPage.route: (_) => AccountSelectPage(_appStore),
         // governance
         CandidateDetailPage.route: (_) => CandidateDetailPage(_appStore),
         CouncilVotePage.route: (_) => CouncilVotePage(_appStore),

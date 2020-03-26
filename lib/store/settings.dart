@@ -206,6 +206,9 @@ abstract class _EndpointData with Store {
   String info = '';
 
   @observable
+  int ss58 = 42;
+
+  @observable
   String text = '';
 
   @observable

@@ -164,7 +164,8 @@ class _StakingActions extends State<StakingActions>
     bool controllerEqualStash = controllerId == stashId;
     String account02 = isStash ? controllerId : stashId;
     String account02PubKey;
-    store.account.pubKeyAddressMap.forEach((k, v) {
+    store.account.pubKeyAddressMap[store.settings.endpoint.ss58]
+        .forEach((k, v) {
       if (v == account02) {
         account02PubKey = k;
       }

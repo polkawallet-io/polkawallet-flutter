@@ -43,7 +43,8 @@ class _BondPageState extends State<BondPage> {
     if (_formKey.currentState.validate()) {
       String controllerId = store.account.currentAddress;
       if (_controller != null) {
-        controllerId = store.account.pubKeyAddressMap[_controller.pubKey];
+        controllerId = store.account
+            .pubKeyAddressMap[store.settings.endpoint.info][_controller.pubKey];
       }
 
       var args = {

@@ -4,8 +4,8 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 
-class ApiAssets {
-  ApiAssets(this.apiRoot);
+class ApiAcalaAssets {
+  ApiAcalaAssets(this.apiRoot);
 
   final Api apiRoot;
   final store = globalAppStore;

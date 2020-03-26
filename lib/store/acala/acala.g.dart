@@ -9,20 +9,20 @@ part of 'acala.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AcalaStore on _AcalaStore, Store {
-  final _$accountAtom = Atom(name: '_AcalaStore.account');
+  final _$testAtom = Atom(name: '_AcalaStore.test');
 
   @override
-  AccountStore get account {
-    _$accountAtom.context.enforceReadPolicy(_$accountAtom);
-    _$accountAtom.reportObserved();
-    return super.account;
+  String get test {
+    _$testAtom.context.enforceReadPolicy(_$testAtom);
+    _$testAtom.reportObserved();
+    return super.test;
   }
 
   @override
-  set account(AccountStore value) {
-    _$accountAtom.context.conditionallyRunInAction(() {
-      super.account = value;
-      _$accountAtom.reportChanged();
-    }, _$accountAtom, name: '${_$accountAtom.name}_set');
+  set test(String value) {
+    _$testAtom.context.conditionallyRunInAction(() {
+      super.test = value;
+      _$testAtom.reportChanged();
+    }, _$testAtom, name: '${_$testAtom.name}_set');
   }
 }

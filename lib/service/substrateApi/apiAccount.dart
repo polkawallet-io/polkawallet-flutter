@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/notification.dart';
@@ -16,8 +17,8 @@ class ApiAccount {
   Future<void> setSS58Format(int value) async {
     print('set ss58: $value');
     // setSS58Format and reload new addresses
-    List res = await apiRoot.evalJavascript('account.resetSS58Format($value)');
-    store.account.setPubKeyAddressMap(res);
+//    List res = await apiRoot.evalJavascript('account.resetSS58Format($value)');
+//    store.account.setPubKeyAddressMap(res);
   }
 
   Future<void> initAccounts() async {
@@ -25,11 +26,12 @@ class ApiAccount {
 
     String accounts = jsonEncode(
         store.account.accountList.map((i) => AccountData.toJson(i)).toList());
-    int ss58 = default_ss58_map[store.settings.endpoint.info];
-    if (store.settings.customSS58Format['info'] != 'default') {
-      ss58 = store.settings.customSS58Format['value'];
-    }
-    List keys =
+//    int ss58 = default_ss58_map[store.settings.endpoint.info];
+//    if (store.settings.customSS58Format['info'] != 'default') {
+//      ss58 = store.settings.customSS58Format['value'];
+//    }
+    String ss58 = jsonEncode(network_ss58_map.values.toList());
+    Map keys =
         await apiRoot.evalJavascript('account.initKeys($accounts, $ss58)');
     store.account.setPubKeyAddressMap(keys);
 
@@ -44,7 +46,11 @@ class ApiAccount {
     List res = await apiRoot
         .evalJavascript('account.decodeAddress(${jsonEncode(addresses)})');
     if (res != null) {
-      store.account.setPubKeyAddressMap(res);
+      Map<String, String> data = {};
+      res.forEach((i) {
+        data[i['pubKey']] = i['address'];
+      });
+      store.account.setPubKeyAddressMap({store.settings.endpoint.ss58: data});
     }
   }
 
@@ -103,11 +109,11 @@ class ApiAccount {
       store.assets.loadAccountCache();
       store.staking.loadAccountCache();
 
-      if (store.settings.customSS58Format['info'] == 'default') {
-        await setSS58Format(default_ss58_map[store.settings.endpoint.info]);
-      } else {
-        await setSS58Format(store.settings.customSS58Format['value']);
-      }
+//      if (store.settings.customSS58Format['info'] == 'default') {
+//        await setSS58Format(default_ss58_map[store.settings.endpoint.info]);
+//      } else {
+//        await setSS58Format(store.settings.customSS58Format['value']);
+//      }
 
       // fetch info for the imported account
       String pubKey = acc['pubKey'];

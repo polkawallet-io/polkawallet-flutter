@@ -16,7 +16,8 @@ class DrawerMenu extends StatelessWidget {
 
   List<Widget> _buildAccList(BuildContext context) {
     return store.account.optionalAccounts.map((i) {
-      String address = store.account.pubKeyAddressMap[i.pubKey];
+      String address = store
+          .account.pubKeyAddressMap[store.settings.endpoint.info][i.pubKey];
       return ListTile(
         leading: AddressIcon(i.address, pubKey: i.pubKey, size: 36),
         title: Text(i.name ?? 'name',

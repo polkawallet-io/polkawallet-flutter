@@ -50,7 +50,8 @@ class _SetControllerPageState extends State<SetControllerPage> {
     String controllerPubKey = _controller != null
         ? _controller.pubKey
         : store.account.currentAccount.pubKey;
-    String address = store.account.pubKeyAddressMap[controllerPubKey];
+    String address = store.account
+        .pubKeyAddressMap[store.settings.endpoint.info][controllerPubKey];
     Map<String, dynamic> args = {
       "title": I18n.of(context).staking['action.control'],
       "txInfo": {
