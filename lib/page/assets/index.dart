@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -29,10 +30,17 @@ class _AssetsState extends State<Assets> {
   final AppStore store;
 
   Future<void> _fetchBalance() async {
-    await Future.wait([
-      webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
-      webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
-    ]);
+    if (store.settings.endpoint.info == networkEndpointAcala.info) {
+      await Future.wait([
+        webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
+        webApi.acalaAssets.fetchTokens(store.account.currentAccount.pubKey),
+      ]);
+    } else {
+      await Future.wait([
+        webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
+        webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
+      ]);
+    }
   }
 
   Widget _buildTopCard(BuildContext context) {
@@ -42,6 +50,8 @@ class _AssetsState extends State<Assets> {
         : store.settings.networkName ?? dic['node.failed'];
 
     AccountData acc = store.account.currentAccount;
+
+    bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
 
     return RoundedCard(
       padding: EdgeInsets.all(8),
@@ -55,7 +65,8 @@ class _AssetsState extends State<Assets> {
           ListTile(
             title: Text(Fmt.address(store.account.currentAddress)),
             trailing: IconButton(
-              icon: Image.asset('assets/images/assets/Assets_nav_code.png'),
+              icon: Image.asset(
+                  'assets/images/assets/qrcode_${isAcala ? 'indigo' : 'pink'}.png'),
               onPressed: () {
                 if (acc.address != '') {
                   Navigator.pushNamed(context, ReceivePage.route);
@@ -84,6 +95,14 @@ class _AssetsState extends State<Assets> {
       builder: (_) {
         String symbol = store.settings.networkState.tokenSymbol;
         String networkName = store.settings.networkName;
+
+        List<String> currencyIds = [];
+        if (store.settings.endpoint.info == networkEndpointAcala.info) {
+          currencyIds.addAll(
+              List<String>.from(store.settings.networkConst['currencyIds']));
+          currencyIds.retainWhere((i) => i != symbol);
+          print(currencyIds);
+        }
         return RefreshIndicator(
           key: globalBalanceRefreshKey,
           onRefresh: _fetchBalance,
@@ -109,7 +128,8 @@ class _AssetsState extends State<Assets> {
                   title: Text(symbol ?? ''),
                   subtitle: Text(networkName ?? '~'),
                   trailing: Text(
-                    Fmt.balance(store.assets.balance),
+                    Fmt.balance(store.assets.balance,
+                        decimals: store.settings.networkState.tokenDecimals),
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,

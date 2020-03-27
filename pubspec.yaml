@@ -89,8 +89,10 @@ flutter:
     - assets/images/public/acala_gray.png
     - assets/images/assets/ACA.png
     ## images - acala
-    - assets/images/assets/acala_logo.png
     - assets/images/assets/top_bg_indigo.png
+    - assets/images/assets/receive_line_indigo.png
+    - assets/images/assets/qrcode_indigo.png
+    - assets/images/assets/plus_indigo.png
     - assets/images/staking/top_bg_indigo.png
     - assets/images/public/Assets_indigo.png
     - assets/images/public/Governance_indigo.png
@@ -120,8 +122,8 @@ flutter:
     - assets/images/assets/top_bg_pink.png
     - assets/images/assets/Assets_nav_0.png
     - assets/images/assets/Assets_nav_1.png
-    - assets/images/assets/Assets_nav_code.png
-    - assets/images/assets/Assets_nav_plus.png
+    - assets/images/assets/qrcode_pink.png
+    - assets/images/assets/plus_pink.png
     - assets/images/assets/Menu_scan.png
     - assets/images/assets/Menu_create.png
     - assets/images/assets/assets_send.png
@@ -130,7 +132,7 @@ flutter:
     - assets/images/assets/assets_down.png
     - assets/images/assets/assets_fail.png
     - assets/images/assets/success.png
-    - assets/images/assets/sweep_code_line.png
+    - assets/images/assets/receive_line_pink.png
     - assets/images/assets/DOT.png
     - assets/images/assets/KSM.png
     - assets/images/assets/FIR.png

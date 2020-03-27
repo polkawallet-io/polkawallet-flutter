@@ -91,7 +91,7 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
             Scaffold(
               backgroundColor: Colors.transparent,
               appBar: AppBar(
-                title: Image.asset('assets/images/assets/acala_logo.png'),
+                title: Image.asset('assets/images/assets/logo.png'),
                 centerTitle: false,
                 backgroundColor: Colors.transparent,
                 elevation: 0.0,

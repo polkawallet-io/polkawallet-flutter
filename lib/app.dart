@@ -170,7 +170,7 @@ class _WalletAppState extends State<WalletApp> {
         // assets
         AssetPage.route: (_) => AssetPage(_appStore),
         TransferPage.route: (_) => TransferPage(_appStore),
-        ReceivePage.route: (_) => ReceivePage(_appStore.account),
+        ReceivePage.route: (_) => ReceivePage(_appStore),
         TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
         // staking
         StakingDetailPage.route: (_) => StakingDetailPage(_appStore),

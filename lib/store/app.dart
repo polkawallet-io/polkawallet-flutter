@@ -15,7 +15,7 @@ class AppStore extends _AppStore with _$AppStore {}
 
 abstract class _AppStore with Store {
   @observable
-  AcalaStore acala = AcalaStore();
+  SettingsStore settings = SettingsStore();
 
   @observable
   AccountStore account;
@@ -28,9 +28,6 @@ abstract class _AppStore with Store {
 
   @observable
   GovernanceStore gov;
-
-  @observable
-  SettingsStore settings = SettingsStore();
 
   @observable
   bool isReady = false;

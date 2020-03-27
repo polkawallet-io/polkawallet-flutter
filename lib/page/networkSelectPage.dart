@@ -33,6 +33,8 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   EndpointData _selectedNetwork;
 
   List<Widget> _buildAccountList() {
+    Color primaryColor = Theme.of(context).primaryColor;
+    bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
     List<Widget> res = [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -42,8 +44,9 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
             style: Theme.of(context).textTheme.display4,
           ),
           IconButton(
-            icon: Icon(Icons.add_circle_outline),
-            color: Theme.of(context).primaryColor,
+            icon: Image.asset(
+                'assets/images/assets/plus_${isAcala ? 'indigo' : 'pink'}.png'),
+            color: primaryColor,
             onPressed: () =>
                 Navigator.of(context).pushNamed(CreateAccountEntryPage.route),
           )
@@ -66,7 +69,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         child: ListTile(
           leading: AddressIcon('', pubKey: i.pubKey),
           title: Text(i.name),
-          subtitle: Text(Fmt.address(address ?? 'address')),
+          subtitle: Text(Fmt.address(address ?? 'address xxxx')),
           onTap: () {
             if (address == store.account.currentAddress) return;
 

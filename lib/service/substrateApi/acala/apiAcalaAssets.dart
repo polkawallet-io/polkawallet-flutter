@@ -10,12 +10,18 @@ class ApiAcalaAssets {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<void> fetchBalance(String pubKey) async {
+  Future<void> fetchTokens(String pubKey) async {
     if (pubKey != null && pubKey.isNotEmpty) {
       String address = store.account.currentAddress;
-      String res =
-          await apiRoot.evalJavascript('account.getBalance("$address")');
-      store.assets.setAccountBalance(pubKey, res);
+      List<String> tokens =
+          List<String>.from(store.settings.networkConst['currencyIds']);
+      tokens.retainWhere((i) => i != store.settings.networkState.tokenSymbol);
+      String queries = tokens
+          .map((i) => 'api.query.tokens.balance("$i", "$address")')
+          .join(",");
+      var res = await apiRoot.evalJavascript('Promise.all([$queries])');
+      print(res);
+//      store.assets.setAccountBalance(pubKey, res);
     }
   }
 
