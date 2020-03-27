@@ -6,11 +6,13 @@ import 'package:polka_wallet/utils/i18n/index.dart';
 
 const default_node_zh = {
   'info': 'kusama',
+  'ss58': 2,
   'text': 'Kusama (Polkadot Canary, hosted by Polkawallet)',
   'value': 'ws://mandala-01.acala.network:9954/',
 };
 const default_node = {
   'info': 'kusama',
+  'ss58': 2,
   'text': 'Kusama (Polkadot Canary, hosted by Parity)',
   'value': 'wss://kusama-rpc.polkadot.io/',
 };
@@ -19,16 +21,19 @@ const nodeList = [
   default_node,
   {
     'info': 'kusama',
+    'ss58': 2,
     'text': 'Kusama (Polkadot Canary, hosted by Web3 Foundation)',
     'value': 'wss://cc3-5.kusama.network/',
   },
   {
     'info': 'substrate',
+    'ss58': 42,
     'text': 'Flaming Fir (Substrate Testnet, hosted by Parity)',
     'value': 'wss://substrate-rpc.parity.io/',
   },
   {
     'info': 'substrate',
+    'ss58': 42,
     'text': 'Kulupu (Kulupu Mainnet, hosted by Kulupu)',
     'value': 'wss://rpc.kulupu.network/ws',
   },

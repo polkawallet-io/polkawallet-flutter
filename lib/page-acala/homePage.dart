@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/page/assets/drawerMenu.dart';
+import 'package:polka_wallet/page-acala/loan/Loan.dart';
 import 'package:polka_wallet/page/assets/index.dart';
-import 'package:polka_wallet/page/staking/index.dart';
 import 'package:polka_wallet/page/governance/index.dart';
 import 'package:polka_wallet/page/profile/index.dart';
 import 'package:polka_wallet/service/notification.dart';
@@ -30,7 +29,7 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
 
   final List<String> _tabList = [
     'Assets',
-    'Staking',
+    'Loan',
     'Governance',
     'Profile',
   ];
@@ -40,14 +39,15 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
     return _tabList
         .map((i) => BottomNavigationBarItem(
               icon: Image.asset(_tabList[activeItem] == i
-                  ? 'assets/images/public/$i.png'
+                  ? 'assets/images/public/${i}_indigo.png'
                   : 'assets/images/public/${i}_dark.png'),
               title: Text(
                 tabs[i.toLowerCase()],
                 style: TextStyle(
                     fontSize: 14,
-                    color:
-                        _tabList[activeItem] == i ? Colors.pink : Colors.grey),
+                    color: _tabList[activeItem] == i
+                        ? Colors.indigo
+                        : Colors.grey),
               ),
             ))
         .toList();
@@ -58,7 +58,7 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
       case 0:
         return Assets(store);
       case 1:
-        return Staking(store);
+        return Loan(store);
       case 2:
         return Governance(store);
       default:
@@ -83,7 +83,7 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   alignment: Alignment.topLeft,
-                  image: AssetImage("assets/images/staking/top_bg.png"),
+                  image: AssetImage("assets/images/assets/top_bg_indigo.png"),
                   fit: BoxFit.contain,
                 ),
               ),
@@ -91,7 +91,7 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
             Scaffold(
               backgroundColor: Colors.transparent,
               appBar: AppBar(
-                title: Image.asset('assets/images/assets/logo.png'),
+                title: Image.asset('assets/images/assets/acala_logo.png'),
                 centerTitle: false,
                 backgroundColor: Colors.transparent,
                 elevation: 0.0,
@@ -130,7 +130,7 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 alignment: Alignment.topLeft,
-                image: AssetImage("assets/images/assets/Assets_bg.png"),
+                image: AssetImage("assets/images/staking/top_bg_indigo.png"),
                 fit: BoxFit.contain,
               ),
             ),

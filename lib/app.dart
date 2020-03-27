@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/homePage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
@@ -62,6 +63,19 @@ class _WalletAppState extends State<WalletApp> {
   AppStore _appStore;
 
   Locale _locale = const Locale('en', '');
+  ThemeData _theme = appTheme;
+
+  void _changeTheme() {
+    if (_appStore.settings.endpoint.info == networkEndpointAcala.info) {
+      setState(() {
+        _theme = appThemeAcala;
+      });
+    } else {
+      setState(() {
+        _theme = appTheme;
+      });
+    }
+  }
 
   void _changeLang(BuildContext context, String code) {
     Locale res;
@@ -92,6 +106,7 @@ class _WalletAppState extends State<WalletApp> {
       webApi.init();
 
       _changeLang(context, _appStore.settings.localeCode);
+      _changeTheme();
     }
 
     return _appStore.account.accountList.length;
@@ -119,17 +134,21 @@ class _WalletAppState extends State<WalletApp> {
         const Locale('zh', ''),
       ],
       initialRoute: HomePage.route,
-      theme: appTheme,
+      theme: _theme,
 //      darkTheme: darkTheme,
       routes: {
         HomePage.route: (context) => Observer(
               builder: (_) {
+                String network =
+                    _appStore != null ? _appStore.settings.endpoint.info : '';
                 return FutureBuilder<int>(
                   future: _initStore(context),
                   builder: (_, AsyncSnapshot<int> snapshot) {
                     if (snapshot.hasData) {
                       return snapshot.data > 0
-                          ? HomePage(_appStore)
+                          ? network == networkEndpointAcala.info
+                              ? AcalaHomePage(_appStore)
+                              : HomePage(_appStore)
                           : CreateAccountEntryPage();
                     } else {
                       return Container();
@@ -138,7 +157,8 @@ class _WalletAppState extends State<WalletApp> {
                 );
               },
             ),
-        NetworkSelectPage.route: (_) => NetworkSelectPage(_appStore),
+        NetworkSelectPage.route: (_) =>
+            NetworkSelectPage(_appStore, _changeTheme),
         // account
         CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
         CreateAccountPage.route: (_) =>

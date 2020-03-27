@@ -361,7 +361,7 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void setPubKeyAddressMap(Map data) {
+  void setPubKeyAddressMap(Map<String, Map> data) {
     final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
       return super.setPubKeyAddressMap(data);

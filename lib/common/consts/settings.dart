@@ -1,13 +1,13 @@
 import 'package:polka_wallet/store/settings.dart';
 
-EndpointData networkEndpointKusama = EndpointData.fromJson({
+EndpointData networkEndpointKusama = EndpointData.fromJson(const {
   'info': 'kusama',
   'ss58': 2,
   'text': 'Kusama (Polkadot Canary, hosted by Parity)',
   'value': 'wss://kusama-rpc.polkadot.io/',
 });
 
-EndpointData networkEndpointAcala = EndpointData.fromJson({
+EndpointData networkEndpointAcala = EndpointData.fromJson(const {
   'info': 'acala',
   'ss58': 42,
   'text': 'Acala Mandala (Hosted by Acala Network)',

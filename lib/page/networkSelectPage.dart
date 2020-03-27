@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/settings.dart';
@@ -11,19 +13,22 @@ import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class NetworkSelectPage extends StatefulWidget {
-  NetworkSelectPage(this.store);
+  NetworkSelectPage(this.store, this.changeTheme);
 
   static final String route = '/network';
   final AppStore store;
+  final Function changeTheme;
 
   @override
-  _NetworkSelectPageState createState() => _NetworkSelectPageState(store);
+  _NetworkSelectPageState createState() =>
+      _NetworkSelectPageState(store, changeTheme);
 }
 
 class _NetworkSelectPageState extends State<NetworkSelectPage> {
-  _NetworkSelectPageState(this.store);
+  _NetworkSelectPageState(this.store, this.changeTheme);
 
   final AppStore store;
+  final Function changeTheme;
 
   EndpointData _selectedNetwork;
 
@@ -47,18 +52,41 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     ];
     bool isCurrentNetwork =
         _selectedNetwork.info == store.settings.endpoint.info;
-    List<AccountData> accounts =
-        isCurrentNetwork ? [store.account.currentAccount] : [];
 
+    List<AccountData> accounts = [store.account.currentAccount];
     accounts.addAll(store.account.optionalAccounts);
     res.addAll(accounts.map((i) {
+      String address =
+          store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
       return RoundedCard(
+        border: address == store.account.currentAddress
+            ? Border.all(color: Theme.of(context).primaryColorLight)
+            : Border.all(color: Theme.of(context).cardColor),
         margin: EdgeInsets.only(bottom: 16),
         child: ListTile(
+          leading: AddressIcon('', pubKey: i.pubKey),
           title: Text(i.name),
-          subtitle: Text(Fmt.address(
-              store.account.pubKeyAddressMap[_selectedNetwork.info][i.pubKey] ??
-                  '')),
+          subtitle: Text(Fmt.address(address ?? 'address')),
+          onTap: () {
+            if (address == store.account.currentAddress) return;
+
+            /// set current account
+            store.account.setCurrentAccount(i);
+
+            if (isCurrentNetwork) {
+              /// reload account info
+//              store.settings.setEndpoint(EndpointData.toJson(_selectedNetwork));
+//              webApi.launchWebview();
+//              Navigator.of(context).pop();
+            } else {
+              /// set new network and reload web view
+              store.settings.setEndpoint(EndpointData.toJson(_selectedNetwork));
+              webApi.launchWebview();
+              changeTheme();
+            }
+
+            Navigator.of(context).pop();
+          },
         ),
       );
     }).toList());

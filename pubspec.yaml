@@ -87,13 +87,23 @@ flutter:
     - assets/images/public/kusama_gray.png
     - assets/images/public/acala.png
     - assets/images/public/acala_gray.png
+    - assets/images/assets/ACA.png
     ## images - acala
+    - assets/images/assets/acala_logo.png
+    - assets/images/assets/top_bg_indigo.png
+    - assets/images/staking/top_bg_indigo.png
+    - assets/images/public/Assets_indigo.png
+    - assets/images/public/Governance_indigo.png
+    - assets/images/public/Profile_indigo.png
+    - assets/images/public/Staking_indigo.png
+    - assets/images/public/Loan_indigo.png
+    - assets/images/public/Loan_dark.png
     ## images - kusama
     - assets/images/public/app.png
-    - assets/images/public/Assets.png
-    - assets/images/public/Governance.png
-    - assets/images/public/Profile.png
-    - assets/images/public/Staking.png
+    - assets/images/public/Assets_pink.png
+    - assets/images/public/Governance_pink.png
+    - assets/images/public/Profile_pink.png
+    - assets/images/public/Staking_pink.png
     - assets/images/public/Assets_dark.png
     - assets/images/public/Governance_dark.png
     - assets/images/public/Profile_dark.png
@@ -107,7 +117,7 @@ flutter:
     - assets/images/public/substrate.png
     - assets/images/public/default.png
     - assets/images/assets/logo.png
-    - assets/images/assets/Assets_bg.png
+    - assets/images/assets/top_bg_pink.png
     - assets/images/assets/Assets_nav_0.png
     - assets/images/assets/Assets_nav_1.png
     - assets/images/assets/Assets_nav_code.png
@@ -124,7 +134,7 @@ flutter:
     - assets/images/assets/DOT.png
     - assets/images/assets/KSM.png
     - assets/images/assets/FIR.png
-    - assets/images/staking/top_bg.png
+    - assets/images/staking/top_bg_pink.png
     - assets/images/staking/set.png
     - assets/images/staking/ok.png
     - assets/images/staking/error.png

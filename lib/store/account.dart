@@ -69,15 +69,16 @@ abstract class _AccountStore with Store {
 
   @computed
   ObservableList<AccountData> get optionalAccounts {
-    return ObservableList.of(accountList.where(
-        (i) => (pubKeyAddressMap[i.pubKey] ?? i.address) != currentAddress));
+    int ss58 = rootStore.settings.endpoint.ss58;
+    return ObservableList.of(accountList.where((i) =>
+        (pubKeyAddressMap[ss58][i.pubKey] ?? i.address) != currentAddress));
   }
 
   @computed
   String get currentAddress {
-    String network = rootStore.settings.endpoint.info;
-    return pubKeyAddressMap[network] != null
-        ? pubKeyAddressMap[network][currentAccount.pubKey] ??
+    int ss58 = rootStore.settings.endpoint.ss58;
+    return pubKeyAddressMap[ss58] != null
+        ? pubKeyAddressMap[ss58][currentAccount.pubKey] ??
             currentAccount.address
         : currentAccount.address;
   }
@@ -259,16 +260,18 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  void setPubKeyAddressMap(Map data) {
+  void setPubKeyAddressMap(Map<String, Map> data) {
     data.keys.forEach((ss58) {
       // get old data map
-      Map<String, String> addresses = Map.of(pubKeyAddressMap[ss58]);
+      Map<String, String> addresses =
+          Map.of(pubKeyAddressMap[int.parse(ss58)] ?? {});
       // set new data
       Map.of(data[ss58]).forEach((k, v) {
         addresses[k] = v;
       });
+      print(addresses);
       // update state
-      pubKeyAddressMap[ss58] = addresses;
+      pubKeyAddressMap[int.parse(ss58)] = addresses;
     });
   }
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/substrateApi/acala/apiAcalaAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
@@ -177,14 +178,12 @@ class Api {
     store.settings.setNetworkState(info[1]);
     store.settings.setNetworkName(info[2]);
 
+    if (store.settings.endpoint.info == networkEndpointAcala.info) {
+      return;
+    }
+
     // fetch account balance
     if (store.account.accountList.length > 0) {
-      // reset account address format
-//      if (store.settings.customSS58Format['info'] == 'default') {
-//        account.setSS58Format(info[1]['ss58Format'] ?? 42);
-//      }
-
-      // fetch account balance
       await Future.wait([
         assets.fetchBalance(store.account.currentAccount.pubKey),
         staking.fetchAccountStaking(store.account.currentAccount.pubKey),

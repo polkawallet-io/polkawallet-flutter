@@ -97,6 +97,7 @@ class AccountManagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).profile;
 
+    Color primaryColor = Theme.of(context).primaryColor;
     return Observer(
       builder: (_) => Scaffold(
         appBar: AppBar(
@@ -111,7 +112,7 @@ class AccountManagePage extends StatelessWidget {
                 child: ListView(
                   children: <Widget>[
                     Container(
-                      color: Colors.pink,
+                      color: primaryColor,
                       padding: EdgeInsets.only(bottom: 16),
                       child: ListTile(
                         leading: AddressIcon(
@@ -155,7 +156,7 @@ class AccountManagePage extends StatelessWidget {
                     child: FlatButton(
                       padding: EdgeInsets.all(16),
                       color: Colors.white,
-                      textColor: Colors.pink,
+                      textColor: Colors.red,
                       child: Text(dic['delete']),
                       onPressed: () => _onDeleteAccount(context),
                     ),
