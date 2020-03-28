@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 final appTheme = ThemeData(
-  primarySwatch: Colors.pink,
+  primarySwatch: Colors.purple,
   textTheme: TextTheme(
       display1: TextStyle(
         fontSize: 24,
@@ -21,7 +21,7 @@ final appTheme = ThemeData(
 // TODO: dark theme has display issues
 final darkTheme = ThemeData(
   brightness: Brightness.dark,
-  primarySwatch: Colors.pink,
+  primarySwatch: Colors.purple,
   textTheme: TextTheme(
       display1: TextStyle(
         fontSize: 24,

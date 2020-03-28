@@ -111,7 +111,7 @@ class AccountManagePage extends StatelessWidget {
                 child: ListView(
                   children: <Widget>[
                     Container(
-                      color: Colors.pink,
+                      color: Colors.purple,
                       padding: EdgeInsets.only(bottom: 16),
                       child: ListTile(
                         leading: AddressIcon(
@@ -155,7 +155,7 @@ class AccountManagePage extends StatelessWidget {
                     child: FlatButton(
                       padding: EdgeInsets.all(16),
                       color: Colors.white,
-                      textColor: Colors.pink,
+                      textColor: Colors.purple,
                       child: Text(dic['delete']),
                       onPressed: () => _onDeleteAccount(context),
                     ),

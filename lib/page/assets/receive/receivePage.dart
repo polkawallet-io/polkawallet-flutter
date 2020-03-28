@@ -58,7 +58,7 @@ class ReceivePage extends StatelessWidget {
                       Container(
                         decoration: BoxDecoration(
                           border:
-                              Border.all(width: 4, color: Colors.pinkAccent),
+                              Border.all(width: 4, color: Colors.purpleAccent),
                           borderRadius:
                               BorderRadius.all(const Radius.circular(8)),
                         ),
@@ -80,7 +80,7 @@ class ReceivePage extends StatelessWidget {
                         width: MediaQuery.of(context).size.width / 2,
                         padding: EdgeInsets.only(top: 16, bottom: 32),
                         child: RoundedButton(
-                          color: Colors.pinkAccent,
+                          color: Colors.purpleAccent,
                           text: I18n.of(context).assets['copy'],
                           onPressed: () =>
                               UI.copyAndNotify(context, store.currentAddress),

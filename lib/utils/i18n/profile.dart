@@ -40,6 +40,9 @@ const Map<String, String> enProfile = {
   'delete.confirm': 'Input your password to confirm',
   'about.brif': 'Mobile Wallet for Polkadot',
   'about.version': 'Version',
+  'about.power': 'Powered by',
+  'password': 'Set App Password',
+  'faceId': 'FaceId/Fingerprint'
 };
 
 const Map<String, String> zhProfile = {
@@ -83,4 +86,7 @@ const Map<String, String> zhProfile = {
   'delete.confirm': '输入密码确认操作',
   'about.brif': 'Mobile Wallet for Polkadot',
   'about.version': '版本',
+  'about.power': 'Powered by',
+  'password': '设置 App 密码 ',
+  'faceId': '面部/指纹认证'
 };

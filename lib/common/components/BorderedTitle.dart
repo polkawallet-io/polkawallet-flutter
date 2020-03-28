@@ -9,7 +9,7 @@ class BorderedTitle extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(left: 8),
       decoration: BoxDecoration(
-        border: Border(left: BorderSide(width: 3, color: Colors.pink)),
+        border: Border(left: BorderSide(width: 3, color: Colors.purple)),
       ),
       child: Text(
         title,

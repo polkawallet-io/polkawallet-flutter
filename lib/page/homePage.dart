@@ -41,13 +41,14 @@ class _HomePageState extends State<HomePage> {
         .map((i) => BottomNavigationBarItem(
               icon: Image.asset(_tabList[activeItem] == i
                   ? 'assets/images/public/$i.png'
-                  : 'assets/images/public/${i}_dark.png'),
+                  : 'assets/images/public/${i}_dark.png',
+                  color: _tabList[activeItem] == i ? Colors.purple : Colors.grey),
               title: Text(
                 tabs[i.toLowerCase()],
                 style: TextStyle(
                     fontSize: 14,
                     color:
-                        _tabList[activeItem] == i ? Colors.pink : Colors.grey),
+                        _tabList[activeItem] == i ? Colors.purple : Colors.grey),
               ),
             ))
         .toList();
@@ -91,7 +92,20 @@ class _HomePageState extends State<HomePage> {
             Scaffold(
               backgroundColor: Colors.transparent,
               appBar: AppBar(
-                title: Image.asset('assets/images/assets/logo.png'),
+                title: Row(
+                  children: <Widget>[
+                    Image.asset(
+                      'assets/images/assets/logo.png',
+                      width: 40,
+                      height: 40,
+                    ),
+                    Text('DATA\nHIGHWAY',
+                      style: TextStyle(
+                        fontSize: 16
+                      ),
+                    ),
+                  ]
+                ),
                 centerTitle: false,
                 backgroundColor: Colors.transparent,
                 elevation: 0.0,

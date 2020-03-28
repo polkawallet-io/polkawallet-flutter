@@ -26,7 +26,7 @@ class RoundedButton extends StatelessWidget {
     ));
     return RaisedButton(
       padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
-      color: color ?? Colors.pink,
+      color: color ?? Colors.purple,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

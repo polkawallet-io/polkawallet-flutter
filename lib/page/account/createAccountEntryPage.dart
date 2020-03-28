@@ -17,7 +17,26 @@ class CreateAccountEntryPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Expanded(
-              child: Image.asset('assets/images/public/About_logo.png'),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 120),
+                child: Column(
+                  children: <Widget>[
+                    Image.asset(
+                      'assets/images/public/app.png',
+                      width: 160,
+                      height: 160,
+                    ),
+                    Text(
+                      'Data Highway',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
             Padding(
               padding: EdgeInsets.all(16),
