@@ -75,21 +75,21 @@ mixin _$AssetsStore on _AssetsStore, Store {
     }, _$submittingAtom, name: '${_$submittingAtom.name}_set');
   }
 
-  final _$balanceAtom = Atom(name: '_AssetsStore.balance');
+  final _$balancesAtom = Atom(name: '_AssetsStore.balances');
 
   @override
-  String get balance {
-    _$balanceAtom.context.enforceReadPolicy(_$balanceAtom);
-    _$balanceAtom.reportObserved();
-    return super.balance;
+  ObservableMap<String, String> get balances {
+    _$balancesAtom.context.enforceReadPolicy(_$balancesAtom);
+    _$balancesAtom.reportObserved();
+    return super.balances;
   }
 
   @override
-  set balance(String value) {
-    _$balanceAtom.context.conditionallyRunInAction(() {
-      super.balance = value;
-      _$balanceAtom.reportChanged();
-    }, _$balanceAtom, name: '${_$balanceAtom.name}_set');
+  set balances(ObservableMap<String, String> value) {
+    _$balancesAtom.context.conditionallyRunInAction(() {
+      super.balances = value;
+      _$balancesAtom.reportChanged();
+    }, _$balancesAtom, name: '${_$balancesAtom.name}_set');
   }
 
   final _$txsAtom = Atom(name: '_AssetsStore.txs');
@@ -192,10 +192,10 @@ mixin _$AssetsStore on _AssetsStore, Store {
   }
 
   @override
-  void setAccountBalance(String pubKey, String amt) {
+  void setAccountBalances(String pubKey, Map amt) {
     final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
-      return super.setAccountBalance(pubKey, amt);
+      return super.setAccountBalances(pubKey, amt);
     } finally {
       _$_AssetsStoreActionController.endAction(_$actionInfo);
     }

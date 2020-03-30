@@ -15,7 +15,8 @@ class ApiAssets {
       String address = store.account.currentAddress;
       String res =
           await apiRoot.evalJavascript('account.getBalance("$address")');
-      store.assets.setAccountBalance(pubKey, res);
+      store.assets.setAccountBalances(
+          pubKey, Map.of({store.settings.networkState.tokenSymbol: res}));
     }
   }
 

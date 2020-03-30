@@ -23,18 +23,21 @@ class Fmt {
 
   static String balance(String raw, {int decimals = 12}) {
     if (raw == null || raw.length == 0) {
-      return raw;
+      return '0.000';
     }
-    NumberFormat f = NumberFormat(",##0.000");
-    var num = f.parse(raw);
-    return f.format(num / pow(10, decimals));
+    return NumberFormat(",##0.000")
+        .format(balanceInt(raw) / BigInt.from(pow(10, decimals)));
   }
 
-  static int balanceInt(String raw) {
+  static BigInt balanceInt(String raw) {
     if (raw == null || raw.length == 0) {
-      return 0;
+      return BigInt.zero;
     }
-    return NumberFormat(",##0.000").parse(raw).toInt();
+    if (raw.contains(',')) {
+      return BigInt.from(NumberFormat(",##0.000").parse(raw));
+    } else {
+      return BigInt.parse(raw);
+    }
   }
 
   static String token(int value, {int decimals = 12, bool fullLength = false}) {

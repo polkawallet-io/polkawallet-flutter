@@ -90,8 +90,7 @@ class _BondPageState extends State<BondPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    String balance = Fmt.balance(store.assets.balance);
-    String address = store.account.currentAddress;
+    String balance = Fmt.balance(store.assets.balances[symbol]);
 
     var rewardToOptions =
         _rewardToOptions.map((i) => dic['reward.$i']).toList();

@@ -20,8 +20,11 @@ class ApiAcalaAssets {
           .map((i) => 'api.query.tokens.balance("$i", "$address")')
           .join(",");
       var res = await apiRoot.evalJavascript('Promise.all([$queries])');
-      print(res);
-//      store.assets.setAccountBalance(pubKey, res);
+      Map balances = {};
+      tokens.asMap().forEach((index, token) {
+        balances[token] = res[index].toString();
+      });
+      store.assets.setAccountBalances(pubKey, balances);
     }
   }
 

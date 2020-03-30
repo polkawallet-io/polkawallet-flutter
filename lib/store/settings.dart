@@ -18,6 +18,8 @@ abstract class _SettingsStore with Store {
 
   final String cacheNetworkStateKey = 'network';
 
+  final int acalaTokenDecimals = 18;
+
   @observable
   bool loading = true;
 

@@ -120,7 +120,9 @@ class _CouncilVote extends State<CouncilVotePage> {
           final Map<String, String> dic = I18n.of(context).assets;
           int decimals = store.settings.networkState.tokenDecimals;
 
-          int balance = Fmt.balanceInt(store.assets.balance);
+          int balance = Fmt.balanceInt(store
+                  .assets.balances[store.settings.networkState.tokenSymbol])
+              .toInt();
 
           return SafeArea(
             child: Column(

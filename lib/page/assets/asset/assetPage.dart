@@ -119,27 +119,30 @@ class _AssetPageState extends State<AssetPage>
           border: Border(bottom: BorderSide(width: 0.5, color: Colors.black12)),
         ),
         child: ListTile(
-            title: Text(i.id),
-            subtitle: Text(time),
-            trailing: Container(
-              width: 110,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                      child: Text(
-                    '${Fmt.token(i.value, decimals: decimals)} $symbol',
-                    style: Theme.of(context).textTheme.display4,
-                  )),
-                  i.sender == store.account.currentAddress
-                      ? Image.asset('assets/images/assets/assets_up.png')
-                      : Image.asset('assets/images/assets/assets_down.png')
-                ],
-              ),
+          title: Text(i.id),
+          subtitle: Text(time),
+          trailing: Container(
+            width: 110,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                    child: Text(
+                  '${Fmt.token(i.value, decimals: decimals)} $symbol',
+                  style: Theme.of(context).textTheme.display4,
+                )),
+                i.sender == store.account.currentAddress
+                    ? Image.asset('assets/images/assets/assets_up.png')
+                    : Image.asset('assets/images/assets/assets_down.png')
+              ],
             ),
-            onTap: block != null ? () {
-              Navigator.pushNamed(context, TransferDetailPage.route,
-                  arguments: i);
-            }: null,),
+          ),
+          onTap: block != null
+              ? () {
+                  Navigator.pushNamed(context, TransferDetailPage.route,
+                      arguments: i);
+                }
+              : null,
+        ),
       );
     }).toList();
   }
@@ -147,7 +150,9 @@ class _AssetPageState extends State<AssetPage>
   List<Widget> _buildListView() {
     final dic = I18n.of(context).assets;
 
-    int balance = Fmt.balanceInt(store.assets.balance);
+    int balance = Fmt.balanceInt(
+            store.assets.balances[store.settings.networkState.tokenSymbol])
+        .toInt();
     int bonded = 0;
     bool isStash = false;
     bool hasData = store.staking.ledger['stakingLedger'] != null;

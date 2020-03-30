@@ -38,9 +38,9 @@ abstract class _AppStore with Store {
     await settings.init(sysLocaleCode);
 
     account = AccountStore(this);
-
     await account.loadAccount();
-    assets = AssetsStore(account);
+
+    assets = AssetsStore(this);
     staking = StakingStore(account);
     gov = GovernanceStore(account);
 

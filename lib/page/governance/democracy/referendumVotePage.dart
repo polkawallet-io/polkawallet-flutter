@@ -125,7 +125,9 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
           final Map<String, String> dicGov = I18n.of(context).gov;
           int decimals = store.settings.networkState.tokenDecimals;
 
-          int balance = Fmt.balanceInt(store.assets.balance);
+          int balance = Fmt.balanceInt(store
+                  .assets.balances[store.settings.networkState.tokenSymbol])
+              .toInt();
 
           Map args = ModalRoute.of(context).settings.arguments;
           ReferendumInfo info = args['referenda'];

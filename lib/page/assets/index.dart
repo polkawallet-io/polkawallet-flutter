@@ -96,12 +96,16 @@ class _AssetsState extends State<Assets> {
         String symbol = store.settings.networkState.tokenSymbol;
         String networkName = store.settings.networkName;
 
+        bool isAcala =
+            store.settings.endpoint.info == networkEndpointAcala.info;
+
         List<String> currencyIds = [];
-        if (store.settings.endpoint.info == networkEndpointAcala.info) {
-          currencyIds.addAll(
-              List<String>.from(store.settings.networkConst['currencyIds']));
+        if (isAcala && networkName != null) {
+          if (store.settings.networkConst['currencyIds'] != null) {
+            currencyIds.addAll(
+                List<String>.from(store.settings.networkConst['currencyIds']));
+          }
           currencyIds.retainWhere((i) => i != symbol);
-          print(currencyIds);
         }
         return RefreshIndicator(
           key: globalBalanceRefreshKey,
@@ -128,7 +132,7 @@ class _AssetsState extends State<Assets> {
                   title: Text(symbol ?? ''),
                   subtitle: Text(networkName ?? '~'),
                   trailing: Text(
-                    Fmt.balance(store.assets.balance,
+                    Fmt.balance(store.assets.balances[symbol],
                         decimals: store.settings.networkState.tokenDecimals),
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -139,6 +143,45 @@ class _AssetsState extends State<Assets> {
                     Navigator.pushNamed(context, AssetPage.route);
                   },
                 ),
+              ),
+              Column(
+                children: currencyIds.map((i) {
+//                  print(store.assets.balances[i]);
+                  return RoundedCard(
+                    margin: EdgeInsets.only(top: 16),
+                    child: ListTile(
+                      leading: Container(
+                        width: 40,
+                        height: 40,
+                        child: Image.asset('assets/images/assets/$i.png'),
+                      ),
+                      title: Text(i),
+                      subtitle: Text(networkName),
+                      trailing: Text(
+                        Fmt.balance(store.assets.balances[i],
+                            decimals: store.settings.acalaTokenDecimals),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black54),
+                      ),
+                      onTap: () {
+                        Navigator.pushNamed(context, AssetPage.route);
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+              isAcala
+                  ? Padding(
+                      padding: EdgeInsets.only(top: 32),
+                      child: BorderedTitle(
+                        title: I18n.of(context).home['assets'],
+                      ),
+                    )
+                  : Container(),
+              Container(
+                padding: EdgeInsets.only(bottom: 24),
               ),
             ],
           ),

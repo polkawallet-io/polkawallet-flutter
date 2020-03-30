@@ -3,20 +3,20 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'assets.g.dart';
 
 class AssetsStore extends _AssetsStore with _$AssetsStore {
-  AssetsStore(AccountStore account) : super(account);
+  AssetsStore(AppStore store) : super(store);
 }
 
 abstract class _AssetsStore with Store {
-  _AssetsStore(this.account);
+  _AssetsStore(this.rootStore);
 
-  final AccountStore account;
+  final AppStore rootStore;
 
   final String localStorageBlocksKey = 'blocks';
 
@@ -33,7 +33,7 @@ abstract class _AssetsStore with Store {
   bool submitting = false;
 
   @observable
-  String balance = '0';
+  ObservableMap<String, String> balances = ObservableMap<String, String>();
 
   @observable
   ObservableList<TransferData> txs = ObservableList<TransferData>();
@@ -49,9 +49,9 @@ abstract class _AssetsStore with Store {
     return ObservableList.of(txs.where((i) {
       switch (txsFilter) {
         case 1:
-          return i.destination == account.currentAddress;
+          return i.destination == rootStore.account.currentAddress;
         case 2:
-          return i.sender == account.currentAddress;
+          return i.sender == rootStore.account.currentAddress;
         default:
           return true;
       }
@@ -61,20 +61,24 @@ abstract class _AssetsStore with Store {
   @computed
   ObservableList<Map<String, dynamic>> get balanceHistory {
     List<Map<String, dynamic>> res = List<Map<String, dynamic>>();
-    int total = Fmt.balanceInt(balance);
+    BigInt total =
+        Fmt.balanceInt(balances[rootStore.settings.networkState.tokenSymbol]);
     txs.asMap().forEach((index, i) {
       if (index != 0) {
         TransferData prev = txs[index - 1];
-        if (i.sender == account.currentAddress) {
-          total -= prev.value;
+        if (i.sender == rootStore.account.currentAddress) {
+          total -= BigInt.from(prev.value);
         } else {
-          total += prev.value;
+          total += BigInt.from(prev.value);
         }
         // add transfer fee: 0.02KSM
-        total += 20000000000;
+        total += BigInt.from(20000000000);
       }
       if (blockMap[i.block] != null) {
-        res.add({"time": blockMap[i.block].time, "value": total / pow(10, 12)});
+        res.add({
+          "time": blockMap[i.block].time,
+          "value": total / BigInt.from(pow(10, 12))
+        });
       }
     });
     return ObservableList.of(res.reversed);
@@ -86,13 +90,15 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  void setAccountBalance(String pubKey, String amt) {
-    if (account.currentAccount.pubKey != pubKey) return;
+  void setAccountBalances(String pubKey, Map amt) {
+    if (rootStore.account.currentAccount.pubKey != pubKey) return;
 
-    balance = amt;
+    amt.forEach((k, v) {
+      balances[k] = v;
+    });
 
-    LocalStorage.setAccountCache(
-        account.currentAccount.pubKey, cacheBalanceKey, amt);
+    LocalStorage.setAccountCache(rootStore.account.currentAccount.pubKey,
+        cacheBalanceKey, Map<String, String>.from(balances));
   }
 
   @action
@@ -103,7 +109,7 @@ abstract class _AssetsStore with Store {
   @action
   Future<void> addTxs(List ls, String address,
       {bool shouldCache = false}) async {
-    if (account.currentAddress != address) return;
+    if (rootStore.account.currentAddress != address) return;
 
     ls.forEach((i) {
       TransferData tx = TransferData.fromJson(i);
@@ -112,11 +118,11 @@ abstract class _AssetsStore with Store {
 
     if (shouldCache) {
       LocalStorage.setAccountCache(
-          account.currentAccount.pubKey, cacheTxsKey, ls);
+          rootStore.account.currentAccount.pubKey, cacheTxsKey, ls);
 
       cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
-      LocalStorage.setAccountCache(
-          account.currentAccount.pubKey, cacheTimeKey, cacheTxsTimestamp);
+      LocalStorage.setAccountCache(rootStore.account.currentAccount.pubKey,
+          cacheTimeKey, cacheTxsTimestamp);
     }
   }
 
@@ -148,7 +154,7 @@ abstract class _AssetsStore with Store {
   @action
   Future<void> loadAccountCache() async {
     // loadCache if currentAccount exist
-    String pubKey = account.currentAccount.pubKey;
+    String pubKey = rootStore.account.currentAccount.pubKey;
     if (pubKey == null) {
       return;
     }
@@ -159,7 +165,7 @@ abstract class _AssetsStore with Store {
       LocalStorage.getAccountCache(pubKey, cacheTimeKey),
     ]);
     if (cache[0] != null) {
-      balance = cache[0] ?? '0';
+      balances = ObservableMap.of(Map<String, String>.from(cache[0]));
     }
     if (cache[1] != null) {
       txs = ObservableList.of(

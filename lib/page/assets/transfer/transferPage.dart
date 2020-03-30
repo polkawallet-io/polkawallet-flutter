@@ -94,7 +94,7 @@ class _TransferPageState extends State<TransferPage> {
         String symbol = store.settings.networkState.tokenSymbol;
         int decimals = store.settings.networkState.tokenDecimals;
 
-        int balance = Fmt.balanceInt(store.assets.balance);
+        int balance = Fmt.balanceInt(store.assets.balances[symbol]).toInt();
         int available = balance;
         bool hasStakingData = store.staking.ledger['stakingLedger'] != null;
         if (hasStakingData) {

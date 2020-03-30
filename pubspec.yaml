@@ -88,6 +88,8 @@ flutter:
     - assets/images/public/acala.png
     - assets/images/public/acala_gray.png
     - assets/images/assets/ACA.png
+    - assets/images/assets/AUSD.png
+    - assets/images/assets/XBTC.png
     ## images - acala
     - assets/images/assets/top_bg_indigo.png
     - assets/images/assets/receive_line_indigo.png

@@ -35,7 +35,7 @@ class _BondExtraPageState extends State<BondExtraPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    int balance = Fmt.balanceInt(store.assets.balance);
+    int balance = Fmt.balanceInt(store.assets.balances[symbol]).toInt();
     int bonded = store.staking.ledger['stakingLedger']['active'];
     int unlocking = 0;
     List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];

@@ -177,7 +177,9 @@ class _StakingActions extends State<StakingActions>
       acc02 = store.account.accountList[acc02Index];
     }
 
-    int balance = Fmt.balanceInt(store.assets.balance);
+    int balance = Fmt.balanceInt(
+            store.assets.balances[store.settings.networkState.tokenSymbol])
+        .toInt();
     int bonded = 0;
     int redeemable = 0;
     if (hasData) {
