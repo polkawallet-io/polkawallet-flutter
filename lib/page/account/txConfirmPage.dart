@@ -241,7 +241,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                       child: Container(
                         color: store.assets.submitting
                             ? Colors.black12
-                            : Colors.pink,
+                            : Theme.of(context).primaryColor,
                         child: FlatButton(
                           padding: EdgeInsets.all(16),
                           child: Text(

@@ -46,20 +46,26 @@ abstract class _SettingsStore with Store {
 
   @computed
   String get existentialDeposit {
-    return Fmt.token(networkConst['balances']['existentialDeposit'],
+    return Fmt.token(
+        BigInt.parse(networkConst['balances']['existentialDeposit'].toString()),
         decimals: networkState.tokenDecimals);
   }
 
   @computed
   String get transactionBaseFee {
-    return Fmt.token(networkConst['transactionPayment']['transactionBaseFee'],
+    return Fmt.token(
+        BigInt.parse(networkConst['transactionPayment']['transactionBaseFee']
+            .toString()),
         decimals: networkState.tokenDecimals);
   }
 
   @computed
   String get transactionByteFee {
-    return Fmt.token(networkConst['transactionPayment']['transactionByteFee'],
-        decimals: networkState.tokenDecimals, fullLength: true);
+    return Fmt.token(
+        BigInt.parse(networkConst['transactionPayment']['transactionByteFee']
+            .toString()),
+        decimals: networkState.tokenDecimals,
+        fullLength: true);
   }
 
   @action

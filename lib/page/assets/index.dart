@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
+import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
@@ -165,20 +166,16 @@ class _AssetsState extends State<Assets> {
                             fontSize: 20,
                             color: Colors.black54),
                       ),
+                      onTap: () {
+                        Navigator.pushNamed(context, TransferPage.route,
+                            arguments: {'symbol': i, 'redirect': '/'});
+                      },
                     ),
                   );
                 }).toList(),
               ),
-              isAcala
-                  ? Padding(
-                      padding: EdgeInsets.only(top: 32),
-                      child: BorderedTitle(
-                        title: I18n.of(context).home['assets'],
-                      ),
-                    )
-                  : Container(),
               Container(
-                padding: EdgeInsets.only(bottom: 24),
+                padding: EdgeInsets.only(bottom: 32),
               ),
             ],
           ),
