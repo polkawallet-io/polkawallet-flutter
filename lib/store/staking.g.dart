@@ -22,17 +22,17 @@ mixin _$StakingStore on _StakingStore, Store {
       (_$nominatingListComputed ??= Computed<ObservableList<ValidatorData>>(
               () => super.nominatingList))
           .value;
-  Computed<int> _$accountUnlockingTotalComputed;
+  Computed<BigInt> _$accountUnlockingTotalComputed;
 
   @override
-  int get accountUnlockingTotal => (_$accountUnlockingTotalComputed ??=
-          Computed<int>(() => super.accountUnlockingTotal))
+  BigInt get accountUnlockingTotal => (_$accountUnlockingTotalComputed ??=
+          Computed<BigInt>(() => super.accountUnlockingTotal))
       .value;
-  Computed<int> _$accountRewardTotalComputed;
+  Computed<BigInt> _$accountRewardTotalComputed;
 
   @override
-  int get accountRewardTotal => (_$accountRewardTotalComputed ??=
-          Computed<int>(() => super.accountRewardTotal))
+  BigInt get accountRewardTotal => (_$accountRewardTotalComputed ??=
+          Computed<BigInt>(() => super.accountRewardTotal))
       .value;
 
   final _$cacheTxsTimestampAtom = Atom(name: '_StakingStore.cacheTxsTimestamp');
@@ -89,14 +89,14 @@ mixin _$StakingStore on _StakingStore, Store {
   final _$stakedAtom = Atom(name: '_StakingStore.staked');
 
   @override
-  int get staked {
+  BigInt get staked {
     _$stakedAtom.context.enforceReadPolicy(_$stakedAtom);
     _$stakedAtom.reportObserved();
     return super.staked;
   }
 
   @override
-  set staked(int value) {
+  set staked(BigInt value) {
     _$stakedAtom.context.conditionallyRunInAction(() {
       super.staked = value;
       _$stakedAtom.reportChanged();
@@ -354,14 +354,14 @@ mixin _$ValidatorData on _ValidatorData, Store {
   final _$totalAtom = Atom(name: '_ValidatorData.total');
 
   @override
-  int get total {
+  BigInt get total {
     _$totalAtom.context.enforceReadPolicy(_$totalAtom);
     _$totalAtom.reportObserved();
     return super.total;
   }
 
   @override
-  set total(int value) {
+  set total(BigInt value) {
     _$totalAtom.context.conditionallyRunInAction(() {
       super.total = value;
       _$totalAtom.reportChanged();
@@ -371,14 +371,14 @@ mixin _$ValidatorData on _ValidatorData, Store {
   final _$bondOwnAtom = Atom(name: '_ValidatorData.bondOwn');
 
   @override
-  int get bondOwn {
+  BigInt get bondOwn {
     _$bondOwnAtom.context.enforceReadPolicy(_$bondOwnAtom);
     _$bondOwnAtom.reportObserved();
     return super.bondOwn;
   }
 
   @override
-  set bondOwn(int value) {
+  set bondOwn(BigInt value) {
     _$bondOwnAtom.context.conditionallyRunInAction(() {
       super.bondOwn = value;
       _$bondOwnAtom.reportChanged();
@@ -388,14 +388,14 @@ mixin _$ValidatorData on _ValidatorData, Store {
   final _$bondOtherAtom = Atom(name: '_ValidatorData.bondOther');
 
   @override
-  int get bondOther {
+  BigInt get bondOther {
     _$bondOtherAtom.context.enforceReadPolicy(_$bondOtherAtom);
     _$bondOtherAtom.reportObserved();
     return super.bondOther;
   }
 
   @override
-  set bondOther(int value) {
+  set bondOther(BigInt value) {
     _$bondOtherAtom.context.conditionallyRunInAction(() {
       super.bondOther = value;
       _$bondOtherAtom.reportChanged();

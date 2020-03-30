@@ -62,6 +62,9 @@ class Api {
       if (viewState.type == WebViewState.finishLoad) {
         String network = store.settings.endpoint.info;
         print('webview loaded for network $network');
+        if (network.contains('acala')) {
+          network = 'acala';
+        }
         DefaultAssetBundle.of(context)
             .loadString('lib/js_service_$network/dist/main.js')
             .then((String js) {
@@ -179,6 +182,10 @@ class Api {
     store.settings.setNetworkName(info[2]);
 
     if (store.settings.endpoint.info == networkEndpointAcala.info) {
+      await Future.wait([
+        assets.fetchBalance(store.account.currentAccount.pubKey),
+        acalaAssets.fetchTokens(store.account.currentAccount.pubKey),
+      ]);
       return;
     }
 

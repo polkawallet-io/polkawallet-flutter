@@ -67,9 +67,9 @@ abstract class _AssetsStore with Store {
       if (index != 0) {
         TransferData prev = txs[index - 1];
         if (i.sender == rootStore.account.currentAddress) {
-          total -= BigInt.from(prev.value);
+          total -= prev.value;
         } else {
-          total += BigInt.from(prev.value);
+          total += prev.value;
         }
         // add transfer fee: 0.02KSM
         total += BigInt.from(20000000000);
@@ -77,7 +77,9 @@ abstract class _AssetsStore with Store {
       if (blockMap[i.block] != null) {
         res.add({
           "time": blockMap[i.block].time,
-          "value": total / BigInt.from(pow(10, 12))
+          "value": total /
+              BigInt.from(
+                  pow(10, rootStore.settings.networkState.tokenDecimals))
         });
       }
     });
@@ -198,8 +200,8 @@ class TransferData extends _TransferData with _$TransferData {
     tx.id = json['id'];
     tx.hash = json['hash'];
     tx.block = json['attributes']['block_id'];
-    tx.value = json['attributes']['value'];
-    tx.fee = json['attributes']['fee'];
+    tx.value = BigInt.parse(json['attributes']['value'].toString());
+    tx.fee = BigInt.parse(json['attributes']['fee'].toString());
     tx.sender = json['attributes']['sender']['attributes']['address'];
     tx.senderId = json['attributes']['sender']['attributes']['index_address'];
     tx.destination = json['attributes']['destination']['attributes']['address'];
@@ -235,10 +237,10 @@ abstract class _TransferData with Store {
   String destinationId = '';
 
   @observable
-  int value = 0;
+  BigInt value = BigInt.zero;
 
   @observable
-  int fee = 0;
+  BigInt fee = BigInt.zero;
 }
 
 class BlockData extends _BlockData with _$BlockData {

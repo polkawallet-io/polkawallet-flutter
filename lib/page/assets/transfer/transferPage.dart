@@ -94,15 +94,16 @@ class _TransferPageState extends State<TransferPage> {
         String symbol = store.settings.networkState.tokenSymbol;
         int decimals = store.settings.networkState.tokenDecimals;
 
-        int balance = Fmt.balanceInt(store.assets.balances[symbol]).toInt();
-        int available = balance;
+        BigInt balance = Fmt.balanceInt(store.assets.balances[symbol]);
+        BigInt available = balance;
         bool hasStakingData = store.staking.ledger['stakingLedger'] != null;
         if (hasStakingData) {
           String stashId = store.staking.ledger['stakingLedger']['stash'];
           bool isStash = store.staking.ledger['accountId'] == stashId;
           if (isStash) {
-            int bonded = store.staking.ledger['stakingLedger']['active'];
-            int unlocking = store.staking.accountUnlockingTotal;
+            BigInt bonded = BigInt.parse(
+                store.staking.ledger['stakingLedger']['active'].toString());
+            BigInt unlocking = store.staking.accountUnlockingTotal;
             available = balance - bonded - unlocking;
           }
         }
@@ -178,7 +179,8 @@ class _TransferPageState extends State<TransferPage> {
                                   return dic['amount.error'];
                                 }
                                 if (double.parse(v.trim()) >=
-                                    available / pow(10, decimals) - 0.02) {
+                                    available / BigInt.from(pow(10, decimals)) -
+                                        0.02) {
                                   return dic['amount.low'];
                                 }
                                 return null;

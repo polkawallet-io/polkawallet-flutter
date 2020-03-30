@@ -78,9 +78,8 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
 
             if (isCurrentNetwork) {
               /// reload account info
-//              store.settings.setEndpoint(EndpointData.toJson(_selectedNetwork));
-//              webApi.launchWebview();
-//              Navigator.of(context).pop();
+              webApi.assets.fetchBalance(i.pubKey);
+              webApi.acalaAssets.fetchTokens(i.pubKey);
             } else {
               /// set new network and reload web view
               store.settings.setEndpoint(EndpointData.toJson(_selectedNetwork));

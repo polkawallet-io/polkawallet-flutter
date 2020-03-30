@@ -24,7 +24,8 @@ class StakingDetailPage extends StatelessWidget {
     ];
     switch (action) {
       case 'bond':
-        String value = Fmt.token(detail['detail']['params'][1]['value']);
+        String value = Fmt.token(
+            BigInt.parse(detail['detail']['params'][1]['value'].toString()));
         info.add(DetailInfoItem(
           label: dic['value'],
           title: '$value $symbol',
@@ -32,7 +33,8 @@ class StakingDetailPage extends StatelessWidget {
         break;
       case 'bond_extra':
       case 'unbond':
-        String value = Fmt.token(detail['detail']['params'][0]['value']);
+        String value = Fmt.token(
+            BigInt.parse(detail['detail']['params'][0]['value'].toString()));
         info.add(DetailInfoItem(
           label: dic['value'],
           title: '$value $symbol',

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/assets/asset/assetChart.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
@@ -39,8 +40,16 @@ class _AssetPageState extends State<AssetPage>
   Future<void> _updateData() async {
     String pubKey = store.account.currentAccount.pubKey;
     webApi.assets.fetchBalance(pubKey);
-    webApi.staking.fetchAccountStaking(pubKey);
-    List res = await webApi.assets.updateTxs(_txsPage);
+    List res = [];
+
+    if (store.settings.endpoint.info == networkEndpointKusama.info) {
+      webApi.staking.fetchAccountStaking(pubKey);
+      res = await webApi.assets.updateTxs(_txsPage);
+    }
+    if (store.settings.endpoint.info == networkEndpointAcala.info) {
+      res = await webApi.acalaAssets.updateTxs(_txsPage);
+    }
+
     if (res.length < tx_list_page_size) {
       setState(() {
         _isLastPage = true;
@@ -150,10 +159,11 @@ class _AssetPageState extends State<AssetPage>
   List<Widget> _buildListView() {
     final dic = I18n.of(context).assets;
 
-    int balance = Fmt.balanceInt(
-            store.assets.balances[store.settings.networkState.tokenSymbol])
-        .toInt();
-    int bonded = 0;
+    int decimals = store.settings.networkState.tokenDecimals;
+
+    BigInt balance = Fmt.balanceInt(
+        store.assets.balances[store.settings.networkState.tokenSymbol]);
+    BigInt bonded = BigInt.zero;
     bool isStash = false;
     bool hasData = store.staking.ledger['stakingLedger'] != null;
     if (hasData) {
@@ -161,10 +171,10 @@ class _AssetPageState extends State<AssetPage>
       String stashId = store.staking.ledger['stakingLedger']['stash'];
       isStash = store.staking.ledger['accountId'] == stashId;
     }
-    int unlocking = store.staking.accountUnlockingTotal;
+    BigInt unlocking = store.staking.accountUnlockingTotal;
 
-    int locked = bonded + unlocking;
-    int available = isStash ? balance - locked : balance;
+    BigInt locked = bonded + unlocking;
+    BigInt available = isStash ? balance - locked : balance;
 
     final List<Tab> _myTabs = <Tab>[
       Tab(text: dic['all']),
@@ -182,11 +192,14 @@ class _AssetPageState extends State<AssetPage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('${dic['balance']}: ${Fmt.token(balance)}'),
+            Text(
+                '${dic['balance']}: ${Fmt.token(balance, decimals: decimals)}'),
             isStash
-                ? Text('${dic['locked']}: ${Fmt.token(locked)}')
+                ? Text(
+                    '${dic['locked']}: ${Fmt.token(locked, decimals: decimals)}')
                 : Container(),
-            Text('${dic['available']}: ${Fmt.token(available)}'),
+            Text(
+                '${dic['available']}: ${Fmt.token(available, decimals: decimals)}'),
           ],
         ),
       ),

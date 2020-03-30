@@ -120,9 +120,8 @@ class _CouncilVote extends State<CouncilVotePage> {
           final Map<String, String> dic = I18n.of(context).assets;
           int decimals = store.settings.networkState.tokenDecimals;
 
-          int balance = Fmt.balanceInt(store
-                  .assets.balances[store.settings.networkState.tokenSymbol])
-              .toInt();
+          BigInt balance = Fmt.balanceInt(
+              store.assets.balances[store.settings.networkState.tokenSymbol]);
 
           return SafeArea(
             child: Column(
@@ -153,7 +152,8 @@ class _CouncilVote extends State<CouncilVotePage> {
                                 return dic['amount.error'];
                               }
                               if (double.parse(v.trim()) >=
-                                  balance / pow(10, decimals) - 0.02) {
+                                  balance / BigInt.from(pow(10, decimals)) -
+                                      0.02) {
                                 return dic['amount.low'];
                               }
                               return null;

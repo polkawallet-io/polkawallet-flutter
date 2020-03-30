@@ -40,10 +40,11 @@ class Fmt {
     }
   }
 
-  static String token(int value, {int decimals = 12, bool fullLength = false}) {
+  static String token(BigInt value,
+      {int decimals = 12, bool fullLength = false}) {
     NumberFormat f = NumberFormat(
         ",##0.${fullLength == true ? '000#########' : '000'}", "en_US");
-    return f.format(value / pow(10, decimals));
+    return f.format(value / BigInt.from(pow(10, decimals)));
   }
 
   static bool isAddress(String txt) {

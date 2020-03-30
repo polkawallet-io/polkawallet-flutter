@@ -8,7 +8,7 @@ EndpointData networkEndpointKusama = EndpointData.fromJson(const {
 });
 
 EndpointData networkEndpointAcala = EndpointData.fromJson(const {
-  'info': 'acala',
+  'info': 'acala-mandala',
   'ss58': 42,
   'text': 'Acala Mandala (Hosted by Acala Network)',
   'value': 'wss://testnet-node-1.acala.laminar.one/ws',

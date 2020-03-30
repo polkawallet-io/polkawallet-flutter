@@ -197,7 +197,7 @@ class CandidateItem extends StatelessWidget {
       subtitle: balance.length == 1
           ? null
           : Text(
-              '${I18n.of(context).gov['backing']}: ${Fmt.token(int.parse(balance[1]))} $tokenSymbol'),
+              '${I18n.of(context).gov['backing']}: ${Fmt.token(BigInt.parse(balance[1]))} $tokenSymbol'),
       onTap: () => Navigator.of(context).pushNamed(CandidateDetailPage.route,
           arguments: balance.length == 1 ? [balance[0], '0x0'] : balance),
       trailing: onSwitch == null

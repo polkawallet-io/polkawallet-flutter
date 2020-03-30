@@ -31,7 +31,7 @@ class TransferDetailPage extends StatelessWidget {
       eventId: tx.id,
       hash: tx.hash,
       block: block,
-      networkName: store.settings.networkName,
+      networkName: store.settings.endpoint.info,
       info: <DetailInfoItem>[
         DetailInfoItem(
           label: dic['value'],

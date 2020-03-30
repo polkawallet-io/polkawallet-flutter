@@ -199,11 +199,12 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
           }
           validator = store.staking.validatorsInfo[validatorIndex];
 
-          int meStaked;
+          BigInt meStaked;
           int meIndex =
               validator.nominators.indexWhere((i) => i['who'] == stashAddress);
           if (meIndex >= 0) {
-            meStaked = validator.nominators[meIndex]['value'];
+            meStaked =
+                BigInt.parse(validator.nominators[meIndex]['value'].toString());
           }
 
           Map accInfo = store.account.accountIndexMap[id];

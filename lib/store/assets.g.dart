@@ -362,14 +362,14 @@ mixin _$TransferData on _TransferData, Store {
   final _$valueAtom = Atom(name: '_TransferData.value');
 
   @override
-  int get value {
+  BigInt get value {
     _$valueAtom.context.enforceReadPolicy(_$valueAtom);
     _$valueAtom.reportObserved();
     return super.value;
   }
 
   @override
-  set value(int value) {
+  set value(BigInt value) {
     _$valueAtom.context.conditionallyRunInAction(() {
       super.value = value;
       _$valueAtom.reportChanged();
@@ -379,14 +379,14 @@ mixin _$TransferData on _TransferData, Store {
   final _$feeAtom = Atom(name: '_TransferData.fee');
 
   @override
-  int get fee {
+  BigInt get fee {
     _$feeAtom.context.enforceReadPolicy(_$feeAtom);
     _$feeAtom.reportObserved();
     return super.fee;
   }
 
   @override
-  set fee(int value) {
+  set fee(BigInt value) {
     _$feeAtom.context.conditionallyRunInAction(() {
       super.fee = value;
       _$feeAtom.reportChanged();

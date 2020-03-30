@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/assets.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -71,6 +72,13 @@ class TxDetail extends StatelessWidget {
             : null,
       ));
     });
+
+    String jumpLink =
+        'https://polkascan.io/pre/${networkName.toLowerCase()}/transaction/0x$hash';
+    if (networkName == networkEndpointAcala.info) {
+      jumpLink =
+          'https://polkascan.io/pre/${networkName.toLowerCase()}/balances/transfer/$eventId';
+    }
     list.addAll(<Widget>[
       ListTile(
         leading: buildLabel(dic['event']),
@@ -91,7 +99,7 @@ class TxDetail extends StatelessWidget {
       Padding(
         padding: EdgeInsets.only(top: 8, bottom: 32),
         child: JumpToBrowserLink(
-          'https://polkascan.io/pre/${networkName.toLowerCase()}/transaction/0x$hash',
+          jumpLink,
           text: dic['polkascan'],
         ),
       )

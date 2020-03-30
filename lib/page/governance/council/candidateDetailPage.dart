@@ -35,7 +35,7 @@ class CandidateDetailPage extends StatelessWidget {
                   Divider(),
                   Padding(
                     padding: EdgeInsets.only(top: 8, bottom: 8),
-                    child: Text('${Fmt.token(int.parse(info[1]))} $symbol',
+                    child: Text('${Fmt.token(BigInt.parse(info[1]))} $symbol',
                         style: style),
                   ),
                   Text(dic['backing'])

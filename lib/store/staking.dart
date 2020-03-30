@@ -32,7 +32,7 @@ abstract class _StakingStore with Store {
   bool done = false;
 
   @observable
-  int staked = 0;
+  BigInt staked = BigInt.zero;
 
   @observable
   int nominatorCount = 0;
@@ -81,33 +81,33 @@ abstract class _StakingStore with Store {
   }
 
   @computed
-  int get accountUnlockingTotal {
-    int res = 0;
+  BigInt get accountUnlockingTotal {
+    BigInt res = BigInt.zero;
     if (ledger['stakingLedger'] == null) {
       return res;
     }
 
     List.of(ledger['stakingLedger']['unlocking']).forEach((i) {
-      res += i['value'];
+      res += BigInt.parse(i['value'].toString());
     });
     return res;
   }
 
   @computed
-  int get accountRewardTotal {
+  BigInt get accountRewardTotal {
     if (ledger['rewards'] == null) {
       return null;
     }
-    int res = 0;
+    BigInt res = BigInt.zero;
     List.of(ledger['rewards']).forEach((i) {
-      res += i['total'];
+      res += BigInt.parse(i['total'].toString());
     });
     return res;
   }
 
   @action
   void setValidatorsInfo(Map<String, dynamic> data, {bool shouldCache = true}) {
-    int totalStaked = 0;
+    BigInt totalStaked = BigInt.zero;
     var nominators = {};
     List<ValidatorData> ls = List<ValidatorData>();
 
@@ -270,13 +270,9 @@ class ValidatorData extends _ValidatorData with _$ValidatorData {
   static ValidatorData fromJson(Map<String, dynamic> json) {
     ValidatorData data = ValidatorData();
     data.accountId = json['accountId'];
-    data.total = int.parse(json['exposure']['total'].toString());
-    var own = json['exposure']['own'];
-    if (own.runtimeType == String) {
-      data.bondOwn = int.parse(own);
-    } else {
-      data.bondOwn = own;
-    }
+    data.total = BigInt.parse(json['exposure']['total'].toString());
+    data.bondOwn = BigInt.parse(json['exposure']['own'].toString());
+
     data.bondOther = data.total - data.bondOwn;
     data.points = json['points'] ?? 0;
     data.commission = NumberFormat('0.00%')
@@ -292,13 +288,13 @@ abstract class _ValidatorData with Store {
   String accountId = '';
 
   @observable
-  int total = 0;
+  BigInt total = BigInt.zero;
 
   @observable
-  int bondOwn = 0;
+  BigInt bondOwn = BigInt.zero;
 
   @observable
-  int bondOther = 0;
+  BigInt bondOther = BigInt.zero;
 
   @observable
   int points = 0;

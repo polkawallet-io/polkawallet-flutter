@@ -85,6 +85,8 @@ flutter:
     ## images - settings
     - assets/images/public/kusama.png
     - assets/images/public/kusama_gray.png
+    - assets/images/public/acala-mandala.png
+    - assets/images/public/acala-mandala_gray.png
     - assets/images/public/acala.png
     - assets/images/public/acala_gray.png
     - assets/images/assets/ACA.png

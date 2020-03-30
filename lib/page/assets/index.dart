@@ -165,9 +165,6 @@ class _AssetsState extends State<Assets> {
                             fontSize: 20,
                             color: Colors.black54),
                       ),
-                      onTap: () {
-                        Navigator.pushNamed(context, AssetPage.route);
-                      },
                     ),
                   );
                 }).toList(),
