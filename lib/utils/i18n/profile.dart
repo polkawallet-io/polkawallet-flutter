@@ -42,7 +42,7 @@ const Map<String, String> enProfile = {
   'about.version': 'Version',
   'about.power': 'Powered by',
   'password': 'Set App Password',
-  'faceId': 'FaceId/Fingerprint'
+  'faceId': 'FaceID/Fingerprint'
 };
 
 const Map<String, String> zhProfile = {

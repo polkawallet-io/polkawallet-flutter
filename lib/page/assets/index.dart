@@ -59,7 +59,10 @@ class _AssetsState extends State<Assets> {
           ListTile(
             title: Text(Fmt.address(store.account.currentAddress)),
             trailing: IconButton(
-              icon: Image.asset('assets/images/assets/Assets_nav_code.png'),
+              icon: Image.asset(
+                'assets/images/assets/Assets_nav_code.png',
+                color: Colors.purple,
+              ),
               onPressed: () {
                 if (acc.address != '') {
                   Navigator.pushNamed(context, ReceivePage.route);
@@ -104,18 +107,18 @@ class _AssetsState extends State<Assets> {
               item(
                 context,
                 store: store,
+                symbol: 'DHX', 
+                name: 'DataHighway',
+                expandSet: expandSet,
+                expandTap: () => _onTapExpand(expandSet,'DataHighway')
+              ),
+              item(
+                context,
+                store: store,
                 symbol: symbol, 
                 name: networkName,
                 expandSet: expandSet,
-                expandTap: (){
-                  if(expandSet.contains(networkName)){
-                    expandSet.remove(networkName);
-                  }else{
-                    expandSet.add(networkName);
-                  }
-
-                  setState(() {});
-                } 
+                expandTap: () => _onTapExpand(expandSet,networkName)
               )
             ],
           ),
@@ -123,9 +126,19 @@ class _AssetsState extends State<Assets> {
       },
     );
   }
+
+  void _onTapExpand(expandSet,name){
+    if(expandSet.contains(name)){
+      expandSet.remove(name);
+    }else{
+      expandSet.add(name);
+    }
+
+    setState(() {});
+  }
 }
 
-Widget item(context,{store,symbol,name = '',Set expandSet,expandTap}){
+Widget item(context,{store,symbol = '',name = '',Set expandSet,expandTap}){
   return RoundedCard(
     margin: EdgeInsets.only(top: 16),
     child: Column(
@@ -136,12 +149,24 @@ Widget item(context,{store,symbol,name = '',Set expandSet,expandTap}){
           symbol: symbol, 
           name: name
         ),
-        operater(
-          context,
-          name: name,
-          expandSet: expandSet,
-          expandTap: expandTap),
-        itemButtons(context),
+        Row(
+          // mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: Container(),
+            ),
+            itemButtons(context),
+            operate(
+              context,
+              name: name,
+              expandSet: expandSet,
+              expandTap: expandTap
+            ),
+            Expanded(
+              child: Container(),
+            ),
+          ]
+        ),
         expandSet != null && expandSet.contains(name) ?
           expandTab(context):
           Container(),
@@ -157,8 +182,10 @@ Widget itemHeader(context,{store,symbol,name = ''}){
     leading: Container(
       width: 40,
       height: 40,
-      child: Image.asset(
-        'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
+      child: symbol == 'DataHightway' ?
+        Image.asset('assets/images/assets/DHX.png') :
+        Image.asset(
+          'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
     ),
     title: Text(symbol ?? ''),
     subtitle: Text(name.isNotEmpty ? name : '~'),
@@ -170,24 +197,6 @@ Widget itemHeader(context,{store,symbol,name = ''}){
         dense: true,
         contentPadding: EdgeInsets.zero,
         title: Text(
-          I18n.of(context).assets['balance'],
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-          )
-        ),
-        subtitle: Container(
-          padding: EdgeInsets.zero,
-          child: const Text('(~3000 USD)',
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 10
-            ),
-          )
-        ),
-        trailing: Text(
           Fmt.balance(store.assets.balance),
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -195,7 +204,28 @@ Widget itemHeader(context,{store,symbol,name = ''}){
             fontSize: 18,
             color: Colors.black54
           ),
-        )
+        ),
+        subtitle: Row(
+          // padding: EdgeInsets.zero,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              I18n.of(context).assets['balance'],
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              )
+            ),
+            const Text(' (~3000 USD)',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 10
+              ),
+            )
+          ],
+        ),
       ),
     ),
     // onTap: () {
@@ -204,15 +234,15 @@ Widget itemHeader(context,{store,symbol,name = ''}){
   );
 }
 
-Widget operater(context,{name = '',expandSet,expandTap}){
+Widget operate(context,{name = '',expandSet,expandTap}){
   return Container(
-    padding: EdgeInsets.only(right:20),
+    // padding: EdgeInsets.only(right:20),
     child: Row(
       children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: Container(),
-        ),
+        // Expanded(
+        //   flex: 1,
+        //   child: Container(),
+        // ),
         GestureDetector(
           child: Icon(
             expandSet.contains(name) ? 
@@ -233,8 +263,8 @@ Widget operater(context,{name = '',expandSet,expandTap}){
 }
 
 final List<String> itemButtonsList = [
-  'topup',
-  'withdraw',
+  // 'topup',
+  // 'withdraw',
   'lock',
   'signal',
   'claim',
@@ -306,7 +336,7 @@ void _tapBtns(context,index){
 
 final List<String> itemTabList = [
   'claim.eligibility',//'claim Eligibility(MXC)',
-  'rewards'//'Rewards(DHC)'
+  'rewards'//'Rewards(DHX)'
 ];
 
 Widget expandTab(context){
@@ -458,13 +488,13 @@ Widget tabRW(context){
 Widget content(text,{color = Colors.black,fontWeight = FontWeight.normal}){
   return Expanded(
     child: Container(
-      padding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Text(
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
           color: color,
-          fontSize: 14,
+          fontSize: 12,
           fontWeight: fontWeight
         ),
       ),

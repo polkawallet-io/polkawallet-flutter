@@ -133,7 +133,7 @@ class _WalletAppState extends State<WalletApp> {
                   future: _initStore(context),
                   builder: (_, AsyncSnapshot<int> snapshot) {
                     if (snapshot.hasData) {
-                      return snapshot.data > 0
+                      return true//snapshot.data > 0
                           ? HomePage(_appStore)
                           : CreateAccountEntryPage();
                     } else {

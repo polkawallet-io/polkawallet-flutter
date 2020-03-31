@@ -24,15 +24,8 @@ class AboutPage extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   Image.asset(
-                    'assets/images/assets/logo.png',
-                    width: 100,
-                  ),
-                  Text(
-                    'DATA HIGHWAY',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20
-                    ),
+                    'assets/images/public/About_app.png',
+                    width: 160,
                   ),
                 ]
               )

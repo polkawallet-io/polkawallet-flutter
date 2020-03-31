@@ -20,7 +20,7 @@ class _ClaimPageState extends State<ClaimPage> {
   final AppStore store;
   TapGestureRecognizer tapRuleRecongnizer = TapGestureRecognizer()
     ..onTap = () => _tapRule();
-  TextEditingController textCtl = TextEditingController(text: 'xxx-yy11-zz22');
+  TextEditingController textCtl = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {

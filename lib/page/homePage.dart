@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   NotificationPlugin _notificationPlugin;
 
   final List<String> _tabList = [
-    'Assets',
+    'Mining',
     'Staking',
     'Governance',
     'Profile',
@@ -92,19 +92,10 @@ class _HomePageState extends State<HomePage> {
             Scaffold(
               backgroundColor: Colors.transparent,
               appBar: AppBar(
-                title: Row(
-                  children: <Widget>[
-                    Image.asset(
-                      'assets/images/assets/logo.png',
-                      width: 40,
-                      height: 40,
-                    ),
-                    Text('DATA\nHIGHWAY',
-                      style: TextStyle(
-                        fontSize: 16
-                      ),
-                    ),
-                  ]
+                title: Image.asset(
+                  'assets/images/assets/logo.png',
+                  // width: 40,
+                  // height: 40,
                 ),
                 centerTitle: false,
                 backgroundColor: Colors.transparent,

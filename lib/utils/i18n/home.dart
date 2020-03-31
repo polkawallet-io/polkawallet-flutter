@@ -31,6 +31,7 @@ const Map<String, String> enHome = {
   'notify.submitted': 'Tx submitted in block',
   'data.empty': 'No Data',
   'copy': 'Copy to clipboard',
+  'scan.helper': 'Please put the QR code in the box'
 };
 
 const Map<String, String> zhHome = {
@@ -63,4 +64,5 @@ const Map<String, String> zhHome = {
   'notify.finish': '交易已被打包',
   'data.empty': '暂无数据',
   'copy': '复制到剪贴板',
+  'scan.helper': '请将二维码置于方框中',
 };

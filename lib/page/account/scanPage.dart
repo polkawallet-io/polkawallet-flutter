@@ -5,6 +5,7 @@ import 'package:flutter_qr_reader/qrcode_reader_view.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/utils/format.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ScanPage extends StatelessWidget {
   static final String route = '/account/scan';
@@ -53,8 +54,11 @@ class ScanPage extends StatelessWidget {
       body: FutureBuilder<bool>(
         future: canOpenCamera(),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          var dic = I18n.of(context).home;
+
           if (snapshot.hasData && snapshot.data == true) {
             return QrcodeReaderView(
+                helpWidget: Text(dic['scan.helper']),
                 key: _qrViewKey,
                 headerWidget: SafeArea(
                   child: IconButton(

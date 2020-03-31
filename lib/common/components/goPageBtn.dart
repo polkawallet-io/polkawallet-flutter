@@ -8,7 +8,7 @@ Widget goPageBtn(name,{onTap,textAlign = TextAlign.right}){
         textAlign: textAlign,
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 22
+          fontSize: 18
         ),
       ),
       onTap: onTap,

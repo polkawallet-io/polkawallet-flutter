@@ -62,7 +62,7 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/public/app.png"
+  image_path: "assets/images/public/About_app.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -81,14 +81,15 @@ flutter:
     - lib/polkadot_js_service/dist/main.js
     # images
     - assets/images/public/app.png
-    - assets/images/public/Assets.png
+    - assets/images/public/Mining.png
     - assets/images/public/Governance.png
     - assets/images/public/Profile.png
     - assets/images/public/Staking.png
-    - assets/images/public/Assets_dark.png
+    - assets/images/public/Mining_dark.png
     - assets/images/public/Governance_dark.png
     - assets/images/public/Profile_dark.png
     - assets/images/public/Staking_dark.png
+    - assets/images/public/About_app.png
     - assets/images/public/About_logo.png
     - assets/images/public/dontscreen.png
     - assets/images/public/copy.png
@@ -112,6 +113,7 @@ flutter:
     - assets/images/assets/assets_fail.png
     - assets/images/assets/success.png
     - assets/images/assets/sweep_code_line.png
+    - assets/images/assets/DHX.png
     - assets/images/assets/DOT.png
     - assets/images/assets/KSM.png
     - assets/images/assets/FIR.png

@@ -62,12 +62,24 @@ class Profile extends StatelessWidget {
               ),
             ),
             ListTile(
+              leading: Image.asset('assets/images/profile/setting.png'),
+              title: Text(dic['setting']),
+              trailing: Icon(Icons.arrow_forward_ios, size: 18),
+              onTap: () => Navigator.of(context).pushNamed(SettingsPage.route),
+            ),
+            ListTile(
               leading: Image.asset('assets/images/profile/address.png'),
               title: Text(dic['contact']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
               onTap: () => Navigator.of(context).pushNamed(ContactsPage.route),
             ),
-           ListTile(
+            ListTile(
+              leading: Image.asset('assets/images/profile/about.png'),
+              title: Text(dic['about']),
+              trailing: Icon(Icons.arrow_forward_ios, size: 18),
+              onTap: () => Navigator.of(context).pushNamed(AboutPage.route),
+            ),
+            ListTile(
               leading: Icon(Icons.lock_open),//Image.asset('assets/images/profile/about.png'),
               title: Text(dic['password']),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
