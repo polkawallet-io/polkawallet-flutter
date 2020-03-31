@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/page-acala/exchange/exchange.dart';
 import 'package:polka_wallet/page-acala/loan/Loan.dart';
 import 'package:polka_wallet/page/assets/index.dart';
-import 'package:polka_wallet/page/governance/index.dart';
 import 'package:polka_wallet/page/profile/index.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -29,8 +29,9 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
 
   final List<String> _tabList = [
     'Assets',
+    'Exchange',
     'Loan',
-    'Governance',
+//    'Governance',
     'Profile',
   ];
 
@@ -58,9 +59,9 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
       case 0:
         return Assets(store);
       case 1:
-        return Loan(store);
+        return Exchange(store);
       case 2:
-        return Governance(store);
+        return Loan(store);
       default:
         return Profile(store.account);
     }
@@ -130,7 +131,8 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 alignment: Alignment.topLeft,
-                image: AssetImage("assets/images/staking/top_bg_indigo.png"),
+                image: AssetImage(
+                    "assets/images/${i == 1 ? 'staking' : 'assets'}/top_bg_indigo.png"),
                 fit: BoxFit.contain,
               ),
             ),

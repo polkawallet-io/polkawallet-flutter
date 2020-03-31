@@ -104,6 +104,8 @@ flutter:
     - assets/images/public/Staking_indigo.png
     - assets/images/public/Loan_indigo.png
     - assets/images/public/Loan_dark.png
+    - assets/images/public/Exchange_indigo.png
+    - assets/images/public/Exchange_dark.png
     ## images - kusama
     - assets/images/public/app.png
     - assets/images/public/Assets_pink.png

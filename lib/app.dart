@@ -9,6 +9,7 @@ import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
+import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
@@ -42,6 +43,7 @@ import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/settings.dart';
 
 import 'utils/i18n/index.dart';
 import 'common/theme.dart';
@@ -139,14 +141,15 @@ class _WalletAppState extends State<WalletApp> {
       routes: {
         HomePage.route: (context) => Observer(
               builder: (_) {
-                String network =
-                    _appStore != null ? _appStore.settings.endpoint.info : '';
+                EndpointData network = _appStore != null
+                    ? _appStore.settings.endpoint
+                    : EndpointData();
                 return FutureBuilder<int>(
                   future: _initStore(context),
                   builder: (_, AsyncSnapshot<int> snapshot) {
                     if (snapshot.hasData) {
                       return snapshot.data > 0
-                          ? network == networkEndpointAcala.info
+                          ? network.info == networkEndpointAcala.info
                               ? AcalaHomePage(_appStore)
                               : HomePage(_appStore)
                           : CreateAccountEntryPage();
@@ -172,6 +175,7 @@ class _WalletAppState extends State<WalletApp> {
         TransferPage.route: (_) => TransferPage(_appStore),
         ReceivePage.route: (_) => ReceivePage(_appStore),
         TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
+        CurrencySelectPage.route: (_) => CurrencySelectPage(),
         // staking
         StakingDetailPage.route: (_) => StakingDetailPage(_appStore),
         ValidatorDetailPage.route: (_) => ValidatorDetailPage(_appStore),

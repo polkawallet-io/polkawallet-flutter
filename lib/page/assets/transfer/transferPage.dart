@@ -5,12 +5,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
+import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -40,29 +42,18 @@ class _TransferPageState extends State<TransferPage> {
 
   String _tokenSymbol;
 
-  void _showSymbolPicker() {
-    List symbolOptions = store.settings.networkConst['currencyIds'];
+  Future<void> _selectCurrency() async {
+    List<String> symbolOptions =
+        List<String>.from(store.settings.networkConst['currencyIds']);
 
-    showCupertinoModalPopup(
-      context: context,
-      builder: (_) => Container(
-        height: MediaQuery.of(context).copyWith().size.height / 3,
-        child: CupertinoPicker(
-          backgroundColor: Colors.white,
-          itemExtent: 56,
-          scrollController: FixedExtentScrollController(
-              initialItem: symbolOptions.indexOf(_tokenSymbol)),
-          children: symbolOptions
-              .map((i) => Padding(padding: EdgeInsets.all(16), child: Text(i)))
-              .toList(),
-          onSelectedItemChanged: (v) {
-            setState(() {
-              _tokenSymbol = symbolOptions[v];
-            });
-          },
-        ),
-      ),
-    );
+    var currency = await Navigator.of(context)
+        .pushNamed(CurrencySelectPage.route, arguments: symbolOptions);
+
+    if (currency != null) {
+      setState(() {
+        _tokenSymbol = currency;
+      });
+    }
   }
 
   void _handleSubmit() {
@@ -119,20 +110,22 @@ class _TransferPageState extends State<TransferPage> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
 
-    final Map args = ModalRoute.of(context).settings.arguments;
-    if (args['address'] != null) {
-      setState(() {
-        _addressCtrl.text = args['address'];
-      });
-    }
-    if (args['symbol'] != null) {
-      setState(() {
-        _tokenSymbol = args['symbol'];
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final Map args = ModalRoute.of(context).settings.arguments;
+      if (args['address'] != null) {
+        setState(() {
+          _addressCtrl.text = args['address'];
+        });
+      }
+      if (args['symbol'] != null) {
+        setState(() {
+          _tokenSymbol = args['symbol'];
+        });
+      }
+    });
   }
 
   @override
@@ -258,12 +251,13 @@ class _TransferPageState extends State<TransferPage> {
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          'symbol',
+                                          dic['currency'],
                                           style: TextStyle(
                                               color: Theme.of(context)
                                                   .unselectedWidgetColor),
                                         ),
-                                        Text(_tokenSymbol ?? baseTokenSymbol),
+                                        CurrencyWithIcon(
+                                            _tokenSymbol ?? baseTokenSymbol),
                                       ],
                                     ),
                                     Icon(
@@ -274,7 +268,7 @@ class _TransferPageState extends State<TransferPage> {
                                 ),
                               ),
                               onTap: symbolOptions != null
-                                  ? _showSymbolPicker
+                                  ? () => _selectCurrency()
                                   : null,
                             ),
                             Padding(

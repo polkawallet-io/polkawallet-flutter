@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -37,6 +38,36 @@ class UI {
       print('Could not launch $url');
     }
   }
+
+  static void showCurrencyPicker(BuildContext context, List<String> currencyIds,
+      String selected, Function(String) onChange) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => Container(
+        height: MediaQuery.of(context).copyWith().size.height / 3,
+        child: CupertinoPicker(
+          backgroundColor: Colors.white,
+          itemExtent: 56,
+          scrollController: FixedExtentScrollController(
+              initialItem: currencyIds.indexOf(selected)),
+          children: currencyIds
+              .map(
+                (i) => Padding(
+                  padding: EdgeInsets.all(16),
+                  child: CurrencyWithIcon(
+                    i,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  ),
+                ),
+              )
+              .toList(),
+          onSelectedItemChanged: (v) {
+            onChange(currencyIds[v]);
+          },
+        ),
+      ),
+    );
+  }
 }
 
 // access the refreshIndicator globally
@@ -57,4 +88,8 @@ final GlobalKey<RefreshIndicatorState> globalCouncilRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
 // democracy page:
 final GlobalKey<RefreshIndicatorState> globalDemocracyRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+
+// acala exchange page:
+final GlobalKey<RefreshIndicatorState> globalDexRefreshKey =
     new GlobalKey<RefreshIndicatorState>();

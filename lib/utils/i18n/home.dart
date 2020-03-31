@@ -1,5 +1,6 @@
 const Map<String, String> enHome = {
   'assets': 'Assets',
+  'exchange': 'Exchange',
   'loan': 'Loan',
   'staking': 'Staking',
   'governance': 'Governance',
@@ -36,6 +37,7 @@ const Map<String, String> enHome = {
 
 const Map<String, String> zhHome = {
   'assets': '资产',
+  'exchange': '交易',
   'loan': '借贷',
   'staking': '抵押',
   'governance': '治理',
