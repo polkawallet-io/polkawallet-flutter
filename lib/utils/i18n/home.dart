@@ -33,6 +33,7 @@ const Map<String, String> enHome = {
   'data.empty': 'No Data',
   'copy': 'Copy to clipboard',
   'setting.network': 'Select Wallet',
+  'acala': 'Acala',
 };
 
 const Map<String, String> zhHome = {
@@ -67,4 +68,5 @@ const Map<String, String> zhHome = {
   'data.empty': '暂无数据',
   'copy': '复制到剪贴板',
   'setting.network': '选择钱包',
+  'acala': 'Acala',
 };

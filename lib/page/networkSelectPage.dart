@@ -58,6 +58,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
 
     List<AccountData> accounts = [store.account.currentAccount];
     accounts.addAll(store.account.optionalAccounts);
+    print(store.account.pubKeyAddressMap);
     res.addAll(accounts.map((i) {
       String address =
           store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show SynchronousFuture;
 import 'package:polka_wallet/utils/i18n/assets.dart';
-import 'package:polka_wallet/utils/i18n/dex.dart';
+import 'package:polka_wallet/utils/i18n/acala.dart';
 import 'package:polka_wallet/utils/i18n/staking.dart';
 import 'package:polka_wallet/utils/i18n/gov.dart';
 
@@ -44,7 +44,7 @@ class I18n {
       'staking': enStaking,
       'profile': enProfile,
       'gov': enGov,
-      'dex': enDex,
+      'acala': enDex,
     },
     'zh': {
       'home': zhHome,
@@ -53,7 +53,7 @@ class I18n {
       'staking': zhStaking,
       'profile': zhProfile,
       'gov': zhGov,
-      'dex': zhDex,
+      'acala': zhDex,
     },
   };
 
@@ -81,7 +81,7 @@ class I18n {
     return _localizedValues[locale.languageCode]['gov'];
   }
 
-  Map<String, String> get dex {
-    return _localizedValues[locale.languageCode]['dex'];
+  Map<String, String> get acala {
+    return _localizedValues[locale.languageCode]['acala'];
   }
 }

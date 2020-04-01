@@ -31,6 +31,16 @@ class ApiAccount {
     getAddressIcons(store.settings.contactList.map((i) => i.address).toList());
   }
 
+  /// encode addresses to publicKeys
+  Future<void> encodeAddress(List<String> pubKeys) async {
+    String ss58 = jsonEncode(network_ss58_map.values.toSet().toList());
+    Map res = await apiRoot
+        .evalJavascript('account.encodeAddress(${jsonEncode(pubKeys)}, $ss58)');
+    if (res != null) {
+      store.account.setPubKeyAddressMap(Map<String, Map>.from(res));
+    }
+  }
+
   /// decode addresses to publicKeys
   Future<void> decodeAddress(List<String> addresses) async {
     Map res = await apiRoot
@@ -90,7 +100,7 @@ class ApiAccount {
     Map<String, dynamic> acc = await apiRoot.evalJavascript(code);
     if (acc != null) {
       await store.account.addAccount(acc, pass);
-      decodeAddress([acc['address']]);
+      encodeAddress([acc['pubKey']]);
 
       store.gov.clearSate();
 

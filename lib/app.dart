@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/exchange/exchangePage.dart';
 import 'package:polka_wallet/page-acala/homePage.dart';
+import 'package:polka_wallet/page-acala/loan/loanPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
@@ -209,7 +211,8 @@ class _WalletAppState extends State<WalletApp> {
         AboutPage.route: (_) => AboutPage(),
 
         // acala-network
-//        AcalaHomePage.route: (_) => AcalaHomePage(_appStore),
+        ExchangePage.route: (_) => ExchangePage(_appStore),
+        LoanPage.route: (_) => LoanPage(_appStore),
       },
     );
   }

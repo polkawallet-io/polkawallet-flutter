@@ -93,3 +93,6 @@ final GlobalKey<RefreshIndicatorState> globalDemocracyRefreshKey =
 // acala exchange page:
 final GlobalKey<RefreshIndicatorState> globalDexRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
+// acala loan page:
+final GlobalKey<RefreshIndicatorState> globalLoanRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();

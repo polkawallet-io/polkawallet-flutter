@@ -102,10 +102,10 @@ flutter:
     - assets/images/public/Governance_indigo.png
     - assets/images/public/Profile_indigo.png
     - assets/images/public/Staking_indigo.png
-    - assets/images/public/Loan_indigo.png
-    - assets/images/public/Loan_dark.png
-    - assets/images/public/Exchange_indigo.png
-    - assets/images/public/Exchange_dark.png
+    - assets/images/public/Acala_indigo.png
+    - assets/images/public/Acala_dark.png
+    - assets/images/acala/exchange.svg
+    - assets/images/acala/loan.svg
     ## images - kusama
     - assets/images/public/app.png
     - assets/images/public/Assets_pink.png

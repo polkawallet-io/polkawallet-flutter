@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/page-acala/exchange/exchange.dart';
+import 'package:polka_wallet/page-acala/acalaEntry.dart';
 import 'package:polka_wallet/page-acala/loan/Loan.dart';
 import 'package:polka_wallet/page/assets/index.dart';
+import 'package:polka_wallet/page/governance/index.dart';
 import 'package:polka_wallet/page/profile/index.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -29,9 +30,8 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
 
   final List<String> _tabList = [
     'Assets',
-    'Exchange',
-    'Loan',
-//    'Governance',
+    'Acala',
+    'Governance',
     'Profile',
   ];
 
@@ -43,7 +43,7 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
                   ? 'assets/images/public/${i}_indigo.png'
                   : 'assets/images/public/${i}_dark.png'),
               title: Text(
-                tabs[i.toLowerCase()],
+                tabs[i.toLowerCase()] ?? 'Acala',
                 style: TextStyle(
                     fontSize: 14,
                     color: _tabList[activeItem] == i
@@ -59,9 +59,9 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
       case 0:
         return Assets(store);
       case 1:
-        return Exchange(store);
+        return AcalaEntry(store);
       case 2:
-        return Loan(store);
+        return Governance(store);
       default:
         return Profile(store.account);
     }
