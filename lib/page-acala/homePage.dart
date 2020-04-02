@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/page-acala/acalaEntry.dart';
-import 'package:polka_wallet/page-acala/loan/Loan.dart';
 import 'package:polka_wallet/page/assets/index.dart';
 import 'package:polka_wallet/page/governance/index.dart';
 import 'package:polka_wallet/page/profile/index.dart';

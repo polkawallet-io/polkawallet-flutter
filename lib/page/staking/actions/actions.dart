@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/page/account/import/importAccountPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondExtraPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondPage.dart';
@@ -441,31 +442,6 @@ class RowAccount02 extends StatelessWidget {
               ],
             )
           : null,
-    );
-  }
-}
-
-class InfoItem extends StatelessWidget {
-  InfoItem({this.title, this.content, this.crossAxisAlignment});
-  final String title;
-  final String content;
-  final CrossAxisAlignment crossAxisAlignment;
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(fontSize: 13),
-          ),
-          Text(
-            content ?? '-',
-            style: Theme.of(context).textTheme.display4,
-          )
-        ],
-      ),
     );
   }
 }

@@ -30,6 +30,9 @@ abstract class _AppStore with Store {
   GovernanceStore gov;
 
   @observable
+  AcalaStore acala;
+
+  @observable
   bool isReady = false;
 
   @action
@@ -47,6 +50,8 @@ abstract class _AppStore with Store {
     assets.loadCache();
     staking.loadCache();
     gov.loadCache();
+
+    acala = AcalaStore();
 
     isReady = true;
   }

@@ -42,7 +42,7 @@ class _ExchangePageState extends State<ExchangePage> {
   Future<void> _refreshData() async {
     String pubKey = store.account.currentAccount.pubKey;
     webApi.assets.fetchBalance(pubKey);
-    webApi.acalaAssets.fetchTokens(pubKey);
+    webApi.acala.fetchTokens(pubKey);
     // then fetch txs history
   }
 

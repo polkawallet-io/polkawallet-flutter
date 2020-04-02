@@ -9,20 +9,34 @@ part of 'acala.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AcalaStore on _AcalaStore, Store {
-  final _$testAtom = Atom(name: '_AcalaStore.test');
+  final _$loansAtom = Atom(name: '_AcalaStore.loans');
 
   @override
-  String get test {
-    _$testAtom.context.enforceReadPolicy(_$testAtom);
-    _$testAtom.reportObserved();
-    return super.test;
+  Map<String, LoanData> get loans {
+    _$loansAtom.context.enforceReadPolicy(_$loansAtom);
+    _$loansAtom.reportObserved();
+    return super.loans;
   }
 
   @override
-  set test(String value) {
-    _$testAtom.context.conditionallyRunInAction(() {
-      super.test = value;
-      _$testAtom.reportChanged();
-    }, _$testAtom, name: '${_$testAtom.name}_set');
+  set loans(Map<String, LoanData> value) {
+    _$loansAtom.context.conditionallyRunInAction(() {
+      super.loans = value;
+      _$loansAtom.reportChanged();
+    }, _$loansAtom, name: '${_$loansAtom.name}_set');
+  }
+
+  final _$_AcalaStoreActionController = ActionController(name: '_AcalaStore');
+
+  @override
+  void setAccountLoans(List data) {
+    final _$actionInfo = _$_AcalaStoreActionController.startAction();
+    try {
+      return super.setAccountLoans(data);
+    } finally {
+      _$_AcalaStoreActionController.endAction(_$actionInfo);
+    }
   }
 }
+
+mixin _$LoanData on _LoanData, Store {}

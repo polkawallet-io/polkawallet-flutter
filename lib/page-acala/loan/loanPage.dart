@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/infoItem.dart';
+import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/common/theme.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -25,50 +29,91 @@ class _LoanPageState extends State<LoanPage> {
 
   Future<void> _fetchData() async {
     print('refresh');
+    webApi.acala.fetchPrices();
+//    webApi.acala.fetchAccountLoans();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      globalLoanRefreshKey.currentState.show();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
+    bool haveLoan = true;
     return Scaffold(
       appBar: AppBar(title: Text(dic['loan.title']), centerTitle: true),
-      body: SafeArea(
-        child: RefreshIndicator(
-          key: globalLoanRefreshKey,
-          onRefresh: _fetchData,
-          child: Column(
-            children: <Widget>[
-              CurrencyTab(collateral, _tab, (i) {
-                setState(() {
-                  _tab = i;
-                });
-              }),
-              Expanded(
-                child: ListView(
-                  children: <Widget>[
-                    Text('coll'),
-                  ],
-                ),
-              ),
-              Row(
+      body: Observer(
+        builder: (_) {
+          print(store.acala.prices);
+          print(store.acala.loans);
+          return SafeArea(
+            child: RefreshIndicator(
+              key: globalLoanRefreshKey,
+              onRefresh: _fetchData,
+              child: ListView(
                 children: <Widget>[
-                  Expanded(
-                    child: FlatButton(
-                      child: Text('borrow'),
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  Expanded(
-                    child: FlatButton(
-                      child: Text('pay back'),
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  )
+                  CurrencyTab(collateral, _tab, (i) {
+                    setState(() {
+                      _tab = i;
+                    });
+                  }),
+                  haveLoan
+                      ? RoundedCard(
+                          margin: EdgeInsets.all(16),
+                          padding: EdgeInsets.fromLTRB(16, 32, 16, 16),
+                          child: Column(
+                            children: <Widget>[
+                              Text(dic['loan.borrowed'] + 'aUSD'),
+                              Text(
+                                '300.56',
+                                style: TextStyle(
+                                    fontSize: 36,
+                                    color: Theme.of(context).primaryColor),
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: FlatButton(
+                                      child: Text('borrow'),
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: FlatButton(
+                                      child: Text('pay back'),
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Divider(height: 48),
+                              Row(
+                                children: <Widget>[
+                                  InfoItem(
+                                    title: dic['loan.collateral'],
+                                    content: '0',
+                                  ),
+                                  InfoItem(
+                                    title: dic['collateral.require'],
+                                    content: '0',
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        )
+                      : Container(),
+                  haveLoan ? LoanChart() : Container()
                 ],
-              )
-            ],
-          ),
-        ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -157,6 +202,87 @@ class CurrencyTab extends StatelessWidget {
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+}
+
+class LoanChart extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return RoundedCard(
+      margin: EdgeInsets.fromLTRB(16, 8, 16, 32),
+      padding: EdgeInsets.all(16),
+      child: Container(
+        padding: EdgeInsets.only(top: 8, right: 8),
+        decoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(),
+            bottom: BorderSide(),
+          ),
+        ),
+        child: Stack(
+          alignment: AlignmentDirectional.bottomStart,
+          children: <Widget>[
+            // borrowed amount
+            Container(
+              color: color_green_45,
+              height: 60,
+              child: Padding(
+                padding: EdgeInsets.only(left: 8, top: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[Text('\$300'), Text('borrowed')],
+                ),
+              ),
+            ),
+            // the liquidation line
+            Container(
+              height: 150,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Divider(color: Colors.red),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[Text('105%'), Text('Liquidation')],
+                  ),
+                ],
+              ),
+            ),
+            // the required line
+            Container(
+              height: 120,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Divider(color: Colors.orange),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[Text('120%'), Text('Required')],
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 160,
+              decoration: BoxDecoration(
+                color: color_green_26,
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(left: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[Text('1200'), Text('Collateral')],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -4,8 +4,8 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 
-class ApiAcalaAssets {
-  ApiAcalaAssets(this.apiRoot);
+class ApiAcala {
+  ApiAcala(this.apiRoot);
 
   final Api apiRoot;
   final store = globalAppStore;
@@ -16,9 +16,8 @@ class ApiAcalaAssets {
       List<String> tokens =
           List<String>.from(store.settings.networkConst['currencyIds']);
       tokens.retainWhere((i) => i != store.settings.networkState.tokenSymbol);
-      String queries = tokens
-          .map((i) => 'api.query.tokens.balance("$i", "$address")')
-          .join(",");
+      String queries =
+          tokens.map((i) => 'acala.getTokens("$i", "$address")').join(",");
       var res = await apiRoot.evalJavascript('Promise.all([$queries])');
       Map balances = {};
       tokens.asMap().forEach((index, token) {
@@ -44,5 +43,17 @@ class ApiAcalaAssets {
     await apiRoot.updateBlocks(transfers);
     store.assets.setTxsLoading(false);
     return transfers;
+  }
+
+  Future<void> fetchAccountLoans() async {
+    String address = store.account.currentAddress;
+    List res =
+        await apiRoot.evalJavascript('api.derive.loan.allLoans("$address}")');
+    store.acala.setAccountLoans(res);
+  }
+
+  Future<void> fetchPrices() async {
+    List res = await apiRoot.evalJavascript('api.derive.price.allPrices()');
+    store.acala.setPrices(res);
   }
 }

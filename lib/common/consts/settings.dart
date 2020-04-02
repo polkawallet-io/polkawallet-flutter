@@ -11,7 +11,8 @@ EndpointData networkEndpointAcala = EndpointData.fromJson(const {
   'info': 'acala-mandala',
   'ss58': 42,
   'text': 'Acala Mandala (Hosted by Acala Network)',
-  'value': 'wss://testnet-node-1.acala.laminar.one/ws',
+//  'value': 'wss://testnet-node-1.acala.laminar.one/ws',
+  'value': 'ws://192.168.1.249:9944',
 });
 
 const network_ss58_map = {

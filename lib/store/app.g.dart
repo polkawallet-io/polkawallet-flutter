@@ -94,6 +94,23 @@ mixin _$AppStore on _AppStore, Store {
     }, _$govAtom, name: '${_$govAtom.name}_set');
   }
 
+  final _$acalaAtom = Atom(name: '_AppStore.acala');
+
+  @override
+  AcalaStore get acala {
+    _$acalaAtom.context.enforceReadPolicy(_$acalaAtom);
+    _$acalaAtom.reportObserved();
+    return super.acala;
+  }
+
+  @override
+  set acala(AcalaStore value) {
+    _$acalaAtom.context.conditionallyRunInAction(() {
+      super.acala = value;
+      _$acalaAtom.reportChanged();
+    }, _$acalaAtom, name: '${_$acalaAtom.name}_set');
+  }
+
   final _$isReadyAtom = Atom(name: '_AppStore.isReady');
 
   @override

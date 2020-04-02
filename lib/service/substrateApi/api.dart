@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/service/substrateApi/acala/apiAcalaAssets.dart';
+import 'package:polka_wallet/service/substrateApi/acala/apiAcala.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiGov.dart';
@@ -22,7 +22,7 @@ class Api {
 
   ApiAccount account;
 
-  ApiAcalaAssets acalaAssets;
+  ApiAcala acala;
 
   ApiAssets assets;
   ApiStaking staking;
@@ -36,7 +36,7 @@ class Api {
   void init() {
     account = ApiAccount(this);
 
-    acalaAssets = ApiAcalaAssets(this);
+    acala = ApiAcala(this);
 
     assets = ApiAssets(this);
     staking = ApiStaking(this);
@@ -184,7 +184,7 @@ class Api {
     if (store.settings.endpoint.info == networkEndpointAcala.info) {
       await Future.wait([
         assets.fetchBalance(store.account.currentAccount.pubKey),
-        acalaAssets.fetchTokens(store.account.currentAccount.pubKey),
+        acala.fetchTokens(store.account.currentAccount.pubKey),
       ]);
       return;
     }

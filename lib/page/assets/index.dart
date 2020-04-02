@@ -34,7 +34,7 @@ class _AssetsState extends State<Assets> {
     if (store.settings.endpoint.info == networkEndpointAcala.info) {
       await Future.wait([
         webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
-        webApi.acalaAssets.fetchTokens(store.account.currentAccount.pubKey),
+        webApi.acala.fetchTokens(store.account.currentAccount.pubKey),
       ]);
     } else {
       await Future.wait([
