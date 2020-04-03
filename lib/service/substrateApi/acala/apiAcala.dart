@@ -48,8 +48,13 @@ class ApiAcala {
   Future<void> fetchAccountLoans() async {
     String address = store.account.currentAddress;
     List res =
-        await apiRoot.evalJavascript('api.derive.loan.allLoans("$address}")');
+        await apiRoot.evalJavascript('api.derive.loan.allLoans("$address")');
     store.acala.setAccountLoans(res);
+  }
+
+  Future<void> fetchLoanTypes() async {
+    List res = await apiRoot.evalJavascript('api.derive.loan.allLoanTypes()');
+    store.acala.setLoanTypes(res);
   }
 
   Future<void> fetchPrices() async {

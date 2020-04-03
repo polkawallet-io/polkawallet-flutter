@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@acala-network/api-derive@^0.2.0-beta.27":
+"@acala-network/api-derive@^0.2.0-beta.28":
   version "0.2.0-beta.27"
   resolved "https://registry.npm.taobao.org/@acala-network/api-derive/download/@acala-network/api-derive-0.2.0-beta.27.tgz#bb6fba472937b539772eeee313bba59815329ea6"
   integrity sha1-u2+6Ryk3tTl3Lu7jE7ulmBUynqY=
@@ -10,18 +10,18 @@
     "@acala-network/types" beta
     memoizee "^0.4.14"
 
-"@acala-network/api@^0.2.0-beta.27":
-  version "0.2.0-beta.27"
-  resolved "https://registry.npm.taobao.org/@acala-network/api/download/@acala-network/api-0.2.0-beta.27.tgz#3386fd7740f9a16d337c58f606d82613b22f9afc"
-  integrity sha1-M4b9d0D5oW0zfFj2BtgmE7Ivmvw=
+"@acala-network/api@^0.2.0-beta.28":
+  version "0.2.0-beta.28"
+  resolved "https://registry.npm.taobao.org/@acala-network/api/download/@acala-network/api-0.2.0-beta.28.tgz#7cc3d4c7f56fe47eadab22caf3a2d0f1668485ec"
+  integrity sha1-fMPUx/Vv5H6tqyLK86LQ8WaEhew=
   dependencies:
-    "@acala-network/api-derive" "^0.2.0-beta.27"
-    "@acala-network/types" "^0.2.0-beta.27"
+    "@acala-network/api-derive" "^0.2.0-beta.28"
+    "@acala-network/types" "^0.2.0-beta.28"
     "@babel/runtime" "^7.8.0"
     "@orml/api-derive" "^0.2.0-beta.63"
     "@polkadot/api" "^1.9.0-beta.22"
 
-"@acala-network/types@^0.2.0-beta.27", "@acala-network/types@beta":
+"@acala-network/types@^0.2.0-beta.28", "@acala-network/types@beta":
   version "0.2.0-beta.27"
   resolved "https://registry.npm.taobao.org/@acala-network/types/download/@acala-network/types-0.2.0-beta.27.tgz#340753d748eecd0d12301475e8ed386f738fea39"
   integrity sha1-NAdT10juzQ0SMBR16O04b3OP6jk=

@@ -47,6 +47,11 @@ class Fmt {
     return f.format(value / BigInt.from(pow(10, decimals)));
   }
 
+  static String ratio(dynamic number) {
+    NumberFormat f = NumberFormat(",##0.##%");
+    return f.format(number);
+  }
+
   static bool isAddress(String txt) {
     var reg = RegExp(r'^[A-z\d]{47,48}$');
     return reg.hasMatch(txt);

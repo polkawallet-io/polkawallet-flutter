@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/components/infoItem.dart';
-import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/common/theme.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
+import 'package:polka_wallet/page-acala/loan/loanCard.dart';
+import 'package:polka_wallet/page-acala/loan/loanChart.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/acala/acala.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class LoanPage extends StatefulWidget {
@@ -23,14 +26,15 @@ class _LoanPageState extends State<LoanPage> {
 
   final AppStore store;
 
-  final List<String> collateral = ['DOT', 'XBTC'];
-
   String _tab = 'DOT';
 
   Future<void> _fetchData() async {
     print('refresh');
-    webApi.acala.fetchPrices();
-//    webApi.acala.fetchAccountLoans();
+    await Future.wait([
+      webApi.acala.fetchLoanTypes(),
+      webApi.acala.fetchPrices(),
+    ]);
+    webApi.acala.fetchAccountLoans();
   }
 
   @override
@@ -49,69 +53,70 @@ class _LoanPageState extends State<LoanPage> {
       appBar: AppBar(title: Text(dic['loan.title']), centerTitle: true),
       body: Observer(
         builder: (_) {
-          print(store.acala.prices);
-          print(store.acala.loans);
+          LoanData loan = store.acala.loans[_tab];
+
+          Color cardColor = Theme.of(context).cardColor;
+          Color primaryColor = Theme.of(context).primaryColor;
           return SafeArea(
             child: RefreshIndicator(
-              key: globalLoanRefreshKey,
-              onRefresh: _fetchData,
-              child: ListView(
-                children: <Widget>[
-                  CurrencyTab(collateral, _tab, (i) {
-                    setState(() {
-                      _tab = i;
-                    });
-                  }),
-                  haveLoan
-                      ? RoundedCard(
-                          margin: EdgeInsets.all(16),
-                          padding: EdgeInsets.fromLTRB(16, 32, 16, 16),
-                          child: Column(
-                            children: <Widget>[
-                              Text(dic['loan.borrowed'] + 'aUSD'),
-                              Text(
-                                '300.56',
-                                style: TextStyle(
-                                    fontSize: 36,
-                                    color: Theme.of(context).primaryColor),
+                key: globalLoanRefreshKey,
+                onRefresh: _fetchData,
+                child: Column(
+                  children: <Widget>[
+                    CurrencyTab(store.acala.loanTypes, _tab, store.acala.prices,
+                        (i) {
+                      setState(() {
+                        _tab = i;
+                      });
+                    }),
+                    Expanded(
+                      child: ListView(
+                        children: <Widget>[
+                          loan.collaterals > BigInt.zero
+                              ? LoanCard(loan)
+                              : Container(),
+                          loan.debitAmount == BigInt.zero
+                              ? LoanChart(loan)
+                              : Container()
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            color: Colors.blue,
+                            child: FlatButton(
+                              padding: EdgeInsets.only(top: 16, bottom: 16),
+                              child: Text(
+                                dic['loan.borrow'],
+                                style: TextStyle(color: cardColor),
                               ),
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: FlatButton(
-                                      child: Text('borrow'),
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: FlatButton(
-                                      child: Text('pay back'),
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Divider(height: 48),
-                              Row(
-                                children: <Widget>[
-                                  InfoItem(
-                                    title: dic['loan.collateral'],
-                                    content: '0',
-                                  ),
-                                  InfoItem(
-                                    title: dic['collateral.require'],
-                                    content: '0',
-                                  ),
-                                ],
-                              )
-                            ],
+                              onPressed: () => Navigator.of(context).pushNamed(
+                                  LoanAdjustPage.route,
+                                  arguments: 'borrow'),
+                            ),
                           ),
-                        )
-                      : Container(),
-                  haveLoan ? LoanChart() : Container()
-                ],
-              ),
-            ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            color: primaryColor,
+                            child: FlatButton(
+                              padding: EdgeInsets.only(top: 16, bottom: 16),
+                              child: Text(
+                                dic['loan.payback'],
+                                style: TextStyle(color: cardColor),
+                              ),
+                              onPressed: () => Navigator.of(context).pushNamed(
+                                  LoanAdjustPage.route,
+                                  arguments: 'payback'),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )),
           );
         },
       ),
@@ -120,10 +125,12 @@ class _LoanPageState extends State<LoanPage> {
 }
 
 class CurrencyTab extends StatelessWidget {
-  CurrencyTab(this.tabs, this.activeTab, this.onTabChange);
+  CurrencyTab(this.tabs, this.activeTab, this.prices, this.onTabChange);
   final String activeTab;
-  final List<String> tabs;
+  final List<LoanType> tabs;
+  final Map<String, BigInt> prices;
   final Function(String) onTabChange;
+
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
@@ -144,6 +151,8 @@ class CurrencyTab extends StatelessWidget {
       ),
       child: Row(
         children: tabs.map((i) {
+          String price =
+              Fmt.token(prices[i.token], decimals: acala_token_decimals);
           return Expanded(
             child: GestureDetector(
               child: Container(
@@ -152,7 +161,7 @@ class CurrencyTab extends StatelessWidget {
                     border: Border(
                       bottom: BorderSide(
                         width: 2,
-                        color: activeTab == i
+                        color: activeTab == i.token
                             ? Theme.of(context).primaryColor
                             : Theme.of(context).cardColor,
                       ),
@@ -164,8 +173,8 @@ class CurrencyTab extends StatelessWidget {
                       Container(
                         width: 32,
                         margin: EdgeInsets.only(right: 8),
-                        child: activeTab == i
-                            ? Image.asset('assets/images/assets/$i.png')
+                        child: activeTab == i.token
+                            ? Image.asset('assets/images/assets/${i.token}.png')
                             : Container(
                                 width: 32,
                                 height: 32,
@@ -181,108 +190,34 @@ class CurrencyTab extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            i,
-                            style: Theme.of(context).textTheme.display4,
+                            i.token,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: activeTab == i.token
+                                  ? Theme.of(context).primaryColor
+                                  : Theme.of(context).unselectedWidgetColor,
+                            ),
                           ),
                           Text(
-                            '\$ 345.984',
+                            '\$$price',
                             style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(context).unselectedWidgetColor),
+                              fontSize: 12,
+                              color: Theme.of(context).unselectedWidgetColor,
+                            ),
                           )
                         ],
                       )
                     ],
                   )),
               onTap: () {
-                if (activeTab != i) {
-                  onTabChange(i);
+                if (activeTab != i.token) {
+                  onTabChange(i.token);
                 }
               },
             ),
           );
         }).toList(),
-      ),
-    );
-  }
-}
-
-class LoanChart extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return RoundedCard(
-      margin: EdgeInsets.fromLTRB(16, 8, 16, 32),
-      padding: EdgeInsets.all(16),
-      child: Container(
-        padding: EdgeInsets.only(top: 8, right: 8),
-        decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(),
-            bottom: BorderSide(),
-          ),
-        ),
-        child: Stack(
-          alignment: AlignmentDirectional.bottomStart,
-          children: <Widget>[
-            // borrowed amount
-            Container(
-              color: color_green_45,
-              height: 60,
-              child: Padding(
-                padding: EdgeInsets.only(left: 8, top: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[Text('\$300'), Text('borrowed')],
-                ),
-              ),
-            ),
-            // the liquidation line
-            Container(
-              height: 150,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Divider(color: Colors.red),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[Text('105%'), Text('Liquidation')],
-                  ),
-                ],
-              ),
-            ),
-            // the required line
-            Container(
-              height: 120,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Divider(color: Colors.orange),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[Text('120%'), Text('Required')],
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: 160,
-              decoration: BoxDecoration(
-                color: color_green_26,
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(left: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[Text('1200'), Text('Collateral')],
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
