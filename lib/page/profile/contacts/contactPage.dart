@@ -84,6 +84,14 @@ class _Contact extends State<ContactPage> {
   }
 
   @override
+  void dispose() {
+    _addressCtrl.dispose();
+    _nameCtrl.dispose();
+    _memoCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Map<String, String> dic = I18n.of(context).profile;
     List<Widget> action = <Widget>[

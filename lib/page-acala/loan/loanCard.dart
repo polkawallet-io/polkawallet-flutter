@@ -8,8 +8,9 @@ import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class LoanCard extends StatelessWidget {
-  LoanCard(this.loan);
+  LoanCard(this.loan, this.balance);
   final LoanData loan;
+  final String balance;
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
@@ -25,15 +26,22 @@ class LoanCard extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(16, 32, 16, 16),
       child: Column(
         children: <Widget>[
-          Text(dic['loan.borrowed'] + 'aUSD'),
+          Text(dic['loan.borrowed'] + ' aUSD'),
           Padding(
-            padding: EdgeInsets.only(top: 8, bottom: 8),
+            padding: EdgeInsets.only(top: 8, bottom: 0),
             child: Text(
               Fmt.token(loan.debits, decimals: acala_token_decimals),
               style: TextStyle(
                 fontSize: 36,
                 color: Theme.of(context).primaryColor,
               ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 8),
+            child: Text(
+              '${I18n.of(context).assets['balance']}: $balance',
+              style: TextStyle(fontSize: 14),
             ),
           ),
           Divider(height: 32),
@@ -59,8 +67,10 @@ class LoanCard extends StatelessWidget {
                         ),
                       ),
                       onTap: () => Navigator.of(context).pushNamed(
-                          LoanAdjustPage.route,
-                          arguments: 'deposit'),
+                        LoanAdjustPage.route,
+                        arguments: LoanAdjustPageParams(
+                            LoanAdjustPage.actionTypeDeposit, loan.token),
+                      ),
                     ),
                     GestureDetector(
                       child: Container(
@@ -74,8 +84,10 @@ class LoanCard extends StatelessWidget {
                         ),
                       ),
                       onTap: () => Navigator.of(context).pushNamed(
-                          LoanAdjustPage.route,
-                          arguments: 'withdraw'),
+                        LoanAdjustPage.route,
+                        arguments: LoanAdjustPageParams(
+                            LoanAdjustPage.actionTypeWithdraw, loan.token),
+                      ),
                     ),
                   ],
                 ),

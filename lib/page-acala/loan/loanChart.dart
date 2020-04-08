@@ -22,14 +22,17 @@ class LoanChart extends StatelessWidget {
     double heightBorrowed = 0;
     double heightRequired = 0;
     double heightLiquidation = 0;
-    if (loan.debitAmount > BigInt.zero) {
-      heightBorrowed = heightTotal * (loan.debitAmount / loan.collateralAmount);
+    if (loan.debitInUSD > BigInt.zero) {
+      heightBorrowed = heightTotal * (loan.debitInUSD / loan.collateralInUSD);
       heightRequired = heightTotal / requiredCollateralRatio;
       heightLiquidation = heightTotal / liquidationRatio;
+      if (heightLiquidation - heightRequired < 24) {
+        heightLiquidation = heightRequired + 24;
+      }
     }
 
-//    String borrowed =
-//        Fmt.token(loan.debitAmount, decimals: acala_token_decimals);
+    String collatoralInUSD =
+        Fmt.token(loan.collateralInUSD, decimals: acala_token_decimals);
 
     const TextStyle textStyle = TextStyle(fontSize: 12);
     return RoundedCard(
@@ -49,7 +52,7 @@ class LoanChart extends StatelessWidget {
             // borrowed amount
             Container(
               color: color_green_45,
-              height: 20 + heightBorrowed,
+              height: heightBorrowed > 30 ? heightBorrowed : 30,
               child: Padding(
                 padding: EdgeInsets.fromLTRB(4, 4, 4, 0),
                 child: Row(
@@ -57,18 +60,18 @@ class LoanChart extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(Fmt.ratio(loan.collateralRatio), style: textStyle),
-                    Text(dic['loan.borrowed'], style: textStyle)
+                    Text(dic['liquid.ratio.current'], style: textStyle)
                   ],
                 ),
               ),
             ),
             // the liquidation line
             Container(
-              height: 150,
+              height: heightLiquidation,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Divider(color: Colors.red, height: 8),
+                  Divider(color: Colors.red, height: 8, thickness: 1),
                   Padding(
                     padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
                     child: Row(
@@ -85,11 +88,11 @@ class LoanChart extends StatelessWidget {
             ),
             // the required line
             Container(
-              height: 120,
+              height: heightRequired,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Divider(color: Colors.orange, height: 8),
+                  Divider(color: Colors.orange, height: 8, thickness: 1),
                   Padding(
                     padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
                     child: Row(
@@ -116,7 +119,7 @@ class LoanChart extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text('100%', style: textStyle),
+                    Text('100% (≈\$$collatoralInUSD)', style: textStyle),
                     Text(dic['loan.collateral'], style: textStyle),
                   ],
                 ),

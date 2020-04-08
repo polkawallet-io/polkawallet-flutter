@@ -190,22 +190,23 @@ class _TransferPageState extends State<TransferPage> {
                           children: <Widget>[
                             TextFormField(
                               decoration: InputDecoration(
-                                  hintText: dic['address'],
-                                  labelText: dic['address'],
-                                  suffix: IconButton(
-                                    icon: Image.asset(
-                                        'assets/images/profile/address.png'),
-                                    onPressed: () async {
-                                      var to = await Navigator.of(context)
-                                          .pushNamed(ContactListPage.route);
-                                      if (to != null) {
-                                        setState(() {
-                                          _addressCtrl.text =
-                                              (to as AccountData).address;
-                                        });
-                                      }
-                                    },
-                                  )),
+                                hintText: dic['address'],
+                                labelText: dic['address'],
+                                suffix: IconButton(
+                                  icon: Image.asset(
+                                      'assets/images/profile/address.png'),
+                                  onPressed: () async {
+                                    var to = await Navigator.of(context)
+                                        .pushNamed(ContactListPage.route);
+                                    if (to != null) {
+                                      setState(() {
+                                        _addressCtrl.text =
+                                            (to as AccountData).address;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
                               controller: _addressCtrl,
                               validator: (v) {
                                 return Fmt.isAddress(v.trim())

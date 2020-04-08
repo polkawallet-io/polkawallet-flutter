@@ -31,7 +31,7 @@ dependencies:
   http: ^0.12.0
   flutter_webview_plugin: ^0.3.10+2
   rxdart: ^0.23.1
-  flutter_local_notifications: ^1.1.6
+  flutter_local_notifications: ^1.4.0
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -107,6 +107,7 @@ flutter:
     - assets/images/public/Acala_dark.png
     - assets/images/acala/exchange.svg
     - assets/images/acala/loan.svg
+    - assets/images/acala/loan-start.svg
     ## images - kusama
     - assets/images/public/app.png
     - assets/images/public/Assets_pink.png

@@ -33,7 +33,7 @@ class Fmt {
     if (raw == null || raw.length == 0) {
       return BigInt.zero;
     }
-    if (raw.contains(',')) {
+    if (raw.contains(',') || raw.contains('.')) {
       return BigInt.from(NumberFormat(",##0.000").parse(raw));
     } else {
       return BigInt.parse(raw);
@@ -42,9 +42,30 @@ class Fmt {
 
   static String token(BigInt value,
       {int decimals = 12, bool fullLength = false}) {
+    if (value == null) {
+      return '~';
+    }
     NumberFormat f = NumberFormat(
         ",##0.${fullLength == true ? '000#########' : '000'}", "en_US");
     return f.format(value / BigInt.from(pow(10, decimals)));
+  }
+
+  static String tokenNum(BigInt value,
+      {int decimals = 12, bool fullLength = false}) {
+    if (value == null) {
+      return '~';
+    }
+    NumberFormat f = NumberFormat(
+        "0.${fullLength == true ? '000#########' : '000'}", "en_US");
+    return f.format(value / BigInt.from(pow(10, decimals)));
+  }
+
+  static BigInt tokenInt(String value,
+      {int decimals = 12, bool fullLength = false}) {
+    if (value == null) {
+      return BigInt.zero;
+    }
+    return BigInt.from(double.parse(value) * pow(10, decimals));
   }
 
   static String ratio(dynamic number) {

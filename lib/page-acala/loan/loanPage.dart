@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanCard.dart';
 import 'package:polka_wallet/page-acala/loan/loanChart.dart';
+import 'package:polka_wallet/page-acala/loan/loanCreatePage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/acala/acala.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -31,6 +34,7 @@ class _LoanPageState extends State<LoanPage> {
   Future<void> _fetchData() async {
     print('refresh');
     await Future.wait([
+      webApi.acala.fetchTokens(store.account.currentAccount.pubKey),
       webApi.acala.fetchLoanTypes(),
       webApi.acala.fetchPrices(),
     ]);
@@ -48,12 +52,14 @@ class _LoanPageState extends State<LoanPage> {
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
-    bool haveLoan = true;
     return Scaffold(
       appBar: AppBar(title: Text(dic['loan.title']), centerTitle: true),
       body: Observer(
         builder: (_) {
           LoanData loan = store.acala.loans[_tab];
+
+          String balance = Fmt.balance(store.assets.balances['AUSD'],
+              decimals: acala_token_decimals);
 
           Color cardColor = Theme.of(context).cardColor;
           Color primaryColor = Theme.of(context).primaryColor;
@@ -70,16 +76,24 @@ class _LoanPageState extends State<LoanPage> {
                       });
                     }),
                     Expanded(
-                      child: ListView(
-                        children: <Widget>[
-                          loan.collaterals > BigInt.zero
-                              ? LoanCard(loan)
-                              : Container(),
-                          loan.debitAmount == BigInt.zero
-                              ? LoanChart(loan)
-                              : Container()
-                        ],
-                      ),
+                      child: loan != null
+                          ? ListView(
+                              children: <Widget>[
+                                loan.collaterals > BigInt.zero
+                                    ? LoanCard(loan, balance)
+                                    : RoundedCard(
+                                        margin: EdgeInsets.all(16),
+                                        padding:
+                                            EdgeInsets.fromLTRB(48, 24, 48, 24),
+                                        child: SvgPicture.asset(
+                                            'assets/images/acala/loan-start.svg'),
+                                      ),
+                                loan.debitInUSD > BigInt.zero
+                                    ? LoanChart(loan)
+                                    : Container()
+                              ],
+                            )
+                          : Container(),
                     ),
                     Row(
                       children: <Widget>[
@@ -87,32 +101,51 @@ class _LoanPageState extends State<LoanPage> {
                           child: Container(
                             color: Colors.blue,
                             child: FlatButton(
-                              padding: EdgeInsets.only(top: 16, bottom: 16),
-                              child: Text(
-                                dic['loan.borrow'],
-                                style: TextStyle(color: cardColor),
-                              ),
-                              onPressed: () => Navigator.of(context).pushNamed(
-                                  LoanAdjustPage.route,
-                                  arguments: 'borrow'),
-                            ),
+                                padding: EdgeInsets.only(top: 16, bottom: 16),
+                                child: Text(
+                                  dic['loan.borrow'],
+                                  style: TextStyle(color: cardColor),
+                                ),
+                                onPressed: () {
+                                  if (loan != null &&
+                                      loan.collaterals > BigInt.zero) {
+                                    Navigator.of(context).pushNamed(
+                                      LoanAdjustPage.route,
+                                      arguments: LoanAdjustPageParams(
+                                          LoanAdjustPage.actionTypeBorrow,
+                                          _tab),
+                                    );
+                                  } else {
+                                    Navigator.of(context).pushNamed(
+                                      LoanCreatePage.route,
+                                      arguments: LoanAdjustPageParams('', _tab),
+                                    );
+                                  }
+                                }),
                           ),
                         ),
-                        Expanded(
-                          child: Container(
-                            color: primaryColor,
-                            child: FlatButton(
-                              padding: EdgeInsets.only(top: 16, bottom: 16),
-                              child: Text(
-                                dic['loan.payback'],
-                                style: TextStyle(color: cardColor),
-                              ),
-                              onPressed: () => Navigator.of(context).pushNamed(
-                                  LoanAdjustPage.route,
-                                  arguments: 'payback'),
-                            ),
-                          ),
-                        ),
+                        loan != null && loan.debitInUSD > BigInt.zero
+                            ? Expanded(
+                                child: Container(
+                                  color: primaryColor,
+                                  child: FlatButton(
+                                    padding:
+                                        EdgeInsets.only(top: 16, bottom: 16),
+                                    child: Text(
+                                      dic['loan.payback'],
+                                      style: TextStyle(color: cardColor),
+                                    ),
+                                    onPressed: () =>
+                                        Navigator.of(context).pushNamed(
+                                      LoanAdjustPage.route,
+                                      arguments: LoanAdjustPageParams(
+                                          LoanAdjustPage.actionTypePayback,
+                                          _tab),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(),
                       ],
                     ),
                   ],

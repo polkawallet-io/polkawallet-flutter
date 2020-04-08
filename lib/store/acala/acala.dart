@@ -23,8 +23,12 @@ abstract class _AcalaStore with Store {
     Map<String, LoanData> data = {};
     list.forEach((i) {
       String token = i['token'];
-      data[token] = LoanData.fromJson(Map<String, dynamic>.from(i),
-          loanTypes.firstWhere((t) => t.token == token), prices[token]);
+      data[token] = LoanData.fromJson(
+        Map<String, dynamic>.from(i),
+        loanTypes.firstWhere((t) => t.token == token),
+        prices[token],
+        prices['AUSD'],
+      );
     });
     loans = data;
   }
@@ -48,21 +52,28 @@ abstract class _AcalaStore with Store {
 }
 
 class LoanData extends _LoanData with _$LoanData {
-  static LoanData fromJson(
-      Map<String, dynamic> json, LoanType type, BigInt price) {
+  static LoanData fromJson(Map<String, dynamic> json, LoanType type,
+      BigInt tokenPrice, BigInt stableCoinPrice) {
     LoanData data = LoanData();
     data.token = json['token'];
     data.type = type;
-    data.price = price;
-    data.debits = BigInt.parse(json['debits'].toString());
+    data.price = tokenPrice;
+    data.stableCoinPrice = stableCoinPrice;
+    data.debitShares = BigInt.parse(json['debits'].toString());
+    data.debits = type.debitShareToDebit(data.debitShares);
     data.collaterals = BigInt.parse(json['collaterals'].toString());
 
-    data.debitAmount = data.debitToUSD();
-    data.collateralAmount = data.collateralToUSD();
-    data.collateralRatio = type.calcCollateralRatio(data);
-    data.requiredCollateral = data.calcRequiredCollateral();
+    data.debitInUSD = type.tokenToUSD(data.debits, stableCoinPrice);
+    data.collateralInUSD = type.tokenToUSD(data.collaterals, tokenPrice);
+    data.collateralRatio =
+        type.calcCollateralRatio(data.debitInUSD, data.collateralInUSD);
+    data.requiredCollateral =
+        type.calcRequiredCollateral(data.debitInUSD, tokenPrice);
+    data.maxToBorrow =
+        type.calcMaxToBorrow(data.collaterals, tokenPrice, stableCoinPrice);
     data.stableFeeAPR = data.calcStableFeeAPR();
-    data.liquidationPrice = type.calcLiquidationPrice(data);
+    data.liquidationPrice =
+        type.calcLiquidationPrice(data.debitInUSD, data.collaterals);
     return data;
   }
 }
@@ -73,38 +84,19 @@ abstract class _LoanData with Store {
   String token = '';
   LoanType type = LoanType();
   BigInt price = BigInt.zero;
+  BigInt stableCoinPrice = BigInt.zero;
+  BigInt debitShares = BigInt.zero;
   BigInt debits = BigInt.zero;
   BigInt collaterals = BigInt.zero;
 
   // computed properties
-  BigInt debitAmount = BigInt.zero;
-  BigInt collateralAmount = BigInt.zero;
+  BigInt debitInUSD = BigInt.zero;
+  BigInt collateralInUSD = BigInt.zero;
   double collateralRatio = 0;
   BigInt requiredCollateral = BigInt.zero;
+  BigInt maxToBorrow = BigInt.zero;
   double stableFeeAPR = 0;
   BigInt liquidationPrice = BigInt.zero;
-
-  BigInt debitToStableCoin() {
-    return debits * type.debitExchangeRate;
-  }
-
-  BigInt debitToUSD() {
-    return debitToStableCoin() * price;
-  }
-
-  BigInt collateralToUSD() {
-    return collaterals * price;
-  }
-
-  BigInt calcRequiredCollateral() {
-    if (price > BigInt.zero && debitAmount > BigInt.zero) {
-      BigInt requiredAmount = BigInt.parse(Fmt.token(
-          debitAmount * type.requiredCollateralRatio,
-          decimals: acala_token_decimals));
-      return BigInt.from(requiredAmount / price);
-    }
-    return BigInt.zero;
-  }
 
   double calcStableFeeAPR() {
     return ((1 +
@@ -135,15 +127,50 @@ class LoanType extends _LoanType with _$LoanType {
     return data;
   }
 
-  double calcCollateralRatio(LoanData loanData) {
-    return loanData.collateralAmount / loanData.debitAmount;
+  BigInt debitShareToDebit(BigInt debitShares) {
+    return Fmt.balanceInt(Fmt.token(
+      debitShares * debitExchangeRate,
+      decimals: acala_token_decimals,
+    ));
   }
 
-  BigInt calcLiquidationPrice(LoanData loanData) {
-    return loanData.collaterals > BigInt.zero
-        ? BigInt.from(
-            loanData.debitAmount * this.liquidationRatio / loanData.collaterals)
+  BigInt debitToDebitShare(BigInt debits) {
+    return Fmt.tokenInt(
+      (debits / debitExchangeRate).toString(),
+      decimals: acala_token_decimals,
+    );
+  }
+
+  BigInt tokenToUSD(BigInt amount, BigInt price) {
+    return Fmt.balanceInt(Fmt.token(
+      amount * price,
+      decimals: acala_token_decimals,
+    ));
+  }
+
+  double calcCollateralRatio(BigInt debitInUSD, BigInt collateralInUSD) {
+    return collateralInUSD / debitInUSD;
+  }
+
+  BigInt calcLiquidationPrice(BigInt debitInUSD, BigInt collaterals) {
+    return debitInUSD > BigInt.zero
+        ? BigInt.from(debitInUSD * this.liquidationRatio / collaterals)
         : BigInt.zero;
+  }
+
+  BigInt calcRequiredCollateral(BigInt debitInUSD, BigInt price) {
+    if (price > BigInt.zero && debitInUSD > BigInt.zero) {
+      return BigInt.from(debitInUSD * requiredCollateralRatio / price);
+    }
+    return BigInt.zero;
+  }
+
+  BigInt calcMaxToBorrow(
+      BigInt collaterals, BigInt tokenPrice, BigInt stableCoinPrice) {
+    return Fmt.tokenInt(
+        (collaterals * tokenPrice / (requiredCollateralRatio * stableCoinPrice))
+            .toString(),
+        decimals: acala_token_decimals);
   }
 }
 
