@@ -192,10 +192,10 @@ class _TransferPageState extends State<TransferPage> {
                               decoration: InputDecoration(
                                 hintText: dic['address'],
                                 labelText: dic['address'],
-                                suffix: IconButton(
-                                  icon: Image.asset(
+                                suffix: GestureDetector(
+                                  child: Image.asset(
                                       'assets/images/profile/address.png'),
-                                  onPressed: () async {
+                                  onTap: () async {
                                     var to = await Navigator.of(context)
                                         .pushNamed(ContactListPage.route);
                                     if (to != null) {

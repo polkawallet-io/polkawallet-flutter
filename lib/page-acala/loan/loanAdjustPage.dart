@@ -205,7 +205,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
         BigInt debitAdd = loan.type.debitToDebitShare(_amountDebit);
         return {
           'detail': jsonEncode({
-            "amount": Fmt.token(_amountDebit, decimals: acala_token_decimals),
+            "amount": _amountCtrl2.text.trim(),
           }),
           'params': [
             params.token,
@@ -217,7 +217,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
         BigInt debitSubtract = loan.type.debitToDebitShare(_amountDebit);
         return {
           'detail': jsonEncode({
-            "amount": Fmt.token(_amountDebit, decimals: acala_token_decimals),
+            "amount": _amountCtrl2.text.trim(),
           }),
           'params': [
             params.token,
@@ -230,8 +230,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
       case LoanAdjustPage.actionTypeDeposit:
         return {
           'detail': jsonEncode({
-            "amount":
-                Fmt.token(_amountCollateral, decimals: acala_token_decimals),
+            "amount": _amountCtrl.text.trim(),
           }),
           'params': [
             params.token,
@@ -242,8 +241,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
       case LoanAdjustPage.actionTypeWithdraw:
         return {
           'detail': jsonEncode({
-            "amount":
-                Fmt.token(_amountCollateral, decimals: acala_token_decimals),
+            "amount": _amountCtrl.text.trim(),
           }),
           'params': [
             params.token,

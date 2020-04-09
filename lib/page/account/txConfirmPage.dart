@@ -25,6 +25,14 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
   final TextEditingController _passCtrl = new TextEditingController();
 
+  Future<String> _getTxFee() async {
+    final Map args = ModalRoute.of(context).settings.arguments;
+    Map txInfo = args['txInfo'];
+    txInfo['address'] = store.account.currentAddress;
+    String fee = await webApi.account.estimateTxFees(txInfo, args['params']);
+    return fee;
+  }
+
   Future<void> _onSubmit(BuildContext context) async {
     final ScaffoldState state = Scaffold.of(context);
     final Map<String, String> dic = I18n.of(context).home;
@@ -189,6 +197,39 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                               child: Text(
                                 args['detail'],
                               ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 16, right: 16),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              width: 64,
+                              child: Text(
+                                dic["submit.fees"],
+                              ),
+                            ),
+                            FutureBuilder<String>(
+                              future: _getTxFee(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<String> snapshot) {
+                                if (snapshot.hasData) {
+                                  return Container(
+                                    width: MediaQuery.of(context)
+                                            .copyWith()
+                                            .size
+                                            .width -
+                                        120,
+                                    child: Text(
+                                      snapshot.data,
+                                    ),
+                                  );
+                                } else {
+                                  return CupertinoActivityIndicator();
+                                }
+                              },
                             ),
                           ],
                         ),
