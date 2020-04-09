@@ -161,7 +161,7 @@ class _ExchangePageState extends State<ExchangePage> {
         BigInt balance = BigInt.zero;
         if (currencyIds != null &&
             store.assets.balances[_currencyPay ?? currencyIds[1]] != null) {
-          balance = BigInt.parse(
+          balance = Fmt.balanceInt(
               store.assets.balances[_currencyPay ?? currencyIds[1]]);
         }
 

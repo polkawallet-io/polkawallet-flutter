@@ -7,6 +7,7 @@ import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanCard.dart';
 import 'package:polka_wallet/page-acala/loan/loanChart.dart';
 import 'package:polka_wallet/page-acala/loan/loanCreatePage.dart';
+import 'package:polka_wallet/page-acala/loan/loanDonutChart.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/acala/acala.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -53,13 +54,14 @@ class _LoanPageState extends State<LoanPage> {
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
     return Scaffold(
+      backgroundColor: Theme.of(context).cardColor,
       appBar: AppBar(title: Text(dic['loan.title']), centerTitle: true),
       body: Observer(
         builder: (_) {
           LoanData loan = store.acala.loans[_tab];
 
-          String balance = Fmt.balance(store.assets.balances['AUSD'],
-              decimals: acala_token_decimals);
+          String balance =
+              Fmt.priceFloor(Fmt.balanceInt(store.assets.balances['AUSD']));
 
           Color cardColor = Theme.of(context).cardColor;
           Color primaryColor = Theme.of(context).primaryColor;
@@ -90,6 +92,7 @@ class _LoanPageState extends State<LoanPage> {
                                       ),
                                 loan.debitInUSD > BigInt.zero
                                     ? LoanChart(loan)
+//                                    ? LoanDonutChart(loan)
                                     : Container()
                               ],
                             )
@@ -185,7 +188,7 @@ class CurrencyTab extends StatelessWidget {
       child: Row(
         children: tabs.map((i) {
           String price =
-              Fmt.token(prices[i.token], decimals: acala_token_decimals);
+              Fmt.priceCeil(prices[i.token], decimals: acala_token_decimals);
           return Expanded(
             child: GestureDetector(
               child: Container(

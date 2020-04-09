@@ -40,21 +40,21 @@ class AcalaEntry extends StatelessWidget {
               ),
               GestureDetector(
                 child: _AcalaCard(
-                  dic['dex.title'],
-                  dic['dex.bref'],
-                  'assets/images/acala/exchange.svg',
-                  color: Colors.cyan,
-                ),
-                onTap: () =>
-                    Navigator.of(context).pushNamed(ExchangePage.route),
-              ),
-              GestureDetector(
-                child: _AcalaCard(
                   dic['loan.title'],
                   dic['loan.bref'],
                   'assets/images/acala/loan.svg',
                 ),
                 onTap: () => Navigator.of(context).pushNamed(LoanPage.route),
+              ),
+              GestureDetector(
+                child: _AcalaCard(
+                  dic['dex.title'],
+                  dic['dex.bref'],
+                  'assets/images/acala/exchange.svg',
+                  color: Colors.grey,
+                ),
+//                onTap: () =>
+//                    Navigator.of(context).pushNamed(ExchangePage.route),
               ),
             ],
           ),

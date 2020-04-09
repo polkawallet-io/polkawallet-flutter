@@ -397,8 +397,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                         text: Fmt.tokenNum(
                                           available,
                                           decimals: decimals,
-                                          fullLength: true,
-                                        ),
+                                        ).toString(),
                                       );
                                     },
                                   ),
@@ -440,8 +439,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                         text: Fmt.tokenNum(
                                           maxToBorrow,
                                           decimals: decimals,
-                                          fullLength: true,
-                                        ),
+                                        ).toString(),
                                       );
                                     },
                                   ),

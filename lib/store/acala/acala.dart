@@ -71,13 +71,15 @@ class LoanData extends _LoanData with _$LoanData {
         type.calcRequiredCollateral(data.debitInUSD, tokenPrice);
     data.maxToBorrow =
         type.calcMaxToBorrow(data.collaterals, tokenPrice, stableCoinPrice);
-    data.stableFeeAPR = data.calcStableFeeAPR();
+    data.stableFeeDay = data.calcStableFee(SECONDS_OF_DAY);
+    data.stableFeeYear = data.calcStableFee(SECONDS_OF_YEAR);
     data.liquidationPrice =
         type.calcLiquidationPrice(data.debitInUSD, data.collaterals);
     return data;
   }
 }
 
+const int SECONDS_OF_DAY = 24 * 60 * 60; // seconds of one day
 const int SECONDS_OF_YEAR = 365 * 24 * 60 * 60; // seconds of one year
 
 abstract class _LoanData with Store {
@@ -95,15 +97,16 @@ abstract class _LoanData with Store {
   double collateralRatio = 0;
   BigInt requiredCollateral = BigInt.zero;
   BigInt maxToBorrow = BigInt.zero;
-  double stableFeeAPR = 0;
+  double stableFeeDay = 0;
+  double stableFeeYear = 0;
   BigInt liquidationPrice = BigInt.zero;
 
-  double calcStableFeeAPR() {
-    return ((1 +
-                double.parse(Fmt.token(type.stabilityFee,
-                    decimals: acala_token_decimals))) *
-            pow((SECONDS_OF_YEAR / type.expectedBlockTime), 2) -
-        1);
+  double calcStableFee(int seconds) {
+    int blocks = seconds * 1000 ~/ type.expectedBlockTime;
+    double base = 1 +
+        (type.globalStabilityFee + type.stabilityFee) /
+            BigInt.from(pow(10, acala_token_decimals));
+    return (pow(base, blocks) - 1);
   }
 }
 

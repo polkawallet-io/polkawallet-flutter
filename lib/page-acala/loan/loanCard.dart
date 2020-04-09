@@ -19,6 +19,11 @@ class LoanCard extends StatelessWidget {
         Fmt.token(loan.collaterals, decimals: acala_token_decimals);
     String collateralRequired =
         Fmt.token(loan.requiredCollateral, decimals: acala_token_decimals);
+    double dailyInterest =
+        Fmt.tokenNum(loan.debits, decimals: acala_token_decimals) *
+            loan.stableFeeDay;
+    String ratio = Fmt.ratio(loan.stableFeeDay);
+    String ratio2 = Fmt.ratio(loan.stableFeeYear);
 
     Color primaryColor = Theme.of(context).primaryColor;
     return RoundedCard(
@@ -30,7 +35,7 @@ class LoanCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 8, bottom: 0),
             child: Text(
-              Fmt.token(loan.debits, decimals: acala_token_decimals),
+              Fmt.priceCeil(loan.debits, decimals: acala_token_decimals),
               style: TextStyle(
                 fontSize: 36,
                 color: Theme.of(context).primaryColor,
@@ -43,6 +48,25 @@ class LoanCard extends StatelessWidget {
               '${I18n.of(context).assets['balance']}: $balance',
               style: TextStyle(fontSize: 14),
             ),
+          ),
+          Row(
+            children: <Widget>[
+              InfoItem(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                title: dic['collateral.ratio'],
+                content: Fmt.ratio(dailyInterest, needSymbol: false),
+              ),
+              InfoItem(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                title: dic['collateral.ratio'],
+                content: ratio,
+              ),
+              InfoItem(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                title: dic['collateral.ratio'],
+                content: ratio2,
+              )
+            ],
           ),
           Divider(height: 32),
           Row(

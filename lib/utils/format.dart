@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:convert/convert.dart';
 import 'package:intl/intl.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/staking.dart';
 
 class Fmt {
@@ -50,14 +51,28 @@ class Fmt {
     return f.format(value / BigInt.from(pow(10, decimals)));
   }
 
-  static String tokenNum(BigInt value,
-      {int decimals = 12, bool fullLength = false}) {
+  static double tokenNum(BigInt value, {int decimals = 12}) {
+    if (value == null) {
+      return 0;
+    }
+    return value / BigInt.from(pow(10, decimals));
+  }
+
+  static String priceCeil(BigInt value, {int decimals = acala_token_decimals}) {
     if (value == null) {
       return '~';
     }
-    NumberFormat f = NumberFormat(
-        "0.${fullLength == true ? '000#########' : '000'}", "en_US");
-    return f.format(value / BigInt.from(pow(10, decimals)));
+    NumberFormat f = NumberFormat(",##0.00", "en_US");
+    return f.format((value / BigInt.from(pow(10, decimals - 2))).ceil() / 100);
+  }
+
+  static String priceFloor(BigInt value,
+      {int decimals = acala_token_decimals}) {
+    if (value == null) {
+      return '~';
+    }
+    NumberFormat f = NumberFormat(",##0.00", "en_US");
+    return f.format((value / BigInt.from(pow(10, decimals - 2))).floor() / 100);
   }
 
   static BigInt tokenInt(String value,
@@ -68,8 +83,8 @@ class Fmt {
     return BigInt.from(double.parse(value) * pow(10, decimals));
   }
 
-  static String ratio(dynamic number) {
-    NumberFormat f = NumberFormat(",##0.##%");
+  static String ratio(dynamic number, {bool needSymbol = true}) {
+    NumberFormat f = NumberFormat(",##0.###${needSymbol ? '%' : ''}");
     return f.format(number);
   }
 
