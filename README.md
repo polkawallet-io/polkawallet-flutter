@@ -29,6 +29,35 @@ While `main.js` was built in `lib/polkadot_js_service/` directory, you may build
 >substrate `sr25519` keyPair is generated within an `WASM` virtual
 >machine which is **not supported** by IOS simulators.
 
+#### Troubleshooting (Android)
+
+If you encounter the following issue https://github.com/polkawallet-io/polkawallet-flutter/issues/15, where it hangs with the following shown in the logs `Waiting for observatory port to be available...`, then the following additional changes are required before you run `flutter run`:
+
+* Create a MainActivity.kt file, as follows:
+```
+mkdir -p ./android/app/src/main/kotlin/io/polkawallet/www/polkawalletflutter && \
+touch ./android/app/src/main/kotlin/io/polkawallet/www/polkawalletflutter/MainActivity.kt
+```
+
+* Paste the following in MainActivity.kt
+
+```bash
+package io.polkawallet.www.polkawalletflutter
+
+import androidx.annotation.NonNull;
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugins.GeneratedPluginRegistrant
+
+class MainActivity: FlutterActivity() {
+    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+        GeneratedPluginRegistrant.registerWith(flutterEngine);
+    }
+}
+```
+
+Note: the folder structure is required since the package of polkawallet-flutter is "io.polkawallet.www.polkawalletflutter"
+
 ### Project introduce
 
  [Polkawallet](http://polkawallet.io) provide Cross-chain asset one-stop management, convenient staking and governance, the private key is self-owned. 
