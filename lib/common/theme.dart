@@ -57,13 +57,3 @@ final appThemeAcala = ThemeData(
         fontSize: 18,
       )),
 );
-
-// customized colors for loan chart
-const Color color_green_26 = Color.fromARGB(26, 0, 200, 100);
-const Color color_green_45 = Color.fromARGB(45, 0, 200, 100);
-const Color color_yellow_26 = Color.fromARGB(26, 0, 100, 100);
-const Color color_yellow_45 = Color.fromARGB(45, 0, 100, 100);
-const Color color_orange_26 = Color.fromARGB(26, 255, 100, 100);
-const Color color_orange_45 = Color.fromARGB(45, 255, 100, 100);
-const Color color_red_26 = Color.fromARGB(26, 255, 0, 0);
-const Color color_red_45 = Color.fromARGB(45, 255, 0, 0);

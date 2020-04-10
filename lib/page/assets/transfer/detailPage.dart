@@ -36,12 +36,12 @@ class TransferDetailPage extends StatelessWidget {
         DetailInfoItem(
           label: dic['value'],
           title:
-              '${Fmt.token(tx.value, decimals: decimals, fullLength: true)} $symbol',
+              '${Fmt.token(tx.value, decimals: decimals, length: decimals)} $symbol',
         ),
         DetailInfoItem(
           label: dic['fee'],
           title:
-              '${Fmt.token(tx.fee, decimals: decimals, fullLength: true)} $symbol',
+              '${Fmt.token(tx.fee, decimals: decimals, length: decimals)} $symbol',
         ),
         DetailInfoItem(
           label: dic['from'],

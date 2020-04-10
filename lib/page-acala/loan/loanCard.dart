@@ -20,7 +20,7 @@ class LoanCard extends StatelessWidget {
     String collateralRequired =
         Fmt.token(loan.requiredCollateral, decimals: acala_token_decimals);
     double dailyInterest =
-        Fmt.tokenNum(loan.debits, decimals: acala_token_decimals) *
+        Fmt.bigIntToDouble(loan.debits, decimals: acala_token_decimals) *
             loan.stableFeeDay;
     String ratio = Fmt.ratio(loan.stableFeeDay);
     String ratio2 = Fmt.ratio(loan.stableFeeYear);
@@ -28,7 +28,7 @@ class LoanCard extends StatelessWidget {
     Color primaryColor = Theme.of(context).primaryColor;
     return RoundedCard(
       margin: EdgeInsets.all(16),
-      padding: EdgeInsets.fromLTRB(16, 32, 16, 16),
+      padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
       child: Column(
         children: <Widget>[
           Text(dic['loan.borrowed'] + ' aUSD'),
@@ -43,7 +43,7 @@ class LoanCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(bottom: 8),
+            padding: EdgeInsets.only(bottom: 16),
             child: Text(
               '${I18n.of(context).assets['balance']}: $balance',
               style: TextStyle(fontSize: 14),
@@ -53,7 +53,7 @@ class LoanCard extends StatelessWidget {
             children: <Widget>[
               InfoItem(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                title: dic['collateral.ratio'],
+                title: dic['collateral.interest'],
                 content: Fmt.ratio(dailyInterest, needSymbol: false),
               ),
               InfoItem(
@@ -63,7 +63,7 @@ class LoanCard extends StatelessWidget {
               ),
               InfoItem(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                title: dic['collateral.ratio'],
+                title: dic['collateral.ratio.year'],
                 content: ratio2,
               )
             ],
@@ -72,10 +72,15 @@ class LoanCard extends StatelessWidget {
           Row(
             children: <Widget>[
               InfoItem(
-                title: '${dic['loan.collateral']}/${dic['collateral.require']}',
-                content: '$collateral/$collateralRequired ${loan.token}',
+                title: '${dic['loan.collateral']}(${loan.token})',
+                content: collateral,
+              ),
+              InfoItem(
+                title: dic['collateral.require'],
+                content: collateralRequired,
               ),
               Container(
+                margin: EdgeInsets.only(left: 16),
                 decoration: BoxDecoration(
                   border: Border.all(color: primaryColor),
                   borderRadius: BorderRadius.all(Radius.circular(16)),

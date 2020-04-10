@@ -65,7 +65,7 @@ abstract class _SettingsStore with Store {
         BigInt.parse(networkConst['transactionPayment']['transactionByteFee']
             .toString()),
         decimals: networkState.tokenDecimals,
-        fullLength: true);
+        length: networkState.tokenDecimals);
   }
 
   @action

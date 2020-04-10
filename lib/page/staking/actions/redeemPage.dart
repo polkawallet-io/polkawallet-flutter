@@ -24,6 +24,7 @@ class _RedeemPageState extends State<RedeemPage> {
 
   void _onSubmit() {
     var dic = I18n.of(context).staking;
+    final int decimals = store.settings.networkState.tokenDecimals;
     var args = {
       "title": dic['action.redeem'],
       "txInfo": {
@@ -32,7 +33,7 @@ class _RedeemPageState extends State<RedeemPage> {
       },
       "detail": jsonEncode({
         'amount':
-            Fmt.token(store.staking.ledger['redeemable'], fullLength: true)
+            Fmt.token(store.staking.ledger['redeemable'], length: decimals)
       }),
       "params": [],
       'onFinish': (BuildContext txPageContext) {
@@ -47,7 +48,7 @@ class _RedeemPageState extends State<RedeemPage> {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
-    String address = store.account.currentAddress;
+    final int decimals = store.settings.networkState.tokenDecimals;
 
     return Scaffold(
       appBar: AppBar(
@@ -73,7 +74,7 @@ class _RedeemPageState extends State<RedeemPage> {
                       ),
                       initialValue: Fmt.token(
                           store.staking.ledger['redeemable'],
-                          fullLength: true),
+                          length: decimals),
                       readOnly: true,
                     ),
                   ],

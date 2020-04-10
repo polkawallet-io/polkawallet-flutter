@@ -48,10 +48,12 @@ class LoanInfoPanel extends StatelessWidget {
         LoanInfoItem(
           dic['liquid.ratio.current'],
           Fmt.ratio(currentRatio),
+          colorPrimary: true,
         ),
         LoanInfoItem(
           dic['liquid.price'],
           '\$$liquidationPriceString',
+          colorPrimary: true,
         ),
       ],
     );
@@ -59,9 +61,10 @@ class LoanInfoPanel extends StatelessWidget {
 }
 
 class LoanInfoItem extends StatelessWidget {
-  LoanInfoItem(this.label, this.content);
+  LoanInfoItem(this.label, this.content, {this.colorPrimary = false});
   final String label;
   final String content;
+  final bool colorPrimary;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -71,7 +74,14 @@ class LoanInfoItem extends StatelessWidget {
           label,
           style: TextStyle(fontSize: 14),
         ),
-        Text(content, style: Theme.of(context).textTheme.display4),
+        Text(content,
+            style: colorPrimary
+                ? TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor,
+                  )
+                : Theme.of(context).textTheme.display4),
       ],
     );
   }

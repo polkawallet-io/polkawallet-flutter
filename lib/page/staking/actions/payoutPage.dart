@@ -24,6 +24,7 @@ class _PayoutPageState extends State<PayoutPage> {
 
   void _onSubmit() {
     var dic = I18n.of(context).staking;
+    final int decimals = store.settings.networkState.tokenDecimals;
 
     List rewards = store.staking.ledger['rewards'];
     if (rewards.length == 1) {
@@ -35,7 +36,7 @@ class _PayoutPageState extends State<PayoutPage> {
         },
         "detail": jsonEncode({
           'amount':
-              Fmt.token(store.staking.accountRewardTotal, fullLength: true),
+              Fmt.token(store.staking.accountRewardTotal, length: decimals),
           'era': rewards[0]['era'],
           'nominating': rewards[0]['nominating'],
         }),
@@ -66,7 +67,7 @@ class _PayoutPageState extends State<PayoutPage> {
         "call": 'batch',
       },
       "detail": jsonEncode({
-        'amount': Fmt.token(store.staking.accountRewardTotal, fullLength: true),
+        'amount': Fmt.token(store.staking.accountRewardTotal, length: decimals),
         'txs': rewards
             .map((i) => {'era': i['era'], 'nominating': i['nominating']})
             .toList(),
@@ -85,7 +86,7 @@ class _PayoutPageState extends State<PayoutPage> {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
-    String address = store.account.currentAddress;
+    final int decimals = store.settings.networkState.tokenDecimals;
 
     return Scaffold(
       appBar: AppBar(
@@ -109,7 +110,7 @@ class _PayoutPageState extends State<PayoutPage> {
                         labelText: I18n.of(context).assets['amount'],
                       ),
                       initialValue: Fmt.token(store.staking.accountRewardTotal,
-                          fullLength: true),
+                          decimals: decimals),
                       readOnly: true,
                     ),
                   ],

@@ -22,14 +22,8 @@ class Fmt {
     return addr.substring(0, pad) + '...' + addr.substring(addr.length - pad);
   }
 
-  static String balance(String raw, {int decimals = 12}) {
-    if (raw == null || raw.length == 0) {
-      return '0.000';
-    }
-    return NumberFormat(",##0.000")
-        .format(balanceInt(raw) / BigInt.from(pow(10, decimals)));
-  }
-
+  /// number transform 1:
+  /// from raw <String> of Api data to <BigInt>
   static BigInt balanceInt(String raw) {
     if (raw == null || raw.length == 0) {
       return BigInt.zero;
@@ -41,40 +35,64 @@ class Fmt {
     }
   }
 
-  static String token(BigInt value,
-      {int decimals = 12, bool fullLength = false}) {
-    if (value == null) {
-      return '~';
-    }
-    NumberFormat f = NumberFormat(
-        ",##0.${fullLength == true ? '000#########' : '000'}", "en_US");
-    return f.format(value / BigInt.from(pow(10, decimals)));
-  }
-
-  static double tokenNum(BigInt value, {int decimals = 12}) {
+  /// number transform 2:
+  /// from <BigInt> to <double>
+  static double bigIntToDouble(BigInt value, {int decimals = 12}) {
     if (value == null) {
       return 0;
     }
     return value / BigInt.from(pow(10, decimals));
   }
 
-  static String priceCeil(BigInt value, {int decimals = acala_token_decimals}) {
+  /// number transform 3:
+  /// from <double> to <String> in token format of ",##0.000"
+  static String doubleFormat(
+    double value, {
+    int length = 3,
+  }) {
     if (value == null) {
       return '~';
     }
-    NumberFormat f = NumberFormat(",##0.00", "en_US");
-    return f.format((value / BigInt.from(pow(10, decimals - 2))).ceil() / 100);
+    NumberFormat f = NumberFormat(",##0.${'#' * length}", "en_US");
+    return f.format(value);
   }
 
-  static String priceFloor(BigInt value,
-      {int decimals = acala_token_decimals}) {
+  /// combined number transform 1-3:
+  /// from raw <String> to <String> in token format of ",##0.000"
+  static String balance(
+    String raw, {
+    int decimals = 12,
+    int length = 3,
+  }) {
+    if (raw == null || raw.length == 0) {
+      return '~';
+    }
+    return doubleFormat(bigIntToDouble(balanceInt(raw), decimals: decimals),
+        length: length);
+  }
+
+  /// combined number transform 1-2:
+  /// from raw <String> to <double>
+  static double balanceDouble(String raw, {int decimals = 12}) {
+    return bigIntToDouble(balanceInt(raw), decimals: decimals);
+  }
+
+  /// combined number transform 2-3:
+  /// from <BigInt> to <String> in token format of ",##0.000"
+  static String token(
+    BigInt value, {
+    int decimals = 12,
+    int length = 3,
+  }) {
     if (value == null) {
       return '~';
     }
-    NumberFormat f = NumberFormat(",##0.00", "en_US");
-    return f.format((value / BigInt.from(pow(10, decimals - 2))).floor() / 100);
+    return doubleFormat(bigIntToDouble(value, decimals: decimals),
+        length: length);
   }
 
+  /// number transform 4:
+  /// from <String of double> to <BigInt>
   static BigInt tokenInt(String value,
       {int decimals = 12, bool fullLength = false}) {
     if (value == null) {
@@ -83,6 +101,37 @@ class Fmt {
     return BigInt.from(double.parse(value) * pow(10, decimals));
   }
 
+  /// number transform 5:
+  /// from <BigInt> to <String> in price format of ",##0.00"
+  /// ceil number of last decimal
+  static String priceCeil(BigInt value,
+      {int decimals = acala_token_decimals, int length = 2}) {
+    if (value == null) {
+      return '~';
+    }
+    NumberFormat f = NumberFormat(",##0.${"0" * length}", "en_US");
+    return f.format((value / BigInt.from(pow(10, decimals - length))).ceil() /
+        pow(10, length));
+  }
+
+  /// number transform 6:
+  /// from <BigInt> to <String> in price format of ",##0.00"
+  /// floor number of last decimal
+  static String priceFloor(
+    BigInt value, {
+    int decimals = acala_token_decimals,
+    int length = 3,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    NumberFormat f = NumberFormat(",##0.${"0" * length}", "en_US");
+    return f.format((value / BigInt.from(pow(10, decimals - length))).floor() /
+        pow(10, length));
+  }
+
+  /// number transform 7:
+  /// from number to <String> in price format of ",##0.###%"
   static String ratio(dynamic number, {bool needSymbol = true}) {
     NumberFormat f = NumberFormat(",##0.###${needSymbol ? '%' : ''}");
     return f.format(number);

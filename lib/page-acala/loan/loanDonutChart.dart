@@ -40,8 +40,8 @@ class LoanDonutChart extends StatelessWidget {
 
     final dataCollateral = [1, 0];
     final dataDebit = [
-      Fmt.tokenNum(loan.debitInUSD),
-      Fmt.tokenNum(loan.collateralInUSD - loan.debitInUSD),
+      Fmt.bigIntToDouble(loan.debitInUSD),
+      Fmt.bigIntToDouble(loan.collateralInUSD - loan.debitInUSD),
     ];
 
     List<charts.Series> seriesListCollateral = [

@@ -394,7 +394,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                         _amountCollateral = available;
                                       });
                                       _amountCtrl.value = TextEditingValue(
-                                        text: Fmt.tokenNum(
+                                        text: Fmt.bigIntToDouble(
                                           available,
                                           decimals: decimals,
                                         ).toString(),
@@ -436,7 +436,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                         _amountDebit = maxToBorrow;
                                       });
                                       _amountCtrl2.value = TextEditingValue(
-                                        text: Fmt.tokenNum(
+                                        text: Fmt.bigIntToDouble(
                                           maxToBorrow,
                                           decimals: decimals,
                                         ).toString(),
