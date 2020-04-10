@@ -3,6 +3,7 @@ import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
+import 'package:polka_wallet/page-acala/loan/loanHistoryPage.dart';
 import 'package:polka_wallet/store/acala/acala.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -31,41 +32,66 @@ class LoanCard extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
       child: Column(
         children: <Widget>[
-          Text(dic['loan.borrowed'] + ' aUSD'),
-          Padding(
-            padding: EdgeInsets.only(top: 8, bottom: 0),
-            child: Text(
-              Fmt.priceCeil(loan.debits, decimals: acala_token_decimals),
-              style: TextStyle(
-                fontSize: 36,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 16),
-            child: Text(
-              '${I18n.of(context).assets['balance']}: $balance',
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
-          Row(
+          Stack(
+            alignment: AlignmentDirectional.topEnd,
             children: <Widget>[
-              InfoItem(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                title: dic['collateral.interest'],
-                content: Fmt.ratio(dailyInterest, needSymbol: false),
+              Column(
+                children: <Widget>[
+                  Text(dic['loan.borrowed'] + ' aUSD'),
+                  Padding(
+                    padding: EdgeInsets.only(top: 8, bottom: 0),
+                    child: Text(
+                      Fmt.priceCeil(loan.debits,
+                          decimals: acala_token_decimals),
+                      style: TextStyle(
+                        fontSize: 36,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: Text(
+                      '${I18n.of(context).assets['balance']}: $balance',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      InfoItem(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        title: dic['collateral.interest'],
+                        content: Fmt.ratio(dailyInterest, needSymbol: false),
+                      ),
+                      InfoItem(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        title: dic['collateral.ratio'],
+                        content: ratio,
+                      ),
+                      InfoItem(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        title: dic['collateral.ratio.year'],
+                        content: ratio2,
+                      )
+                    ],
+                  ),
+                ],
               ),
-              InfoItem(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                title: dic['collateral.ratio'],
-                content: ratio,
+              GestureDetector(
+                child: Container(
+                  child: Column(
+                    children: <Widget>[
+                      Icon(Icons.history, color: primaryColor),
+                      Text(
+                        'history',
+                        style: TextStyle(color: primaryColor, fontSize: 14),
+                      )
+                    ],
+                  ),
+                ),
+                onTap: () =>
+                    Navigator.of(context).pushNamed(LoanHistoryPage.route),
               ),
-              InfoItem(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                title: dic['collateral.ratio.year'],
-                content: ratio2,
-              )
             ],
           ),
           Divider(height: 32),
