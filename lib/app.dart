@@ -10,6 +10,7 @@ import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanCreatePage.dart';
 import 'package:polka_wallet/page-acala/loan/loanHistoryPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanPage.dart';
+import 'package:polka_wallet/page-acala/loan/loanTxDetailPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
@@ -219,6 +220,7 @@ class _WalletAppState extends State<WalletApp> {
         LoanCreatePage.route: (_) => LoanCreatePage(_appStore),
         LoanAdjustPage.route: (_) => LoanAdjustPage(_appStore),
         LoanHistoryPage.route: (_) => LoanHistoryPage(_appStore),
+        LoanTxDetailPage.route: (_) => LoanTxDetailPage(_appStore),
       },
     );
   }

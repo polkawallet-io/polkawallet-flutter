@@ -89,8 +89,8 @@ class LoanCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                onTap: () =>
-                    Navigator.of(context).pushNamed(LoanHistoryPage.route),
+                onTap: () => Navigator.of(context)
+                    .pushNamed(LoanHistoryPage.route, arguments: loan.type),
               ),
             ],
           ),

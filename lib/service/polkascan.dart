@@ -4,8 +4,6 @@ import 'package:polka_wallet/common/consts/settings.dart';
 const int tx_list_page_size = 10;
 
 class PolkaScanApi {
-  static const String endpoint = 'https://api-01.polkascan.io/kusama/api/v1';
-
   static const String module_balances = 'balances';
   static const String module_staking = 'staking';
   static const String module_democracy = 'democracy';
@@ -14,7 +12,7 @@ class PolkaScanApi {
     if (network == networkEndpointAcala.info) {
       return 'https://api-03.polkascan.io/$network/api/v1';
     }
-    return 'https://api-01.polkascan.io/$network/api/v1';
+    return 'https://api-02.polkascan.io/$network/api/v1';
   }
 
   static Future<String> fetchTransfers(

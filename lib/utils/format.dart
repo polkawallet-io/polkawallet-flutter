@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:convert/convert.dart';
 import 'package:intl/intl.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
+import 'package:polka_wallet/store/acala/acala.dart';
 import 'package:polka_wallet/store/staking.dart';
 
 class Fmt {
@@ -104,8 +106,11 @@ class Fmt {
   /// number transform 5:
   /// from <BigInt> to <String> in price format of ",##0.00"
   /// ceil number of last decimal
-  static String priceCeil(BigInt value,
-      {int decimals = acala_token_decimals, int length = 2}) {
+  static String priceCeil(
+    BigInt value, {
+    int decimals = acala_token_decimals,
+    int length = 2,
+  }) {
     if (value == null) {
       return '~';
     }
@@ -120,7 +125,7 @@ class Fmt {
   static String priceFloor(
     BigInt value, {
     int decimals = acala_token_decimals,
-    int length = 3,
+    int length = 2,
   }) {
     if (value == null) {
       return '~';

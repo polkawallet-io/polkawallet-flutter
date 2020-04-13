@@ -60,6 +60,40 @@ mixin _$AcalaStore on _AcalaStore, Store {
     }, _$pricesAtom, name: '${_$pricesAtom.name}_set');
   }
 
+  final _$txsAtom = Atom(name: '_AcalaStore.txs');
+
+  @override
+  ObservableList<TxLoanData> get txs {
+    _$txsAtom.context.enforceReadPolicy(_$txsAtom);
+    _$txsAtom.reportObserved();
+    return super.txs;
+  }
+
+  @override
+  set txs(ObservableList<TxLoanData> value) {
+    _$txsAtom.context.conditionallyRunInAction(() {
+      super.txs = value;
+      _$txsAtom.reportChanged();
+    }, _$txsAtom, name: '${_$txsAtom.name}_set');
+  }
+
+  final _$txsLoadingAtom = Atom(name: '_AcalaStore.txsLoading');
+
+  @override
+  bool get txsLoading {
+    _$txsLoadingAtom.context.enforceReadPolicy(_$txsLoadingAtom);
+    _$txsLoadingAtom.reportObserved();
+    return super.txsLoading;
+  }
+
+  @override
+  set txsLoading(bool value) {
+    _$txsLoadingAtom.context.conditionallyRunInAction(() {
+      super.txsLoading = value;
+      _$txsLoadingAtom.reportChanged();
+    }, _$txsLoadingAtom, name: '${_$txsLoadingAtom.name}_set');
+  }
+
   final _$_AcalaStoreActionController = ActionController(name: '_AcalaStore');
 
   @override
@@ -91,8 +125,30 @@ mixin _$AcalaStore on _AcalaStore, Store {
       _$_AcalaStoreActionController.endAction(_$actionInfo);
     }
   }
+
+  @override
+  void setLoanTxs(List list, {bool reset = false}) {
+    final _$actionInfo = _$_AcalaStoreActionController.startAction();
+    try {
+      return super.setLoanTxs(list, reset: reset);
+    } finally {
+      _$_AcalaStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setTxsLoading(bool loading) {
+    final _$actionInfo = _$_AcalaStoreActionController.startAction();
+    try {
+      return super.setTxsLoading(loading);
+    } finally {
+      _$_AcalaStoreActionController.endAction(_$actionInfo);
+    }
+  }
 }
 
 mixin _$LoanData on _LoanData, Store {}
 
 mixin _$LoanType on _LoanType, Store {}
+
+mixin _$TxLoanData on _TxLoanData, Store {}

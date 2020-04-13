@@ -1,0 +1,49 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page/assets/transfer/txDetail.dart';
+import 'package:polka_wallet/store/acala/acala.dart';
+import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/format.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
+
+class LoanTxDetailPage extends StatelessWidget {
+  LoanTxDetailPage(this.store);
+
+  static final String route = '/acala/loan/tx';
+  final AppStore store;
+
+  @override
+  Widget build(BuildContext context) {
+    final Map<String, String> dic = I18n.of(context).acala;
+    final int decimals = acala_token_decimals;
+
+    final TxLoanData tx = ModalRoute.of(context).settings.arguments;
+
+    List<DetailInfoItem> list = <DetailInfoItem>[
+      DetailInfoItem(
+        label: dic['txs.action'],
+        title: tx.actionType,
+      ),
+      DetailInfoItem(
+        label: dic['loan.amount'],
+        title: '${Fmt.priceFloor(tx.amountView)} ${tx.currencyIdView}',
+      ),
+    ];
+    if (tx.actionType == 'create') {
+      print(tx.amountCollateral);
+      list.add(DetailInfoItem(
+        label: '',
+        title: '${Fmt.priceFloor(tx.amountCollateral)} ${tx.currencyId}',
+      ));
+    }
+    return TxDetail(
+      success: true,
+      action: '',
+      eventId: 'tx.id',
+      hash: tx.hash,
+      networkName: store.settings.endpoint.info,
+      info: list,
+    );
+  }
+}

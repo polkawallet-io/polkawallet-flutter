@@ -36,6 +36,7 @@ const Map<String, String> enDex = {
   'loan.amount.collateral': 'How much would you deposit as collateral?',
   'loan.max': 'Max',
   'loan.txs': 'Transactions',
+  'txs.action': 'Action',
 };
 
 const Map<String, String> zhDex = {
@@ -74,4 +75,5 @@ const Map<String, String> zhDex = {
   'loan.amount.collateral': '您要存入多少抵押物？',
   'loan.max': '最大值',
   'loan.txs': '交易记录',
+  'txs.action': '操作类型',
 };

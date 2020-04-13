@@ -167,7 +167,7 @@ class _AssetPageState extends State<AssetPage>
     bool isStash = false;
     bool hasData = store.staking.ledger['stakingLedger'] != null;
     if (hasData) {
-      bonded = store.staking.ledger['stakingLedger']['active'];
+      bonded = BigInt.from(store.staking.ledger['stakingLedger']['active']);
       String stashId = store.staking.ledger['stakingLedger']['stash'];
       isStash = store.staking.ledger['accountId'] == stashId;
     }

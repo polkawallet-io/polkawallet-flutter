@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:mobx/mobx.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 part 'acala.g.dart';
@@ -17,6 +19,12 @@ abstract class _AcalaStore with Store {
 
   @observable
   Map<String, BigInt> prices = {};
+
+  @observable
+  ObservableList<TxLoanData> txs = ObservableList<TxLoanData>();
+
+  @observable
+  bool txsLoading = false;
 
   @action
   void setAccountLoans(List list) {
@@ -48,6 +56,20 @@ abstract class _AcalaStore with Store {
           : BigInt.parse(i['price']['value'].toString());
     });
     prices = data;
+  }
+
+  @action
+  void setLoanTxs(List list, {bool reset = false}) {
+    if (reset) {
+      txs = ObservableList.of(list.map((i) => TxLoanData.fromJson(i)));
+    } else {
+      txs.addAll(list.map((i) => TxLoanData.fromJson(i)));
+    }
+  }
+
+  @action
+  void setTxsLoading(bool loading) {
+    txsLoading = loading;
   }
 }
 
@@ -188,4 +210,46 @@ abstract class _LoanType with Store {
   BigInt maximumTotalDebitValue = BigInt.zero;
   BigInt minimumDebitValue = BigInt.zero;
   int expectedBlockTime = 0;
+}
+
+class TxLoanData extends _TxLoanData with _$TxLoanData {
+  static TxLoanData fromJson(Map<String, dynamic> json) {
+    TxLoanData data = TxLoanData();
+    data.hash = json['hash'];
+    data.currencyId = json['method']['args'][0];
+    data.amountCollateral = Fmt.balanceInt(json['method']['args'][1]);
+    data.amountDebitShare = Fmt.balanceInt(json['method']['args'][2]);
+    if (data.amountCollateral == BigInt.zero) {
+      data.actionType = data.amountDebitShare > BigInt.zero
+          ? LoanAdjustPage.actionTypeBorrow
+          : LoanAdjustPage.actionTypePayback;
+      data.amountView = data.amountDebitShare;
+      data.currencyIdView = 'aUSD';
+    } else if (data.amountDebitShare == BigInt.zero) {
+      data.actionType = data.amountCollateral > BigInt.zero
+          ? LoanAdjustPage.actionTypeWithdraw
+          : LoanAdjustPage.actionTypeDeposit;
+      data.amountView = data.amountCollateral;
+      data.currencyIdView = data.currencyId;
+    } else {
+      data.actionType = 'create';
+      data.amountView = data.amountDebitShare;
+      data.currencyIdView = 'aUSD';
+    }
+    return data;
+  }
+
+//  static Map<String, dynamic> toJson(TxLoanData data) =>
+//      _$TxLoanDataToJson(data);
+}
+
+abstract class _TxLoanData with Store {
+  String hash;
+  String currencyId;
+  String actionType;
+  BigInt amountCollateral;
+  BigInt amountDebitShare;
+
+  BigInt amountView;
+  String currencyIdView;
 }
