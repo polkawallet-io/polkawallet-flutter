@@ -10,7 +10,7 @@ const Map<String, String> enDex = {
   'loan.title': 'Self serviced loan',
   'loan.bref':
       'Lock your digital assets(i.e. DOT, XBTC) in Acala platform to borrow equivalent aUSD.',
-  'loan.borrowed': 'Borrowed',
+  'loan.borrowed': 'My Debt',
   'loan.collateral': 'Collateral',
   'loan.borrow': 'Borrow',
   'loan.payback': 'Payback',
@@ -37,6 +37,7 @@ const Map<String, String> enDex = {
   'loan.max': 'Max',
   'loan.txs': 'Transactions',
   'txs.action': 'Action',
+  'payback.small': 'The remaining debt is too small.',
 };
 
 const Map<String, String> zhDex = {
@@ -49,7 +50,7 @@ const Map<String, String> zhDex = {
   'dex.exchange': '兑换',
   'loan.title': '自助借贷',
   'loan.bref': '将您的数字资产（如：DOT、XBTC）锁定在 Acala 平台作为抵押，可以借出相应数量的 aUSD。',
-  'loan.borrowed': '已借',
+  'loan.borrowed': '债务',
   'loan.collateral': '抵押',
   'loan.borrow': '借贷',
   'loan.payback': '还贷',
@@ -76,4 +77,5 @@ const Map<String, String> zhDex = {
   'loan.max': '最大值',
   'loan.txs': '交易记录',
   'txs.action': '操作类型',
+  'payback.small': '剩余债务过小',
 };

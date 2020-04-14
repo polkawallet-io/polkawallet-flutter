@@ -30,7 +30,7 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
   final List<String> _tabList = [
     'Assets',
     'Acala',
-    'Governance',
+//    'Governance',
     'Profile',
   ];
 
@@ -59,15 +59,15 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
         return Assets(store);
       case 1:
         return AcalaEntry(store);
-      case 2:
-        return Governance(store);
+//      case 2:
+//        return Governance(store);
       default:
         return Profile(store.account);
     }
   }
 
   List<Widget> _buildPages() {
-    return [0, 1, 2, 3].map((i) {
+    return [0, 1, 2].map((i) {
       if (i == 0) {
         // return assets page
         return Stack(

@@ -176,6 +176,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     BigInt max,
     String maxToBorrowView,
     BigInt balanceAUSD,
+    LoanData loan,
   ) {
     final Map assetDic = I18n.of(context).assets;
     final Map dic = I18n.of(context).acala;
@@ -189,10 +190,17 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     }
     final LoanAdjustPageParams params =
         ModalRoute.of(context).settings.arguments;
-    if (params.actionType == LoanAdjustPage.actionTypePayback &&
-        _amountDebit > balanceAUSD) {
-      String balance = Fmt.token(balanceAUSD, decimals: acala_token_decimals);
-      return '${assetDic['amount.low']}(${assetDic['balance']}: $balance)';
+    if (params.actionType == LoanAdjustPage.actionTypePayback) {
+      if (_amountDebit > balanceAUSD) {
+        String balance = Fmt.token(balanceAUSD, decimals: acala_token_decimals);
+        return '${assetDic['amount.low']}(${assetDic['balance']}: $balance)';
+      }
+      BigInt debitLeft = loan.debits - _amountDebit;
+      if (debitLeft > BigInt.zero &&
+          loan.type.debitToDebitShare(debitLeft) <
+              loan.type.minimumDebitValue) {
+        return dic['payback.small'];
+      }
     }
     return null;
   }
@@ -214,7 +222,9 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
           ]
         };
       case LoanAdjustPage.actionTypePayback:
-        BigInt debitSubtract = loan.type.debitToDebitShare(_amountDebit);
+        BigInt debitSubtract = _amountDebit == loan.debits
+            ? loan.debitShares
+            : loan.type.debitToDebitShare(_amountDebit);
         return {
           'detail': jsonEncode({
             "amount": _amountCtrl2.text.trim(),
@@ -335,6 +345,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
         showDebit = false;
         break;
       case LoanAdjustPage.actionTypeWithdraw:
+        // TODO: max withdraw number bug
         available = loan.collaterals - loan.requiredCollateral;
         showDebit = false;
         break;
@@ -390,14 +401,19 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                               Theme.of(context).primaryColor),
                                     ),
                                     onTap: () async {
+                                      String value = Fmt.bigIntToDouble(
+                                        available,
+                                        decimals: decimals,
+                                      ).toString();
                                       setState(() {
                                         _amountCollateral = available;
+                                        _amountCtrl.text = value;
                                       });
-                                      _amountCtrl.value = TextEditingValue(
-                                        text: Fmt.bigIntToDouble(
-                                          available,
-                                          decimals: decimals,
-                                        ).toString(),
+                                      _onAmount1Change(
+                                        value,
+                                        loan.type,
+                                        price,
+                                        stableCoinPrice,
                                       );
                                     },
                                   ),
@@ -432,15 +448,16 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                               Theme.of(context).primaryColor),
                                     ),
                                     onTap: () async {
+                                      String value = Fmt.bigIntToDouble(
+                                        maxToBorrow,
+                                        decimals: decimals,
+                                      ).toString();
                                       setState(() {
                                         _amountDebit = maxToBorrow;
+                                        _amountCtrl2.text = value;
                                       });
-                                      _amountCtrl2.value = TextEditingValue(
-                                        text: Fmt.bigIntToDouble(
-                                          maxToBorrow,
-                                          decimals: decimals,
-                                        ).toString(),
-                                      );
+                                      _onAmount2Change(value, loan.type,
+                                          stableCoinPrice, showCheckbox);
                                     },
                                   ),
                                 ),
@@ -451,8 +468,12 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                 controller: _amountCtrl2,
                                 keyboardType: TextInputType.numberWithOptions(
                                     decimal: true),
-                                validator: (v) => _validateAmount2(v,
-                                    maxToBorrow, maxToBorrowView, balanceAUSD),
+                                validator: (v) => _validateAmount2(
+                                    v,
+                                    maxToBorrow,
+                                    maxToBorrowView,
+                                    balanceAUSD,
+                                    loan),
                                 onChanged: (v) => _onAmount2Change(v, loan.type,
                                     stableCoinPrice, showCheckbox),
                               ),
@@ -469,7 +490,15 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                     });
                                   },
                                 ),
-                                Text(dic['loan.withdraw.all'])
+                                GestureDetector(
+                                  child: Text(dic['loan.withdraw.all']),
+                                  onTap: () {
+                                    setState(() {
+                                      _paybackAndCloseChecked =
+                                          !_paybackAndCloseChecked;
+                                    });
+                                  },
+                                )
                               ],
                             )
                           : Container(),
