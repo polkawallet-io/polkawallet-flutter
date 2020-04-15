@@ -29,14 +29,14 @@ class LoanInfoPanel extends StatelessWidget {
           dic['collateral.price'],
           '\$$priceString',
         ),
-        LoanInfoItem(
-          dic['liquid.ratio'],
-          Fmt.ratio(
-            double.parse(
-              Fmt.token(liquidationRatio, decimals: acala_token_decimals),
-            ),
-          ),
-        ),
+//        LoanInfoItem(
+//          dic['liquid.ratio'],
+//          Fmt.ratio(
+//            double.parse(
+//              Fmt.token(liquidationRatio, decimals: acala_token_decimals),
+//            ),
+//          ),
+//        ),
         LoanInfoItem(
           dic['liquid.ratio.require'],
           Fmt.ratio(

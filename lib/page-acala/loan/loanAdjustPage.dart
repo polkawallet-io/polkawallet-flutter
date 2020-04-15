@@ -331,12 +331,12 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     BigInt balanceAUSD = Fmt.balanceInt(store.assets.balances['AUSD']);
     BigInt balance = Fmt.balanceInt(store.assets.balances[params.token]);
     BigInt available = balance;
-    BigInt maxToBorrow = loan.maxToBorrow;
+    BigInt maxToBorrow = loan.maxToBorrow - loan.debits;
     String maxToBorrowView = Fmt.priceFloor(maxToBorrow);
 
     switch (params.actionType) {
       case LoanAdjustPage.actionTypeBorrow:
-        maxToBorrow = loan.maxToBorrow - loan.debits;
+        maxToBorrow = Fmt.tokenInt(maxToBorrowView, decimals: decimals);
         showCollateral = false;
         titleSuffix = ' aUSD';
         break;
