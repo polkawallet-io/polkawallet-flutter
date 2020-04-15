@@ -43,7 +43,7 @@ class _NominatePageState extends State<NominatePage> {
       },
       "detail": 'chill',
       "params": [],
-      'onFinish': (BuildContext txPageContext) {
+      'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalNominatingRefreshKey.currentState.show();
       }
@@ -68,7 +68,7 @@ class _NominatePageState extends State<NominatePage> {
         // "targets"
         targets,
       ],
-      'onFinish': (BuildContext txPageContext) {
+      'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalNominatingRefreshKey.currentState.show();
       }

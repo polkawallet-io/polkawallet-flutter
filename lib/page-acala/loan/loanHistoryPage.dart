@@ -105,13 +105,17 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                         title: Text(list[i].actionType),
                         subtitle: Text('time'),
                         trailing: Container(
-                          width: 110,
+                          width: 140,
                           child: Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(
-                                  '${Fmt.priceFloor(list[i].amountView)} ${list[i].currencyIdView}',
-                                  style: Theme.of(context).textTheme.display4,
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: 12),
+                                  child: Text(
+                                    '${Fmt.priceFloor(list[i].amountView)} ${list[i].currencyIdView}',
+                                    style: Theme.of(context).textTheme.display4,
+                                    textAlign: TextAlign.end,
+                                  ),
                                 ),
                               ),
                               list[i].amountView < BigInt.zero

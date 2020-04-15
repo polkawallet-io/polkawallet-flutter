@@ -51,7 +51,8 @@ abstract class _AppStore with Store {
     staking.loadCache();
     gov.loadCache();
 
-    acala = AcalaStore();
+    acala = AcalaStore(this);
+    acala.loadCache();
 
     isReady = true;
   }

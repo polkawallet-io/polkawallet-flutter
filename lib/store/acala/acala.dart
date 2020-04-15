@@ -1,16 +1,24 @@
 import 'dart:math';
 
 import 'package:mobx/mobx.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'acala.g.dart';
 
-class AcalaStore = _AcalaStore with _$AcalaStore;
+class AcalaStore extends _AcalaStore with _$AcalaStore {
+  AcalaStore(AppStore store) : super(store);
+}
 
 abstract class _AcalaStore with Store {
+  _AcalaStore(this.rootStore);
+
+  final AppStore rootStore;
+  final String cacheLoanTxsKey = 'loan_txs';
+
   @observable
   List<LoanType> loanTypes = List<LoanType>();
 
@@ -59,17 +67,41 @@ abstract class _AcalaStore with Store {
   }
 
   @action
-  void setLoanTxs(List list, {bool reset = false}) {
+  Future<void> setLoanTxs(List list,
+      {bool reset = false, needCache = true}) async {
     if (reset) {
-      txs = ObservableList.of(list.map((i) => TxLoanData.fromJson(i)));
+      txs = ObservableList.of(
+          list.map((i) => TxLoanData.fromJson(Map<String, dynamic>.from(i))));
     } else {
-      txs.addAll(list.map((i) => TxLoanData.fromJson(i)));
+      txs.addAll(
+          list.map((i) => TxLoanData.fromJson(Map<String, dynamic>.from(i))));
+    }
+
+    if (needCache && txs.length > 0) {
+      String pubKey = rootStore.account.currentAccount.pubKey;
+      List cached = await LocalStorage.getAccountCache(pubKey, cacheLoanTxsKey);
+      if (cached != null) {
+        cached.addAll(list);
+      } else {
+        cached = list;
+      }
+      LocalStorage.setAccountCache(pubKey, cacheLoanTxsKey, cached);
     }
   }
 
   @action
   void setTxsLoading(bool loading) {
     txsLoading = loading;
+  }
+
+  @action
+  Future<void> loadCache() async {
+    String pubKey = rootStore.account.currentAccount.pubKey;
+    List cached = await LocalStorage.getAccountCache(pubKey, cacheLoanTxsKey);
+    if (cached != null) {
+      print(cached);
+      setLoanTxs(cached, needCache: false);
+    }
   }
 }
 
@@ -220,6 +252,7 @@ class TxLoanData extends _TxLoanData with _$TxLoanData {
     TxLoanData data = TxLoanData();
     data.hash = json['hash'];
     data.currencyId = json['method']['args'][0];
+    data.time = DateTime.fromMillisecondsSinceEpoch(json['time']);
     data.amountCollateral = Fmt.balanceInt(json['method']['args'][1]);
     data.amountDebitShare = Fmt.balanceInt(json['method']['args'][2]);
     if (data.amountCollateral == BigInt.zero) {
@@ -230,8 +263,8 @@ class TxLoanData extends _TxLoanData with _$TxLoanData {
       data.currencyIdView = 'aUSD';
     } else if (data.amountDebitShare == BigInt.zero) {
       data.actionType = data.amountCollateral > BigInt.zero
-          ? LoanAdjustPage.actionTypeWithdraw
-          : LoanAdjustPage.actionTypeDeposit;
+          ? LoanAdjustPage.actionTypeDeposit
+          : LoanAdjustPage.actionTypeWithdraw;
       data.amountView = data.amountCollateral;
       data.currencyIdView = data.currencyId;
     } else {
@@ -250,6 +283,7 @@ abstract class _TxLoanData with Store {
   String hash;
   String currencyId;
   String actionType;
+  DateTime time;
   BigInt amountCollateral;
   BigInt amountDebitShare;
 

@@ -100,21 +100,21 @@ abstract class _SettingsStore with Store {
 
   @action
   void setNetworkName(String name) {
-    print('set netwwork name: $name');
     networkName = name;
     loading = false;
   }
 
   @action
   Future<void> setNetworkState(Map<String, dynamic> data) async {
-    LocalStorage.setKV(cacheNetworkStateKey, data);
+    LocalStorage.setKV('${cacheNetworkStateKey}_${endpoint.info}', data);
 
     networkState = NetworkState.fromJson(data);
   }
 
   @action
   Future<void> loadNetworkStateCache() async {
-    var data = await LocalStorage.getKV(cacheNetworkStateKey);
+    var data =
+        await LocalStorage.getKV('${cacheNetworkStateKey}_${endpoint.info}');
     if (data != null) {
       networkState = NetworkState.fromJson(data);
     }

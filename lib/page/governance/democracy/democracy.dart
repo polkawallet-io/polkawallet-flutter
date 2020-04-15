@@ -69,7 +69,7 @@ class _DemocracyState extends State<Democracy> {
               // "options"
               options
             ],
-            'onFinish': (BuildContext txPageContext) {
+            'onFinish': (BuildContext txPageContext, Map res) {
               Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
               globalDemocracyRefreshKey.currentState.show();
             }

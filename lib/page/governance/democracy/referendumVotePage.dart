@@ -59,7 +59,7 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
           // "options"
           {"Standard": vote},
         ],
-        'onFinish': (BuildContext txPageContext) {
+        'onFinish': (BuildContext txPageContext, Map res) {
           Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
           globalDemocracyRefreshKey.currentState.show();
         }

@@ -118,7 +118,7 @@ class _ExchangePageState extends State<ExchangePage> {
             (double.parse(receive) * pow(10, decimals)).toStringAsFixed(0)
           ],
         ],
-        "onFinish": (BuildContext txPageContext) {
+        "onFinish": (BuildContext txPageContext, Map res) {
           Navigator.popUntil(
               txPageContext, ModalRoute.withName(AcalaHomePage.route));
           globalDexRefreshKey.currentState.show();

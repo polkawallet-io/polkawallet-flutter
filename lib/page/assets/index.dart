@@ -125,13 +125,12 @@ class _AssetsState extends State<Assets> {
                 margin: EdgeInsets.only(top: 16),
                 child: ListTile(
                   leading: Container(
-                    width: 40,
-                    height: 40,
+                    width: 36,
                     child: Image.asset(
                         'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
                   ),
                   title: Text(symbol ?? ''),
-                  subtitle: Text(networkName ?? '~'),
+//                  subtitle: Text(networkName ?? '~'),
                   trailing: Text(
                     Fmt.balance(store.assets.balances[symbol],
                         decimals: store.settings.networkState.tokenDecimals),
@@ -152,12 +151,11 @@ class _AssetsState extends State<Assets> {
                     margin: EdgeInsets.only(top: 16),
                     child: ListTile(
                       leading: Container(
-                        width: 40,
-                        height: 40,
+                        width: 36,
                         child: Image.asset('assets/images/assets/$i.png'),
                       ),
                       title: Text(i),
-                      subtitle: Text(networkName),
+//                      subtitle: Text(networkName),
                       trailing: Text(
                         Fmt.balance(store.assets.balances[i],
                             decimals: store.settings.acalaTokenDecimals),

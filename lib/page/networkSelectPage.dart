@@ -83,8 +83,8 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
               webApi.acala.fetchTokens(i.pubKey);
             } else {
               /// set new network and reload web view
-              // TODO: clear cache after network changed
               store.settings.setEndpoint(EndpointData.toJson(_selectedNetwork));
+              store.settings.loadNetworkStateCache();
               store.settings.setNetworkLoading(true);
               webApi.launchWebview();
               changeTheme();

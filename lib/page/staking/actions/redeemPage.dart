@@ -36,7 +36,7 @@ class _RedeemPageState extends State<RedeemPage> {
             Fmt.token(store.staking.ledger['redeemable'], length: decimals)
       }),
       "params": [],
-      'onFinish': (BuildContext txPageContext) {
+      'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalBondingRefreshKey.currentState.show();
       }

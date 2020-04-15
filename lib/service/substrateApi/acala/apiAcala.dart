@@ -92,7 +92,7 @@ class ApiAcala {
       store.acala.setTxsLoading(true);
     }
     // cache first page of txs
-    store.acala.setLoanTxs(txs, reset: page == 1);
+//    store.acala.setLoanTxs(txs, reset: page == 1);
 
 //    await apiRoot.updateBlocks(txs);
     store.acala.setTxsLoading(false);

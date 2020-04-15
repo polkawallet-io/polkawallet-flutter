@@ -94,6 +94,22 @@ mixin _$AcalaStore on _AcalaStore, Store {
     }, _$txsLoadingAtom, name: '${_$txsLoadingAtom.name}_set');
   }
 
+  final _$setLoanTxsAsyncAction = AsyncAction('setLoanTxs');
+
+  @override
+  Future<void> setLoanTxs(List list,
+      {bool reset = false, dynamic needCache = true}) {
+    return _$setLoanTxsAsyncAction
+        .run(() => super.setLoanTxs(list, reset: reset, needCache: needCache));
+  }
+
+  final _$loadCacheAsyncAction = AsyncAction('loadCache');
+
+  @override
+  Future<void> loadCache() {
+    return _$loadCacheAsyncAction.run(() => super.loadCache());
+  }
+
   final _$_AcalaStoreActionController = ActionController(name: '_AcalaStore');
 
   @override
@@ -121,16 +137,6 @@ mixin _$AcalaStore on _AcalaStore, Store {
     final _$actionInfo = _$_AcalaStoreActionController.startAction();
     try {
       return super.setPrices(list);
-    } finally {
-      _$_AcalaStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setLoanTxs(List list, {bool reset = false}) {
-    final _$actionInfo = _$_AcalaStoreActionController.startAction();
-    try {
-      return super.setLoanTxs(list, reset: reset);
     } finally {
       _$_AcalaStoreActionController.endAction(_$actionInfo);
     }

@@ -171,7 +171,8 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
       },
       "detail": params['detail'],
       "params": params['params'],
-      'onFinish': (BuildContext txPageContext) {
+      'onFinish': (BuildContext txPageContext, Map res) {
+        store.acala.setLoanTxs([res]);
         Navigator.popUntil(txPageContext, ModalRoute.withName('/acala/loan'));
         globalLoanRefreshKey.currentState.show();
       }

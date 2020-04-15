@@ -46,7 +46,7 @@ class _PayoutPageState extends State<PayoutPage> {
           // nominating
           jsonEncode(rewards[0]['nominating']),
         ],
-        'onFinish': (BuildContext txPageContext) {
+        'onFinish': (BuildContext txPageContext, Map res) {
           Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
           globalBondingRefreshKey.currentState.show();
         }
@@ -74,7 +74,7 @@ class _PayoutPageState extends State<PayoutPage> {
       }),
       "params": [],
       "rawParam": '[[$params]]',
-      'onFinish': (BuildContext txPageContext) {
+      'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalBondingRefreshKey.currentState.show();
       }

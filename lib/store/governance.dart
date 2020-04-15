@@ -73,7 +73,13 @@ abstract class _GovernanceStore with Store {
   @action
   void setUserReferendumVotes(String address, List ls) {
     if (account.currentAddress != address) return;
-    userReferendumVotes.addAll(List<Map>.from(ls));
+    Map referendumIndexes = {};
+    ls.reversed.forEach((i) {
+      if (referendumIndexes[i['detail']['params'][0]['value']] == null) {
+        referendumIndexes[i['detail']['params'][0]['value']] = i;
+      }
+    });
+    userReferendumVotes.addAll(List<Map>.from(referendumIndexes.values));
   }
 
   @action

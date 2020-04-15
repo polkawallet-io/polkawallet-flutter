@@ -60,7 +60,7 @@ class _SetControllerPageState extends State<SetControllerPage> {
       },
       "detail": jsonEncode({"controllerId": address}),
       "params": [address],
-      'onFinish': (BuildContext txPageContext) {
+      'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalBondingRefreshKey.currentState.show();
       }

@@ -62,7 +62,7 @@ class _CouncilVote extends State<CouncilVotePage> {
           // "voteValue"
           (double.parse(amt) * pow(10, decimals)).toInt(),
         ],
-        'onFinish': (BuildContext txPageContext) {
+        'onFinish': (BuildContext txPageContext, Map res) {
           Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
           globalCouncilRefreshKey.currentState.show();
         }

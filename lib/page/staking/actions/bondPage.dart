@@ -65,7 +65,7 @@ class _BondPageState extends State<BondPage> {
           // "to"
           _rewardTo,
         ],
-        'onFinish': (BuildContext txPageContext) {
+        'onFinish': (BuildContext txPageContext, Map res) {
           Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
           globalBondingRefreshKey.currentState.show();
         }

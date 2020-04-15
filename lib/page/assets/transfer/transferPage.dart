@@ -92,7 +92,7 @@ class _TransferPageState extends State<TransferPage> {
               .toStringAsFixed(0),
         ];
       }
-      args['onFinish'] = (BuildContext txPageContext) {
+      args['onFinish'] = (BuildContext txPageContext, Map res) {
         final Map routeArgs = ModalRoute.of(context).settings.arguments;
         Navigator.popUntil(
             txPageContext, ModalRoute.withName(routeArgs['redirect']));

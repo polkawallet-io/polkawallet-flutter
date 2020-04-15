@@ -113,7 +113,7 @@ class _BondExtraPageState extends State<BondExtraPage> {
                                   pow(10, decimals))
                               .toInt(),
                         ],
-                        'onFinish': (BuildContext txPageContext) {
+                        'onFinish': (BuildContext txPageContext, Map res) {
                           Navigator.popUntil(
                               txPageContext, ModalRoute.withName('/'));
                           globalBondingRefreshKey.currentState.show();

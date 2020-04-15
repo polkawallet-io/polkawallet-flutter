@@ -39,8 +39,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
     final Map args = ModalRoute.of(context).settings.arguments;
 
-    void onTxFinish(String blockHash) {
-      print('callback triggered, blockHash: $blockHash');
+    void onTxFinish(Map res) {
+      print('callback triggered, blockHash: ${res['hash']}');
       store.assets.setSubmitting(false);
       if (state.mounted) {
         state.removeCurrentSnackBar();
@@ -62,7 +62,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
         Timer(Duration(seconds: 2), () {
           if (state.mounted) {
-            (args['onFinish'] as Function(BuildContext))(context);
+            (args['onFinish'] as Function(BuildContext, Map))(context, res);
           }
         });
       }
@@ -121,7 +121,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     if (res == null) {
       onTxError();
     } else {
-      onTxFinish(res['hash']);
+      onTxFinish(Map.from(res));
     }
   }
 
