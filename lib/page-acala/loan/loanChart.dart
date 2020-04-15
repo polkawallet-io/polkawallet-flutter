@@ -20,48 +20,54 @@ class LoanChart extends StatelessWidget {
     const double heightTotal = 160;
     final double widthChart = MediaQuery.of(context).size.width / 4;
     double heightBorrowed = 0;
+    double heightBorrowedAdjusted = 0;
     double heightRequired = 0;
     double heightLiquidation = 0;
     if (loan.debitInUSD > BigInt.zero) {
       heightBorrowed = heightTotal * (loan.debitInUSD / loan.collateralInUSD);
+      heightBorrowedAdjusted = heightBorrowed;
       heightRequired = heightTotal / requiredCollateralRatio;
       heightLiquidation = heightTotal / liquidationRatio;
       if (heightLiquidation - heightRequired < 24) {
         heightLiquidation = heightRequired + 24;
       }
+      if (heightRequired - heightBorrowed < 24) {
+        heightBorrowedAdjusted = heightRequired - 24;
+      }
     }
 
-    String collatoralInUSD =
-        Fmt.token(loan.collateralInUSD, decimals: acala_token_decimals);
-
+    String collateralInUSD =
+        Fmt.priceFloor(loan.collateralInUSD, decimals: acala_token_decimals);
+    String debitInUSD =
+        Fmt.priceCeil(loan.debitInUSD, decimals: acala_token_decimals);
     const TextStyle textStyle = TextStyle(fontSize: 12);
 
     return Row(
       children: <Widget>[
-//        Container(
-//          margin: EdgeInsets.fromLTRB(32, 8, 0, 8),
-//          child: _ChartContainer(
-//            heightBorrowed,
-//            heightRequired,
-//            heightLiquidation,
-//            collateral: Text('100%'),
-//            debits: Text(
-//              Fmt.ratio(loan.collateralRatio),
-//              style: TextStyle(color: Colors.green),
-//            ),
-//            liquidation: Text(
-//              Fmt.ratio(liquidationRatio),
-//              style: TextStyle(color: Colors.red),
-//            ),
-//            required: Text(
-//              Fmt.ratio(requiredCollateralRatio),
-//              style: TextStyle(color: Colors.blue),
-//            ),
-//            alignment: AlignmentDirectional.bottomEnd,
-//          ),
-//        ),
         Container(
-          margin: EdgeInsets.fromLTRB(32, 8, 8, 8),
+          margin: EdgeInsets.fromLTRB(32, 8, 0, 8),
+          child: _ChartContainer(
+            heightBorrowedAdjusted,
+            heightRequired,
+            heightLiquidation,
+            collateral: Text('100%'),
+            debits: Text(
+              Fmt.ratio(loan.collateralRatio),
+              style: TextStyle(color: Colors.orange),
+            ),
+            liquidation: Text(
+              Fmt.ratio(liquidationRatio),
+              style: TextStyle(color: Colors.red),
+            ),
+            required: Text(
+              Fmt.ratio(requiredCollateralRatio),
+              style: TextStyle(color: Colors.blue),
+            ),
+            alignment: AlignmentDirectional.bottomEnd,
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
           padding: EdgeInsets.only(top: 8, right: 8),
           width: widthChart,
           decoration: BoxDecoration(
@@ -83,7 +89,7 @@ class LoanChart extends StatelessWidget {
           child: Container(
             margin: EdgeInsets.fromLTRB(0, 0, 48, 8),
             child: _ChartContainer(
-              heightBorrowed,
+              heightBorrowedAdjusted,
               heightRequired,
               heightLiquidation,
               collateral: Row(
@@ -91,65 +97,65 @@ class LoanChart extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(dic['loan.collateral']),
-                  Text('\$$collatoralInUSD',
+                  Text('\$$collateralInUSD',
                       style: Theme.of(context).textTheme.display4),
                 ],
               ),
 //              debits: Text(
 //                dic['liquid.ratio.current'],
-//                style: TextStyle(color: Colors.green),
+//                style: TextStyle(color: Colors.orange),
 //              ),
-//              liquidation: Text(
-//                dic['liquid.ratio'],
-//                style: TextStyle(color: Colors.red),
-//              ),
-//              required: Text(
-//                dic['liquid.ratio.require'],
-//                style: TextStyle(color: Colors.blue),
-//              ),
+              liquidation: Text(
+                dic['liquid.ratio'],
+                style: TextStyle(color: Colors.red),
+              ),
+              required: Text(
+                dic['liquid.ratio.require'],
+                style: TextStyle(color: Colors.blue),
+              ),
               debits: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
                     dic['liquid.ratio.current'],
-                    style: TextStyle(color: Theme.of(context).primaryColor),
+                    style: TextStyle(color: Colors.orange),
                   ),
                   Text(
-                    Fmt.ratio(loan.collateralRatio),
+                    '\$$debitInUSD',
                     style: TextStyle(
-                      color: Theme.of(context).primaryColor,
+                      color: Colors.orange,
                       fontSize: 18,
                     ),
                   ),
                 ],
               ),
-              liquidation: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    dic['liquid.ratio'],
-                    style: TextStyle(color: Colors.red),
-                  ),
-                  Text(
-                    Fmt.ratio(liquidationRatio),
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ],
-              ),
-              required: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    dic['liquid.ratio.require'],
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                  Text(
-                    Fmt.ratio(requiredCollateralRatio),
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ],
-              ),
+//              liquidation: Row(
+//                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                children: <Widget>[
+//                  Text(
+//                    dic['liquid.ratio'],
+//                    style: TextStyle(color: Colors.red),
+//                  ),
+//                  Text(
+//                    Fmt.ratio(liquidationRatio),
+//                    style: TextStyle(color: Colors.red),
+//                  ),
+//                ],
+//              ),
+//              required: Row(
+//                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                children: <Widget>[
+//                  Text(
+//                    dic['liquid.ratio.require'],
+//                    style: TextStyle(color: Colors.blue),
+//                  ),
+//                  Text(
+//                    Fmt.ratio(requiredCollateralRatio),
+//                    style: TextStyle(color: Colors.blue),
+//                  ),
+//                ],
+//              ),
             ),
           ),
         ),
@@ -206,9 +212,7 @@ class _ChartContainer extends StatelessWidget {
         // borrowed amount
         Container(
           height: heightBorrowed > 30 ? heightBorrowed : 30,
-          color: debits == null
-              ? Theme.of(context).primaryColor
-              : Colors.transparent,
+          color: debits == null ? Colors.orangeAccent : Colors.transparent,
           child: debits,
         ),
         // the liquidation line

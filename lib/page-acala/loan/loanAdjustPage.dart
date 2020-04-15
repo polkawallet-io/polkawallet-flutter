@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
@@ -121,15 +122,17 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     String value,
     LoanType loanType,
     BigInt stableCoinPrice,
-    bool showCheckbox,
-  ) {
+    bool showCheckbox, {
+    BigInt debits,
+  }) {
     String v = value.trim();
     if (v.isEmpty) return;
 
-    BigInt debits = Fmt.tokenInt(v, decimals: acala_token_decimals);
+    BigInt debitsNew =
+        debits ?? Fmt.tokenInt(v, decimals: acala_token_decimals);
 
     setState(() {
-      _amountDebit = debits;
+      _amountDebit = debitsNew;
     });
     if (!showCheckbox && _paybackAndCloseChecked) {
       setState(() {
@@ -137,7 +140,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
       });
     }
 
-    Map amountTotal = _calcTotalAmount(_amountCollateral, debits);
+    Map amountTotal = _calcTotalAmount(_amountCollateral, debitsNew);
     _updateState(loanType, amountTotal['collateral'], amountTotal['debit']);
 
     _checkAutoValidate();
@@ -185,11 +188,12 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     if (v.isEmpty) {
       return assetDic['amount.error'];
     }
-    if (_amountDebit > max) {
-      return '${dic['loan.max']} $maxToBorrowView';
-    }
     final LoanAdjustPageParams params =
         ModalRoute.of(context).settings.arguments;
+    if (params.actionType == LoanAdjustPage.actionTypeBorrow &&
+        _amountDebit > max) {
+      return '${dic['loan.max']} $maxToBorrowView';
+    }
     if (params.actionType == LoanAdjustPage.actionTypePayback) {
       if (_amountDebit > balanceAUSD) {
         String balance = Fmt.token(balanceAUSD, decimals: acala_token_decimals);
@@ -328,6 +332,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     BigInt balance = Fmt.balanceInt(store.assets.balances[params.token]);
     BigInt available = balance;
     BigInt maxToBorrow = loan.maxToBorrow;
+    String maxToBorrowView = Fmt.priceFloor(maxToBorrow);
 
     switch (params.actionType) {
       case LoanAdjustPage.actionTypeBorrow:
@@ -338,6 +343,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
       case LoanAdjustPage.actionTypePayback:
         // max to payback
         maxToBorrow = loan.debits;
+        maxToBorrowView = Fmt.priceCeil(maxToBorrow);
         showCollateral = false;
         titleSuffix = ' aUSD';
         break;
@@ -345,14 +351,16 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
         showDebit = false;
         break;
       case LoanAdjustPage.actionTypeWithdraw:
-        // TODO: max withdraw number bug
         available = loan.collaterals - loan.requiredCollateral;
         showDebit = false;
         break;
       default:
     }
-    String availableView = Fmt.token(available, decimals: decimals);
-    String maxToBorrowView = Fmt.token(maxToBorrow, decimals: decimals);
+
+    int maxCollateralDecimal =
+        loan.debits > BigInt.zero ? 6 : acala_token_decimals;
+    String availableView =
+        Fmt.priceFloor(available, lengthMax: maxCollateralDecimal);
 
     String pageTitle = '${dic['loan.${params.actionType}']}$titleSuffix';
 
@@ -401,16 +409,17 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                               Theme.of(context).primaryColor),
                                     ),
                                     onTap: () async {
-                                      String value = Fmt.bigIntToDouble(
-                                        available,
-                                        decimals: decimals,
-                                      ).toString();
+                                      BigInt max = Fmt.tokenInt(availableView,
+                                          decimals: maxCollateralDecimal);
                                       setState(() {
-                                        _amountCollateral = available;
-                                        _amountCtrl.text = value;
+                                        _amountCollateral = max;
+                                        _amountCtrl.text = Fmt.bigIntToDouble(
+                                          max,
+                                          decimals: maxCollateralDecimal,
+                                        ).toString();
                                       });
                                       _onAmount1Change(
-                                        value,
+                                        availableView,
                                         loan.type,
                                         price,
                                         stableCoinPrice,
@@ -448,16 +457,19 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                               Theme.of(context).primaryColor),
                                     ),
                                     onTap: () async {
-                                      String value = Fmt.bigIntToDouble(
-                                        maxToBorrow,
-                                        decimals: decimals,
-                                      ).toString();
+                                      double max = NumberFormat(",##0.00")
+                                          .parse(maxToBorrowView);
                                       setState(() {
                                         _amountDebit = maxToBorrow;
-                                        _amountCtrl2.text = value;
+                                        _amountCtrl2.text = max.toString();
                                       });
-                                      _onAmount2Change(value, loan.type,
-                                          stableCoinPrice, showCheckbox);
+                                      _onAmount2Change(
+                                        maxToBorrowView,
+                                        loan.type,
+                                        stableCoinPrice,
+                                        showCheckbox,
+                                        debits: maxToBorrow,
+                                      );
                                     },
                                   ),
                                 ),

@@ -174,6 +174,9 @@ class LoanType extends _LoanType with _$LoanType {
   }
 
   double calcCollateralRatio(BigInt debitInUSD, BigInt collateralInUSD) {
+    if (debitInUSD < minimumDebitValue) {
+      return double.minPositive;
+    }
     return collateralInUSD / debitInUSD;
   }
 

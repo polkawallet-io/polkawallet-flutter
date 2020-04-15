@@ -95,12 +95,17 @@ class Fmt {
 
   /// number transform 4:
   /// from <String of double> to <BigInt>
-  static BigInt tokenInt(String value,
-      {int decimals = 12, bool fullLength = false}) {
+  static BigInt tokenInt(String value, {int decimals = 12}) {
     if (value == null) {
       return BigInt.zero;
     }
-    return BigInt.from(double.parse(value) * pow(10, decimals));
+    double v = 0;
+    if (value.contains(',') || value.contains('.')) {
+      v = NumberFormat(",##0.${"0" * decimals}").parse(value);
+    } else {
+      v = double.parse(value);
+    }
+    return BigInt.from(v * pow(10, decimals));
   }
 
   /// number transform 5:
@@ -109,14 +114,20 @@ class Fmt {
   static String priceCeil(
     BigInt value, {
     int decimals = acala_token_decimals,
-    int length = 2,
+    int lengthFixed = 2,
+    int lengthMax,
   }) {
     if (value == null) {
       return '~';
     }
-    NumberFormat f = NumberFormat(",##0.${"0" * length}", "en_US");
-    return f.format((value / BigInt.from(pow(10, decimals - length))).ceil() /
-        pow(10, length));
+    String tailDecimals =
+        lengthMax == null ? '' : "#" * (lengthMax - lengthFixed);
+    NumberFormat f =
+        NumberFormat(",##0.${"0" * lengthFixed}$tailDecimals", "en_US");
+    return f.format(
+        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
+                .ceil() /
+            pow(10, lengthMax ?? lengthFixed));
   }
 
   /// number transform 6:
@@ -125,14 +136,20 @@ class Fmt {
   static String priceFloor(
     BigInt value, {
     int decimals = acala_token_decimals,
-    int length = 2,
+    int lengthFixed = 2,
+    int lengthMax,
   }) {
     if (value == null) {
       return '~';
     }
-    NumberFormat f = NumberFormat(",##0.${"0" * length}", "en_US");
-    return f.format((value / BigInt.from(pow(10, decimals - length))).floor() /
-        pow(10, length));
+    String tailDecimals =
+        lengthMax == null ? '' : "#" * (lengthMax - lengthFixed);
+    NumberFormat f =
+        NumberFormat(",##0.${"0" * lengthFixed}$tailDecimals", "en_US");
+    return f.format(
+        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
+                .floor() /
+            pow(10, lengthMax ?? lengthFixed));
   }
 
   /// number transform 7:
