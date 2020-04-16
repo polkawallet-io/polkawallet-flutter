@@ -127,10 +127,10 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                             ],
                           ),
                         ),
-                        onTap: () {
-                          Navigator.pushNamed(context, LoanTxDetailPage.route,
-                              arguments: list[i]);
-                        },
+//                        onTap: () {
+//                          Navigator.pushNamed(context, LoanTxDetailPage.route,
+//                              arguments: list[i]);
+//                        },
                       ),
                     );
                   },
