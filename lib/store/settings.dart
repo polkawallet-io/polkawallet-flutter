@@ -117,6 +117,8 @@ abstract class _SettingsStore with Store {
         await LocalStorage.getKV('${cacheNetworkStateKey}_${endpoint.info}');
     if (data != null) {
       networkState = NetworkState.fromJson(data);
+    } else {
+      networkState = NetworkState();
     }
   }
 

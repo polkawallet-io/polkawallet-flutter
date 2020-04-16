@@ -25,7 +25,9 @@ class _DemocracyState extends State<Democracy> {
 
   final AppStore store;
 
-  final _options = [0, 1, 2, 3, 4, 5, 6];
+  final String _bestNumberSubscribeChannel = 'BestNumber';
+
+  final List _options = [0, 1, 2, 3, 4, 5, 6];
 
   Future<void> _fetchReferendums() async {
     if (store.settings.loading) {
@@ -102,7 +104,10 @@ class _DemocracyState extends State<Democracy> {
   @override
   void initState() {
     super.initState();
-    webApi.subscribeBestNumber();
+    webApi.subscribeMessage(
+        'chain', 'bestNumber', [], _bestNumberSubscribeChannel, (data) {
+      store.gov.setBestNumber(data as int);
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (store.gov.referendums == null) {
@@ -113,7 +118,8 @@ class _DemocracyState extends State<Democracy> {
 
   @override
   void dispose() {
-    webApi.unsubscribeBestNumber();
+    webApi.unsubscribeMessage(_bestNumberSubscribeChannel);
+
     super.dispose();
   }
 

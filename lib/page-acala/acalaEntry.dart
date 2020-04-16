@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/page-acala/exchange/exchangePage.dart';
 import 'package:polka_wallet/page-acala/loan/loanPage.dart';
+import 'package:polka_wallet/page-acala/swap/swapPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -51,10 +51,9 @@ class AcalaEntry extends StatelessWidget {
                   dic['dex.title'],
                   dic['dex.bref'],
                   'assets/images/acala/exchange.svg',
-                  color: Colors.grey,
+                  color: Theme.of(context).primaryColor,
                 ),
-//                onTap: () =>
-//                    Navigator.of(context).pushNamed(ExchangePage.route),
+                onTap: () => Navigator.of(context).pushNamed(SwapPage.route),
               ),
             ],
           ),

@@ -45,7 +45,7 @@ class LoanChart extends StatelessWidget {
     return Row(
       children: <Widget>[
         Container(
-          margin: EdgeInsets.fromLTRB(32, 8, 0, 8),
+          margin: EdgeInsets.fromLTRB(24, 8, 0, 8),
           child: _ChartContainer(
             heightBorrowedAdjusted,
             heightRequired,
@@ -87,7 +87,7 @@ class LoanChart extends StatelessWidget {
         ),
         Expanded(
           child: Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 48, 8),
+            margin: EdgeInsets.fromLTRB(0, 0, 24, 8),
             child: _ChartContainer(
               heightBorrowedAdjusted,
               heightRequired,
@@ -121,11 +121,14 @@ class LoanChart extends StatelessWidget {
                     dic['liquid.ratio.current'],
                     style: TextStyle(color: Colors.orange),
                   ),
-                  Text(
-                    '\$$debitInUSD',
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontSize: 18,
+                  Expanded(
+                    child: Text(
+                      '\$$debitInUSD',
+                      style: TextStyle(
+                        color: Colors.orange,
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.end,
                     ),
                   ),
                 ],

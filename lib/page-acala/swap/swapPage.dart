@@ -17,18 +17,18 @@ import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-class ExchangePage extends StatefulWidget {
-  ExchangePage(this.store);
+class SwapPage extends StatefulWidget {
+  SwapPage(this.store);
 
   static const String route = '/acala/dex';
   final AppStore store;
 
   @override
-  _ExchangePageState createState() => _ExchangePageState(store);
+  _SwapPageState createState() => _SwapPageState(store);
 }
 
-class _ExchangePageState extends State<ExchangePage> {
-  _ExchangePageState(this.store);
+class _SwapPageState extends State<SwapPage> {
+  _SwapPageState(this.store);
 
   final AppStore store;
 
@@ -131,6 +131,7 @@ class _ExchangePageState extends State<ExchangePage> {
   @override
   void initState() {
     super.initState();
+    webApi.acala.subscribeTokenPrices();
     List currencyIds = store.settings.networkConst['currencyIds'];
     if (currencyIds != null && _currencyPay == null) {
       setState(() {

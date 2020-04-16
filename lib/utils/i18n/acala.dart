@@ -7,7 +7,7 @@ const Map<String, String> enDex = {
   'dex.receive': 'Received amount',
   'dex.rate': 'Exchange rate',
   'dex.exchange': 'Exchange',
-  'loan.title': 'Self serviced loan',
+  'loan.title': 'Self Serviced Loan',
   'loan.bref':
       'Lock your digital assets(i.e. DOT, XBTC) in Acala platform to borrow equivalent aUSD.',
   'loan.borrowed': 'My Debt',

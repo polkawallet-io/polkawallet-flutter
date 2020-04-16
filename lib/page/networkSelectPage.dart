@@ -116,70 +116,67 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         title: Text(doc['setting.network']),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Observer(
-          builder: (_) {
-            return Row(
-              children: <Widget>[
-                // left side bar
-                Container(
-                  padding: EdgeInsets.fromLTRB(16, 16, 0, 0),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius:
-                            8.0, // has the effect of softening the shadow
-                        spreadRadius: 2.0, // ha
-                      )
-                    ],
-                  ),
+      body: Observer(
+        builder: (_) {
+          return Row(
+            children: <Widget>[
+              // left side bar
+              Container(
+                padding: EdgeInsets.fromLTRB(16, 16, 0, 0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 8.0, // has the effect of softening the shadow
+                      spreadRadius: 2.0, // ha
+                    )
+                  ],
+                ),
+                child: Column(
+                  children:
+                      [networkEndpointKusama, networkEndpointAcala].map((i) {
+                    String network = i.info;
+                    bool isCurrent = network == _selectedNetwork.info;
+                    String img =
+                        'assets/images/public/$network${isCurrent ? '' : '_gray'}.png';
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 8),
+                      padding: EdgeInsets.only(right: 8),
+                      decoration: isCurrent
+                          ? BoxDecoration(
+                              border: Border(
+                                  right: BorderSide(
+                                      width: 2,
+                                      color: Theme.of(context).primaryColor)),
+                            )
+                          : null,
+                      child: IconButton(
+                        padding: EdgeInsets.all(8),
+                        icon: Image.asset(img),
+                        onPressed: () {
+                          if (!isCurrent) {
+                            setState(() {
+                              _selectedNetwork = i;
+                            });
+                          }
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(16),
                   child: Column(
-                    children:
-                        [networkEndpointKusama, networkEndpointAcala].map((i) {
-                      String network = i.info;
-                      bool isCurrent = network == _selectedNetwork.info;
-                      String img =
-                          'assets/images/public/$network${isCurrent ? '' : '_gray'}.png';
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 8),
-                        padding: EdgeInsets.only(right: 8),
-                        decoration: isCurrent
-                            ? BoxDecoration(
-                                border: Border(
-                                    right: BorderSide(
-                                        width: 2,
-                                        color: Theme.of(context).primaryColor)),
-                              )
-                            : null,
-                        child: IconButton(
-                          padding: EdgeInsets.all(8),
-                          icon: Image.asset(img),
-                          onPressed: () {
-                            if (!isCurrent) {
-                              setState(() {
-                                _selectedNetwork = i;
-                              });
-                            }
-                          },
-                        ),
-                      );
-                    }).toList(),
+                    children: _buildAccountList(),
                   ),
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      children: _buildAccountList(),
-                    ),
-                  ),
-                )
-              ],
-            );
-          },
-        ),
+              )
+            ],
+          );
+        },
       ),
     );
   }

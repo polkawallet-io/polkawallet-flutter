@@ -42,12 +42,12 @@ class Api {
     staking = ApiStaking(this);
     gov = ApiGovernance(this);
 
-    _msgHandlers = {'txStatusChange': store.account.setTxStatus};
-
     launchWebview();
   }
 
   Future<void> launchWebview() async {
+    _msgHandlers = {'txStatusChange': store.account.setTxStatus};
+
     _evalJavascriptUID = 0;
     _msgCompleters = {};
 
@@ -100,9 +100,6 @@ class Api {
                 if (_msgHandlers[path] != null) {
                   Function handler = _msgHandlers[path];
                   handler(msg['data']);
-                  if (path.contains('uid=')) {
-                    _msgHandlers.remove(path);
-                  }
                 }
               });
             }),
@@ -217,14 +214,19 @@ class Api {
     store.assets.setBlockMap(data);
   }
 
-  Future<void> subscribeBestNumber() async {
-    _msgHandlers['bestNumber'] = (data) {
-      store.gov.setBestNumber(data as int);
-    };
-    evalJavascript('gov.subBestNumber()');
+  Future<void> subscribeMessage(
+    String section,
+    String method,
+    List params,
+    String channel,
+    Function callback,
+  ) async {
+    _msgHandlers[channel] = callback;
+    evalJavascript(
+        'settings.subscribeMessage("$section", "$method", ${jsonEncode(params)}, "$channel")');
   }
 
-  Future<void> unsubscribeBestNumber() async {
-    _web.evalJavascript('unsubBestNumber()');
+  Future<void> unsubscribeMessage(String channel) async {
+    _web.evalJavascript('unsub$channel()');
   }
 }

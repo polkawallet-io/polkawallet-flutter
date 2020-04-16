@@ -111,8 +111,39 @@ class ApiAcala {
     store.acala.setLoanTypes(res);
   }
 
-  Future<void> fetchPrices() async {
-    List res = await apiRoot.evalJavascript('api.derive.price.allPrices()');
-    store.acala.setPrices(res);
+  Future<void> subscribeTokenPrices() async {
+    await apiRoot.subscribeMessage('price', 'allPrices', [], 'TokenPrices',
+        (List res) {
+      store.acala.setPrices(res);
+    });
+  }
+
+  Future<void> unsubscribeTokenPrices() async {
+    await apiRoot.unsubscribeMessage('TokenPrices');
+  }
+
+  List getSwapTokens() {
+    List currencyIds = List.from(store.settings.networkConst['currencyIds']);
+    currencyIds
+        .retainWhere((i) => i != store.settings.networkState.tokenSymbol);
+    return currencyIds;
+  }
+
+  Future<void> subscribeDexPool() async {
+    getSwapTokens().forEach((i) {
+      apiRoot.subscribeMessage('dex', 'pool', [i], 'DexPool$i', (res) {
+        fetchTokenSwapRatio();
+      });
+    });
+  }
+
+  Future<void> unsubscribeDexPool() async {
+    getSwapTokens().forEach((i) {
+      apiRoot.unsubscribeMessage('DexPool$i');
+    });
+  }
+
+  Future<void> fetchTokenSwapRatio() async {
+    //
   }
 }

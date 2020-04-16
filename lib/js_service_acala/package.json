@@ -9,7 +9,8 @@
     "build-dev": "webpack -d --mode development"
   },
   "dependencies": {
-    "@acala-network/api": "^0.2.0-beta.28",
+    "@acala-network/api": "^0.2.0-beta.32",
+    "@acala-network/app-util": "^0.2.0-beta.32",
     "@babel/polyfill": "^7.8.3",
     "@polkadot/api": "^1.9.0-beta.22",
     "@polkadot/ui-shared": "^0.51.1",

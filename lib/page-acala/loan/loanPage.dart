@@ -37,7 +37,6 @@ class _LoanPageState extends State<LoanPage> {
     await Future.wait([
       webApi.acala.fetchTokens(store.account.currentAccount.pubKey),
       webApi.acala.fetchLoanTypes(),
-      webApi.acala.fetchPrices(),
     ]);
     webApi.acala.fetchAccountLoans();
   }
@@ -45,9 +44,18 @@ class _LoanPageState extends State<LoanPage> {
   @override
   void initState() {
     super.initState();
+    webApi.acala.subscribeTokenPrices();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       globalLoanRefreshKey.currentState.show();
     });
+  }
+
+  @override
+  void dispose() {
+    webApi.acala.unsubscribeTokenPrices();
+
+    super.dispose();
   }
 
   @override

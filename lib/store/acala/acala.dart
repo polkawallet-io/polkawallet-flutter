@@ -29,6 +29,9 @@ abstract class _AcalaStore with Store {
   Map<String, BigInt> prices = {};
 
   @observable
+  BigInt swapRatio = BigInt.one;
+
+  @observable
   ObservableList<TxLoanData> txs = ObservableList<TxLoanData>();
 
   @observable
@@ -64,6 +67,11 @@ abstract class _AcalaStore with Store {
           : BigInt.parse(i['price']['value'].toString());
     });
     prices = data;
+  }
+
+  @action
+  void setSwapRatio(BigInt ratio) {
+    swapRatio = ratio;
   }
 
   @action
