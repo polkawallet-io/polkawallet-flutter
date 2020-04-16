@@ -61,10 +61,11 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
       body: SafeArea(
         child: Observer(
           builder: (_) {
-            List<TxLoanData> list = store.acala.txs;
-            Map<int, BlockData> blockMap = store.assets.blockMap;
+            List<TxLoanData> list = store.acala.txs.reversed.toList();
+//            Map<int, BlockData> blockMap = store.assets.blockMap;
 
             LoanType loanType = ModalRoute.of(context).settings.arguments;
+            list.retainWhere((i) => i.currencyId == loanType.token);
 
             return RefreshIndicator(
                 key: _refreshKey,
@@ -103,7 +104,7 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                       ),
                       child: ListTile(
                         title: Text(list[i].actionType),
-                        subtitle: Text('time'),
+                        subtitle: Text(list[i].time.toString()),
                         trailing: Container(
                           width: 140,
                           child: Row(
