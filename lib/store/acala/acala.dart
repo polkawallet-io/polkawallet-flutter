@@ -18,6 +18,7 @@ abstract class _AcalaStore with Store {
 
   final AppStore rootStore;
   final String cacheLoanTxsKey = 'loan_txs';
+  final String acalaSwapBaseCoin = 'AUSD';
 
   @observable
   List<LoanType> loanTypes = List<LoanType>();
@@ -29,13 +30,16 @@ abstract class _AcalaStore with Store {
   Map<String, BigInt> prices = {};
 
   @observable
-  BigInt swapRatio = BigInt.one;
-
-  @observable
   ObservableList<TxLoanData> txs = ObservableList<TxLoanData>();
 
   @observable
   bool txsLoading = false;
+
+  @observable
+  List<String> currentSwapPair = List<String>();
+
+  @observable
+  String swapRatio = '';
 
   @action
   void setAccountLoans(List list) {
@@ -70,7 +74,12 @@ abstract class _AcalaStore with Store {
   }
 
   @action
-  void setSwapRatio(BigInt ratio) {
+  void setSwapPair(List pair) {
+    currentSwapPair = ObservableList<String>.of(List<String>.from(pair));
+  }
+
+  @action
+  void setSwapRatio(String ratio) {
     swapRatio = ratio;
   }
 

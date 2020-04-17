@@ -122,28 +122,22 @@ class ApiAcala {
     await apiRoot.unsubscribeMessage('TokenPrices');
   }
 
-  List getSwapTokens() {
-    List currencyIds = List.from(store.settings.networkConst['currencyIds']);
-    currencyIds
-        .retainWhere((i) => i != store.settings.networkState.tokenSymbol);
-    return currencyIds;
+  Future<String> fetchTokenSwapRatio() async {
+    String ratio = await fetchTokenSwapAmount('1', null, '0');
+    store.acala.setSwapRatio(ratio);
+    return ratio;
   }
 
-  Future<void> subscribeDexPool() async {
-    getSwapTokens().forEach((i) {
-      apiRoot.subscribeMessage('dex', 'pool', [i], 'DexPool$i', (res) {
-        fetchTokenSwapRatio();
-      });
-    });
-  }
+  Future<String> fetchTokenSwapAmount(
+      String supply, String target, String slippage) async {
+    List<String> swapPair = store.acala.currentSwapPair;
 
-  Future<void> unsubscribeDexPool() async {
-    getSwapTokens().forEach((i) {
-      apiRoot.unsubscribeMessage('DexPool$i');
-    });
-  }
-
-  Future<void> fetchTokenSwapRatio() async {
-    //
+    /// baseCoin = 0, supplyToken == AUSD
+    /// baseCoin = 1, targetToken == AUSD
+    /// baseCoin = -1, no AUSD
+    int baseCoin = swapPair.indexOf(store.acala.acalaSwapBaseCoin);
+    String output = await apiRoot.evalJavascript(
+        'acala.calcTokenSwapAmount(api, $supply, $target, ${jsonEncode(swapPair)}, $baseCoin, $slippage)');
+    return output;
   }
 }

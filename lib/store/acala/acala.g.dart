@@ -94,6 +94,40 @@ mixin _$AcalaStore on _AcalaStore, Store {
     }, _$txsLoadingAtom, name: '${_$txsLoadingAtom.name}_set');
   }
 
+  final _$currentSwapPairAtom = Atom(name: '_AcalaStore.currentSwapPair');
+
+  @override
+  List<String> get currentSwapPair {
+    _$currentSwapPairAtom.context.enforceReadPolicy(_$currentSwapPairAtom);
+    _$currentSwapPairAtom.reportObserved();
+    return super.currentSwapPair;
+  }
+
+  @override
+  set currentSwapPair(List<String> value) {
+    _$currentSwapPairAtom.context.conditionallyRunInAction(() {
+      super.currentSwapPair = value;
+      _$currentSwapPairAtom.reportChanged();
+    }, _$currentSwapPairAtom, name: '${_$currentSwapPairAtom.name}_set');
+  }
+
+  final _$swapRatioAtom = Atom(name: '_AcalaStore.swapRatio');
+
+  @override
+  String get swapRatio {
+    _$swapRatioAtom.context.enforceReadPolicy(_$swapRatioAtom);
+    _$swapRatioAtom.reportObserved();
+    return super.swapRatio;
+  }
+
+  @override
+  set swapRatio(String value) {
+    _$swapRatioAtom.context.conditionallyRunInAction(() {
+      super.swapRatio = value;
+      _$swapRatioAtom.reportChanged();
+    }, _$swapRatioAtom, name: '${_$swapRatioAtom.name}_set');
+  }
+
   final _$setLoanTxsAsyncAction = AsyncAction('setLoanTxs');
 
   @override
@@ -137,6 +171,26 @@ mixin _$AcalaStore on _AcalaStore, Store {
     final _$actionInfo = _$_AcalaStoreActionController.startAction();
     try {
       return super.setPrices(list);
+    } finally {
+      _$_AcalaStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setSwapPair(List pair) {
+    final _$actionInfo = _$_AcalaStoreActionController.startAction();
+    try {
+      return super.setSwapPair(pair);
+    } finally {
+      _$_AcalaStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setSwapRatio(String ratio) {
+    final _$actionInfo = _$_AcalaStoreActionController.startAction();
+    try {
+      return super.setSwapRatio(ratio);
     } finally {
       _$_AcalaStoreActionController.endAction(_$actionInfo);
     }
