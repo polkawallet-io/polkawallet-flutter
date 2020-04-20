@@ -60,21 +60,55 @@ mixin _$AcalaStore on _AcalaStore, Store {
     }, _$pricesAtom, name: '${_$pricesAtom.name}_set');
   }
 
-  final _$txsAtom = Atom(name: '_AcalaStore.txs');
+  final _$txsLoanAtom = Atom(name: '_AcalaStore.txsLoan');
 
   @override
-  ObservableList<TxLoanData> get txs {
-    _$txsAtom.context.enforceReadPolicy(_$txsAtom);
-    _$txsAtom.reportObserved();
-    return super.txs;
+  ObservableList<TxLoanData> get txsLoan {
+    _$txsLoanAtom.context.enforceReadPolicy(_$txsLoanAtom);
+    _$txsLoanAtom.reportObserved();
+    return super.txsLoan;
   }
 
   @override
-  set txs(ObservableList<TxLoanData> value) {
-    _$txsAtom.context.conditionallyRunInAction(() {
-      super.txs = value;
-      _$txsAtom.reportChanged();
-    }, _$txsAtom, name: '${_$txsAtom.name}_set');
+  set txsLoan(ObservableList<TxLoanData> value) {
+    _$txsLoanAtom.context.conditionallyRunInAction(() {
+      super.txsLoan = value;
+      _$txsLoanAtom.reportChanged();
+    }, _$txsLoanAtom, name: '${_$txsLoanAtom.name}_set');
+  }
+
+  final _$txsSwapAtom = Atom(name: '_AcalaStore.txsSwap');
+
+  @override
+  ObservableList<TxSwapData> get txsSwap {
+    _$txsSwapAtom.context.enforceReadPolicy(_$txsSwapAtom);
+    _$txsSwapAtom.reportObserved();
+    return super.txsSwap;
+  }
+
+  @override
+  set txsSwap(ObservableList<TxSwapData> value) {
+    _$txsSwapAtom.context.conditionallyRunInAction(() {
+      super.txsSwap = value;
+      _$txsSwapAtom.reportChanged();
+    }, _$txsSwapAtom, name: '${_$txsSwapAtom.name}_set');
+  }
+
+  final _$txsDexLiquidityAtom = Atom(name: '_AcalaStore.txsDexLiquidity');
+
+  @override
+  ObservableList<TxDexLiquidityData> get txsDexLiquidity {
+    _$txsDexLiquidityAtom.context.enforceReadPolicy(_$txsDexLiquidityAtom);
+    _$txsDexLiquidityAtom.reportObserved();
+    return super.txsDexLiquidity;
+  }
+
+  @override
+  set txsDexLiquidity(ObservableList<TxDexLiquidityData> value) {
+    _$txsDexLiquidityAtom.context.conditionallyRunInAction(() {
+      super.txsDexLiquidity = value;
+      _$txsDexLiquidityAtom.reportChanged();
+    }, _$txsDexLiquidityAtom, name: '${_$txsDexLiquidityAtom.name}_set');
   }
 
   final _$txsLoadingAtom = Atom(name: '_AcalaStore.txsLoading');
@@ -135,6 +169,31 @@ mixin _$AcalaStore on _AcalaStore, Store {
       {bool reset = false, dynamic needCache = true}) {
     return _$setLoanTxsAsyncAction
         .run(() => super.setLoanTxs(list, reset: reset, needCache: needCache));
+  }
+
+  final _$setSwapTxsAsyncAction = AsyncAction('setSwapTxs');
+
+  @override
+  Future<void> setSwapTxs(List list,
+      {bool reset = false, dynamic needCache = true}) {
+    return _$setSwapTxsAsyncAction
+        .run(() => super.setSwapTxs(list, reset: reset, needCache: needCache));
+  }
+
+  final _$setDexLiquidityTxsAsyncAction = AsyncAction('setDexLiquidityTxs');
+
+  @override
+  Future<void> setDexLiquidityTxs(List list,
+      {bool reset = false, dynamic needCache = true}) {
+    return _$setDexLiquidityTxsAsyncAction.run(() =>
+        super.setDexLiquidityTxs(list, reset: reset, needCache: needCache));
+  }
+
+  final _$_cacheTxsAsyncAction = AsyncAction('_cacheTxs');
+
+  @override
+  Future<void> _cacheTxs(List list, String cacheKey) {
+    return _$_cacheTxsAsyncAction.run(() => super._cacheTxs(list, cacheKey));
   }
 
   final _$loadCacheAsyncAction = AsyncAction('loadCache');
@@ -212,3 +271,7 @@ mixin _$LoanData on _LoanData, Store {}
 mixin _$LoanType on _LoanType, Store {}
 
 mixin _$TxLoanData on _TxLoanData, Store {}
+
+mixin _$TxSwapData on _TxSwapData, Store {}
+
+mixin _$TxDexLiquidityData on _TxDexLiquidityData, Store {}

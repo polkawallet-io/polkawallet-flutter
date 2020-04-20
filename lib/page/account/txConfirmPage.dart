@@ -33,6 +33,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     return fee;
   }
 
+  // todo: error handler after tx inBlock
   Future<void> _onSubmit(BuildContext context) async {
     final ScaffoldState state = Scaffold.of(context);
     final Map<String, String> dic = I18n.of(context).home;

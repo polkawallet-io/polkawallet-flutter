@@ -117,13 +117,13 @@ class Api {
 
   Future<dynamic> evalJavascript(String code) async {
     // check if there's a same request loading
-    for (String i in _msgCompleters.keys) {
-      String call = code.split('(')[0];
-      if (i.contains(call)) {
-        print('request $call loading');
-        return _msgCompleters[i].future;
-      }
-    }
+//    for (String i in _msgCompleters.keys) {
+//      String call = code.split('(')[0];
+//      if (i.contains(call)) {
+//        print('request $call loading');
+//        return _msgCompleters[i].future;
+//      }
+//    }
 
     Completer c = new Completer();
 

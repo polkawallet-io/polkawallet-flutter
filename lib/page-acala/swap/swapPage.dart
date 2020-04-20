@@ -8,7 +8,7 @@ import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
-import 'package:polka_wallet/page-acala/homePage.dart';
+import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -39,7 +39,8 @@ class _SwapPageState extends State<SwapPage> {
 
   final FocusNode _slippageFocusNode = FocusNode();
 
-  String _slippage = '0.005';
+  double _slippage = 0.005;
+  String _slippageError;
 
   Future<void> _refreshData() async {
     String pubKey = store.account.currentAccount.pubKey;
@@ -53,8 +54,8 @@ class _SwapPageState extends State<SwapPage> {
   Future<void> _switchPair() async {
     List<String> swapPair = store.acala.currentSwapPair.toList();
     store.acala.setSwapPair([swapPair[1], swapPair[0]]);
+    await _calcSwapAmount(_amountPayCtrl.text.trim(), null);
     _refreshData();
-    _onSupplyAmountChange(_amountPayCtrl.text);
   }
 
   Future<void> _selectCurrencyPay() async {
@@ -67,6 +68,7 @@ class _SwapPageState extends State<SwapPage> {
         .pushNamed(CurrencySelectPage.route, arguments: currencyOptions);
     if (selected != null) {
       store.acala.setSwapPair([selected, swapPair[1]]);
+      await _calcSwapAmount(_amountPayCtrl.text, null);
       _refreshData();
     }
   }
@@ -81,6 +83,7 @@ class _SwapPageState extends State<SwapPage> {
         .pushNamed(CurrencySelectPage.route, arguments: currencyOptions);
     if (selected != null) {
       store.acala.setSwapPair([swapPair[0], selected]);
+      await _calcSwapAmount(_amountPayCtrl.text, null);
       _refreshData();
     }
   }
@@ -102,17 +105,60 @@ class _SwapPageState extends State<SwapPage> {
   }
 
   Future<void> _calcSwapAmount(String supply, String target) async {
-    String output =
-        await webApi.acala.fetchTokenSwapAmount(supply, target, '0');
     if (supply == null) {
-      setState(() {
-        _amountPayCtrl.text = output;
-      });
+      if (target.isNotEmpty) {
+        String output = await webApi.acala
+            .fetchTokenSwapAmount(supply, target, _slippage.toString());
+        setState(() {
+          _amountPayCtrl.text = output;
+        });
+        _formKey.currentState.validate();
+      }
     } else if (target == null) {
+      if (supply.isNotEmpty) {
+        String output = await webApi.acala
+            .fetchTokenSwapAmount(supply, target, _slippage.toString());
+        setState(() {
+          _amountReceiveCtrl.text = output;
+        });
+        _formKey.currentState.validate();
+      }
+    }
+  }
+
+  void _onSlippageChange(String v) {
+    final Map dic = I18n.of(context).acala;
+    try {
+      double value = double.parse(v.trim());
+      if (value > 5 || value < 0.1) {
+        setState(() {
+          _slippageError = dic['dex.slippage.error'];
+        });
+      } else {
+        setState(() {
+          _slippageError = null;
+        });
+        _updateSlippage(value / 100, custom: true);
+      }
+    } catch (err) {
       setState(() {
-        _amountReceiveCtrl.text = output;
+        _slippageError = dic['dex.slippage.error'];
       });
     }
+  }
+
+  Future<void> _updateSlippage(double input, {bool custom = false}) async {
+    if (!custom) {
+      _slippageFocusNode.unfocus();
+      setState(() {
+        _amountSlippageCtrl.text = '';
+      });
+    }
+    setState(() {
+      _slippage = input;
+    });
+    await _calcSwapAmount(_amountPayCtrl.text.trim(), null);
+    _refreshData();
   }
 
   void _onSubmit() {
@@ -122,7 +168,7 @@ class _SwapPageState extends State<SwapPage> {
       String pay = _amountPayCtrl.text.trim();
       String receive = _amountReceiveCtrl.text.trim();
       var args = {
-        "title": I18n.of(context).acala['dex.exchange'],
+        "title": I18n.of(context).acala['dex.title'],
         "txInfo": {
           "module": 'dex',
           "call": 'swapCurrency',
@@ -135,19 +181,17 @@ class _SwapPageState extends State<SwapPage> {
         }),
         "params": [
           // params.supply
-          [
-            swapPair[0],
-            (double.parse(pay) * pow(10, decimals)).toStringAsFixed(0)
-          ],
+          swapPair[0],
+          Fmt.tokenInt(pay, decimals: decimals).toString(),
           // params.target
-          [
-            swapPair[1],
-            (double.parse(receive) * pow(10, decimals)).toStringAsFixed(0)
-          ],
+          swapPair[1],
+          Fmt.tokenInt(receive, decimals: decimals).toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
+//          print(res);
+          store.acala.setSwapTxs([res]);
           Navigator.popUntil(
-              txPageContext, ModalRoute.withName(AcalaHomePage.route));
+              txPageContext, ModalRoute.withName(SwapPage.route));
           globalDexRefreshKey.currentState.show();
         }
       };
@@ -197,7 +241,7 @@ class _SwapPageState extends State<SwapPage> {
           appBar: AppBar(title: Text(dic['dex.title']), centerTitle: true),
           body: SafeArea(
             child: RefreshIndicator(
-              key: globalAssetRefreshKey,
+              key: globalDexRefreshKey,
               onRefresh: _refreshData,
               child: ListView(
                 padding: EdgeInsets.all(16),
@@ -243,7 +287,6 @@ class _SwapPageState extends State<SwapPage> {
                               ),
                               Form(
                                 key: _formKey,
-                                autovalidate: true,
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -255,6 +298,20 @@ class _SwapPageState extends State<SwapPage> {
                                         decoration: InputDecoration(
                                           hintText: dic['dex.pay'],
                                           labelText: dic['dex.pay'],
+                                          suffix: GestureDetector(
+                                            child: Icon(
+                                              CupertinoIcons
+                                                  .clear_thick_circled,
+                                              color: Theme.of(context)
+                                                  .disabledColor,
+                                              size: 18,
+                                            ),
+                                            onTap: () {
+                                              WidgetsBinding.instance
+                                                  .addPostFrameCallback((_) =>
+                                                      _amountPayCtrl.clear());
+                                            },
+                                          ),
                                         ),
                                         inputFormatters: [
                                           RegExInputFormatter.withRegex(
@@ -286,6 +343,21 @@ class _SwapPageState extends State<SwapPage> {
                                         decoration: InputDecoration(
                                           hintText: dic['dex.receive'],
                                           labelText: dic['dex.receive'],
+                                          suffix: GestureDetector(
+                                            child: Icon(
+                                              CupertinoIcons
+                                                  .clear_thick_circled,
+                                              color: Theme.of(context)
+                                                  .disabledColor,
+                                              size: 18,
+                                            ),
+                                            onTap: () {
+                                              WidgetsBinding.instance
+                                                  .addPostFrameCallback((_) =>
+                                                      _amountReceiveCtrl
+                                                          .clear());
+                                            },
+                                          ),
                                         ),
                                         inputFormatters: [
                                           RegExInputFormatter.withRegex(
@@ -321,14 +393,41 @@ class _SwapPageState extends State<SwapPage> {
                                 ),
                               ),
                               Divider(),
-                              Text(
-                                dic['dex.rate'],
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .unselectedWidgetColor),
-                              ),
-                              Text(
-                                  '1 ${swapPair[0]} = ${store.acala.swapRatio} ${swapPair[1]}'),
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          dic['dex.rate'],
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .unselectedWidgetColor),
+                                        ),
+                                        Text(
+                                            '1 ${swapPair[0]} = ${store.acala.swapRatio} ${swapPair[1]}'),
+                                      ],
+                                    ),
+                                    GestureDetector(
+                                      child: Container(
+                                        child: Column(
+                                          children: <Widget>[
+                                            Icon(Icons.history, color: primary),
+                                            Text(
+                                              dic['loan.txs'],
+                                              style: TextStyle(
+                                                  color: primary, fontSize: 14),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      onTap: () => Navigator.of(context)
+                                          .pushNamed(SwapHistoryPage.route),
+                                    ),
+                                  ])
                             ],
                           )
                         : CupertinoActivityIndicator(),
@@ -342,80 +441,70 @@ class _SwapPageState extends State<SwapPage> {
                         Container(
                           margin: EdgeInsets.only(bottom: 4),
                           child: Text(
-                            dic['dex.rate'],
+                            dic['dex.slippage'],
                             style: TextStyle(
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
                         ),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             _SlippageButton(
                               content: '0.1 %',
-                              active: _slippage == '0.001',
-                              onPressed: () {
-                                _slippageFocusNode.unfocus();
-                                setState(() {
-                                  _amountSlippageCtrl.text = '';
-                                  _slippage = '0.001';
-                                });
-                              },
+                              active: _slippage == 0.001,
+                              onPressed: () => _updateSlippage(0.001),
                             ),
                             _SlippageButton(
                               content: '0.5 %',
-                              active: _slippage == '0.005',
-                              onPressed: () {
-                                _slippageFocusNode.unfocus();
-                                setState(() {
-                                  _amountSlippageCtrl.text = '';
-                                  _slippage = '0.005';
-                                });
-                              },
+                              active: _slippage == 0.005,
+                              onPressed: () => _updateSlippage(0.005),
                             ),
                             _SlippageButton(
                               content: '1 %',
-                              active: _slippage == '0.01',
-                              onPressed: () {
-                                _slippageFocusNode.unfocus();
-                                setState(() {
-                                  _amountSlippageCtrl.text = '';
-                                  _slippage = '0.01';
-                                });
-                              },
+                              active: _slippage == 0.01,
+                              onPressed: () => _updateSlippage(0.01),
                             ),
                             Expanded(
-                              child: CupertinoTextField(
-                                padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                                placeholder: 'customized',
-                                inputFormatters: [
-                                  RegExInputFormatter.withRegex(
-                                      '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                                ],
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(24)),
-                                  border: Border.all(
-                                      width: 0.5,
-                                      color: _slippageFocusNode.hasFocus
-                                          ? primary
-                                          : grey),
-                                ),
-                                controller: _amountSlippageCtrl,
-                                focusNode: _slippageFocusNode,
-                                onChanged: (v) {
-                                  setState(() {
-                                    _slippage = v.trim();
-                                  });
-                                },
-                                suffix: Container(
-                                  padding: EdgeInsets.only(right: 8),
-                                  child: Text(
-                                    '%',
-                                    style: TextStyle(
-                                        color: _slippageFocusNode.hasFocus
-                                            ? primary
-                                            : grey),
+                              child: Column(
+                                children: <Widget>[
+                                  CupertinoTextField(
+                                    padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
+                                    placeholder: 'customized',
+                                    inputFormatters: [
+                                      RegExInputFormatter.withRegex(
+                                          '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                    ],
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(24)),
+                                      border: Border.all(
+                                          width: 0.5,
+                                          color: _slippageFocusNode.hasFocus
+                                              ? primary
+                                              : grey),
+                                    ),
+                                    controller: _amountSlippageCtrl,
+                                    focusNode: _slippageFocusNode,
+                                    onChanged: _onSlippageChange,
+                                    suffix: Container(
+                                      padding: EdgeInsets.only(right: 8),
+                                      child: Text(
+                                        '%',
+                                        style: TextStyle(
+                                            color: _slippageFocusNode.hasFocus
+                                                ? primary
+                                                : grey),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  _slippageError != null
+                                      ? Text(
+                                          _slippageError,
+                                          style: TextStyle(
+                                              color: Colors.red, fontSize: 12),
+                                        )
+                                      : Container()
+                                ],
                               ),
                             )
                           ],
@@ -426,7 +515,7 @@ class _SwapPageState extends State<SwapPage> {
                   Padding(
                     padding: EdgeInsets.only(top: 24),
                     child: RoundedButton(
-                      text: dic['dex.exchange'],
+                      text: dic['dex.title'],
                       onPressed: _onSubmit,
                     ),
                   )

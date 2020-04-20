@@ -27,65 +27,10 @@ class ApiAcala {
     }
   }
 
-  Future<String> _mockFetchTxs() async {
-    Map data = {
-      "data": [
-        {
-          "hash":
-              "0x35d84b670411d4224fb7cf3bc521c3ad3208572b2458faba110060b4136f42b2",
-          "time": 1586750500643,
-          "method": {
-            "callIndex": "0x1702",
-            "section": "honzon",
-            "method": "adjustLoan",
-            "args": ["XBTC", "-166,899,564,349,554,688", "0"]
-          },
-          "isSigned": true,
-          "signer": "5HGN9UPNrtZ3vMwyxj7koXuRnZXfSYccwhopm7whoELDJwxU",
-          "nonce": "4",
-        },
-        {
-          "hash":
-              "0x35d84b670411d4224fb7cf3bc521c3ad3208572b2458faba110060b4136f42bc",
-          "time": 1586750500643,
-          "method": {
-            "callIndex": "0x1702",
-            "section": "honzon",
-            "method": "adjustLoan",
-            "args": ["XBTC", "0", "999,996,899,564,349,554,688"]
-          },
-          "isSigned": true,
-          "signer": "5HGN9UPNrtZ3vMwyxj7koXuRnZXfSYccwhopm7whoELDJwxU",
-          "nonce": "3",
-        },
-        {
-          "hash":
-              "0x35d84b670411d4224fb7cf3bc521c3ad3208572b2458faba110060b4136f42bb",
-          "time": 1586750500643,
-          "method": {
-            "callIndex": "0x1702",
-            "section": "honzon",
-            "method": "adjustLoan",
-            "args": [
-              "XBTC",
-              "400000000000000000",
-              "1999,996,899,564,349,554,688"
-            ]
-          },
-          "isSigned": true,
-          "signer": "5HGN9UPNrtZ3vMwyxj7koXuRnZXfSYccwhopm7whoELDJwxU",
-          "nonce": "2",
-        },
-      ],
-    };
-    return jsonEncode(data);
-  }
-
   Future<List> updateTxs(int page) async {
     String address = store.account.currentAddress;
-//    String data = await PolkaScanApi.fetchTransfers(address, page,
-//        network: store.settings.endpoint.info);
-    String data = await _mockFetchTxs();
+    String data = await PolkaScanApi.fetchTransfers(address, page,
+        network: store.settings.endpoint.info);
     List txs = jsonDecode(data)['data'];
 
     if (page == 1) {

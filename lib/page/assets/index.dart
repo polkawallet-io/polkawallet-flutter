@@ -97,6 +97,7 @@ class _AssetsState extends State<Assets> {
         String symbol = store.settings.networkState.tokenSymbol;
         String networkName = store.settings.networkName;
 
+        // todo: add acala airdrop tokens
         bool isAcala =
             store.settings.endpoint.info == networkEndpointAcala.info;
 
@@ -140,7 +141,15 @@ class _AssetsState extends State<Assets> {
                         color: Colors.black54),
                   ),
                   onTap: () {
-                    Navigator.pushNamed(context, AssetPage.route);
+                    if (isAcala) {
+                      Navigator.pushNamed(
+                        context,
+                        TransferPage.route,
+                        arguments: {'symbol': symbol, 'redirect': '/'},
+                      );
+                    } else {
+                      Navigator.pushNamed(context, AssetPage.route);
+                    }
                   },
                 ),
               ),

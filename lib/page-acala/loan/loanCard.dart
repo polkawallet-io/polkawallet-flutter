@@ -83,7 +83,7 @@ class LoanCard extends StatelessWidget {
                     children: <Widget>[
                       Icon(Icons.history, color: primaryColor),
                       Text(
-                        'history',
+                        dic['loan.txs'],
                         style: TextStyle(color: primaryColor, fontSize: 14),
                       )
                     ],

@@ -3,22 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/store/acala/acala.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-class LoanHistoryPage extends StatefulWidget {
-  LoanHistoryPage(this.store);
+class SwapHistoryPage extends StatefulWidget {
+  SwapHistoryPage(this.store);
 
-  static const String route = '/acala/loan/txs';
+  static const String route = '/acala/swap/txs';
 
   final AppStore store;
 
   @override
-  _LoanHistoryPage createState() => _LoanHistoryPage(store);
+  _SwapHistoryPage createState() => _SwapHistoryPage(store);
 }
 
-class _LoanHistoryPage extends State<LoanHistoryPage> {
-  _LoanHistoryPage(this.store);
+class _SwapHistoryPage extends State<SwapHistoryPage> {
+  _SwapHistoryPage(this.store);
 
   final AppStore store;
 
@@ -57,11 +56,9 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
       body: SafeArea(
         child: Observer(
           builder: (_) {
-            List<TxLoanData> list = store.acala.txsLoan.reversed.toList();
-//            Map<int, BlockData> blockMap = store.assets.blockMap;
-
-            LoanType loanType = ModalRoute.of(context).settings.arguments;
-            list.retainWhere((i) => i.currencyId == loanType.token);
+            final Map dic = I18n.of(context).acala;
+            List<TxSwapData> list = store.acala.txsSwap.reversed.toList();
+            print(list.length);
 
             return RefreshIndicator(
                 key: _refreshKey,
@@ -92,15 +89,7 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
 //                      time = block.time.toString().split('.')[0];
 //                    }
 
-                    TxLoanData detail = list[i];
-                    LoanType loanType = store.acala.loanTypes
-                        .firstWhere((i) => i.token == detail.currencyId);
-                    BigInt amountView = detail.amountCollateral;
-                    if (detail.currencyIdView.toUpperCase() ==
-                        store.acala.acalaSwapBaseCoin) {
-                      amountView =
-                          loanType.debitShareToDebit(detail.amountDebitShare);
-                    }
+                    TxSwapData detail = list[i];
                     return Container(
                       decoration: BoxDecoration(
                         border: Border(
@@ -108,7 +97,8 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                                 BorderSide(width: 0.5, color: Colors.black12)),
                       ),
                       child: ListTile(
-                        title: Text(list[i].actionType),
+                        title: Text(
+                            '${dic['dex.tx.pay']} ${detail.amountPay} ${detail.tokenPay}'),
                         subtitle: Text(list[i].time.toString()),
                         trailing: Container(
                           width: 140,
@@ -118,17 +108,14 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                                 child: Padding(
                                   padding: EdgeInsets.only(right: 12),
                                   child: Text(
-                                    '${Fmt.priceFloor(amountView)} ${detail.currencyIdView}',
+                                    '${detail.amountReceive} ${detail.tokenReceive}',
                                     style: Theme.of(context).textTheme.display4,
                                     textAlign: TextAlign.end,
                                   ),
                                 ),
                               ),
-                              amountView < BigInt.zero
-                                  ? Image.asset(
-                                      'assets/images/assets/assets_up.png')
-                                  : Image.asset(
-                                      'assets/images/assets/assets_down.png')
+                              Image.asset(
+                                  'assets/images/assets/assets_down.png')
                             ],
                           ),
                         ),

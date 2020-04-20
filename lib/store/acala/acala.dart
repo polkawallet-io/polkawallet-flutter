@@ -17,7 +17,9 @@ abstract class _AcalaStore with Store {
   _AcalaStore(this.rootStore);
 
   final AppStore rootStore;
-  final String cacheLoanTxsKey = 'loan_txs';
+  final String cacheTxsLoanKey = 'loan_txs';
+  final String cacheTxsSwapKey = 'swap_txs';
+  final String cacheTxsDexLiquidityKey = 'dex_liquidity_txs';
   final String acalaSwapBaseCoin = 'AUSD';
 
   @observable
@@ -30,7 +32,14 @@ abstract class _AcalaStore with Store {
   Map<String, BigInt> prices = {};
 
   @observable
-  ObservableList<TxLoanData> txs = ObservableList<TxLoanData>();
+  ObservableList<TxLoanData> txsLoan = ObservableList<TxLoanData>();
+
+  @observable
+  ObservableList<TxSwapData> txsSwap = ObservableList<TxSwapData>();
+
+  @observable
+  ObservableList<TxDexLiquidityData> txsDexLiquidity =
+      ObservableList<TxDexLiquidityData>();
 
   @observable
   bool txsLoading = false;
@@ -40,6 +49,9 @@ abstract class _AcalaStore with Store {
 
   @observable
   String swapRatio = '';
+
+//  @computed
+//  ObservableList<TxSwapData>
 
   @action
   void setAccountLoans(List list) {
@@ -87,23 +99,60 @@ abstract class _AcalaStore with Store {
   Future<void> setLoanTxs(List list,
       {bool reset = false, needCache = true}) async {
     if (reset) {
-      txs = ObservableList.of(
+      txsLoan = ObservableList.of(
           list.map((i) => TxLoanData.fromJson(Map<String, dynamic>.from(i))));
     } else {
-      txs.addAll(
+      txsLoan.addAll(
           list.map((i) => TxLoanData.fromJson(Map<String, dynamic>.from(i))));
     }
 
-    if (needCache && txs.length > 0) {
-      String pubKey = rootStore.account.currentAccount.pubKey;
-      List cached = await LocalStorage.getAccountCache(pubKey, cacheLoanTxsKey);
-      if (cached != null) {
-        cached.addAll(list);
-      } else {
-        cached = list;
-      }
-      LocalStorage.setAccountCache(pubKey, cacheLoanTxsKey, cached);
+    if (needCache && txsLoan.length > 0) {
+      _cacheTxs(list, cacheTxsLoanKey);
     }
+  }
+
+  @action
+  Future<void> setSwapTxs(List list,
+      {bool reset = false, needCache = true}) async {
+    if (reset) {
+      txsSwap = ObservableList.of(
+          list.map((i) => TxSwapData.fromJson(Map<String, dynamic>.from(i))));
+    } else {
+      txsSwap.addAll(
+          list.map((i) => TxSwapData.fromJson(Map<String, dynamic>.from(i))));
+    }
+
+    if (needCache && txsSwap.length > 0) {
+      _cacheTxs(list, cacheTxsSwapKey);
+    }
+  }
+
+  @action
+  Future<void> setDexLiquidityTxs(List list,
+      {bool reset = false, needCache = true}) async {
+    if (reset) {
+      txsDexLiquidity = ObservableList.of(list.map(
+          (i) => TxDexLiquidityData.fromJson(Map<String, dynamic>.from(i))));
+    } else {
+      txsDexLiquidity.addAll(list.map(
+          (i) => TxDexLiquidityData.fromJson(Map<String, dynamic>.from(i))));
+    }
+
+    if (needCache && txsDexLiquidity.length > 0) {
+      _cacheTxs(list, cacheTxsDexLiquidityKey);
+    }
+  }
+
+  @action
+  Future<void> _cacheTxs(List list, String cacheKey) async {
+    String pubKey = rootStore.account.currentAccount.pubKey;
+    List cached = await LocalStorage.getAccountCache(pubKey, cacheKey);
+    if (cached != null) {
+      cached.addAll(list);
+    } else {
+      cached = list;
+    }
+    LocalStorage.setAccountCache(pubKey, cacheKey, cached);
   }
 
   @action
@@ -114,9 +163,8 @@ abstract class _AcalaStore with Store {
   @action
   Future<void> loadCache() async {
     String pubKey = rootStore.account.currentAccount.pubKey;
-    List cached = await LocalStorage.getAccountCache(pubKey, cacheLoanTxsKey);
+    List cached = await LocalStorage.getAccountCache(pubKey, cacheTxsLoanKey);
     if (cached != null) {
-      print(cached);
       setLoanTxs(cached, needCache: false);
     }
   }
@@ -276,17 +324,14 @@ class TxLoanData extends _TxLoanData with _$TxLoanData {
       data.actionType = data.amountDebitShare > BigInt.zero
           ? LoanAdjustPage.actionTypeBorrow
           : LoanAdjustPage.actionTypePayback;
-      data.amountView = data.amountDebitShare;
       data.currencyIdView = 'aUSD';
     } else if (data.amountDebitShare == BigInt.zero) {
       data.actionType = data.amountCollateral > BigInt.zero
           ? LoanAdjustPage.actionTypeDeposit
           : LoanAdjustPage.actionTypeWithdraw;
-      data.amountView = data.amountCollateral;
       data.currencyIdView = data.currencyId;
     } else {
       data.actionType = 'create';
-      data.amountView = data.amountDebitShare;
       data.currencyIdView = 'aUSD';
     }
     return data;
@@ -304,6 +349,53 @@ abstract class _TxLoanData with Store {
   BigInt amountCollateral;
   BigInt amountDebitShare;
 
-  BigInt amountView;
   String currencyIdView;
+}
+
+class TxSwapData extends _TxSwapData with _$TxSwapData {
+  static TxSwapData fromJson(Map<String, dynamic> json) {
+    TxSwapData data = TxSwapData();
+    data.hash = json['hash'];
+    data.tokenPay = json['method']['args'][0];
+    data.tokenReceive = json['method']['args'][2];
+    data.amountPay = (json['method']['args'][1] as String).split(' ')[0];
+    data.amountReceive = (json['method']['args'][3] as String).split(' ')[0];
+    data.time = DateTime.fromMillisecondsSinceEpoch(json['time']);
+    return data;
+  }
+
+//  static Map<String, dynamic> toJson(TxLoanData data) =>
+//      _$TxLoanDataToJson(data);
+}
+
+abstract class _TxSwapData with Store {
+  String hash;
+  String tokenPay;
+  String tokenReceive;
+  String amountPay;
+  String amountReceive;
+  DateTime time;
+}
+
+class TxDexLiquidityData extends _TxDexLiquidityData with _$TxDexLiquidityData {
+  static TxDexLiquidityData fromJson(Map<String, dynamic> json) {
+    TxDexLiquidityData data = TxDexLiquidityData();
+    data.hash = json['hash'];
+    data.token = json['method']['args'][0];
+    data.amountToken = Fmt.balanceInt(json['method']['args'][1]);
+    data.amountStableCoin = Fmt.balanceInt(json['method']['args'][2]);
+    data.time = DateTime.fromMillisecondsSinceEpoch(json['time']);
+    return data;
+  }
+
+//  static Map<String, dynamic> toJson(TxLoanData data) =>
+//      _$TxLoanDataToJson(data);
+}
+
+abstract class _TxDexLiquidityData with Store {
+  String hash;
+  String token;
+  BigInt amountToken;
+  BigInt amountStableCoin;
+  DateTime time;
 }

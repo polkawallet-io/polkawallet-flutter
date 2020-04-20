@@ -46,9 +46,9 @@ class _AssetPageState extends State<AssetPage>
       webApi.staking.fetchAccountStaking(pubKey);
       res = await webApi.assets.updateTxs(_txsPage);
     }
-    if (store.settings.endpoint.info == networkEndpointAcala.info) {
-      res = await webApi.acala.updateTxs(_txsPage);
-    }
+//    if (store.settings.endpoint.info == networkEndpointAcala.info) {
+//      res = await webApi.acala.updateTxs(_txsPage);
+//    }
 
     if (res.length < tx_list_page_size) {
       setState(() {

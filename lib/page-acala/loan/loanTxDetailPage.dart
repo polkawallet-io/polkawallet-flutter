@@ -19,6 +19,12 @@ class LoanTxDetailPage extends StatelessWidget {
     final int decimals = acala_token_decimals;
 
     final TxLoanData tx = ModalRoute.of(context).settings.arguments;
+    LoanType loanType =
+        store.acala.loanTypes.firstWhere((i) => i.token == tx.currencyId);
+    BigInt amountView = tx.amountCollateral;
+    if (tx.currencyIdView.toUpperCase() == store.acala.acalaSwapBaseCoin) {
+      amountView = loanType.debitShareToDebit(tx.amountDebitShare);
+    }
 
     List<DetailInfoItem> list = <DetailInfoItem>[
       DetailInfoItem(
@@ -27,7 +33,7 @@ class LoanTxDetailPage extends StatelessWidget {
       ),
       DetailInfoItem(
         label: dic['loan.amount'],
-        title: '${Fmt.priceFloor(tx.amountView)} ${tx.currencyIdView}',
+        title: '${Fmt.priceFloor(amountView)} ${tx.currencyIdView}',
       ),
     ];
     if (tx.actionType == 'create') {
