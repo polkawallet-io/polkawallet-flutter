@@ -46,7 +46,7 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
     final LoanAdjustPageParams params =
         ModalRoute.of(context).settings.arguments;
     BigInt tokenPrice = store.acala.prices[params.token];
-    BigInt stableCoinPrice = store.acala.prices['AUSD'];
+    BigInt stableCoinPrice = store.acala.prices[store.acala.acalaBaseCoin];
     BigInt collateralInUSD = loanType.tokenToUSD(collateral, tokenPrice);
     BigInt debitInUSD = loanType.tokenToUSD(debit, stableCoinPrice);
     setState(() {
@@ -202,7 +202,7 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
     int decimals = acala_token_decimals;
 
     BigInt price = store.acala.prices[symbol];
-    BigInt stableCoinPrice = store.acala.prices['AUSD'];
+    BigInt stableCoinPrice = store.acala.prices[store.acala.acalaBaseCoin];
 
     LoanType loanType =
         store.acala.loanTypes.firstWhere((i) => i.token == symbol);

@@ -13,7 +13,6 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -31,6 +30,9 @@ class _SwapPageState extends State<SwapPage> {
   _SwapPageState(this.store);
 
   final AppStore store;
+
+  final GlobalKey<RefreshIndicatorState> _refreshKey =
+      new GlobalKey<RefreshIndicatorState>();
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _amountPayCtrl = new TextEditingController();
@@ -105,10 +107,11 @@ class _SwapPageState extends State<SwapPage> {
   }
 
   Future<void> _calcSwapAmount(String supply, String target) async {
+    List<String> swapPair = store.acala.currentSwapPair;
     if (supply == null) {
       if (target.isNotEmpty) {
-        String output = await webApi.acala
-            .fetchTokenSwapAmount(supply, target, _slippage.toString());
+        String output = await webApi.acala.fetchTokenSwapAmount(
+            supply, target, swapPair, _slippage.toString());
         setState(() {
           _amountPayCtrl.text = output;
         });
@@ -116,8 +119,8 @@ class _SwapPageState extends State<SwapPage> {
       }
     } else if (target == null) {
       if (supply.isNotEmpty) {
-        String output = await webApi.acala
-            .fetchTokenSwapAmount(supply, target, _slippage.toString());
+        String output = await webApi.acala.fetchTokenSwapAmount(
+            supply, target, swapPair, _slippage.toString());
         setState(() {
           _amountReceiveCtrl.text = output;
         });
@@ -192,7 +195,7 @@ class _SwapPageState extends State<SwapPage> {
           store.acala.setSwapTxs([res]);
           Navigator.popUntil(
               txPageContext, ModalRoute.withName(SwapPage.route));
-          globalDexRefreshKey.currentState.show();
+          _refreshKey.currentState.show();
         }
       };
       Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
@@ -241,7 +244,7 @@ class _SwapPageState extends State<SwapPage> {
           appBar: AppBar(title: Text(dic['dex.title']), centerTitle: true),
           body: SafeArea(
             child: RefreshIndicator(
-              key: globalDexRefreshKey,
+              key: _refreshKey,
               onRefresh: _refreshData,
               child: ListView(
                 padding: EdgeInsets.all(16),

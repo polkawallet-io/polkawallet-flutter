@@ -90,9 +90,9 @@ final GlobalKey<RefreshIndicatorState> globalCouncilRefreshKey =
 final GlobalKey<RefreshIndicatorState> globalDemocracyRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
 
-// acala exchange page:
-final GlobalKey<RefreshIndicatorState> globalDexRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
 // acala loan page:
 final GlobalKey<RefreshIndicatorState> globalLoanRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+// acala dexLiquidity page:
+final GlobalKey<RefreshIndicatorState> globalDexLiquidityRefreshKey =
     new GlobalKey<RefreshIndicatorState>();

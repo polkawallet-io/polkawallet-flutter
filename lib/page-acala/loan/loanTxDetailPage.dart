@@ -22,7 +22,7 @@ class LoanTxDetailPage extends StatelessWidget {
     LoanType loanType =
         store.acala.loanTypes.firstWhere((i) => i.token == tx.currencyId);
     BigInt amountView = tx.amountCollateral;
-    if (tx.currencyIdView.toUpperCase() == store.acala.acalaSwapBaseCoin) {
+    if (tx.currencyIdView.toUpperCase() == store.acala.acalaBaseCoin) {
       amountView = loanType.debitShareToDebit(tx.amountDebitShare);
     }
 

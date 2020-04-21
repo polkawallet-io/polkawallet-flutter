@@ -41,6 +41,17 @@ const Map<String, String> enDex = {
   'loan.txs': 'Transactions',
   'txs.action': 'Action',
   'payback.small': 'The remaining debt is too small.',
+  'earn.title': 'Deposit & Earn',
+  'earn.bref':
+      'Deposit your digital assets and stable coins into the liquid pool to earn interests and rewards',
+  'earn.deposit': 'Deposit Liquidity',
+  'earn.withdraw': 'Withdraw Liquidity',
+  'earn.get': 'Withdraw Rewards',
+  'earn.reward.year': 'Annualized Rewards',
+  'earn.fee': 'Swap Fee',
+  'earn.pool': 'Current pool size',
+  'earn.share': 'Your pool share',
+  'earn.reward': 'System Rewards',
 };
 
 const Map<String, String> zhDex = {
@@ -84,4 +95,14 @@ const Map<String, String> zhDex = {
   'loan.txs': '交易记录',
   'txs.action': '操作类型',
   'payback.small': '剩余债务过小',
+  'earn.title': '存款盈利',
+  'earn.bref': '将你的数字资产和稳定币存入流动性池，并获取交易费收益和系统奖励。',
+  'earn.deposit': '存入流动性',
+  'earn.withdraw': '提取流动性',
+  'earn.get': '领取奖励',
+  'earn.reward.year': '年化奖励',
+  'earn.fee': '交易费率',
+  'earn.pool': '当前资金池',
+  'earn.share': '资金池份额',
+  'earn.reward': '系统奖励',
 };

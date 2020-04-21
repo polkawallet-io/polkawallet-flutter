@@ -57,7 +57,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     final LoanAdjustPageParams params =
         ModalRoute.of(context).settings.arguments;
     BigInt tokenPrice = store.acala.prices[params.token];
-    BigInt stableCoinPrice = store.acala.prices['AUSD'];
+    BigInt stableCoinPrice = store.acala.prices[store.acala.acalaBaseCoin];
     BigInt collateralInUSD = loanType.tokenToUSD(collateral, tokenPrice);
     BigInt debitInUSD = loanType.tokenToUSD(debit, stableCoinPrice);
     setState(() {
@@ -320,16 +320,17 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     final LoanAdjustPageParams params =
         ModalRoute.of(context).settings.arguments;
     final String symbol = params.token;
+    final String baseCoin = store.acala.acalaBaseCoin;
     final LoanData loan = store.acala.loans[symbol];
 
     final BigInt price = store.acala.prices[symbol];
-    final BigInt stableCoinPrice = store.acala.prices['AUSD'];
+    final BigInt stableCoinPrice = store.acala.prices[baseCoin];
 
     String titleSuffix = ' $symbol';
     bool showCollateral = true;
     bool showDebit = true;
 
-    BigInt balanceAUSD = Fmt.balanceInt(store.assets.balances['AUSD']);
+    BigInt balanceAUSD = Fmt.balanceInt(store.assets.balances[baseCoin]);
     BigInt balance = Fmt.balanceInt(store.assets.balances[params.token]);
     BigInt available = balance;
     BigInt maxToBorrow = loan.maxToBorrow - loan.debits;

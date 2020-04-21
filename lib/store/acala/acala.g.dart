@@ -9,6 +9,24 @@ part of 'acala.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AcalaStore on _AcalaStore, Store {
+  Computed<List<String>> _$swapTokensComputed;
+
+  @override
+  List<String> get swapTokens =>
+      (_$swapTokensComputed ??= Computed<List<String>>(() => super.swapTokens))
+          .value;
+  Computed<double> _$swapFeeComputed;
+
+  @override
+  double get swapFee =>
+      (_$swapFeeComputed ??= Computed<double>(() => super.swapFee)).value;
+  Computed<double> _$dexLiquidityRewardsComputed;
+
+  @override
+  double get dexLiquidityRewards => (_$dexLiquidityRewardsComputed ??=
+          Computed<double>(() => super.dexLiquidityRewards))
+      .value;
+
   final _$loanTypesAtom = Atom(name: '_AcalaStore.loanTypes');
 
   @override
@@ -162,6 +180,77 @@ mixin _$AcalaStore on _AcalaStore, Store {
     }, _$swapRatioAtom, name: '${_$swapRatioAtom.name}_set');
   }
 
+  final _$swapPoolAtom = Atom(name: '_AcalaStore.swapPool');
+
+  @override
+  Map<String, dynamic> get swapPool {
+    _$swapPoolAtom.context.enforceReadPolicy(_$swapPoolAtom);
+    _$swapPoolAtom.reportObserved();
+    return super.swapPool;
+  }
+
+  @override
+  set swapPool(Map<String, dynamic> value) {
+    _$swapPoolAtom.context.conditionallyRunInAction(() {
+      super.swapPool = value;
+      _$swapPoolAtom.reportChanged();
+    }, _$swapPoolAtom, name: '${_$swapPoolAtom.name}_set');
+  }
+
+  final _$swapPoolRewardsAtom = Atom(name: '_AcalaStore.swapPoolRewards');
+
+  @override
+  Map<String, double> get swapPoolRewards {
+    _$swapPoolRewardsAtom.context.enforceReadPolicy(_$swapPoolRewardsAtom);
+    _$swapPoolRewardsAtom.reportObserved();
+    return super.swapPoolRewards;
+  }
+
+  @override
+  set swapPoolRewards(Map<String, double> value) {
+    _$swapPoolRewardsAtom.context.conditionallyRunInAction(() {
+      super.swapPoolRewards = value;
+      _$swapPoolRewardsAtom.reportChanged();
+    }, _$swapPoolRewardsAtom, name: '${_$swapPoolRewardsAtom.name}_set');
+  }
+
+  final _$swapPoolSharesAtom = Atom(name: '_AcalaStore.swapPoolShares');
+
+  @override
+  ObservableMap<String, BigInt> get swapPoolShares {
+    _$swapPoolSharesAtom.context.enforceReadPolicy(_$swapPoolSharesAtom);
+    _$swapPoolSharesAtom.reportObserved();
+    return super.swapPoolShares;
+  }
+
+  @override
+  set swapPoolShares(ObservableMap<String, BigInt> value) {
+    _$swapPoolSharesAtom.context.conditionallyRunInAction(() {
+      super.swapPoolShares = value;
+      _$swapPoolSharesAtom.reportChanged();
+    }, _$swapPoolSharesAtom, name: '${_$swapPoolSharesAtom.name}_set');
+  }
+
+  final _$swapPoolShareRewardsAtom =
+      Atom(name: '_AcalaStore.swapPoolShareRewards');
+
+  @override
+  ObservableMap<String, BigInt> get swapPoolShareRewards {
+    _$swapPoolShareRewardsAtom.context
+        .enforceReadPolicy(_$swapPoolShareRewardsAtom);
+    _$swapPoolShareRewardsAtom.reportObserved();
+    return super.swapPoolShareRewards;
+  }
+
+  @override
+  set swapPoolShareRewards(ObservableMap<String, BigInt> value) {
+    _$swapPoolShareRewardsAtom.context.conditionallyRunInAction(() {
+      super.swapPoolShareRewards = value;
+      _$swapPoolShareRewardsAtom.reportChanged();
+    }, _$swapPoolShareRewardsAtom,
+        name: '${_$swapPoolShareRewardsAtom.name}_set');
+  }
+
   final _$setLoanTxsAsyncAction = AsyncAction('setLoanTxs');
 
   @override
@@ -201,6 +290,38 @@ mixin _$AcalaStore on _AcalaStore, Store {
   @override
   Future<void> loadCache() {
     return _$loadCacheAsyncAction.run(() => super.loadCache());
+  }
+
+  final _$setSwapPoolAsyncAction = AsyncAction('setSwapPool');
+
+  @override
+  Future<void> setSwapPool(Map<String, dynamic> map) {
+    return _$setSwapPoolAsyncAction.run(() => super.setSwapPool(map));
+  }
+
+  final _$setSwapPoolRewardsAsyncAction = AsyncAction('setSwapPoolRewards');
+
+  @override
+  Future<void> setSwapPoolRewards(Map<String, dynamic> map) {
+    return _$setSwapPoolRewardsAsyncAction
+        .run(() => super.setSwapPoolRewards(map));
+  }
+
+  final _$setSwapPoolShareAsyncAction = AsyncAction('setSwapPoolShare');
+
+  @override
+  Future<void> setSwapPoolShare(String currencyId, BigInt share) {
+    return _$setSwapPoolShareAsyncAction
+        .run(() => super.setSwapPoolShare(currencyId, share));
+  }
+
+  final _$setSwapPoolShareRewardsAsyncAction =
+      AsyncAction('setSwapPoolShareRewards');
+
+  @override
+  Future<void> setSwapPoolShareRewards(String currencyId, BigInt rewards) {
+    return _$setSwapPoolShareRewardsAsyncAction
+        .run(() => super.setSwapPoolShareRewards(currencyId, rewards));
   }
 
   final _$_AcalaStoreActionController = ActionController(name: '_AcalaStore');

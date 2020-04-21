@@ -20,7 +20,7 @@ abstract class _AcalaStore with Store {
   final String cacheTxsLoanKey = 'loan_txs';
   final String cacheTxsSwapKey = 'swap_txs';
   final String cacheTxsDexLiquidityKey = 'dex_liquidity_txs';
-  final String acalaSwapBaseCoin = 'AUSD';
+  final String acalaBaseCoin = 'AUSD';
 
   @observable
   List<LoanType> loanTypes = List<LoanType>();
@@ -50,8 +50,43 @@ abstract class _AcalaStore with Store {
   @observable
   String swapRatio = '';
 
-//  @computed
-//  ObservableList<TxSwapData>
+  @observable
+  Map<String, dynamic> swapPool = Map<String, dynamic>();
+
+  @observable
+  Map<String, dynamic> swapPoolRatios = Map<String, dynamic>();
+
+  @observable
+  Map<String, double> swapPoolRewards = Map<String, double>();
+
+  @observable
+  ObservableMap<String, BigInt> swapPoolShares =
+      ObservableMap<String, BigInt>();
+
+  @observable
+  ObservableMap<String, BigInt> swapPoolShareRewards =
+      ObservableMap<String, BigInt>();
+
+  @computed
+  List<String> get swapTokens {
+    return List<String>.from(
+        rootStore.settings.networkConst['dex']['enabledCurrencyIds']);
+  }
+
+  @computed
+  double get swapFee {
+    return Fmt.balanceDouble(
+        rootStore.settings.networkConst['dex']['getExchangeFee'].toString(),
+        decimals: acala_token_decimals);
+  }
+
+  @computed
+  double get dexLiquidityRewards {
+    return Fmt.bigIntToDouble(
+        Fmt.balanceInt(rootStore.settings.networkConst['dex']['getExchangeFee']
+            .toString()),
+        decimals: acala_token_decimals);
+  }
 
   @action
   void setAccountLoans(List list) {
@@ -62,7 +97,7 @@ abstract class _AcalaStore with Store {
         Map<String, dynamic>.from(i),
         loanTypes.firstWhere((t) => t.token == token),
         prices[token],
-        prices['AUSD'],
+        prices[acalaBaseCoin],
       );
     });
     loans = data;
@@ -167,6 +202,42 @@ abstract class _AcalaStore with Store {
     if (cached != null) {
       setLoanTxs(cached, needCache: false);
     }
+  }
+
+  @action
+  Future<void> setSwapPool(Map<String, dynamic> map) async {
+    swapPool = map;
+  }
+
+  @action
+  Future<void> setSwapPoolRatios(Map<String, dynamic> map) async {
+    swapPoolRatios = map;
+  }
+
+  @action
+  Future<void> setSwapPoolRewards(Map<String, dynamic> map) async {
+    final int blockTime =
+        rootStore.settings.networkConst['babe']['expectedBlockTime'];
+    Map<String, double> rewards = {};
+    map.forEach((k, v) {
+      rewards[k] =
+          Fmt.balanceDouble(v.toString(), decimals: acala_token_decimals) *
+              SECONDS_OF_YEAR *
+              1000 /
+              blockTime;
+    });
+    swapPoolRewards = rewards;
+  }
+
+  @action
+  Future<void> setSwapPoolShare(String currencyId, BigInt share) async {
+    swapPoolShares[currencyId] = share;
+  }
+
+  @action
+  Future<void> setSwapPoolShareRewards(
+      String currencyId, BigInt rewards) async {
+    swapPoolShareRewards[currencyId] = rewards;
   }
 }
 

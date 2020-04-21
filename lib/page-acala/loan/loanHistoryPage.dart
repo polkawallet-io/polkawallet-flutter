@@ -97,7 +97,7 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                         .firstWhere((i) => i.token == detail.currencyId);
                     BigInt amountView = detail.amountCollateral;
                     if (detail.currencyIdView.toUpperCase() ==
-                        store.acala.acalaSwapBaseCoin) {
+                        store.acala.acalaBaseCoin) {
                       amountView =
                           loanType.debitShareToDebit(detail.amountDebitShare);
                     }

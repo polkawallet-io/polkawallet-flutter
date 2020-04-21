@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/page-acala/earn/earnPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapPage.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -20,7 +21,7 @@ class AcalaEntry extends StatelessWidget {
       body: SafeArea(
         child: Container(
           color: Colors.transparent,
-          padding: EdgeInsets.all(16),
+          margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
           child: ListView(
             children: <Widget>[
               Padding(
@@ -31,29 +32,48 @@ class AcalaEntry extends StatelessWidget {
                     Text(
                       dic['acala'] ?? 'Acala Platform',
                       style: TextStyle(
-                          fontSize: 20,
-                          color: Theme.of(context).cardColor,
-                          fontWeight: FontWeight.w500),
+                        fontSize: 20,
+                        color: Theme.of(context).cardColor,
+                        fontWeight: FontWeight.w500,
+                      ),
                     )
                   ],
                 ),
               ),
-              GestureDetector(
-                child: _AcalaCard(
-                  dic['loan.title'],
-                  dic['loan.bref'],
-                  'assets/images/acala/loan.svg',
+              Padding(
+                padding: EdgeInsets.only(bottom: 24),
+                child: GestureDetector(
+                  child: _AcalaCard(
+                    dic['loan.title'],
+                    dic['loan.bref'],
+                    'assets/images/acala/loan.svg',
+                  ),
+                  onTap: () => Navigator.of(context).pushNamed(LoanPage.route),
                 ),
-                onTap: () => Navigator.of(context).pushNamed(LoanPage.route),
               ),
-              GestureDetector(
-                child: _AcalaCard(
-                  dic['dex.title'],
-                  dic['dex.bref'],
-                  'assets/images/acala/exchange.svg',
-                  color: Theme.of(context).primaryColor,
+              Padding(
+                padding: EdgeInsets.only(bottom: 24),
+                child: GestureDetector(
+                  child: _AcalaCard(
+                    dic['dex.title'],
+                    dic['dex.bref'],
+                    'assets/images/acala/exchange.svg',
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  onTap: () => Navigator.of(context).pushNamed(SwapPage.route),
                 ),
-                onTap: () => Navigator.of(context).pushNamed(SwapPage.route),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 24),
+                child: GestureDetector(
+                  child: _AcalaCard(
+                    dic['earn.title'],
+                    dic['earn.bref'],
+                    'assets/images/acala/loan.svg',
+                    color: Colors.blueAccent,
+                  ),
+                  onTap: () => Navigator.of(context).pushNamed(EarnPage.route),
+                ),
               ),
             ],
           ),
@@ -74,7 +94,6 @@ class _AcalaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RoundedCard(
-      margin: EdgeInsets.only(bottom: 24),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -89,7 +108,7 @@ class _AcalaCard extends StatelessWidget {
             ),
             child: SvgPicture.asset(
               icon,
-              height: 100,
+              height: 80,
             ),
           ),
           Column(
