@@ -49,9 +49,11 @@ const Map<String, String> enDex = {
   'earn.get': 'Withdraw Rewards',
   'earn.reward.year': 'Annualized Rewards',
   'earn.fee': 'Swap Fee',
-  'earn.pool': 'Current pool size',
-  'earn.share': 'Your pool share',
+  'earn.pool': 'Current Pool Size',
+  'earn.deposit.user': 'My Deposit',
+  'earn.share': 'Pool Share',
   'earn.reward': 'System Rewards',
+  'earn.available': 'Available',
 };
 
 const Map<String, String> zhDex = {
@@ -103,6 +105,8 @@ const Map<String, String> zhDex = {
   'earn.reward.year': '年化奖励',
   'earn.fee': '交易费率',
   'earn.pool': '当前资金池',
+  'earn.deposit.user': '我的存款',
   'earn.share': '资金池份额',
   'earn.reward': '系统奖励',
+  'earn.available': '可用',
 };

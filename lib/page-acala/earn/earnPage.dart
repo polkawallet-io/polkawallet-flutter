@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
+import 'package:polka_wallet/page-acala/earn/withdrawLiquidityPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
-import 'package:polka_wallet/page-acala/loan/loanCard.dart';
-import 'package:polka_wallet/page-acala/loan/loanChart.dart';
-import 'package:polka_wallet/page-acala/loan/loanCreatePage.dart';
-import 'package:polka_wallet/page-acala/loan/loanDonutChart.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/acala/acala.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -37,11 +33,11 @@ class _EarnPageState extends State<EarnPage> {
     print('refresh');
     await Future.wait([
       webApi.acala.fetchDexLiquidityPool(),
+      webApi.acala.fetchDexLiquidityPoolShareTotal(),
       webApi.acala.fetchDexLiquidityPoolSwapRatios(),
       webApi.acala.fetchDexLiquidityPoolShare(_tab),
       webApi.acala.fetchDexLiquidityPoolShareRewards(_tab),
     ]);
-//    webApi.acala.fetchAccountLoans();
   }
 
   @override
@@ -57,111 +53,111 @@ class _EarnPageState extends State<EarnPage> {
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
+    final int decimals = acala_token_decimals;
     return Scaffold(
       backgroundColor: Theme.of(context).cardColor,
       appBar: AppBar(title: Text(dic['earn.title']), centerTitle: true),
       body: Observer(
         builder: (_) {
+          BigInt shareTotal =
+              store.acala.swapPoolSharesTotal[_tab] ?? BigInt.zero;
           BigInt share = store.acala.swapPoolShares[_tab] ?? BigInt.zero;
+          double userShare = share / shareTotal;
 
           Color cardColor = Theme.of(context).cardColor;
           Color primaryColor = Theme.of(context).primaryColor;
+
+          List pool = store.acala.swapPool[_tab];
+          double amountToken = Fmt.balanceDouble(
+              pool != null ? pool[0].toString() : '',
+              decimals: decimals);
+          double amountStableCoin = Fmt.balanceDouble(
+              pool != null ? pool[1].toString() : '',
+              decimals: decimals);
+          double amountTokenUser = amountToken * userShare;
+          double amountStableCoinUser = amountStableCoin * userShare;
+
           return SafeArea(
             child: RefreshIndicator(
-                key: globalDexLiquidityRefreshKey,
-                onRefresh: _fetchData,
-                child: Column(
-                  children: <Widget>[
-                    _CurrencyTab(store.acala.swapTokens, _tab, (i) {
-                      setState(() {
-                        _tab = i;
-                      });
-                    }),
-                    Expanded(
-                      child: ListView(
-                        children: <Widget>[
-                          _SystemCard(
-                            reward: store.acala.swapPoolRewards[_tab],
-                            fee: store.acala.swapFee,
-                            token: _tab,
-                            baseCoin: store.acala.acalaBaseCoin,
-                            swapRatio:
-                                store.acala.swapPoolRatios[_tab] as String,
-                            amountToken: Fmt.balanceInt(
-                                store.acala.swapPool[_tab][0].toString()),
-                            amountStableCoin: Fmt.balanceInt(
-                                store.acala.swapPool[_tab][1].toString()),
-                          )
-//                                loan.collaterals > BigInt.zero
-//                                    ? LoanCard(loan, balance)
-//                                    : RoundedCard(
-//                                        margin: EdgeInsets.all(16),
-//                                        padding:
-//                                            EdgeInsets.fromLTRB(48, 24, 48, 24),
-//                                        child: SvgPicture.asset(
-//                                            'assets/images/acala/loan-start.svg'),
-//                                      ),
-//                                loan.debitInUSD > BigInt.zero
-//                                    ? LoanChart(loan)
-////                                    ? LoanDonutChart(loan)
-//                                    : Container()
-                        ],
-                      ),
-                    ),
-                    Row(
+              key: globalDexLiquidityRefreshKey,
+              onRefresh: _fetchData,
+              child: Column(
+                children: <Widget>[
+                  _CurrencyTab(store.acala.swapTokens, _tab, (i) {
+                    setState(() {
+                      _tab = i;
+                    });
+                    globalDexLiquidityRefreshKey.currentState.show();
+                  }),
+                  Expanded(
+                    child: ListView(
                       children: <Widget>[
-                        Expanded(
-                          child: Container(
-                            color: Colors.blue,
-                            child: FlatButton(
-                                padding: EdgeInsets.only(top: 16, bottom: 16),
-                                child: Text(
-                                  dic['earn.deposit'],
-                                  style: TextStyle(color: cardColor),
-                                ),
-                                onPressed: () {
-                                  if (share > BigInt.zero) {
-                                    Navigator.of(context).pushNamed(
-                                      LoanAdjustPage.route,
-                                      arguments: LoanAdjustPageParams(
-                                          LoanAdjustPage.actionTypeBorrow,
-                                          _tab),
-                                    );
-                                  } else {
-                                    Navigator.of(context).pushNamed(
-                                      LoanCreatePage.route,
-                                      arguments: LoanAdjustPageParams('', _tab),
-                                    );
-                                  }
-                                }),
-                          ),
+                        _SystemCard(
+                          reward: store.acala.swapPoolRewards[_tab],
+                          fee: store.acala.swapFee,
+                          token: _tab,
+                          baseCoin: store.acala.acalaBaseCoin,
+                          swapRatio: store.acala.swapPoolRatios[_tab] as String,
+                          amountToken: amountToken.toString(),
+                          amountStableCoin: amountStableCoin.toString(),
                         ),
-                        share > BigInt.zero
-                            ? Expanded(
-                                child: Container(
-                                  color: primaryColor,
-                                  child: FlatButton(
-                                    padding:
-                                        EdgeInsets.only(top: 16, bottom: 16),
-                                    child: Text(
-                                      dic['earn.withdraw'],
-                                      style: TextStyle(color: cardColor),
-                                    ),
-                                    onPressed: () =>
-                                        Navigator.of(context).pushNamed(
-                                      LoanAdjustPage.route,
-                                      arguments: LoanAdjustPageParams(
-                                          LoanAdjustPage.actionTypePayback,
-                                          _tab),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Container(),
+                        _UserCard(
+                          share: userShare,
+                          reward: store.acala.swapPoolShareRewards[_tab],
+                          token: _tab,
+                          baseCoin: store.acala.acalaBaseCoin,
+                          amountToken: amountTokenUser.toString(),
+                          amountStableCoin: amountStableCoinUser.toString(),
+                        )
                       ],
                     ),
-                  ],
-                )),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          color: Colors.blue,
+                          child: FlatButton(
+                              padding: EdgeInsets.only(top: 16, bottom: 16),
+                              child: Text(
+                                dic['earn.deposit'],
+                                style: TextStyle(color: cardColor),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pushNamed(
+                                  AddLiquidityPage.route,
+                                  arguments: AddLiquidityPageParams(
+                                    AddLiquidityPage.actionDeposit,
+                                    _tab,
+                                  ),
+                                );
+                              }),
+                        ),
+                      ),
+                      share > BigInt.zero
+                          ? Expanded(
+                              child: Container(
+                                color: primaryColor,
+                                child: FlatButton(
+                                  padding: EdgeInsets.only(top: 16, bottom: 16),
+                                  child: Text(
+                                    dic['earn.withdraw'],
+                                    style: TextStyle(color: cardColor),
+                                  ),
+                                  onPressed: () =>
+                                      Navigator.of(context).pushNamed(
+                                    WithdrawLiquidityPage.route,
+                                    arguments: _tab,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           );
         },
       ),
@@ -268,8 +264,8 @@ class _SystemCard extends StatelessWidget {
   final String token;
   final String baseCoin;
   final String swapRatio;
-  final BigInt amountToken;
-  final BigInt amountStableCoin;
+  final String amountToken;
+  final String amountStableCoin;
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
@@ -295,7 +291,7 @@ class _SystemCard extends StatelessWidget {
                 children: <Widget>[
                   Text(token),
                   Text(
-                    Fmt.priceFloor(amountToken),
+                    amountToken,
                     style: primaryText,
                   ),
                 ],
@@ -304,7 +300,7 @@ class _SystemCard extends StatelessWidget {
                 children: <Widget>[
                   Text(baseCoin),
                   Text(
-                    Fmt.priceFloor(amountStableCoin),
+                    amountStableCoin,
                     style: primaryText,
                   ),
                 ],
@@ -341,19 +337,19 @@ class _SystemCard extends StatelessWidget {
 
 class _UserCard extends StatelessWidget {
   _UserCard({
+    this.share,
     this.reward,
-    this.fee,
     this.token,
     this.baseCoin,
     this.amountToken,
     this.amountStableCoin,
   });
-  final double reward;
-  final double fee;
+  final double share;
+  final BigInt reward;
   final String token;
   final String baseCoin;
-  final BigInt amountToken;
-  final BigInt amountStableCoin;
+  final String amountToken;
+  final String amountStableCoin;
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
@@ -364,13 +360,13 @@ class _UserCard extends StatelessWidget {
       color: primary,
     );
     return RoundedCard(
-      margin: EdgeInsets.all(16),
+      margin: EdgeInsets.fromLTRB(16, 0, 16, 24),
       padding: EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(bottom: 16),
-            child: Text(dic['earn.pool']),
+            child: Text(dic['earn.deposit.user']),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -379,7 +375,7 @@ class _UserCard extends StatelessWidget {
                 children: <Widget>[
                   Text(token),
                   Text(
-                    Fmt.priceFloor(amountToken),
+                    amountToken,
                     style: primaryText,
                   ),
                 ],
@@ -388,7 +384,7 @@ class _UserCard extends StatelessWidget {
                 children: <Widget>[
                   Text(baseCoin),
                   Text(
-                    Fmt.priceFloor(amountStableCoin),
+                    amountStableCoin,
                     style: primaryText,
                   ),
                 ],
@@ -400,14 +396,38 @@ class _UserCard extends StatelessWidget {
             children: <Widget>[
               InfoItem(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                title: dic['earn.reward.year'],
-                content: Fmt.ratio(reward),
+                title: dic['earn.share'],
+                content: Fmt.ratio(share),
               ),
-              InfoItem(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                title: dic['earn.fee'],
-                content: Fmt.ratio(fee),
-              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(dic['earn.reward']),
+                        reward > BigInt.zero
+                            ? GestureDetector(
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 4),
+                                  child: Icon(
+                                    Icons.card_giftcard,
+                                    size: 18,
+                                    color: primary,
+                                  ),
+                                ),
+                                onTap: () => print('rewards'),
+                              )
+                            : Container(),
+                      ],
+                    ),
+                    Text(
+                      Fmt.priceFloor(reward),
+                      style: Theme.of(context).textTheme.display4,
+                    )
+                  ],
+                ),
+              )
             ],
           )
         ],

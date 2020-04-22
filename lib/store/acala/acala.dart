@@ -54,6 +54,9 @@ abstract class _AcalaStore with Store {
   Map<String, dynamic> swapPool = Map<String, dynamic>();
 
   @observable
+  Map<String, BigInt> swapPoolSharesTotal = Map<String, BigInt>();
+
+  @observable
   Map<String, dynamic> swapPoolRatios = Map<String, dynamic>();
 
   @observable
@@ -207,6 +210,11 @@ abstract class _AcalaStore with Store {
   @action
   Future<void> setSwapPool(Map<String, dynamic> map) async {
     swapPool = map;
+  }
+
+  @action
+  Future<void> setSwapPoolSharesTotal(Map<String, BigInt> map) async {
+    swapPoolSharesTotal = map;
   }
 
   @action

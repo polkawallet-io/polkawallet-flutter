@@ -98,6 +98,18 @@ class ApiAcala {
     store.acala.setSwapPool(pool);
   }
 
+  Future<void> fetchDexLiquidityPoolShareTotal() async {
+    List<String> tokens = store.acala.swapTokens;
+    String code =
+        tokens.map((i) => 'api.query.dex.totalShares("$i")').join(',');
+    List list = await apiRoot.evalJavascript('Promise.all([$code])');
+    Map<String, BigInt> shares = Map<String, BigInt>();
+    tokens.asMap().forEach((k, v) {
+      shares[v] = Fmt.balanceInt(list[k].toString());
+    });
+    store.acala.setSwapPoolSharesTotal(shares);
+  }
+
   Future<void> fetchDexLiquidityPoolSwapRatios() async {
     List<String> tokens = store.acala.swapTokens;
     List list = await Future.wait(tokens.map((i) {

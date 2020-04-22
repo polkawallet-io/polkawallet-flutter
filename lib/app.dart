@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
+import 'package:polka_wallet/page-acala/earn/withdrawLiquidityPage.dart';
 import 'package:polka_wallet/page-acala/homePage.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanCreatePage.dart';
@@ -225,6 +227,8 @@ class _WalletAppState extends State<WalletApp> {
         LoanTxDetailPage.route: (_) => LoanTxDetailPage(_appStore),
         SwapHistoryPage.route: (_) => SwapHistoryPage(_appStore),
         EarnPage.route: (_) => EarnPage(_appStore),
+        AddLiquidityPage.route: (_) => AddLiquidityPage(_appStore),
+        WithdrawLiquidityPage.route: (_) => WithdrawLiquidityPage(_appStore),
       },
     );
   }

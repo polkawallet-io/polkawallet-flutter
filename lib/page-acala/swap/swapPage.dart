@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
+import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
@@ -452,17 +453,17 @@ class _SwapPageState extends State<SwapPage> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            _SlippageButton(
+                            OutlinedButtonSmall(
                               content: '0.1 %',
                               active: _slippage == 0.001,
                               onPressed: () => _updateSlippage(0.001),
                             ),
-                            _SlippageButton(
+                            OutlinedButtonSmall(
                               content: '0.5 %',
                               active: _slippage == 0.005,
                               onPressed: () => _updateSlippage(0.005),
                             ),
-                            _SlippageButton(
+                            OutlinedButtonSmall(
                               content: '1 %',
                               active: _slippage == 0.01,
                               onPressed: () => _updateSlippage(0.01),
@@ -528,32 +529,6 @@ class _SwapPageState extends State<SwapPage> {
           ),
         );
       },
-    );
-  }
-}
-
-class _SlippageButton extends StatelessWidget {
-  _SlippageButton({this.content, this.active, this.onPressed});
-  final String content;
-  final bool active;
-  final Function onPressed;
-  @override
-  Widget build(BuildContext context) {
-    Color primary = Theme.of(context).primaryColor;
-    Color grey = Theme.of(context).unselectedWidgetColor;
-    Color white = Theme.of(context).cardColor;
-    return GestureDetector(
-      child: Container(
-        margin: EdgeInsets.only(right: 8),
-        padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-        decoration: BoxDecoration(
-          color: active ? primary : white,
-          border: Border.all(color: active ? primary : grey),
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-        ),
-        child: Text(content, style: TextStyle(color: active ? white : grey)),
-      ),
-      onTap: onPressed,
     );
   }
 }

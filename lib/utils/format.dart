@@ -122,8 +122,9 @@ class Fmt {
     }
     String tailDecimals =
         lengthMax == null ? '' : "#" * (lengthMax - lengthFixed);
-    NumberFormat f =
-        NumberFormat(",##0.${"0" * lengthFixed}$tailDecimals", "en_US");
+    NumberFormat f = NumberFormat(
+        ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
+        "en_US");
     return f.format(
         (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
                 .ceil() /
@@ -144,8 +145,9 @@ class Fmt {
     }
     String tailDecimals =
         lengthMax == null ? '' : "#" * (lengthMax - lengthFixed);
-    NumberFormat f =
-        NumberFormat(",##0.${"0" * lengthFixed}$tailDecimals", "en_US");
+    NumberFormat f = NumberFormat(
+        ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
+        "en_US");
     return f.format(
         (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
                 .floor() /
@@ -156,7 +158,7 @@ class Fmt {
   /// from number to <String> in price format of ",##0.###%"
   static String ratio(dynamic number, {bool needSymbol = true}) {
     NumberFormat f = NumberFormat(",##0.###${needSymbol ? '%' : ''}");
-    return f.format(number);
+    return f.format(number ?? 0);
   }
 
   static bool isAddress(String txt) {
