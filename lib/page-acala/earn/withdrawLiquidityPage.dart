@@ -66,30 +66,26 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
 
   void _onSubmit() {
     if (_formKey.currentState.validate()) {
+      String token = ModalRoute.of(context).settings.arguments;
       int decimals = store.settings.networkState.tokenDecimals;
-      List<String> swapPair = store.acala.currentSwapPair;
-      String pay = _amountCtrl.text.trim();
+      String amount = _amountCtrl.text.trim();
       var args = {
-        "title": I18n.of(context).acala['dex.title'],
+        "title": I18n.of(context).acala['earn.withdraw'],
         "txInfo": {
           "module": 'dex',
-          "call": 'swapCurrency',
+          "call": 'withdrawLiquidity',
         },
         "detail": jsonEncode({
-          "currencyPay": swapPair[0],
-          "amountPay": pay,
-          "currencyReceive": swapPair[1],
+          "currencyId": token,
+          "amountOfShare": amount,
         }),
         "params": [
-          // params.supply
-          swapPair[0],
-          Fmt.tokenInt(pay, decimals: decimals).toString(),
-          // params.target
-          swapPair[1],
+          token,
+          Fmt.tokenInt(amount, decimals: decimals).toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
 //          print(res);
-          store.acala.setSwapTxs([res]);
+          store.acala.setDexLiquidityTxs([res]);
           Navigator.popUntil(
               txPageContext, ModalRoute.withName(EarnPage.route));
           _refreshKey.currentState.show();
@@ -165,7 +161,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                           decoration: InputDecoration(
                             hintText: dic['dex.pay'],
                             labelText:
-                                '${dic['dex.pay']} (available: ${Fmt.priceFloor(store.acala.swapPoolShares[token], lengthFixed: 0)})',
+                                '${dic['dex.pay']} (${dic['earn.available']}: ${Fmt.priceFloor(store.acala.swapPoolShares[token], lengthFixed: 0)})',
                             suffix: GestureDetector(
                               child: Icon(
                                 CupertinoIcons.clear_thick_circled,
@@ -204,24 +200,24 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                           children: <Widget>[
                             OutlinedButtonSmall(
                               content: '10%',
-                              active: _shareInput == shareTotal / 10,
-                              onPressed: () => _onAmountSelect(shareTotal / 10),
+                              active: _shareInput == share / 10,
+                              onPressed: () => _onAmountSelect(share / 10),
                             ),
                             OutlinedButtonSmall(
                               content: '25%',
-                              active: _shareInput == shareTotal / 4,
-                              onPressed: () => _onAmountSelect(shareTotal / 4),
+                              active: _shareInput == share / 4,
+                              onPressed: () => _onAmountSelect(share / 4),
                             ),
                             OutlinedButtonSmall(
                               content: '50%',
-                              active: _shareInput == shareTotal / 2,
-                              onPressed: () => _onAmountSelect(shareTotal / 2),
+                              active: _shareInput == share / 2,
+                              onPressed: () => _onAmountSelect(share / 2),
                             ),
                             OutlinedButtonSmall(
                               margin: EdgeInsets.only(right: 0),
                               content: '100%',
-                              active: _shareInput == shareTotal,
-                              onPressed: () => _onAmountSelect(shareTotal),
+                              active: _shareInput == share,
+                              onPressed: () => _onAmountSelect(share),
                             )
                           ],
                         ),
@@ -236,7 +232,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                               style: Theme.of(context).textTheme.display4,
                             ),
                             Text(
-                              '$amountToken $token + $amountBaseCoin ${store.acala.acalaBaseCoin}',
+                              '${Fmt.doubleFormat(amountToken)} $token + ${Fmt.doubleFormat(amountBaseCoin, length: 2)} ${store.acala.acalaBaseCoin}',
                               style: Theme.of(context).textTheme.display4,
                             ),
                           ],
@@ -252,7 +248,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
                           Text(
-                              '1 $token = $swapRatio ${store.acala.acalaBaseCoin}'),
+                              '1 $token = ${Fmt.doubleFormat(swapRatio, length: 2)} ${store.acala.acalaBaseCoin}'),
                         ],
                       ),
                       Row(
@@ -264,7 +260,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
                           Text(
-                              '$poolToken $token + $poolStableCoin ${store.acala.acalaBaseCoin}'),
+                              '${Fmt.doubleFormat(poolToken)} $token + ${Fmt.doubleFormat(poolStableCoin, length: 2)} ${store.acala.acalaBaseCoin}'),
                         ],
                       ),
                       Row(

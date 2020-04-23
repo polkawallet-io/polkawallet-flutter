@@ -1,23 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/store/acala/types/txSwapData.dart';
+import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
+import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-class SwapHistoryPage extends StatefulWidget {
-  SwapHistoryPage(this.store);
+class EarnHistoryPage extends StatefulWidget {
+  EarnHistoryPage(this.store);
 
-  static const String route = '/acala/swap/txs';
+  static const String route = '/acala/earn/txs';
 
   final AppStore store;
 
   @override
-  _SwapHistoryPage createState() => _SwapHistoryPage(store);
+  _EarnHistoryPage createState() => _EarnHistoryPage(store);
 }
 
-class _SwapHistoryPage extends State<SwapHistoryPage> {
-  _SwapHistoryPage(this.store);
+class _EarnHistoryPage extends State<EarnHistoryPage> {
+  _EarnHistoryPage(this.store);
 
   final AppStore store;
 
@@ -57,7 +58,8 @@ class _SwapHistoryPage extends State<SwapHistoryPage> {
         child: Observer(
           builder: (_) {
             final Map dic = I18n.of(context).acala;
-            List<TxSwapData> list = store.acala.txsSwap.reversed.toList();
+            List<TxDexLiquidityData> list =
+                store.acala.txsDexLiquidity.reversed.toList();
             print(list.length);
 
             return RefreshIndicator(
@@ -89,7 +91,23 @@ class _SwapHistoryPage extends State<SwapHistoryPage> {
 //                      time = block.time.toString().split('.')[0];
 //                    }
 
-                    TxSwapData detail = list[i];
+                    TxDexLiquidityData detail = list[i];
+                    String amount = '';
+                    String image = 'assets/images/assets/assets_down.png';
+                    switch (detail.action) {
+                      case AddLiquidityPage.actionDeposit:
+                        amount =
+                            '${detail.amountToken} ${detail.currencyId} + ${detail.amountStableCoin} ${store.acala.acalaBaseCoin}';
+                        image = 'assets/images/assets/assets_up.png';
+                        break;
+                      case AddLiquidityPage.actionWithdraw:
+                        amount = '${detail.amountShare} Share';
+                        break;
+                      case AddLiquidityPage.actionReward:
+                        amount =
+                            '${detail.amountStableCoin} ${store.acala.acalaBaseCoin}';
+                        break;
+                    }
                     return Container(
                       decoration: BoxDecoration(
                         border: Border(
@@ -97,8 +115,7 @@ class _SwapHistoryPage extends State<SwapHistoryPage> {
                                 BorderSide(width: 0.5, color: Colors.black12)),
                       ),
                       child: ListTile(
-                        title: Text(
-                            '${dic['dex.tx.pay']} ${detail.amountPay} ${detail.tokenPay}'),
+                        title: Text(detail.action),
                         subtitle: Text(list[i].time.toString()),
                         trailing: Container(
                           width: 140,
@@ -108,14 +125,13 @@ class _SwapHistoryPage extends State<SwapHistoryPage> {
                                 child: Padding(
                                   padding: EdgeInsets.only(right: 12),
                                   child: Text(
-                                    '${detail.amountReceive} ${detail.tokenReceive}',
+                                    amount,
                                     style: Theme.of(context).textTheme.display4,
                                     textAlign: TextAlign.end,
                                   ),
                                 ),
                               ),
-                              Image.asset(
-                                  'assets/images/assets/assets_down.png')
+                              Image.asset(image)
                             ],
                           ),
                         ),

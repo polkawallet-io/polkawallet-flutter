@@ -4,6 +4,7 @@ import 'package:polka_wallet/page/account/create/createAccountForm.dart';
 import 'package:polka_wallet/page/account/import/importAccountForm.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ImportAccountPage extends StatefulWidget {
@@ -34,6 +35,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     );
     if (acc != null) {
       Navigator.popUntil(context, ModalRoute.withName('/'));
+      globalBalanceRefreshKey.currentState.show();
       return;
     }
 

@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
+import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
+import 'package:polka_wallet/store/acala/types/txSwapData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
@@ -318,7 +320,7 @@ class LoanType extends _LoanType with _$LoanType {
     data.liquidationRatio = BigInt.parse(json['liquidationRatio'].toString());
     data.requiredCollateralRatio =
         BigInt.parse(json['requiredCollateralRatio'].toString());
-    data.stabilityFee = BigInt.parse(json['stabilityFee'].toString());
+    data.stabilityFee = BigInt.parse((json['stabilityFee'] ?? 0).toString());
     data.globalStabilityFee =
         BigInt.parse(json['globalStabilityFee'].toString());
     data.maximumTotalDebitValue =
@@ -429,52 +431,4 @@ abstract class _TxLoanData with Store {
   BigInt amountDebitShare;
 
   String currencyIdView;
-}
-
-class TxSwapData extends _TxSwapData with _$TxSwapData {
-  static TxSwapData fromJson(Map<String, dynamic> json) {
-    TxSwapData data = TxSwapData();
-    data.hash = json['hash'];
-    data.tokenPay = json['method']['args'][0];
-    data.tokenReceive = json['method']['args'][2];
-    data.amountPay = (json['method']['args'][1] as String).split(' ')[0];
-    data.amountReceive = (json['method']['args'][3] as String).split(' ')[0];
-    data.time = DateTime.fromMillisecondsSinceEpoch(json['time']);
-    return data;
-  }
-
-//  static Map<String, dynamic> toJson(TxLoanData data) =>
-//      _$TxLoanDataToJson(data);
-}
-
-abstract class _TxSwapData with Store {
-  String hash;
-  String tokenPay;
-  String tokenReceive;
-  String amountPay;
-  String amountReceive;
-  DateTime time;
-}
-
-class TxDexLiquidityData extends _TxDexLiquidityData with _$TxDexLiquidityData {
-  static TxDexLiquidityData fromJson(Map<String, dynamic> json) {
-    TxDexLiquidityData data = TxDexLiquidityData();
-    data.hash = json['hash'];
-    data.token = json['method']['args'][0];
-    data.amountToken = Fmt.balanceInt(json['method']['args'][1]);
-    data.amountStableCoin = Fmt.balanceInt(json['method']['args'][2]);
-    data.time = DateTime.fromMillisecondsSinceEpoch(json['time']);
-    return data;
-  }
-
-//  static Map<String, dynamic> toJson(TxLoanData data) =>
-//      _$TxLoanDataToJson(data);
-}
-
-abstract class _TxDexLiquidityData with Store {
-  String hash;
-  String token;
-  BigInt amountToken;
-  BigInt amountStableCoin;
-  DateTime time;
 }

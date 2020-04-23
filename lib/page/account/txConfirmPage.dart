@@ -25,11 +25,19 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
   final TextEditingController _passCtrl = new TextEditingController();
 
+  String _fee = '';
+
   Future<String> _getTxFee() async {
+    if (_fee.isNotEmpty) {
+      return _fee;
+    }
     final Map args = ModalRoute.of(context).settings.arguments;
     Map txInfo = args['txInfo'];
     txInfo['address'] = store.account.currentAddress;
     String fee = await webApi.account.estimateTxFees(txInfo, args['params']);
+    setState(() {
+      _fee = fee;
+    });
     return fee;
   }
 

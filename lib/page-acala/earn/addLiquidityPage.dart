@@ -20,6 +20,7 @@ class AddLiquidityPage extends StatefulWidget {
   static const String route = '/acala/earn/deposit';
   static const String actionDeposit = 'deposit';
   static const String actionWithdraw = 'withdraw';
+  static const String actionReward = 'reward';
 
   final AppStore store;
 
@@ -36,10 +37,8 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
       new GlobalKey<RefreshIndicatorState>();
 
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _amountPayCtrl = new TextEditingController();
-  final TextEditingController _amountReceiveCtrl = new TextEditingController();
-
-  double _slippage = 0.005;
+  final TextEditingController _amountTokenCtrl = new TextEditingController();
+  final TextEditingController _amountBaseCoinCtrl = new TextEditingController();
 
   Future<void> _refreshData() async {
     AddLiquidityPageParams params = ModalRoute.of(context).settings.arguments;
@@ -56,7 +55,8 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
       return;
     }
     setState(() {
-      _amountReceiveCtrl.text = (double.parse(supply) * swapRatio).toString();
+      _amountBaseCoinCtrl.text =
+          (double.parse(supply) * swapRatio).toStringAsFixed(2);
     });
     _formKey.currentState.validate();
   }
@@ -67,40 +67,37 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
       return;
     }
     setState(() {
-      _amountPayCtrl.text = (double.parse(target) / swapRatio).toString();
+      _amountTokenCtrl.text =
+          (double.parse(target) / swapRatio).toStringAsFixed(3);
     });
     _formKey.currentState.validate();
   }
 
   void _onSubmit() {
     if (_formKey.currentState.validate()) {
+      AddLiquidityPageParams params = ModalRoute.of(context).settings.arguments;
       int decimals = store.settings.networkState.tokenDecimals;
-      List<String> swapPair = store.acala.currentSwapPair;
-      String pay = _amountPayCtrl.text.trim();
-      String receive = _amountReceiveCtrl.text.trim();
+      String amountToken = _amountTokenCtrl.text.trim();
+      String amountBaseCoin = _amountBaseCoinCtrl.text.trim();
       var args = {
-        "title": I18n.of(context).acala['dex.title'],
+        "title": I18n.of(context).acala['earn.deposit'],
         "txInfo": {
           "module": 'dex',
-          "call": 'swapCurrency',
+          "call": 'addLiquidity',
         },
         "detail": jsonEncode({
-          "currencyPay": swapPair[0],
-          "amountPay": pay,
-          "currencyReceive": swapPair[1],
-          "amountReceive": receive,
+          "currencyId": params.token,
+          "amountOfToken": amountToken,
+          "amountOfBaseCoin": amountBaseCoin,
         }),
         "params": [
-          // params.supply
-          swapPair[0],
-          Fmt.tokenInt(pay, decimals: decimals).toString(),
-          // params.target
-          swapPair[1],
-          Fmt.tokenInt(receive, decimals: decimals).toString(),
+          params.token,
+          Fmt.tokenInt(amountToken, decimals: decimals).toString(),
+          Fmt.tokenInt(amountBaseCoin, decimals: decimals).toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
 //          print(res);
-          store.acala.setSwapTxs([res]);
+          store.acala.setDexLiquidityTxs([res]);
           Navigator.popUntil(
               txPageContext, ModalRoute.withName(EarnPage.route));
           _refreshKey.currentState.show();
@@ -121,8 +118,8 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
 
   @override
   void dispose() {
-    _amountPayCtrl.dispose();
-    _amountReceiveCtrl.dispose();
+    _amountTokenCtrl.dispose();
+    _amountBaseCoinCtrl.dispose();
     super.dispose();
   }
 
@@ -157,7 +154,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
         double balanceToken = 0;
         double balanceBaseCoin = 0;
         double userShareNew = userShare;
-        String amountInput = _amountPayCtrl.text.trim();
+        String amountInput = _amountTokenCtrl.text.trim();
         double shareInput =
             double.parse(amountInput.isEmpty ? '0' : amountInput) /
                 poolToken *
@@ -230,8 +227,8 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                               width: inputWidth,
                               child: TextFormField(
                                 decoration: InputDecoration(
-                                  hintText: dic['dex.pay'],
-                                  labelText: dic['dex.pay'],
+                                  hintText: dicAssets['amount'],
+                                  labelText: dicAssets['amount'],
                                   suffix: GestureDetector(
                                     child: Icon(
                                       CupertinoIcons.clear_thick_circled,
@@ -241,7 +238,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                     onTap: () {
                                       WidgetsBinding.instance
                                           .addPostFrameCallback(
-                                              (_) => _amountPayCtrl.clear());
+                                              (_) => _amountTokenCtrl.clear());
                                     },
                                   ),
                                 ),
@@ -249,7 +246,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                   RegExInputFormatter.withRegex(
                                       '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
                                 ],
-                                controller: _amountPayCtrl,
+                                controller: _amountTokenCtrl,
                                 keyboardType: TextInputType.numberWithOptions(
                                     decimal: true),
                                 validator: (v) {
@@ -269,8 +266,8 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                               width: inputWidth,
                               child: TextFormField(
                                 decoration: InputDecoration(
-                                  hintText: dic['dex.receive'],
-                                  labelText: dic['dex.receive'],
+                                  hintText: dicAssets['amount'],
+                                  labelText: dicAssets['amount'],
                                   suffix: GestureDetector(
                                     child: Icon(
                                       CupertinoIcons.clear_thick_circled,
@@ -280,7 +277,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                     onTap: () {
                                       WidgetsBinding.instance
                                           .addPostFrameCallback((_) =>
-                                              _amountReceiveCtrl.clear());
+                                              _amountBaseCoinCtrl.clear());
                                     },
                                   ),
                                 ),
@@ -288,7 +285,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                   RegExInputFormatter.withRegex(
                                       '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
                                 ],
-                                controller: _amountReceiveCtrl,
+                                controller: _amountBaseCoinCtrl,
                                 keyboardType: TextInputType.numberWithOptions(
                                     decimal: true),
                                 validator: (v) {
@@ -314,7 +311,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                           Container(
                             width: inputWidth,
                             child: Text(
-                              '${dicAssets['balance']}: $balanceToken',
+                              '${dicAssets['balance']}: ${Fmt.doubleFormat(balanceToken)}',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Theme.of(context).unselectedWidgetColor,
@@ -324,7 +321,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                           Container(
                             width: inputWidth,
                             child: Text(
-                              '${dicAssets['balance']}: $balanceBaseCoin',
+                              '${dicAssets['balance']}: ${Fmt.doubleFormat(balanceBaseCoin, length: 2)}',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Theme.of(context).unselectedWidgetColor,
@@ -343,7 +340,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
                           Text(
-                              '1 ${params.token} = ${store.acala.swapPoolRatios[params.token]} ${store.acala.acalaBaseCoin}'),
+                              '1 ${params.token} = ${Fmt.doubleFormat(swapRatio, length: 2)} ${store.acala.acalaBaseCoin}'),
                         ],
                       ),
                       Row(
@@ -355,7 +352,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
                           Text(
-                              '$poolToken ${params.token} + $poolStableCoin ${store.acala.acalaBaseCoin}'),
+                              '${Fmt.doubleFormat(poolToken)} ${params.token} + ${Fmt.doubleFormat(poolStableCoin, length: 2)} ${store.acala.acalaBaseCoin}'),
                         ],
                       ),
                       Row(

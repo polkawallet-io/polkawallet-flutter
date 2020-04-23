@@ -74,7 +74,7 @@ class _TransferPageState extends State<TransferPage> {
           // params.to
           _addressCtrl.text.trim(),
           // params.amount
-          (double.parse(_amountCtrl.text.trim()) * pow(10, decimals)).toInt(),
+          Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
         ],
       };
       if (store.settings.endpoint.info == networkEndpointAcala.info) {
@@ -88,8 +88,7 @@ class _TransferPageState extends State<TransferPage> {
           // params.currencyId
           symbol,
           // params.amount
-          (double.parse(_amountCtrl.text.trim()) * pow(10, decimals))
-              .toStringAsFixed(0),
+          Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
         ];
       }
       args['onFinish'] = (BuildContext txPageContext, Map res) {

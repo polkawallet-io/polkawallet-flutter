@@ -40,8 +40,19 @@ class AcalaEntry extends StatelessWidget {
                   ],
                 ),
               ),
+//              Padding(
+//                padding: EdgeInsets.only(bottom: 16),
+//                child: GestureDetector(
+//                  child: _AcalaCard(
+//                    dic['loan.title'],
+//                    dic['loan.bref'],
+//                    'assets/images/acala/exchange.svg',
+//                  ),
+//                  onTap: () => Navigator.of(context).pushNamed(LoanPage.route),
+//                ),
+//              ),
               Padding(
-                padding: EdgeInsets.only(bottom: 24),
+                padding: EdgeInsets.only(bottom: 16),
                 child: GestureDetector(
                   child: _AcalaCard(
                     dic['loan.title'],
@@ -52,7 +63,7 @@ class AcalaEntry extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 24),
+                padding: EdgeInsets.only(bottom: 16),
                 child: GestureDetector(
                   child: _AcalaCard(
                     dic['dex.title'],
@@ -64,7 +75,7 @@ class AcalaEntry extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 24),
+                padding: EdgeInsets.only(bottom: 16),
                 child: GestureDetector(
                   child: _AcalaCard(
                     dic['earn.title'],
@@ -98,8 +109,8 @@ class _AcalaCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.all(32),
-            width: 140,
+            padding: EdgeInsets.all(24),
+            width: 120,
             decoration: BoxDecoration(
               color: color ?? Colors.blue,
               borderRadius: const BorderRadius.only(
@@ -108,7 +119,7 @@ class _AcalaCard extends StatelessWidget {
             ),
             child: SvgPicture.asset(
               icon,
-              height: 80,
+              height: 76,
             ),
           ),
           Column(

@@ -1,11 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
+import 'package:polka_wallet/page-acala/earn/earnHistoryPage.dart';
 import 'package:polka_wallet/page-acala/earn/withdrawLiquidityPage.dart';
-import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
+import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -38,6 +41,31 @@ class _EarnPageState extends State<EarnPage> {
       webApi.acala.fetchDexLiquidityPoolShare(_tab),
       webApi.acala.fetchDexLiquidityPoolShareRewards(_tab),
     ]);
+  }
+
+  Future<void> _onWithdrawReward() async {
+    int decimals = store.settings.networkState.tokenDecimals;
+    String amount = Fmt.token(store.acala.swapPoolShareRewards[_tab],
+        decimals: decimals, length: 6);
+    var args = {
+      "title": I18n.of(context).acala['earn.get'],
+      "txInfo": {
+        "module": 'dex',
+        "call": 'withdrawIncentiveInterest',
+      },
+      "detail": jsonEncode({
+        "currencyId": _tab,
+        "amount": '$amount ${store.acala.acalaBaseCoin}',
+      }),
+      "params": [_tab],
+      "onFinish": (BuildContext txPageContext, Map res) {
+//          print(res);
+        store.acala.setDexLiquidityTxs([res]);
+        Navigator.popUntil(txPageContext, ModalRoute.withName(EarnPage.route));
+        globalDexLiquidityRefreshKey.currentState.show();
+      }
+    };
+    Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
   }
 
   @override
@@ -97,17 +125,23 @@ class _EarnPageState extends State<EarnPage> {
                           fee: store.acala.swapFee,
                           token: _tab,
                           baseCoin: store.acala.acalaBaseCoin,
-                          swapRatio: store.acala.swapPoolRatios[_tab] as String,
-                          amountToken: amountToken.toString(),
-                          amountStableCoin: amountStableCoin.toString(),
+                          swapRatio: Fmt.doubleFormat(
+                              double.parse(
+                                  store.acala.swapPoolRatios[_tab] ?? '0'),
+                              length: 2),
+                          amountToken: Fmt.doubleFormat(amountToken),
+                          amountStableCoin:
+                              Fmt.doubleFormat(amountStableCoin, length: 2),
                         ),
                         _UserCard(
                           share: userShare,
                           reward: store.acala.swapPoolShareRewards[_tab],
                           token: _tab,
                           baseCoin: store.acala.acalaBaseCoin,
-                          amountToken: amountTokenUser.toString(),
-                          amountStableCoin: amountStableCoinUser.toString(),
+                          amountToken: Fmt.doubleFormat(amountTokenUser),
+                          amountStableCoin:
+                              Fmt.doubleFormat(amountStableCoinUser, length: 2),
+                          onWithdrawReward: () => _onWithdrawReward(),
                         )
                       ],
                     ),
@@ -310,7 +344,7 @@ class _SystemCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 8),
             child: Text(
-              '${dic['dex.rate']} 1$token=$swapRatio$baseCoin',
+              '${dic['dex.rate']} 1 $token = $swapRatio $baseCoin',
               style: TextStyle(fontSize: 12),
             ),
           ),
@@ -343,6 +377,7 @@ class _UserCard extends StatelessWidget {
     this.baseCoin,
     this.amountToken,
     this.amountStableCoin,
+    this.onWithdrawReward,
   });
   final double share;
   final BigInt reward;
@@ -350,6 +385,7 @@ class _UserCard extends StatelessWidget {
   final String baseCoin;
   final String amountToken;
   final String amountStableCoin;
+  final Function onWithdrawReward;
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
@@ -362,74 +398,93 @@ class _UserCard extends StatelessWidget {
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 0, 16, 24),
       padding: EdgeInsets.all(16),
-      child: Column(
+      child: Stack(
+        alignment: AlignmentDirectional.topEnd,
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(bottom: 16),
-            child: Text(dic['earn.deposit.user']),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Column(
             children: <Widget>[
-              Column(
+              Padding(
+                padding: EdgeInsets.only(top: 8, bottom: 20),
+                child: Text(dic['earn.deposit.user']),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Text(token),
-                  Text(
-                    amountToken,
-                    style: primaryText,
+                  Column(
+                    children: <Widget>[
+                      Text(token),
+                      Text(
+                        amountToken,
+                        style: primaryText,
+                      ),
+                    ],
                   ),
+                  Column(
+                    children: <Widget>[
+                      Text(baseCoin),
+                      Text(
+                        amountStableCoin,
+                        style: primaryText,
+                      ),
+                    ],
+                  )
                 ],
               ),
-              Column(
+              Divider(height: 24),
+              Row(
                 children: <Widget>[
-                  Text(baseCoin),
-                  Text(
-                    amountStableCoin,
-                    style: primaryText,
+                  InfoItem(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    title: dic['earn.share'],
+                    content: Fmt.ratio(share),
                   ),
-                ],
-              )
-            ],
-          ),
-          Divider(height: 24),
-          Row(
-            children: <Widget>[
-              InfoItem(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                title: dic['earn.share'],
-                content: Fmt.ratio(share),
-              ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  Expanded(
+                    child: Column(
                       children: <Widget>[
-                        Text(dic['earn.reward']),
-                        reward > BigInt.zero
-                            ? GestureDetector(
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 4),
-                                  child: Icon(
-                                    Icons.card_giftcard,
-                                    size: 18,
-                                    color: primary,
-                                  ),
-                                ),
-                                onTap: () => print('rewards'),
-                              )
-                            : Container(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(dic['earn.reward']),
+                            reward != null && reward > BigInt.zero
+                                ? GestureDetector(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 4),
+                                      child: Icon(
+                                        Icons.card_giftcard,
+                                        size: 18,
+                                        color: primary,
+                                      ),
+                                    ),
+                                    onTap: onWithdrawReward,
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                        Text(
+                          Fmt.priceFloor(reward),
+                          style: Theme.of(context).textTheme.display4,
+                        )
                       ],
                     ),
-                    Text(
-                      Fmt.priceFloor(reward),
-                      style: Theme.of(context).textTheme.display4,
-                    )
-                  ],
-                ),
+                  )
+                ],
               )
             ],
-          )
+          ),
+          GestureDetector(
+            child: Container(
+              child: Column(
+                children: <Widget>[
+                  Icon(Icons.history, color: primary),
+                  Text(
+                    dic['loan.txs'],
+                    style: TextStyle(color: primary, fontSize: 12),
+                  )
+                ],
+              ),
+            ),
+            onTap: () => Navigator.of(context).pushNamed(EarnHistoryPage.route),
+          ),
         ],
       ),
     );
