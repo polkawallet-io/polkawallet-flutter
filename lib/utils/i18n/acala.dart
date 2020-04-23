@@ -1,5 +1,6 @@
 const Map<String, String> enDex = {
   'acala': 'Acala Platform',
+  'airdrop': 'Airdrop',
   'dex.title': 'Swap',
   'dex.bref':
       'Decentralized token exchange with the liquid pool of the Acala platform.',
@@ -54,10 +55,13 @@ const Map<String, String> enDex = {
   'earn.share': 'Pool Share',
   'earn.reward': 'System Rewards',
   'earn.available': 'Available',
+  'faucet.title': 'Faucet',
+  'faucet.bref': 'Get test Tokens of Acala testnet.',
 };
 
 const Map<String, String> zhDex = {
   'acala': 'Acala 稳定币平台',
+  'airdrop': '空投',
   'dex.title': '兑换',
   'dex.bref': '与 Acala 平台的流动性池进行去中心化 Token 交易.',
   'dex.pay': '支付数量',
@@ -109,4 +113,6 @@ const Map<String, String> zhDex = {
   'earn.share': '资金池份额',
   'earn.reward': '系统奖励',
   'earn.available': '可用',
+  'faucet.title': '水龙头',
+  'faucet.bref': '领取 Acala 测试网使用的测试 Token.',
 };

@@ -115,7 +115,7 @@ class Api {
     return _evalJavascriptUID++;
   }
 
-  Future<dynamic> evalJavascript(String code) async {
+  Future<dynamic> evalJavascript(String code, {bool wrapPromise = true}) async {
     // check if there's a same request loading
 //    for (String i in _msgCompleters.keys) {
 //      String call = code.split('(')[0];
@@ -124,6 +124,11 @@ class Api {
 //        return _msgCompleters[i].future;
 //      }
 //    }
+
+    if (!wrapPromise) {
+      String res = await _web.evalJavascript(code);
+      return res;
+    }
 
     Completer c = new Completer();
 

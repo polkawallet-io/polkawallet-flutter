@@ -25,6 +25,9 @@ abstract class _AcalaStore with Store {
   final String acalaBaseCoin = 'AUSD';
 
   @observable
+  Map<String, BigInt> airdrops = Map<String, BigInt>();
+
+  @observable
   List<LoanType> loanTypes = List<LoanType>();
 
   @observable
@@ -91,6 +94,11 @@ abstract class _AcalaStore with Store {
         Fmt.balanceInt(rootStore.settings.networkConst['dex']['getExchangeFee']
             .toString()),
         decimals: acala_token_decimals);
+  }
+
+  @action
+  void setAirdrops(Map<String, BigInt> amt) {
+    airdrops = amt;
   }
 
   @action
@@ -251,6 +259,7 @@ abstract class _AcalaStore with Store {
   }
 }
 
+// todo: move struct data definitions into acala.types
 class LoanData extends _LoanData with _$LoanData {
   static LoanData fromJson(Map<String, dynamic> json, LoanType type,
       BigInt tokenPrice, BigInt stableCoinPrice) {

@@ -93,6 +93,7 @@ flutter:
     - assets/images/assets/AUSD.png
     - assets/images/assets/XBTC.png
     - assets/images/assets/LDOT.png
+    - assets/images/assets/KAR.png
     ## images - acala
     - assets/images/assets/top_bg_indigo.png
     - assets/images/assets/receive_line_indigo.png

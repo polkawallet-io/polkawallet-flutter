@@ -19,75 +19,70 @@ class AcalaEntry extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
-        child: Container(
-          color: Colors.transparent,
-          margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: ListView(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(bottom: 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      dic['acala'] ?? 'Acala Platform',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Theme.of(context).cardColor,
-                        fontWeight: FontWeight.w500,
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    dic['acala'] ?? 'Acala Platform',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Theme.of(context).cardColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.all(16),
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: GestureDetector(
+                      child: _AcalaCard(
+                        dic['loan.title'],
+                        dic['loan.bref'],
+                        'assets/images/acala/loan.svg',
                       ),
-                    )
-                  ],
-                ),
-              ),
-//              Padding(
-//                padding: EdgeInsets.only(bottom: 16),
-//                child: GestureDetector(
-//                  child: _AcalaCard(
-//                    dic['loan.title'],
-//                    dic['loan.bref'],
-//                    'assets/images/acala/exchange.svg',
-//                  ),
-//                  onTap: () => Navigator.of(context).pushNamed(LoanPage.route),
-//                ),
-//              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 16),
-                child: GestureDetector(
-                  child: _AcalaCard(
-                    dic['loan.title'],
-                    dic['loan.bref'],
-                    'assets/images/acala/loan.svg',
+                      onTap: () =>
+                          Navigator.of(context).pushNamed(LoanPage.route),
+                    ),
                   ),
-                  onTap: () => Navigator.of(context).pushNamed(LoanPage.route),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 16),
-                child: GestureDetector(
-                  child: _AcalaCard(
-                    dic['dex.title'],
-                    dic['dex.bref'],
-                    'assets/images/acala/exchange.svg',
-                    color: Theme.of(context).primaryColor,
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: GestureDetector(
+                      child: _AcalaCard(
+                        dic['dex.title'],
+                        dic['dex.bref'],
+                        'assets/images/acala/exchange.svg',
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      onTap: () =>
+                          Navigator.of(context).pushNamed(SwapPage.route),
+                    ),
                   ),
-                  onTap: () => Navigator.of(context).pushNamed(SwapPage.route),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 16),
-                child: GestureDetector(
-                  child: _AcalaCard(
-                    dic['earn.title'],
-                    dic['earn.bref'],
-                    'assets/images/acala/loan.svg',
-                    color: Colors.blueAccent,
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: GestureDetector(
+                      child: _AcalaCard(
+                        dic['earn.title'],
+                        dic['earn.bref'],
+                        'assets/images/acala/loan.svg',
+                        color: Colors.blueAccent,
+                      ),
+                      onTap: () =>
+                          Navigator.of(context).pushNamed(EarnPage.route),
+                    ),
                   ),
-                  onTap: () => Navigator.of(context).pushNamed(EarnPage.route),
-                ),
+                ],
               ),
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );
@@ -109,7 +104,7 @@ class _AcalaCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.all(24),
+            padding: EdgeInsets.all(28),
             width: 120,
             decoration: BoxDecoration(
               color: color ?? Colors.blue,
@@ -119,7 +114,7 @@ class _AcalaCard extends StatelessWidget {
             ),
             child: SvgPicture.asset(
               icon,
-              height: 76,
+              height: 68,
             ),
           ),
           Column(

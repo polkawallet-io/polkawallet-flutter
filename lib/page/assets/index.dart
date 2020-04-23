@@ -35,6 +35,7 @@ class _AssetsState extends State<Assets> {
       await Future.wait([
         webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
         webApi.acala.fetchTokens(store.account.currentAccount.pubKey),
+        webApi.acala.fetchAirdropTokens(),
       ]);
     } else {
       await Future.wait([
@@ -55,6 +56,7 @@ class _AssetsState extends State<Assets> {
     bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
 
     return RoundedCard(
+      margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
       padding: EdgeInsets.all(8),
       child: Column(
         children: <Widget>[
@@ -112,78 +114,120 @@ class _AssetsState extends State<Assets> {
         return RefreshIndicator(
           key: globalBalanceRefreshKey,
           onRefresh: _fetchBalance,
-          child: ListView(
-            padding: EdgeInsets.only(left: 16, right: 16),
+          child: Column(
             children: <Widget>[
               _buildTopCard(context),
-              Padding(
-                padding: EdgeInsets.only(top: 32),
-                child: BorderedTitle(
-                  title: I18n.of(context).home['assets'],
-                ),
-              ),
-              RoundedCard(
-                margin: EdgeInsets.only(top: 16),
-                child: ListTile(
-                  leading: Container(
-                    width: 36,
-                    child: Image.asset(
-                        'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
-                  ),
-                  title: Text(symbol ?? ''),
-//                  subtitle: Text(networkName ?? '~'),
-                  trailing: Text(
-                    Fmt.balance(store.assets.balances[symbol],
-                        decimals: store.settings.networkState.tokenDecimals),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.black54),
-                  ),
-                  onTap: () {
-                    if (isAcala) {
-                      Navigator.pushNamed(
-                        context,
-                        TransferPage.route,
-                        arguments: {'symbol': symbol, 'redirect': '/'},
-                      );
-                    } else {
-                      Navigator.pushNamed(context, AssetPage.route);
-                    }
-                  },
-                ),
-              ),
-              Column(
-                children: currencyIds.map((i) {
-//                  print(store.assets.balances[i]);
-                  return RoundedCard(
-                    margin: EdgeInsets.only(top: 16),
-                    child: ListTile(
-                      leading: Container(
-                        width: 36,
-                        child: Image.asset('assets/images/assets/$i.png'),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.only(left: 16, right: 16),
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 24),
+                      child: BorderedTitle(
+                        title: I18n.of(context).home['assets'],
                       ),
-                      title: Text(i),
-//                      subtitle: Text(networkName),
-                      trailing: Text(
-                        Fmt.balance(store.assets.balances[i],
-                            decimals: store.settings.acalaTokenDecimals),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.black54),
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(context, TransferPage.route,
-                            arguments: {'symbol': i, 'redirect': '/'});
-                      },
                     ),
-                  );
-                }).toList(),
-              ),
-              Container(
-                padding: EdgeInsets.only(bottom: 32),
-              ),
+                    RoundedCard(
+                      margin: EdgeInsets.only(top: 16),
+                      child: ListTile(
+                        leading: Container(
+                          width: 36,
+                          child: Image.asset(
+                              'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
+                        ),
+                        title: Text(symbol ?? ''),
+//                  subtitle: Text(networkName ?? '~'),
+                        trailing: Text(
+                          Fmt.balance(store.assets.balances[symbol],
+                              decimals:
+                                  store.settings.networkState.tokenDecimals),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.black54),
+                        ),
+                        onTap: () {
+                          if (isAcala) {
+                            Navigator.pushNamed(
+                              context,
+                              TransferPage.route,
+                              arguments: {'symbol': symbol, 'redirect': '/'},
+                            );
+                          } else {
+                            Navigator.pushNamed(context, AssetPage.route);
+                          }
+                        },
+                      ),
+                    ),
+                    Column(
+                      children: currencyIds.map((i) {
+//                  print(store.assets.balances[i]);
+                        return RoundedCard(
+                          margin: EdgeInsets.only(top: 16),
+                          child: ListTile(
+                            leading: Container(
+                              width: 36,
+                              child: Image.asset('assets/images/assets/$i.png'),
+                            ),
+                            title: Text(i),
+//                      subtitle: Text(networkName),
+                            trailing: Text(
+                              Fmt.balance(store.assets.balances[i],
+                                  decimals: store.settings.acalaTokenDecimals),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black54),
+                            ),
+                            onTap: () {
+                              Navigator.pushNamed(context, TransferPage.route,
+                                  arguments: {'symbol': i, 'redirect': '/'});
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    isAcala
+                        ? Padding(
+                            padding: EdgeInsets.only(top: 24),
+                            child: BorderedTitle(
+                              title: I18n.of(context).acala['airdrop'],
+                            ),
+                          )
+                        : Container(),
+                    isAcala && store.acala.airdrops.keys.length > 0
+                        ? Column(
+                            children: store.acala.airdrops.keys.map((i) {
+                              return RoundedCard(
+                                margin: EdgeInsets.only(top: 16),
+                                child: ListTile(
+                                  leading: Container(
+                                    width: 36,
+                                    child: Image.asset(
+                                        'assets/images/assets/$i.png'),
+                                  ),
+                                  title: Text(i),
+//                      subtitle: Text(networkName),
+                                  trailing: Text(
+                                    Fmt.token(store.acala.airdrops[i],
+                                        decimals:
+                                            store.settings.acalaTokenDecimals),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        color: Colors.black54),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          )
+                        : Container(),
+                    Container(
+                      padding: EdgeInsets.only(bottom: 32),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         );

@@ -28,6 +28,25 @@ class ApiAcala {
     }
   }
 
+  Future<void> fetchAirdropTokens() async {
+    String address = store.account.currentAddress;
+    String res = await apiRoot.evalJavascript(
+        'api.registry.createType("AirDropCurrencyId").defKeys',
+        wrapPromise: false);
+    if (res == null) return;
+    List tokens = jsonDecode(res);
+    String queries = tokens
+        .map((i) => 'api.query.airDrop.airDrops("$address", "$i")')
+        .join(",");
+    List amount = await apiRoot.evalJavascript('Promise.all([$queries])');
+    Map<String, BigInt> amt = Map<String, BigInt>();
+    tokens.asMap().forEach((i, v) {
+      amt[v] = BigInt.parse(amount[i].toString());
+    });
+    print(amt);
+    store.acala.setAirdrops(amt);
+  }
+
   Future<List> updateTxs(int page) async {
     String address = store.account.currentAddress;
     String data = await PolkaScanApi.fetchTransfers(address, page,

@@ -27,6 +27,23 @@ mixin _$AcalaStore on _AcalaStore, Store {
           Computed<double>(() => super.dexLiquidityRewards))
       .value;
 
+  final _$airdropsAtom = Atom(name: '_AcalaStore.airdrops');
+
+  @override
+  Map<String, BigInt> get airdrops {
+    _$airdropsAtom.context.enforceReadPolicy(_$airdropsAtom);
+    _$airdropsAtom.reportObserved();
+    return super.airdrops;
+  }
+
+  @override
+  set airdrops(Map<String, BigInt> value) {
+    _$airdropsAtom.context.conditionallyRunInAction(() {
+      super.airdrops = value;
+      _$airdropsAtom.reportChanged();
+    }, _$airdropsAtom, name: '${_$airdropsAtom.name}_set');
+  }
+
   final _$loanTypesAtom = Atom(name: '_AcalaStore.loanTypes');
 
   @override
@@ -379,6 +396,16 @@ mixin _$AcalaStore on _AcalaStore, Store {
   }
 
   final _$_AcalaStoreActionController = ActionController(name: '_AcalaStore');
+
+  @override
+  void setAirdrops(Map<String, BigInt> amt) {
+    final _$actionInfo = _$_AcalaStoreActionController.startAction();
+    try {
+      return super.setAirdrops(amt);
+    } finally {
+      _$_AcalaStoreActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void setAccountLoans(List list) {
