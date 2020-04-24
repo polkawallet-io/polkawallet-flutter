@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:polka_wallet/service/faucet.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -10,6 +11,11 @@ class ApiAcala {
 
   final Api apiRoot;
   final store = globalAppStore;
+
+  Future<String> fetchFaucet() async {
+    String res = await AcalaFaucetApi.getTokens(store.account.currentAddress);
+    return res;
+  }
 
   Future<void> fetchTokens(String pubKey) async {
     if (pubKey != null && pubKey.isNotEmpty) {

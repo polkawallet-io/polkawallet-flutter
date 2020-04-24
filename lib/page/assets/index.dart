@@ -30,6 +30,8 @@ class _AssetsState extends State<Assets> {
 
   final AppStore store;
 
+  bool _faucetSubmitting = false;
+
   Future<void> _fetchBalance() async {
     if (store.settings.endpoint.info == networkEndpointAcala.info) {
       await Future.wait([
@@ -43,6 +45,41 @@ class _AssetsState extends State<Assets> {
         webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
       ]);
     }
+  }
+
+  Future<void> _getTokensFromFaucet() async {
+    setState(() {
+      _faucetSubmitting = true;
+    });
+    print('sss');
+    String res = await webApi.acala.fetchFaucet();
+    print(res);
+    String dialogContent = "success";
+    if (res == null) {
+      dialogContent = "error";
+    } else if (res == "LIMIT") {
+      dialogContent = "LIMIT";
+    }
+
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final Map<String, String> accDic = I18n.of(context).account;
+        return CupertinoAlertDialog(
+          title: Container(),
+          content: Text(dialogContent),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(I18n.of(context).home['ok']),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+    setState(() {
+      _faucetSubmitting = false;
+    });
   }
 
   Widget _buildTopCard(BuildContext context) {
@@ -64,6 +101,36 @@ class _AssetsState extends State<Assets> {
             leading: AddressIcon('', pubKey: acc.pubKey),
             title: Text(acc.name ?? ''),
             subtitle: Text(network),
+            trailing: isAcala
+                ? GestureDetector(
+                    child: Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Column(
+                        children: <Widget>[
+                          _faucetSubmitting
+                              ? CupertinoActivityIndicator()
+                              : Icon(
+                                  Icons.card_giftcard,
+                                  color: Theme.of(context).primaryColor,
+                                  size: 20,
+                                ),
+                          Text(
+                            I18n.of(context).acala['faucet.title'],
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      if (acc.address != '') {
+                        _getTokensFromFaucet();
+                      }
+                    },
+                  )
+                : Container(),
           ),
           ListTile(
             title: Text(Fmt.address(store.account.currentAddress)),
@@ -99,7 +166,6 @@ class _AssetsState extends State<Assets> {
         String symbol = store.settings.networkState.tokenSymbol;
         String networkName = store.settings.networkName;
 
-        // todo: add acala airdrop tokens
         bool isAcala =
             store.settings.endpoint.info == networkEndpointAcala.info;
 
@@ -136,7 +202,6 @@ class _AssetsState extends State<Assets> {
                               'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
                         ),
                         title: Text(symbol ?? ''),
-//                  subtitle: Text(networkName ?? '~'),
                         trailing: Text(
                           Fmt.balance(store.assets.balances[symbol],
                               decimals:
@@ -170,7 +235,6 @@ class _AssetsState extends State<Assets> {
                               child: Image.asset('assets/images/assets/$i.png'),
                             ),
                             title: Text(i),
-//                      subtitle: Text(networkName),
                             trailing: Text(
                               Fmt.balance(store.assets.balances[i],
                                   decimals: store.settings.acalaTokenDecimals),
@@ -207,7 +271,6 @@ class _AssetsState extends State<Assets> {
                                         'assets/images/assets/$i.png'),
                                   ),
                                   title: Text(i),
-//                      subtitle: Text(networkName),
                                   trailing: Text(
                                     Fmt.token(store.acala.airdrops[i],
                                         decimals:
