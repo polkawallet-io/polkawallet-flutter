@@ -135,17 +135,10 @@ class ApiAcala {
     store.acala.setSwapPoolSharesTotal(shares);
   }
 
-  Future<void> fetchDexLiquidityPoolSwapRatios() async {
-    List<String> tokens = store.acala.swapTokens;
-    List list = await Future.wait(tokens.map((i) {
-      return fetchTokenSwapAmount(
-          '1', null, [i, store.acala.acalaBaseCoin], '0');
-    }));
-    Map<String, dynamic> ratios = Map<String, dynamic>();
-    tokens.asMap().forEach((k, v) {
-      ratios[v] = list[k];
-    });
-    store.acala.setSwapPoolRatios(ratios);
+  Future<void> fetchDexLiquidityPoolSwapRatio(String currencyId) async {
+    String res = await fetchTokenSwapAmount(
+        '1', null, [currencyId, store.acala.acalaBaseCoin], '0');
+    store.acala.setSwapPoolRatio(currencyId, res);
   }
 
   Future<void> fetchDexLiquidityPoolRewards() async {
@@ -172,5 +165,11 @@ class ApiAcala {
         'api.query.dex.withdrawnInterest("$currencyId", "${store.account.currentAddress}")');
     store.acala.setSwapPoolShareRewards(
         currencyId, Fmt.balanceInt(rewards.toString()));
+  }
+
+  Future<void> fetchDexPoolInfo(String currencyId) async {
+    Map info = await apiRoot.evalJavascript(
+        'acala.fetchDexPoolInfo("$currencyId", "${store.account.currentAddress}")');
+    store.acala.setDexPoolInfo(currencyId, info);
   }
 }

@@ -11,7 +11,9 @@ import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -32,9 +34,6 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
 
   final AppStore store;
 
-  final GlobalKey<RefreshIndicatorState> _refreshKey =
-      new GlobalKey<RefreshIndicatorState>();
-
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _amountCtrl = new TextEditingController();
 
@@ -44,7 +43,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
     String token = ModalRoute.of(context).settings.arguments;
     String pubKey = store.account.currentAccount.pubKey;
     webApi.acala.fetchTokens(pubKey);
-    webApi.acala.fetchDexLiquidityPoolSwapRatios();
+    webApi.acala.fetchDexLiquidityPoolSwapRatio(token);
     webApi.acala.fetchDexLiquidityPool();
     webApi.acala.fetchDexLiquidityPoolShare(token);
   }
@@ -84,11 +83,11 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
           Fmt.tokenInt(amount, decimals: decimals).toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
-//          print(res);
+          res['action'] = TxDexLiquidityData.actionWithdraw;
           store.acala.setDexLiquidityTxs([res]);
           Navigator.popUntil(
               txPageContext, ModalRoute.withName(EarnPage.route));
-          _refreshKey.currentState.show();
+          globalDexLiquidityRefreshKey.currentState.show();
         }
       };
       Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
@@ -134,7 +133,6 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
             pool != null ? pool[1].toString() : '',
             decimals: decimals);
 
-        print(_shareInput);
         double userShareRatio =
             (share - _shareInput) / (shareTotal - _shareInput);
 

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
 import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class EarnHistoryPage extends StatefulWidget {
@@ -95,19 +95,21 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                     String amount = '';
                     String image = 'assets/images/assets/assets_down.png';
                     switch (detail.action) {
-                      case AddLiquidityPage.actionDeposit:
+                      case TxDexLiquidityData.actionDeposit:
                         amount =
-                            '${detail.amountToken} ${detail.currencyId} + ${detail.amountStableCoin} ${store.acala.acalaBaseCoin}';
+                            '${Fmt.priceCeil(detail.amountToken)} ${detail.currencyId} + ${Fmt.priceCeil(detail.amountStableCoin)} ${store.acala.acalaBaseCoin}';
                         image = 'assets/images/assets/assets_up.png';
                         break;
-                      case AddLiquidityPage.actionWithdraw:
-                        amount = '${detail.amountShare} Share';
-                        break;
-                      case AddLiquidityPage.actionReward:
+                      case TxDexLiquidityData.actionWithdraw:
                         amount =
-                            '${detail.amountStableCoin} ${store.acala.acalaBaseCoin}';
+                            '${Fmt.priceFloor(detail.amountShare, lengthFixed: 0)} Share';
+                        break;
+                      case TxDexLiquidityData.actionReward:
+                        amount =
+                            '${Fmt.priceCeil(detail.amountStableCoin)} ${store.acala.acalaBaseCoin}';
                         break;
                     }
+                    print(detail.action);
                     return Container(
                       decoration: BoxDecoration(
                         border: Border(

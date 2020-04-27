@@ -1,9 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ota_update/ota_update.dart';
+import 'package:package_info/package_info.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
+import 'package:polka_wallet/service/version.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -66,6 +71,73 @@ class UI {
           },
         ),
       ),
+    );
+  }
+
+  static Future<void> checkUpdate(BuildContext context) async {
+    String versions = await VersionApi.getLatestVersion();
+    Map v = jsonDecode(versions);
+    String latest = v['android']['version'];
+
+    PackageInfo info = await PackageInfo.fromPlatform();
+
+    bool needUpdate = false;
+    if (latest.compareTo(info.version) > 0) {
+      // new version found
+      needUpdate = true;
+    }
+
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(latest),
+          content: Padding(
+            padding: EdgeInsets.only(top: 12),
+            child: Text(needUpdate ? "find new" : "newst"),
+          ),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(I18n.of(context).home['cancel']),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            CupertinoButton(
+              child: Text(I18n.of(context).home['ok']),
+              onPressed: () {
+                if (Platform.isIOS) {
+                  // go to ios download page
+                  launchURL('xxx');
+                } else if (Platform.isAndroid) {
+                  // download apk
+                  // START LISTENING FOR DOWNLOAD PROGRESS REPORTING EVENTS
+                  try {
+//                    String url = v['android']['url'];
+                    String url =
+                        'https://xhhn.ltd/public/flutter_hello_world.apk';
+                    print(url);
+
+                    //LINK CONTAINS APK OF FLUTTER HELLO WORLD FROM FLUTTER SDK EXAMPLES
+                    OtaUpdate()
+                        .execute(
+                      url,
+                      destinationFilename: 'flutter_hello_world.apk',
+                    )
+                        .listen(
+                      (OtaEvent event) {
+                        print('EVENT: ${event.status} : ${event.value}');
+                      },
+                    );
+                  } catch (e) {
+                    print('Failed to make OTA update. Details: $e');
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

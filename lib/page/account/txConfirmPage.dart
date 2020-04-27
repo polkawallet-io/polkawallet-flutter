@@ -4,8 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class TxConfirmPage extends StatefulWidget {
@@ -36,7 +38,11 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     txInfo['address'] = store.account.currentAddress;
     String fee = await webApi.account.estimateTxFees(txInfo, args['params']);
     setState(() {
-      _fee = fee;
+      _fee = Fmt.balance(
+        fee,
+        decimals: acala_token_decimals,
+        length: 6,
+      );
     });
     return fee;
   }
@@ -143,6 +149,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).home;
+    final String symbol = store.settings.networkState.tokenSymbol;
 
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
 
@@ -232,7 +239,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                                             .width -
                                         120,
                                     child: Text(
-                                      snapshot.data,
+                                      '$_fee $symbol',
                                     ),
                                   );
                                 } else {

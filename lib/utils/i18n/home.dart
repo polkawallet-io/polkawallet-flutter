@@ -35,6 +35,9 @@ const Map<String, String> enHome = {
   'copy': 'Copy to clipboard',
   'setting.network': 'Select Wallet',
   'acala': 'Acala',
+  'update': 'Check Update',
+  'update.latest': 'Your App is the newst version: ',
+  'update.up': 'New version found, update now?',
 };
 
 const Map<String, String> zhHome = {
@@ -71,4 +74,7 @@ const Map<String, String> zhHome = {
   'copy': '复制到剪贴板',
   'setting.network': '选择钱包',
   'acala': 'Acala',
+  'update': '检查更新',
+  'update.latest': '您的应用是最新版本：',
+  'update.up': '发现新版本，立即更新吗？',
 };

@@ -10,7 +10,9 @@ import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -19,8 +21,6 @@ class AddLiquidityPage extends StatefulWidget {
 
   static const String route = '/acala/earn/deposit';
   static const String actionDeposit = 'deposit';
-  static const String actionWithdraw = 'withdraw';
-  static const String actionReward = 'reward';
 
   final AppStore store;
 
@@ -33,9 +33,6 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
 
   final AppStore store;
 
-  final GlobalKey<RefreshIndicatorState> _refreshKey =
-      new GlobalKey<RefreshIndicatorState>();
-
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _amountTokenCtrl = new TextEditingController();
   final TextEditingController _amountBaseCoinCtrl = new TextEditingController();
@@ -44,7 +41,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
     AddLiquidityPageParams params = ModalRoute.of(context).settings.arguments;
     String pubKey = store.account.currentAccount.pubKey;
     webApi.acala.fetchTokens(pubKey);
-    webApi.acala.fetchDexLiquidityPoolSwapRatios();
+    webApi.acala.fetchDexLiquidityPoolSwapRatio(params.token);
     webApi.acala.fetchDexLiquidityPool();
     webApi.acala.fetchDexLiquidityPoolShare(params.token);
   }
@@ -96,11 +93,11 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
           Fmt.tokenInt(amountBaseCoin, decimals: decimals).toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
-//          print(res);
+          res['action'] = TxDexLiquidityData.actionDeposit;
           store.acala.setDexLiquidityTxs([res]);
           Navigator.popUntil(
               txPageContext, ModalRoute.withName(EarnPage.route));
-          _refreshKey.currentState.show();
+          globalDexLiquidityRefreshKey.currentState.show();
         }
       };
       Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
@@ -160,7 +157,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                 poolToken *
                 shareTotal;
 
-        if (params.actionType == AddLiquidityPage.actionDeposit) {
+        if (params.actionType == TxDexLiquidityData.actionDeposit) {
           balanceToken = Fmt.balanceDouble(store.assets.balances[params.token],
                   decimals: decimals) ??
               BigInt.zero;
@@ -169,12 +166,11 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                   decimals: decimals) ??
               BigInt.zero;
           userShareNew = (share + shareInput) / (shareTotal + shareInput);
-        } else if (params.actionType == AddLiquidityPage.actionWithdraw) {
+        } else if (params.actionType == TxDexLiquidityData.actionWithdraw) {
           balanceToken = poolToken * userShare;
           balanceBaseCoin = poolStableCoin * userShare;
           userShareNew = (share - shareInput) / (shareTotal - shareInput);
         }
-        print(userShareNew);
 
         double swapRatio =
             double.parse(store.acala.swapPoolRatios[params.token].toString());

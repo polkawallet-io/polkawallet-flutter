@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/infoItem.dart';
@@ -10,6 +11,8 @@ import 'package:polka_wallet/page-acala/earn/earnHistoryPage.dart';
 import 'package:polka_wallet/page-acala/earn/withdrawLiquidityPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/acala/types/dexPoolInfoData.dart';
+import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -34,13 +37,15 @@ class _EarnPageState extends State<EarnPage> {
 
   Future<void> _fetchData() async {
     print('refresh');
-    await Future.wait([
-      webApi.acala.fetchDexLiquidityPool(),
-      webApi.acala.fetchDexLiquidityPoolShareTotal(),
-      webApi.acala.fetchDexLiquidityPoolSwapRatios(),
-      webApi.acala.fetchDexLiquidityPoolShare(_tab),
-      webApi.acala.fetchDexLiquidityPoolShareRewards(_tab),
-    ]);
+    webApi.acala.fetchDexLiquidityPoolSwapRatio(_tab);
+    await webApi.acala.fetchDexPoolInfo(_tab);
+//    await Future.wait([
+//      webApi.acala.fetchDexLiquidityPool(),
+//      webApi.acala.fetchDexLiquidityPoolShareTotal(),
+//      webApi.acala.fetchDexLiquidityPoolSwapRatios(),
+//      webApi.acala.fetchDexLiquidityPoolShare(_tab),
+//      webApi.acala.fetchDexLiquidityPoolShareRewards(_tab),
+//    ]);
   }
 
   Future<void> _onWithdrawReward() async {
@@ -59,7 +64,8 @@ class _EarnPageState extends State<EarnPage> {
       }),
       "params": [_tab],
       "onFinish": (BuildContext txPageContext, Map res) {
-//          print(res);
+        res['action'] = TxDexLiquidityData.actionReward;
+        res['reward'] = amount;
         store.acala.setDexLiquidityTxs([res]);
         Navigator.popUntil(txPageContext, ModalRoute.withName(EarnPage.route));
         globalDexLiquidityRefreshKey.currentState.show();
@@ -87,23 +93,31 @@ class _EarnPageState extends State<EarnPage> {
       appBar: AppBar(title: Text(dic['earn.title']), centerTitle: true),
       body: Observer(
         builder: (_) {
-          BigInt shareTotal =
-              store.acala.swapPoolSharesTotal[_tab] ?? BigInt.zero;
-          BigInt share = store.acala.swapPoolShares[_tab] ?? BigInt.zero;
-          double userShare = share / shareTotal;
+          BigInt shareTotal = BigInt.zero;
+          BigInt share = BigInt.zero;
+          double userShare = 0;
+
+          double amountToken = 0;
+          double amountStableCoin = 0;
+          double amountTokenUser = 0;
+          double amountStableCoinUser = 0;
+
+          DexPoolInfoData poolInfo = store.acala.dexPoolInfoMap[_tab];
+          if (poolInfo != null) {
+            shareTotal = poolInfo.sharesTotal;
+            share = poolInfo.shares;
+            userShare = share / shareTotal;
+
+            amountToken =
+                Fmt.bigIntToDouble(poolInfo.amountToken, decimals: decimals);
+            amountStableCoin = Fmt.bigIntToDouble(poolInfo.amountStableCoin,
+                decimals: decimals);
+            amountTokenUser = amountToken * userShare;
+            amountStableCoinUser = amountStableCoin * userShare;
+          }
 
           Color cardColor = Theme.of(context).cardColor;
           Color primaryColor = Theme.of(context).primaryColor;
-
-          List pool = store.acala.swapPool[_tab];
-          double amountToken = Fmt.balanceDouble(
-              pool != null ? pool[0].toString() : '',
-              decimals: decimals);
-          double amountStableCoin = Fmt.balanceDouble(
-              pool != null ? pool[1].toString() : '',
-              decimals: decimals);
-          double amountTokenUser = amountToken * userShare;
-          double amountStableCoinUser = amountStableCoin * userShare;
 
           return SafeArea(
             child: RefreshIndicator(
@@ -135,7 +149,8 @@ class _EarnPageState extends State<EarnPage> {
                         ),
                         _UserCard(
                           share: userShare,
-                          reward: store.acala.swapPoolShareRewards[_tab],
+                          reward:
+                              poolInfo != null ? poolInfo.reward : BigInt.zero,
                           token: _tab,
                           baseCoin: store.acala.acalaBaseCoin,
                           amountToken: Fmt.doubleFormat(amountTokenUser),
@@ -161,7 +176,7 @@ class _EarnPageState extends State<EarnPage> {
                                 Navigator.of(context).pushNamed(
                                   AddLiquidityPage.route,
                                   arguments: AddLiquidityPageParams(
-                                    AddLiquidityPage.actionDeposit,
+                                    TxDexLiquidityData.actionDeposit,
                                     _tab,
                                   ),
                                 );

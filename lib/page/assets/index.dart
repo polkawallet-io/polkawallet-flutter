@@ -130,7 +130,7 @@ class _AssetsState extends State<Assets> {
                       }
                     },
                   )
-                : Container(),
+                : Container(width: 8),
           ),
           ListTile(
             title: Text(Fmt.address(store.account.currentAddress)),

@@ -29,13 +29,16 @@ dependencies:
   flutter_aes_ecb_pkcs5: ^0.1.1
   convert: ^2.1.1
   http: ^0.12.0
-  flutter_webview_plugin: ^0.3.10+2
+  flutter_webview_plugin: ^0.3.11
   rxdart: ^0.23.1
   flutter_local_notifications: ^1.4.0
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  ota_update: ^2.2.1
+  flutter_downloader: ^1.4.4
+  path_provider:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

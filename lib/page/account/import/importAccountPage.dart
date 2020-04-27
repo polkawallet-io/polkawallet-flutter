@@ -35,7 +35,9 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     );
     if (acc != null) {
       Navigator.popUntil(context, ModalRoute.withName('/'));
-      globalBalanceRefreshKey.currentState.show();
+      if (globalBalanceRefreshKey.currentState != null) {
+        globalBalanceRefreshKey.currentState.show();
+      }
       return;
     }
 

@@ -237,14 +237,14 @@ mixin _$AcalaStore on _AcalaStore, Store {
   final _$swapPoolRatiosAtom = Atom(name: '_AcalaStore.swapPoolRatios');
 
   @override
-  Map<String, dynamic> get swapPoolRatios {
+  ObservableMap<String, String> get swapPoolRatios {
     _$swapPoolRatiosAtom.context.enforceReadPolicy(_$swapPoolRatiosAtom);
     _$swapPoolRatiosAtom.reportObserved();
     return super.swapPoolRatios;
   }
 
   @override
-  set swapPoolRatios(Map<String, dynamic> value) {
+  set swapPoolRatios(ObservableMap<String, String> value) {
     _$swapPoolRatiosAtom.context.conditionallyRunInAction(() {
       super.swapPoolRatios = value;
       _$swapPoolRatiosAtom.reportChanged();
@@ -305,6 +305,23 @@ mixin _$AcalaStore on _AcalaStore, Store {
         name: '${_$swapPoolShareRewardsAtom.name}_set');
   }
 
+  final _$dexPoolInfoMapAtom = Atom(name: '_AcalaStore.dexPoolInfoMap');
+
+  @override
+  ObservableMap<String, DexPoolInfoData> get dexPoolInfoMap {
+    _$dexPoolInfoMapAtom.context.enforceReadPolicy(_$dexPoolInfoMapAtom);
+    _$dexPoolInfoMapAtom.reportObserved();
+    return super.dexPoolInfoMap;
+  }
+
+  @override
+  set dexPoolInfoMap(ObservableMap<String, DexPoolInfoData> value) {
+    _$dexPoolInfoMapAtom.context.conditionallyRunInAction(() {
+      super.dexPoolInfoMap = value;
+      _$dexPoolInfoMapAtom.reportChanged();
+    }, _$dexPoolInfoMapAtom, name: '${_$dexPoolInfoMapAtom.name}_set');
+  }
+
   final _$setLoanTxsAsyncAction = AsyncAction('setLoanTxs');
 
   @override
@@ -362,12 +379,12 @@ mixin _$AcalaStore on _AcalaStore, Store {
         .run(() => super.setSwapPoolSharesTotal(map));
   }
 
-  final _$setSwapPoolRatiosAsyncAction = AsyncAction('setSwapPoolRatios');
+  final _$setSwapPoolRatioAsyncAction = AsyncAction('setSwapPoolRatio');
 
   @override
-  Future<void> setSwapPoolRatios(Map<String, dynamic> map) {
-    return _$setSwapPoolRatiosAsyncAction
-        .run(() => super.setSwapPoolRatios(map));
+  Future<void> setSwapPoolRatio(String currencyId, String ratio) {
+    return _$setSwapPoolRatioAsyncAction
+        .run(() => super.setSwapPoolRatio(currencyId, ratio));
   }
 
   final _$setSwapPoolRewardsAsyncAction = AsyncAction('setSwapPoolRewards');
@@ -393,6 +410,14 @@ mixin _$AcalaStore on _AcalaStore, Store {
   Future<void> setSwapPoolShareRewards(String currencyId, BigInt rewards) {
     return _$setSwapPoolShareRewardsAsyncAction
         .run(() => super.setSwapPoolShareRewards(currencyId, rewards));
+  }
+
+  final _$setDexPoolInfoAsyncAction = AsyncAction('setDexPoolInfo');
+
+  @override
+  Future<void> setDexPoolInfo(String currencyId, Map info) {
+    return _$setDexPoolInfoAsyncAction
+        .run(() => super.setDexPoolInfo(currencyId, info));
   }
 
   final _$_AcalaStoreActionController = ActionController(name: '_AcalaStore');

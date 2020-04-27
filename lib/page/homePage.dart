@@ -5,6 +5,7 @@ import 'package:polka_wallet/page/governance/index.dart';
 import 'package:polka_wallet/page/profile/index.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -158,6 +159,8 @@ class _HomePageState extends State<HomePage> {
       _notificationPlugin = NotificationPlugin();
       _notificationPlugin.init(context);
     }
+
+    UI.checkUpdate(context);
 
     super.initState();
   }

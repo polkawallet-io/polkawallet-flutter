@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
+import 'package:polka_wallet/store/acala/types/dexPoolInfoData.dart';
 import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/acala/types/txSwapData.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -62,7 +63,8 @@ abstract class _AcalaStore with Store {
   Map<String, BigInt> swapPoolSharesTotal = Map<String, BigInt>();
 
   @observable
-  Map<String, dynamic> swapPoolRatios = Map<String, dynamic>();
+  ObservableMap<String, String> swapPoolRatios =
+      ObservableMap<String, String>();
 
   @observable
   Map<String, double> swapPoolRewards = Map<String, double>();
@@ -74,6 +76,10 @@ abstract class _AcalaStore with Store {
   @observable
   ObservableMap<String, BigInt> swapPoolShareRewards =
       ObservableMap<String, BigInt>();
+
+  @observable
+  ObservableMap<String, DexPoolInfoData> dexPoolInfoMap =
+      ObservableMap<String, DexPoolInfoData>();
 
   @computed
   List<String> get swapTokens {
@@ -228,8 +234,8 @@ abstract class _AcalaStore with Store {
   }
 
   @action
-  Future<void> setSwapPoolRatios(Map<String, dynamic> map) async {
-    swapPoolRatios = map;
+  Future<void> setSwapPoolRatio(String currencyId, String ratio) async {
+    swapPoolRatios[currencyId] = ratio;
   }
 
   @action
@@ -256,6 +262,11 @@ abstract class _AcalaStore with Store {
   Future<void> setSwapPoolShareRewards(
       String currencyId, BigInt rewards) async {
     swapPoolShareRewards[currencyId] = rewards;
+  }
+
+  @action
+  Future<void> setDexPoolInfo(String currencyId, Map info) async {
+    dexPoolInfoMap[currencyId] = DexPoolInfoData.fromJson(info);
   }
 }
 
