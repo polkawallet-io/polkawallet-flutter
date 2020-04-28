@@ -15,7 +15,7 @@ EndpointData networkEndpointAcala = EndpointData.fromJson(const {
   'text': 'Acala Mandala (Hosted by Acala Network)',
 //  'value':
 //      'wss://node-6655590520181506048.jm.onfinality.io/ws?apikey=5fb96acf-6839-484f-9f3d-8784f26df699',
-  'value': 'ws://192.168.1.81:9944',
+  'value': 'ws://192.168.1.103:9944',
 });
 
 const network_ss58_map = {

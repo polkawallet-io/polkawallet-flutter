@@ -55,7 +55,8 @@ class Fmt {
     if (value == null) {
       return '~';
     }
-    NumberFormat f = NumberFormat(",##0.${'#' * length}", "en_US");
+    NumberFormat f =
+        NumberFormat(",##0${length > 0 ? '.' : ''}${'#' * length}", "en_US");
     return f.format(value);
   }
 

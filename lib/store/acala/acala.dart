@@ -57,25 +57,11 @@ abstract class _AcalaStore with Store {
   String swapRatio = '';
 
   @observable
-  Map<String, dynamic> swapPool = Map<String, dynamic>();
-
-  @observable
-  Map<String, BigInt> swapPoolSharesTotal = Map<String, BigInt>();
-
-  @observable
   ObservableMap<String, String> swapPoolRatios =
       ObservableMap<String, String>();
 
   @observable
   Map<String, double> swapPoolRewards = Map<String, double>();
-
-  @observable
-  ObservableMap<String, BigInt> swapPoolShares =
-      ObservableMap<String, BigInt>();
-
-  @observable
-  ObservableMap<String, BigInt> swapPoolShareRewards =
-      ObservableMap<String, BigInt>();
 
   @observable
   ObservableMap<String, DexPoolInfoData> dexPoolInfoMap =
@@ -184,6 +170,7 @@ abstract class _AcalaStore with Store {
   @action
   Future<void> setDexLiquidityTxs(List list,
       {bool reset = false, needCache = true}) async {
+    list.retainWhere((i) => i['params'] != null);
     if (reset) {
       txsDexLiquidity = ObservableList.of(list.map(
           (i) => TxDexLiquidityData.fromJson(Map<String, dynamic>.from(i))));
@@ -221,16 +208,11 @@ abstract class _AcalaStore with Store {
     if (cached != null) {
       setLoanTxs(cached, needCache: false);
     }
-  }
-
-  @action
-  Future<void> setSwapPool(Map<String, dynamic> map) async {
-    swapPool = map;
-  }
-
-  @action
-  Future<void> setSwapPoolSharesTotal(Map<String, BigInt> map) async {
-    swapPoolSharesTotal = map;
+    List dexs =
+        await LocalStorage.getAccountCache(pubKey, cacheTxsDexLiquidityKey);
+    if (dexs != null) {
+      setDexLiquidityTxs(dexs, needCache: false);
+    }
   }
 
   @action
@@ -251,17 +233,6 @@ abstract class _AcalaStore with Store {
               blockTime;
     });
     swapPoolRewards = rewards;
-  }
-
-  @action
-  Future<void> setSwapPoolShare(String currencyId, BigInt share) async {
-    swapPoolShares[currencyId] = share;
-  }
-
-  @action
-  Future<void> setSwapPoolShareRewards(
-      String currencyId, BigInt rewards) async {
-    swapPoolShareRewards[currencyId] = rewards;
   }
 
   @action

@@ -7,10 +7,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/acala/types/dexPoolInfoData.dart';
 import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -37,36 +39,34 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _amountCtrl = new TextEditingController();
 
-  double _shareInput = 0;
+  BigInt _shareInput = BigInt.zero;
 
   Future<void> _refreshData() async {
     String token = ModalRoute.of(context).settings.arguments;
-    String pubKey = store.account.currentAccount.pubKey;
-    webApi.acala.fetchTokens(pubKey);
     webApi.acala.fetchDexLiquidityPoolSwapRatio(token);
-    webApi.acala.fetchDexLiquidityPool();
-    webApi.acala.fetchDexLiquidityPoolShare(token);
+    await webApi.acala.fetchDexPoolInfo(token);
   }
 
   void _onAmountChange(String v) {
     String amountInput = v.trim();
     setState(() {
-      _shareInput = double.parse(amountInput.isEmpty ? '0' : amountInput);
+      _shareInput = Fmt.tokenInt(amountInput, decimals: acala_token_decimals);
     });
     _formKey.currentState.validate();
   }
 
-  void _onAmountSelect(double v) {
+  void _onAmountSelect(BigInt v) {
     setState(() {
       _shareInput = v;
-      _amountCtrl.text = v.toInt().toString();
+      _amountCtrl.text = Fmt.bigIntToDouble(v, decimals: acala_token_decimals)
+          .toStringAsFixed(2);
     });
+    _formKey.currentState.validate();
   }
 
   void _onSubmit() {
     if (_formKey.currentState.validate()) {
       String token = ModalRoute.of(context).settings.arguments;
-      int decimals = store.settings.networkState.tokenDecimals;
       String amount = _amountCtrl.text.trim();
       var args = {
         "title": I18n.of(context).acala['earn.withdraw'],
@@ -80,7 +80,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
         }),
         "params": [
           token,
-          Fmt.tokenInt(amount, decimals: decimals).toString(),
+          _shareInput.toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
           res['action'] = TxDexLiquidityData.actionWithdraw;
@@ -118,26 +118,41 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
         int decimals = store.settings.networkState.tokenDecimals;
         String token = ModalRoute.of(context).settings.arguments;
 
-        double shareTotal = Fmt.balanceDouble(
-            (store.acala.swapPoolSharesTotal[token] ?? BigInt.zero).toString(),
-            decimals: decimals);
-        double share = Fmt.balanceDouble(
-            (store.acala.swapPoolShares[token] ?? BigInt.zero).toString(),
-            decimals: decimals);
+        double shareTotal = 0;
+        BigInt shareInt = BigInt.zero;
+        BigInt shareInt10 = BigInt.zero;
+        BigInt shareInt25 = BigInt.zero;
+        BigInt shareInt50 = BigInt.zero;
+        double share = 0;
+        double shareRatioNew = 0;
+        double shareInput = Fmt.bigIntToDouble(_shareInput, decimals: decimals);
 
-        List pool = store.acala.swapPool[token];
-        double poolToken = Fmt.balanceDouble(
-            pool != null ? pool[0].toString() : '',
-            decimals: decimals);
-        double poolStableCoin = Fmt.balanceDouble(
-            pool != null ? pool[1].toString() : '',
-            decimals: decimals);
+        double poolToken = 0;
+        double poolStableCoin = 0;
+        double amountToken = 0;
+        double amountStableCoin = 0;
 
-        double userShareRatio =
-            (share - _shareInput) / (shareTotal - _shareInput);
+        DexPoolInfoData poolInfo = store.acala.dexPoolInfoMap[token];
+        if (poolInfo != null) {
+          shareTotal =
+              Fmt.bigIntToDouble(poolInfo.sharesTotal, decimals: decimals);
+          shareInt = poolInfo.shares;
+          shareInt10 = BigInt.from(shareInt / BigInt.from(10));
+          shareInt25 = BigInt.from(shareInt / BigInt.from(4));
+          shareInt50 = BigInt.from(shareInt / BigInt.from(2));
 
-        double amountToken = poolToken * _shareInput / shareTotal;
-        double amountBaseCoin = poolStableCoin * _shareInput / shareTotal;
+          share = Fmt.bigIntToDouble(poolInfo.shares, decimals: decimals);
+
+          poolToken =
+              Fmt.bigIntToDouble(poolInfo.amountToken, decimals: decimals);
+          poolStableCoin =
+              Fmt.bigIntToDouble(poolInfo.amountStableCoin, decimals: decimals);
+
+          amountToken = poolToken * shareInput / shareTotal;
+          amountStableCoin = poolStableCoin * shareInput / shareTotal;
+
+          shareRatioNew = (share - shareInput) / (shareTotal - shareInput);
+        }
 
         double swapRatio =
             double.parse(store.acala.swapPoolRatios[token].toString());
@@ -159,7 +174,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                           decoration: InputDecoration(
                             hintText: dic['dex.pay'],
                             labelText:
-                                '${dic['dex.pay']} (${dic['earn.available']}: ${Fmt.priceFloor(store.acala.swapPoolShares[token], lengthFixed: 0)})',
+                                '${dic['dex.pay']} (${dic['earn.available']}: ${Fmt.priceFloor(shareInt)})',
                             suffix: GestureDetector(
                               child: Icon(
                                 CupertinoIcons.clear_thick_circled,
@@ -183,7 +198,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                             if (v.isEmpty) {
                               return dicAssets['amount.error'];
                             }
-                            if (double.parse(v.trim()) > share) {
+                            if (_shareInput > shareInt) {
                               return dicAssets['amount.low'];
                             }
                             return null;
@@ -198,24 +213,24 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                           children: <Widget>[
                             OutlinedButtonSmall(
                               content: '10%',
-                              active: _shareInput == share / 10,
-                              onPressed: () => _onAmountSelect(share / 10),
+                              active: _shareInput == shareInt10,
+                              onPressed: () => _onAmountSelect(shareInt10),
                             ),
                             OutlinedButtonSmall(
                               content: '25%',
-                              active: _shareInput == share / 4,
-                              onPressed: () => _onAmountSelect(share / 4),
+                              active: _shareInput == shareInt25,
+                              onPressed: () => _onAmountSelect(shareInt25),
                             ),
                             OutlinedButtonSmall(
                               content: '50%',
-                              active: _shareInput == share / 2,
-                              onPressed: () => _onAmountSelect(share / 2),
+                              active: _shareInput == shareInt50,
+                              onPressed: () => _onAmountSelect(shareInt50),
                             ),
                             OutlinedButtonSmall(
                               margin: EdgeInsets.only(right: 0),
                               content: '100%',
-                              active: _shareInput == share,
-                              onPressed: () => _onAmountSelect(share),
+                              active: _shareInput == shareInt,
+                              onPressed: () => _onAmountSelect(shareInt),
                             )
                           ],
                         ),
@@ -230,7 +245,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                               style: Theme.of(context).textTheme.display4,
                             ),
                             Text(
-                              '${Fmt.doubleFormat(amountToken)} $token + ${Fmt.doubleFormat(amountBaseCoin, length: 2)} ${store.acala.acalaBaseCoin}',
+                              '${Fmt.doubleFormat(amountToken)} $token + ${Fmt.doubleFormat(amountStableCoin, length: 2)} ${store.acala.acalaBaseCoin}',
                               style: Theme.of(context).textTheme.display4,
                             ),
                           ],
@@ -269,7 +284,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                             style: TextStyle(
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
-                          Text(Fmt.ratio(userShareRatio)),
+                          Text(Fmt.ratio(shareRatioNew)),
                         ],
                       )
                     ],

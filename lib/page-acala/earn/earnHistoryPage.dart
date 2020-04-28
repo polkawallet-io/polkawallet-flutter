@@ -58,9 +58,10 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
         child: Observer(
           builder: (_) {
             final Map dic = I18n.of(context).acala;
+            final String token = ModalRoute.of(context).settings.arguments;
             List<TxDexLiquidityData> list =
                 store.acala.txsDexLiquidity.reversed.toList();
-            print(list.length);
+            list.retainWhere((i) => i.currencyId == token);
 
             return RefreshIndicator(
                 key: _refreshKey,
@@ -97,7 +98,7 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                     switch (detail.action) {
                       case TxDexLiquidityData.actionDeposit:
                         amount =
-                            '${Fmt.priceCeil(detail.amountToken)} ${detail.currencyId} + ${Fmt.priceCeil(detail.amountStableCoin)} ${store.acala.acalaBaseCoin}';
+                            '${Fmt.priceCeil(detail.amountToken)} ${detail.currencyId}\n+ ${Fmt.priceCeil(detail.amountStableCoin)} ${store.acala.acalaBaseCoin}';
                         image = 'assets/images/assets/assets_up.png';
                         break;
                       case TxDexLiquidityData.actionWithdraw:
@@ -109,7 +110,6 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                             '${Fmt.priceCeil(detail.amountStableCoin)} ${store.acala.acalaBaseCoin}';
                         break;
                     }
-                    print(detail.action);
                     return Container(
                       decoration: BoxDecoration(
                         border: Border(
@@ -118,9 +118,9 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                       ),
                       child: ListTile(
                         title: Text(detail.action),
-                        subtitle: Text(list[i].time.toString()),
+                        subtitle: Text(list[i].time.toString().split('.')[0]),
                         trailing: Container(
-                          width: 140,
+                          width: MediaQuery.of(context).size.width / 2,
                           child: Row(
                             children: <Widget>[
                               Expanded(

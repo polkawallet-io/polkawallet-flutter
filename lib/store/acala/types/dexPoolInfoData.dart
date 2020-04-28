@@ -9,7 +9,7 @@ class DexPoolInfoData extends _DexPoolInfoData {
     data.sharesTotal = Fmt.balanceInt(json['sharesTotal'].toString());
     data.shares = Fmt.balanceInt(json['shares'].toString());
     data.proportion = double.parse(json['proportion'].toString());
-    data.reward = Fmt.balanceInt('0x${json['reward'].toString()}');
+    data.reward = double.parse(json['reward'].toString());
     return data;
   }
 }
@@ -20,6 +20,6 @@ abstract class _DexPoolInfoData {
   BigInt amountStableCoin;
   BigInt sharesTotal;
   BigInt shares;
-  BigInt reward;
+  double reward;
   double proportion;
 }

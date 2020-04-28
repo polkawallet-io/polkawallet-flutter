@@ -10,6 +10,7 @@ import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/acala/types/dexPoolInfoData.dart';
 import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -38,12 +39,10 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
   final TextEditingController _amountBaseCoinCtrl = new TextEditingController();
 
   Future<void> _refreshData() async {
-    AddLiquidityPageParams params = ModalRoute.of(context).settings.arguments;
-    String pubKey = store.account.currentAccount.pubKey;
-    webApi.acala.fetchTokens(pubKey);
-    webApi.acala.fetchDexLiquidityPoolSwapRatio(params.token);
-    webApi.acala.fetchDexLiquidityPool();
-    webApi.acala.fetchDexLiquidityPoolShare(params.token);
+    String token = ModalRoute.of(context).settings.arguments;
+    webApi.acala.fetchTokens(store.account.currentAccount.pubKey);
+    webApi.acala.fetchDexLiquidityPoolSwapRatio(token);
+    await webApi.acala.fetchDexPoolInfo(token);
   }
 
   Future<void> _onSupplyAmountChange(String v, double swapRatio) async {
@@ -72,7 +71,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
 
   void _onSubmit() {
     if (_formKey.currentState.validate()) {
-      AddLiquidityPageParams params = ModalRoute.of(context).settings.arguments;
+      String token = ModalRoute.of(context).settings.arguments;
       int decimals = store.settings.networkState.tokenDecimals;
       String amountToken = _amountTokenCtrl.text.trim();
       String amountBaseCoin = _amountBaseCoinCtrl.text.trim();
@@ -83,12 +82,12 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
           "call": 'addLiquidity',
         },
         "detail": jsonEncode({
-          "currencyId": params.token,
+          "currencyId": token,
           "amountOfToken": amountToken,
           "amountOfBaseCoin": amountBaseCoin,
         }),
         "params": [
-          params.token,
+          token,
           Fmt.tokenInt(amountToken, decimals: decimals).toString(),
           Fmt.tokenInt(amountBaseCoin, decimals: decimals).toString(),
         ],
@@ -127,57 +126,41 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
         final Map dic = I18n.of(context).acala;
         final Map dicAssets = I18n.of(context).assets;
         int decimals = store.settings.networkState.tokenDecimals;
-        AddLiquidityPageParams params =
-            ModalRoute.of(context).settings.arguments;
+        String token = ModalRoute.of(context).settings.arguments;
 
         final double inputWidth = MediaQuery.of(context).size.width / 3;
 
-        double shareTotal = Fmt.balanceDouble(
-            (store.acala.swapPoolSharesTotal[params.token] ?? BigInt.zero)
-                .toString());
-        double share = Fmt.balanceDouble(
-            (store.acala.swapPoolShares[params.token] ?? BigInt.zero)
-                .toString());
-        double userShare = share / shareTotal;
+        double userShare = 0;
+        double userShareNew = 0;
 
-        List pool = store.acala.swapPool[params.token];
-        double poolToken = Fmt.balanceDouble(
-            pool != null ? pool[0].toString() : '',
-            decimals: decimals);
-        double poolStableCoin = Fmt.balanceDouble(
-            pool != null ? pool[1].toString() : '',
-            decimals: decimals);
+        double amountToken = 0;
+        double amountStableCoin = 0;
+        double amountTokenUser = 0;
+        BigInt balanceTokenUser = Fmt.balanceInt(store.assets.balances[token]);
+        BigInt balanceStableCoinUser =
+            Fmt.balanceInt(store.assets.balances[store.acala.acalaBaseCoin]);
 
-        double balanceToken = 0;
-        double balanceBaseCoin = 0;
-        double userShareNew = userShare;
-        String amountInput = _amountTokenCtrl.text.trim();
-        double shareInput =
-            double.parse(amountInput.isEmpty ? '0' : amountInput) /
-                poolToken *
-                shareTotal;
+        DexPoolInfoData poolInfo = store.acala.dexPoolInfoMap[token];
+        if (poolInfo != null) {
+          userShare = poolInfo.proportion;
 
-        if (params.actionType == TxDexLiquidityData.actionDeposit) {
-          balanceToken = Fmt.balanceDouble(store.assets.balances[params.token],
-                  decimals: decimals) ??
-              BigInt.zero;
-          balanceBaseCoin = Fmt.balanceDouble(
-                  store.assets.balances[store.acala.acalaBaseCoin],
-                  decimals: decimals) ??
-              BigInt.zero;
-          userShareNew = (share + shareInput) / (shareTotal + shareInput);
-        } else if (params.actionType == TxDexLiquidityData.actionWithdraw) {
-          balanceToken = poolToken * userShare;
-          balanceBaseCoin = poolStableCoin * userShare;
-          userShareNew = (share - shareInput) / (shareTotal - shareInput);
+          amountToken =
+              Fmt.bigIntToDouble(poolInfo.amountToken, decimals: decimals);
+          amountStableCoin =
+              Fmt.bigIntToDouble(poolInfo.amountStableCoin, decimals: decimals);
+          amountTokenUser = amountToken * userShare;
+
+          String input = _amountTokenCtrl.text.trim();
+          double amountInput = double.parse(input.isEmpty ? '0' : input);
+          userShareNew =
+              (amountInput + amountTokenUser) / (amountInput + amountToken);
         }
 
         double swapRatio =
-            double.parse(store.acala.swapPoolRatios[params.token].toString());
+            double.parse(store.acala.swapPoolRatios[token].toString());
 
         return Scaffold(
-          appBar: AppBar(
-              title: Text(dic['earn.${params.actionType}']), centerTitle: true),
+          appBar: AppBar(title: Text(dic['earn.deposit']), centerTitle: true),
           body: SafeArea(
             child: ListView(
               padding: EdgeInsets.all(16),
@@ -193,7 +176,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                           Container(
                             width: inputWidth,
                             child: CurrencyWithIcon(
-                              params.token,
+                              token,
                               textWidth: 48,
                               textStyle: Theme.of(context).textTheme.display4,
                             ),
@@ -249,7 +232,9 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                   if (v.isEmpty) {
                                     return dicAssets['amount.error'];
                                   }
-                                  if (double.parse(v.trim()) > balanceToken) {
+                                  if (Fmt.tokenInt(v.trim(),
+                                          decimals: decimals) >
+                                      balanceTokenUser) {
                                     return dicAssets['amount.low'];
                                   }
                                   return null;
@@ -288,8 +273,9 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                   if (v.isEmpty) {
                                     return dicAssets['amount.error'];
                                   }
-                                  if (double.parse(v.trim()) >
-                                      balanceBaseCoin) {
+                                  if (Fmt.tokenInt(v.trim(),
+                                          decimals: decimals) >
+                                      balanceStableCoinUser) {
                                     return dicAssets['amount.low'];
                                   }
                                   return null;
@@ -307,7 +293,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                           Container(
                             width: inputWidth,
                             child: Text(
-                              '${dicAssets['balance']}: ${Fmt.doubleFormat(balanceToken)}',
+                              '${dicAssets['balance']}: ${Fmt.priceFloor(balanceTokenUser, lengthMax: 3)}',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Theme.of(context).unselectedWidgetColor,
@@ -317,7 +303,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                           Container(
                             width: inputWidth,
                             child: Text(
-                              '${dicAssets['balance']}: ${Fmt.doubleFormat(balanceBaseCoin, length: 2)}',
+                              '${dicAssets['balance']}: ${Fmt.priceFloor(balanceStableCoinUser, lengthMax: 2)}',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Theme.of(context).unselectedWidgetColor,
@@ -336,7 +322,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
                           Text(
-                              '1 ${params.token} = ${Fmt.doubleFormat(swapRatio, length: 2)} ${store.acala.acalaBaseCoin}'),
+                              '1 $token = ${Fmt.doubleFormat(swapRatio, length: 2)} ${store.acala.acalaBaseCoin}'),
                         ],
                       ),
                       Row(
@@ -348,7 +334,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
                           Text(
-                              '${Fmt.doubleFormat(poolToken)} ${params.token} + ${Fmt.doubleFormat(poolStableCoin, length: 2)} ${store.acala.acalaBaseCoin}'),
+                              '${Fmt.doubleFormat(amountToken)} $token + ${Fmt.doubleFormat(amountStableCoin, length: 2)} ${store.acala.acalaBaseCoin}'),
                         ],
                       ),
                       Row(
@@ -368,7 +354,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                 Padding(
                   padding: EdgeInsets.only(top: 24),
                   child: RoundedButton(
-                    text: dic['earn.${params.actionType}'],
+                    text: dic['earn.deposit'],
                     onPressed: _onSubmit,
                   ),
                 )
@@ -379,10 +365,4 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
       },
     );
   }
-}
-
-class AddLiquidityPageParams {
-  AddLiquidityPageParams(this.actionType, this.token);
-  final String actionType;
-  final String token;
 }

@@ -251,7 +251,7 @@ class _AssetsState extends State<Assets> {
                         );
                       }).toList(),
                     ),
-                    isAcala
+                    isAcala && store.acala.airdrops.keys.length > 0
                         ? Padding(
                             padding: EdgeInsets.only(top: 24),
                             child: BorderedTitle(

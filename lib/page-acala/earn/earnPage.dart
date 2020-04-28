@@ -36,22 +36,12 @@ class _EarnPageState extends State<EarnPage> {
   String _tab = 'DOT';
 
   Future<void> _fetchData() async {
-    print('refresh');
     webApi.acala.fetchDexLiquidityPoolSwapRatio(_tab);
     await webApi.acala.fetchDexPoolInfo(_tab);
-//    await Future.wait([
-//      webApi.acala.fetchDexLiquidityPool(),
-//      webApi.acala.fetchDexLiquidityPoolShareTotal(),
-//      webApi.acala.fetchDexLiquidityPoolSwapRatios(),
-//      webApi.acala.fetchDexLiquidityPoolShare(_tab),
-//      webApi.acala.fetchDexLiquidityPoolShareRewards(_tab),
-//    ]);
   }
 
-  Future<void> _onWithdrawReward() async {
-    int decimals = store.settings.networkState.tokenDecimals;
-    String amount = Fmt.token(store.acala.swapPoolShareRewards[_tab],
-        decimals: decimals, length: 6);
+  Future<void> _onWithdrawReward(double reward) async {
+    String amount = Fmt.doubleFormat(reward, length: 6);
     var args = {
       "title": I18n.of(context).acala['earn.get'],
       "txInfo": {
@@ -149,14 +139,14 @@ class _EarnPageState extends State<EarnPage> {
                         ),
                         _UserCard(
                           share: userShare,
-                          reward:
-                              poolInfo != null ? poolInfo.reward : BigInt.zero,
+                          reward: poolInfo != null ? poolInfo.reward : 0,
                           token: _tab,
                           baseCoin: store.acala.acalaBaseCoin,
                           amountToken: Fmt.doubleFormat(amountTokenUser),
                           amountStableCoin:
                               Fmt.doubleFormat(amountStableCoinUser, length: 2),
-                          onWithdrawReward: () => _onWithdrawReward(),
+                          onWithdrawReward: () =>
+                              _onWithdrawReward(poolInfo.reward),
                         )
                       ],
                     ),
@@ -175,10 +165,7 @@ class _EarnPageState extends State<EarnPage> {
                               onPressed: () {
                                 Navigator.of(context).pushNamed(
                                   AddLiquidityPage.route,
-                                  arguments: AddLiquidityPageParams(
-                                    TxDexLiquidityData.actionDeposit,
-                                    _tab,
-                                  ),
+                                  arguments: _tab,
                                 );
                               }),
                         ),
@@ -395,7 +382,7 @@ class _UserCard extends StatelessWidget {
     this.onWithdrawReward,
   });
   final double share;
-  final BigInt reward;
+  final double reward;
   final String token;
   final String baseCoin;
   final String amountToken;
@@ -460,7 +447,7 @@ class _UserCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(dic['earn.reward']),
-                            reward != null && reward > BigInt.zero
+                            reward != null && reward >= 0.01
                                 ? GestureDetector(
                                     child: Padding(
                                       padding: EdgeInsets.only(left: 4),
@@ -476,7 +463,7 @@ class _UserCard extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          Fmt.priceFloor(reward),
+                          '${Fmt.doubleFormat(reward, length: 4)} $baseCoin',
                           style: Theme.of(context).textTheme.display4,
                         )
                       ],
@@ -498,7 +485,8 @@ class _UserCard extends StatelessWidget {
                 ],
               ),
             ),
-            onTap: () => Navigator.of(context).pushNamed(EarnHistoryPage.route),
+            onTap: () => Navigator.of(context)
+                .pushNamed(EarnHistoryPage.route, arguments: token),
           ),
         ],
       ),

@@ -111,30 +111,6 @@ class ApiAcala {
     return output;
   }
 
-  Future<void> fetchDexLiquidityPool() async {
-    List<String> tokens = store.acala.swapTokens;
-    String code =
-        tokens.map((i) => 'api.query.dex.liquidityPool("$i")').join(',');
-    List list = await apiRoot.evalJavascript('Promise.all([$code])');
-    Map<String, dynamic> pool = Map<String, dynamic>();
-    tokens.asMap().forEach((k, v) {
-      pool[v] = list[k];
-    });
-    store.acala.setSwapPool(pool);
-  }
-
-  Future<void> fetchDexLiquidityPoolShareTotal() async {
-    List<String> tokens = store.acala.swapTokens;
-    String code =
-        tokens.map((i) => 'api.query.dex.totalShares("$i")').join(',');
-    List list = await apiRoot.evalJavascript('Promise.all([$code])');
-    Map<String, BigInt> shares = Map<String, BigInt>();
-    tokens.asMap().forEach((k, v) {
-      shares[v] = Fmt.balanceInt(list[k].toString());
-    });
-    store.acala.setSwapPoolSharesTotal(shares);
-  }
-
   Future<void> fetchDexLiquidityPoolSwapRatio(String currencyId) async {
     String res = await fetchTokenSwapAmount(
         '1', null, [currencyId, store.acala.acalaBaseCoin], '0');
@@ -152,19 +128,6 @@ class ApiAcala {
       rewards[v] = list[k];
     });
     store.acala.setSwapPoolRewards(rewards);
-  }
-
-  Future<void> fetchDexLiquidityPoolShare(String currencyId) async {
-    var share = await apiRoot.evalJavascript(
-        'api.query.dex.shares("$currencyId", "${store.account.currentAddress}")');
-    store.acala.setSwapPoolShare(currencyId, Fmt.balanceInt(share.toString()));
-  }
-
-  Future<void> fetchDexLiquidityPoolShareRewards(String currencyId) async {
-    var rewards = await apiRoot.evalJavascript(
-        'api.query.dex.withdrawnInterest("$currencyId", "${store.account.currentAddress}")');
-    store.acala.setSwapPoolShareRewards(
-        currencyId, Fmt.balanceInt(rewards.toString()));
   }
 
   Future<void> fetchDexPoolInfo(String currencyId) async {

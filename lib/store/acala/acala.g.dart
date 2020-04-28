@@ -197,43 +197,6 @@ mixin _$AcalaStore on _AcalaStore, Store {
     }, _$swapRatioAtom, name: '${_$swapRatioAtom.name}_set');
   }
 
-  final _$swapPoolAtom = Atom(name: '_AcalaStore.swapPool');
-
-  @override
-  Map<String, dynamic> get swapPool {
-    _$swapPoolAtom.context.enforceReadPolicy(_$swapPoolAtom);
-    _$swapPoolAtom.reportObserved();
-    return super.swapPool;
-  }
-
-  @override
-  set swapPool(Map<String, dynamic> value) {
-    _$swapPoolAtom.context.conditionallyRunInAction(() {
-      super.swapPool = value;
-      _$swapPoolAtom.reportChanged();
-    }, _$swapPoolAtom, name: '${_$swapPoolAtom.name}_set');
-  }
-
-  final _$swapPoolSharesTotalAtom =
-      Atom(name: '_AcalaStore.swapPoolSharesTotal');
-
-  @override
-  Map<String, BigInt> get swapPoolSharesTotal {
-    _$swapPoolSharesTotalAtom.context
-        .enforceReadPolicy(_$swapPoolSharesTotalAtom);
-    _$swapPoolSharesTotalAtom.reportObserved();
-    return super.swapPoolSharesTotal;
-  }
-
-  @override
-  set swapPoolSharesTotal(Map<String, BigInt> value) {
-    _$swapPoolSharesTotalAtom.context.conditionallyRunInAction(() {
-      super.swapPoolSharesTotal = value;
-      _$swapPoolSharesTotalAtom.reportChanged();
-    }, _$swapPoolSharesTotalAtom,
-        name: '${_$swapPoolSharesTotalAtom.name}_set');
-  }
-
   final _$swapPoolRatiosAtom = Atom(name: '_AcalaStore.swapPoolRatios');
 
   @override
@@ -266,43 +229,6 @@ mixin _$AcalaStore on _AcalaStore, Store {
       super.swapPoolRewards = value;
       _$swapPoolRewardsAtom.reportChanged();
     }, _$swapPoolRewardsAtom, name: '${_$swapPoolRewardsAtom.name}_set');
-  }
-
-  final _$swapPoolSharesAtom = Atom(name: '_AcalaStore.swapPoolShares');
-
-  @override
-  ObservableMap<String, BigInt> get swapPoolShares {
-    _$swapPoolSharesAtom.context.enforceReadPolicy(_$swapPoolSharesAtom);
-    _$swapPoolSharesAtom.reportObserved();
-    return super.swapPoolShares;
-  }
-
-  @override
-  set swapPoolShares(ObservableMap<String, BigInt> value) {
-    _$swapPoolSharesAtom.context.conditionallyRunInAction(() {
-      super.swapPoolShares = value;
-      _$swapPoolSharesAtom.reportChanged();
-    }, _$swapPoolSharesAtom, name: '${_$swapPoolSharesAtom.name}_set');
-  }
-
-  final _$swapPoolShareRewardsAtom =
-      Atom(name: '_AcalaStore.swapPoolShareRewards');
-
-  @override
-  ObservableMap<String, BigInt> get swapPoolShareRewards {
-    _$swapPoolShareRewardsAtom.context
-        .enforceReadPolicy(_$swapPoolShareRewardsAtom);
-    _$swapPoolShareRewardsAtom.reportObserved();
-    return super.swapPoolShareRewards;
-  }
-
-  @override
-  set swapPoolShareRewards(ObservableMap<String, BigInt> value) {
-    _$swapPoolShareRewardsAtom.context.conditionallyRunInAction(() {
-      super.swapPoolShareRewards = value;
-      _$swapPoolShareRewardsAtom.reportChanged();
-    }, _$swapPoolShareRewardsAtom,
-        name: '${_$swapPoolShareRewardsAtom.name}_set');
   }
 
   final _$dexPoolInfoMapAtom = Atom(name: '_AcalaStore.dexPoolInfoMap');
@@ -363,22 +289,6 @@ mixin _$AcalaStore on _AcalaStore, Store {
     return _$loadCacheAsyncAction.run(() => super.loadCache());
   }
 
-  final _$setSwapPoolAsyncAction = AsyncAction('setSwapPool');
-
-  @override
-  Future<void> setSwapPool(Map<String, dynamic> map) {
-    return _$setSwapPoolAsyncAction.run(() => super.setSwapPool(map));
-  }
-
-  final _$setSwapPoolSharesTotalAsyncAction =
-      AsyncAction('setSwapPoolSharesTotal');
-
-  @override
-  Future<void> setSwapPoolSharesTotal(Map<String, BigInt> map) {
-    return _$setSwapPoolSharesTotalAsyncAction
-        .run(() => super.setSwapPoolSharesTotal(map));
-  }
-
   final _$setSwapPoolRatioAsyncAction = AsyncAction('setSwapPoolRatio');
 
   @override
@@ -393,23 +303,6 @@ mixin _$AcalaStore on _AcalaStore, Store {
   Future<void> setSwapPoolRewards(Map<String, dynamic> map) {
     return _$setSwapPoolRewardsAsyncAction
         .run(() => super.setSwapPoolRewards(map));
-  }
-
-  final _$setSwapPoolShareAsyncAction = AsyncAction('setSwapPoolShare');
-
-  @override
-  Future<void> setSwapPoolShare(String currencyId, BigInt share) {
-    return _$setSwapPoolShareAsyncAction
-        .run(() => super.setSwapPoolShare(currencyId, share));
-  }
-
-  final _$setSwapPoolShareRewardsAsyncAction =
-      AsyncAction('setSwapPoolShareRewards');
-
-  @override
-  Future<void> setSwapPoolShareRewards(String currencyId, BigInt rewards) {
-    return _$setSwapPoolShareRewardsAsyncAction
-        .run(() => super.setSwapPoolShareRewards(currencyId, rewards));
   }
 
   final _$setDexPoolInfoAsyncAction = AsyncAction('setDexPoolInfo');
