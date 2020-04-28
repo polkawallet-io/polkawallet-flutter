@@ -58,7 +58,6 @@ class _SwapHistoryPage extends State<SwapHistoryPage> {
           builder: (_) {
             final Map dic = I18n.of(context).acala;
             List<TxSwapData> list = store.acala.txsSwap.reversed.toList();
-            print(list.length);
 
             return RefreshIndicator(
                 key: _refreshKey,

@@ -8,10 +8,10 @@ class TxLoanData extends _TxLoanData {
   static TxLoanData fromJson(Map<String, dynamic> json) {
     TxLoanData data = TxLoanData();
     data.hash = json['hash'];
-    data.currencyId = json['method']['args'][0];
+    data.currencyId = json['params'][0];
     data.time = DateTime.fromMillisecondsSinceEpoch(json['time']);
-    data.amountCollateral = Fmt.balanceInt(json['method']['args'][1]);
-    data.amountDebitShare = Fmt.balanceInt(json['method']['args'][2]);
+    data.amountCollateral = Fmt.balanceInt(json['params'][1].toString());
+    data.amountDebitShare = Fmt.balanceInt(json['params'][2].toString());
     if (data.amountCollateral == BigInt.zero) {
       data.actionType = data.amountDebitShare > BigInt.zero
           ? actionTypeBorrow

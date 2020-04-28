@@ -83,9 +83,22 @@ class ApiAcala {
     store.acala.setLoanTypes(res);
   }
 
+  Future<Map> _fetchPriceOfLDOT() async {
+    var res = await apiRoot.evalJavascript('acala.fetchLDOTPrice(api)');
+    return {
+      "token": 'LDOT',
+      "price": {
+        "value": Fmt.tokenInt(res.toString(), decimals: acala_token_decimals)
+            .toString()
+      }
+    };
+  }
+
   Future<void> subscribeTokenPrices() async {
     await apiRoot.subscribeMessage('price', 'allPrices', [], 'TokenPrices',
-        (List res) {
+        (List res) async {
+      var priceOfLDOT = await _fetchPriceOfLDOT();
+      res.add(priceOfLDOT);
       store.acala.setPrices(res);
     });
   }
@@ -106,7 +119,8 @@ class ApiAcala {
     /// baseCoin = 0, supplyToken == AUSD
     /// baseCoin = 1, targetToken == AUSD
     /// baseCoin = -1, no AUSD
-    int baseCoin = swapPair.indexOf(acala_stable_coin);
+    int baseCoin =
+        swapPair.indexWhere((i) => i.toUpperCase() == acala_stable_coin);
     String output = await apiRoot.evalJavascript(
         'acala.calcTokenSwapAmount(api, $supplyAmount, $targetAmount, ${jsonEncode(swapPair)}, $baseCoin, $slippage)');
     return output;

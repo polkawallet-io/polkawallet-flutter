@@ -27,24 +27,20 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
   final TextEditingController _passCtrl = new TextEditingController();
 
-  String _fee = '';
+  Map _fee = {};
 
   Future<String> _getTxFee() async {
     if (_fee.isNotEmpty) {
-      return _fee;
+      return _fee['partialFee'];
     }
     final Map args = ModalRoute.of(context).settings.arguments;
     Map txInfo = args['txInfo'];
     txInfo['address'] = store.account.currentAddress;
-    String fee = await webApi.account.estimateTxFees(txInfo, args['params']);
+    Map fee = await webApi.account.estimateTxFees(txInfo, args['params']);
     setState(() {
-      _fee = Fmt.balance(
-        fee,
-        decimals: acala_token_decimals,
-        length: 6,
-      );
+      _fee = fee;
     });
-    return fee;
+    return fee['partialFee'];
   }
 
   // todo: error handler after tx inBlock
@@ -222,6 +218,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                         child: Row(
                           children: <Widget>[
                             Container(
+                              margin: EdgeInsets.only(top: 8),
                               width: 64,
                               child: Text(
                                 dic["submit.fees"],
@@ -232,14 +229,34 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                               builder: (BuildContext context,
                                   AsyncSnapshot<String> snapshot) {
                                 if (snapshot.hasData) {
+                                  String fee = Fmt.balance(
+                                    _fee['partialFee'],
+                                    decimals: acala_token_decimals,
+                                    length: 6,
+                                  );
                                   return Container(
+                                    margin: EdgeInsets.only(top: 8),
                                     width: MediaQuery.of(context)
                                             .copyWith()
                                             .size
                                             .width -
                                         120,
-                                    child: Text(
-                                      '$_fee $symbol',
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          '$fee $symbol',
+                                        ),
+                                        Text(
+                                          '${_fee['weight']} Weight',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Theme.of(context)
+                                                .unselectedWidgetColor,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   );
                                 } else {

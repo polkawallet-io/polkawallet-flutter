@@ -8,6 +8,7 @@ import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
@@ -63,9 +64,8 @@ class _SwapPageState extends State<SwapPage> {
 
   Future<void> _selectCurrencyPay() async {
     List<String> swapPair = store.acala.currentSwapPair;
-    List<String> currencyOptions =
-        List<String>.from(store.settings.networkConst['currencyIds'])
-            .sublist(1);
+    List<String> currencyOptions = List<String>.of(store.acala.swapTokens);
+    currencyOptions.add(acala_stable_coin_view);
     currencyOptions.retainWhere((i) => i != swapPair[0] && i != swapPair[1]);
     var selected = await Navigator.of(context)
         .pushNamed(CurrencySelectPage.route, arguments: currencyOptions);
@@ -78,9 +78,8 @@ class _SwapPageState extends State<SwapPage> {
 
   Future<void> _selectCurrencyReceive() async {
     List<String> swapPair = store.acala.currentSwapPair;
-    List<String> currencyOptions =
-        List<String>.from(store.settings.networkConst['currencyIds'])
-            .sublist(1);
+    List<String> currencyOptions = List<String>.of(store.acala.swapTokens);
+    currencyOptions.add(acala_stable_coin_view);
     currencyOptions.retainWhere((i) => i != swapPair[0] && i != swapPair[1]);
     var selected = await Navigator.of(context)
         .pushNamed(CurrencySelectPage.route, arguments: currencyOptions);
@@ -206,9 +205,10 @@ class _SwapPageState extends State<SwapPage> {
   @override
   void initState() {
     super.initState();
-    List currencyIds = store.settings.networkConst['currencyIds'];
+    List currencyIds = store.acala.swapTokens;
     if (currencyIds != null) {
-      store.acala.setSwapPair(currencyIds.sublist(1, 3).reversed.toList());
+      store.acala
+          .setSwapPair([store.acala.swapTokens[0], acala_stable_coin_view]);
       _refreshData();
     }
   }
@@ -227,14 +227,14 @@ class _SwapPageState extends State<SwapPage> {
         final Map dic = I18n.of(context).acala;
         final Map dicAssets = I18n.of(context).assets;
         int decimals = store.settings.networkState.tokenDecimals;
-        List currencyIds = store.settings.networkConst['currencyIds'];
-        List swapPair = store.acala.currentSwapPair.toList();
+        List<String> swapPair = store.acala.currentSwapPair;
 
         final double inputWidth = MediaQuery.of(context).size.width / 3;
 
         BigInt balance = BigInt.zero;
-        if (currencyIds != null && swapPair.length > 0) {
-          balance = Fmt.balanceInt(store.assets.balances[swapPair[0]]);
+        if (store.acala.swapTokens != null && swapPair.length > 0) {
+          balance =
+              Fmt.balanceInt(store.assets.balances[swapPair[0].toUpperCase()]);
         }
 
         Color primary = Theme.of(context).primaryColor;
