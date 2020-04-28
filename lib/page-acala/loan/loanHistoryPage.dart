@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/store/acala/acala.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/store/acala/types/loanType.dart';
+import 'package:polka_wallet/store/acala/types/txLoanData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -97,7 +99,7 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                         .firstWhere((i) => i.token == detail.currencyId);
                     BigInt amountView = detail.amountCollateral;
                     if (detail.currencyIdView.toUpperCase() ==
-                        store.acala.acalaBaseCoin) {
+                        acala_stable_coin) {
                       amountView =
                           loanType.debitShareToDebit(detail.amountDebitShare);
                     }

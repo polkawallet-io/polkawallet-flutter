@@ -8,7 +8,7 @@ import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanInfoPanel.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
-import 'package:polka_wallet/store/acala/acala.dart';
+import 'package:polka_wallet/store/acala/types/loanType.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -46,7 +46,7 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
     final LoanAdjustPageParams params =
         ModalRoute.of(context).settings.arguments;
     BigInt tokenPrice = store.acala.prices[params.token];
-    BigInt stableCoinPrice = store.acala.prices[store.acala.acalaBaseCoin];
+    BigInt stableCoinPrice = store.acala.prices[acala_stable_coin];
     BigInt collateralInUSD = loanType.tokenToUSD(collateral, tokenPrice);
     BigInt debitInUSD = loanType.tokenToUSD(debit, stableCoinPrice);
     setState(() {
@@ -202,7 +202,7 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
     int decimals = acala_token_decimals;
 
     BigInt price = store.acala.prices[symbol];
-    BigInt stableCoinPrice = store.acala.prices[store.acala.acalaBaseCoin];
+    BigInt stableCoinPrice = store.acala.prices[acala_stable_coin];
 
     LoanType loanType =
         store.acala.loanTypes.firstWhere((i) => i.token == symbol);

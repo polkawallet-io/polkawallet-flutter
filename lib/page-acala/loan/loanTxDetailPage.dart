@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/assets/transfer/txDetail.dart';
-import 'package:polka_wallet/store/acala/acala.dart';
+import 'package:polka_wallet/store/acala/types/loanType.dart';
+import 'package:polka_wallet/store/acala/types/txLoanData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -22,7 +23,7 @@ class LoanTxDetailPage extends StatelessWidget {
     LoanType loanType =
         store.acala.loanTypes.firstWhere((i) => i.token == tx.currencyId);
     BigInt amountView = tx.amountCollateral;
-    if (tx.currencyIdView.toUpperCase() == store.acala.acalaBaseCoin) {
+    if (tx.currencyIdView.toUpperCase() == acala_stable_coin) {
       amountView = loanType.debitShareToDebit(tx.amountDebitShare);
     }
 

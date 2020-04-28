@@ -6,7 +6,6 @@ class TxDexLiquidityData extends _TxDexLiquidityData {
   static const String actionWithdraw = 'withdraw';
   static const String actionReward = 'reward';
   static TxDexLiquidityData fromJson(Map<String, dynamic> json) {
-    print(json);
     TxDexLiquidityData data = TxDexLiquidityData();
     data.hash = json['hash'];
     data.action = json['action'];

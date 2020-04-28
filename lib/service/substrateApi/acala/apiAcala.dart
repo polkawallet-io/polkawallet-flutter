@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/faucet.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/polkascan.dart';
@@ -105,7 +106,7 @@ class ApiAcala {
     /// baseCoin = 0, supplyToken == AUSD
     /// baseCoin = 1, targetToken == AUSD
     /// baseCoin = -1, no AUSD
-    int baseCoin = swapPair.indexOf(store.acala.acalaBaseCoin);
+    int baseCoin = swapPair.indexOf(acala_stable_coin);
     String output = await apiRoot.evalJavascript(
         'acala.calcTokenSwapAmount(api, $supplyAmount, $targetAmount, ${jsonEncode(swapPair)}, $baseCoin, $slippage)');
     return output;
@@ -113,7 +114,7 @@ class ApiAcala {
 
   Future<void> fetchDexLiquidityPoolSwapRatio(String currencyId) async {
     String res = await fetchTokenSwapAmount(
-        '1', null, [currencyId, store.acala.acalaBaseCoin], '0');
+        '1', null, [currencyId, acala_stable_coin], '0');
     store.acala.setSwapPoolRatio(currencyId, res);
   }
 

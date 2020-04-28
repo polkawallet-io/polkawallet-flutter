@@ -8,7 +8,7 @@ import 'package:polka_wallet/page-acala/loan/loanCard.dart';
 import 'package:polka_wallet/page-acala/loan/loanChart.dart';
 import 'package:polka_wallet/page-acala/loan/loanCreatePage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/acala/acala.dart';
+import 'package:polka_wallet/store/acala/types/loanType.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -68,7 +68,7 @@ class _LoanPageState extends State<LoanPage> {
           LoanData loan = store.acala.loans[_tab];
 
           String balance = Fmt.priceFloor(
-              Fmt.balanceInt(store.assets.balances[store.acala.acalaBaseCoin]));
+              Fmt.balanceInt(store.assets.balances[acala_stable_coin]));
 
           Color cardColor = Theme.of(context).cardColor;
           Color primaryColor = Theme.of(context).primaryColor;

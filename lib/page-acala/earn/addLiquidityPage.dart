@@ -6,6 +6,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
@@ -138,7 +139,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
         double amountTokenUser = 0;
         BigInt balanceTokenUser = Fmt.balanceInt(store.assets.balances[token]);
         BigInt balanceStableCoinUser =
-            Fmt.balanceInt(store.assets.balances[store.acala.acalaBaseCoin]);
+            Fmt.balanceInt(store.assets.balances[acala_stable_coin]);
 
         DexPoolInfoData poolInfo = store.acala.dexPoolInfoMap[token];
         if (poolInfo != null) {
@@ -189,7 +190,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                           Container(
                             width: inputWidth,
                             child: CurrencyWithIcon(
-                              store.acala.acalaBaseCoin,
+                              acala_stable_coin_view,
                               textWidth: 48,
                               textStyle: Theme.of(context).textTheme.display4,
                             ),
@@ -322,7 +323,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
                           Text(
-                              '1 $token = ${Fmt.doubleFormat(swapRatio, length: 2)} ${store.acala.acalaBaseCoin}'),
+                              '1 $token = ${Fmt.doubleFormat(swapRatio, length: 2)} $acala_stable_coin_view'),
                         ],
                       ),
                       Row(
@@ -334,7 +335,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
                           Text(
-                              '${Fmt.doubleFormat(amountToken)} $token + ${Fmt.doubleFormat(amountStableCoin, length: 2)} ${store.acala.acalaBaseCoin}'),
+                              '${Fmt.doubleFormat(amountToken)} $token + ${Fmt.doubleFormat(amountStableCoin, length: 2)} $acala_stable_coin_view'),
                         ],
                       ),
                       Row(

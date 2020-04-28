@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -98,7 +99,7 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                     switch (detail.action) {
                       case TxDexLiquidityData.actionDeposit:
                         amount =
-                            '${Fmt.priceCeil(detail.amountToken)} ${detail.currencyId}\n+ ${Fmt.priceCeil(detail.amountStableCoin)} ${store.acala.acalaBaseCoin}';
+                            '${Fmt.priceCeil(detail.amountToken)} ${detail.currencyId}\n+ ${Fmt.priceCeil(detail.amountStableCoin)} $acala_stable_coin_view';
                         image = 'assets/images/assets/assets_up.png';
                         break;
                       case TxDexLiquidityData.actionWithdraw:
@@ -107,7 +108,7 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                         break;
                       case TxDexLiquidityData.actionReward:
                         amount =
-                            '${Fmt.priceCeil(detail.amountStableCoin)} ${store.acala.acalaBaseCoin}';
+                            '${Fmt.priceCeil(detail.amountStableCoin)} $acala_stable_coin_view';
                         break;
                     }
                     return Container(

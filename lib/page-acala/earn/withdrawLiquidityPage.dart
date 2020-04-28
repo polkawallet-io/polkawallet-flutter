@@ -245,7 +245,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                               style: Theme.of(context).textTheme.display4,
                             ),
                             Text(
-                              '${Fmt.doubleFormat(amountToken)} $token + ${Fmt.doubleFormat(amountStableCoin, length: 2)} ${store.acala.acalaBaseCoin}',
+                              '${Fmt.doubleFormat(amountToken)} $token + ${Fmt.doubleFormat(amountStableCoin, length: 2)} $acala_stable_coin_view',
                               style: Theme.of(context).textTheme.display4,
                             ),
                           ],
@@ -261,7 +261,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
                           Text(
-                              '1 $token = ${Fmt.doubleFormat(swapRatio, length: 2)} ${store.acala.acalaBaseCoin}'),
+                              '1 $token = ${Fmt.doubleFormat(swapRatio, length: 2)} $acala_stable_coin_view'),
                         ],
                       ),
                       Row(
@@ -273,7 +273,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
                           Text(
-                              '${Fmt.doubleFormat(poolToken)} $token + ${Fmt.doubleFormat(poolStableCoin, length: 2)} ${store.acala.acalaBaseCoin}'),
+                              '${Fmt.doubleFormat(poolToken)} $token + ${Fmt.doubleFormat(poolStableCoin, length: 2)} $acala_stable_coin_view'),
                         ],
                       ),
                       Row(

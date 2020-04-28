@@ -385,9 +385,3 @@ mixin _$AcalaStore on _AcalaStore, Store {
     }
   }
 }
-
-mixin _$LoanData on _LoanData, Store {}
-
-mixin _$LoanType on _LoanType, Store {}
-
-mixin _$TxLoanData on _TxLoanData, Store {}

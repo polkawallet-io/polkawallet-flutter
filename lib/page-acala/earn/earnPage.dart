@@ -50,7 +50,7 @@ class _EarnPageState extends State<EarnPage> {
       },
       "detail": jsonEncode({
         "currencyId": _tab,
-        "amount": '$amount ${store.acala.acalaBaseCoin}',
+        "amount": '$amount $acala_stable_coin_view',
       }),
       "params": [_tab],
       "onFinish": (BuildContext txPageContext, Map res) {
@@ -128,7 +128,6 @@ class _EarnPageState extends State<EarnPage> {
                           reward: store.acala.swapPoolRewards[_tab],
                           fee: store.acala.swapFee,
                           token: _tab,
-                          baseCoin: store.acala.acalaBaseCoin,
                           swapRatio: Fmt.doubleFormat(
                               double.parse(
                                   store.acala.swapPoolRatios[_tab] ?? '0'),
@@ -141,7 +140,6 @@ class _EarnPageState extends State<EarnPage> {
                           share: userShare,
                           reward: poolInfo != null ? poolInfo.reward : 0,
                           token: _tab,
-                          baseCoin: store.acala.acalaBaseCoin,
                           amountToken: Fmt.doubleFormat(amountTokenUser),
                           amountStableCoin:
                               Fmt.doubleFormat(amountStableCoinUser, length: 2),
@@ -290,7 +288,6 @@ class _SystemCard extends StatelessWidget {
     this.reward,
     this.fee,
     this.token,
-    this.baseCoin,
     this.swapRatio,
     this.amountToken,
     this.amountStableCoin,
@@ -298,7 +295,6 @@ class _SystemCard extends StatelessWidget {
   final double reward;
   final double fee;
   final String token;
-  final String baseCoin;
   final String swapRatio;
   final String amountToken;
   final String amountStableCoin;
@@ -334,7 +330,7 @@ class _SystemCard extends StatelessWidget {
               ),
               Column(
                 children: <Widget>[
-                  Text(baseCoin),
+                  Text(acala_stable_coin_view),
                   Text(
                     amountStableCoin,
                     style: primaryText,
@@ -346,7 +342,7 @@ class _SystemCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 8),
             child: Text(
-              '${dic['dex.rate']} 1 $token = $swapRatio $baseCoin',
+              '${dic['dex.rate']} 1 $token = $swapRatio $acala_stable_coin_view',
               style: TextStyle(fontSize: 12),
             ),
           ),
@@ -376,7 +372,6 @@ class _UserCard extends StatelessWidget {
     this.share,
     this.reward,
     this.token,
-    this.baseCoin,
     this.amountToken,
     this.amountStableCoin,
     this.onWithdrawReward,
@@ -384,7 +379,6 @@ class _UserCard extends StatelessWidget {
   final double share;
   final double reward;
   final String token;
-  final String baseCoin;
   final String amountToken;
   final String amountStableCoin;
   final Function onWithdrawReward;
@@ -423,7 +417,7 @@ class _UserCard extends StatelessWidget {
                   ),
                   Column(
                     children: <Widget>[
-                      Text(baseCoin),
+                      Text(acala_stable_coin_view),
                       Text(
                         amountStableCoin,
                         style: primaryText,
@@ -463,7 +457,7 @@ class _UserCard extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          '${Fmt.doubleFormat(reward, length: 4)} $baseCoin',
+                          '${Fmt.doubleFormat(reward, length: 4)} $acala_stable_coin_view',
                           style: Theme.of(context).textTheme.display4,
                         )
                       ],
