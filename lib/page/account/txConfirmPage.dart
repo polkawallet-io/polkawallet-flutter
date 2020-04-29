@@ -127,7 +127,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     print(txInfo);
     print(args['params']);
     var res = await webApi.account.sendTx(
-        txInfo, args['params'], dic['notify.submitted'],
+        txInfo, args['params'], args['title'], dic['notify.submitted'],
         rawParam: args['rawParam']);
     if (res == null) {
       onTxError();

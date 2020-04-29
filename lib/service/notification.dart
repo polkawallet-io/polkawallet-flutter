@@ -22,11 +22,12 @@ class ReceivedNotification {
   final String body;
   final String payload;
 
-  ReceivedNotification(
-      {@required this.id,
-      @required this.title,
-      @required this.body,
-      @required this.payload});
+  ReceivedNotification({
+    @required this.id,
+    @required this.title,
+    @required this.body,
+    @required this.payload,
+  });
 }
 
 class NotificationPlugin {
@@ -89,6 +90,10 @@ class NotificationPlugin {
 
   static Future<void> showNotification(int id, String title, String body,
       {String payload}) async {
+    print('showNotification');
+    print(id);
+    print(title);
+    print(body);
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'transaction_submitted',
         'Tx Submitted',

@@ -76,17 +76,21 @@ class ApiAccount {
     return c.future;
   }
 
-  Future<dynamic> sendTx(Map txInfo, List params, String notificationTitle,
+  Future<dynamic> sendTx(
+      Map txInfo, List params, String pageTile, String notificationTitle,
       {String rawParam}) async {
     String param = rawParam != null ? rawParam : jsonEncode(params);
-//    var res = await _testSendTx();
     var res = await apiRoot
         .evalJavascript('account.sendTx(${jsonEncode(txInfo)}, $param)');
+//    var res = await _testSendTx();
 
     if (res != null) {
       String hash = res['hash'];
-      NotificationPlugin.showNotification(int.parse(hash.substring(0, 6)),
-          notificationTitle, '${txInfo['module']}.${txInfo['call']}');
+      NotificationPlugin.showNotification(
+        int.parse(hash.substring(0, 6)),
+        notificationTitle,
+        '$pageTile - ${txInfo['module']}.${txInfo['call']}',
+      );
     }
     return res;
   }
