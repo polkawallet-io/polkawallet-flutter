@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -16,34 +17,6 @@ const default_node = {
   'text': 'Kusama (Polkadot Canary, hosted by Parity)',
   'value': 'wss://kusama-rpc.polkadot.io/',
 };
-const nodeList = [
-  default_node_zh,
-  default_node,
-  {
-    'info': 'kusama',
-    'ss58': 2,
-    'text': 'Kusama (Polkadot Canary, hosted by Web3 Foundation)',
-    'value': 'wss://cc3-5.kusama.network/',
-  },
-  {
-    'info': 'substrate',
-    'ss58': 42,
-    'text': 'Flaming Fir (Substrate Testnet, hosted by Parity)',
-    'value': 'wss://substrate-rpc.parity.io/',
-  },
-  {
-    'info': 'substrate',
-    'ss58': 42,
-    'text': 'Kulupu (Kulupu Mainnet, hosted by Kulupu)',
-    'value': 'wss://rpc.kulupu.network/ws',
-  },
-];
-const default_ss58_map = {
-  'kusama': 2,
-  'substrate': 42,
-  'westend': 42,
-  'polkadot': 0,
-};
 
 class RemoteNodeListPage extends StatelessWidget {
   RemoteNodeListPage(this.store);
@@ -55,22 +28,26 @@ class RemoteNodeListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).profile;
-    List<Widget> list = nodeList
+    List<EndpointData> endpoints = List<EndpointData>.of(networkEndpoints);
+    endpoints.retainWhere((i) => i.info == store.endpoint.info);
+    List<Widget> list = endpoints
         .map((i) => ListTile(
               leading: Container(
                 width: 36,
-                child: Image.asset('assets/images/public/${i['info']}.png'),
+                child: Image.asset('assets/images/public/${i.info}.png'),
               ),
-              title: Text(i['info']),
-              subtitle: Text(i['text']),
+              title: Text(i.info),
+              subtitle: Text(i.text),
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
               onTap: () {
-                if (store.endpoint.value == i['value']) {
+                if (store.endpoint.value == i.value) {
                   Navigator.of(context).pop();
                   return;
                 }
-                store.setEndpoint(i);
-                api.changeNode(i['value']);
+                store.setEndpoint(EndpointData.toJson(i));
+                store.loadNetworkStateCache();
+                store.setNetworkLoading(true);
+                webApi.launchWebview();
                 Navigator.of(context).pop();
               },
             ))

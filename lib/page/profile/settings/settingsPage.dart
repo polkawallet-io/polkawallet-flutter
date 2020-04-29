@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -82,18 +83,18 @@ class _Settings extends State<SettingsPage> {
         builder: (_) => SafeArea(
           child: ListView(
             children: <Widget>[
-//              ListTile(
-//                leading: Container(
-//                  width: 36,
-//                  child: Image.asset(
-//                      'assets/images/public/${store.endpoint.info}.png'),
-//                ),
-//                title: Text(dic['setting.node']),
-//                subtitle: Text(store.endpoint.text ?? ''),
-//                trailing: Icon(Icons.arrow_forward_ios, size: 18),
-//                onTap: () =>
-//                    Navigator.of(context).pushNamed(RemoteNodeListPage.route),
-//              ),
+              ListTile(
+                leading: Container(
+                  width: 36,
+                  child: Image.asset(
+                      'assets/images/public/${store.endpoint.info}.png'),
+                ),
+                title: Text(dic['setting.node']),
+                subtitle: Text(store.endpoint.text ?? ''),
+                trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                onTap: () =>
+                    Navigator.of(context).pushNamed(RemoteNodeListPage.route),
+              ),
               ListTile(
                 leading: Container(
                   width: 36,

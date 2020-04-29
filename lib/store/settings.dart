@@ -1,7 +1,7 @@
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -162,9 +162,10 @@ abstract class _SettingsStore with Store {
     Map<String, dynamic> value =
         await LocalStorage.getKV(localStorageEndpointKey);
     if (value == null) {
-      value = sysLocaleCode.contains('zh') ? default_node_zh : default_node;
+      endpoint = networkEndpointKusama;
+    } else {
+      endpoint = EndpointData.fromJson(value);
     }
-    endpoint = EndpointData.fromJson(value);
   }
 
   @action

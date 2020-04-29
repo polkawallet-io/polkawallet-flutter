@@ -185,6 +185,11 @@ class Api {
 
     // fetch account balance
     if (store.account.accountList.length > 0) {
+      if (store.settings.endpoint.info == networkEndpointAcala.info) {
+        await assets.fetchBalance(store.account.currentAccount.pubKey);
+        return;
+      }
+
       await Future.wait([
         assets.fetchBalance(store.account.currentAccount.pubKey),
         staking.fetchAccountStaking(store.account.currentAccount.pubKey),
