@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
@@ -54,13 +56,15 @@ class AboutPage extends StatelessWidget {
                     : Container();
               },
             ),
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: RoundedButton(
-                text: I18n.of(context).home['update'],
-                onPressed: () => UI.checkUpdate(context),
-              ),
-            )
+            Platform.isAndroid
+                ? Padding(
+                    padding: EdgeInsets.all(16),
+                    child: RoundedButton(
+                      text: I18n.of(context).home['update'],
+                      onPressed: () => UI.checkUpdate(context),
+                    ),
+                  )
+                : Container()
           ],
         ),
       ),

@@ -38,6 +38,10 @@ const Map<String, String> enHome = {
   'update': 'Check Update',
   'update.latest': 'Your App is the newest version.',
   'update.up': 'New version found, update now?',
+  'update.start': 'Connecting...',
+  'update.download': 'Downloading...',
+  'update.install': 'Installing...',
+  'update.error': 'Update Failed',
 };
 
 const Map<String, String> zhHome = {
@@ -77,4 +81,8 @@ const Map<String, String> zhHome = {
   'update': '检查更新',
   'update.latest': '您的应用已是最新版本。',
   'update.up': '发现新版本，立即更新吗？',
+  'update.start': '等待连接...',
+  'update.download': '正在下载...',
+  'update.install': '开始安装',
+  'update.error': '更新失败',
 };

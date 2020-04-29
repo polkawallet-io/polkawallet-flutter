@@ -1,3 +1,13 @@
+# 0.7.1
+- Support OTA update
+
+# 0.7.0
+- Support acala-mandala network
+- Add Acala Loan
+- Add Acala Swap
+- Add Acala Deposit&Earn
+- Add Acala Faucet
+
 # 0.6.2
 - Update polkadot-js/api to 1.9.0-beta.0
 

@@ -55,6 +55,7 @@ import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/utils/UI.dart';
 
 import 'utils/i18n/index.dart';
 import 'common/theme.dart';
@@ -120,6 +121,8 @@ class _WalletAppState extends State<WalletApp> {
 
       _changeLang(context, _appStore.settings.localeCode);
       _changeTheme();
+
+      UI.checkUpdate(context, autoCheck: true);
     }
 
     return _appStore.account.accountList.length;
