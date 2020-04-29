@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:device_info/device_info.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/faucet.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -14,7 +16,17 @@ class ApiAcala {
   final store = globalAppStore;
 
   Future<String> fetchFaucet() async {
-    String res = await AcalaFaucetApi.getTokens(store.account.currentAddress);
+    String address = store.account.currentAddress;
+    String deviceId = address;
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo info = await deviceInfo.androidInfo;
+      deviceId = info.id;
+    } else {
+      IosDeviceInfo info = await deviceInfo.iosInfo;
+      deviceId = info.identifierForVendor;
+    }
+    String res = await AcalaFaucetApi.getTokens(address, deviceId);
     return res;
   }
 
@@ -50,7 +62,6 @@ class ApiAcala {
     tokens.asMap().forEach((i, v) {
       amt[v] = BigInt.parse(amount[i].toString());
     });
-    print(amt);
     store.acala.setAirdrops(amt);
   }
 

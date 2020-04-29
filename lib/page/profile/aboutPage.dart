@@ -11,7 +11,7 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var dic = I18n.of(context).profile;
+    final Map dic = I18n.of(context).profile;
     return Scaffold(
       backgroundColor: Theme.of(context).cardColor,
       appBar: AppBar(
@@ -57,7 +57,7 @@ class AboutPage extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(16),
               child: RoundedButton(
-                text: 'update',
+                text: I18n.of(context).home['update'],
                 onPressed: () => UI.checkUpdate(context),
               ),
             )

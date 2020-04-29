@@ -57,6 +57,9 @@ const Map<String, String> enDex = {
   'earn.available': 'Available',
   'faucet.title': 'Faucet',
   'faucet.bref': 'Get test Tokens of Acala testnet.',
+  'faucet.ok': 'Test Tokens were sent.',
+  'faucet.limit': 'Exceeds daily limit.',
+  'faucet.error': 'Request error, try again later.',
 };
 
 const Map<String, String> zhDex = {
@@ -115,4 +118,7 @@ const Map<String, String> zhDex = {
   'earn.available': '可用',
   'faucet.title': '水龙头',
   'faucet.bref': '领取 Acala 测试网使用的测试 Token.',
+  'faucet.ok': '领取成功。',
+  'faucet.limit': '每天领取次数有限哦。',
+  'faucet.error': '可能领取姿势不太对，等会儿再试试吧。',
 };

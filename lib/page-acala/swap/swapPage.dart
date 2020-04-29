@@ -49,7 +49,6 @@ class _SwapPageState extends State<SwapPage> {
   Future<void> _refreshData() async {
     String pubKey = store.account.currentAccount.pubKey;
     webApi.assets.fetchBalance(pubKey);
-    webApi.acala.fetchTokens(pubKey);
     webApi.acala.fetchTokenSwapRatio();
 
     // then fetch txs history

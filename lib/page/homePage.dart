@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
       _notificationPlugin.init(context);
     }
 
-    UI.checkUpdate(context);
+//    UI.checkUpdate(context);
 
     super.initState();
   }

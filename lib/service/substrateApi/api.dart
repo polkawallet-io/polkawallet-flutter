@@ -183,14 +183,6 @@ class Api {
     store.settings.setNetworkState(info[1]);
     store.settings.setNetworkName(info[2]);
 
-    if (store.settings.endpoint.info == networkEndpointAcala.info) {
-      await Future.wait([
-        assets.fetchBalance(store.account.currentAccount.pubKey),
-        acala.fetchTokens(store.account.currentAccount.pubKey),
-      ]);
-      return;
-    }
-
     // fetch account balance
     if (store.account.accountList.length > 0) {
       await Future.wait([

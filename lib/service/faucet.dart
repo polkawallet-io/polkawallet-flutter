@@ -3,22 +3,21 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 class AcalaFaucetApi {
-  static const String _endpoint = 'http://192.168.1.64:5555';
+  static const String _endpoint = 'https://apps.acala.network/faucet';
 
-  static Future<String> getTokens(String address) async {
-    String amount = jsonEncode({
-      "ACA": 2,
-      "aUSD": 2,
-      "DOT": 2,
-      "XBTC": 0.1,
+  static Future<String> getTokens(String address, String deviceId) async {
+    Map<String, String> headers = {"Content-type": "application/json"};
+    String body = jsonEncode({
+      "address": address,
+      "sender": deviceId,
     });
     try {
-      Response res = await post('$_endpoint/bot-endpoint', body: {
-        "address": address,
-        "sender": address,
-        "amount": amount,
-      });
-      return res.body;
+      Response res =
+          await post('$_endpoint/bot-endpoint', headers: headers, body: body);
+      if (res.statusCode == 200) {
+        return res.body;
+      }
+      return null;
     } catch (err) {
       print(err);
       return null;

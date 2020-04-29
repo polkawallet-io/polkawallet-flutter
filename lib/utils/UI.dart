@@ -75,6 +75,7 @@ class UI {
   }
 
   static Future<void> checkUpdate(BuildContext context) async {
+    final Map dic = I18n.of(context).home;
     String versions = await VersionApi.getLatestVersion();
     Map v = jsonDecode(versions);
     String latest = v['android']['version'];
@@ -94,17 +95,17 @@ class UI {
           title: Text(latest),
           content: Padding(
             padding: EdgeInsets.only(top: 12),
-            child: Text(needUpdate ? "find new" : "newst"),
+            child: Text(needUpdate ? dic['update.up'] : dic['update.latest']),
           ),
           actions: <Widget>[
             CupertinoButton(
-              child: Text(I18n.of(context).home['cancel']),
+              child: Text(dic['cancel']),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             CupertinoButton(
-              child: Text(I18n.of(context).home['ok']),
+              child: Text(dic['ok']),
               onPressed: () {
                 if (Platform.isIOS) {
                   // go to ios download page

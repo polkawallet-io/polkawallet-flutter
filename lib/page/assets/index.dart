@@ -36,8 +36,6 @@ class _AssetsState extends State<Assets> {
     if (store.settings.endpoint.info == networkEndpointAcala.info) {
       await Future.wait([
         webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
-        webApi.acala.fetchTokens(store.account.currentAccount.pubKey),
-        webApi.acala.fetchAirdropTokens(),
       ]);
     } else {
       await Future.wait([
@@ -51,35 +49,40 @@ class _AssetsState extends State<Assets> {
     setState(() {
       _faucetSubmitting = true;
     });
-    print('sss');
     String res = await webApi.acala.fetchFaucet();
-    print(res);
-    String dialogContent = "success";
+    String dialogContent = I18n.of(context).acala['faucet.ok'];
+    bool isOK = false;
     if (res == null) {
-      dialogContent = "error";
+      dialogContent = I18n.of(context).acala['faucet.error'];
     } else if (res == "LIMIT") {
-      dialogContent = "LIMIT";
+      dialogContent = I18n.of(context).acala['faucet.limit'];
+    } else {
+      isOK = true;
     }
+    setState(() {
+      _faucetSubmitting = false;
+    });
 
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        final Map<String, String> accDic = I18n.of(context).account;
         return CupertinoAlertDialog(
           title: Container(),
           content: Text(dialogContent),
           actions: <Widget>[
             CupertinoButton(
               child: Text(I18n.of(context).home['ok']),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (isOK) {
+                  globalBalanceRefreshKey.currentState.show();
+                }
+              },
             ),
           ],
         );
       },
     );
-    setState(() {
-      _faucetSubmitting = false;
-    });
   }
 
   Widget _buildTopCard(BuildContext context) {

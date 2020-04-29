@@ -32,7 +32,6 @@ class _LoanPageState extends State<LoanPage> {
   String _tab = 'DOT';
 
   Future<void> _fetchData() async {
-    print('refresh');
     await Future.wait([
       webApi.acala.fetchTokens(store.account.currentAccount.pubKey),
       webApi.acala.fetchLoanTypes(),
