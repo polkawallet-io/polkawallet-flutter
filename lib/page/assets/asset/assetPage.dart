@@ -9,7 +9,7 @@ import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/store/assets/assets.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -33,24 +33,21 @@ class _AssetPageState extends State<AssetPage>
   final AppStore store;
 
   TabController _tabController;
-  int _txsPage = 1;
+  int _txsPage = 0;
   bool _isLastPage = false;
   ScrollController _scrollController;
 
   Future<void> _updateData() async {
     String pubKey = store.account.currentAccount.pubKey;
     webApi.assets.fetchBalance(pubKey);
-    List res = [];
+    Map res = {"transfers": []};
 
     if (store.settings.endpoint.info == networkEndpointKusama.info) {
       webApi.staking.fetchAccountStaking(pubKey);
       res = await webApi.assets.updateTxs(_txsPage);
     }
-//    if (store.settings.endpoint.info == networkEndpointAcala.info) {
-//      res = await webApi.acala.updateTxs(_txsPage);
-//    }
 
-    if (res.length < tx_list_page_size) {
+    if (res['transfers'].length < tx_list_page_size) {
       setState(() {
         _isLastPage = true;
       });
@@ -59,7 +56,7 @@ class _AssetPageState extends State<AssetPage>
 
   Future<void> _refreshData() async {
     setState(() {
-      _txsPage = 1;
+      _txsPage = 0;
       _isLastPage = false;
     });
     await _updateData();
@@ -71,17 +68,17 @@ class _AssetPageState extends State<AssetPage>
     _tabController = TabController(vsync: this, length: 3);
 
     _scrollController = ScrollController();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent) {
-        setState(() {
-          if (_tabController.index == 0 && !_isLastPage) {
-            _txsPage += 1;
-            _updateData();
-          }
-        });
-      }
-    });
+//    _scrollController.addListener(() {
+//      if (_scrollController.position.pixels >=
+//          _scrollController.position.maxScrollExtent) {
+//        setState(() {
+//          if (_tabController.index == 0 && !_isLastPage) {
+//            _txsPage += 1;
+//            _updateData();
+//          }
+//        });
+//      }
+//    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (LocalStorage.checkCacheTimeout(store.assets.cacheTxsTimestamp)) {
@@ -118,39 +115,34 @@ class _AssetPageState extends State<AssetPage>
     String symbol = store.settings.networkState.tokenSymbol;
     Map<int, BlockData> blockMap = store.assets.blockMap;
     return store.assets.txsView.map((i) {
-      BlockData block = blockMap[i.block];
-      String time = 'time';
-      if (block != null) {
-        time = block.time.toString().split('.')[0];
-      }
       return Container(
         decoration: BoxDecoration(
           border: Border(bottom: BorderSide(width: 0.5, color: Colors.black12)),
         ),
         child: ListTile(
-          title: Text(i.id),
-          subtitle: Text(time),
+          title: Text(i.extrinsicIndex),
+          subtitle: Text(
+              DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp * 1000)
+                  .toString()),
           trailing: Container(
             width: 110,
             child: Row(
               children: <Widget>[
                 Expanded(
                     child: Text(
-                  '${Fmt.token(i.value, decimals: decimals)} $symbol',
+                  '${i.amount} $symbol',
                   style: Theme.of(context).textTheme.display4,
                 )),
-                i.sender == store.account.currentAddress
+                i.from == store.account.currentAddress
                     ? Image.asset('assets/images/assets/assets_up.png')
                     : Image.asset('assets/images/assets/assets_down.png')
               ],
             ),
           ),
-          onTap: block != null
-              ? () {
-                  Navigator.pushNamed(context, TransferDetailPage.route,
-                      arguments: i);
-                }
-              : null,
+          onTap: () {
+            Navigator.pushNamed(context, TransferDetailPage.route,
+                arguments: i);
+          },
         ),
       );
     }).toList();

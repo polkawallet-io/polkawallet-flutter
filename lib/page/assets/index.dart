@@ -75,6 +75,7 @@ class _AssetsState extends State<Assets> {
               onPressed: () {
                 Navigator.of(context).pop();
                 if (isOK) {
+                  // TODO：add notification
                   globalBalanceRefreshKey.currentState.show();
                 }
               },

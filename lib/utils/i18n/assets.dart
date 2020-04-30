@@ -28,7 +28,7 @@ const Map<String, String> enAssets = {
   'to': 'To',
   'block': 'Block',
   'event': 'Event ID',
-  'hash': 'Block Hash',
+  'hash': 'TxHash',
   'polkascan': 'Open in Browser',
 };
 
@@ -62,6 +62,6 @@ const Map<String, String> zhAssets = {
   'to': '收款地址',
   'block': '区块',
   'event': '交易ID',
-  'hash': '区块Hash',
+  'hash': '交易Hash',
   'polkascan': '在浏览器中查看',
 };

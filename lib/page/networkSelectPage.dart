@@ -73,9 +73,22 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
           subtitle: Text(Fmt.address(address ?? 'address xxxx')),
           onTap: () {
             if (address == store.account.currentAddress) return;
+            Navigator.of(context).pop();
 
             /// set current account
             store.account.setCurrentAccount(i);
+            // refresh balance
+            store.assets.loadAccountCache();
+
+            if (store.settings.endpoint.info == networkEndpointKusama.info) {
+              // refresh user's staking & gov info
+              store.gov.clearSate();
+              store.staking.loadAccountCache();
+            }
+
+            if (store.settings.endpoint.info == networkEndpointAcala.info) {
+              store.acala.loadCache();
+            }
 
             if (isCurrentNetwork) {
               /// reload account info
@@ -88,8 +101,6 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
               webApi.launchWebview();
               changeTheme();
             }
-
-            Navigator.of(context).pop();
           },
         ),
       );

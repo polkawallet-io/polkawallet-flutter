@@ -30,8 +30,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   Map _fee = {};
 
   Future<String> _getTxFee() async {
-    if (_fee.isNotEmpty) {
-      return _fee['partialFee'];
+    if (_fee['partialFee'] != null) {
+      return _fee['partialFee'].toString();
     }
     final Map args = ModalRoute.of(context).settings.arguments;
     Map txInfo = args['txInfo'];
@@ -40,7 +40,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     setState(() {
       _fee = fee;
     });
-    return fee['partialFee'];
+    print(fee);
+    return fee['partialFee'].toString();
   }
 
   // todo: error handler after tx inBlock
@@ -130,6 +131,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
         txInfo, args['params'], args['title'], dic['notify.submitted'],
         rawParam: args['rawParam']);
     if (res == null) {
+      // TODO: handle different errors
       onTxError();
     } else {
       onTxFinish(Map.from(res));
@@ -146,6 +148,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).home;
     final String symbol = store.settings.networkState.tokenSymbol;
+    final int decimals = store.settings.networkState.tokenDecimals;
 
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
 
@@ -230,8 +233,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                                   AsyncSnapshot<String> snapshot) {
                                 if (snapshot.hasData) {
                                   String fee = Fmt.balance(
-                                    _fee['partialFee'],
-                                    decimals: acala_token_decimals,
+                                    _fee['partialFee'].toString(),
+                                    decimals: decimals,
                                     length: 6,
                                   );
                                   return Container(

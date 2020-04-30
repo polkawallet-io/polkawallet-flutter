@@ -4,7 +4,7 @@ import 'package:polka_wallet/store/acala/acala.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking.dart';
 import 'package:polka_wallet/store/account.dart';
-import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/store/assets/assets.dart';
 import 'package:polka_wallet/store/governance.dart';
 
 part 'app.g.dart';

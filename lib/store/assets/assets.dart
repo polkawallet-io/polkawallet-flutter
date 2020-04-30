@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/transferData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
@@ -36,6 +36,9 @@ abstract class _AssetsStore with Store {
   ObservableMap<String, String> balances = ObservableMap<String, String>();
 
   @observable
+  int txsCount = 0;
+
+  @observable
   ObservableList<TransferData> txs = ObservableList<TransferData>();
 
   @observable
@@ -49,9 +52,9 @@ abstract class _AssetsStore with Store {
     return ObservableList.of(txs.where((i) {
       switch (txsFilter) {
         case 1:
-          return i.destination == rootStore.account.currentAddress;
+          return i.to == rootStore.account.currentAddress;
         case 2:
-          return i.sender == rootStore.account.currentAddress;
+          return i.from == rootStore.account.currentAddress;
         default:
           return true;
       }
@@ -61,27 +64,23 @@ abstract class _AssetsStore with Store {
   @computed
   ObservableList<Map<String, dynamic>> get balanceHistory {
     List<Map<String, dynamic>> res = List<Map<String, dynamic>>();
-    BigInt total =
-        Fmt.balanceInt(balances[rootStore.settings.networkState.tokenSymbol]);
+    double total = Fmt.balanceDouble(
+        balances[rootStore.settings.networkState.tokenSymbol]);
     txs.asMap().forEach((index, i) {
       if (index != 0) {
         TransferData prev = txs[index - 1];
-        if (i.sender == rootStore.account.currentAddress) {
-          total -= prev.value;
+        if (i.from == rootStore.account.currentAddress) {
+          total -= double.parse(prev.amount);
+          // add transfer fee: 0.02KSM
+          total += 0.02;
         } else {
-          total += prev.value;
+          total += double.parse(prev.amount);
         }
-        // add transfer fee: 0.02KSM
-        total += BigInt.from(20000000000);
       }
-      if (blockMap[i.block] != null) {
-        res.add({
-          "time": blockMap[i.block].time,
-          "value": total /
-              BigInt.from(
-                  pow(10, rootStore.settings.networkState.tokenDecimals))
-        });
-      }
+      res.add({
+        "time": DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp * 1000),
+        "value": total
+      });
     });
     return ObservableList.of(res.reversed);
   }
@@ -109,9 +108,15 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  Future<void> addTxs(List ls, String address,
+  Future<void> addTxs(Map res, String address,
       {bool shouldCache = false}) async {
     if (rootStore.account.currentAddress != address) return;
+
+    txsCount = res['count'];
+
+    List ls = res['transfers'];
+    if (ls == null) return;
+    print(ls.length);
 
     ls.forEach((i) {
       TransferData tx = TransferData.fromJson(i);
@@ -193,57 +198,7 @@ abstract class _AssetsStore with Store {
   }
 }
 
-class TransferData extends _TransferData with _$TransferData {
-  static TransferData fromJson(Map<String, dynamic> json) {
-    TransferData tx = TransferData();
-    tx.type = json['type'];
-    tx.id = json['id'];
-    tx.hash = json['hash'];
-    tx.block = json['attributes']['block_id'];
-    tx.value = BigInt.parse(json['attributes']['value'].toString());
-    tx.fee = BigInt.parse(json['attributes']['fee'].toString());
-    tx.sender = json['attributes']['sender']['attributes']['address'];
-    tx.senderId = json['attributes']['sender']['attributes']['index_address'];
-    tx.destination = json['attributes']['destination']['attributes']['address'];
-    tx.destinationId =
-        json['attributes']['destination']['attributes']['index_address'];
-    return tx;
-  }
-}
-
-abstract class _TransferData with Store {
-  @observable
-  String type = '';
-
-  @observable
-  String id = '';
-
-  @observable
-  String hash = '';
-
-  @observable
-  int block = 0;
-
-  @observable
-  String sender = '';
-
-  @observable
-  String senderId = '';
-
-  @observable
-  String destination = '';
-
-  @observable
-  String destinationId = '';
-
-  @observable
-  BigInt value = BigInt.zero;
-
-  @observable
-  BigInt fee = BigInt.zero;
-}
-
-class BlockData extends _BlockData with _$BlockData {
+class BlockData extends _BlockData {
   static BlockData fromJson(Map<String, dynamic> json) {
     BlockData block = BlockData();
     block.id = json['id'];
@@ -261,13 +216,10 @@ class BlockData extends _BlockData with _$BlockData {
   }
 }
 
-abstract class _BlockData with Store {
-  @observable
+abstract class _BlockData {
   int id = 0;
 
-  @observable
   String hash = '';
 
-  @observable
   DateTime time = DateTime.now();
 }

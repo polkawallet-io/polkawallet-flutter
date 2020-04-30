@@ -5,7 +5,6 @@ import 'package:device_info/device_info.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/faucet.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -63,23 +62,6 @@ class ApiAcala {
       amt[v] = BigInt.parse(amount[i].toString());
     });
     store.acala.setAirdrops(amt);
-  }
-
-  Future<List> updateTxs(int page) async {
-    String address = store.account.currentAddress;
-    String data = await PolkaScanApi.fetchTransfers(address, page,
-        network: store.settings.endpoint.info);
-    List txs = jsonDecode(data)['data'];
-
-    if (page == 1) {
-      store.acala.setTxsLoading(true);
-    }
-    // cache first page of txs
-//    store.acala.setLoanTxs(txs, reset: page == 1);
-
-//    await apiRoot.updateBlocks(txs);
-    store.acala.setTxsLoading(false);
-    return txs;
   }
 
   Future<void> fetchAccountLoans() async {
