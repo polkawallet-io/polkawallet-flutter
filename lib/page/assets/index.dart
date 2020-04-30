@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -5,6 +7,7 @@ import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
+import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
@@ -50,40 +53,47 @@ class _AssetsState extends State<Assets> {
       _faucetSubmitting = true;
     });
     String res = await webApi.acala.fetchFaucet();
-    String dialogContent = I18n.of(context).acala['faucet.ok'];
-    bool isOK = false;
-    if (res == null) {
-      dialogContent = I18n.of(context).acala['faucet.error'];
-    } else if (res == "LIMIT") {
-      dialogContent = I18n.of(context).acala['faucet.limit'];
-    } else {
-      isOK = true;
-    }
-    setState(() {
-      _faucetSubmitting = false;
-    });
 
-    showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Container(),
-          content: Text(dialogContent),
-          actions: <Widget>[
-            CupertinoButton(
-              child: Text(I18n.of(context).home['ok']),
-              onPressed: () {
-                Navigator.of(context).pop();
-                if (isOK) {
-                  // TODO：add notification
-                  globalBalanceRefreshKey.currentState.show();
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
+    Timer(Duration(seconds: 3), () {
+      String dialogContent = I18n.of(context).acala['faucet.ok'];
+      bool isOK = false;
+      if (res == null) {
+        dialogContent = I18n.of(context).acala['faucet.error'];
+      } else if (res == "LIMIT") {
+        dialogContent = I18n.of(context).acala['faucet.limit'];
+      } else {
+        isOK = true;
+      }
+      setState(() {
+        _faucetSubmitting = false;
+      });
+
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Container(),
+            content: Text(dialogContent),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  if (isOK) {
+                    globalBalanceRefreshKey.currentState.show();
+                    NotificationPlugin.showNotification(
+                      int.parse(res.substring(0, 6)),
+                      I18n.of(context).assets['notify.receive'],
+                      '{"ACA": 2, "aUSD": 2, "DOT": 2, "XBTC": 0.2}',
+                    );
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 
   Widget _buildTopCard(BuildContext context) {

@@ -30,6 +30,7 @@ const Map<String, String> enAssets = {
   'event': 'Event ID',
   'hash': 'TxHash',
   'polkascan': 'Open in Browser',
+  'notify.receive': 'Token Received',
 };
 
 const Map<String, String> zhAssets = {
@@ -64,4 +65,5 @@ const Map<String, String> zhAssets = {
   'event': '交易ID',
   'hash': '交易Hash',
   'polkascan': '在浏览器中查看',
+  'notify.receive': '到账通知',
 };
