@@ -172,9 +172,9 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                         key: _formKey,
                         child: TextFormField(
                           decoration: InputDecoration(
-                            hintText: dic['dex.pay'],
+                            hintText: dicAssets['amount'],
                             labelText:
-                                '${dic['dex.pay']} (${dic['earn.available']}: ${Fmt.priceFloor(shareInt)})',
+                                '${dicAssets['amount']} (${dic['earn.available']}: ${Fmt.priceFloor(shareInt)} Shares)',
                             suffix: GestureDetector(
                               child: Icon(
                                 CupertinoIcons.clear_thick_circled,

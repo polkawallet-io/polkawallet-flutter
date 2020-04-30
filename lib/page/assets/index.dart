@@ -258,6 +258,7 @@ class _AssetsState extends State<Assets> {
                                   color: Colors.black54),
                             ),
                             onTap: () {
+                              // TODO: add txs list page
                               Navigator.pushNamed(context, TransferPage.route,
                                   arguments: {'symbol': i, 'redirect': '/'});
                             },

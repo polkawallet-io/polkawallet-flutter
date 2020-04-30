@@ -90,10 +90,6 @@ class NotificationPlugin {
 
   static Future<void> showNotification(int id, String title, String body,
       {String payload}) async {
-    print('showNotification');
-    print(id);
-    print(title);
-    print(body);
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'transaction_submitted',
         'Tx Submitted',

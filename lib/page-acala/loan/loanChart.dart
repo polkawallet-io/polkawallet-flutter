@@ -19,19 +19,28 @@ class LoanChart extends StatelessWidget {
     const double heightTotal = 160;
     final double widthChart = MediaQuery.of(context).size.width / 4;
     double heightBorrowed = 0;
-    double heightBorrowedAdjusted = 0;
     double heightRequired = 0;
     double heightLiquidation = 0;
+    double heightBorrowedAdjusted = 0;
+    double heightRequiredAdjusted = 0;
+    double heightLiquidationAdjusted = 0;
     if (loan.debitInUSD > BigInt.zero) {
       heightBorrowed = heightTotal * (loan.debitInUSD / loan.collateralInUSD);
-      heightBorrowedAdjusted = heightBorrowed;
       heightRequired = heightTotal / requiredCollateralRatio;
       heightLiquidation = heightTotal / liquidationRatio;
-      if (heightLiquidation - heightRequired < 24) {
-        heightLiquidation = heightRequired + 24;
+
+      heightBorrowedAdjusted = heightBorrowed;
+      heightRequiredAdjusted = heightRequired;
+      heightLiquidationAdjusted = heightLiquidation;
+
+      if (heightTotal - heightLiquidationAdjusted < 20) {
+        heightLiquidationAdjusted = heightTotal - 20;
       }
-      if (heightRequired - heightBorrowed < 24) {
-        heightBorrowedAdjusted = heightRequired - 24;
+      if (heightLiquidationAdjusted - heightRequiredAdjusted < 20) {
+        heightRequiredAdjusted = heightLiquidationAdjusted - 20;
+      }
+      if (heightRequiredAdjusted - heightBorrowedAdjusted < 20) {
+        heightBorrowedAdjusted = heightRequiredAdjusted - 24;
       }
     }
 
@@ -47,8 +56,8 @@ class LoanChart extends StatelessWidget {
           margin: EdgeInsets.fromLTRB(24, 8, 0, 8),
           child: _ChartContainer(
             heightBorrowedAdjusted,
-            heightRequired,
-            heightLiquidation,
+            heightRequiredAdjusted,
+            heightLiquidationAdjusted,
             collateral: Text('100%'),
             debits: Text(
               Fmt.ratio(loan.collateralRatio),
@@ -89,8 +98,8 @@ class LoanChart extends StatelessWidget {
             margin: EdgeInsets.fromLTRB(0, 0, 24, 8),
             child: _ChartContainer(
               heightBorrowedAdjusted,
-              heightRequired,
-              heightLiquidation,
+              heightRequiredAdjusted,
+              heightLiquidationAdjusted,
               collateral: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

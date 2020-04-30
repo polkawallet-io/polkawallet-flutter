@@ -131,7 +131,6 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
         txInfo, args['params'], args['title'], dic['notify.submitted'],
         rawParam: args['rawParam']);
     if (res == null) {
-      // TODO: handle different errors
       onTxError();
     } else {
       onTxFinish(Map.from(res));

@@ -207,7 +207,7 @@ class _CurrencyTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).acala;
+    final double iconSize = 28;
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
@@ -243,17 +243,17 @@ class _CurrencyTab extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        width: 32,
+                        width: iconSize,
                         margin: EdgeInsets.only(right: 8),
                         child: activeTab == i
                             ? Image.asset('assets/images/assets/$i.png')
                             : Container(
-                                width: 32,
-                                height: 32,
+                                width: iconSize,
+                                height: iconSize,
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).dividerColor,
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(32),
+                                    Radius.circular(iconSize),
                                   ),
                                 ),
                               ),
