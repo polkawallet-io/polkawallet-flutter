@@ -226,21 +226,16 @@ class _AssetsState extends State<Assets> {
                               color: Colors.black54),
                         ),
                         onTap: () {
-                          if (isAcala) {
-                            Navigator.pushNamed(
-                              context,
-                              TransferPage.route,
-                              arguments: {'symbol': symbol, 'redirect': '/'},
-                            );
-                          } else {
-                            Navigator.pushNamed(context, AssetPage.route);
-                          }
+                          Navigator.pushNamed(context, AssetPage.route,
+                              arguments: symbol);
                         },
                       ),
                     ),
                     Column(
                       children: currencyIds.map((i) {
 //                  print(store.assets.balances[i]);
+                        String token =
+                            i == acala_stable_coin ? acala_stable_coin_view : i;
                         return RoundedCard(
                           margin: EdgeInsets.only(top: 16),
                           child: ListTile(
@@ -248,7 +243,7 @@ class _AssetsState extends State<Assets> {
                               width: 36,
                               child: Image.asset('assets/images/assets/$i.png'),
                             ),
-                            title: Text(i),
+                            title: Text(token),
                             trailing: Text(
                               Fmt.balance(store.assets.balances[i],
                                   decimals: store.settings.acalaTokenDecimals),
@@ -258,9 +253,8 @@ class _AssetsState extends State<Assets> {
                                   color: Colors.black54),
                             ),
                             onTap: () {
-                              // TODO: add txs list page
-                              Navigator.pushNamed(context, TransferPage.route,
-                                  arguments: {'symbol': i, 'redirect': '/'});
+                              Navigator.pushNamed(context, AssetPage.route,
+                                  arguments: token);
                             },
                           ),
                         );

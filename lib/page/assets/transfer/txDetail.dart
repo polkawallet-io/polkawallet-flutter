@@ -41,7 +41,7 @@ class TxDetail extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(32),
+            padding: EdgeInsets.all(24),
             child: success
                 ? Image.asset('assets/images/assets/success.png')
                 : Image.asset('assets/images/staking/error.png'),

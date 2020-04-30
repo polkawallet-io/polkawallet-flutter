@@ -15,6 +15,7 @@ TransferData _$TransferDataFromJson(Map<String, dynamic> json) {
     ..from = json['from'] as String
     ..to = json['to'] as String
     ..amount = json['amount'] as String
+    ..token = json['token'] as String
     ..hash = json['hash'] as String
     ..module = json['module'] as String
     ..success = json['success'] as bool;
@@ -29,6 +30,7 @@ Map<String, dynamic> _$TransferDataToJson(TransferData instance) =>
       'from': instance.from,
       'to': instance.to,
       'amount': instance.amount,
+      'token': instance.token,
       'hash': instance.hash,
       'module': instance.module,
       'success': instance.success,

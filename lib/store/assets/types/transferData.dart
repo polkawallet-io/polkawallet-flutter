@@ -23,6 +23,7 @@ abstract class _TransferData {
   String from = "";
   String to = "";
   String amount = "";
+  String token = "";
   String hash = "";
   String module = "";
   bool success = true;

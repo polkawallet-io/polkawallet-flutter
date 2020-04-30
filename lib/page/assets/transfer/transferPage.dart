@@ -20,6 +20,17 @@ import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+class TransferPageParams {
+  TransferPageParams({
+    this.symbol,
+    this.address,
+    this.redirect,
+  });
+  final String address;
+  final String redirect;
+  final String symbol;
+}
+
 class TransferPage extends StatefulWidget {
   const TransferPage(this.store);
 
@@ -77,7 +88,8 @@ class _TransferPageState extends State<TransferPage> {
           Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
         ],
       };
-      if (store.settings.endpoint.info == networkEndpointAcala.info) {
+      bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+      if (isAcala) {
         args['txInfo'] = {
           "module": 'currencies',
           "call": 'transfer',
@@ -86,21 +98,25 @@ class _TransferPageState extends State<TransferPage> {
           // params.to
           _addressCtrl.text.trim(),
           // params.currencyId
-          symbol,
+          symbol.toUpperCase(),
           // params.amount
           Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
         ];
       }
       args['onFinish'] = (BuildContext txPageContext, Map res) {
-        final Map routeArgs = ModalRoute.of(context).settings.arguments;
+        final TransferPageParams routeArgs =
+            ModalRoute.of(context).settings.arguments;
+        if (isAcala) {
+          store.acala.setTransferTxs([res]);
+        }
         Navigator.popUntil(
-            txPageContext, ModalRoute.withName(routeArgs['redirect']));
+            txPageContext, ModalRoute.withName(routeArgs.redirect));
         // user may route to transfer page from asset page
         // or from home page with QRCode Scanner
-        if (routeArgs['redirect'] == AssetPage.route) {
+        if (routeArgs.redirect == AssetPage.route) {
           globalAssetRefreshKey.currentState.show();
         }
-        if (routeArgs['redirect'] == '/') {
+        if (routeArgs.redirect == '/') {
           globalBalanceRefreshKey.currentState.show();
         }
       };
@@ -113,15 +129,15 @@ class _TransferPageState extends State<TransferPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final Map args = ModalRoute.of(context).settings.arguments;
-      if (args['address'] != null) {
+      final TransferPageParams args = ModalRoute.of(context).settings.arguments;
+      if (args.address != null) {
         setState(() {
-          _addressCtrl.text = args['address'];
+          _addressCtrl.text = args.address;
         });
       }
-      if (args['symbol'] != null) {
+      if (args.symbol != null) {
         setState(() {
-          _tokenSymbol = args['symbol'];
+          _tokenSymbol = args.symbol;
         });
       }
     });
@@ -145,7 +161,8 @@ class _TransferPageState extends State<TransferPage> {
 
         int decimals = store.settings.networkState.tokenDecimals;
 
-        BigInt balance = Fmt.balanceInt(store.assets.balances[symbol]);
+        BigInt balance =
+            Fmt.balanceInt(store.assets.balances[symbol.toUpperCase()]);
         BigInt available = balance;
         bool hasStakingData = store.staking.ledger['stakingLedger'] != null;
         if (hasStakingData) {

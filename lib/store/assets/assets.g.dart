@@ -15,14 +15,6 @@ mixin _$AssetsStore on _AssetsStore, Store {
   ObservableList<TransferData> get txsView => (_$txsViewComputed ??=
           Computed<ObservableList<TransferData>>(() => super.txsView))
       .value;
-  Computed<ObservableList<Map<String, dynamic>>> _$balanceHistoryComputed;
-
-  @override
-  ObservableList<Map<String, dynamic>> get balanceHistory =>
-      (_$balanceHistoryComputed ??=
-              Computed<ObservableList<Map<String, dynamic>>>(
-                  () => super.balanceHistory))
-          .value;
 
   final _$cacheTxsTimestampAtom = Atom(name: '_AssetsStore.cacheTxsTimestamp');
 

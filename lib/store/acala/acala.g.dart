@@ -95,6 +95,23 @@ mixin _$AcalaStore on _AcalaStore, Store {
     }, _$pricesAtom, name: '${_$pricesAtom.name}_set');
   }
 
+  final _$txsTransferAtom = Atom(name: '_AcalaStore.txsTransfer');
+
+  @override
+  ObservableList<TransferData> get txsTransfer {
+    _$txsTransferAtom.context.enforceReadPolicy(_$txsTransferAtom);
+    _$txsTransferAtom.reportObserved();
+    return super.txsTransfer;
+  }
+
+  @override
+  set txsTransfer(ObservableList<TransferData> value) {
+    _$txsTransferAtom.context.conditionallyRunInAction(() {
+      super.txsTransfer = value;
+      _$txsTransferAtom.reportChanged();
+    }, _$txsTransferAtom, name: '${_$txsTransferAtom.name}_set');
+  }
+
   final _$txsLoanAtom = Atom(name: '_AcalaStore.txsLoan');
 
   @override
@@ -246,6 +263,15 @@ mixin _$AcalaStore on _AcalaStore, Store {
       super.dexPoolInfoMap = value;
       _$dexPoolInfoMapAtom.reportChanged();
     }, _$dexPoolInfoMapAtom, name: '${_$dexPoolInfoMapAtom.name}_set');
+  }
+
+  final _$setTransferTxsAsyncAction = AsyncAction('setTransferTxs');
+
+  @override
+  Future<void> setTransferTxs(List list,
+      {bool reset = false, dynamic needCache = true}) {
+    return _$setTransferTxsAsyncAction.run(
+        () => super.setTransferTxs(list, reset: reset, needCache: needCache));
   }
 
   final _$setLoanTxsAsyncAction = AsyncAction('setLoanTxs');

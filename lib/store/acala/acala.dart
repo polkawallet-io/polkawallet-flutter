@@ -6,6 +6,7 @@ import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/acala/types/txLoanData.dart';
 import 'package:polka_wallet/store/acala/types/txSwapData.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/transferData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
@@ -19,6 +20,7 @@ abstract class _AcalaStore with Store {
   _AcalaStore(this.rootStore);
 
   final AppStore rootStore;
+  final String cacheTxsTransferKey = 'transfer_txs';
   final String cacheTxsLoanKey = 'loan_txs';
   final String cacheTxsSwapKey = 'swap_txs';
   final String cacheTxsDexLiquidityKey = 'dex_liquidity_txs';
@@ -34,6 +36,9 @@ abstract class _AcalaStore with Store {
 
   @observable
   Map<String, BigInt> prices = {};
+
+  @observable
+  ObservableList<TransferData> txsTransfer = ObservableList<TransferData>();
 
   @observable
   ObservableList<TxLoanData> txsLoan = ObservableList<TxLoanData>();
@@ -131,6 +136,33 @@ abstract class _AcalaStore with Store {
   @action
   void setSwapRatio(String ratio) {
     swapRatio = ratio;
+  }
+
+  @action
+  Future<void> setTransferTxs(List list,
+      {bool reset = false, needCache = true}) async {
+    List transfers = list.map((i) {
+      return {
+        "block_timestamp": i['time'],
+        "hash": i['hash'],
+        "success": true,
+        "from": rootStore.account.currentAddress,
+        "to": i['params'][0],
+        "token": i['params'][1],
+        "amount": Fmt.balance(i['params'][2], decimals: acala_token_decimals),
+      };
+    }).toList();
+    if (reset) {
+      txsTransfer = ObservableList.of(transfers
+          .map((i) => TransferData.fromJson(Map<String, dynamic>.from(i))));
+    } else {
+      txsTransfer.addAll(transfers
+          .map((i) => TransferData.fromJson(Map<String, dynamic>.from(i))));
+    }
+
+    if (needCache && txsTransfer.length > 0) {
+      _cacheTxs(transfers, cacheTxsTransferKey);
+    }
   }
 
   @action

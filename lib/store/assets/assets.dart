@@ -61,29 +61,29 @@ abstract class _AssetsStore with Store {
     }));
   }
 
-  @computed
-  ObservableList<Map<String, dynamic>> get balanceHistory {
-    List<Map<String, dynamic>> res = List<Map<String, dynamic>>();
-    double total = Fmt.balanceDouble(
-        balances[rootStore.settings.networkState.tokenSymbol]);
-    txs.asMap().forEach((index, i) {
-      if (index != 0) {
-        TransferData prev = txs[index - 1];
-        if (i.from == rootStore.account.currentAddress) {
-          total -= double.parse(prev.amount);
-          // add transfer fee: 0.02KSM
-          total += 0.02;
-        } else {
-          total += double.parse(prev.amount);
-        }
-      }
-      res.add({
-        "time": DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp * 1000),
-        "value": total
-      });
-    });
-    return ObservableList.of(res.reversed);
-  }
+//  @computed
+//  ObservableList<Map<String, dynamic>> get balanceHistory {
+//    List<Map<String, dynamic>> res = List<Map<String, dynamic>>();
+//    double total = Fmt.balanceDouble(
+//        balances[rootStore.settings.networkState.tokenSymbol]);
+//    txs.asMap().forEach((index, i) {
+//      if (index != 0) {
+//        TransferData prev = txs[index - 1];
+//        if (i.from == rootStore.account.currentAddress) {
+//          total -= double.parse(prev.amount);
+//          // add transfer fee: 0.02KSM
+//          total += 0.02;
+//        } else {
+//          total += double.parse(prev.amount);
+//        }
+//      }
+//      res.add({
+//        "time": DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp * 1000),
+//        "value": total
+//      });
+//    });
+//    return ObservableList.of(res.reversed);
+//  }
 
   @action
   void setTxsLoading(bool isLoading) {
