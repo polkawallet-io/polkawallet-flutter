@@ -185,43 +185,58 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
     );
   }
 
+  String _validateInput(String v) {
+    bool passed = false;
+    Map<String, String> dic = I18n.of(context).account;
+    String input = v.trim();
+    switch (_keySelection) {
+      case 0:
+        int len = input.split(' ').length;
+        if (len == 12 || len == 24) {
+          passed = true;
+        }
+        break;
+      case 1:
+        if (input.length <= 32 || input.length == 66) {
+          passed = true;
+        }
+        break;
+      case 2:
+        try {
+          jsonDecode(input);
+          passed = true;
+        } catch (_) {
+          // ignore
+        }
+    }
+    return passed
+        ? null
+        : '${dic['import.invalid']} ${_keyOptions[_keySelection]}';
+  }
+
+  void _onKeyChange(String v) {
+    if (_keySelection == 2) {
+      // auto set account name
+      var json = jsonDecode(v.trim());
+      if (json['meta']['name'] != null) {
+        setState(() {
+          _nameCtrl.value = TextEditingValue(text: json['meta']['name']);
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _passCtrl.dispose();
+    _pathCtrl.dispose();
+    _keyCtrl.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    String validateInput(String v) {
-      bool passed = false;
-      Map<String, String> dic = I18n.of(context).account;
-      String input = v.trim();
-      switch (_keySelection) {
-        case 0:
-          int len = input.split(' ').length;
-          if (len == 12 || len == 24) {
-            passed = true;
-          }
-          break;
-        case 1:
-          if (input.length <= 32 || input.length == 66) {
-            passed = true;
-          }
-          break;
-        case 2:
-          try {
-            Map json = jsonDecode(input);
-            passed = true;
-            // auto set account name
-            if (json['meta']['name'] != null) {
-              setState(() {
-                _nameCtrl.text = json['meta']['name'];
-              });
-            }
-          } catch (_) {
-            // ignore
-          }
-      }
-      return passed
-          ? null
-          : '${dic['import.invalid']} ${_keyOptions[_keySelection]}';
-    }
-
     return Column(
       children: <Widget>[
         Expanded(
@@ -269,7 +284,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                     ),
                     controller: _keyCtrl,
                     maxLines: 2,
-                    validator: validateInput,
+                    validator: _validateInput,
+                    onChanged: _onKeyChange,
                   ),
                 ),
                 _keySelection == 2

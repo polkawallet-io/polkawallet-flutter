@@ -16,7 +16,8 @@ class AccountSelectList extends StatelessWidget {
       children: list.map((i) {
         String address = i.address;
         if (i.pubKey != null) {
-          address = globalAppStore.account.pubKeyAddressMap[i.pubKey];
+          String network = globalAppStore.settings.endpoint.info;
+          address = globalAppStore.account.pubKeyAddressMap[network][i.pubKey];
         }
         return ListTile(
           leading: AddressIcon(address, pubKey: i.pubKey),

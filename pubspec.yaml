@@ -11,7 +11,7 @@ description: PolkaWallet made with Flutter.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.6.2+2
+version: 0.7.2
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -19,23 +19,27 @@ environment:
 dependencies:
   # intl - format numbers
   intl: ^0.16.0
+  json_annotation: ^3.0.1
   # state management with mobx & provider
   mobx: ^0.4.0
   flutter_mobx: ^0.3.6
   mobx_codegen: ^0.3.12
   provider: ^3.1.0
-  json_serializable: ^3.0.0
   shared_preferences: ^0.5.6
   flutter_aes_ecb_pkcs5: ^0.1.1
   convert: ^2.1.1
   http: ^0.12.0
-  flutter_webview_plugin: ^0.3.10
+  flutter_webview_plugin: ^0.3.11
   rxdart: ^0.23.1
-  flutter_local_notifications: ^1.1.6
+  flutter_local_notifications: ^1.4.2
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  ota_update: ^2.2.1
+  flutter_downloader: ^1.4.4
+  path_provider:
+  device_info: ^0.4.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -56,6 +60,7 @@ dependencies:
 dev_dependencies:
   flutter_launcher_icons: "^0.7.3"
   build_runner: ^1.7.4
+  json_serializable: ^3.0.0
   flutter_test:
     sdk: flutter
 
@@ -78,13 +83,43 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     # js service
-    - lib/polkadot_js_service/dist/main.js
+    - lib/js_service_kusama/dist/main.js
+    - lib/js_service_acala/dist/main.js
+
     # images
+    ## images - settings
+    - assets/images/public/kusama.png
+    - assets/images/public/kusama_gray.png
+    - assets/images/public/acala-mandala.png
+    - assets/images/public/acala-mandala_gray.png
+    - assets/images/public/acala.png
+    - assets/images/public/acala_gray.png
+    - assets/images/assets/ACA.png
+    - assets/images/assets/AUSD.png
+    - assets/images/assets/XBTC.png
+    - assets/images/assets/LDOT.png
+    - assets/images/assets/KAR.png
+    ## images - acala
+    - assets/images/assets/top_bg_indigo.png
+    - assets/images/assets/receive_line_indigo.png
+    - assets/images/assets/qrcode_indigo.png
+    - assets/images/assets/plus_indigo.png
+    - assets/images/staking/top_bg_indigo.png
+    - assets/images/public/Assets_indigo.png
+    - assets/images/public/Governance_indigo.png
+    - assets/images/public/Profile_indigo.png
+    - assets/images/public/Staking_indigo.png
+    - assets/images/public/Acala_indigo.png
+    - assets/images/public/Acala_dark.png
+    - assets/images/acala/exchange.svg
+    - assets/images/acala/loan.svg
+    - assets/images/acala/loan-start.svg
+    ## images - kusama
     - assets/images/public/app.png
-    - assets/images/public/Assets.png
-    - assets/images/public/Governance.png
-    - assets/images/public/Profile.png
-    - assets/images/public/Staking.png
+    - assets/images/public/Assets_pink.png
+    - assets/images/public/Governance_pink.png
+    - assets/images/public/Profile_pink.png
+    - assets/images/public/Staking_pink.png
     - assets/images/public/Assets_dark.png
     - assets/images/public/Governance_dark.png
     - assets/images/public/Profile_dark.png
@@ -98,11 +133,11 @@ flutter:
     - assets/images/public/substrate.png
     - assets/images/public/default.png
     - assets/images/assets/logo.png
-    - assets/images/assets/Assets_bg.png
+    - assets/images/assets/top_bg_pink.png
     - assets/images/assets/Assets_nav_0.png
     - assets/images/assets/Assets_nav_1.png
-    - assets/images/assets/Assets_nav_code.png
-    - assets/images/assets/Assets_nav_plus.png
+    - assets/images/assets/qrcode_pink.png
+    - assets/images/assets/plus_pink.png
     - assets/images/assets/Menu_scan.png
     - assets/images/assets/Menu_create.png
     - assets/images/assets/assets_send.png
@@ -111,11 +146,11 @@ flutter:
     - assets/images/assets/assets_down.png
     - assets/images/assets/assets_fail.png
     - assets/images/assets/success.png
-    - assets/images/assets/sweep_code_line.png
+    - assets/images/assets/receive_line_pink.png
     - assets/images/assets/DOT.png
     - assets/images/assets/KSM.png
     - assets/images/assets/FIR.png
-    - assets/images/staking/top_bg.png
+    - assets/images/staking/top_bg_pink.png
     - assets/images/staking/set.png
     - assets/images/staking/ok.png
     - assets/images/staking/error.png

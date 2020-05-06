@@ -4,8 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class TxConfirmPage extends StatefulWidget {
@@ -25,14 +27,32 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
   final TextEditingController _passCtrl = new TextEditingController();
 
+  Map _fee = {};
+
+  Future<String> _getTxFee() async {
+    if (_fee['partialFee'] != null) {
+      return _fee['partialFee'].toString();
+    }
+    final Map args = ModalRoute.of(context).settings.arguments;
+    Map txInfo = args['txInfo'];
+    txInfo['address'] = store.account.currentAddress;
+    Map fee = await webApi.account.estimateTxFees(txInfo, args['params']);
+    setState(() {
+      _fee = fee;
+    });
+    print(fee);
+    return fee['partialFee'].toString();
+  }
+
+  // todo: error handler after tx inBlock
   Future<void> _onSubmit(BuildContext context) async {
     final ScaffoldState state = Scaffold.of(context);
     final Map<String, String> dic = I18n.of(context).home;
 
     final Map args = ModalRoute.of(context).settings.arguments;
 
-    void onTxFinish(String blockHash) {
-      print('callback triggered, blockHash: $blockHash');
+    void onTxFinish(Map res) {
+      print('callback triggered, blockHash: ${res['hash']}');
       store.assets.setSubmitting(false);
       if (state.mounted) {
         state.removeCurrentSnackBar();
@@ -54,7 +74,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
         Timer(Duration(seconds: 2), () {
           if (state.mounted) {
-            (args['onFinish'] as Function(BuildContext))(context);
+            (args['onFinish'] as Function(BuildContext, Map))(context, res);
           }
         });
       }
@@ -108,12 +128,12 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     print(txInfo);
     print(args['params']);
     var res = await webApi.account.sendTx(
-        txInfo, args['params'], dic['notify.submitted'],
+        txInfo, args['params'], args['title'], dic['notify.submitted'],
         rawParam: args['rawParam']);
     if (res == null) {
       onTxError();
     } else {
-      onTxFinish(res['hash']);
+      onTxFinish(Map.from(res));
     }
   }
 
@@ -126,6 +146,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).home;
+    final String symbol = store.settings.networkState.tokenSymbol;
+    final int decimals = store.settings.networkState.tokenDecimals;
 
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
 
@@ -194,6 +216,60 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                         ),
                       ),
                       Padding(
+                        padding: EdgeInsets.only(left: 16, right: 16),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(top: 8),
+                              width: 64,
+                              child: Text(
+                                dic["submit.fees"],
+                              ),
+                            ),
+                            FutureBuilder<String>(
+                              future: _getTxFee(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<String> snapshot) {
+                                if (snapshot.hasData) {
+                                  String fee = Fmt.balance(
+                                    _fee['partialFee'].toString(),
+                                    decimals: decimals,
+                                    length: 6,
+                                  );
+                                  return Container(
+                                    margin: EdgeInsets.only(top: 8),
+                                    width: MediaQuery.of(context)
+                                            .copyWith()
+                                            .size
+                                            .width -
+                                        120,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          '$fee $symbol',
+                                        ),
+                                        Text(
+                                          '${_fee['weight']} Weight',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Theme.of(context)
+                                                .unselectedWidgetColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  return CupertinoActivityIndicator();
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
                         padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                         child: TextFormField(
                           decoration: InputDecoration(
@@ -241,7 +317,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                       child: Container(
                         color: store.assets.submitting
                             ? Colors.black12
-                            : Colors.pink,
+                            : Theme.of(context).primaryColor,
                         child: FlatButton(
                           padding: EdgeInsets.all(16),
                           child: Text(

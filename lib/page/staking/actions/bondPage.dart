@@ -43,7 +43,8 @@ class _BondPageState extends State<BondPage> {
     if (_formKey.currentState.validate()) {
       String controllerId = store.account.currentAddress;
       if (_controller != null) {
-        controllerId = store.account.pubKeyAddressMap[_controller.pubKey];
+        controllerId = store.account
+            .pubKeyAddressMap[store.settings.endpoint.info][_controller.pubKey];
       }
 
       var args = {
@@ -64,7 +65,7 @@ class _BondPageState extends State<BondPage> {
           // "to"
           _rewardTo,
         ],
-        'onFinish': (BuildContext txPageContext) {
+        'onFinish': (BuildContext txPageContext, Map res) {
           Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
           globalBondingRefreshKey.currentState.show();
         }
@@ -89,8 +90,7 @@ class _BondPageState extends State<BondPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    String balance = Fmt.balance(store.assets.balance);
-    String address = store.account.currentAddress;
+    String balance = Fmt.balance(store.assets.balances[symbol]);
 
     var rewardToOptions =
         _rewardToOptions.map((i) => dic['reward.$i']).toList();

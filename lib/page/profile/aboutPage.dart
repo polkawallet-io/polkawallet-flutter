@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class AboutPage extends StatelessWidget {
@@ -9,7 +13,7 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var dic = I18n.of(context).profile;
+    final Map dic = I18n.of(context).profile;
     return Scaffold(
       backgroundColor: Theme.of(context).cardColor,
       appBar: AppBar(
@@ -45,13 +49,22 @@ class AboutPage extends StatelessWidget {
                   (BuildContext context, AsyncSnapshot<PackageInfo> snapshot) {
                 return snapshot.hasData
                     ? Padding(
-                        padding: EdgeInsets.all(24),
+                        padding: EdgeInsets.all(8),
                         child: Text(
                             '${dic['about.version']}: v${snapshot.data.version}'),
                       )
                     : Container();
               },
             ),
+            Platform.isAndroid
+                ? Padding(
+                    padding: EdgeInsets.all(16),
+                    child: RoundedButton(
+                      text: I18n.of(context).home['update'],
+                      onPressed: () => UI.checkUpdate(context),
+                    ),
+                  )
+                : Container()
           ],
         ),
       ),

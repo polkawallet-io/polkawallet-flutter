@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
-import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -13,7 +13,8 @@ class TxDetail extends StatelessWidget {
     this.action,
     this.eventId,
     this.hash,
-    this.block,
+    this.blockTime,
+    this.blockNum,
     this.info,
   });
 
@@ -22,7 +23,8 @@ class TxDetail extends StatelessWidget {
   final String action;
   final String eventId;
   final String hash;
-  final BlockData block;
+  final String blockTime;
+  final int blockNum;
   final List<DetailInfoItem> info;
 
   List<Widget> _buildListView(BuildContext context) {
@@ -39,7 +41,7 @@ class TxDetail extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(32),
+            padding: EdgeInsets.all(24),
             child: success
                 ? Image.asset('assets/images/assets/success.png')
                 : Image.asset('assets/images/staking/error.png'),
@@ -50,9 +52,7 @@ class TxDetail extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.only(top: 8, bottom: 32),
-            child: Text(block != null
-                ? block.time.toString().split('.')[0]
-                : 'datetime'),
+            child: Text(blockTime),
           ),
         ],
       ),
@@ -71,30 +71,47 @@ class TxDetail extends StatelessWidget {
             : null,
       ));
     });
+
+    String pnLink =
+        'https://polkascan.io/pre/${networkName.toLowerCase()}/transaction/$hash';
+    String snLink =
+        'https://${networkName.toLowerCase()}.subscan.io/extrinsic/$hash';
+    if (networkName == networkEndpointAcala.info) {
+      pnLink =
+          'https://polkascan.io/pre/${networkName.toLowerCase()}/balances/transfer/$eventId';
+      snLink = null;
+    }
     list.addAll(<Widget>[
       ListTile(
         leading: buildLabel(dic['event']),
         title: Text(eventId),
       ),
-      block != null
-          ? ListTile(
-              leading: buildLabel(dic['block']),
-              title: Text('#${block.id}'),
-            )
-          : Container(),
-      block != null
-          ? ListTile(
-              leading: buildLabel(dic['hash']),
-              title: Text(Fmt.address(block.hash)),
-            )
-          : Container(),
-      Padding(
-        padding: EdgeInsets.only(top: 8, bottom: 32),
-        child: JumpToBrowserLink(
-          'https://polkascan.io/pre/${networkName.toLowerCase()}/transaction/0x$hash',
-          text: dic['polkascan'],
+      ListTile(
+        leading: buildLabel(dic['block']),
+        title: Text('#$blockNum'),
+      ),
+      ListTile(
+        leading: buildLabel(dic['hash']),
+        title: Text(Fmt.address(hash)),
+        trailing: Container(
+          width: 140,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              JumpToBrowserLink(
+                pnLink,
+                text: 'Polkascan',
+              ),
+              snLink != null
+                  ? JumpToBrowserLink(
+                      snLink,
+                      text: 'Subscan',
+                    )
+                  : Container(),
+            ],
+          ),
         ),
-      )
+      ),
     ]);
     return list;
   }
@@ -107,7 +124,10 @@ class TxDetail extends StatelessWidget {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: ListView(children: _buildListView(context)),
+        child: ListView(
+          padding: EdgeInsets.only(bottom: 32),
+          children: _buildListView(context),
+        ),
       ),
     );
   }

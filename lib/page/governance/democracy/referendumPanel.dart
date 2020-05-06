@@ -57,42 +57,7 @@ class ReferendumPanel extends StatelessWidget {
       )
     ];
     if (data.detail['params'] != null && data.detail['params'].length > 0) {
-      List<Widget> args = [];
-      data.detail['params'].asMap().forEach((k, v) {
-        args.add(Container(
-          margin: EdgeInsets.fromLTRB(8, 4, 4, 4),
-          padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
-          decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).dividerColor),
-              borderRadius: BorderRadius.all(Radius.circular(4))),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text('${v['name']}: ${v['type']['type']}'),
-                    Text(
-                      data.proposal['args'][k].toString(),
-                      style: Theme.of(context).textTheme.display4,
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-        ));
-      });
-      list.add(Container(
-        margin: EdgeInsets.only(top: 8, bottom: 8),
-        decoration: BoxDecoration(
-            border: Border(
-                left: BorderSide(
-                    color: Theme.of(context).dividerColor, width: 3))),
-        child: Column(
-          children: args,
-        ),
-      ));
+      list.add(ReferendumArgsList(data.detail['params'], data.proposal));
     }
     list.add(Container(
       padding: EdgeInsets.only(top: 8),
@@ -112,11 +77,12 @@ class ReferendumPanel extends StatelessWidget {
     if (votes != null) {
       double widthFull = MediaQuery.of(context).size.width - 72;
 //      int votedTotal = int.parse(votes['votedTotal'].toString());
-      int votedAye = int.parse(votes['votedAye'].toString());
-      int votedNay = int.parse(votes['votedNay'].toString());
-      int votedTotalCalc = votedAye + votedNay;
-      double yes = int.parse(votes['votedAye'].toString()) / votedTotalCalc;
-      double widthYes = votedTotalCalc > 0 ? yes * widthFull : widthFull / 2;
+      BigInt votedAye = BigInt.parse(votes['votedAye'].toString());
+      BigInt votedNay = BigInt.parse(votes['votedNay'].toString());
+      BigInt votedTotalCalc = votedAye + votedNay;
+      double yes = BigInt.parse(votes['votedAye'].toString()) / votedTotalCalc;
+      double widthYes =
+          votedTotalCalc > BigInt.zero ? yes * widthFull : widthFull / 2;
       double widthMin = 6;
       list.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -192,6 +158,85 @@ class ReferendumPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: list,
+      ),
+    );
+  }
+}
+
+class ReferendumArgsList extends StatefulWidget {
+  ReferendumArgsList(this.args, this.proposal);
+
+  final List args;
+  final Map proposal;
+
+  @override
+  _ReferendumArgsList createState() => _ReferendumArgsList(args, proposal);
+}
+
+class _ReferendumArgsList extends State<ReferendumArgsList> {
+  _ReferendumArgsList(this.args, this.proposal);
+
+  final List args;
+  final Map proposal;
+
+  bool _showDetail = false;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> items = [
+      GestureDetector(
+        child: Row(
+          children: <Widget>[
+            Icon(
+              _showDetail
+                  ? Icons.keyboard_arrow_down
+                  : Icons.keyboard_arrow_right,
+            ),
+            Text(I18n.of(context).gov['detail'])
+          ],
+        ),
+        onTap: () {
+          setState(() {
+            _showDetail = !_showDetail;
+          });
+        },
+      )
+    ];
+    if (_showDetail) {
+      args.asMap().forEach((k, v) {
+        items.add(Container(
+          margin: EdgeInsets.fromLTRB(8, 4, 4, 4),
+          padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+          decoration: BoxDecoration(
+              border: Border.all(color: Theme.of(context).dividerColor),
+              borderRadius: BorderRadius.all(Radius.circular(4))),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text('${v['name']}: ${v['type']['type']}'),
+                    Text(
+                      proposal['args'][k].toString(),
+                      style: Theme.of(context).textTheme.display4,
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ));
+      });
+    }
+    return Container(
+      margin: EdgeInsets.only(top: 8, bottom: 8),
+      decoration: BoxDecoration(
+          border: Border(
+              left:
+                  BorderSide(color: Theme.of(context).dividerColor, width: 3))),
+      child: Column(
+        children: items,
       ),
     );
   }

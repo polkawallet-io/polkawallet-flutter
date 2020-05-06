@@ -59,7 +59,7 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
           // "options"
           {"Standard": vote},
         ],
-        'onFinish': (BuildContext txPageContext) {
+        'onFinish': (BuildContext txPageContext, Map res) {
           Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
           globalDemocracyRefreshKey.currentState.show();
         }
@@ -125,7 +125,8 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
           final Map<String, String> dicGov = I18n.of(context).gov;
           int decimals = store.settings.networkState.tokenDecimals;
 
-          int balance = Fmt.balanceInt(store.assets.balance);
+          BigInt balance = Fmt.balanceInt(
+              store.assets.balances[store.settings.networkState.tokenSymbol]);
 
           Map args = ModalRoute.of(context).settings.arguments;
           ReferendumInfo info = args['referenda'];
@@ -166,7 +167,7 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
                                 return dic['amount.error'];
                               }
                               if (double.parse(v.trim()) >=
-                                  balance / pow(10, decimals)) {
+                                  balance / BigInt.from(pow(10, decimals))) {
                                 return dic['amount.low'];
                               }
                               return null;

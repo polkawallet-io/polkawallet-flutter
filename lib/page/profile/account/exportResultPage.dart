@@ -55,7 +55,9 @@ class ExportResultPage extends StatelessWidget {
                           padding: EdgeInsets.all(8),
                           child: Text(
                             I18n.of(context).home['copy'],
-                            style: TextStyle(fontSize: 14, color: Colors.pink),
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).primaryColor),
                           ),
                         ),
                         onTap: () => _showExportDialog(context, args),

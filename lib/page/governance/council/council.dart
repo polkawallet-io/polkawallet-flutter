@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -8,7 +9,6 @@ import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/page/staking/actions/actions.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -197,7 +197,7 @@ class CandidateItem extends StatelessWidget {
       subtitle: balance.length == 1
           ? null
           : Text(
-              '${I18n.of(context).gov['backing']}: ${Fmt.token(int.parse(balance[1]))} $tokenSymbol'),
+              '${I18n.of(context).gov['backing']}: ${Fmt.token(BigInt.parse(balance[1]))} $tokenSymbol'),
       onTap: () => Navigator.of(context).pushNamed(CandidateDetailPage.route,
           arguments: balance.length == 1 ? [balance[0], '0x0'] : balance),
       trailing: onSwitch == null

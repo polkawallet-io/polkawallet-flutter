@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -13,25 +13,16 @@ class ApiAccount {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<void> setSS58Format(int value) async {
-    print('set ss58: $value');
-    // setSS58Format and reload new addresses
-    List res = await apiRoot.evalJavascript('account.resetSS58Format($value)');
-    store.account.setPubKeyAddressMap(res);
-  }
-
   Future<void> initAccounts() async {
     if (store.account.accountList.length < 1) return;
 
     String accounts = jsonEncode(
         store.account.accountList.map((i) => AccountData.toJson(i)).toList());
-    int ss58 = default_ss58_map[store.settings.endpoint.info];
-    if (store.settings.customSS58Format['info'] != 'default') {
-      ss58 = store.settings.customSS58Format['value'];
-    }
-    List keys =
+
+    String ss58 = jsonEncode(network_ss58_map.values.toSet().toList());
+    Map keys =
         await apiRoot.evalJavascript('account.initKeys($accounts, $ss58)');
-    store.account.setPubKeyAddressMap(keys);
+    store.account.setPubKeyAddressMap(Map<String, Map>.from(keys));
 
     // get accounts icons
     getPubKeyIcons(store.account.accountList.map((i) => i.pubKey).toList());
@@ -40,11 +31,23 @@ class ApiAccount {
     getAddressIcons(store.settings.contactList.map((i) => i.address).toList());
   }
 
+  /// encode addresses to publicKeys
+  Future<void> encodeAddress(List<String> pubKeys) async {
+    String ss58 = jsonEncode(network_ss58_map.values.toSet().toList());
+    Map res = await apiRoot
+        .evalJavascript('account.encodeAddress(${jsonEncode(pubKeys)}, $ss58)');
+    if (res != null) {
+      store.account.setPubKeyAddressMap(Map<String, Map>.from(res));
+    }
+  }
+
+  /// decode addresses to publicKeys
   Future<void> decodeAddress(List<String> addresses) async {
-    List res = await apiRoot
+    Map res = await apiRoot
         .evalJavascript('account.decodeAddress(${jsonEncode(addresses)})');
     if (res != null) {
-      store.account.setPubKeyAddressMap(res);
+      store.account.setPubKeyAddressMap(Map<String, Map>.from(
+          {store.settings.endpoint.ss58.toString(): res}));
     }
   }
 
@@ -54,6 +57,13 @@ class ApiAccount {
           'account.queryAccountsBonded(${jsonEncode(pubKeys)})');
       store.account.setAccountsBonded(res);
     }
+  }
+
+  Future<Map> estimateTxFees(Map txInfo, List params, {String rawParam}) async {
+    String param = rawParam != null ? rawParam : jsonEncode(params);
+    Map res = await apiRoot
+        .evalJavascript('account.txFeeEstimate(${jsonEncode(txInfo)}, $param)');
+    return res;
   }
 
   Future<dynamic> _testSendTx() async {
@@ -66,17 +76,21 @@ class ApiAccount {
     return c.future;
   }
 
-  Future<dynamic> sendTx(Map txInfo, List params, String notificationTitle,
+  Future<dynamic> sendTx(
+      Map txInfo, List params, String pageTile, String notificationTitle,
       {String rawParam}) async {
     String param = rawParam != null ? rawParam : jsonEncode(params);
-//    var res = await _testSendTx();
     var res = await apiRoot
         .evalJavascript('account.sendTx(${jsonEncode(txInfo)}, $param)');
+//    var res = await _testSendTx();
 
     if (res != null) {
       String hash = res['hash'];
-      NotificationPlugin.showNotification(int.parse(hash.substring(0, 6)),
-          notificationTitle, '${txInfo['module']}.${txInfo['call']}');
+      NotificationPlugin.showNotification(
+        int.parse(hash.substring(0, 6)),
+        notificationTitle,
+        '$pageTile - ${txInfo['module']}.${txInfo['call']}',
+      );
     }
     return res;
   }
@@ -97,17 +111,12 @@ class ApiAccount {
     Map<String, dynamic> acc = await apiRoot.evalJavascript(code);
     if (acc != null) {
       await store.account.addAccount(acc, pass);
+      encodeAddress([acc['pubKey']]);
 
       store.gov.clearSate();
 
       store.assets.loadAccountCache();
       store.staking.loadAccountCache();
-
-      if (store.settings.customSS58Format['info'] == 'default') {
-        await setSS58Format(default_ss58_map[store.settings.endpoint.info]);
-      } else {
-        await setSS58Format(store.settings.customSS58Format['value']);
-      }
 
       // fetch info for the imported account
       String pubKey = acc['pubKey'];

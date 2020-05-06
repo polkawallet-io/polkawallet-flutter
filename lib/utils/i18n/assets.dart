@@ -9,6 +9,8 @@ const Map<String, String> enAssets = {
   'amount': 'Amount',
   'amount.error': 'Invalid amount',
   'amount.low': 'Insufficient balance',
+  'currency': 'Currency',
+  'currency.select': 'Select Currency',
   'make': 'Make Transfer',
   'balance': 'Balance',
   'locked': 'Locked',
@@ -26,8 +28,9 @@ const Map<String, String> enAssets = {
   'to': 'To',
   'block': 'Block',
   'event': 'Event ID',
-  'hash': 'Block Hash',
+  'hash': 'TxHash',
   'polkascan': 'Open in Browser',
+  'notify.receive': 'Token Received',
 };
 
 const Map<String, String> zhAssets = {
@@ -41,6 +44,8 @@ const Map<String, String> zhAssets = {
   'amount': '数量',
   'amount.error': '格式错误',
   'amount.low': '余额不足',
+  'currency': '币种',
+  'currency.select': '选择币种',
   'make': '添加转账',
   'balance': '余额',
   'locked': '锁定',
@@ -58,6 +63,7 @@ const Map<String, String> zhAssets = {
   'to': '收款地址',
   'block': '区块',
   'event': '交易ID',
-  'hash': '区块Hash',
+  'hash': '交易Hash',
   'polkascan': '在浏览器中查看',
+  'notify.receive': '到账通知',
 };

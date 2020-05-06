@@ -171,14 +171,14 @@ mixin _$AccountStore on _AccountStore, Store {
   final _$pubKeyAddressMapAtom = Atom(name: '_AccountStore.pubKeyAddressMap');
 
   @override
-  ObservableMap<String, String> get pubKeyAddressMap {
+  ObservableMap<int, Map<String, String>> get pubKeyAddressMap {
     _$pubKeyAddressMapAtom.context.enforceReadPolicy(_$pubKeyAddressMapAtom);
     _$pubKeyAddressMapAtom.reportObserved();
     return super.pubKeyAddressMap;
   }
 
   @override
-  set pubKeyAddressMap(ObservableMap<String, String> value) {
+  set pubKeyAddressMap(ObservableMap<int, Map<String, String>> value) {
     _$pubKeyAddressMapAtom.context.conditionallyRunInAction(() {
       super.pubKeyAddressMap = value;
       _$pubKeyAddressMapAtom.reportChanged();
@@ -361,10 +361,10 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void setPubKeyAddressMap(List list) {
+  void setPubKeyAddressMap(Map<String, Map> data) {
     final _$actionInfo = _$_AccountStoreActionController.startAction();
     try {
-      return super.setPubKeyAddressMap(list);
+      return super.setPubKeyAddressMap(data);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }

@@ -1,8 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:package_info/package_info.dart';
+import 'package:polka_wallet/common/components/currencyWithIcon.dart';
+import 'package:polka_wallet/common/components/downloadDialog.dart';
+import 'package:polka_wallet/service/version.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -37,6 +42,103 @@ class UI {
       print('Could not launch $url');
     }
   }
+
+  static void showCurrencyPicker(BuildContext context, List<String> currencyIds,
+      String selected, Function(String) onChange) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => Container(
+        height: MediaQuery.of(context).copyWith().size.height / 3,
+        child: CupertinoPicker(
+          backgroundColor: Colors.white,
+          itemExtent: 56,
+          scrollController: FixedExtentScrollController(
+              initialItem: currencyIds.indexOf(selected)),
+          children: currencyIds
+              .map(
+                (i) => Padding(
+                  padding: EdgeInsets.all(16),
+                  child: CurrencyWithIcon(
+                    i,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  ),
+                ),
+              )
+              .toList(),
+          onSelectedItemChanged: (v) {
+            onChange(currencyIds[v]);
+          },
+        ),
+      ),
+    );
+  }
+
+  static Future<void> checkUpdate(BuildContext context,
+      {bool autoCheck = false}) async {
+    final Map dic = I18n.of(context).home;
+    Map versions = await VersionApi.getLatestVersion();
+    String latest = versions['android']['version'];
+
+    PackageInfo info = await PackageInfo.fromPlatform();
+
+    bool needUpdate = false;
+    if (latest.compareTo(info.version) > 0) {
+      // new version found
+      needUpdate = true;
+    }
+    if (autoCheck && !needUpdate) {
+      return;
+    }
+
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text('v$latest'),
+          content: Padding(
+            padding: EdgeInsets.only(top: 12),
+            child: Text(needUpdate ? dic['update.up'] : dic['update.latest']),
+          ),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(dic['cancel']),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            CupertinoButton(
+              child: Text(dic['ok']),
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (!needUpdate) {
+                  return;
+                }
+                if (Platform.isIOS) {
+                  // go to ios download page
+//                  launchURL('xxx');
+                } else if (Platform.isAndroid) {
+                  // download apk
+                  // START LISTENING FOR DOWNLOAD PROGRESS REPORTING EVENTS
+                  try {
+                    String url = versions['android']['url'];
+                    print(url);
+                    showCupertinoDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return DownloadDialog(url);
+                      },
+                    );
+                  } catch (e) {
+                    print('Failed to make OTA update. Details: $e');
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 // access the refreshIndicator globally
@@ -57,4 +159,11 @@ final GlobalKey<RefreshIndicatorState> globalCouncilRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
 // democracy page:
 final GlobalKey<RefreshIndicatorState> globalDemocracyRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+
+// acala loan page:
+final GlobalKey<RefreshIndicatorState> globalLoanRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+// acala dexLiquidity page:
+final GlobalKey<RefreshIndicatorState> globalDexLiquidityRefreshKey =
     new GlobalKey<RefreshIndicatorState>();

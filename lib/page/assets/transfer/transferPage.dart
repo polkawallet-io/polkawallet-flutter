@@ -5,17 +5,31 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
+import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+
+class TransferPageParams {
+  TransferPageParams({
+    this.symbol,
+    this.address,
+    this.redirect,
+  });
+  final String address;
+  final String redirect;
+  final String symbol;
+}
 
 class TransferPage extends StatefulWidget {
   const TransferPage(this.store);
@@ -37,11 +51,28 @@ class _TransferPageState extends State<TransferPage> {
   final TextEditingController _addressCtrl = new TextEditingController();
   final TextEditingController _amountCtrl = new TextEditingController();
 
+  String _tokenSymbol;
+
+  Future<void> _selectCurrency() async {
+    List<String> symbolOptions =
+        List<String>.from(store.settings.networkConst['currencyIds']);
+
+    var currency = await Navigator.of(context)
+        .pushNamed(CurrencySelectPage.route, arguments: symbolOptions);
+
+    if (currency != null) {
+      setState(() {
+        _tokenSymbol = currency;
+      });
+    }
+  }
+
   void _handleSubmit() {
     if (_formKey.currentState.validate()) {
+      String symbol = _tokenSymbol ?? store.settings.networkState.tokenSymbol;
       int decimals = store.settings.networkState.tokenDecimals;
       var args = {
-        "title": I18n.of(context).assets['transfer'],
+        "title": I18n.of(context).assets['transfer'] + ' $symbol',
         "txInfo": {
           "module": 'balances',
           "call": 'transfer',
@@ -54,20 +85,39 @@ class _TransferPageState extends State<TransferPage> {
           // params.to
           _addressCtrl.text.trim(),
           // params.amount
-          (double.parse(_amountCtrl.text.trim()) * pow(10, decimals)).toInt(),
+          Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
         ],
-        'onFinish': (BuildContext txPageContext) {
-          final Map routeArgs = ModalRoute.of(context).settings.arguments;
-          Navigator.popUntil(
-              txPageContext, ModalRoute.withName(routeArgs['redirect']));
-          // user may route to transfer page from asset page
-          // or from home page with QRCode Scanner
-          if (routeArgs['redirect'] == AssetPage.route) {
-            globalAssetRefreshKey.currentState.show();
-          }
-          if (routeArgs['redirect'] == '/') {
-            globalBalanceRefreshKey.currentState.show();
-          }
+      };
+      bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+      if (isAcala) {
+        args['txInfo'] = {
+          "module": 'currencies',
+          "call": 'transfer',
+        };
+        args['params'] = [
+          // params.to
+          _addressCtrl.text.trim(),
+          // params.currencyId
+          symbol.toUpperCase(),
+          // params.amount
+          Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
+        ];
+      }
+      args['onFinish'] = (BuildContext txPageContext, Map res) {
+        final TransferPageParams routeArgs =
+            ModalRoute.of(context).settings.arguments;
+        if (isAcala) {
+          store.acala.setTransferTxs([res]);
+        }
+        Navigator.popUntil(
+            txPageContext, ModalRoute.withName(routeArgs.redirect));
+        // user may route to transfer page from asset page
+        // or from home page with QRCode Scanner
+        if (routeArgs.redirect == AssetPage.route) {
+          globalAssetRefreshKey.currentState.show();
+        }
+        if (routeArgs.redirect == '/') {
+          globalBalanceRefreshKey.currentState.show();
         }
       };
       Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
@@ -75,15 +125,29 @@ class _TransferPageState extends State<TransferPage> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
 
-    final Map args = ModalRoute.of(context).settings.arguments;
-    if (args['address'] != null) {
-      setState(() {
-        _addressCtrl.text = args['address'];
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final TransferPageParams args = ModalRoute.of(context).settings.arguments;
+      if (args.address != null) {
+        setState(() {
+          _addressCtrl.text = args.address;
+        });
+      }
+      if (args.symbol != null) {
+        setState(() {
+          _tokenSymbol = args.symbol;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _addressCtrl.dispose();
+    _amountCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -91,25 +155,30 @@ class _TransferPageState extends State<TransferPage> {
     return Observer(
       builder: (_) {
         final Map<String, String> dic = I18n.of(context).assets;
-        String symbol = store.settings.networkState.tokenSymbol;
+        String baseTokenSymbol = store.settings.networkState.tokenSymbol;
+        String symbol = _tokenSymbol ?? baseTokenSymbol;
+        List symbolOptions = store.settings.networkConst['currencyIds'];
+
         int decimals = store.settings.networkState.tokenDecimals;
 
-        int balance = Fmt.balanceInt(store.assets.balance);
-        int available = balance;
+        BigInt balance =
+            Fmt.balanceInt(store.assets.balances[symbol.toUpperCase()]);
+        BigInt available = balance;
         bool hasStakingData = store.staking.ledger['stakingLedger'] != null;
         if (hasStakingData) {
           String stashId = store.staking.ledger['stakingLedger']['stash'];
           bool isStash = store.staking.ledger['accountId'] == stashId;
           if (isStash) {
-            int bonded = store.staking.ledger['stakingLedger']['active'];
-            int unlocking = store.staking.accountUnlockingTotal;
+            BigInt bonded = BigInt.parse(
+                store.staking.ledger['stakingLedger']['active'].toString());
+            BigInt unlocking = store.staking.accountUnlockingTotal;
             available = balance - bonded - unlocking;
           }
         }
 
         return Scaffold(
           appBar: AppBar(
-            title: Text('${dic['transfer']} $symbol'),
+            title: Text(dic['transfer']),
             centerTitle: true,
             actions: <Widget>[
               IconButton(
@@ -137,22 +206,23 @@ class _TransferPageState extends State<TransferPage> {
                           children: <Widget>[
                             TextFormField(
                               decoration: InputDecoration(
-                                  hintText: dic['address'],
-                                  labelText: dic['address'],
-                                  suffix: IconButton(
-                                    icon: Image.asset(
-                                        'assets/images/profile/address.png'),
-                                    onPressed: () async {
-                                      var to = await Navigator.of(context)
-                                          .pushNamed(ContactListPage.route);
-                                      if (to != null) {
-                                        setState(() {
-                                          _addressCtrl.text =
-                                              (to as AccountData).address;
-                                        });
-                                      }
-                                    },
-                                  )),
+                                hintText: dic['address'],
+                                labelText: dic['address'],
+                                suffix: GestureDetector(
+                                  child: Image.asset(
+                                      'assets/images/profile/address.png'),
+                                  onTap: () async {
+                                    var to = await Navigator.of(context)
+                                        .pushNamed(ContactListPage.route);
+                                    if (to != null) {
+                                      setState(() {
+                                        _addressCtrl.text =
+                                            (to as AccountData).address;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
                               controller: _addressCtrl,
                               validator: (v) {
                                 return Fmt.isAddress(v.trim())
@@ -164,7 +234,7 @@ class _TransferPageState extends State<TransferPage> {
                               decoration: InputDecoration(
                                 hintText: dic['amount'],
                                 labelText:
-                                    '${dic['amount']} (${dic['balance']}: ${Fmt.token(available)})',
+                                    '${dic['amount']} (${dic['balance']}: ${Fmt.token(available, decimals: decimals)})',
                               ),
                               inputFormatters: [
                                 RegExInputFormatter.withRegex(
@@ -178,30 +248,64 @@ class _TransferPageState extends State<TransferPage> {
                                   return dic['amount.error'];
                                 }
                                 if (double.parse(v.trim()) >=
-                                    available / pow(10, decimals) - 0.02) {
+                                    available / BigInt.from(pow(10, decimals)) -
+                                        0.02) {
                                   return dic['amount.low'];
                                 }
                                 return null;
                               },
                             ),
+                            GestureDetector(
+                              child: Container(
+                                color: Theme.of(context).canvasColor,
+                                margin: EdgeInsets.only(top: 16, bottom: 16),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          dic['currency'],
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .unselectedWidgetColor),
+                                        ),
+                                        CurrencyWithIcon(
+                                            _tokenSymbol ?? baseTokenSymbol),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 18,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              onTap: symbolOptions != null
+                                  ? () => _selectCurrency()
+                                  : null,
+                            ),
                             Padding(
                               padding: EdgeInsets.only(top: 16),
                               child: Text(
-                                  'existentialDeposit: ${store.settings.existentialDeposit} $symbol',
+                                  'existentialDeposit: ${store.settings.existentialDeposit} $baseTokenSymbol',
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.black54)),
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 16),
                               child: Text(
-                                  'TransferFee: ${store.settings.transactionBaseFee} $symbol',
+                                  'TransferFee: ${store.settings.transactionBaseFee} $baseTokenSymbol',
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.black54)),
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 16),
                               child: Text(
-                                  'transactionByteFee: ${store.settings.transactionByteFee} $symbol',
+                                  'transactionByteFee: ${store.settings.transactionByteFee} $baseTokenSymbol',
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.black54)),
                             ),

@@ -1,15 +1,22 @@
 import 'package:flutter_aes_ecb_pkcs5/flutter_aes_ecb_pkcs5.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'account.g.dart';
 
-class AccountStore extends _AccountStore with _$AccountStore {}
+class AccountStore extends _AccountStore with _$AccountStore {
+  AccountStore(AppStore appStore) : super(appStore);
+}
 
 abstract class _AccountStore with Store {
+  _AccountStore(this.rootStore);
+
+  final AppStore rootStore;
+
   final String seedTypeMnemonic = 'mnemonic';
   final String seedTypeRaw = 'rawSeed';
 
@@ -49,8 +56,8 @@ abstract class _AccountStore with Store {
       ObservableMap<String, AccountBondedInfo>();
 
   @observable
-  ObservableMap<String, String> pubKeyAddressMap =
-      ObservableMap<String, String>();
+  ObservableMap<int, Map<String, String>> pubKeyAddressMap =
+      ObservableMap<int, Map<String, String>>();
 
   @observable
   ObservableMap<String, String> pubKeyIconsMap =
@@ -62,13 +69,18 @@ abstract class _AccountStore with Store {
 
   @computed
   ObservableList<AccountData> get optionalAccounts {
-    return ObservableList.of(accountList.where(
-        (i) => (pubKeyAddressMap[i.pubKey] ?? i.address) != currentAddress));
+    int ss58 = rootStore.settings.endpoint.ss58;
+    return ObservableList.of(accountList.where((i) =>
+        (pubKeyAddressMap[ss58][i.pubKey] ?? i.address) != currentAddress));
   }
 
   @computed
   String get currentAddress {
-    return pubKeyAddressMap[currentAccount.pubKey] ?? currentAccount.address;
+    int ss58 = rootStore.settings.endpoint.ss58;
+    return pubKeyAddressMap[ss58] != null
+        ? pubKeyAddressMap[ss58][currentAccount.pubKey] ??
+            currentAccount.address
+        : currentAccount.address;
   }
 
   @action
@@ -248,9 +260,18 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  void setPubKeyAddressMap(List list) {
-    list.forEach((i) {
-      pubKeyAddressMap[i['pubKey']] = i['address'];
+  void setPubKeyAddressMap(Map<String, Map> data) {
+    data.keys.forEach((ss58) {
+      // get old data map
+      Map<String, String> addresses =
+          Map.of(pubKeyAddressMap[int.parse(ss58)] ?? {});
+      // set new data
+      Map.of(data[ss58]).forEach((k, v) {
+        addresses[k] = v;
+      });
+      print(addresses);
+      // update state
+      pubKeyAddressMap[int.parse(ss58)] = addresses;
     });
   }
 

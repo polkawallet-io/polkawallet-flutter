@@ -35,13 +35,14 @@ class _BondExtraPageState extends State<BondExtraPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    int balance = Fmt.balanceInt(store.assets.balance);
-    int bonded = store.staking.ledger['stakingLedger']['active'];
-    int unlocking = 0;
+    BigInt balance = Fmt.balanceInt(store.assets.balances[symbol]);
+    BigInt bonded = BigInt.parse(
+        store.staking.ledger['stakingLedger']['active'].toString());
+    BigInt unlocking = BigInt.zero;
     List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
-    unlockingList.forEach((i) => unlocking += i['value']);
-    int available = balance - bonded - unlocking;
-    String address = store.account.currentAddress;
+    unlockingList
+        .forEach((i) => unlocking += BigInt.parse(i['value'].toString()));
+    BigInt available = balance - bonded - unlocking;
 
     return Scaffold(
       appBar: AppBar(
@@ -80,7 +81,8 @@ class _BondExtraPageState extends State<BondExtraPage> {
                             return assetDic['amount.error'];
                           }
                           if (double.parse(v.trim()) >=
-                              available / pow(10, decimals) - 0.02) {
+                              available / BigInt.from(pow(10, decimals)) -
+                                  0.02) {
                             return assetDic['amount.low'];
                           }
                           return null;
@@ -111,7 +113,7 @@ class _BondExtraPageState extends State<BondExtraPage> {
                                   pow(10, decimals))
                               .toInt(),
                         ],
-                        'onFinish': (BuildContext txPageContext) {
+                        'onFinish': (BuildContext txPageContext, Map res) {
                           Navigator.popUntil(
                               txPageContext, ModalRoute.withName('/'));
                           globalBondingRefreshKey.currentState.show();

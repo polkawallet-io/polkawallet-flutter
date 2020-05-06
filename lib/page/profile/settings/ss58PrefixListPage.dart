@@ -42,12 +42,12 @@ class SS58PrefixListPage extends StatelessWidget {
                   return;
                 }
                 store.setCustomSS58Format(i);
-                if (i['info'] == 'default') {
-                  api.account
-                      .setSS58Format(default_ss58_map[store.endpoint.info]);
-                } else {
-                  api.account.setSS58Format(i['value']);
-                }
+//                if (i['info'] == 'default') {
+//                  api.account
+//                      .setSS58Format(default_ss58_map[store.endpoint.info]);
+//                } else {
+//                  api.account.setSS58Format(i['value']);
+//                }
                 Navigator.of(context).pop();
               },
             ))

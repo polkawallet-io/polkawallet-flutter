@@ -1,7 +1,7 @@
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -17,6 +17,8 @@ abstract class _SettingsStore with Store {
   final String localStorageSS58Key = 'custom_ss58';
 
   final String cacheNetworkStateKey = 'network';
+
+  final int acalaTokenDecimals = 18;
 
   @observable
   bool loading = true;
@@ -44,20 +46,26 @@ abstract class _SettingsStore with Store {
 
   @computed
   String get existentialDeposit {
-    return Fmt.token(networkConst['balances']['existentialDeposit'],
+    return Fmt.token(
+        BigInt.parse(networkConst['balances']['existentialDeposit'].toString()),
         decimals: networkState.tokenDecimals);
   }
 
   @computed
   String get transactionBaseFee {
-    return Fmt.token(networkConst['transactionPayment']['transactionBaseFee'],
+    return Fmt.token(
+        BigInt.parse(networkConst['transactionPayment']['transactionBaseFee']
+            .toString()),
         decimals: networkState.tokenDecimals);
   }
 
   @computed
   String get transactionByteFee {
-    return Fmt.token(networkConst['transactionPayment']['transactionByteFee'],
-        decimals: networkState.tokenDecimals, fullLength: true);
+    return Fmt.token(
+        BigInt.parse(networkConst['transactionPayment']['transactionByteFee']
+            .toString()),
+        decimals: networkState.tokenDecimals,
+        length: networkState.tokenDecimals);
   }
 
   @action
@@ -92,23 +100,25 @@ abstract class _SettingsStore with Store {
 
   @action
   void setNetworkName(String name) {
-    print('set netwwork name: $name');
     networkName = name;
     loading = false;
   }
 
   @action
   Future<void> setNetworkState(Map<String, dynamic> data) async {
-    LocalStorage.setKV(cacheNetworkStateKey, data);
+    LocalStorage.setKV('${cacheNetworkStateKey}_${endpoint.info}', data);
 
     networkState = NetworkState.fromJson(data);
   }
 
   @action
   Future<void> loadNetworkStateCache() async {
-    var data = await LocalStorage.getKV(cacheNetworkStateKey);
+    var data =
+        await LocalStorage.getKV('${cacheNetworkStateKey}_${endpoint.info}');
     if (data != null) {
       networkState = NetworkState.fromJson(data);
+    } else {
+      networkState = NetworkState();
     }
   }
 
@@ -152,9 +162,10 @@ abstract class _SettingsStore with Store {
     Map<String, dynamic> value =
         await LocalStorage.getKV(localStorageEndpointKey);
     if (value == null) {
-      value = sysLocaleCode.contains('zh') ? default_node_zh : default_node;
+      endpoint = networkEndpointKusama;
+    } else {
+      endpoint = EndpointData.fromJson(value);
     }
-    endpoint = EndpointData.fromJson(value);
   }
 
   @action
@@ -204,6 +215,9 @@ class EndpointData extends _EndpointData with _$EndpointData {
 abstract class _EndpointData with Store {
   @observable
   String info = '';
+
+  @observable
+  int ss58 = 42;
 
   @observable
   String text = '';

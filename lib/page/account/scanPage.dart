@@ -39,8 +39,10 @@ class ScanPage extends StatelessWidget {
         final String args = ModalRoute.of(context).settings.arguments;
         if (args == 'tx') {
           Navigator.of(context).pop();
-          Navigator.of(context).pushNamed(TransferPage.route,
-              arguments: {'address': address, 'redirect': '/'});
+          Navigator.of(context).pushNamed(
+            TransferPage.route,
+            arguments: TransferPageParams(address: address, redirect: '/'),
+          );
         } else {
           Navigator.of(context).pop(address);
         }

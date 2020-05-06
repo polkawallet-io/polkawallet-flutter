@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/page/assets/transfer/txDetail.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/assets.dart';
+import 'package:polka_wallet/store/assets/assets.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -24,7 +24,8 @@ class StakingDetailPage extends StatelessWidget {
     ];
     switch (action) {
       case 'bond':
-        String value = Fmt.token(detail['detail']['params'][1]['value']);
+        String value = Fmt.token(
+            BigInt.parse(detail['detail']['params'][1]['value'].toString()));
         info.add(DetailInfoItem(
           label: dic['value'],
           title: '$value $symbol',
@@ -32,7 +33,8 @@ class StakingDetailPage extends StatelessWidget {
         break;
       case 'bond_extra':
       case 'unbond':
-        String value = Fmt.token(detail['detail']['params'][0]['value']);
+        String value = Fmt.token(
+            BigInt.parse(detail['detail']['params'][0]['value'].toString()));
         info.add(DetailInfoItem(
           label: dic['value'],
           title: '$value $symbol',
@@ -62,10 +64,11 @@ class StakingDetailPage extends StatelessWidget {
             networkName: store.settings.networkName,
             success: detail['attributes']['success'] > 0,
             action: action,
-            hash: detail['attributes']['extrinsic_hash'],
+            hash: '0x${detail['attributes']['extrinsic_hash']}',
             eventId: detail['id'],
-            block: store.assets.blockMap[detail['attributes']['block_id']],
             info: info,
+            blockTime: block.time.toString(),
+            blockNum: block.id,
           );
   }
 }

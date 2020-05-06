@@ -21,6 +21,7 @@ const Map<String, String> enGov = {
   'locked': 'locked for',
   'locked.no': 'no lockup period',
   'day': 'days',
+  'detail': 'Details',
 };
 
 const Map<String, String> zhGov = {
@@ -46,4 +47,5 @@ const Map<String, String> zhGov = {
   'locked': '锁定时间',
   'locked.no': '无锁定期',
   'day': '天',
+  'detail': '详情',
 };

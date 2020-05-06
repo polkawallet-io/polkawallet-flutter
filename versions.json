@@ -1,0 +1,9 @@
+{
+  "android": {
+    "version": "0.7.0-alpha.03",
+    "url": "http://qiniu.xhhn.ltd/polkawallet-v0.7.0-alpha.03.apk"
+  },
+  "ios": {
+    "version": "0.7.0-alpha.03"
+  }
+}

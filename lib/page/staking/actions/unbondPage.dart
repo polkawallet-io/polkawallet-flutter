@@ -35,11 +35,12 @@ class _UnBondPageState extends State<UnBondPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
+    String bonded = '0.000';
     bool hasData = store.staking.ledger['stakingLedger'] != null;
-    int bondedInt =
-        hasData ? store.staking.ledger['stakingLedger']['active'] : 0;
-    String bonded = Fmt.token(bondedInt);
-    String address = store.account.currentAddress;
+    if (hasData) {
+      bonded = Fmt.token(BigInt.parse(
+          store.staking.ledger['stakingLedger']['active'].toString()));
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -108,7 +109,7 @@ class _UnBondPageState extends State<UnBondPage> {
                                   pow(10, decimals))
                               .toInt(),
                         ],
-                        'onFinish': (BuildContext txPageContext) {
+                        'onFinish': (BuildContext txPageContext, Map res) {
                           Navigator.popUntil(
                               txPageContext, ModalRoute.withName('/'));
                           globalBondingRefreshKey.currentState.show();
