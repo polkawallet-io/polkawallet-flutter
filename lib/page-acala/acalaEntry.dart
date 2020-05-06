@@ -79,6 +79,19 @@ class AcalaEntry extends StatelessWidget {
                           Navigator.of(context).pushNamed(EarnPage.route),
                     ),
                   ),
+//                  Padding(
+//                    padding: EdgeInsets.only(bottom: 16),
+//                    child: GestureDetector(
+//                      child: _AcalaCard(
+//                        dic['dex.title'],
+//                        dic['dex.bref'],
+//                        'assets/images/acala/exchange.svg',
+//                        color: Theme.of(context).primaryColor,
+//                      ),
+//                      onTap: () =>
+//                          Navigator.of(context).pushNamed(SwapPage.route),
+//                    ),
+//                  ),
                 ],
               ),
             )

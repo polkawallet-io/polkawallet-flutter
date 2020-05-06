@@ -60,6 +60,14 @@ const Map<String, String> enDex = {
   'faucet.ok': 'Test Tokens were sent.',
   'faucet.limit': 'Exceeds daily limit.',
   'faucet.error': 'Request error, try again later.',
+  'homa.title': 'Liquid DOT',
+  'homa.bref':
+      'Deposit DOT & Mint Liquid DOT (L-DOT). Your DOTs will be staked to earn returns, meanwhile you can use, trade and invest L-DOT balance in your wallet.',
+  'homa.mint': 'Mint L-DOT',
+  'homa.redeem': 'Redeem DOT',
+  'homa.now': 'Redeem Now',
+  'homa.era': 'Redeem in Era',
+  'homa.unbond': 'Redeem & Wait for Unbounding Period',
 };
 
 const Map<String, String> zhDex = {
@@ -121,4 +129,12 @@ const Map<String, String> zhDex = {
   'faucet.ok': '领取成功。',
   'faucet.limit': '每天领取次数有限哦。',
   'faucet.error': '可能领取姿势不太对，等会儿再试试吧。',
+  'homa.title': 'L-DOT 抵押/提取',
+  'homa.bref':
+      '存入 DOT 并生成 Liquid DOT (L-DOT). 你存入的 DOT 将用于 Staking 获取收益, 同时你可以使用你钱包中的 L-DOT 进行日常交易和投资.',
+  'homa.mint': '生成 L-DOT',
+  'homa.redeem': '取回 DOT',
+  'homa.now': '立即取回',
+  'homa.era': '下个 Era 周期取回',
+  'homa.unbond': '等待 DOT 解锁周期取回',
 };

@@ -81,7 +81,9 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                                   child: Text(
                                     I18n.of(context).assets['end'],
                                     style: TextStyle(
-                                        fontSize: 18, color: Colors.black38),
+                                      fontSize: 18,
+                                      color: Colors.black38,
+                                    ),
                                   ),
                                 )
                               ],
@@ -102,6 +104,11 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                         acala_stable_coin) {
                       amountView =
                           loanType.debitShareToDebit(detail.amountDebitShare);
+                    }
+                    String icon = 'assets_down.png';
+                    if (detail.actionType == TxLoanData.actionTypePayback ||
+                        detail.actionType == TxLoanData.actionTypeDeposit) {
+                      icon = 'assets_up.png';
                     }
                     return Container(
                       decoration: BoxDecoration(
@@ -126,11 +133,7 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                                   ),
                                 ),
                               ),
-                              amountView < BigInt.zero
-                                  ? Image.asset(
-                                      'assets/images/assets/assets_up.png')
-                                  : Image.asset(
-                                      'assets/images/assets/assets_down.png')
+                              Image.asset('assets/images/assets/$icon')
                             ],
                           ),
                         ),

@@ -1,3 +1,9 @@
+# 0.7.3
+- Add Acala Liquid DOT
+
+# 0.7.2
+- Bugs fix
+
 # 0.7.1
 - Support OTA update
 
