@@ -70,14 +70,14 @@ mixin _$AssetsStore on _AssetsStore, Store {
   final _$balancesAtom = Atom(name: '_AssetsStore.balances');
 
   @override
-  ObservableMap<String, String> get balances {
+  ObservableMap<String, BalancesInfo> get balances {
     _$balancesAtom.context.enforceReadPolicy(_$balancesAtom);
     _$balancesAtom.reportObserved();
     return super.balances;
   }
 
   @override
-  set balances(ObservableMap<String, String> value) {
+  set balances(ObservableMap<String, BalancesInfo> value) {
     _$balancesAtom.context.conditionallyRunInAction(() {
       super.balances = value;
       _$balancesAtom.reportChanged();
@@ -152,6 +152,15 @@ mixin _$AssetsStore on _AssetsStore, Store {
     }, _$blockMapAtom, name: '${_$blockMapAtom.name}_set');
   }
 
+  final _$setAccountBalancesAsyncAction = AsyncAction('setAccountBalances');
+
+  @override
+  Future<void> setAccountBalances(String pubKey, Map amt,
+      {bool needCache = true}) {
+    return _$setAccountBalancesAsyncAction
+        .run(() => super.setAccountBalances(pubKey, amt, needCache: needCache));
+  }
+
   final _$clearTxsAsyncAction = AsyncAction('clearTxs');
 
   @override
@@ -195,16 +204,6 @@ mixin _$AssetsStore on _AssetsStore, Store {
     final _$actionInfo = _$_AssetsStoreActionController.startAction();
     try {
       return super.setTxsLoading(isLoading);
-    } finally {
-      _$_AssetsStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setAccountBalances(String pubKey, Map amt) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction();
-    try {
-      return super.setAccountBalances(pubKey, amt);
     } finally {
       _$_AssetsStoreActionController.endAction(_$actionInfo);
     }

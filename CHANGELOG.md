@@ -1,4 +1,6 @@
 # 0.7.3
+- Update polkadot.js to 1.13.0-beta.12
+- Move staking payouts calculation to isolate page
 - Add Acala Liquid DOT
 
 # 0.7.2

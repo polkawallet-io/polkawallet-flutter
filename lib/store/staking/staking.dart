@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/staking/types/txData.dart';
+import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'staking.g.dart';
@@ -29,9 +31,6 @@ abstract class _StakingStore with Store {
   ObservableMap<String, dynamic> overview = ObservableMap<String, dynamic>();
 
   @observable
-  bool done = false;
-
-  @observable
   BigInt staked = BigInt.zero;
 
   @observable
@@ -48,7 +47,13 @@ abstract class _StakingStore with Store {
   ObservableMap<String, dynamic> ledger = ObservableMap<String, dynamic>();
 
   @observable
-  ObservableList<Map> txs = ObservableList<Map>();
+  bool txsLoading = false;
+
+  @observable
+  int txsCount = 0;
+
+  @observable
+  ObservableList<TxData> txs = ObservableList<TxData>();
 
   @observable
   ObservableMap<String, dynamic> rewardsChartDataCache =
@@ -57,18 +62,6 @@ abstract class _StakingStore with Store {
   @observable
   ObservableMap<String, dynamic> stakesChartDataCache =
       ObservableMap<String, dynamic>();
-
-  @computed
-  ObservableList<String> get nextUps {
-    if (overview['intentions'] == null) {
-      return ObservableList<String>();
-    }
-    List<String> ls = List<String>.from(overview['intentions'].where((i) {
-      bool ok = overview['validators'].indexOf(i) < 0;
-      return ok;
-    }));
-    return ObservableList.of(ls);
-  }
 
   @computed
   ObservableList<ValidatorData> get nominatingList {
@@ -192,12 +185,24 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  Future<void> addTxs(List<Map> ls, {bool shouldCache = false}) async {
+  Future<void> setTxsLoading(bool loading) async {
+    txsLoading = loading;
+  }
+
+  @action
+  Future<void> addTxs(Map res, {bool shouldCache = false}) async {
+    txsCount = res['count'];
+
+    if (res['extrinsics'] == null) return;
+    List<TxData> ls =
+        List.of(res['extrinsics']).map((i) => TxData.fromJson(i)).toList();
+    print(ls.length);
+
     txs.addAll(ls);
 
     if (shouldCache) {
       LocalStorage.setAccountCache(
-          account.currentAccount.pubKey, cacheStakingTxsKey, ls);
+          account.currentAccount.pubKey, cacheStakingTxsKey, res);
 
       cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
       LocalStorage.setAccountCache(
@@ -240,7 +245,7 @@ abstract class _StakingStore with Store {
       ledger = ObservableMap<String, dynamic>();
     }
     if (cache[1] != null) {
-      addTxs(List<Map>.from(cache[1]));
+      addTxs(cache[1]);
     } else {
       txs.clear();
     }
@@ -264,44 +269,4 @@ abstract class _StakingStore with Store {
 
     loadAccountCache();
   }
-}
-
-class ValidatorData extends _ValidatorData with _$ValidatorData {
-  static ValidatorData fromJson(Map<String, dynamic> json) {
-    ValidatorData data = ValidatorData();
-    data.accountId = json['accountId'];
-    data.total = BigInt.parse(json['exposure']['total'].toString());
-    data.bondOwn = BigInt.parse(json['exposure']['own'].toString());
-
-    data.bondOther = data.total - data.bondOwn;
-    data.points = json['points'] ?? 0;
-    data.commission = NumberFormat('0.00%')
-        .format(json['validatorPrefs']['commission'] / pow(10, 9));
-    data.nominators =
-        List<Map<String, dynamic>>.from(json['exposure']['others']);
-    return data;
-  }
-}
-
-abstract class _ValidatorData with Store {
-  @observable
-  String accountId = '';
-
-  @observable
-  BigInt total = BigInt.zero;
-
-  @observable
-  BigInt bondOwn = BigInt.zero;
-
-  @observable
-  BigInt bondOther = BigInt.zero;
-
-  @observable
-  int points = 0;
-
-  @observable
-  String commission = '';
-
-  @observable
-  List<Map<String, dynamic>> nominators = List<Map<String, dynamic>>();
 }

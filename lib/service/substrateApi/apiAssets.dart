@@ -14,8 +14,7 @@ class ApiAssets {
   Future<void> fetchBalance(String pubKey) async {
     if (pubKey != null && pubKey.isNotEmpty) {
       String address = store.account.currentAddress;
-      String res =
-          await apiRoot.evalJavascript('account.getBalance("$address")');
+      Map res = await apiRoot.evalJavascript('account.getBalance("$address")');
       store.assets.setAccountBalances(
           pubKey, Map.of({store.settings.networkState.tokenSymbol: res}));
     }
@@ -26,12 +25,13 @@ class ApiAssets {
   }
 
   Future<Map> updateTxs(int page) async {
+    store.assets.setTxsLoading(true);
+
     String address = store.account.currentAddress;
     Map res = await PolkaScanApi.fetchTransfers(address, page);
 
     if (page == 0) {
       store.assets.clearTxs();
-      store.assets.setTxsLoading(true);
     }
     // cache first page of txs
     await store.assets.addTxs(res, address, shouldCache: page == 0);

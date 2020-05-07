@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
+import 'package:polka_wallet/common/components/listTail.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
@@ -9,6 +10,7 @@ import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
 import 'package:polka_wallet/store/assets/types/transferData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -96,74 +98,31 @@ class _AssetPageState extends State<AssetPage>
   }
 
   List<Widget> _buildTxList() {
+    List<Widget> res = [];
     final String token = ModalRoute.of(context).settings.arguments;
     if (store.settings.endpoint.info == networkEndpointAcala.info) {
       List<TransferData> ls = store.acala.txsTransfer.reversed.toList();
       ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
-      return ls.map((i) {
+      res.addAll(ls.map((i) {
         return TransferListItem(
             i, token, i.from == store.account.currentAddress, false);
-      }).toList();
+      }));
+      res.add(ListTail(
+        isEmpty: ls.length == 0,
+        isLoading: false,
+      ));
+    } else {
+      res.addAll(store.assets.txsView.map((i) {
+        return TransferListItem(
+            i, token, i.from == store.account.currentAddress, true);
+      }));
+      res.add(ListTail(
+        isEmpty: store.assets.txsView.length == 0,
+        isLoading: store.assets.isTxsLoading,
+      ));
     }
-    if (!store.assets.isTxsLoading && store.assets.txsView.length == 0) {
-      return [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(24),
-              child: Text(
-                I18n.of(context).home['data.empty'],
-                style: TextStyle(fontSize: 18, color: Colors.black38),
-              ),
-            )
-          ],
-        )
-      ];
-    }
-    return store.assets.txsView.map((i) {
-      return TransferListItem(
-          i, token, i.from == store.account.currentAddress, true);
-    }).toList();
-  }
 
-  List<Widget> _buildListView() {
-    final dic = I18n.of(context).assets;
-
-    // TODO: chart data is generated from transfer history
-    // need to use other data source
-//    List<Map<String, dynamic>> balanceHistory = store.assets.balanceHistory;
-
-    List<Widget> list = <Widget>[
-//      Container(
-//        height: 240,
-//        child: AssetChart.withData(balanceHistory),
-//      ),
-    ];
-    list.addAll(_buildTxList());
-    if (store.assets.isTxsLoading) {
-      list.add(
-        Padding(
-            padding: EdgeInsets.all(8), child: CupertinoActivityIndicator()),
-      );
-    }
-    if (_isLastPage) {
-      list.add(
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: Text(
-                dic['end'],
-                style: TextStyle(fontSize: 18, color: Colors.black38),
-              ),
-            )
-          ],
-        ),
-      );
-    }
-    return list;
+    return res;
   }
 
   @override
@@ -195,7 +154,9 @@ class _AssetPageState extends State<AssetPage>
             int decimals = store.settings.networkState.tokenDecimals;
 
             BigInt balance =
-                Fmt.balanceInt(store.assets.balances[token.toUpperCase()]);
+                Fmt.balanceInt(store.assets.tokenBalances[token.toUpperCase()]);
+
+            BalancesInfo balancesInfo = store.assets.balances[symbol];
 
             return Column(
               children: <Widget>[
@@ -208,7 +169,10 @@ class _AssetPageState extends State<AssetPage>
                       Padding(
                         padding: EdgeInsets.only(bottom: 16),
                         child: Text(
-                          Fmt.token(balance, decimals: decimals, length: 8),
+                          Fmt.token(
+                              isBaseToken ? balancesInfo.transferable : balance,
+                              decimals: decimals,
+                              length: 8),
                           style: TextStyle(
                             color: titleColor,
                             fontSize: 28,
@@ -219,41 +183,18 @@ class _AssetPageState extends State<AssetPage>
                       isBaseToken
                           ? Builder(
                               builder: (_) {
-                                BigInt bonded = BigInt.zero;
-                                bool isStash = false;
-                                bool hasData =
-                                    store.staking.ledger['stakingLedger'] !=
-                                        null;
-                                if (hasData) {
-                                  bonded = BigInt.from(store.staking
-                                      .ledger['stakingLedger']['active']);
-                                  String stashId = store
-                                      .staking.ledger['stakingLedger']['stash'];
-                                  isStash = store.staking.ledger['accountId'] ==
-                                      stashId;
-                                }
-                                BigInt unlocking =
-                                    store.staking.accountUnlockingTotal;
-
-                                BigInt locked = bonded + unlocking;
-                                BigInt available =
-                                    isStash ? balance - locked : balance;
-
                                 return Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    isStash
-                                        ? Container(
-                                            margin: EdgeInsets.only(right: 16),
-                                            child: Text(
-                                              '${dic['locked']}: ${Fmt.token(locked, decimals: decimals)}',
-                                              style:
-                                                  TextStyle(color: titleColor),
-                                            ),
-                                          )
-                                        : Container(),
+                                    Container(
+                                      margin: EdgeInsets.only(right: 16),
+                                      child: Text(
+                                        '${dic['locked']}: ${Fmt.token(balancesInfo.lockedBalance, decimals: decimals)}',
+                                        style: TextStyle(color: titleColor),
+                                      ),
+                                    ),
                                     Text(
-                                      '${dic['available']}: ${Fmt.token(available, decimals: decimals)}',
+                                      '${dic['available']}: ${Fmt.token(balancesInfo.transferable, decimals: decimals)}',
                                       style: TextStyle(color: titleColor),
                                     ),
                                   ],

@@ -13,6 +13,7 @@ import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -173,6 +174,7 @@ class _AssetsState extends State<Assets> {
     super.initState();
   }
 
+  // TODO: locked tokens in balance
   @override
   Widget build(BuildContext context) {
     return Observer(
@@ -191,6 +193,9 @@ class _AssetsState extends State<Assets> {
           }
           currencyIds.retainWhere((i) => i != symbol);
         }
+
+        BalancesInfo balancesInfo = store.assets.balances[symbol];
+
         return RefreshIndicator(
           key: globalBalanceRefreshKey,
           onRefresh: _fetchBalance,
@@ -217,7 +222,10 @@ class _AssetsState extends State<Assets> {
                         ),
                         title: Text(symbol ?? ''),
                         trailing: Text(
-                          Fmt.balance(store.assets.balances[symbol],
+                          Fmt.token(
+                              balancesInfo != null
+                                  ? balancesInfo.total
+                                  : BigInt.zero,
                               decimals:
                                   store.settings.networkState.tokenDecimals),
                           style: TextStyle(
@@ -245,7 +253,7 @@ class _AssetsState extends State<Assets> {
                             ),
                             title: Text(token),
                             trailing: Text(
-                              Fmt.balance(store.assets.balances[i],
+                              Fmt.balance(store.assets.tokenBalances[i],
                                   decimals: store.settings.acalaTokenDecimals),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,

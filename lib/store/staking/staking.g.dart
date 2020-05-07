@@ -9,12 +9,6 @@ part of 'staking.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$StakingStore on _StakingStore, Store {
-  Computed<ObservableList<String>> _$nextUpsComputed;
-
-  @override
-  ObservableList<String> get nextUps => (_$nextUpsComputed ??=
-          Computed<ObservableList<String>>(() => super.nextUps))
-      .value;
   Computed<ObservableList<ValidatorData>> _$nominatingListComputed;
 
   @override
@@ -67,23 +61,6 @@ mixin _$StakingStore on _StakingStore, Store {
       super.overview = value;
       _$overviewAtom.reportChanged();
     }, _$overviewAtom, name: '${_$overviewAtom.name}_set');
-  }
-
-  final _$doneAtom = Atom(name: '_StakingStore.done');
-
-  @override
-  bool get done {
-    _$doneAtom.context.enforceReadPolicy(_$doneAtom);
-    _$doneAtom.reportObserved();
-    return super.done;
-  }
-
-  @override
-  set done(bool value) {
-    _$doneAtom.context.conditionallyRunInAction(() {
-      super.done = value;
-      _$doneAtom.reportChanged();
-    }, _$doneAtom, name: '${_$doneAtom.name}_set');
   }
 
   final _$stakedAtom = Atom(name: '_StakingStore.staked');
@@ -171,17 +148,51 @@ mixin _$StakingStore on _StakingStore, Store {
     }, _$ledgerAtom, name: '${_$ledgerAtom.name}_set');
   }
 
+  final _$txsLoadingAtom = Atom(name: '_StakingStore.txsLoading');
+
+  @override
+  bool get txsLoading {
+    _$txsLoadingAtom.context.enforceReadPolicy(_$txsLoadingAtom);
+    _$txsLoadingAtom.reportObserved();
+    return super.txsLoading;
+  }
+
+  @override
+  set txsLoading(bool value) {
+    _$txsLoadingAtom.context.conditionallyRunInAction(() {
+      super.txsLoading = value;
+      _$txsLoadingAtom.reportChanged();
+    }, _$txsLoadingAtom, name: '${_$txsLoadingAtom.name}_set');
+  }
+
+  final _$txsCountAtom = Atom(name: '_StakingStore.txsCount');
+
+  @override
+  int get txsCount {
+    _$txsCountAtom.context.enforceReadPolicy(_$txsCountAtom);
+    _$txsCountAtom.reportObserved();
+    return super.txsCount;
+  }
+
+  @override
+  set txsCount(int value) {
+    _$txsCountAtom.context.conditionallyRunInAction(() {
+      super.txsCount = value;
+      _$txsCountAtom.reportChanged();
+    }, _$txsCountAtom, name: '${_$txsCountAtom.name}_set');
+  }
+
   final _$txsAtom = Atom(name: '_StakingStore.txs');
 
   @override
-  ObservableList<Map> get txs {
+  ObservableList<TxData> get txs {
     _$txsAtom.context.enforceReadPolicy(_$txsAtom);
     _$txsAtom.reportObserved();
     return super.txs;
   }
 
   @override
-  set txs(ObservableList<Map> value) {
+  set txs(ObservableList<TxData> value) {
     _$txsAtom.context.conditionallyRunInAction(() {
       super.txs = value;
       _$txsAtom.reportChanged();
@@ -235,12 +246,19 @@ mixin _$StakingStore on _StakingStore, Store {
     return _$clearTxsAsyncAction.run(() => super.clearTxs());
   }
 
+  final _$setTxsLoadingAsyncAction = AsyncAction('setTxsLoading');
+
+  @override
+  Future<void> setTxsLoading(bool loading) {
+    return _$setTxsLoadingAsyncAction.run(() => super.setTxsLoading(loading));
+  }
+
   final _$addTxsAsyncAction = AsyncAction('addTxs');
 
   @override
-  Future<void> addTxs(List<Map> ls, {bool shouldCache = false}) {
+  Future<void> addTxs(Map res, {bool shouldCache = false}) {
     return _$addTxsAsyncAction
-        .run(() => super.addTxs(ls, shouldCache: shouldCache));
+        .run(() => super.addTxs(res, shouldCache: shouldCache));
   }
 
   final _$loadAccountCacheAsyncAction = AsyncAction('loadAccountCache');
@@ -330,126 +348,5 @@ mixin _$StakingStore on _StakingStore, Store {
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }
-  }
-}
-
-mixin _$ValidatorData on _ValidatorData, Store {
-  final _$accountIdAtom = Atom(name: '_ValidatorData.accountId');
-
-  @override
-  String get accountId {
-    _$accountIdAtom.context.enforceReadPolicy(_$accountIdAtom);
-    _$accountIdAtom.reportObserved();
-    return super.accountId;
-  }
-
-  @override
-  set accountId(String value) {
-    _$accountIdAtom.context.conditionallyRunInAction(() {
-      super.accountId = value;
-      _$accountIdAtom.reportChanged();
-    }, _$accountIdAtom, name: '${_$accountIdAtom.name}_set');
-  }
-
-  final _$totalAtom = Atom(name: '_ValidatorData.total');
-
-  @override
-  BigInt get total {
-    _$totalAtom.context.enforceReadPolicy(_$totalAtom);
-    _$totalAtom.reportObserved();
-    return super.total;
-  }
-
-  @override
-  set total(BigInt value) {
-    _$totalAtom.context.conditionallyRunInAction(() {
-      super.total = value;
-      _$totalAtom.reportChanged();
-    }, _$totalAtom, name: '${_$totalAtom.name}_set');
-  }
-
-  final _$bondOwnAtom = Atom(name: '_ValidatorData.bondOwn');
-
-  @override
-  BigInt get bondOwn {
-    _$bondOwnAtom.context.enforceReadPolicy(_$bondOwnAtom);
-    _$bondOwnAtom.reportObserved();
-    return super.bondOwn;
-  }
-
-  @override
-  set bondOwn(BigInt value) {
-    _$bondOwnAtom.context.conditionallyRunInAction(() {
-      super.bondOwn = value;
-      _$bondOwnAtom.reportChanged();
-    }, _$bondOwnAtom, name: '${_$bondOwnAtom.name}_set');
-  }
-
-  final _$bondOtherAtom = Atom(name: '_ValidatorData.bondOther');
-
-  @override
-  BigInt get bondOther {
-    _$bondOtherAtom.context.enforceReadPolicy(_$bondOtherAtom);
-    _$bondOtherAtom.reportObserved();
-    return super.bondOther;
-  }
-
-  @override
-  set bondOther(BigInt value) {
-    _$bondOtherAtom.context.conditionallyRunInAction(() {
-      super.bondOther = value;
-      _$bondOtherAtom.reportChanged();
-    }, _$bondOtherAtom, name: '${_$bondOtherAtom.name}_set');
-  }
-
-  final _$pointsAtom = Atom(name: '_ValidatorData.points');
-
-  @override
-  int get points {
-    _$pointsAtom.context.enforceReadPolicy(_$pointsAtom);
-    _$pointsAtom.reportObserved();
-    return super.points;
-  }
-
-  @override
-  set points(int value) {
-    _$pointsAtom.context.conditionallyRunInAction(() {
-      super.points = value;
-      _$pointsAtom.reportChanged();
-    }, _$pointsAtom, name: '${_$pointsAtom.name}_set');
-  }
-
-  final _$commissionAtom = Atom(name: '_ValidatorData.commission');
-
-  @override
-  String get commission {
-    _$commissionAtom.context.enforceReadPolicy(_$commissionAtom);
-    _$commissionAtom.reportObserved();
-    return super.commission;
-  }
-
-  @override
-  set commission(String value) {
-    _$commissionAtom.context.conditionallyRunInAction(() {
-      super.commission = value;
-      _$commissionAtom.reportChanged();
-    }, _$commissionAtom, name: '${_$commissionAtom.name}_set');
-  }
-
-  final _$nominatorsAtom = Atom(name: '_ValidatorData.nominators');
-
-  @override
-  List<Map<String, dynamic>> get nominators {
-    _$nominatorsAtom.context.enforceReadPolicy(_$nominatorsAtom);
-    _$nominatorsAtom.reportObserved();
-    return super.nominators;
-  }
-
-  @override
-  set nominators(List<Map<String, dynamic>> value) {
-    _$nominatorsAtom.context.conditionallyRunInAction(() {
-      super.nominators = value;
-      _$nominatorsAtom.reportChanged();
-    }, _$nominatorsAtom, name: '${_$nominatorsAtom.name}_set');
   }
 }

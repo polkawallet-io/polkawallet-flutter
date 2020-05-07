@@ -8,7 +8,7 @@ import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/governance.dart';
+import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -124,9 +124,9 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
           final Map<String, String> dic = I18n.of(context).assets;
           final Map<String, String> dicGov = I18n.of(context).gov;
           int decimals = store.settings.networkState.tokenDecimals;
+          String symbol = store.settings.networkState.tokenSymbol;
 
-          BigInt balance = Fmt.balanceInt(
-              store.assets.balances[store.settings.networkState.tokenSymbol]);
+          BigInt balance = store.assets.balances[symbol].freeBalance;
 
           Map args = ModalRoute.of(context).settings.arguments;
           ReferendumInfo info = args['referenda'];

@@ -32,8 +32,7 @@ class DrawerMenu extends StatelessWidget {
           // refresh balance
           store.assets.loadAccountCache();
           globalBalanceRefreshKey.currentState.show();
-          // refresh user's staking & gov info
-          store.gov.clearSate();
+          // refresh user's staking info
           store.staking.loadAccountCache();
           webApi.staking.fetchAccountStaking(i.pubKey);
         },

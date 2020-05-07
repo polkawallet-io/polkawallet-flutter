@@ -60,6 +60,7 @@ class _ValidatorListFilterState extends State<ValidatorListFilter> {
             child: Padding(
               padding: EdgeInsets.only(right: 16),
               child: CupertinoTextField(
+                clearButtonMode: OverlayVisibilityMode.editing,
                 padding: EdgeInsets.fromLTRB(16, 6, 16, 6),
                 placeholder: dic['filter'],
                 decoration: BoxDecoration(

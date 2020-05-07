@@ -81,8 +81,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
             store.assets.loadAccountCache();
 
             if (store.settings.endpoint.info == networkEndpointKusama.info) {
-              // refresh user's staking & gov info
-              store.gov.clearSate();
+              // refresh user's staking info
               store.staking.loadAccountCache();
             }
 
@@ -98,6 +97,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
               store.settings.setEndpoint(EndpointData.toJson(_selectedNetwork));
               store.settings.loadNetworkStateCache();
               store.settings.setNetworkLoading(true);
+              store.assets.clearTxs();
               webApi.launchWebview();
               changeTheme();
             }

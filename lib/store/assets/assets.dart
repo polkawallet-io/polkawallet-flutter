@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
 import 'package:polka_wallet/store/assets/types/transferData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
@@ -33,7 +34,11 @@ abstract class _AssetsStore with Store {
   bool submitting = false;
 
   @observable
-  ObservableMap<String, String> balances = ObservableMap<String, String>();
+  ObservableMap<String, BalancesInfo> balances =
+      ObservableMap<String, BalancesInfo>();
+
+  @observable
+  ObservableMap<String, String> tokenBalances = ObservableMap<String, String>();
 
   @observable
   int txsCount = 0;
@@ -86,20 +91,45 @@ abstract class _AssetsStore with Store {
 //  }
 
   @action
-  void setTxsLoading(bool isLoading) {
-    isTxsLoading = isLoading;
-  }
-
-  @action
-  void setAccountBalances(String pubKey, Map amt) {
+  Future<void> setAccountBalances(String pubKey, Map amt,
+      {bool needCache = true}) async {
     if (rootStore.account.currentAccount.pubKey != pubKey) return;
 
     amt.forEach((k, v) {
-      balances[k] = v;
+      balances[k] = BalancesInfo.fromJson(v);
     });
 
-    LocalStorage.setAccountCache(rootStore.account.currentAccount.pubKey,
-        cacheBalanceKey, Map<String, String>.from(balances));
+    if (!needCache) return;
+    Map cache = await LocalStorage.getAccountCache(
+      rootStore.account.currentAccount.pubKey,
+      cacheBalanceKey,
+    );
+    if (cache == null) {
+      cache = amt;
+    } else {
+      amt.forEach((k, v) {
+        cache[k] = v;
+      });
+    }
+    LocalStorage.setAccountCache(
+      rootStore.account.currentAccount.pubKey,
+      cacheBalanceKey,
+      cache,
+    );
+  }
+
+  @action
+  Future<void> setAccountTokenBalances(String pubKey, Map amt) async {
+    if (rootStore.account.currentAccount.pubKey != pubKey) return;
+
+    amt.forEach((k, v) {
+      tokenBalances[k] = v;
+    });
+  }
+
+  @action
+  void setTxsLoading(bool isLoading) {
+    isTxsLoading = isLoading;
   }
 
   @action
@@ -172,7 +202,7 @@ abstract class _AssetsStore with Store {
       LocalStorage.getAccountCache(pubKey, cacheTimeKey),
     ]);
     if (cache[0] != null) {
-      balances = ObservableMap.of(Map<String, String>.from(cache[0]));
+      setAccountBalances(pubKey, cache[0], needCache: false);
     }
     if (cache[1] != null) {
       txs = ObservableList.of(

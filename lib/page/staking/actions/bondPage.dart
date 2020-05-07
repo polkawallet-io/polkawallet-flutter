@@ -90,7 +90,8 @@ class _BondPageState extends State<BondPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    String balance = Fmt.balance(store.assets.balances[symbol]);
+    double balance =
+        Fmt.bigIntToDouble(store.assets.balances[symbol].freeBalance);
 
     var rewardToOptions =
         _rewardToOptions.map((i) => dic['reward.$i']).toList();
@@ -130,7 +131,7 @@ class _BondPageState extends State<BondPage> {
                           decoration: InputDecoration(
                             hintText: assetDic['amount'],
                             labelText:
-                                '${assetDic['amount']} (${dic['balance']}: $balance $symbol)',
+                                '${assetDic['amount']} (${dic['balance']}: ${Fmt.doubleFormat(balance)} $symbol)',
                           ),
                           inputFormatters: [
                             RegExInputFormatter.withRegex(
@@ -143,8 +144,7 @@ class _BondPageState extends State<BondPage> {
                             if (v.isEmpty) {
                               return assetDic['amount.error'];
                             }
-                            if (double.parse(v.trim()) >=
-                                double.parse(balance) - 0.02) {
+                            if (double.parse(v.trim()) >= balance - 0.02) {
                               return assetDic['amount.low'];
                             }
                             return null;

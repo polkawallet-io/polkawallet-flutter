@@ -67,7 +67,7 @@ class _LoanPageState extends State<LoanPage> {
           LoanData loan = store.acala.loans[_tab];
 
           String balance = Fmt.priceFloor(
-              Fmt.balanceInt(store.assets.balances[acala_stable_coin]));
+              Fmt.balanceInt(store.assets.tokenBalances[acala_stable_coin]));
 
           Color cardColor = Theme.of(context).cardColor;
           Color primaryColor = Theme.of(context).primaryColor;

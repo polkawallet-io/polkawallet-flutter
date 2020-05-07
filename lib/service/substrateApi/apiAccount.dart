@@ -113,8 +113,6 @@ class ApiAccount {
       await store.account.addAccount(acc, pass);
       encodeAddress([acc['pubKey']]);
 
-      store.gov.clearSate();
-
       store.assets.loadAccountCache();
       store.staking.loadAccountCache();
 

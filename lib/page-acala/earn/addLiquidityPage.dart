@@ -137,9 +137,10 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
         double amountToken = 0;
         double amountStableCoin = 0;
         double amountTokenUser = 0;
-        BigInt balanceTokenUser = Fmt.balanceInt(store.assets.balances[token]);
+        BigInt balanceTokenUser =
+            Fmt.balanceInt(store.assets.tokenBalances[token]);
         BigInt balanceStableCoinUser =
-            Fmt.balanceInt(store.assets.balances[acala_stable_coin]);
+            Fmt.balanceInt(store.assets.tokenBalances[acala_stable_coin]);
 
         DexPoolInfoData poolInfo = store.acala.dexPoolInfoMap[token];
         if (poolInfo != null) {

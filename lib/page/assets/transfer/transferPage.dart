@@ -161,20 +161,8 @@ class _TransferPageState extends State<TransferPage> {
 
         int decimals = store.settings.networkState.tokenDecimals;
 
-        BigInt balance =
-            Fmt.balanceInt(store.assets.balances[symbol.toUpperCase()]);
-        BigInt available = balance;
-        bool hasStakingData = store.staking.ledger['stakingLedger'] != null;
-        if (hasStakingData) {
-          String stashId = store.staking.ledger['stakingLedger']['stash'];
-          bool isStash = store.staking.ledger['accountId'] == stashId;
-          if (isStash) {
-            BigInt bonded = BigInt.parse(
-                store.staking.ledger['stakingLedger']['active'].toString());
-            BigInt unlocking = store.staking.accountUnlockingTotal;
-            available = balance - bonded - unlocking;
-          }
-        }
+        BigInt available =
+            store.assets.balances[symbol.toUpperCase()].transferable;
 
         return Scaffold(
           appBar: AppBar(
@@ -295,13 +283,13 @@ class _TransferPageState extends State<TransferPage> {
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.black54)),
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 16),
-                              child: Text(
-                                  'TransferFee: ${store.settings.transactionBaseFee} $baseTokenSymbol',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black54)),
-                            ),
+//                            Padding(
+//                              padding: EdgeInsets.only(top: 16),
+//                              child: Text(
+//                                  'TransferFee: ${store.settings.transactionBaseFee} $baseTokenSymbol',
+//                                  style: TextStyle(
+//                                      fontSize: 16, color: Colors.black54)),
+//                            ),
                             Padding(
                               padding: EdgeInsets.only(top: 16),
                               child: Text(

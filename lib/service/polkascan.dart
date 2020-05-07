@@ -1,9 +1,19 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 
 const int tx_list_page_size = 10;
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
 
 class PolkaScanApi {
   static const String module_balances = 'balances';
@@ -27,8 +37,10 @@ class PolkaScanApi {
     String network = 'kusama',
   }) async {
     String url = '${getSnEndpoint(network)}/transfers';
-    print(url);
-    Map<String, String> headers = {"Content-type": "application/json"};
+    Map<String, String> headers = {
+      "Content-type": "application/json",
+      "Accept": "*/*"
+    };
     String body = jsonEncode({
       "page": page,
       "row": tx_list_page_size,
@@ -41,15 +53,25 @@ class PolkaScanApi {
     return {};
   }
 
-  static Future<String> fetchTxs(
+  static Future<Map> fetchTxs(
     String address, {
     String module,
-    int page = 1,
+    int page = 0,
     String network = 'kusama',
   }) async {
-    Response res = await get(
-        '${getPnEndpoint(network)}/extrinsic?filter[module_id]=$module&filter[address]=$address&page[number]=$page&page[size]=$tx_list_page_size');
-    return res.body;
+    String url = '${getSnEndpoint(network)}/extrinsics';
+    Map<String, String> headers = {"Content-type": "application/json"};
+    String body = jsonEncode({
+      "page": page,
+      "row": tx_list_page_size,
+      "address": address,
+      "module": module,
+    });
+    Response res = await post(url, headers: headers, body: body);
+    if (res.body != null) {
+      return jsonDecode(res.body)['data'];
+    }
+    return {};
   }
 
   static Future<String> fetchTx(String hash,

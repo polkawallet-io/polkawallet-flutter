@@ -330,8 +330,8 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     bool showDebit = true;
 
     BigInt balanceAUSD =
-        Fmt.balanceInt(store.assets.balances[acala_stable_coin]);
-    BigInt balance = Fmt.balanceInt(store.assets.balances[params.token]);
+        Fmt.balanceInt(store.assets.tokenBalances[acala_stable_coin]);
+    BigInt balance = Fmt.balanceInt(store.assets.tokenBalances[params.token]);
     BigInt available = balance;
     BigInt maxToBorrow = loan.maxToBorrow - loan.debits;
     String maxToBorrowView = Fmt.priceFloor(maxToBorrow);

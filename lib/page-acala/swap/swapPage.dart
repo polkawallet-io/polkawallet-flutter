@@ -232,8 +232,8 @@ class _SwapPageState extends State<SwapPage> {
 
         BigInt balance = BigInt.zero;
         if (store.acala.swapTokens != null && swapPair.length > 0) {
-          balance =
-              Fmt.balanceInt(store.assets.balances[swapPair[0].toUpperCase()]);
+          balance = Fmt.balanceInt(
+              store.assets.tokenBalances[swapPair[0].toUpperCase()]);
         }
 
         Color primary = Theme.of(context).primaryColor;

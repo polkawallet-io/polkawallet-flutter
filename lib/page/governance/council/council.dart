@@ -145,16 +145,22 @@ class _CouncilState extends State<Council> {
                   ),
                   Container(
                     color: Theme.of(context).cardColor,
-                    child: Column(
-                      children: store.gov.council.candidates.map((i) {
-                        Map accInfo = store.account.accountIndexMap[i];
-                        return CandidateItem(
-                          accInfo: accInfo,
-                          balance: [i],
-                          tokenSymbol: store.settings.networkState.tokenSymbol,
-                        );
-                      }).toList(),
-                    ),
+                    child: store.gov.council.candidates.length > 0
+                        ? Column(
+                            children: store.gov.council.candidates.map((i) {
+                              Map accInfo = store.account.accountIndexMap[i];
+                              return CandidateItem(
+                                accInfo: accInfo,
+                                balance: [i],
+                                tokenSymbol:
+                                    store.settings.networkState.tokenSymbol,
+                              );
+                            }).toList(),
+                          )
+                        : Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Text(dic['candidate.empty']),
+                          ),
                   ),
                 ],
               ),
@@ -172,7 +178,7 @@ class CandidateItem extends StatelessWidget {
       this.onSwitch});
   final Map accInfo;
   // balance == [<candidate_address>, <0x_candidate_backing_amount>]
-  final List<String> balance;
+  final List balance;
   final String tokenSymbol;
   final bool switchValue;
   final Function(bool) onSwitch;
@@ -197,7 +203,7 @@ class CandidateItem extends StatelessWidget {
       subtitle: balance.length == 1
           ? null
           : Text(
-              '${I18n.of(context).gov['backing']}: ${Fmt.token(BigInt.parse(balance[1]))} $tokenSymbol'),
+              '${I18n.of(context).gov['backing']}: ${Fmt.token(BigInt.parse(balance[1].toString()))} $tokenSymbol'),
       onTap: () => Navigator.of(context).pushNamed(CandidateDetailPage.route,
           arguments: balance.length == 1 ? [balance[0], '0x0'] : balance),
       trailing: onSwitch == null

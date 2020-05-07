@@ -33,7 +33,11 @@ class TxDetail extends StatelessWidget {
       return Container(
           padding: EdgeInsets.only(left: 8),
           width: 80,
-          child: Text(name, style: Theme.of(context).textTheme.display4));
+          child: Text(name,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).unselectedWidgetColor,
+              )));
     }
 
     var list = <Widget>[

@@ -31,18 +31,20 @@ class ApiAcala {
 
   Future<void> fetchTokens(String pubKey) async {
     if (pubKey != null && pubKey.isNotEmpty) {
+      String symbol = store.settings.networkState.tokenSymbol;
       String address = store.account.currentAddress;
       List<String> tokens =
           List<String>.from(store.settings.networkConst['currencyIds']);
-      tokens.retainWhere((i) => i != store.settings.networkState.tokenSymbol);
+      tokens.retainWhere((i) => i != symbol);
       String queries =
           tokens.map((i) => 'acala.getTokens("$i", "$address")').join(",");
       var res = await apiRoot.evalJavascript('Promise.all([$queries])');
       Map balances = {};
+      balances[symbol] = store.assets.balances[symbol].transferable.toString();
       tokens.asMap().forEach((index, token) {
         balances[token] = res[index].toString();
       });
-      store.assets.setAccountBalances(pubKey, balances);
+      store.assets.setAccountTokenBalances(pubKey, balances);
     }
   }
 

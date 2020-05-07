@@ -206,7 +206,7 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
 
     LoanType loanType =
         store.acala.loanTypes.firstWhere((i) => i.token == symbol);
-    BigInt balance = Fmt.balanceInt(store.assets.balances[params.token]);
+    BigInt balance = Fmt.balanceInt(store.assets.tokenBalances[params.token]);
     BigInt available = balance;
 
     String balanceView = Fmt.token(available, decimals: decimals);

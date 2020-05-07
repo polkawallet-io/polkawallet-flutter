@@ -7,7 +7,7 @@ import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/staking/validators/rewardsChart.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:charts_flutter/flutter.dart' as charts;

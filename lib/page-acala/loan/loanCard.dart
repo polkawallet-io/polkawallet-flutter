@@ -23,8 +23,7 @@ class LoanCard extends StatelessWidget {
     double dailyInterest =
         Fmt.bigIntToDouble(loan.debits, decimals: acala_token_decimals) *
             loan.stableFeeDay;
-    String ratio = Fmt.ratio(loan.stableFeeDay);
-    String ratio2 = Fmt.ratio(loan.stableFeeYear);
+    String ratio = Fmt.ratio(loan.stableFeeYear);
 
     Color primaryColor = Theme.of(context).primaryColor;
     return RoundedCard(
@@ -65,13 +64,8 @@ class LoanCard extends StatelessWidget {
                       ),
                       InfoItem(
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        title: dic['collateral.ratio'],
-                        content: ratio,
-                      ),
-                      InfoItem(
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         title: dic['collateral.ratio.year'],
-                        content: ratio2,
+                        content: ratio,
                       )
                     ],
                   ),

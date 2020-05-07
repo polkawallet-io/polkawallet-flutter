@@ -8,7 +8,7 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumPanel.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/governance.dart';
+import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -33,7 +33,6 @@ class _DemocracyState extends State<Democracy> {
     if (store.settings.loading) {
       return;
     }
-    webApi.gov.updateDemocracyVotes(store.account.currentAddress);
     await webApi.gov.fetchReferendums();
   }
 
@@ -150,9 +149,8 @@ class _DemocracyState extends State<Democracy> {
                         return ReferendumPanel(
                           data: list[i],
                           bestNumber: bestNumber,
-                          votes: list[i].votes,
                           symbol: symbol,
-                          voted: store.gov.votedMap[list[i].index],
+                          voted: list[i].userVoted,
                         );
                       },
                     ),

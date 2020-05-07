@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -21,6 +23,17 @@ class PayoutPage extends StatefulWidget {
 class _PayoutPageState extends State<PayoutPage> {
   _PayoutPageState(this.store);
   final AppStore store;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (store.staking.accountRewardTotal == null) {
+        webApi.staking.fetchAccountRewards(store.account.currentAccount.pubKey);
+      }
+    });
+  }
 
   void _onSubmit() {
     var dic = I18n.of(context).staking;
@@ -87,13 +100,13 @@ class _PayoutPageState extends State<PayoutPage> {
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
     final int decimals = store.settings.networkState.tokenDecimals;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(dic['action.payout']),
         centerTitle: true,
       ),
-      body: Builder(builder: (BuildContext context) {
+      body: Observer(builder: (BuildContext context) {
+        bool rewardLoading = store.staking.accountRewardTotal == null;
         return SafeArea(
           child: Column(
             children: <Widget>[
@@ -105,14 +118,29 @@ class _PayoutPageState extends State<PayoutPage> {
                       dic['controller'],
                       store.account.currentAccount,
                     ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: I18n.of(context).assets['amount'],
-                      ),
-                      initialValue: Fmt.token(store.staking.accountRewardTotal,
-                          decimals: decimals),
-                      readOnly: true,
-                    ),
+                    rewardLoading
+                        ? Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.all(16),
+                                child: CupertinoActivityIndicator(),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: Text(
+                                    I18n.of(context).staking['reward.tip']),
+                              ),
+                            ],
+                          )
+                        : TextFormField(
+                            decoration: InputDecoration(
+                              labelText: I18n.of(context).assets['amount'],
+                            ),
+                            initialValue: Fmt.token(
+                                store.staking.accountRewardTotal,
+                                decimals: decimals),
+                            readOnly: true,
+                          ),
                   ],
                 ),
               ),
@@ -120,7 +148,10 @@ class _PayoutPageState extends State<PayoutPage> {
                 padding: EdgeInsets.all(16),
                 child: RoundedButton(
                   text: I18n.of(context).home['submit.tx'],
-                  onPressed: _onSubmit,
+                  onPressed: rewardLoading ||
+                          store.staking.accountRewardTotal == BigInt.zero
+                      ? null
+                      : _onSubmit,
                 ),
               ),
             ],

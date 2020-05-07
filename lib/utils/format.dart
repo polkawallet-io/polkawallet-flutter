@@ -4,9 +4,7 @@ import 'dart:math';
 import 'package:convert/convert.dart';
 import 'package:intl/intl.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
-import 'package:polka_wallet/store/acala/acala.dart';
-import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/store/staking/types/validatorData.dart';
 
 class Fmt {
   static String passwordToEncryptKey(String password) {
