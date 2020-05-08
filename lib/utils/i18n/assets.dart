@@ -31,6 +31,10 @@ const Map<String, String> enAssets = {
   'hash': 'TxHash',
   'polkascan': 'Open in Browser',
   'notify.receive': 'Token Received',
+  'lock.democrac': 'via Democracy/Vote',
+  'lock.phrelect': 'via Council/Vote',
+  'lock.staking': 'via Staking/Bond',
+  'lock.vesting': 'via Vesting',
 };
 
 const Map<String, String> zhAssets = {
@@ -66,4 +70,8 @@ const Map<String, String> zhAssets = {
   'hash': '交易Hash',
   'polkascan': '在浏览器中查看',
   'notify.receive': '到账通知',
+  'lock.democrac': '提案治理投票',
+  'lock.phrelect': '议会选举投票',
+  'lock.staking': '抵押绑定',
+  'lock.vesting': '投资锁定',
 };

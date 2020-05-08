@@ -157,6 +157,15 @@ class _AssetPageState extends State<AssetPage>
                 Fmt.balanceInt(store.assets.tokenBalances[token.toUpperCase()]);
 
             BalancesInfo balancesInfo = store.assets.balances[symbol];
+            String lockedInfo = '\n';
+            if (balancesInfo.lockedBreakdown != null) {
+              balancesInfo.lockedBreakdown.forEach((i) {
+                if (i.amount > BigInt.zero) {
+                  lockedInfo +=
+                      '${Fmt.token(i.amount, decimals: decimals)} $symbol ${dic['lock.${i.use}']}\n';
+                }
+              });
+            }
 
             return Column(
               children: <Widget>[
@@ -188,9 +197,29 @@ class _AssetPageState extends State<AssetPage>
                                   children: <Widget>[
                                     Container(
                                       margin: EdgeInsets.only(right: 16),
-                                      child: Text(
-                                        '${dic['locked']}: ${Fmt.token(balancesInfo.lockedBalance, decimals: decimals)}',
-                                        style: TextStyle(color: titleColor),
+                                      child: Row(
+                                        children: <Widget>[
+                                          lockedInfo.length > 2
+                                              ? Tooltip(
+                                                  message: lockedInfo,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        right: 6),
+                                                    child: Icon(
+                                                      Icons.info,
+                                                      size: 16,
+                                                      color: titleColor,
+                                                    ),
+                                                  ),
+                                                  waitDuration:
+                                                      Duration(seconds: 0),
+                                                )
+                                              : Container(),
+                                          Text(
+                                            '${dic['locked']}: ${Fmt.token(balancesInfo.lockedBalance, decimals: decimals)}',
+                                            style: TextStyle(color: titleColor),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     Text(

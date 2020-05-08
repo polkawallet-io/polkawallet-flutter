@@ -1,7 +1,10 @@
-# 0.7.3
-- Update polkadot.js to 1.13.0-beta.12
-- Move staking payouts calculation to isolate page
+# 0.7.4
 - Add Acala Liquid DOT
+
+# 0.7.3
+- Update polkadot.js to 1.13.1
+- Move staking payouts calculation to isolate page
+- Add locked token info of ksm
 
 # 0.7.2
 - Bugs fix
