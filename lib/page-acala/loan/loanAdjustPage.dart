@@ -334,7 +334,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     BigInt balance = Fmt.balanceInt(store.assets.tokenBalances[params.token]);
     BigInt available = balance;
     BigInt maxToBorrow = loan.maxToBorrow - loan.debits;
-    String maxToBorrowView = Fmt.priceFloor(maxToBorrow);
+    String maxToBorrowView = Fmt.priceFloorBigInt(maxToBorrow);
 
     switch (params.actionType) {
       case LoanAdjustPage.actionTypeBorrow:
@@ -345,7 +345,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
       case LoanAdjustPage.actionTypePayback:
         // max to payback
         maxToBorrow = loan.debits;
-        maxToBorrowView = Fmt.priceCeil(maxToBorrow);
+        maxToBorrowView = Fmt.priceCeilBigInt(maxToBorrow);
         showCollateral = false;
         titleSuffix = ' aUSD';
         break;
@@ -362,7 +362,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     int maxCollateralDecimal =
         loan.debits > BigInt.zero ? 6 : acala_token_decimals;
     String availableView =
-        Fmt.priceFloor(available, lengthMax: maxCollateralDecimal);
+        Fmt.priceFloorBigInt(available, lengthMax: maxCollateralDecimal);
 
     String pageTitle = '${dic['loan.${params.actionType}']}$titleSuffix';
 

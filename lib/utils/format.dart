@@ -49,10 +49,12 @@ class Fmt {
   static String doubleFormat(
     double value, {
     int length = 3,
+    int round = 0,
   }) {
     if (value == null) {
       return '~';
     }
+    value.toStringAsFixed(3);
     NumberFormat f =
         NumberFormat(",##0${length > 0 ? '.' : ''}${'#' * length}", "en_US");
     return f.format(value);
@@ -111,7 +113,7 @@ class Fmt {
   /// from <BigInt> to <String> in price format of ",##0.00"
   /// ceil number of last decimal
   static String priceCeil(
-    BigInt value, {
+    double value, {
     int decimals = acala_token_decimals,
     int lengthFixed = 2,
     int lengthMax,
@@ -124,18 +126,14 @@ class Fmt {
     NumberFormat f = NumberFormat(
         ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
         "en_US");
-    return f.format(
-        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
-                .ceil() /
-            pow(10, lengthMax ?? lengthFixed));
+    return f.format(value);
   }
 
   /// number transform 6:
   /// from <BigInt> to <String> in price format of ",##0.00"
   /// floor number of last decimal
   static String priceFloor(
-    BigInt value, {
-    int decimals = acala_token_decimals,
+    double value, {
     int lengthFixed = 2,
     int lengthMax,
   }) {
@@ -147,10 +145,7 @@ class Fmt {
     NumberFormat f = NumberFormat(
         ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
         "en_US");
-    return f.format(
-        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
-                .floor() /
-            pow(10, lengthMax ?? lengthFixed));
+    return f.format(value);
   }
 
   /// number transform 7:
@@ -158,6 +153,38 @@ class Fmt {
   static String ratio(dynamic number, {bool needSymbol = true}) {
     NumberFormat f = NumberFormat(",##0.###${needSymbol ? '%' : ''}");
     return f.format(number ?? 0);
+  }
+
+  static String priceCeilBigInt(
+    BigInt value, {
+    int decimals = acala_token_decimals,
+    int lengthFixed = 2,
+    int lengthMax,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    double price =
+        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
+                .ceil() /
+            pow(10, lengthMax ?? lengthFixed);
+    return priceCeil(price, lengthFixed: lengthFixed, lengthMax: lengthMax);
+  }
+
+  static String priceFloorBigInt(
+    BigInt value, {
+    int decimals = acala_token_decimals,
+    int lengthFixed = 2,
+    int lengthMax,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    double price =
+        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
+                .floor() /
+            pow(10, lengthMax ?? lengthFixed);
+    return priceFloor(price, lengthFixed: lengthFixed, lengthMax: lengthMax);
   }
 
   static bool isAddress(String txt) {

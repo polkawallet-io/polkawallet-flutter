@@ -40,7 +40,7 @@ class LoanCard extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(top: 8, bottom: 0),
                     child: Text(
-                      Fmt.priceCeil(loan.debits,
+                      Fmt.priceCeilBigInt(loan.debits,
                           decimals: acala_token_decimals),
                       style: TextStyle(
                         fontSize: 36,

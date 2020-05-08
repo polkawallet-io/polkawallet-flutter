@@ -7,9 +7,9 @@ class TxSwapData extends _TxSwapData {
     data.tokenPay = json['params'][0];
     data.tokenReceive = json['params'][2];
     data.amountPay =
-        Fmt.priceCeil(Fmt.balanceInt(json['params'][1].toString()));
+        Fmt.priceCeilBigInt(Fmt.balanceInt(json['params'][1].toString()));
     data.amountReceive =
-        Fmt.priceFloor(Fmt.balanceInt(json['params'][3].toString()));
+        Fmt.priceFloorBigInt(Fmt.balanceInt(json['params'][3].toString()));
     data.time = DateTime.fromMillisecondsSinceEpoch(json['time']);
     return data;
   }

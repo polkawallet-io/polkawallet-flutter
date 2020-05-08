@@ -68,6 +68,12 @@ const Map<String, String> enDex = {
   'homa.now': 'Redeem Now',
   'homa.era': 'Redeem in Era',
   'homa.unbond': 'Redeem & Wait for Unbounding Period',
+  'homa.pool': 'Staking Pool',
+  'homa.pool.total': 'Total',
+  'homa.pool.bonded': 'Total Bonded',
+  'homa.pool.free': 'Total Free',
+  'homa.pool.unbonding': 'Unbonding',
+  'homa.pool.ratio': 'Bond Ratio',
 };
 
 const Map<String, String> zhDex = {
@@ -135,6 +141,12 @@ const Map<String, String> zhDex = {
   'homa.mint': '生成 L-DOT',
   'homa.redeem': '取回 DOT',
   'homa.now': '立即取回',
-  'homa.era': '下个 Era 周期取回',
+  'homa.era': '指定 Era 周期取回',
   'homa.unbond': '等待 DOT 解锁周期取回',
+  'homa.pool': '抵押资金池',
+  'homa.pool.total': '总量',
+  'homa.pool.bonded': '绑定数量',
+  'homa.pool.free': '流动数量',
+  'homa.pool.unbonding': '解绑中',
+  'homa.pool.ratio': '抵押率',
 };

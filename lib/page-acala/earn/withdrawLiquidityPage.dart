@@ -174,7 +174,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                           decoration: InputDecoration(
                             hintText: dicAssets['amount'],
                             labelText:
-                                '${dicAssets['amount']} (${dic['earn.available']}: ${Fmt.priceFloor(shareInt)} Shares)',
+                                '${dicAssets['amount']} (${dic['earn.available']}: ${Fmt.priceFloorBigInt(shareInt)} Shares)',
                             suffix: GestureDetector(
                               child: Icon(
                                 CupertinoIcons.clear_thick_circled,

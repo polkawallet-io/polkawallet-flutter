@@ -167,3 +167,6 @@ final GlobalKey<RefreshIndicatorState> globalLoanRefreshKey =
 // acala dexLiquidity page:
 final GlobalKey<RefreshIndicatorState> globalDexLiquidityRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
+// acala homa page:
+final GlobalKey<RefreshIndicatorState> globalHomaRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();

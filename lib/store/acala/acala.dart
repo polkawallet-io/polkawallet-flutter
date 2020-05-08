@@ -2,6 +2,8 @@ import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/acala/types/dexPoolInfoData.dart';
 import 'package:polka_wallet/store/acala/types/loanType.dart';
+import 'package:polka_wallet/store/acala/types/stakingPoolInfoData.dart';
+import 'package:polka_wallet/store/acala/types/txHomaData.dart';
 import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/acala/types/txLoanData.dart';
 import 'package:polka_wallet/store/acala/types/txSwapData.dart';
@@ -24,6 +26,7 @@ abstract class _AcalaStore with Store {
   final String cacheTxsLoanKey = 'loan_txs';
   final String cacheTxsSwapKey = 'swap_txs';
   final String cacheTxsDexLiquidityKey = 'dex_liquidity_txs';
+  final String cacheTxsHomaKey = 'homa_txs';
 
   @observable
   Map<String, BigInt> airdrops = Map<String, BigInt>();
@@ -51,6 +54,9 @@ abstract class _AcalaStore with Store {
       ObservableList<TxDexLiquidityData>();
 
   @observable
+  ObservableList<TxHomaData> txsHoma = ObservableList<TxHomaData>();
+
+  @observable
   bool txsLoading = false;
 
   @observable
@@ -69,6 +75,9 @@ abstract class _AcalaStore with Store {
   @observable
   ObservableMap<String, DexPoolInfoData> dexPoolInfoMap =
       ObservableMap<String, DexPoolInfoData>();
+
+  @observable
+  StakingPoolInfoData stakingPoolInfo = StakingPoolInfoData();
 
   @computed
   List<String> get swapTokens {
@@ -215,6 +224,22 @@ abstract class _AcalaStore with Store {
   }
 
   @action
+  Future<void> setHomaTxs(List list,
+      {bool reset = false, needCache = true}) async {
+    if (reset) {
+      txsHoma = ObservableList.of(
+          list.map((i) => TxHomaData.fromJson(Map<String, dynamic>.from(i))));
+    } else {
+      txsHoma.addAll(
+          list.map((i) => TxHomaData.fromJson(Map<String, dynamic>.from(i))));
+    }
+
+    if (needCache && txsHoma.length > 0) {
+      _cacheTxs(list, cacheTxsHomaKey);
+    }
+  }
+
+  @action
   Future<void> _cacheTxs(List list, String cacheKey) async {
     String pubKey = rootStore.account.currentAccount.pubKey;
     List cached = await LocalStorage.getAccountCache(pubKey, cacheKey);
@@ -268,5 +293,10 @@ abstract class _AcalaStore with Store {
   @action
   Future<void> setDexPoolInfo(String currencyId, Map info) async {
     dexPoolInfoMap[currencyId] = DexPoolInfoData.fromJson(info);
+  }
+
+  @action
+  Future<void> setHomaStakingPool(Map pool) async {
+    stakingPoolInfo = StakingPoolInfoData.fromJson(pool);
   }
 }

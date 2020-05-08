@@ -44,10 +44,10 @@ class LoanChart extends StatelessWidget {
       }
     }
 
-    String collateralInUSD =
-        Fmt.priceFloor(loan.collateralInUSD, decimals: acala_token_decimals);
+    String collateralInUSD = Fmt.priceFloorBigInt(loan.collateralInUSD,
+        decimals: acala_token_decimals);
     String debitInUSD =
-        Fmt.priceCeil(loan.debitInUSD, decimals: acala_token_decimals);
+        Fmt.priceCeilBigInt(loan.debitInUSD, decimals: acala_token_decimals);
     const TextStyle textStyle = TextStyle(fontSize: 12);
 
     return Row(

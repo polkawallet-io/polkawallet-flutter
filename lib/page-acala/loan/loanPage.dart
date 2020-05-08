@@ -66,7 +66,7 @@ class _LoanPageState extends State<LoanPage> {
         builder: (_) {
           LoanData loan = store.acala.loans[_tab];
 
-          String balance = Fmt.priceFloor(
+          String balance = Fmt.priceFloorBigInt(
               Fmt.balanceInt(store.assets.tokenBalances[acala_stable_coin]));
 
           Color cardColor = Theme.of(context).cardColor;
@@ -193,8 +193,8 @@ class CurrencyTab extends StatelessWidget {
       ),
       child: Row(
         children: tabs.map((i) {
-          String price =
-              Fmt.priceCeil(prices[i.token], decimals: acala_token_decimals);
+          String price = Fmt.priceCeilBigInt(prices[i.token],
+              decimals: acala_token_decimals);
           return Expanded(
             child: GestureDetector(
               child: Container(

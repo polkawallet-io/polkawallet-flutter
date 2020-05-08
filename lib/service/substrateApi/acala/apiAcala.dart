@@ -145,4 +145,14 @@ class ApiAcala {
         'acala.fetchDexPoolInfo("$currencyId", "${store.account.currentAddress}")');
     store.acala.setDexPoolInfo(currencyId, info);
   }
+
+  Future<void> fetchHomaStakingPool() async {
+    Map res = await apiRoot.evalJavascript('acala.fetchHomaStakingPool(api)');
+    store.acala.setHomaStakingPool(res);
+  }
+
+  Future<void> fetchHomaUserUnbonding() async {
+    Map res = await apiRoot.evalJavascript('acala.fetchHomaStakingPool(api)');
+    store.acala.setHomaStakingPool(res);
+  }
 }

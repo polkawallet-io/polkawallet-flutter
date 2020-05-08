@@ -7,11 +7,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/acala/types/stakingPoolInfoData.dart';
+import 'package:polka_wallet/store/acala/types/txHomaData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -36,13 +37,22 @@ class _MintPageState extends State<MintPage> {
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _amountPayCtrl = new TextEditingController();
+  final TextEditingController _amountReceiveCtrl = new TextEditingController();
 
   Future<void> _refreshData() async {
-    String pubKey = store.account.currentAccount.pubKey;
-    webApi.assets.fetchBalance(pubKey);
-    webApi.acala.fetchTokenSwapRatio();
+    webApi.acala.fetchTokens(store.account.currentAccount.pubKey);
+    await webApi.acala.fetchHomaStakingPool();
+    if (_amountReceiveCtrl.text.isEmpty) {
+      await _updateReceiveAmount(0);
+    }
+  }
 
-    // then fetch txs history
+  Future<void> _updateReceiveAmount(double input) async {
+    double exchangeRate = 1 / store.acala.stakingPoolInfo.liquidExchangeRate;
+    setState(() {
+      _amountReceiveCtrl.text =
+          Fmt.priceFloor(input * exchangeRate, lengthFixed: 3);
+    });
   }
 
   void _onSupplyAmountChange(String v) {
@@ -50,55 +60,31 @@ class _MintPageState extends State<MintPage> {
     if (supply.isEmpty) {
       return;
     }
-    _calcSwapAmount(supply, null);
-  }
-
-  Future<void> _calcSwapAmount(String supply, String target) async {
-    List<String> swapPair = store.acala.currentSwapPair;
-    if (supply == null) {
-      if (target.isNotEmpty) {
-        String output = await webApi.acala
-            .fetchTokenSwapAmount(supply, target, swapPair, '0');
-        setState(() {
-          _amountPayCtrl.text = output;
-        });
-        _formKey.currentState.validate();
-      }
-    } else if (target == null) {
-      if (supply.isNotEmpty) {
-        String output = await webApi.acala
-            .fetchTokenSwapAmount(supply, target, swapPair, '0');
-        _formKey.currentState.validate();
-      }
-    }
+    _updateReceiveAmount(double.parse(supply));
   }
 
   void _onSubmit() {
     if (_formKey.currentState.validate()) {
       int decimals = store.settings.networkState.tokenDecimals;
-      List<String> swapPair = store.acala.currentSwapPair;
       String pay = _amountPayCtrl.text.trim();
+      String receive = _amountReceiveCtrl.text.trim();
       var args = {
-        "title": I18n.of(context).acala['dex.title'],
+        "title": I18n.of(context).acala['homa.mint'],
         "txInfo": {
-          "module": 'dex',
-          "call": 'swapCurrency',
+          "module": 'homa',
+          "call": 'mint',
         },
         "detail": jsonEncode({
-          "currencyPay": swapPair[0],
           "amountPay": pay,
-          "currencyReceive": swapPair[1],
+          "amountReceive": receive,
         }),
         "params": [
-          // params.supply
-          swapPair[0],
           Fmt.tokenInt(pay, decimals: decimals).toString(),
-          // params.target
-          swapPair[1],
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
 //          print(res);
-          store.acala.setSwapTxs([res]);
+          res['action'] = TxHomaData.actionMint;
+          store.acala.setHomaTxs([res]);
           Navigator.popUntil(
               txPageContext, ModalRoute.withName(MintPage.route));
           _refreshKey.currentState.show();
@@ -111,12 +97,9 @@ class _MintPageState extends State<MintPage> {
   @override
   void initState() {
     super.initState();
-    List currencyIds = store.acala.swapTokens;
-    if (currencyIds != null) {
-      store.acala
-          .setSwapPair([store.acala.swapTokens[0], acala_stable_coin_view]);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshData();
-    }
+    });
   }
 
   @override
@@ -142,12 +125,14 @@ class _MintPageState extends State<MintPage> {
               store.assets.tokenBalances[swapPair[0].toUpperCase()]);
         }
 
+        StakingPoolInfoData pool = store.acala.stakingPoolInfo;
+
         Color primary = Theme.of(context).primaryColor;
         Color grey = Theme.of(context).unselectedWidgetColor;
         Color lightGrey = Theme.of(context).dividerColor;
 
         return Scaffold(
-          appBar: AppBar(title: Text(dic['dex.title']), centerTitle: true),
+          appBar: AppBar(title: Text(dic['homa.mint']), centerTitle: true),
           body: SafeArea(
             child: RefreshIndicator(
               key: _refreshKey,
@@ -170,7 +155,6 @@ class _MintPageState extends State<MintPage> {
                                     textWidth: 48,
                                     textStyle:
                                         Theme.of(context).textTheme.display4,
-                                    trailing: Icon(Icons.keyboard_arrow_down),
                                   ),
                                   Icon(
                                     Icons.repeat,
@@ -181,8 +165,7 @@ class _MintPageState extends State<MintPage> {
                                     textWidth: 48,
                                     textStyle:
                                         Theme.of(context).textTheme.display4,
-                                    trailing: Icon(Icons.keyboard_arrow_down),
-                                  )
+                                  ),
                                 ],
                               ),
                               Form(
@@ -239,7 +222,17 @@ class _MintPageState extends State<MintPage> {
                                     ),
                                     Container(
                                       width: inputWidth,
-                                      child: Text('10。03'),
+                                      child: TextFormField(
+                                        decoration: InputDecoration(
+                                          labelText: dic['dex.receive'],
+                                          suffix: Container(
+                                            height: 21,
+                                            width: 8,
+                                          ),
+                                        ),
+                                        controller: _amountReceiveCtrl,
+                                        readOnly: true,
+                                      ),
                                     )
                                   ],
                                 ),
@@ -247,7 +240,7 @@ class _MintPageState extends State<MintPage> {
                               Padding(
                                 padding: EdgeInsets.only(top: 8),
                                 child: Text(
-                                  '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} DOT}',
+                                  '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} DOT',
                                   style: TextStyle(
                                       color: Theme.of(context)
                                           .unselectedWidgetColor),
@@ -269,7 +262,7 @@ class _MintPageState extends State<MintPage> {
                                                   .unselectedWidgetColor),
                                         ),
                                         Text(
-                                            '1 DOT = ${store.acala.swapRatio} L-DOT'),
+                                            '1 DOT = ${Fmt.priceFloor(1 / pool.liquidExchangeRate, lengthMax: 3)} L-DOT'),
                                       ],
                                     ),
                                     GestureDetector(

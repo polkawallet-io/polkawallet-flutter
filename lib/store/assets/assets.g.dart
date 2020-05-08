@@ -84,6 +84,23 @@ mixin _$AssetsStore on _AssetsStore, Store {
     }, _$balancesAtom, name: '${_$balancesAtom.name}_set');
   }
 
+  final _$tokenBalancesAtom = Atom(name: '_AssetsStore.tokenBalances');
+
+  @override
+  ObservableMap<String, String> get tokenBalances {
+    _$tokenBalancesAtom.context.enforceReadPolicy(_$tokenBalancesAtom);
+    _$tokenBalancesAtom.reportObserved();
+    return super.tokenBalances;
+  }
+
+  @override
+  set tokenBalances(ObservableMap<String, String> value) {
+    _$tokenBalancesAtom.context.conditionallyRunInAction(() {
+      super.tokenBalances = value;
+      _$tokenBalancesAtom.reportChanged();
+    }, _$tokenBalancesAtom, name: '${_$tokenBalancesAtom.name}_set');
+  }
+
   final _$txsCountAtom = Atom(name: '_AssetsStore.txsCount');
 
   @override
@@ -159,6 +176,15 @@ mixin _$AssetsStore on _AssetsStore, Store {
       {bool needCache = true}) {
     return _$setAccountBalancesAsyncAction
         .run(() => super.setAccountBalances(pubKey, amt, needCache: needCache));
+  }
+
+  final _$setAccountTokenBalancesAsyncAction =
+      AsyncAction('setAccountTokenBalances');
+
+  @override
+  Future<void> setAccountTokenBalances(String pubKey, Map amt) {
+    return _$setAccountTokenBalancesAsyncAction
+        .run(() => super.setAccountTokenBalances(pubKey, amt));
   }
 
   final _$clearTxsAsyncAction = AsyncAction('clearTxs');

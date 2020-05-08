@@ -163,6 +163,23 @@ mixin _$AcalaStore on _AcalaStore, Store {
     }, _$txsDexLiquidityAtom, name: '${_$txsDexLiquidityAtom.name}_set');
   }
 
+  final _$txsHomaAtom = Atom(name: '_AcalaStore.txsHoma');
+
+  @override
+  ObservableList<TxHomaData> get txsHoma {
+    _$txsHomaAtom.context.enforceReadPolicy(_$txsHomaAtom);
+    _$txsHomaAtom.reportObserved();
+    return super.txsHoma;
+  }
+
+  @override
+  set txsHoma(ObservableList<TxHomaData> value) {
+    _$txsHomaAtom.context.conditionallyRunInAction(() {
+      super.txsHoma = value;
+      _$txsHomaAtom.reportChanged();
+    }, _$txsHomaAtom, name: '${_$txsHomaAtom.name}_set');
+  }
+
   final _$txsLoadingAtom = Atom(name: '_AcalaStore.txsLoading');
 
   @override
@@ -265,6 +282,23 @@ mixin _$AcalaStore on _AcalaStore, Store {
     }, _$dexPoolInfoMapAtom, name: '${_$dexPoolInfoMapAtom.name}_set');
   }
 
+  final _$stakingPoolInfoAtom = Atom(name: '_AcalaStore.stakingPoolInfo');
+
+  @override
+  StakingPoolInfoData get stakingPoolInfo {
+    _$stakingPoolInfoAtom.context.enforceReadPolicy(_$stakingPoolInfoAtom);
+    _$stakingPoolInfoAtom.reportObserved();
+    return super.stakingPoolInfo;
+  }
+
+  @override
+  set stakingPoolInfo(StakingPoolInfoData value) {
+    _$stakingPoolInfoAtom.context.conditionallyRunInAction(() {
+      super.stakingPoolInfo = value;
+      _$stakingPoolInfoAtom.reportChanged();
+    }, _$stakingPoolInfoAtom, name: '${_$stakingPoolInfoAtom.name}_set');
+  }
+
   final _$setTransferTxsAsyncAction = AsyncAction('setTransferTxs');
 
   @override
@@ -299,6 +333,15 @@ mixin _$AcalaStore on _AcalaStore, Store {
       {bool reset = false, dynamic needCache = true}) {
     return _$setDexLiquidityTxsAsyncAction.run(() =>
         super.setDexLiquidityTxs(list, reset: reset, needCache: needCache));
+  }
+
+  final _$setHomaTxsAsyncAction = AsyncAction('setHomaTxs');
+
+  @override
+  Future<void> setHomaTxs(List list,
+      {bool reset = false, dynamic needCache = true}) {
+    return _$setHomaTxsAsyncAction
+        .run(() => super.setHomaTxs(list, reset: reset, needCache: needCache));
   }
 
   final _$_cacheTxsAsyncAction = AsyncAction('_cacheTxs');
@@ -337,6 +380,14 @@ mixin _$AcalaStore on _AcalaStore, Store {
   Future<void> setDexPoolInfo(String currencyId, Map info) {
     return _$setDexPoolInfoAsyncAction
         .run(() => super.setDexPoolInfo(currencyId, info));
+  }
+
+  final _$setHomaStakingPoolAsyncAction = AsyncAction('setHomaStakingPool');
+
+  @override
+  Future<void> setHomaStakingPool(Map pool) {
+    return _$setHomaStakingPoolAsyncAction
+        .run(() => super.setHomaStakingPool(pool));
   }
 
   final _$_AcalaStoreActionController = ActionController(name: '_AcalaStore');

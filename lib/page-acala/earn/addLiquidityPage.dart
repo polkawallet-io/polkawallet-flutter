@@ -295,7 +295,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                           Container(
                             width: inputWidth,
                             child: Text(
-                              '${dicAssets['balance']}: ${Fmt.priceFloor(balanceTokenUser, lengthMax: 3)}',
+                              '${dicAssets['balance']}: ${Fmt.priceFloorBigInt(balanceTokenUser, lengthMax: 3)}',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Theme.of(context).unselectedWidgetColor,
@@ -305,7 +305,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                           Container(
                             width: inputWidth,
                             child: Text(
-                              '${dicAssets['balance']}: ${Fmt.priceFloor(balanceStableCoinUser, lengthMax: 2)}',
+                              '${dicAssets['balance']}: ${Fmt.priceFloorBigInt(balanceStableCoinUser, lengthMax: 2)}',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Theme.of(context).unselectedWidgetColor,

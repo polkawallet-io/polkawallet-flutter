@@ -99,16 +99,16 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                     switch (detail.action) {
                       case TxDexLiquidityData.actionDeposit:
                         amount =
-                            '${Fmt.priceCeil(detail.amountToken)} ${detail.currencyId}\n+ ${Fmt.priceCeil(detail.amountStableCoin)} $acala_stable_coin_view';
+                            '${Fmt.priceCeilBigInt(detail.amountToken)} ${detail.currencyId}\n+ ${Fmt.priceCeilBigInt(detail.amountStableCoin)} $acala_stable_coin_view';
                         image = 'assets/images/assets/assets_up.png';
                         break;
                       case TxDexLiquidityData.actionWithdraw:
                         amount =
-                            '${Fmt.priceFloor(detail.amountShare, lengthFixed: 0)} Share';
+                            '${Fmt.priceFloorBigInt(detail.amountShare, lengthFixed: 0)} Share';
                         break;
                       case TxDexLiquidityData.actionReward:
                         amount =
-                            '${Fmt.priceCeil(detail.amountStableCoin)} $acala_stable_coin_view';
+                            '${Fmt.priceCeilBigInt(detail.amountStableCoin)} $acala_stable_coin_view';
                         break;
                     }
                     return Container(

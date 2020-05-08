@@ -8,6 +8,8 @@ import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
 import 'package:polka_wallet/page-acala/earn/earnHistoryPage.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
 import 'package:polka_wallet/page-acala/earn/withdrawLiquidityPage.dart';
+import 'package:polka_wallet/page-acala/homa/homaPage.dart';
+import 'package:polka_wallet/page-acala/homa/mintPage.dart';
 import 'package:polka_wallet/page-acala/homePage.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanCreatePage.dart';
@@ -234,6 +236,8 @@ class _WalletAppState extends State<WalletApp> {
         AddLiquidityPage.route: (_) => AddLiquidityPage(_appStore),
         WithdrawLiquidityPage.route: (_) => WithdrawLiquidityPage(_appStore),
         EarnHistoryPage.route: (_) => EarnHistoryPage(_appStore),
+        HomaPage.route: (_) => HomaPage(_appStore),
+        MintPage.route: (_) => MintPage(_appStore),
       },
     );
   }

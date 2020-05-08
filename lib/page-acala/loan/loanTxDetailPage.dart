@@ -34,14 +34,14 @@ class LoanTxDetailPage extends StatelessWidget {
       ),
       DetailInfoItem(
         label: dic['loan.amount'],
-        title: '${Fmt.priceFloor(amountView)} ${tx.currencyIdView}',
+        title: '${Fmt.priceFloorBigInt(amountView)} ${tx.currencyIdView}',
       ),
     ];
     if (tx.actionType == 'create') {
       print(tx.amountCollateral);
       list.add(DetailInfoItem(
         label: '',
-        title: '${Fmt.priceFloor(tx.amountCollateral)} ${tx.currencyId}',
+        title: '${Fmt.priceFloorBigInt(tx.amountCollateral)} ${tx.currencyId}',
       ));
     }
     return TxDetail(

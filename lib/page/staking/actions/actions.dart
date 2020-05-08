@@ -32,6 +32,8 @@ class StakingActions extends StatefulWidget {
   _StakingActions createState() => _StakingActions(store);
 }
 
+// TODO: clear staking cache after account change
+// TODO: drag & refresh while list is empty
 class _StakingActions extends State<StakingActions>
     with SingleTickerProviderStateMixin {
   _StakingActions(this.store);

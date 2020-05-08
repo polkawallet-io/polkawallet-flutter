@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
+import 'package:polka_wallet/page-acala/homa/homaPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapPage.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -79,19 +80,19 @@ class AcalaEntry extends StatelessWidget {
                           Navigator.of(context).pushNamed(EarnPage.route),
                     ),
                   ),
-//                  Padding(
-//                    padding: EdgeInsets.only(bottom: 16),
-//                    child: GestureDetector(
-//                      child: _AcalaCard(
-//                        dic['dex.title'],
-//                        dic['dex.bref'],
-//                        'assets/images/acala/exchange.svg',
-//                        color: Theme.of(context).primaryColor,
-//                      ),
-//                      onTap: () =>
-//                          Navigator.of(context).pushNamed(SwapPage.route),
-//                    ),
-//                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: GestureDetector(
+                      child: _AcalaCard(
+                        dic['homa.title'],
+                        dic['homa.bref'],
+                        'assets/images/acala/exchange.svg',
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      onTap: () =>
+                          Navigator.of(context).pushNamed(HomaPage.route),
+                    ),
+                  ),
                 ],
               ),
             )
@@ -143,10 +144,11 @@ class _AcalaCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(left: 16),
                 width: MediaQuery.of(context).size.width / 2,
+                height: 60,
                 child: Text(
                   bref,
                   style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 13,
                       color: Theme.of(context).unselectedWidgetColor),
                 ),
               ),
