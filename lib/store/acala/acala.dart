@@ -79,6 +79,9 @@ abstract class _AcalaStore with Store {
   @observable
   StakingPoolInfoData stakingPoolInfo = StakingPoolInfoData();
 
+  @observable
+  HomaUserInfoData homaUserInfo = HomaUserInfoData();
+
   @computed
   List<String> get swapTokens {
     return List<String>.from(
@@ -259,14 +262,28 @@ abstract class _AcalaStore with Store {
   @action
   Future<void> loadCache() async {
     String pubKey = rootStore.account.currentAccount.pubKey;
-    List cached = await LocalStorage.getAccountCache(pubKey, cacheTxsLoanKey);
-    if (cached != null) {
-      setLoanTxs(cached, needCache: false);
+    List cached = await Future.wait([
+      LocalStorage.getAccountCache(pubKey, cacheTxsLoanKey),
+      LocalStorage.getAccountCache(pubKey, cacheTxsDexLiquidityKey),
+      LocalStorage.getAccountCache(pubKey, cacheTxsSwapKey),
+      LocalStorage.getAccountCache(pubKey, cacheTxsHomaKey),
+      LocalStorage.getAccountCache(pubKey, cacheTxsTransferKey),
+    ]);
+
+    if (cached[0] != null) {
+      setLoanTxs(cached[0], needCache: false);
     }
-    List dexs =
-        await LocalStorage.getAccountCache(pubKey, cacheTxsDexLiquidityKey);
-    if (dexs != null) {
-      setDexLiquidityTxs(dexs, needCache: false);
+    if (cached[1] != null) {
+      setDexLiquidityTxs(cached[1], needCache: false);
+    }
+    if (cached[2] != null) {
+      setSwapTxs(cached[2], needCache: false);
+    }
+    if (cached[3] != null) {
+      setHomaTxs(cached[3], needCache: false);
+    }
+    if (cached[4] != null) {
+      setTransferTxs(cached[4], needCache: false);
     }
   }
 
@@ -298,5 +315,10 @@ abstract class _AcalaStore with Store {
   @action
   Future<void> setHomaStakingPool(Map pool) async {
     stakingPoolInfo = StakingPoolInfoData.fromJson(pool);
+  }
+
+  @action
+  Future<void> setHomaUserInfo(Map info) async {
+    homaUserInfo = HomaUserInfoData.fromJson(info);
   }
 }

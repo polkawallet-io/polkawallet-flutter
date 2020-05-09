@@ -151,8 +151,10 @@ class ApiAcala {
     store.acala.setHomaStakingPool(res);
   }
 
-  Future<void> fetchHomaUserUnbonding() async {
-    Map res = await apiRoot.evalJavascript('acala.fetchHomaStakingPool(api)');
-    store.acala.setHomaStakingPool(res);
+  Future<void> fetchHomaUserInfo() async {
+    String address = store.account.currentAddress;
+    Map res = await apiRoot
+        .evalJavascript('acala.fetchHomaUserInfo(api, "$address")');
+    store.acala.setHomaUserInfo(res);
   }
 }

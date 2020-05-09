@@ -11,7 +11,7 @@ class StakingPoolInfoData extends _StakingPoolInfoData {
 abstract class _StakingPoolInfoData {
   String rewardRate;
   double priceLDOT;
-  List<double> freeList;
+  List<StakingPoolFreeItemData> freeList;
   double unbondingDuration;
   double totalBonded;
   double communalFree;
@@ -26,4 +26,37 @@ abstract class _StakingPoolInfoData {
   double communalTotal;
   double communalBondedRatio;
   double liquidExchangeRate;
+}
+
+@JsonSerializable()
+class StakingPoolFreeItemData {
+  int era;
+  double free;
+
+  static StakingPoolFreeItemData fromJson(Map<String, dynamic> json) =>
+      _$StakingPoolFreeItemDataFromJson(json);
+}
+
+class HomaUserInfoData extends _HomaUserInfoData {
+  static HomaUserInfoData fromJson(Map<String, dynamic> json) {
+    HomaUserInfoData data = HomaUserInfoData();
+    data.unbonded = BigInt.parse(json['unbonded'].toString());
+    data.claims = List.of(json['claims']).map((i) {
+      HomaUserInfoClaimItemData item = HomaUserInfoClaimItemData();
+      item.era = i['era'];
+      item.claimed = BigInt.parse(i['claimed'].toString());
+      return item;
+    }).toList();
+    return data;
+  }
+}
+
+abstract class _HomaUserInfoData {
+  BigInt unbonded;
+  List<HomaUserInfoClaimItemData> claims;
+}
+
+class HomaUserInfoClaimItemData {
+  int era;
+  BigInt claimed;
 }

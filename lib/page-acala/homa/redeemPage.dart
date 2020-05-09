@@ -7,9 +7,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/homa/homaHistoryPage.dart';
-import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/acala/types/stakingPoolInfoData.dart';
@@ -18,18 +18,18 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-class MintPage extends StatefulWidget {
-  MintPage(this.store);
+class HomaRedeemPage extends StatefulWidget {
+  HomaRedeemPage(this.store);
 
-  static const String route = '/acala/homa/mint';
+  static const String route = '/acala/homa/redeem';
   final AppStore store;
 
   @override
-  _MintPageState createState() => _MintPageState(store);
+  _HomaRedeemPageState createState() => _HomaRedeemPageState(store);
 }
 
-class _MintPageState extends State<MintPage> {
-  _MintPageState(this.store);
+class _HomaRedeemPageState extends State<HomaRedeemPage> {
+  _HomaRedeemPageState(this.store);
 
   final AppStore store;
 
@@ -39,6 +39,9 @@ class _MintPageState extends State<MintPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _amountPayCtrl = new TextEditingController();
   final TextEditingController _amountReceiveCtrl = new TextEditingController();
+
+  int _radioSelect = 0;
+  int _eraSelected = 0;
 
   Future<void> _refreshData() async {
     webApi.acala.fetchTokens(store.account.currentAccount.pubKey);
@@ -50,10 +53,11 @@ class _MintPageState extends State<MintPage> {
 
   Future<void> _updateReceiveAmount(double input) async {
     if (mounted) {
-      double exchangeRate = 1 / store.acala.stakingPoolInfo.liquidExchangeRate;
       setState(() {
-        _amountReceiveCtrl.text =
-            Fmt.priceFloor(input * exchangeRate, lengthFixed: 3);
+        _amountReceiveCtrl.text = Fmt.priceFloor(
+          input * store.acala.stakingPoolInfo.liquidExchangeRate,
+          lengthFixed: 3,
+        );
       });
     }
   }
@@ -66,31 +70,82 @@ class _MintPageState extends State<MintPage> {
     _updateReceiveAmount(double.parse(supply));
   }
 
+  void _onRadioChange(int value) {
+    if (value == 1) {
+      final Map dicAssets = I18n.of(context).assets;
+      StakingPoolInfoData pool = store.acala.stakingPoolInfo;
+      if (pool.freeList.length == 0) return;
+
+      showCupertinoModalPopup(
+        context: context,
+        builder: (_) => Container(
+          height: MediaQuery.of(context).copyWith().size.height / 3,
+          child: WillPopScope(
+            child: CupertinoPicker(
+              backgroundColor: Colors.white,
+              itemExtent: 58,
+              scrollController: FixedExtentScrollController(
+                initialItem: _eraSelected,
+              ),
+              children: pool.freeList.map((i) {
+                return Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text(
+                      'Era ${i.era}, ${dicAssets['available']} ${Fmt.priceFloor(i.free)}'),
+                );
+              }).toList(),
+              onSelectedItemChanged: (v) {
+                setState(() {
+                  _eraSelected = v;
+                });
+              },
+            ),
+          ),
+        ),
+      );
+    }
+    setState(() {
+      _radioSelect = value;
+    });
+    print(value);
+  }
+
   void _onSubmit() {
     if (_formKey.currentState.validate()) {
       int decimals = store.settings.networkState.tokenDecimals;
       String pay = _amountPayCtrl.text.trim();
       String receive = _amountReceiveCtrl.text.trim();
+      String strategy = TxHomaData.redeemTypeNow;
+      if (_radioSelect == 2) {
+        strategy = TxHomaData.redeemTypeWait;
+      }
+      int era = 0;
+      StakingPoolInfoData pool = store.acala.stakingPoolInfo;
+      if (pool.freeList.length > 0) {
+        era = pool.freeList[_eraSelected].era;
+      }
       var args = {
         "title": I18n.of(context).acala['homa.mint'],
         "txInfo": {
           "module": 'homa',
-          "call": 'mint',
+          "call": 'redeem',
         },
         "detail": jsonEncode({
           "amountPay": pay,
           "amountReceive": receive,
+          "strategy": _radioSelect == 1 ? 'Era $era' : strategy,
         }),
         "params": [
           Fmt.tokenInt(pay, decimals: decimals).toString(),
+          _radioSelect == 1 ? {"Target": era} : strategy
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
 //          print(res);
-          res['action'] = TxHomaData.actionMint;
+          res['action'] = TxHomaData.actionRedeem;
           res['amountReceive'] = receive;
           store.acala.setHomaTxs([res]);
           Navigator.popUntil(
-              txPageContext, ModalRoute.withName(MintPage.route));
+              txPageContext, ModalRoute.withName(HomaRedeemPage.route));
           _refreshKey.currentState.show();
         }
       };
@@ -123,16 +178,24 @@ class _MintPageState extends State<MintPage> {
 
         final double inputWidth = MediaQuery.of(context).size.width / 3;
 
-        BigInt balance = Fmt.balanceInt(store.assets.tokenBalances['DOT']);
+        BigInt balance = Fmt.balanceInt(store.assets.tokenBalances['LDOT']);
 
         StakingPoolInfoData pool = store.acala.stakingPoolInfo;
 
         Color primary = Theme.of(context).primaryColor;
         Color grey = Theme.of(context).unselectedWidgetColor;
-        Color lightGrey = Theme.of(context).dividerColor;
+
+        double available = pool.communalFree;
+        String eraSelectText = dic['homa.era'];
+        if (pool.freeList.length > 0) {
+          StakingPoolFreeItemData item = pool.freeList[_eraSelected];
+          available = item.free;
+          eraSelectText +=
+              ': ${item.era} (${dicAssets['available']}: ${Fmt.priceFloor(pool.freeList[_eraSelected].free, lengthMax: 3)} DOT)';
+        }
 
         return Scaffold(
-          appBar: AppBar(title: Text(dic['homa.mint']), centerTitle: true),
+          appBar: AppBar(title: Text(dic['homa.redeem']), centerTitle: true),
           body: SafeArea(
             child: RefreshIndicator(
               key: _refreshKey,
@@ -149,7 +212,7 @@ class _MintPageState extends State<MintPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             CurrencyWithIcon(
-                              'DOT',
+                              'LDOT',
                               textWidth: 48,
                               textStyle: Theme.of(context).textTheme.display4,
                             ),
@@ -158,7 +221,7 @@ class _MintPageState extends State<MintPage> {
                               color: Theme.of(context).primaryColor,
                             ),
                             CurrencyWithIcon(
-                              'LDOT',
+                              'DOT',
                               textWidth: 48,
                               textStyle: Theme.of(context).textTheme.display4,
                             ),
@@ -201,10 +264,12 @@ class _MintPageState extends State<MintPage> {
                                       return dicAssets['amount.error'];
                                     }
                                     if (double.parse(v.trim()) >=
-                                        balance /
-                                                BigInt.from(pow(10, decimals)) -
-                                            0.02) {
+                                        Fmt.bigIntToDouble(balance,
+                                            decimals: decimals)) {
                                       return dicAssets['amount.low'];
+                                    }
+                                    if (double.parse(v.trim()) >= available) {
+                                      return dic['homa.pool.low'];
                                     }
                                     return null;
                                   },
@@ -231,7 +296,7 @@ class _MintPageState extends State<MintPage> {
                         Padding(
                           padding: EdgeInsets.only(top: 8),
                           child: Text(
-                            '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} DOT',
+                            '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} LDOT',
                             style: TextStyle(
                                 color: Theme.of(context).unselectedWidgetColor),
                           ),
@@ -250,7 +315,7 @@ class _MintPageState extends State<MintPage> {
                                             .unselectedWidgetColor),
                                   ),
                                   Text(
-                                      '1 DOT = ${Fmt.priceFloor(1 / pool.liquidExchangeRate, lengthMax: 3)} L-DOT'),
+                                      '1 LDOT = ${Fmt.priceFloor(pool.liquidExchangeRate, lengthMax: 3)} DOT'),
                                 ],
                               ),
                               GestureDetector(
@@ -273,10 +338,64 @@ class _MintPageState extends State<MintPage> {
                       ],
                     ),
                   ),
+                  RoundedCard(
+                    margin: EdgeInsets.only(top: 16),
+                    padding: EdgeInsets.fromLTRB(0, 8, 8, 8),
+                    child: Column(
+                      children: <Widget>[
+                        GestureDetector(
+                          child: Row(
+                            children: <Widget>[
+                              Radio(
+                                value: 0,
+                                groupValue: _radioSelect,
+                                onChanged: (v) => _onRadioChange(v),
+                              ),
+                              Text(
+                                  '${dic['homa.now']} (${dicAssets['available']}: ${Fmt.priceFloor(pool.communalFree)} DOT)'),
+                            ],
+                          ),
+                          onTap: () => _onRadioChange(0),
+                        ),
+                        GestureDetector(
+                          child: Row(
+                            children: <Widget>[
+                              Radio(
+                                value: 1,
+                                groupValue: _radioSelect,
+                                onChanged: (v) => _onRadioChange(v),
+                              ),
+                              Text(
+                                eraSelectText,
+                                style: pool.freeList.length == 0
+                                    ? TextStyle(color: grey)
+                                    : null,
+                              ),
+                            ],
+                          ),
+                          onTap: () => _onRadioChange(1),
+                        ),
+                        GestureDetector(
+                          child: Row(
+                            children: <Widget>[
+                              Radio(
+                                value: 2,
+                                groupValue: _radioSelect,
+                                onChanged: (v) => _onRadioChange(v),
+                              ),
+                              Text(
+                                  '${dic['homa.unbond']} (${pool.bondingDuration.toInt()} Era ≈ ${pool.unbondingDuration / 1000 ~/ SECONDS_OF_DAY} ${dic['homa.redeem.day']})'),
+                            ],
+                          ),
+                          onTap: () => _onRadioChange(2),
+                        ),
+                      ],
+                    ),
+                  ),
                   Padding(
                     padding: EdgeInsets.only(top: 24),
                     child: RoundedButton(
-                      text: dic['homa.mint'],
+                      text: dic['homa.redeem'],
                       onPressed: _onSubmit,
                     ),
                   )
