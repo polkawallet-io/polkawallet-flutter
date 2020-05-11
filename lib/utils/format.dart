@@ -15,7 +15,7 @@ class Fmt {
     return passHex.padRight(32, '0');
   }
 
-  static String address(String addr, {int pad = 8}) {
+  static String address(String addr, {int pad = 6}) {
     if (addr == null || addr.length == 0) {
       return addr;
     }
@@ -231,8 +231,8 @@ class Fmt {
     return ls;
   }
 
-  static List<List<String>> filterCandidateList(
-      List<List<String>> ls, String filter, Map accIndexMap) {
+  static List<List> filterCandidateList(
+      List<List> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
       String value = filter.toLowerCase();
       String accName = '';

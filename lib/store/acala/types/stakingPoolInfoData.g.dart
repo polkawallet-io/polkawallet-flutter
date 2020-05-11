@@ -15,6 +15,7 @@ StakingPoolInfoData _$StakingPoolInfoDataFromJson(Map<String, dynamic> json) {
             ? null
             : StakingPoolFreeItemData.fromJson(e as Map<String, dynamic>))
         ?.toList()
+    ..claimFeeRatio = (json['claimFeeRatio'] as num)?.toDouble()
     ..unbondingDuration = (json['unbondingDuration'] as num)?.toDouble()
     ..totalBonded = (json['totalBonded'] as num)?.toDouble()
     ..communalFree = (json['communalFree'] as num)?.toDouble()
@@ -38,6 +39,7 @@ Map<String, dynamic> _$StakingPoolInfoDataToJson(
       'rewardRate': instance.rewardRate,
       'priceLDOT': instance.priceLDOT,
       'freeList': instance.freeList,
+      'claimFeeRatio': instance.claimFeeRatio,
       'unbondingDuration': instance.unbondingDuration,
       'totalBonded': instance.totalBonded,
       'communalFree': instance.communalFree,
@@ -58,7 +60,8 @@ StakingPoolFreeItemData _$StakingPoolFreeItemDataFromJson(
     Map<String, dynamic> json) {
   return StakingPoolFreeItemData()
     ..era = json['era'] as int
-    ..free = (json['free'] as num)?.toDouble();
+    ..free = (json['free'] as num)?.toDouble()
+    ..claimFeeRatio = (json['claimFeeRatio'] as num)?.toDouble();
 }
 
 Map<String, dynamic> _$StakingPoolFreeItemDataToJson(
@@ -66,4 +69,5 @@ Map<String, dynamic> _$StakingPoolFreeItemDataToJson(
     <String, dynamic>{
       'era': instance.era,
       'free': instance.free,
+      'claimFeeRatio': instance.claimFeeRatio,
     };

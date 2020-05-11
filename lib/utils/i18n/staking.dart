@@ -105,7 +105,7 @@ const Map<String, String> zhStaking = {
   'reward.Stash': '储值账户(收益不再质押)',
   'reward.Controller': '控制账户(收益不再质押)',
   'reward.warn': '分红方式未修改',
-  'reward.tip': '正在查询并计算所有抵押奖励，可能需要等待几分钟...',
+  'reward.tip': '正在查询并计算所有质押奖励，可能需要等待几分钟...',
   'controller.warn': '控制账户未修改',
   'controller.stashOf': '不可用，已关联控制账户：',
   'controller.controllerOf': '不可用，已关联储值账户：',

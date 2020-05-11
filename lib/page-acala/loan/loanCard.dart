@@ -8,6 +8,7 @@ import 'package:polka_wallet/store/acala/types/loanType.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+// TODO: account balance display with address
 class LoanCard extends StatelessWidget {
   LoanCard(this.loan, this.balance);
   final LoanData loan;
@@ -100,7 +101,7 @@ class LoanCard extends StatelessWidget {
                 content: collateralRequired,
               ),
               Container(
-                margin: EdgeInsets.only(left: 16),
+                margin: EdgeInsets.only(left: 8),
                 decoration: BoxDecoration(
                   border: Border.all(color: primaryColor),
                   borderRadius: BorderRadius.all(Radius.circular(16)),
@@ -112,7 +113,7 @@ class LoanCard extends StatelessWidget {
                         padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
                         child: Text(
                           dic['loan.deposit'],
-                          style: TextStyle(color: primaryColor),
+                          style: TextStyle(color: primaryColor, fontSize: 13),
                         ),
                       ),
                       onTap: () => Navigator.of(context).pushNamed(
@@ -129,7 +130,7 @@ class LoanCard extends StatelessWidget {
                         padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
                         child: Text(
                           dic['loan.withdraw'],
-                          style: TextStyle(color: primaryColor),
+                          style: TextStyle(color: primaryColor, fontSize: 13),
                         ),
                       ),
                       onTap: () => Navigator.of(context).pushNamed(

@@ -23,12 +23,12 @@ class CurrencyWithIcon extends StatelessWidget {
       children: <Widget>[
         Container(
           width: 32,
-          padding: EdgeInsets.only(right: 8),
+          padding: EdgeInsets.only(right: 4),
           child:
               Image.asset('assets/images/assets/${symbol.toUpperCase()}.png'),
         ),
         Container(
-          width: textWidth ?? 60,
+          width: textWidth ?? 64,
           child: Text(
             symbol,
             style: textStyle,

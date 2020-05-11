@@ -14,7 +14,7 @@ class CandidateDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).gov;
-    final List<String> info = ModalRoute.of(context).settings.arguments;
+    final List info = ModalRoute.of(context).settings.arguments;
     String symbol = store.settings.networkState.tokenSymbol;
 
     Map accInfo = store.account.accountIndexMap[info[0]];

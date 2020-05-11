@@ -48,7 +48,7 @@ const Map<String, String> zhHome = {
   'assets': '资产',
   'exchange': '交易',
   'loan': '借贷',
-  'staking': '抵押',
+  'staking': '质押',
   'governance': '治理',
   'profile': '设置',
   'account': '账户',

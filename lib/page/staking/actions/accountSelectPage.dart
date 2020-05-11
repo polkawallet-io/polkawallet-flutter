@@ -27,7 +27,7 @@ class AccountSelectPage extends StatelessWidget {
                   padding: EdgeInsets.all(16),
                   children: store.account.accountList.map((i) {
                     String address = store.account
-                            .pubKeyAddressMap[store.settings.endpoint.info]
+                            .pubKeyAddressMap[store.settings.endpoint.ss58]
                         [i.pubKey];
                     String unavailable;
                     String stashOf =

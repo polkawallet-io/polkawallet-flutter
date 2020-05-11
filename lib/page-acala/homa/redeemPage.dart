@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -109,14 +108,26 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
     setState(() {
       _radioSelect = value;
     });
-    print(value);
+  }
+
+  double _getClaimFeeRatio() {
+    StakingPoolInfoData pool = store.acala.stakingPoolInfo;
+    if (_radioSelect == 0) {
+      return pool.claimFeeRatio;
+    } else if (_radioSelect == 1) {
+      return pool.freeList[_eraSelected].claimFeeRatio;
+    }
+    return 0;
   }
 
   void _onSubmit() {
     if (_formKey.currentState.validate()) {
       int decimals = store.settings.networkState.tokenDecimals;
       String pay = _amountPayCtrl.text.trim();
-      String receive = _amountReceiveCtrl.text.trim();
+      String receive = Fmt.priceFloor(
+        double.parse(_amountReceiveCtrl.text) * (1 - _getClaimFeeRatio()),
+        lengthMax: 4,
+      );
       String strategy = TxHomaData.redeemTypeNow;
       if (_radioSelect == 2) {
         strategy = TxHomaData.redeemTypeWait;
@@ -189,11 +200,21 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
 
         double available = pool.communalFree;
         String eraSelectText = dic['homa.era'];
+        String eraSelectTextTail = '';
         if (pool.freeList.length > 0) {
           StakingPoolFreeItemData item = pool.freeList[_eraSelected];
           available = item.free;
-          eraSelectText +=
-              ': ${item.era} (${dicAssets['available']}: ${Fmt.priceFloor(pool.freeList[_eraSelected].free, lengthMax: 3)} DOT)';
+          eraSelectText += ': ${item.era}';
+          eraSelectTextTail =
+              '(≈ ${(item.era - pool.currentEra).toInt()}${dic['homa.redeem.day']}, ${dicAssets['available']}: ${Fmt.priceFloor(pool.freeList[_eraSelected].free, lengthMax: 3)} DOT)';
+        }
+        double claimFeeRatio = _getClaimFeeRatio();
+        String claimFee = '0';
+        if (_amountReceiveCtrl.text.isNotEmpty) {
+          claimFee = Fmt.priceCeil(
+            double.parse(_amountReceiveCtrl.text) * claimFeeRatio,
+            lengthMax: 4,
+          );
         }
 
         return Scaffold(
@@ -342,9 +363,21 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                   ),
                   RoundedCard(
                     margin: EdgeInsets.only(top: 16),
-                    padding: EdgeInsets.fromLTRB(0, 8, 8, 8),
+                    padding: EdgeInsets.fromLTRB(0, 8, 16, 8),
                     child: Column(
                       children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.fromLTRB(16, 16, 0, 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                  '${dic['homa.redeem.fee']}: ${Fmt.ratio(claimFeeRatio)}'),
+                              Text('(≈ $claimFee DOT)'),
+                            ],
+                          ),
+                        ),
+                        Divider(height: 4),
                         GestureDetector(
                           child: Row(
                             children: <Widget>[
@@ -353,8 +386,11 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                 groupValue: _radioSelect,
                                 onChanged: (v) => _onRadioChange(v),
                               ),
+                              Expanded(
+                                child: Text(dic['homa.now']),
+                              ),
                               Text(
-                                  '${dic['homa.now']} (${dicAssets['available']}: ${Fmt.priceFloor(pool.communalFree)} DOT)'),
+                                  '(${dicAssets['available']}: ${Fmt.priceFloor(pool.communalFree)} DOT)'),
                             ],
                           ),
                           onTap: () => _onRadioChange(0),
@@ -367,8 +403,16 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                 groupValue: _radioSelect,
                                 onChanged: (v) => _onRadioChange(v),
                               ),
+                              Expanded(
+                                child: Text(
+                                  eraSelectText,
+                                  style: pool.freeList.length == 0
+                                      ? TextStyle(color: grey)
+                                      : null,
+                                ),
+                              ),
                               Text(
-                                eraSelectText,
+                                eraSelectTextTail,
                                 style: pool.freeList.length == 0
                                     ? TextStyle(color: grey)
                                     : null,
@@ -385,8 +429,11 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                 groupValue: _radioSelect,
                                 onChanged: (v) => _onRadioChange(v),
                               ),
+                              Expanded(
+                                child: Text(dic['homa.unbond']),
+                              ),
                               Text(
-                                  '${dic['homa.unbond']} (${pool.bondingDuration.toInt()} Era ≈ ${pool.unbondingDuration / 1000 ~/ SECONDS_OF_DAY} ${dic['homa.redeem.day']})'),
+                                  '(${pool.bondingDuration.toInt()} Era ≈ ${pool.unbondingDuration / 1000 ~/ SECONDS_OF_DAY} ${dic['homa.redeem.day']})'),
                             ],
                           ),
                           onTap: () => _onRadioChange(2),

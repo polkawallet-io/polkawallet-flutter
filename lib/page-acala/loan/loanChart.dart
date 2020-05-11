@@ -44,13 +44,14 @@ class LoanChart extends StatelessWidget {
       }
     }
 
-    String collateralInUSD = Fmt.priceFloorBigInt(loan.collateralInUSD,
-        decimals: acala_token_decimals);
-    String debitInUSD =
-        Fmt.priceCeilBigInt(loan.debitInUSD, decimals: acala_token_decimals);
-    const TextStyle textStyle = TextStyle(fontSize: 12);
+//    String collateralInUSD = Fmt.priceFloorBigInt(loan.collateralInUSD,
+//        decimals: acala_token_decimals);
+//    String debitInUSD =
+//        Fmt.priceCeilBigInt(loan.debitInUSD, decimals: acala_token_decimals);
+//    const TextStyle textStyle = TextStyle(fontSize: 12);
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
           margin: EdgeInsets.fromLTRB(24, 8, 0, 8),
@@ -60,7 +61,9 @@ class LoanChart extends StatelessWidget {
             heightLiquidationAdjusted,
             collateral: Text('100%'),
             debits: Text(
-              Fmt.ratio(loan.collateralRatio),
+              loan.collateralRatio < 10
+                  ? Fmt.ratio(loan.collateralRatio)
+                  : '1000+%',
               style: TextStyle(color: Colors.orange),
             ),
             liquidation: Text(
@@ -93,54 +96,29 @@ class LoanChart extends StatelessWidget {
             required: Divider(color: Colors.blue, height: 2, thickness: 2),
           ),
         ),
-        Expanded(
-          child: Container(
-            margin: EdgeInsets.fromLTRB(0, 0, 24, 8),
-            child: _ChartContainer(
-              heightBorrowedAdjusted,
-              heightRequiredAdjusted,
-              heightLiquidationAdjusted,
-              collateral: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(dic['loan.collateral']),
-                  Text('\$$collateralInUSD',
-                      style: Theme.of(context).textTheme.display4),
-                ],
-              ),
+        Container(
+          margin: EdgeInsets.fromLTRB(0, 0, 24, 8),
+          child: _ChartContainer(
+            heightBorrowedAdjusted,
+            heightRequiredAdjusted,
+            heightLiquidationAdjusted,
+            collateral: Text(dic['loan.collateral']),
 //              debits: Text(
 //                dic['liquid.ratio.current'],
 //                style: TextStyle(color: Colors.orange),
 //              ),
-              liquidation: Text(
-                dic['liquid.ratio'],
-                style: TextStyle(color: Colors.red),
-              ),
-              required: Text(
-                dic['liquid.ratio.require'],
-                style: TextStyle(color: Colors.blue),
-              ),
-              debits: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    dic['liquid.ratio.current'],
-                    style: TextStyle(color: Colors.orange),
-                  ),
-                  Expanded(
-                    child: Text(
-                      '\$$debitInUSD',
-                      style: TextStyle(
-                        color: Colors.orange,
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.end,
-                    ),
-                  ),
-                ],
-              ),
+            liquidation: Text(
+              dic['liquid.ratio'],
+              style: TextStyle(color: Colors.red),
+            ),
+            required: Text(
+              dic['liquid.ratio.require'],
+              style: TextStyle(color: Colors.blue),
+            ),
+            debits: Text(
+              dic['liquid.ratio.current'],
+              style: TextStyle(color: Colors.orange),
+            ),
 //              liquidation: Row(
 //                mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //                children: <Widget>[
@@ -167,7 +145,6 @@ class LoanChart extends StatelessWidget {
 //                  ),
 //                ],
 //              ),
-            ),
           ),
         ),
       ],

@@ -202,10 +202,10 @@ class _HomaPageState extends State<HomaPage> {
                                     userInfo.claims.length > 0
                                         ? Column(
                                             children: userInfo.claims.map((i) {
-                                              String unlockTime =
-                                                  (i.era - pool.currentEra)
-                                                      .toInt()
-                                                      .toString();
+                                              String unlockTime = (i.era -
+                                                      (pool.currentEra ?? 0))
+                                                  .toInt()
+                                                  .toString();
                                               return Row(
                                                 children: <Widget>[
                                                   InfoItem(

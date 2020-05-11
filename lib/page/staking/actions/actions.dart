@@ -120,16 +120,16 @@ class _StakingActions extends State<StakingActions>
     var dic = I18n.of(context).staking;
     bool hasData = store.staking.ledger['stakingLedger'] != null;
 
+    String controllerId = store.staking.ledger['controllerId'] ??
+        store.staking.ledger['accountId'];
     String payee = store.staking.ledger['rewardDestination'];
-    String stashId = store.staking.ledger['stashId'];
+    String stashId = store.staking.ledger['stashId'] ?? controllerId;
     if (hasData) {
       stashId = store.staking.ledger['stakingLedger']['stash'];
       if (payee == null) {
         payee = store.staking.ledger['stakingLedger']['payee'];
       }
     }
-    String controllerId = store.staking.ledger['controllerId'] ??
-        store.staking.ledger['accountId'];
     bool isStash = store.staking.ledger['accountId'] == stashId;
     bool controllerEqualStash = controllerId == stashId;
     String account02 = isStash ? controllerId : stashId;
