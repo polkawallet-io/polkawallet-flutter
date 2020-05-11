@@ -45,3 +45,6 @@ const int SECONDS_OF_YEAR = 365 * 24 * 60 * 60; // seconds of one year
 
 const String acala_stable_coin = 'AUSD';
 const String acala_stable_coin_view = 'aUSD';
+
+/// test app versions
+const String app_beta_version = '0.7.4-beta.3';

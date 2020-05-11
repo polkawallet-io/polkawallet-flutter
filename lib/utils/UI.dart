@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:package_info/package_info.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/downloadDialog.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/version.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -78,16 +79,23 @@ class UI {
     final Map dic = I18n.of(context).home;
     Map versions = await VersionApi.getLatestVersion();
     String latest = versions['android']['version'];
+    String latestBeta = versions['android']['version-beta'];
 
     PackageInfo info = await PackageInfo.fromPlatform();
 
     bool needUpdate = false;
-    if (latest.compareTo(info.version) > 0) {
-      // new version found
-      needUpdate = true;
-    }
-    if (autoCheck && !needUpdate) {
-      return;
+    if (autoCheck) {
+      if (latest.compareTo(info.version) > 0) {
+        // new version found
+        needUpdate = true;
+      } else {
+        return;
+      }
+    } else {
+      if (latestBeta.compareTo(app_beta_version) > 0) {
+        // new version found
+        needUpdate = true;
+      }
     }
 
     showCupertinoDialog(

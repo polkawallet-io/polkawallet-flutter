@@ -62,7 +62,9 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
         nominatorListHeight = double.parse((nominators.length * 60).toString());
       }
     }
-    bool isStash = store.staking.ledger['accountId'] == stashId;
+    String controllerId = store.staking.ledger['controllerId'] ??
+        store.staking.ledger['accountId'];
+    bool isController = store.staking.ledger['accountId'] == controllerId;
 
     Color actionButtonColor = Theme.of(context).primaryColor;
     Color disabledColor = Theme.of(context).disabledColor;
@@ -98,7 +100,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
             subtitle: Text(dic['nominating']),
             trailing: Container(
               width: 100,
-              child: !isStash && bonded > 0
+              child: isController && bonded > 0
                   ? GestureDetector(
                       child: nominators.length > 0
                           ? Column(
