@@ -97,3 +97,7 @@ We got grants from Web3 Foundation, at the same time, we are helping Acala Netwo
 `Website:` https://polkawallet.io  
 `Twitter:` https://twitter.com/polkawallet  
 `E-mail:`  hello@polkawallet.io  
+
+### Tipping address
+
+Kusama address: `E8Yd2tgy9BQi2dGPAMc9GgiGJy3wsibhL1EU4kCLf1g1A3V`
