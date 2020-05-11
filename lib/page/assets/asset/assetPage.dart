@@ -179,10 +179,8 @@ class _AssetPageState extends State<AssetPage>
                       Padding(
                         padding: EdgeInsets.only(bottom: 16),
                         child: Text(
-                          Fmt.token(
-                              isBaseToken ? balancesInfo.transferable : balance,
-                              decimals: decimals,
-                              length: 8),
+                          Fmt.token(isBaseToken ? balancesInfo.total : balance,
+                              decimals: decimals, length: 8),
                           style: TextStyle(
                             color: titleColor,
                             fontSize: 28,
@@ -197,7 +195,7 @@ class _AssetPageState extends State<AssetPage>
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Container(
-                                      margin: EdgeInsets.only(right: 16),
+                                      margin: EdgeInsets.only(right: 12),
                                       child: Row(
                                         children: <Widget>[
                                           lockedInfo.length > 2
@@ -223,8 +221,15 @@ class _AssetPageState extends State<AssetPage>
                                         ],
                                       ),
                                     ),
+                                    Container(
+                                      margin: EdgeInsets.only(right: 12),
+                                      child: Text(
+                                        '${dic['available']}: ${Fmt.token(balancesInfo.transferable, decimals: decimals)}',
+                                        style: TextStyle(color: titleColor),
+                                      ),
+                                    ),
                                     Text(
-                                      '${dic['available']}: ${Fmt.token(balancesInfo.transferable, decimals: decimals)}',
+                                      '${dic['reserved']}: ${Fmt.token(balancesInfo.reserved, decimals: decimals)}',
                                       style: TextStyle(color: titleColor),
                                     ),
                                   ],

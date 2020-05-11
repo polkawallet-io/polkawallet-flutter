@@ -157,12 +157,14 @@ class _TransferPageState extends State<TransferPage> {
         final Map<String, String> dic = I18n.of(context).assets;
         String baseTokenSymbol = store.settings.networkState.tokenSymbol;
         String symbol = _tokenSymbol ?? baseTokenSymbol;
+        final bool isBaseToken = _tokenSymbol == baseTokenSymbol;
         List symbolOptions = store.settings.networkConst['currencyIds'];
 
         int decimals = store.settings.networkState.tokenDecimals;
 
-        BigInt available =
-            Fmt.balanceInt(store.assets.tokenBalances[symbol.toUpperCase()]);
+        BigInt available = isBaseToken
+            ? store.assets.balances[symbol.toUpperCase()].transferable
+            : Fmt.balanceInt(store.assets.tokenBalances[symbol.toUpperCase()]);
 
         return Scaffold(
           appBar: AppBar(

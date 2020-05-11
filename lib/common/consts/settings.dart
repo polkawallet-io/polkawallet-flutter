@@ -26,6 +26,18 @@ List<EndpointData> networkEndpoints = [
   EndpointData.fromJson(const {
     'info': 'acala-mandala',
     'ss58': 42,
+    'text': 'Mandala TC3 Node 1 (Hosted by OnFinality)',
+    'value': 'wss://node-6661046769230852096.jm.onfinality.io/ws'
+  }),
+  EndpointData.fromJson(const {
+    'info': 'acala-mandala',
+    'ss58': 42,
+    'text': 'Mandala TC3 Node 2 (Hosted by OnFinality)',
+    'value': 'wss://node-6661046769218965504.rz.onfinality.io/ws'
+  }),
+  EndpointData.fromJson(const {
+    'info': 'acala-mandala',
+    'ss58': 42,
     'text': 'Acala Mandala (Hosted by Acala Network)',
     'value': 'wss://testnet-node-1.acala.laminar.one/ws',
   }),
@@ -47,4 +59,4 @@ const String acala_stable_coin = 'AUSD';
 const String acala_stable_coin_view = 'aUSD';
 
 /// test app versions
-const String app_beta_version = '0.7.4-beta.3';
+const String app_beta_version = '0.7.4-beta.4';

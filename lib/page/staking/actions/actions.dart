@@ -149,7 +149,7 @@ class _StakingActions extends State<StakingActions>
 
     String symbol = store.settings.networkState.tokenSymbol;
 
-    BigInt balance = store.assets.balances[symbol].freeBalance;
+    BigInt balance = store.assets.balances[symbol].total;
     BigInt bonded = BigInt.zero;
     BigInt redeemable = BigInt.zero;
     if (hasData) {
