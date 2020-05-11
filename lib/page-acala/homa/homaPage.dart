@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/infoItem.dart';
+import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page-acala/homa/mintPage.dart';
 import 'package:polka_wallet/page-acala/homa/redeemPage.dart';
+import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/acala/types/stakingPoolInfoData.dart';
+import 'package:polka_wallet/store/acala/types/txHomaData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -31,7 +36,30 @@ class _HomaPageState extends State<HomaPage> {
     webApi.acala.fetchTokens(store.account.currentAccount.pubKey);
     webApi.acala.fetchHomaUserInfo();
     await webApi.acala.fetchHomaStakingPool();
-//    await webApi.acala.fetchHomaUserUnbonding();
+  }
+
+  void _onSubmitWithdraw() {
+    HomaUserInfoData userInfo = store.acala.homaUserInfo;
+    String receive = Fmt.priceFloorBigInt(userInfo.unbonded, lengthMax: 3);
+    var args = {
+      "title": I18n.of(context).acala['homa.mint'],
+      "txInfo": {
+        "module": 'homa',
+        "call": 'withdrawRedemption',
+      },
+      "detail": jsonEncode({
+        "amountReceive": receive,
+      }),
+      "params": [],
+      "onFinish": (BuildContext txPageContext, Map res) {
+//          print(res);
+        res['action'] = TxHomaData.actionWithdrawRedemption;
+        res['amountReceive'] = receive;
+        store.acala.setHomaTxs([res]);
+        globalHomaRefreshKey.currentState.show();
+      }
+    };
+    Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
   }
 
   @override
@@ -168,12 +196,16 @@ class _HomaPageState extends State<HomaPage> {
                                 child: Column(
                                   children: <Widget>[
                                     Padding(
-                                      padding: EdgeInsets.only(bottom: 8),
+                                      padding: EdgeInsets.only(bottom: 16),
                                       child: Text(dic['homa.user']),
                                     ),
                                     userInfo.claims.length > 0
                                         ? Column(
                                             children: userInfo.claims.map((i) {
+                                              String unlockTime =
+                                                  (i.era - pool.currentEra)
+                                                      .toInt()
+                                                      .toString();
                                               return Row(
                                                 children: <Widget>[
                                                   InfoItem(
@@ -185,8 +217,10 @@ class _HomaPageState extends State<HomaPage> {
                                                             decimals: decimals),
                                                   ),
                                                   InfoItem(
-                                                    title: 'time',
-                                                    content: i.era.toString(),
+                                                    title:
+                                                        dic['homa.user.time'],
+                                                    content:
+                                                        '$unlockTime Era ≈ $unlockTime ${dic['homa.redeem.day']}',
                                                   ),
                                                 ],
                                               );
@@ -194,16 +228,23 @@ class _HomaPageState extends State<HomaPage> {
                                           )
                                         : Container(),
                                     userInfo.unbonded > BigInt.zero
+                                        ? Divider(height: 24)
+                                        : Container(),
+                                    userInfo.unbonded > BigInt.zero
                                         ? Row(
                                             children: <Widget>[
                                               InfoItem(
-                                                title: 'unbonded',
+                                                title:
+                                                    dic['homa.user.redeemable'],
                                                 content: Fmt.priceFloorBigInt(
                                                     userInfo.unbonded,
                                                     decimals: decimals),
                                               ),
-                                              OutlineButton(
-                                                child: Text('withdraw now'),
+                                              OutlinedButtonSmall(
+                                                margin: EdgeInsets.all(0),
+                                                active: true,
+                                                content: dic['homa.now'],
+                                                onPressed: _onSubmitWithdraw,
                                               ),
                                             ],
                                           )
@@ -215,42 +256,44 @@ class _HomaPageState extends State<HomaPage> {
                       ],
                     ),
                   ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          color: Colors.blue,
-                          child: FlatButton(
-                            padding: EdgeInsets.only(top: 16, bottom: 16),
-                            child: Text(
-                              dic['homa.mint'],
-                              style: TextStyle(color: white),
+                  pool.communalTotal != null
+                      ? Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                color: Colors.blue,
+                                child: FlatButton(
+                                  padding: EdgeInsets.only(top: 16, bottom: 16),
+                                  child: Text(
+                                    dic['homa.mint'],
+                                    style: TextStyle(color: white),
+                                  ),
+                                  onPressed: pool.communalTotal != null
+                                      ? () => Navigator.of(context)
+                                          .pushNamed(MintPage.route)
+                                      : null,
+                                ),
+                              ),
                             ),
-                            onPressed: pool.communalTotal != null
-                                ? () => Navigator.of(context)
-                                    .pushNamed(MintPage.route)
-                                : null,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          color: primary,
-                          child: FlatButton(
-                            padding: EdgeInsets.only(top: 16, bottom: 16),
-                            child: Text(
-                              dic['homa.redeem'],
-                              style: TextStyle(color: white),
+                            Expanded(
+                              child: Container(
+                                color: primary,
+                                child: FlatButton(
+                                  padding: EdgeInsets.only(top: 16, bottom: 16),
+                                  child: Text(
+                                    dic['homa.redeem'],
+                                    style: TextStyle(color: white),
+                                  ),
+                                  onPressed: pool.communalTotal != null
+                                      ? () => Navigator.of(context)
+                                          .pushNamed(HomaRedeemPage.route)
+                                      : null,
+                                ),
+                              ),
                             ),
-                            onPressed: pool.communalTotal != null
-                                ? () => Navigator.of(context)
-                                    .pushNamed(HomaRedeemPage.route)
-                                : null,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                          ],
+                        )
+                      : Container(),
                 ],
               ),
             ),

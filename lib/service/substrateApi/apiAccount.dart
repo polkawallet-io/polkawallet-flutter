@@ -80,11 +80,11 @@ class ApiAccount {
       Map txInfo, List params, String pageTile, String notificationTitle,
       {String rawParam}) async {
     String param = rawParam != null ? rawParam : jsonEncode(params);
-    var res = await apiRoot
+    Map res = await apiRoot
         .evalJavascript('account.sendTx(${jsonEncode(txInfo)}, $param)');
 //    var res = await _testSendTx();
 
-    if (res != null) {
+    if (res['hash'] != null) {
       String hash = res['hash'];
       NotificationPlugin.showNotification(
         int.parse(hash.substring(0, 6)),

@@ -44,7 +44,6 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     return fee['partialFee'].toString();
   }
 
-  // todo: error handler after tx inBlock
   Future<void> _onSubmit(BuildContext context) async {
     final ScaffoldState state = Scaffold.of(context);
     final Map<String, String> dic = I18n.of(context).home;
@@ -80,7 +79,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
       }
     }
 
-    void onTxError() {
+    void onTxError(String errorMsg) {
       store.assets.setSubmitting(false);
       if (state.mounted) {
         state.removeCurrentSnackBar();
@@ -88,11 +87,9 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
       showCupertinoDialog(
         context: context,
         builder: (BuildContext context) {
-          final Map<String, String> accDic = I18n.of(context).account;
           return CupertinoAlertDialog(
             title: Container(),
-            content: Text(
-                '${accDic['import.invalid']} ${accDic['create.password']}'),
+            content: Text(errorMsg),
             actions: <Widget>[
               CupertinoButton(
                 child: Text(dic['cancel']),
@@ -127,13 +124,13 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     txInfo['password'] = _passCtrl.text;
     print(txInfo);
     print(args['params']);
-    var res = await webApi.account.sendTx(
+    Map res = await webApi.account.sendTx(
         txInfo, args['params'], args['title'], dic['notify.submitted'],
         rawParam: args['rawParam']);
-    if (res == null) {
-      onTxError();
+    if (res['hash'] == null) {
+      onTxError(res['error']);
     } else {
-      onTxFinish(Map.from(res));
+      onTxFinish(res);
     }
   }
 
@@ -324,7 +321,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                             dic['submit'],
                             style: TextStyle(color: Colors.white),
                           ),
-                          onPressed: store.assets.submitting
+                          onPressed: _fee['partialFee'] == null ||
+                                  store.assets.submitting
                               ? null
                               : () => _onSubmit(context),
                         ),

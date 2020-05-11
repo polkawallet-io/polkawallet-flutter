@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
+import 'package:polka_wallet/common/components/TapTooltip.dart';
 import 'package:polka_wallet/common/components/listTail.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
@@ -200,7 +201,7 @@ class _AssetPageState extends State<AssetPage>
                                       child: Row(
                                         children: <Widget>[
                                           lockedInfo.length > 2
-                                              ? Tooltip(
+                                              ? TapTooltip(
                                                   message: lockedInfo,
                                                   child: Padding(
                                                     padding: EdgeInsets.only(

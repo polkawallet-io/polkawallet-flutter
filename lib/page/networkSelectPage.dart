@@ -98,6 +98,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
               store.settings.loadNetworkStateCache();
               store.settings.setNetworkLoading(true);
               store.assets.clearTxs();
+              store.staking.clearState();
               webApi.launchWebview();
               changeTheme();
             }

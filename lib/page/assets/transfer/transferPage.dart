@@ -162,7 +162,7 @@ class _TransferPageState extends State<TransferPage> {
         int decimals = store.settings.networkState.tokenDecimals;
 
         BigInt available =
-            store.assets.balances[symbol.toUpperCase()].transferable;
+            Fmt.balanceInt(store.assets.tokenBalances[symbol.toUpperCase()]);
 
         return Scaffold(
           appBar: AppBar(

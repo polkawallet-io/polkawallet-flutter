@@ -159,7 +159,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
         }
 
         double swapRatio =
-            double.parse(store.acala.swapPoolRatios[token].toString());
+            double.parse((store.acala.swapPoolRatios[token] ?? 0).toString());
 
         return Scaffold(
           appBar: AppBar(title: Text(dic['earn.deposit']), centerTitle: true),

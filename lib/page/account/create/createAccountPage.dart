@@ -131,11 +131,15 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['create'])),
       body: SafeArea(
-        child: CreateAccountForm(setNewAccount, () {
-          setState(() {
-            _step = 2;
-          });
-        }),
+        child: CreateAccountForm(
+          setNewAccount: setNewAccount,
+          submitting: false,
+          onSubmit: () {
+            setState(() {
+              _step = 2;
+            });
+          },
+        ),
       ),
     );
   }

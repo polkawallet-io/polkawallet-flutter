@@ -85,8 +85,8 @@ class _HomaHistoryPage extends State<HomaHistoryPage> {
 
                     TxHomaData detail = list[i];
 
-                    String amountPay = detail.amountPay ?? '';
-                    String amountReceive = detail.amountReceive ?? '';
+                    String amountPay = detail.amountPay ?? '0';
+                    String amountReceive = detail.amountReceive ?? '0';
                     String icon = 'assets_up.png';
                     if (detail.action == TxHomaData.actionRedeem) {
                       amountPay += ' LDOT';

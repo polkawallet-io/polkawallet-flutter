@@ -299,6 +299,23 @@ mixin _$AcalaStore on _AcalaStore, Store {
     }, _$stakingPoolInfoAtom, name: '${_$stakingPoolInfoAtom.name}_set');
   }
 
+  final _$homaUserInfoAtom = Atom(name: '_AcalaStore.homaUserInfo');
+
+  @override
+  HomaUserInfoData get homaUserInfo {
+    _$homaUserInfoAtom.context.enforceReadPolicy(_$homaUserInfoAtom);
+    _$homaUserInfoAtom.reportObserved();
+    return super.homaUserInfo;
+  }
+
+  @override
+  set homaUserInfo(HomaUserInfoData value) {
+    _$homaUserInfoAtom.context.conditionallyRunInAction(() {
+      super.homaUserInfo = value;
+      _$homaUserInfoAtom.reportChanged();
+    }, _$homaUserInfoAtom, name: '${_$homaUserInfoAtom.name}_set');
+  }
+
   final _$setTransferTxsAsyncAction = AsyncAction('setTransferTxs');
 
   @override
@@ -388,6 +405,13 @@ mixin _$AcalaStore on _AcalaStore, Store {
   Future<void> setHomaStakingPool(Map pool) {
     return _$setHomaStakingPoolAsyncAction
         .run(() => super.setHomaStakingPool(pool));
+  }
+
+  final _$setHomaUserInfoAsyncAction = AsyncAction('setHomaUserInfo');
+
+  @override
+  Future<void> setHomaUserInfo(Map info) {
+    return _$setHomaUserInfoAsyncAction.run(() => super.setHomaUserInfo(info));
   }
 
   final _$_AcalaStoreActionController = ActionController(name: '_AcalaStore');

@@ -106,6 +106,9 @@ class _EarnPageState extends State<EarnPage> {
             amountStableCoinUser = amountStableCoin * userShare;
           }
 
+          double swapRatio = double.parse(
+              (store.acala.swapPoolRatios[_tab] ?? '0').toString());
+
           Color cardColor = Theme.of(context).cardColor;
           Color primaryColor = Theme.of(context).primaryColor;
 
@@ -128,10 +131,7 @@ class _EarnPageState extends State<EarnPage> {
                           reward: store.acala.swapPoolRewards[_tab],
                           fee: store.acala.swapFee,
                           token: _tab,
-                          swapRatio: Fmt.doubleFormat(
-                              double.parse(
-                                  store.acala.swapPoolRatios[_tab] ?? '0'),
-                              length: 2),
+                          swapRatio: Fmt.doubleFormat(swapRatio, length: 2),
                           amountToken: Fmt.doubleFormat(amountToken),
                           amountStableCoin:
                               Fmt.doubleFormat(amountStableCoin, length: 2),
@@ -149,46 +149,50 @@ class _EarnPageState extends State<EarnPage> {
                       ],
                     ),
                   ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          color: Colors.blue,
-                          child: FlatButton(
-                              padding: EdgeInsets.only(top: 16, bottom: 16),
-                              child: Text(
-                                dic['earn.deposit'],
-                                style: TextStyle(color: cardColor),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pushNamed(
-                                  AddLiquidityPage.route,
-                                  arguments: _tab,
-                                );
-                              }),
-                        ),
-                      ),
-                      share > BigInt.zero
-                          ? Expanded(
+                  swapRatio > 0
+                      ? Row(
+                          children: <Widget>[
+                            Expanded(
                               child: Container(
-                                color: primaryColor,
+                                color: Colors.blue,
                                 child: FlatButton(
-                                  padding: EdgeInsets.only(top: 16, bottom: 16),
-                                  child: Text(
-                                    dic['earn.withdraw'],
-                                    style: TextStyle(color: cardColor),
-                                  ),
-                                  onPressed: () =>
+                                    padding:
+                                        EdgeInsets.only(top: 16, bottom: 16),
+                                    child: Text(
+                                      dic['earn.deposit'],
+                                      style: TextStyle(color: cardColor),
+                                    ),
+                                    onPressed: () {
                                       Navigator.of(context).pushNamed(
-                                    WithdrawLiquidityPage.route,
-                                    arguments: _tab,
-                                  ),
-                                ),
+                                        AddLiquidityPage.route,
+                                        arguments: _tab,
+                                      );
+                                    }),
                               ),
-                            )
-                          : Container(),
-                    ],
-                  ),
+                            ),
+                            share > BigInt.zero
+                                ? Expanded(
+                                    child: Container(
+                                      color: primaryColor,
+                                      child: FlatButton(
+                                        padding: EdgeInsets.only(
+                                            top: 16, bottom: 16),
+                                        child: Text(
+                                          dic['earn.withdraw'],
+                                          style: TextStyle(color: cardColor),
+                                        ),
+                                        onPressed: () =>
+                                            Navigator.of(context).pushNamed(
+                                          WithdrawLiquidityPage.route,
+                                          arguments: _tab,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        )
+                      : Container(),
                 ],
               ),
             ),

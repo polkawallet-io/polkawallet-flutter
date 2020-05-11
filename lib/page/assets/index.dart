@@ -174,7 +174,6 @@ class _AssetsState extends State<Assets> {
     super.initState();
   }
 
-  // TODO: locked tokens in balance
   @override
   Widget build(BuildContext context) {
     return Observer(

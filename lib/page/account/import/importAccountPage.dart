@@ -26,13 +26,20 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
   String _keyType = '';
   String _cryptoType = '';
   String _derivePath = '';
+  bool _submitting = false;
 
   Future<void> _importAccount() async {
+    setState(() {
+      _submitting = true;
+    });
     var acc = await webApi.account.importAccount(
       keyType: _keyType,
       cryptoType: _cryptoType,
       derivePath: _derivePath,
     );
+    setState(() {
+      _submitting = false;
+    });
     if (acc != null) {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       return;
@@ -73,7 +80,11 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
           ),
         ),
         body: SafeArea(
-          child: CreateAccountForm(store.account.setNewAccount, _importAccount),
+          child: CreateAccountForm(
+            setNewAccount: store.account.setNewAccount,
+            submitting: _submitting,
+            onSubmit: _importAccount,
+          ),
         ),
       );
     }

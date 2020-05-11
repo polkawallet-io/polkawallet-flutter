@@ -104,59 +104,64 @@ class _LoanPageState extends State<LoanPage> {
                             )
                           : Container(),
                     ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Container(
-                            color: Colors.blue,
-                            child: FlatButton(
-                                padding: EdgeInsets.only(top: 16, bottom: 16),
-                                child: Text(
-                                  dic['loan.borrow'],
-                                  style: TextStyle(color: cardColor),
-                                ),
-                                onPressed: () {
-                                  if (loan != null &&
-                                      loan.collaterals > BigInt.zero) {
-                                    Navigator.of(context).pushNamed(
-                                      LoanAdjustPage.route,
-                                      arguments: LoanAdjustPageParams(
-                                          LoanAdjustPage.actionTypeBorrow,
-                                          _tab),
-                                    );
-                                  } else {
-                                    Navigator.of(context).pushNamed(
-                                      LoanCreatePage.route,
-                                      arguments: LoanAdjustPageParams('', _tab),
-                                    );
-                                  }
-                                }),
-                          ),
-                        ),
-                        loan != null && loan.debitInUSD > BigInt.zero
-                            ? Expanded(
+                    store.acala.loanTypes.length > 0
+                        ? Row(
+                            children: <Widget>[
+                              Expanded(
                                 child: Container(
-                                  color: primaryColor,
+                                  color: Colors.blue,
                                   child: FlatButton(
-                                    padding:
-                                        EdgeInsets.only(top: 16, bottom: 16),
-                                    child: Text(
-                                      dic['loan.payback'],
-                                      style: TextStyle(color: cardColor),
-                                    ),
-                                    onPressed: () =>
-                                        Navigator.of(context).pushNamed(
-                                      LoanAdjustPage.route,
-                                      arguments: LoanAdjustPageParams(
-                                          LoanAdjustPage.actionTypePayback,
-                                          _tab),
-                                    ),
-                                  ),
+                                      padding:
+                                          EdgeInsets.only(top: 16, bottom: 16),
+                                      child: Text(
+                                        dic['loan.borrow'],
+                                        style: TextStyle(color: cardColor),
+                                      ),
+                                      onPressed: () {
+                                        if (loan != null &&
+                                            loan.collaterals > BigInt.zero) {
+                                          Navigator.of(context).pushNamed(
+                                            LoanAdjustPage.route,
+                                            arguments: LoanAdjustPageParams(
+                                                LoanAdjustPage.actionTypeBorrow,
+                                                _tab),
+                                          );
+                                        } else {
+                                          Navigator.of(context).pushNamed(
+                                            LoanCreatePage.route,
+                                            arguments:
+                                                LoanAdjustPageParams('', _tab),
+                                          );
+                                        }
+                                      }),
                                 ),
-                              )
-                            : Container(),
-                      ],
-                    ),
+                              ),
+                              loan != null && loan.debitInUSD > BigInt.zero
+                                  ? Expanded(
+                                      child: Container(
+                                        color: primaryColor,
+                                        child: FlatButton(
+                                          padding: EdgeInsets.only(
+                                              top: 16, bottom: 16),
+                                          child: Text(
+                                            dic['loan.payback'],
+                                            style: TextStyle(color: cardColor),
+                                          ),
+                                          onPressed: () =>
+                                              Navigator.of(context).pushNamed(
+                                            LoanAdjustPage.route,
+                                            arguments: LoanAdjustPageParams(
+                                                LoanAdjustPage
+                                                    .actionTypePayback,
+                                                _tab),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                            ],
+                          )
+                        : Container(),
                   ],
                 )),
           );

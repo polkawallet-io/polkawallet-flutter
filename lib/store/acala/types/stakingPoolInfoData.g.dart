@@ -6,20 +6,6 @@ part of 'stakingPoolInfoData.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-StakingPoolFreeItemData _$StakingPoolFreeItemDataFromJson(
-    Map<String, dynamic> json) {
-  return StakingPoolFreeItemData()
-    ..era = json['era'] as int
-    ..free = (json['free'] as num)?.toDouble();
-}
-
-Map<String, dynamic> _$StakingPoolFreeItemDataToJson(
-        StakingPoolFreeItemData instance) =>
-    <String, dynamic>{
-      'era': instance.era,
-      'free': instance.free,
-    };
-
 StakingPoolInfoData _$StakingPoolInfoDataFromJson(Map<String, dynamic> json) {
   return StakingPoolInfoData()
     ..rewardRate = json['rewardRate'] as String
@@ -66,4 +52,18 @@ Map<String, dynamic> _$StakingPoolInfoDataToJson(
       'communalTotal': instance.communalTotal,
       'communalBondedRatio': instance.communalBondedRatio,
       'liquidExchangeRate': instance.liquidExchangeRate,
+    };
+
+StakingPoolFreeItemData _$StakingPoolFreeItemDataFromJson(
+    Map<String, dynamic> json) {
+  return StakingPoolFreeItemData()
+    ..era = json['era'] as int
+    ..free = (json['free'] as num)?.toDouble();
+}
+
+Map<String, dynamic> _$StakingPoolFreeItemDataToJson(
+        StakingPoolFreeItemData instance) =>
+    <String, dynamic>{
+      'era': instance.era,
+      'free': instance.free,
     };

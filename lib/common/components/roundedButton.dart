@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// TODO: add submitting state for buttons
 class RoundedButton extends StatelessWidget {
   RoundedButton({
     this.text,

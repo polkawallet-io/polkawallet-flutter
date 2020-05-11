@@ -76,33 +76,35 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
       StakingPoolInfoData pool = store.acala.stakingPoolInfo;
       if (pool.freeList.length == 0) return;
 
-      showCupertinoModalPopup(
-        context: context,
-        builder: (_) => Container(
-          height: MediaQuery.of(context).copyWith().size.height / 3,
-          child: WillPopScope(
-            child: CupertinoPicker(
-              backgroundColor: Colors.white,
-              itemExtent: 58,
-              scrollController: FixedExtentScrollController(
-                initialItem: _eraSelected,
+      if (pool.freeList.length > 1) {
+        showCupertinoModalPopup(
+          context: context,
+          builder: (_) => Container(
+            height: MediaQuery.of(context).copyWith().size.height / 3,
+            child: WillPopScope(
+              child: CupertinoPicker(
+                backgroundColor: Colors.white,
+                itemExtent: 58,
+                scrollController: FixedExtentScrollController(
+                  initialItem: _eraSelected,
+                ),
+                children: pool.freeList.map((i) {
+                  return Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                        'Era ${i.era}, ${dicAssets['available']} ${Fmt.priceFloor(i.free)}'),
+                  );
+                }).toList(),
+                onSelectedItemChanged: (v) {
+                  setState(() {
+                    _eraSelected = v;
+                  });
+                },
               ),
-              children: pool.freeList.map((i) {
-                return Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text(
-                      'Era ${i.era}, ${dicAssets['available']} ${Fmt.priceFloor(i.free)}'),
-                );
-              }).toList(),
-              onSelectedItemChanged: (v) {
-                setState(() {
-                  _eraSelected = v;
-                });
-              },
             ),
           ),
-        ),
-      );
+        );
+      }
     }
     setState(() {
       _radioSelect = value;

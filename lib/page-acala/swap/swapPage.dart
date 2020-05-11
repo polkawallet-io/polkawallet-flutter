@@ -519,7 +519,8 @@ class _SwapPageState extends State<SwapPage> {
                     padding: EdgeInsets.only(top: 24),
                     child: RoundedButton(
                       text: dic['dex.title'],
-                      onPressed: _onSubmit,
+                      onPressed:
+                          store.acala.swapRatio.isEmpty ? null : _onSubmit,
                     ),
                   )
                 ],
