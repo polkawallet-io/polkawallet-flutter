@@ -312,7 +312,7 @@ mixin _$SettingsStore on _SettingsStore, Store {
   }
 
   @override
-  void setEndpoint(Map<String, dynamic> value) {
+  void setEndpoint(EndpointData value) {
     final _$actionInfo = _$_SettingsStoreActionController.startAction();
     try {
       return super.setEndpoint(value);

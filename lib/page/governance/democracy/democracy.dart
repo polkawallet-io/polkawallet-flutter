@@ -12,6 +12,9 @@ import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+// TODO: add referendum timeline details
+// TODO: add users voting details & re-vote
+// TODO: add removeVoter
 class Democracy extends StatefulWidget {
   Democracy(this.store);
 

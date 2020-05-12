@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +14,7 @@ import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+// TODO: payback all debts if input near max value
 class LoanAdjustPage extends StatefulWidget {
   LoanAdjustPage(this.store);
   static const String route = '/acala/loan/adjust';

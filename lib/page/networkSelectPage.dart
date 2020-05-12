@@ -31,6 +31,26 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   final Function changeTheme;
 
   EndpointData _selectedNetwork;
+  bool _networkChanging = false;
+
+  Future<void> _reloadNetwork() async {
+    setState(() {
+      _networkChanging = true;
+    });
+    await store.settings.setBestNode(info: _selectedNetwork.info);
+    store.settings.loadNetworkStateCache();
+    store.settings.setNetworkLoading(true);
+    store.assets.clearTxs();
+    store.staking.clearState();
+    webApi.launchWebview();
+    changeTheme();
+    if (mounted) {
+      setState(() {
+        _networkChanging = false;
+      });
+    }
+    Navigator.of(context).pop();
+  }
 
   List<Widget> _buildAccountList() {
     Color primaryColor = Theme.of(context).primaryColor;
@@ -71,38 +91,36 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
           leading: AddressIcon('', pubKey: i.pubKey),
           title: Text(i.name),
           subtitle: Text(Fmt.address(address ?? 'address xxxx')),
-          onTap: () {
-            if (address == store.account.currentAddress) return;
-            Navigator.of(context).pop();
+          onTap: _networkChanging
+              ? null
+              : () {
+                  if (address == store.account.currentAddress) return;
 
-            /// set current account
-            store.account.setCurrentAccount(i);
-            // refresh balance
-            store.assets.loadAccountCache();
+                  /// set current account
+                  store.account.setCurrentAccount(i);
+                  // refresh balance
+                  store.assets.loadAccountCache();
 
-            if (store.settings.endpoint.info == networkEndpointKusama.info) {
-              // refresh user's staking info
-              store.staking.loadAccountCache();
-            }
+                  if (store.settings.endpoint.info ==
+                      networkEndpointKusama.info) {
+                    // refresh user's staking info
+                    store.staking.loadAccountCache();
+                  }
 
-            if (store.settings.endpoint.info == networkEndpointAcala.info) {
-              store.acala.loadCache();
-            }
+                  if (store.settings.endpoint.info ==
+                      networkEndpointAcala.info) {
+                    store.acala.loadCache();
+                  }
 
-            if (isCurrentNetwork) {
-              /// reload account info
-              webApi.assets.fetchBalance(i.pubKey);
-            } else {
-              /// set new network and reload web view
-              store.settings.setEndpoint(EndpointData.toJson(_selectedNetwork));
-              store.settings.loadNetworkStateCache();
-              store.settings.setNetworkLoading(true);
-              store.assets.clearTxs();
-              store.staking.clearState();
-              webApi.launchWebview();
-              changeTheme();
-            }
-          },
+                  if (isCurrentNetwork) {
+                    /// reload account info
+                    webApi.assets.fetchBalance(i.pubKey);
+                    Navigator.of(context).pop();
+                  } else {
+                    /// set new network and reload web view
+                    _reloadNetwork();
+                  }
+                },
         ),
       );
     }).toList());

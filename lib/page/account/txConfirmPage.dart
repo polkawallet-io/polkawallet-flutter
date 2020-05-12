@@ -10,6 +10,7 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+// TODO: Add biometrics
 class TxConfirmPage extends StatefulWidget {
   const TxConfirmPage(this.store);
 

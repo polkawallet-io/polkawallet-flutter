@@ -74,6 +74,7 @@ class UI {
     );
   }
 
+  // TODO： add ios update
   static Future<void> checkUpdate(BuildContext context,
       {bool autoCheck = false}) async {
     final Map dic = I18n.of(context).home;
@@ -123,7 +124,7 @@ class UI {
                 }
                 if (Platform.isIOS) {
                   // go to ios download page
-//                  launchURL('xxx');
+//                  launchURL('https://polkawallet.io/#download');
                 } else if (Platform.isAndroid) {
                   // download apk
                   // START LISTENING FOR DOWNLOAD PROGRESS REPORTING EVENTS

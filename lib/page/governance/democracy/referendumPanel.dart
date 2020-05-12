@@ -7,6 +7,7 @@ import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+// TODO: adjust vote amount times display
 class ReferendumPanel extends StatelessWidget {
   ReferendumPanel({
     this.symbol,

@@ -9,7 +9,6 @@ import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/homa/homaHistoryPage.dart';
-import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/acala/types/stakingPoolInfoData.dart';
@@ -128,8 +127,6 @@ class _MintPageState extends State<MintPage> {
         StakingPoolInfoData pool = store.acala.stakingPoolInfo;
 
         Color primary = Theme.of(context).primaryColor;
-        Color grey = Theme.of(context).unselectedWidgetColor;
-        Color lightGrey = Theme.of(context).dividerColor;
 
         return Scaffold(
           appBar: AppBar(title: Text(dic['homa.mint']), centerTitle: true),
@@ -200,10 +197,9 @@ class _MintPageState extends State<MintPage> {
                                     if (v.isEmpty) {
                                       return dicAssets['amount.error'];
                                     }
-                                    if (double.parse(v.trim()) >=
-                                        balance /
-                                                BigInt.from(pow(10, decimals)) -
-                                            0.02) {
+                                    if (double.parse(v.trim()) >
+                                        Fmt.bigIntToDouble(balance,
+                                            decimals: decimals)) {
                                       return dicAssets['amount.low'];
                                     }
                                     return null;

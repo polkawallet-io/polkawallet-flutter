@@ -212,7 +212,8 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
         String claimFee = '0';
         if (_amountReceiveCtrl.text.isNotEmpty) {
           claimFee = Fmt.priceCeil(
-            double.parse(_amountReceiveCtrl.text) * claimFeeRatio,
+            Fmt.balanceDouble(_amountReceiveCtrl.text, decimals: 0) *
+                claimFeeRatio,
             lengthMax: 4,
           );
         }
@@ -291,7 +292,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                             decimals: decimals)) {
                                       return dicAssets['amount.low'];
                                     }
-                                    if (double.parse(v.trim()) >= available) {
+                                    if (double.parse(v.trim()) > available) {
                                       return dic['homa.pool.low'];
                                     }
                                     return null;

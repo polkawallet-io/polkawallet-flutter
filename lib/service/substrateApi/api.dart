@@ -115,6 +115,7 @@ class Api {
     return _evalJavascriptUID++;
   }
 
+  // TODO: add a param to prevent repeat request
   Future<dynamic> evalJavascript(String code, {bool wrapPromise = true}) async {
     // check if there's a same request loading
 //    for (String i in _msgCompleters.keys) {

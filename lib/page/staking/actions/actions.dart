@@ -25,6 +25,7 @@ import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
+// TODO: txs list rendered in main thread
 class StakingActions extends StatefulWidget {
   StakingActions(this.store);
   final AppStore store;

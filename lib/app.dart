@@ -77,6 +77,7 @@ class WalletApp extends StatefulWidget {
   _WalletAppState createState() => _WalletAppState();
 }
 
+// TODO: add confirm before quit app
 class _WalletAppState extends State<WalletApp> {
   AppStore _appStore;
 
@@ -119,6 +120,7 @@ class _WalletAppState extends State<WalletApp> {
       print('sys locale: ${Localizations.localeOf(context)}');
       await _appStore.init(Localizations.localeOf(context).toString());
 
+      await _appStore.settings.setBestNode();
       // init webApi after store initiated
       webApi = Api(context, _appStore);
       webApi.init();

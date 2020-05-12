@@ -1,6 +1,7 @@
 import 'package:flutter_aes_ecb_pkcs5/flutter_aes_ecb_pkcs5.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
+import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -69,14 +70,25 @@ abstract class _AccountStore with Store {
 
   @computed
   ObservableList<AccountData> get optionalAccounts {
-    int ss58 = rootStore.settings.endpoint.ss58;
+    int ss58 = rootStore.settings.customSS58Format['value'];
+    if (rootStore.settings.customSS58Format['info'] ==
+        default_ss58_prefix['info']) {
+      ss58 = rootStore.settings.endpoint.ss58;
+      print(ss58);
+    }
     return ObservableList.of(accountList.where((i) =>
         (pubKeyAddressMap[ss58][i.pubKey] ?? i.address) != currentAddress));
   }
 
   @computed
   String get currentAddress {
-    int ss58 = rootStore.settings.endpoint.ss58;
+//    int ss58 = rootStore.settings.endpoint.ss58;
+    int ss58 = rootStore.settings.customSS58Format['value'];
+    if (rootStore.settings.customSS58Format['info'] ==
+        default_ss58_prefix['info']) {
+      ss58 = rootStore.settings.endpoint.ss58;
+//      print(ss58);
+    }
     return pubKeyAddressMap[ss58] != null
         ? pubKeyAddressMap[ss58][currentAccount.pubKey] ??
             currentAccount.address

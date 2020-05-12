@@ -17,6 +17,7 @@ const prefixList = [
   {'info': 'polkadot', 'text': 'Polkadot (live)', 'value': 0}
 ];
 
+// TODO: prefix set bug
 class SS58PrefixListPage extends StatelessWidget {
   SS58PrefixListPage(this.store);
 
