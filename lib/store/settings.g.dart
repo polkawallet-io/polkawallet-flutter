@@ -288,6 +288,13 @@ mixin _$SettingsStore on _SettingsStore, Store {
         .run(() => super.loadCustomSS58Format());
   }
 
+  final _$setBestNodeAsyncAction = AsyncAction('setBestNode');
+
+  @override
+  Future<void> setBestNode({String info}) {
+    return _$setBestNodeAsyncAction.run(() => super.setBestNode(info: info));
+  }
+
   final _$_SettingsStoreActionController =
       ActionController(name: '_SettingsStore');
 

@@ -138,7 +138,7 @@ class _AcalaCard extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(16, 8, 8, 8),
                 child: Text(
                   title,
-                  style: Theme.of(context).textTheme.display4,
+                  style: Theme.of(context).textTheme.headline4,
                 ),
               ),
               Container(

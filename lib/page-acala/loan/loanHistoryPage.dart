@@ -128,7 +128,8 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                                   padding: EdgeInsets.only(right: 12),
                                   child: Text(
                                     '${Fmt.priceFloorBigInt(amountView)} ${detail.currencyIdView}',
-                                    style: Theme.of(context).textTheme.display4,
+                                    style:
+                                        Theme.of(context).textTheme.headline4,
                                     textAlign: TextAlign.end,
                                   ),
                                 ),

@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 final appTheme = ThemeData(
   primarySwatch: Colors.pink,
   textTheme: TextTheme(
-      display1: TextStyle(
+      headline1: TextStyle(
         fontSize: 24,
       ),
-      display2: TextStyle(
+      headline2: TextStyle(
         fontSize: 22,
       ),
-      display3: TextStyle(
+      headline3: TextStyle(
         fontSize: 20,
       ),
-      display4: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      headline4: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       button: TextStyle(
         color: Colors.white,
         fontSize: 18,
@@ -23,16 +23,16 @@ final darkTheme = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: Colors.pink,
   textTheme: TextTheme(
-      display1: TextStyle(
+      headline1: TextStyle(
         fontSize: 24,
       ),
-      display2: TextStyle(
+      headline2: TextStyle(
         fontSize: 22,
       ),
-      display3: TextStyle(
+      headline3: TextStyle(
         fontSize: 20,
       ),
-      display4: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      headline4: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       button: TextStyle(
         color: Colors.white,
         fontSize: 18,
@@ -42,16 +42,16 @@ final darkTheme = ThemeData(
 final appThemeAcala = ThemeData(
   primarySwatch: Colors.indigo,
   textTheme: TextTheme(
-      display1: TextStyle(
+      headline1: TextStyle(
         fontSize: 24,
       ),
-      display2: TextStyle(
+      headline2: TextStyle(
         fontSize: 22,
       ),
-      display3: TextStyle(
+      headline3: TextStyle(
         fontSize: 20,
       ),
-      display4: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      headline4: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       button: TextStyle(
         color: Colors.white,
         fontSize: 18,

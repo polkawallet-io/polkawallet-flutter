@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -148,7 +147,7 @@ class _MintPageState extends State<MintPage> {
                             CurrencyWithIcon(
                               'DOT',
                               textWidth: 48,
-                              textStyle: Theme.of(context).textTheme.display4,
+                              textStyle: Theme.of(context).textTheme.headline4,
                             ),
                             Icon(
                               Icons.repeat,
@@ -157,7 +156,7 @@ class _MintPageState extends State<MintPage> {
                             CurrencyWithIcon(
                               'LDOT',
                               textWidth: 48,
-                              textStyle: Theme.of(context).textTheme.display4,
+                              textStyle: Theme.of(context).textTheme.headline4,
                             ),
                           ],
                         ),

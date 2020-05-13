@@ -87,14 +87,14 @@ mixin _$AssetsStore on _AssetsStore, Store {
   final _$tokenBalancesAtom = Atom(name: '_AssetsStore.tokenBalances');
 
   @override
-  ObservableMap<String, String> get tokenBalances {
+  Map<String, String> get tokenBalances {
     _$tokenBalancesAtom.context.enforceReadPolicy(_$tokenBalancesAtom);
     _$tokenBalancesAtom.reportObserved();
     return super.tokenBalances;
   }
 
   @override
-  set tokenBalances(ObservableMap<String, String> value) {
+  set tokenBalances(Map<String, String> value) {
     _$tokenBalancesAtom.context.conditionallyRunInAction(() {
       super.tokenBalances = value;
       _$tokenBalancesAtom.reportChanged();

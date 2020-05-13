@@ -81,7 +81,7 @@ class LoanInfoItem extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).primaryColor,
                   )
-                : Theme.of(context).textTheme.display4),
+                : Theme.of(context).textTheme.headline4),
       ],
     );
   }

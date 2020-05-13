@@ -56,7 +56,7 @@ class ReceivePage extends StatelessWidget {
                       ),
                       Text(
                         store.account.currentAccount.name,
-                        style: Theme.of(context).textTheme.display4,
+                        style: Theme.of(context).textTheme.headline4,
                       ),
                       Container(
                         decoration: BoxDecoration(

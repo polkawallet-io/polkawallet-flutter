@@ -50,12 +50,10 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).staking;
     bool hashData = store.staking.ledger['stakingLedger'] != null;
-    String stashId = store.staking.ledger['stashId'];
     int bonded = 0;
     List nominators = [];
     double nominatorListHeight = 48;
     if (hashData) {
-      stashId = store.staking.ledger['stakingLedger']['stash'];
       bonded = store.staking.ledger['stakingLedger']['active'];
       nominators = store.staking.ledger['nominators'];
       if (nominators.length > 0) {
@@ -95,7 +93,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
               store.staking.ledger['nominators'] != null
                   ? store.staking.ledger['nominators'].length.toString()
                   : '0',
-              style: Theme.of(context).textTheme.display4,
+              style: Theme.of(context).textTheme.headline4,
             ),
             subtitle: Text(dic['nominating']),
             trailing: Container(

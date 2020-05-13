@@ -80,26 +80,24 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
           context: context,
           builder: (_) => Container(
             height: MediaQuery.of(context).copyWith().size.height / 3,
-            child: WillPopScope(
-              child: CupertinoPicker(
-                backgroundColor: Colors.white,
-                itemExtent: 58,
-                scrollController: FixedExtentScrollController(
-                  initialItem: _eraSelected,
-                ),
-                children: pool.freeList.map((i) {
-                  return Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                        'Era ${i.era}, ${dicAssets['available']} ${Fmt.priceFloor(i.free)}'),
-                  );
-                }).toList(),
-                onSelectedItemChanged: (v) {
-                  setState(() {
-                    _eraSelected = v;
-                  });
-                },
+            child: CupertinoPicker(
+              backgroundColor: Colors.white,
+              itemExtent: 58,
+              scrollController: FixedExtentScrollController(
+                initialItem: _eraSelected,
               ),
+              children: pool.freeList.map((i) {
+                return Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text(
+                      'Era ${i.era}, ${dicAssets['available']} ${Fmt.priceFloor(i.free)}'),
+                );
+              }).toList(),
+              onSelectedItemChanged: (v) {
+                setState(() {
+                  _eraSelected = v;
+                });
+              },
             ),
           ),
         );
@@ -238,7 +236,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                             CurrencyWithIcon(
                               'LDOT',
                               textWidth: 48,
-                              textStyle: Theme.of(context).textTheme.display4,
+                              textStyle: Theme.of(context).textTheme.headline4,
                             ),
                             Icon(
                               Icons.repeat,
@@ -247,7 +245,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                             CurrencyWithIcon(
                               'DOT',
                               textWidth: 48,
-                              textStyle: Theme.of(context).textTheme.display4,
+                              textStyle: Theme.of(context).textTheme.headline4,
                             ),
                           ],
                         ),

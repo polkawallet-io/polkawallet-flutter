@@ -11,15 +11,16 @@ part 'account.g.dart';
 
 class AccountStore extends _AccountStore with _$AccountStore {
   AccountStore(AppStore appStore) : super(appStore);
+
+  static const String seedTypeMnemonic = 'mnemonic';
+  static const String seedTypeRawSeed = 'rawSeed';
+  static const String seedTypeKeystore = 'keystore';
 }
 
 abstract class _AccountStore with Store {
   _AccountStore(this.rootStore);
 
   final AppStore rootStore;
-
-  final String seedTypeMnemonic = 'mnemonic';
-  final String seedTypeRaw = 'rawSeed';
 
   Map<String, dynamic> _formatMetaData(Map<String, dynamic> acc) {
     String name = acc['meta']['name'];
@@ -153,8 +154,8 @@ abstract class _AccountStore with Store {
       }
     }
 
-    saveSeed(seedTypeMnemonic);
-    saveSeed(seedTypeRaw);
+    saveSeed(AccountStore.seedTypeMnemonic);
+    saveSeed(AccountStore.seedTypeRawSeed);
 
     // format meta data of acc
     acc = _formatMetaData(acc);
@@ -173,8 +174,8 @@ abstract class _AccountStore with Store {
     await LocalStorage.removeAccount(acc.pubKey);
 
     // remove encrypted seed after removing account
-    deleteSeed(seedTypeMnemonic, acc.pubKey);
-    deleteSeed(seedTypeRaw, acc.pubKey);
+    deleteSeed(AccountStore.seedTypeMnemonic, acc.pubKey);
+    deleteSeed(AccountStore.seedTypeRawSeed, acc.pubKey);
 
     // set new currentAccount after currentAccount was removed
     List<Map<String, dynamic>> accounts = await LocalStorage.getAccountList();
@@ -243,16 +244,18 @@ abstract class _AccountStore with Store {
   @action
   Future<void> updateSeed(
       String pubKey, String passwordOld, String passwordNew) async {
-    Map storedMnemonics = await LocalStorage.getSeeds(seedTypeMnemonic);
-    Map storedRawSeeds = await LocalStorage.getSeeds(seedTypeRaw);
+    Map storedMnemonics =
+        await LocalStorage.getSeeds(AccountStore.seedTypeMnemonic);
+    Map storedRawSeeds =
+        await LocalStorage.getSeeds(AccountStore.seedTypeRawSeed);
     String encryptedSeed = '';
     String seedType = '';
     if (storedMnemonics[pubKey] != null) {
       encryptedSeed = storedMnemonics[pubKey];
-      seedType = seedTypeMnemonic;
+      seedType = AccountStore.seedTypeMnemonic;
     } else if (storedMnemonics[pubKey] != null) {
       encryptedSeed = storedRawSeeds[pubKey];
-      seedType = seedTypeRaw;
+      seedType = AccountStore.seedTypeRawSeed;
     } else {
       return;
     }

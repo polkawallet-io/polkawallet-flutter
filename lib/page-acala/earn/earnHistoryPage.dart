@@ -129,7 +129,8 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                                   padding: EdgeInsets.only(right: 12),
                                   child: Text(
                                     amount,
-                                    style: Theme.of(context).textTheme.display4,
+                                    style:
+                                        Theme.of(context).textTheme.headline4,
                                     textAlign: TextAlign.end,
                                   ),
                                 ),

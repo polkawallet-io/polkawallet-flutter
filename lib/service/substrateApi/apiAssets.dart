@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/polkascan.dart';

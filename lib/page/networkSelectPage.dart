@@ -61,7 +61,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         children: <Widget>[
           Text(
             _selectedNetwork.info.toUpperCase(),
-            style: Theme.of(context).textTheme.display4,
+            style: Theme.of(context).textTheme.headline4,
           ),
           IconButton(
             icon: Image.asset(
@@ -128,13 +128,14 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_selectedNetwork == null) {
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         _selectedNetwork = store.settings.endpoint;
       });
-    }
+    });
   }
 
   @override
@@ -147,6 +148,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
       ),
       body: Observer(
         builder: (_) {
+          if (_selectedNetwork == null) return Container();
           return Row(
             children: <Widget>[
               // left side bar
@@ -196,11 +198,9 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
                 ),
               ),
               Expanded(
-                child: Padding(
+                child: ListView(
                   padding: EdgeInsets.all(16),
-                  child: Column(
-                    children: _buildAccountList(),
-                  ),
+                  children: _buildAccountList(),
                 ),
               )
             ],

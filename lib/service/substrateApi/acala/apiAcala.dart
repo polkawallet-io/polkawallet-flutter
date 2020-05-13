@@ -38,7 +38,8 @@ class ApiAcala {
       tokens.retainWhere((i) => i != symbol);
       String queries =
           tokens.map((i) => 'acala.getTokens("$i", "$address")').join(",");
-      var res = await apiRoot.evalJavascript('Promise.all([$queries])');
+      var res = await apiRoot.evalJavascript('Promise.all([$queries])',
+          allowRepeat: true);
       Map balances = {};
       balances[symbol] = store.assets.balances[symbol].transferable.toString();
       tokens.asMap().forEach((index, token) {
@@ -58,7 +59,8 @@ class ApiAcala {
     String queries = tokens
         .map((i) => 'api.query.airDrop.airDrops("$address", "$i")')
         .join(",");
-    List amount = await apiRoot.evalJavascript('Promise.all([$queries])');
+    List amount = await apiRoot.evalJavascript('Promise.all([$queries])',
+        allowRepeat: true);
     Map<String, BigInt> amt = Map<String, BigInt>();
     tokens.asMap().forEach((i, v) {
       amt[v] = BigInt.parse(amount[i].toString());

@@ -18,7 +18,7 @@ class CandidateDetailPage extends StatelessWidget {
     String symbol = store.settings.networkState.tokenSymbol;
 
     Map accInfo = store.account.accountIndexMap[info[0]];
-    TextStyle style = Theme.of(context).textTheme.display4;
+    TextStyle style = Theme.of(context).textTheme.headline4;
     return Scaffold(
       appBar: AppBar(
           title: Text(I18n.of(context).home['detail']), centerTitle: true),

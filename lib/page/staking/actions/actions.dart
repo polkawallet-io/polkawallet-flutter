@@ -23,9 +23,8 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
-// TODO: txs list rendered in main thread
+// TODO: txs list rendered in UI thread issue
 class StakingActions extends StatefulWidget {
   StakingActions(this.store);
   final AppStore store;
@@ -184,7 +183,7 @@ class _StakingActions extends State<StakingActions>
                   children: <Widget>[
                     Text(
                       store.account.currentAccount.name,
-                      style: Theme.of(context).textTheme.display4,
+                      style: Theme.of(context).textTheme.headline4,
                     ),
                     Text(Fmt.address(store.account.currentAddress))
                   ],
@@ -197,7 +196,7 @@ class _StakingActions extends State<StakingActions>
                   children: <Widget>[
                     Text(
                       '${Fmt.balance(balance.toString())}',
-                      style: Theme.of(context).textTheme.display4,
+                      style: Theme.of(context).textTheme.headline4,
                     ),
                     Text(
                       dic['balance'],
@@ -256,9 +255,7 @@ class _StakingActions extends State<StakingActions>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (LocalStorage.checkCacheTimeout(store.staking.cacheTxsTimestamp)) {
-        globalBondingRefreshKey.currentState.show();
-      }
+      globalBondingRefreshKey.currentState.show();
     });
   }
 
@@ -476,7 +473,7 @@ class StakingInfoPanel extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           Fmt.token(redeemable),
-                          style: Theme.of(context).textTheme.display4,
+                          style: Theme.of(context).textTheme.headline4,
                         ),
                         !isStash && redeemable > BigInt.zero
                             ? GestureDetector(

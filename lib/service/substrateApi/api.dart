@@ -115,16 +115,21 @@ class Api {
     return _evalJavascriptUID++;
   }
 
-  // TODO: add a param to prevent repeat request
-  Future<dynamic> evalJavascript(String code, {bool wrapPromise = true}) async {
+  Future<dynamic> evalJavascript(
+    String code, {
+    bool wrapPromise = true,
+    bool allowRepeat = false,
+  }) async {
     // check if there's a same request loading
-//    for (String i in _msgCompleters.keys) {
-//      String call = code.split('(')[0];
-//      if (i.contains(call)) {
-//        print('request $call loading');
-//        return _msgCompleters[i].future;
-//      }
-//    }
+    if (!allowRepeat) {
+      for (String i in _msgCompleters.keys) {
+        String call = code.split('(')[0];
+        if (i.contains(call)) {
+          print('request $call loading');
+          return _msgCompleters[i].future;
+        }
+      }
+    }
 
     if (!wrapPromise) {
       String res = await _web.evalJavascript(code);

@@ -42,6 +42,7 @@ const Map<String, String> enHome = {
   'update.download': 'Downloading...',
   'update.install': 'Installing...',
   'update.error': 'Update Failed',
+  'exit.confirm': 'Do you want to exit the App?',
 };
 
 const Map<String, String> zhHome = {
@@ -85,4 +86,5 @@ const Map<String, String> zhHome = {
   'update.download': '正在下载...',
   'update.install': '开始安装',
   'update.error': '更新失败',
+  'exit.confirm': '确定要退出 App 吗？',
 };

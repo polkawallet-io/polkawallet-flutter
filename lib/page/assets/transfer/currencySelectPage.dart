@@ -19,7 +19,7 @@ class CurrencySelectPage extends StatelessWidget {
           children: currencyIds.map((i) {
             return ListTile(
               title: CurrencyWithIcon(i,
-                  textStyle: Theme.of(context).textTheme.display4),
+                  textStyle: Theme.of(context).textTheme.headline4),
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 18,

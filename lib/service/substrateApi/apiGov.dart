@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 
 class ApiGovernance {

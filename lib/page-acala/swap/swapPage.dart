@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -264,7 +263,7 @@ class _SwapPageState extends State<SwapPage> {
                                       swapPair[0],
                                       textWidth: 48,
                                       textStyle:
-                                          Theme.of(context).textTheme.display4,
+                                          Theme.of(context).textTheme.headline4,
                                       trailing: Icon(Icons.keyboard_arrow_down),
                                     ),
                                     onTap: () => _selectCurrencyPay(),
@@ -281,7 +280,7 @@ class _SwapPageState extends State<SwapPage> {
                                       swapPair[1],
                                       textWidth: 48,
                                       textStyle:
-                                          Theme.of(context).textTheme.display4,
+                                          Theme.of(context).textTheme.headline4,
                                       trailing: Icon(Icons.keyboard_arrow_down),
                                     ),
                                     onTap: () => _selectCurrencyReceive(),

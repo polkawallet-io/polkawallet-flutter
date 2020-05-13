@@ -370,7 +370,7 @@ class TransferListItem extends StatelessWidget {
               Expanded(
                   child: Text(
                 '${data.amount} $token',
-                style: Theme.of(context).textTheme.display4,
+                style: Theme.of(context).textTheme.headline4,
               )),
               isOut
                   ? Image.asset('assets/images/assets/assets_up.png')

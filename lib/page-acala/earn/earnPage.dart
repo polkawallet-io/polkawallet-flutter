@@ -462,7 +462,7 @@ class _UserCard extends StatelessWidget {
                         ),
                         Text(
                           '${Fmt.doubleFormat(reward, length: 4)} $acala_stable_coin_view',
-                          style: Theme.of(context).textTheme.display4,
+                          style: Theme.of(context).textTheme.headline4,
                         )
                       ],
                     ),

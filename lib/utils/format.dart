@@ -193,7 +193,7 @@ class Fmt {
   }
 
   static bool checkPassword(String pass) {
-    var reg = RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$');
+    var reg = RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[\S]{6,20}$');
     return reg.hasMatch(pass);
   }
 

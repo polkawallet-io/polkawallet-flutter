@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/willPopScopWrapper.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
 import 'package:polka_wallet/page-acala/earn/earnHistoryPage.dart';
@@ -77,7 +78,6 @@ class WalletApp extends StatefulWidget {
   _WalletAppState createState() => _WalletAppState();
 }
 
-// TODO: add confirm before quit app
 class _WalletAppState extends State<WalletApp> {
   AppStore _appStore;
 
@@ -136,6 +136,17 @@ class _WalletAppState extends State<WalletApp> {
 
   @override
   void dispose() {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final Map<String, String> dic = I18n.of(context).assets;
+        return CupertinoAlertDialog(
+          title: Container(),
+          content: Text('${dic['copy']} ${dic['success']}'),
+        );
+      },
+    );
+
     didReceiveLocalNotificationSubject.close();
     selectNotificationSubject.close();
     super.dispose();
@@ -164,19 +175,21 @@ class _WalletAppState extends State<WalletApp> {
                 EndpointData network = _appStore != null
                     ? _appStore.settings.endpoint
                     : EndpointData();
-                return FutureBuilder<int>(
-                  future: _initStore(context),
-                  builder: (_, AsyncSnapshot<int> snapshot) {
-                    if (snapshot.hasData) {
-                      return snapshot.data > 0
-                          ? network.info == networkEndpointAcala.info
-                              ? AcalaHomePage(_appStore)
-                              : HomePage(_appStore)
-                          : CreateAccountEntryPage();
-                    } else {
-                      return Container();
-                    }
-                  },
+                return WillPopScopWrapper(
+                  child: FutureBuilder<int>(
+                    future: _initStore(context),
+                    builder: (_, AsyncSnapshot<int> snapshot) {
+                      if (snapshot.hasData) {
+                        return snapshot.data > 0
+                            ? network.info == networkEndpointAcala.info
+                                ? AcalaHomePage(_appStore)
+                                : HomePage(_appStore)
+                            : CreateAccountEntryPage();
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
                 );
               },
             ),

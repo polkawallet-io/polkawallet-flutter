@@ -143,7 +143,7 @@ class _DemocracyState extends State<Democracy> {
                       padding: EdgeInsets.all(24),
                       child: Text(
                         I18n.of(context).home['data.empty'],
-                        style: Theme.of(context).textTheme.display4,
+                        style: Theme.of(context).textTheme.headline4,
                       ),
                     )
                   : ListView.builder(

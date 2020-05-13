@@ -51,7 +51,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
                   children: <Widget>[
                     Text(
                       i18n['create.warn3'],
-                      style: Theme.of(context).textTheme.display4,
+                      style: Theme.of(context).textTheme.headline4,
                     ),
                     Container(
                       padding: EdgeInsets.only(top: 16, bottom: 32),
@@ -70,7 +70,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
                       padding: EdgeInsets.all(16),
                       child: Text(
                         store.account.newAccount.key ?? '',
-                        style: Theme.of(context).textTheme.display3,
+                        style: Theme.of(context).textTheme.headline4,
                       ),
                     ),
                   ],
@@ -121,7 +121,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
                 children: <Widget>[
                   Text(
                     i18n['backup'],
-                    style: Theme.of(context).textTheme.display4,
+                    style: Theme.of(context).textTheme.headline4,
                   ),
                   Container(
                     padding: EdgeInsets.only(top: 16),
@@ -161,7 +161,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
                     padding: EdgeInsets.all(16),
                     child: Text(
                       _wordsSelected.join(' ') ?? '',
-                      style: Theme.of(context).textTheme.display3,
+                      style: Theme.of(context).textTheme.headline4,
                     ),
                   ),
                   _buildWordsButtons(),

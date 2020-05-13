@@ -108,7 +108,8 @@ class _SwapHistoryPage extends State<SwapHistoryPage> {
                                   padding: EdgeInsets.only(right: 12),
                                   child: Text(
                                     '${detail.amountReceive} ${detail.tokenReceive}',
-                                    style: Theme.of(context).textTheme.display4,
+                                    style:
+                                        Theme.of(context).textTheme.headline4,
                                     textAlign: TextAlign.end,
                                   ),
                                 ),

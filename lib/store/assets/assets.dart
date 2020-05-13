@@ -5,7 +5,6 @@ import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
 import 'package:polka_wallet/store/assets/types/transferData.dart';
-import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'assets.g.dart';
@@ -38,7 +37,7 @@ abstract class _AssetsStore with Store {
       ObservableMap<String, BalancesInfo>();
 
   @observable
-  ObservableMap<String, String> tokenBalances = ObservableMap<String, String>();
+  Map<String, String> tokenBalances = Map<String, String>();
 
   @observable
   int txsCount = 0;
@@ -122,9 +121,7 @@ abstract class _AssetsStore with Store {
   Future<void> setAccountTokenBalances(String pubKey, Map amt) async {
     if (rootStore.account.currentAccount.pubKey != pubKey) return;
 
-    amt.forEach((k, v) {
-      tokenBalances[k] = v;
-    });
+    tokenBalances = Map<String, String>.from(amt);
   }
 
   @action

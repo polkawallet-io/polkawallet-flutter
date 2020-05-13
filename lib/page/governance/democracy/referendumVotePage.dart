@@ -143,7 +143,7 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
                           padding: EdgeInsets.all(16),
                           child: Text(
                             dicGov[voteYes ? 'yes.text' : 'no.text'],
-                            style: Theme.of(context).textTheme.display4,
+                            style: Theme.of(context).textTheme.headline4,
                           ),
                         ),
                         Padding(

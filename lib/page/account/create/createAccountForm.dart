@@ -4,8 +4,6 @@ import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-// TODO: translations for key types
-// TODO: password support more characters
 class CreateAccountForm extends StatelessWidget {
   CreateAccountForm({this.setNewAccount, this.submitting, this.onSubmit});
 

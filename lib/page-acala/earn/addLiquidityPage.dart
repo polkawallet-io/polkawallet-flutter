@@ -180,7 +180,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                             child: CurrencyWithIcon(
                               token,
                               textWidth: 48,
-                              textStyle: Theme.of(context).textTheme.display4,
+                              textStyle: Theme.of(context).textTheme.headline4,
                             ),
                           ),
                           Expanded(
@@ -193,7 +193,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                             child: CurrencyWithIcon(
                               acala_stable_coin_view,
                               textWidth: 48,
-                              textStyle: Theme.of(context).textTheme.display4,
+                              textStyle: Theme.of(context).textTheme.headline4,
                             ),
                           ),
                         ],

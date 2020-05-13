@@ -30,11 +30,11 @@ class ReferendumPanel extends StatelessWidget {
           data.image['proposal'] != null
               ? '${data.image['proposal']['section']}.${data.image['proposal']['method']}'
               : '-',
-          style: Theme.of(context).textTheme.display4,
+          style: Theme.of(context).textTheme.headline4,
         ),
         Text(
           '#${data.index}',
-          style: Theme.of(context).textTheme.display4,
+          style: Theme.of(context).textTheme.headline4,
         ),
       ]),
       Divider(),
@@ -213,7 +213,7 @@ class _ReferendumArgsList extends State<ReferendumArgsList> {
                     Text('${v['name']}: ${v['type']['type']}'),
                     Text(
                       proposal['args'][k].toString(),
-                      style: Theme.of(context).textTheme.display4,
+                      style: Theme.of(context).textTheme.headline4,
                     )
                   ],
                 ),

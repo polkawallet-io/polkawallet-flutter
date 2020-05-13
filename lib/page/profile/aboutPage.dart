@@ -33,7 +33,7 @@ class AboutPage extends StatelessWidget {
               children: <Widget>[
                 Text(
                   dic['about.brif'],
-                  style: Theme.of(context).textTheme.display1,
+                  style: Theme.of(context).textTheme.headline4,
                 ),
               ],
             ),

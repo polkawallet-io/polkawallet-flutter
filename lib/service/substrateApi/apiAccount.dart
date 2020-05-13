@@ -101,7 +101,7 @@ class ApiAccount {
   }
 
   Future<Map<String, dynamic>> importAccount(
-      {String keyType = 'Mnemonic',
+      {String keyType = AccountStore.seedTypeMnemonic,
       String cryptoType = 'sr25519',
       String derivePath = ''}) async {
     String key = store.account.newAccount.key;

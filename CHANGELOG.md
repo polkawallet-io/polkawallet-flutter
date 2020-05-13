@@ -1,5 +1,6 @@
 # 0.7.4
 - Add Acala Liquid DOT
+- Add confirm dialog before quit app for Android
 
 # 0.7.3
 - Update polkadot.js to 1.13.1

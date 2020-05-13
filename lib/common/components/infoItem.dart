@@ -18,7 +18,7 @@ class InfoItem extends StatelessWidget {
           ),
           Text(
             content ?? '-',
-            style: Theme.of(context).textTheme.display4,
+            style: Theme.of(context).textTheme.headline4,
           )
         ],
       ),

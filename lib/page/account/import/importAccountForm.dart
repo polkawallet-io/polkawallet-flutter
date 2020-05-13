@@ -25,7 +25,11 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
   final AccountStore accountStore;
   final Function onSubmit;
 
-  final List<String> _keyOptions = ['Mnemonic', 'Raw Seed', 'Keystore'];
+  final List<String> _keyOptions = [
+    AccountStore.seedTypeMnemonic,
+    AccountStore.seedTypeRawSeed,
+    AccountStore.seedTypeKeystore,
+  ];
   final List<String> _typeOptions = ['sr25519', 'ed25519'];
 
   int _keySelection = 0;
@@ -211,7 +215,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
     }
     return passed
         ? null
-        : '${dic['import.invalid']} ${_keyOptions[_keySelection]}';
+        : '${dic['import.invalid']} ${dic[_keyOptions[_keySelection]]}';
   }
 
   void _onKeyChange(String v) {
@@ -237,6 +241,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, String> dic = I18n.of(context).account;
+    String selected = dic[_keyOptions[_keySelection]];
     return Column(
       children: <Widget>[
         Expanded(
@@ -247,7 +253,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
               children: <Widget>[
                 ListTile(
                   title: Text(I18n.of(context).account['import.type']),
-                  subtitle: Text(_keyOptions[_keySelection]),
+                  subtitle: Text(selected),
                   trailing: Icon(Icons.arrow_forward_ios, size: 18),
                   onTap: () {
                     showCupertinoModalPopup(
@@ -262,7 +268,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                               initialItem: _keySelection),
                           children: _keyOptions
                               .map((i) => Padding(
-                                  padding: EdgeInsets.all(16), child: Text(i)))
+                                  padding: EdgeInsets.all(12),
+                                  child: Text(dic[i])))
                               .toList(),
                           onSelectedItemChanged: (v) {
                             setState(() {
@@ -279,8 +286,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                   padding: EdgeInsets.only(left: 16, right: 16),
                   child: TextFormField(
                     decoration: InputDecoration(
-                      hintText: _keyOptions[_keySelection],
-                      labelText: _keyOptions[_keySelection],
+                      hintText: selected,
+                      labelText: selected,
                     ),
                     controller: _keyCtrl,
                     maxLines: 2,

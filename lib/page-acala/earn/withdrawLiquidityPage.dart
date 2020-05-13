@@ -242,11 +242,11 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                           children: <Widget>[
                             Text(
                               '=',
-                              style: Theme.of(context).textTheme.display4,
+                              style: Theme.of(context).textTheme.headline4,
                             ),
                             Text(
                               '${Fmt.doubleFormat(amountToken)} $token + ${Fmt.doubleFormat(amountStableCoin, length: 2)} $acala_stable_coin_view',
-                              style: Theme.of(context).textTheme.display4,
+                              style: Theme.of(context).textTheme.headline4,
                             ),
                           ],
                         ),

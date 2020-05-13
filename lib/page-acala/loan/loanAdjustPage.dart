@@ -14,7 +14,6 @@ import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-// TODO: payback all debts if input near max value
 class LoanAdjustPage extends StatefulWidget {
   LoanAdjustPage(this.store);
   static const String route = '/acala/loan/adjust';
@@ -226,9 +225,18 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
           ]
         };
       case LoanAdjustPage.actionTypePayback:
-        BigInt debitSubtract = _amountDebit == loan.debits
+
+        /// payback all debts if user input more than debts
+        BigInt debitSubtract = _amountDebit >= loan.debits
             ? loan.debitShares
             : loan.type.debitToDebitShare(_amountDebit);
+
+        /// pay less if less than 1 share will be left,
+        /// make sure tx success by leaving more than 1 share.
+        if (loan.debits - _amountDebit <
+            loan.type.debitShareToDebit(BigInt.one)) {
+          debitSubtract = loan.debitShares - BigInt.one;
+        }
         return {
           'detail': jsonEncode({
             "amount": _amountCtrl2.text.trim(),

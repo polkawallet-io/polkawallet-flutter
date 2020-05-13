@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -166,7 +165,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                         padding: EdgeInsets.all(16),
                         child: Text(
                           dic['submit.tx'],
-                          style: Theme.of(context).textTheme.display4,
+                          style: Theme.of(context).textTheme.headline4,
                         ),
                       ),
                       Padding(
