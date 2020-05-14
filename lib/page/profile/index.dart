@@ -19,6 +19,7 @@ class Profile extends StatelessWidget {
     final Map<String, String> dic = I18n.of(context).profile;
     return Observer(builder: (_) {
       AccountData acc = store.currentAccount;
+      Color primaryColor = Theme.of(context).primaryColor;
       return Scaffold(
         appBar: AppBar(
           title: Text(dic['title']),
@@ -28,7 +29,7 @@ class Profile extends StatelessWidget {
         body: ListView(
           children: <Widget>[
             Container(
-              color: Colors.pink,
+              color: primaryColor,
               padding: EdgeInsets.only(bottom: 16),
               child: ListTile(
                 leading: AddressIcon('', pubKey: store.currentAccount.pubKey),
@@ -47,7 +48,7 @@ class Profile extends StatelessWidget {
                 children: <Widget>[
                   RaisedButton(
                     padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
-                    color: Colors.pinkAccent,
+                    color: primaryColor,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24)),
                     child: Text(

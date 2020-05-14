@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:polka_wallet/page/profile/account/exportAccountPage.dart';
+import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ExportResultPage extends StatelessWidget {
@@ -44,7 +44,7 @@ class ExportResultPage extends StatelessWidget {
               child: ListView(
                 padding: EdgeInsets.all(16),
                 children: <Widget>[
-                  args['type'] == ExportAccountPage.exportTypeKeystore
+                  args['type'] == AccountStore.seedTypeKeystore
                       ? Container()
                       : Text(dic['export.warn']),
                   Row(
@@ -55,7 +55,9 @@ class ExportResultPage extends StatelessWidget {
                           padding: EdgeInsets.all(8),
                           child: Text(
                             I18n.of(context).home['copy'],
-                            style: TextStyle(fontSize: 14, color: Colors.pink),
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).primaryColor),
                           ),
                         ),
                         onTap: () => _showExportDialog(context, args),
@@ -73,7 +75,7 @@ class ExportResultPage extends StatelessWidget {
                     padding: EdgeInsets.all(16),
                     child: Text(
                       args['key'],
-                      style: Theme.of(context).textTheme.display3,
+                      style: Theme.of(context).textTheme.headline4,
                     ),
                   ),
                 ],

@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -17,6 +19,8 @@ abstract class _SettingsStore with Store {
   final String localStorageSS58Key = 'custom_ss58';
 
   final String cacheNetworkStateKey = 'network';
+
+  final int acalaTokenDecimals = 18;
 
   @observable
   bool loading = true;
@@ -44,20 +48,26 @@ abstract class _SettingsStore with Store {
 
   @computed
   String get existentialDeposit {
-    return Fmt.token(networkConst['balances']['existentialDeposit'],
+    return Fmt.token(
+        BigInt.parse(networkConst['balances']['existentialDeposit'].toString()),
         decimals: networkState.tokenDecimals);
   }
 
   @computed
   String get transactionBaseFee {
-    return Fmt.token(networkConst['transactionPayment']['transactionBaseFee'],
+    return Fmt.token(
+        BigInt.parse(networkConst['transactionPayment']['transactionBaseFee']
+            .toString()),
         decimals: networkState.tokenDecimals);
   }
 
   @computed
   String get transactionByteFee {
-    return Fmt.token(networkConst['transactionPayment']['transactionByteFee'],
-        decimals: networkState.tokenDecimals, fullLength: true);
+    return Fmt.token(
+        BigInt.parse(networkConst['transactionPayment']['transactionByteFee']
+            .toString()),
+        decimals: networkState.tokenDecimals,
+        length: networkState.tokenDecimals);
   }
 
   @action
@@ -92,23 +102,25 @@ abstract class _SettingsStore with Store {
 
   @action
   void setNetworkName(String name) {
-    print('set netwwork name: $name');
     networkName = name;
     loading = false;
   }
 
   @action
   Future<void> setNetworkState(Map<String, dynamic> data) async {
-    LocalStorage.setKV(cacheNetworkStateKey, data);
+    LocalStorage.setKV('${cacheNetworkStateKey}_${endpoint.info}', data);
 
     networkState = NetworkState.fromJson(data);
   }
 
   @action
   Future<void> loadNetworkStateCache() async {
-    var data = await LocalStorage.getKV(cacheNetworkStateKey);
+    var data =
+        await LocalStorage.getKV('${cacheNetworkStateKey}_${endpoint.info}');
     if (data != null) {
       networkState = NetworkState.fromJson(data);
+    } else {
+      networkState = NetworkState();
     }
   }
 
@@ -142,9 +154,9 @@ abstract class _SettingsStore with Store {
   }
 
   @action
-  void setEndpoint(Map<String, dynamic> value) {
-    endpoint = EndpointData.fromJson(value);
-    LocalStorage.setKV(localStorageEndpointKey, value);
+  void setEndpoint(EndpointData value) {
+    endpoint = value;
+    LocalStorage.setKV(localStorageEndpointKey, EndpointData.toJson(value));
   }
 
   @action
@@ -152,9 +164,10 @@ abstract class _SettingsStore with Store {
     Map<String, dynamic> value =
         await LocalStorage.getKV(localStorageEndpointKey);
     if (value == null) {
-      value = sysLocaleCode.contains('zh') ? default_node_zh : default_node;
+      endpoint = networkEndpointKusama;
+    } else {
+      endpoint = EndpointData.fromJson(value);
     }
-    endpoint = EndpointData.fromJson(value);
   }
 
   @action
@@ -168,6 +181,40 @@ abstract class _SettingsStore with Store {
     Map<String, dynamic> ss58 = await LocalStorage.getKV(localStorageSS58Key);
 
     customSS58Format = ss58 ?? default_ss58_prefix;
+  }
+
+  @action
+  Future<void> setBestNode({String info}) async {
+    String selected = info ?? endpoint.info;
+    List<EndpointData> ls = List.of(networkEndpoints);
+    ls.retainWhere((i) => i.info == selected);
+
+    final res = await Future.wait(ls.map((i) {
+      return _pingSpeed(i);
+    }));
+
+    res.sort((a, b) => a['time'] - b['time']);
+    EndpointData best = res[0]['endpoint'] as EndpointData;
+    setEndpoint(best);
+    print('${best.value} latency ${res[0]['time']} ms');
+  }
+
+  Future<Map> _pingSpeed(EndpointData info) async {
+    final start = DateTime.now().millisecondsSinceEpoch;
+    final url = info.value.split('/').reversed.toList()[1];
+    try {
+      final result =
+          await InternetAddress.lookup(url).timeout(Duration(seconds: 2));
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('$url connected');
+      }
+    } catch (_) {
+      print('$url not connected');
+    }
+    return {
+      "endpoint": info,
+      "time": DateTime.now().millisecondsSinceEpoch - start,
+    };
   }
 }
 
@@ -204,6 +251,9 @@ class EndpointData extends _EndpointData with _$EndpointData {
 abstract class _EndpointData with Store {
   @observable
   String info = '';
+
+  @observable
+  int ss58 = 42;
 
   @observable
   String text = '';

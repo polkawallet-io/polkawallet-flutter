@@ -30,13 +30,13 @@ class _CouncilVote extends State<CouncilVotePage> {
 
   final TextEditingController _amountCtrl = new TextEditingController();
 
-  List<List<String>> _selected = List<List<String>>();
+  List<List> _selected = List<List>();
 
   Future<void> _handleCandidateSelect() async {
     var res = await Navigator.of(context)
         .pushNamed(CandidateListPage.route, arguments: _selected);
     if (res != null) {
-      _selected = List<List<String>>.of(res);
+      _selected = List<List>.of(res);
     }
   }
 
@@ -62,7 +62,7 @@ class _CouncilVote extends State<CouncilVotePage> {
           // "voteValue"
           (double.parse(amt) * pow(10, decimals)).toInt(),
         ],
-        'onFinish': (BuildContext txPageContext) {
+        'onFinish': (BuildContext txPageContext, Map res) {
           Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
           globalCouncilRefreshKey.currentState.show();
         }
@@ -119,8 +119,9 @@ class _CouncilVote extends State<CouncilVotePage> {
         builder: (_) {
           final Map<String, String> dic = I18n.of(context).assets;
           int decimals = store.settings.networkState.tokenDecimals;
+          String symbol = store.settings.networkState.tokenSymbol;
 
-          int balance = Fmt.balanceInt(store.assets.balance);
+          BigInt balance = store.assets.balances[symbol].freeBalance;
 
           return SafeArea(
             child: Column(
@@ -151,7 +152,8 @@ class _CouncilVote extends State<CouncilVotePage> {
                                 return dic['amount.error'];
                               }
                               if (double.parse(v.trim()) >=
-                                  balance / pow(10, decimals) - 0.02) {
+                                  balance / BigInt.from(pow(10, decimals)) -
+                                      0.02) {
                                 return dic['amount.low'];
                               }
                               return null;

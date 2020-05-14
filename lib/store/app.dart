@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
+import 'package:polka_wallet/store/acala/acala.dart';
 import 'package:polka_wallet/store/settings.dart';
-import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/store/staking/staking.dart';
 import 'package:polka_wallet/store/account.dart';
-import 'package:polka_wallet/store/assets.dart';
-import 'package:polka_wallet/store/governance.dart';
+import 'package:polka_wallet/store/assets/assets.dart';
+import 'package:polka_wallet/store/gov/governance.dart';
 
 part 'app.g.dart';
 
@@ -14,7 +14,10 @@ class AppStore extends _AppStore with _$AppStore {}
 
 abstract class _AppStore with Store {
   @observable
-  AccountStore account = AccountStore();
+  SettingsStore settings = SettingsStore();
+
+  @observable
+  AccountStore account;
 
   @observable
   AssetsStore assets;
@@ -26,7 +29,7 @@ abstract class _AppStore with Store {
   GovernanceStore gov;
 
   @observable
-  SettingsStore settings = SettingsStore();
+  AcalaStore acala;
 
   @observable
   bool isReady = false;
@@ -36,14 +39,19 @@ abstract class _AppStore with Store {
     // wait settings store loaded
     await settings.init(sysLocaleCode);
 
+    account = AccountStore(this);
     await account.loadAccount();
-    assets = AssetsStore(account);
+
+    assets = AssetsStore(this);
     staking = StakingStore(account);
     gov = GovernanceStore(account);
 
     assets.loadCache();
     staking.loadCache();
     gov.loadCache();
+
+    acala = AcalaStore(this);
+    acala.loadCache();
 
     isReady = true;
   }

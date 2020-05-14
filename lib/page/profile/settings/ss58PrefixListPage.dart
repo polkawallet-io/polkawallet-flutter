@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -17,6 +16,7 @@ const prefixList = [
   {'info': 'polkadot', 'text': 'Polkadot (live)', 'value': 0}
 ];
 
+// TODO: prefix set bug
 class SS58PrefixListPage extends StatelessWidget {
   SS58PrefixListPage(this.store);
 
@@ -42,12 +42,12 @@ class SS58PrefixListPage extends StatelessWidget {
                   return;
                 }
                 store.setCustomSS58Format(i);
-                if (i['info'] == 'default') {
-                  api.account
-                      .setSS58Format(default_ss58_map[store.endpoint.info]);
-                } else {
-                  api.account.setSS58Format(i['value']);
-                }
+//                if (i['info'] == 'default') {
+//                  api.account
+//                      .setSS58Format(default_ss58_map[store.endpoint.info]);
+//                } else {
+//                  api.account.setSS58Format(i['value']);
+//                }
                 Navigator.of(context).pop();
               },
             ))

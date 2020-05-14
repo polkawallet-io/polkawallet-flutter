@@ -20,8 +20,8 @@ class _CandidateList extends State<CandidateListPage> {
   _CandidateList(this.store);
   final AppStore store;
 
-  final List<List<String>> _selected = List<List<String>>();
-  final List<List<String>> _notSelected = List<List<String>>();
+  final List<List> _selected = List<List>();
+  final List<List> _notSelected = List<List>();
   Map<String, bool> _selectedMap = Map<String, bool>();
 
   String _filter = '';
@@ -47,7 +47,7 @@ class _CandidateList extends State<CandidateListPage> {
     super.didChangeDependencies();
     List args = ModalRoute.of(context).settings.arguments;
     if (args.length > 0) {
-      List<List<String>> ls = List<List<String>>.from(args);
+      List<List> ls = List<List>.from(args);
       setState(() {
         _selected.addAll(ls);
         _notSelected
@@ -63,10 +63,10 @@ class _CandidateList extends State<CandidateListPage> {
   Widget build(BuildContext context) {
     var dic = I18n.of(context).gov;
 
-    List<List<String>> list = [];
+    List<List> list = [];
     list.addAll(_selected);
     // filter the _notSelected list
-    List<List<String>> retained = List.of(_notSelected);
+    List<List> retained = List.of(_notSelected);
     retained = Fmt.filterCandidateList(
         retained, _filter, store.account.accountIndexMap);
     list.addAll(retained);

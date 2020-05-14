@@ -3,16 +3,36 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/willPopScopWrapper.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
+import 'package:polka_wallet/page-acala/earn/earnHistoryPage.dart';
+import 'package:polka_wallet/page-acala/earn/earnPage.dart';
+import 'package:polka_wallet/page-acala/earn/withdrawLiquidityPage.dart';
+import 'package:polka_wallet/page-acala/homa/homaHistoryPage.dart';
+import 'package:polka_wallet/page-acala/homa/homaPage.dart';
+import 'package:polka_wallet/page-acala/homa/mintPage.dart';
+import 'package:polka_wallet/page-acala/homa/redeemPage.dart';
+import 'package:polka_wallet/page-acala/homePage.dart';
+import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
+import 'package:polka_wallet/page-acala/loan/loanCreatePage.dart';
+import 'package:polka_wallet/page-acala/loan/loanHistoryPage.dart';
+import 'package:polka_wallet/page-acala/loan/loanPage.dart';
+import 'package:polka_wallet/page-acala/loan/loanTxDetailPage.dart';
+import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
+import 'package:polka_wallet/page-acala/swap/swapPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
+import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateListPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
+import 'package:polka_wallet/page/networkSelectPage.dart';
 import 'package:polka_wallet/page/profile/aboutPage.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
 import 'package:polka_wallet/page/profile/account/changeNamePage.dart';
@@ -39,6 +59,8 @@ import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/utils/UI.dart';
 
 import 'utils/i18n/index.dart';
 import 'common/theme.dart';
@@ -60,6 +82,19 @@ class _WalletAppState extends State<WalletApp> {
   AppStore _appStore;
 
   Locale _locale = const Locale('en', '');
+  ThemeData _theme = appTheme;
+
+  void _changeTheme() {
+    if (_appStore.settings.endpoint.info == networkEndpointAcala.info) {
+      setState(() {
+        _theme = appThemeAcala;
+      });
+    } else {
+      setState(() {
+        _theme = appTheme;
+      });
+    }
+  }
 
   void _changeLang(BuildContext context, String code) {
     Locale res;
@@ -85,11 +120,15 @@ class _WalletAppState extends State<WalletApp> {
       print('sys locale: ${Localizations.localeOf(context)}');
       await _appStore.init(Localizations.localeOf(context).toString());
 
+      await _appStore.settings.setBestNode();
       // init webApi after store initiated
       webApi = Api(context, _appStore);
       webApi.init();
 
       _changeLang(context, _appStore.settings.localeCode);
+      _changeTheme();
+
+      UI.checkUpdate(context, autoCheck: true);
     }
 
     return _appStore.account.accountList.length;
@@ -97,6 +136,17 @@ class _WalletAppState extends State<WalletApp> {
 
   @override
   void dispose() {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final Map<String, String> dic = I18n.of(context).assets;
+        return CupertinoAlertDialog(
+          title: Container(),
+          content: Text('${dic['copy']} ${dic['success']}'),
+        );
+      },
+    );
+
     didReceiveLocalNotificationSubject.close();
     selectNotificationSubject.close();
     super.dispose();
@@ -117,25 +167,34 @@ class _WalletAppState extends State<WalletApp> {
         const Locale('zh', ''),
       ],
       initialRoute: HomePage.route,
-      theme: appTheme,
+      theme: _theme,
 //      darkTheme: darkTheme,
       routes: {
         HomePage.route: (context) => Observer(
               builder: (_) {
-                return FutureBuilder<int>(
-                  future: _initStore(context),
-                  builder: (_, AsyncSnapshot<int> snapshot) {
-                    if (snapshot.hasData) {
-                      return snapshot.data > 0
-                          ? HomePage(_appStore)
-                          : CreateAccountEntryPage();
-                    } else {
-                      return Container();
-                    }
-                  },
+                EndpointData network = _appStore != null
+                    ? _appStore.settings.endpoint
+                    : EndpointData();
+                return WillPopScopWrapper(
+                  child: FutureBuilder<int>(
+                    future: _initStore(context),
+                    builder: (_, AsyncSnapshot<int> snapshot) {
+                      if (snapshot.hasData) {
+                        return snapshot.data > 0
+                            ? network.info == networkEndpointAcala.info
+                                ? AcalaHomePage(_appStore)
+                                : HomePage(_appStore)
+                            : CreateAccountEntryPage();
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
                 );
               },
             ),
+        NetworkSelectPage.route: (_) =>
+            NetworkSelectPage(_appStore, _changeTheme),
         // account
         CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
         CreateAccountPage.route: (_) =>
@@ -147,8 +206,9 @@ class _WalletAppState extends State<WalletApp> {
         // assets
         AssetPage.route: (_) => AssetPage(_appStore),
         TransferPage.route: (_) => TransferPage(_appStore),
-        ReceivePage.route: (_) => ReceivePage(_appStore.account),
+        ReceivePage.route: (_) => ReceivePage(_appStore),
         TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
+        CurrencySelectPage.route: (_) => CurrencySelectPage(),
         // staking
         StakingDetailPage.route: (_) => StakingDetailPage(_appStore),
         ValidatorDetailPage.route: (_) => ValidatorDetailPage(_appStore),
@@ -160,7 +220,7 @@ class _WalletAppState extends State<WalletApp> {
         RedeemPage.route: (_) => RedeemPage(_appStore),
         PayoutPage.route: (_) => PayoutPage(_appStore),
         SetControllerPage.route: (_) => SetControllerPage(_appStore),
-        AccountSelectPage.route: (_) => AccountSelectPage(_appStore.account),
+        AccountSelectPage.route: (_) => AccountSelectPage(_appStore),
         // governance
         CandidateDetailPage.route: (_) => CandidateDetailPage(_appStore),
         CouncilVotePage.route: (_) => CouncilVotePage(_appStore),
@@ -180,6 +240,23 @@ class _WalletAppState extends State<WalletApp> {
         RemoteNodeListPage.route: (_) => RemoteNodeListPage(_appStore.settings),
         SS58PrefixListPage.route: (_) => SS58PrefixListPage(_appStore.settings),
         AboutPage.route: (_) => AboutPage(),
+
+        // acala-network
+        SwapPage.route: (_) => SwapPage(_appStore),
+        LoanPage.route: (_) => LoanPage(_appStore),
+        LoanCreatePage.route: (_) => LoanCreatePage(_appStore),
+        LoanAdjustPage.route: (_) => LoanAdjustPage(_appStore),
+        LoanHistoryPage.route: (_) => LoanHistoryPage(_appStore),
+        LoanTxDetailPage.route: (_) => LoanTxDetailPage(_appStore),
+        SwapHistoryPage.route: (_) => SwapHistoryPage(_appStore),
+        EarnPage.route: (_) => EarnPage(_appStore),
+        AddLiquidityPage.route: (_) => AddLiquidityPage(_appStore),
+        WithdrawLiquidityPage.route: (_) => WithdrawLiquidityPage(_appStore),
+        EarnHistoryPage.route: (_) => EarnHistoryPage(_appStore),
+        HomaPage.route: (_) => HomaPage(_appStore),
+        MintPage.route: (_) => MintPage(_appStore),
+        HomaRedeemPage.route: (_) => HomaRedeemPage(_appStore),
+        HomaHistoryPage.route: (_) => HomaHistoryPage(_appStore),
       },
     );
   }

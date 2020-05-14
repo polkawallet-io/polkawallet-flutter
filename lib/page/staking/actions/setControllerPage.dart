@@ -50,7 +50,8 @@ class _SetControllerPageState extends State<SetControllerPage> {
     String controllerPubKey = _controller != null
         ? _controller.pubKey
         : store.account.currentAccount.pubKey;
-    String address = store.account.pubKeyAddressMap[controllerPubKey];
+    String address = store.account
+        .pubKeyAddressMap[store.settings.endpoint.ss58][controllerPubKey];
     Map<String, dynamic> args = {
       "title": I18n.of(context).staking['action.control'],
       "txInfo": {
@@ -59,7 +60,7 @@ class _SetControllerPageState extends State<SetControllerPage> {
       },
       "detail": jsonEncode({"controllerId": address}),
       "params": [address],
-      'onFinish': (BuildContext txPageContext) {
+      'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalBondingRefreshKey.currentState.show();
       }

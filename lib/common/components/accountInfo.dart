@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -16,13 +17,17 @@ class AccountInfo extends StatelessWidget {
       List<Widget> ls = [];
       accInfo['identity'].keys.forEach((k) {
         if (k != 'judgements' && k != 'other') {
+          String content = accInfo['identity'][k].toString();
+          if (k == 'parent') {
+            content = Fmt.address(content);
+          }
           ls.add(Row(
             children: <Widget>[
               Container(
                 width: 80,
                 child: Text(k),
               ),
-              Text(accInfo['identity'][k].toString()),
+              Text(content),
             ],
           ));
         }
@@ -59,6 +64,22 @@ class AccountInfo extends StatelessWidget {
               icon: Image.asset('assets/images/public/copy.png'),
               onPressed: () => UI.copyAndNotify(context, address),
             )
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: JumpToBrowserLink(
+                'https://polkascan.io/pre/kusama/module/account/$address',
+                text: 'Polkascan',
+              ),
+            ),
+            JumpToBrowserLink(
+              'https://kusama.subscan.io/account/$address',
+              text: 'Subscan',
+            ),
           ],
         ),
         accInfo == null

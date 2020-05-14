@@ -1,5 +1,5 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/page/assets/drawerMenu.dart';
 import 'package:polka_wallet/page/assets/index.dart';
 import 'package:polka_wallet/page/staking/index.dart';
 import 'package:polka_wallet/page/governance/index.dart';
@@ -40,14 +40,15 @@ class _HomePageState extends State<HomePage> {
     return _tabList
         .map((i) => BottomNavigationBarItem(
               icon: Image.asset(_tabList[activeItem] == i
-                  ? 'assets/images/public/$i.png'
+                  ? 'assets/images/public/${i}_pink.png'
                   : 'assets/images/public/${i}_dark.png'),
               title: Text(
                 tabs[i.toLowerCase()],
                 style: TextStyle(
                     fontSize: 14,
-                    color:
-                        _tabList[activeItem] == i ? Colors.pink : Colors.grey),
+                    color: _tabList[activeItem] == i
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey),
               ),
             ))
         .toList();
@@ -83,7 +84,7 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   alignment: Alignment.topLeft,
-                  image: AssetImage("assets/images/staking/top_bg.png"),
+                  image: AssetImage("assets/images/assets/top_bg_pink.png"),
                   fit: BoxFit.contain,
                 ),
               ),
@@ -95,9 +96,13 @@ class _HomePageState extends State<HomePage> {
                 centerTitle: false,
                 backgroundColor: Colors.transparent,
                 elevation: 0.0,
-              ),
-              endDrawer: Drawer(
-                child: DrawerMenu(store),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.menu),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed('/network'),
+                  ),
+                ],
               ),
               bottomNavigationBar: BottomNavigationBar(
                   currentIndex: i,
@@ -126,7 +131,7 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 alignment: Alignment.topLeft,
-                image: AssetImage("assets/images/assets/Assets_bg.png"),
+                image: AssetImage("assets/images/staking/top_bg_pink.png"),
                 fit: BoxFit.contain,
               ),
             ),

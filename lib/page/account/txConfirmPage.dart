@@ -6,8 +6,10 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+// TODO: Add biometrics
 class TxConfirmPage extends StatefulWidget {
   const TxConfirmPage(this.store);
 
@@ -25,14 +27,31 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
   final TextEditingController _passCtrl = new TextEditingController();
 
+  Map _fee = {};
+
+  Future<String> _getTxFee() async {
+    if (_fee['partialFee'] != null) {
+      return _fee['partialFee'].toString();
+    }
+    final Map args = ModalRoute.of(context).settings.arguments;
+    Map txInfo = args['txInfo'];
+    txInfo['address'] = store.account.currentAddress;
+    Map fee = await webApi.account.estimateTxFees(txInfo, args['params']);
+    setState(() {
+      _fee = fee;
+    });
+    print(fee);
+    return fee['partialFee'].toString();
+  }
+
   Future<void> _onSubmit(BuildContext context) async {
     final ScaffoldState state = Scaffold.of(context);
     final Map<String, String> dic = I18n.of(context).home;
 
     final Map args = ModalRoute.of(context).settings.arguments;
 
-    void onTxFinish(String blockHash) {
-      print('callback triggered, blockHash: $blockHash');
+    void onTxFinish(Map res) {
+      print('callback triggered, blockHash: ${res['hash']}');
       store.assets.setSubmitting(false);
       if (state.mounted) {
         state.removeCurrentSnackBar();
@@ -54,13 +73,13 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
         Timer(Duration(seconds: 2), () {
           if (state.mounted) {
-            (args['onFinish'] as Function(BuildContext))(context);
+            (args['onFinish'] as Function(BuildContext, Map))(context, res);
           }
         });
       }
     }
 
-    void onTxError() {
+    void onTxError(String errorMsg) {
       store.assets.setSubmitting(false);
       if (state.mounted) {
         state.removeCurrentSnackBar();
@@ -68,11 +87,9 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
       showCupertinoDialog(
         context: context,
         builder: (BuildContext context) {
-          final Map<String, String> accDic = I18n.of(context).account;
           return CupertinoAlertDialog(
             title: Container(),
-            content: Text(
-                '${accDic['import.invalid']} ${accDic['create.password']}'),
+            content: Text(errorMsg),
             actions: <Widget>[
               CupertinoButton(
                 child: Text(dic['cancel']),
@@ -107,13 +124,13 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     txInfo['password'] = _passCtrl.text;
     print(txInfo);
     print(args['params']);
-    var res = await webApi.account.sendTx(
-        txInfo, args['params'], dic['notify.submitted'],
+    Map res = await webApi.account.sendTx(
+        txInfo, args['params'], args['title'], dic['notify.submitted'],
         rawParam: args['rawParam']);
-    if (res == null) {
-      onTxError();
+    if (res['hash'] == null) {
+      onTxError(res['error']);
     } else {
-      onTxFinish(res['hash']);
+      onTxFinish(res);
     }
   }
 
@@ -126,6 +143,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).home;
+    final String symbol = store.settings.networkState.tokenSymbol;
+    final int decimals = store.settings.networkState.tokenDecimals;
 
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
 
@@ -146,7 +165,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                         padding: EdgeInsets.all(16),
                         child: Text(
                           dic['submit.tx'],
-                          style: Theme.of(context).textTheme.display4,
+                          style: Theme.of(context).textTheme.headline4,
                         ),
                       ),
                       Padding(
@@ -189,6 +208,60 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                               child: Text(
                                 args['detail'],
                               ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 16, right: 16),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(top: 8),
+                              width: 64,
+                              child: Text(
+                                dic["submit.fees"],
+                              ),
+                            ),
+                            FutureBuilder<String>(
+                              future: _getTxFee(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<String> snapshot) {
+                                if (snapshot.hasData) {
+                                  String fee = Fmt.balance(
+                                    _fee['partialFee'].toString(),
+                                    decimals: decimals,
+                                    length: 6,
+                                  );
+                                  return Container(
+                                    margin: EdgeInsets.only(top: 8),
+                                    width: MediaQuery.of(context)
+                                            .copyWith()
+                                            .size
+                                            .width -
+                                        120,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          '$fee $symbol',
+                                        ),
+                                        Text(
+                                          '${_fee['weight']} Weight',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Theme.of(context)
+                                                .unselectedWidgetColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  return CupertinoActivityIndicator();
+                                }
+                              },
                             ),
                           ],
                         ),
@@ -241,14 +314,15 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                       child: Container(
                         color: store.assets.submitting
                             ? Colors.black12
-                            : Colors.pink,
+                            : Theme.of(context).primaryColor,
                         child: FlatButton(
                           padding: EdgeInsets.all(16),
                           child: Text(
                             dic['submit'],
                             style: TextStyle(color: Colors.white),
                           ),
-                          onPressed: store.assets.submitting
+                          onPressed: _fee['partialFee'] == null ||
+                                  store.assets.submitting
                               ? null
                               : () => _onSubmit(context),
                         ),

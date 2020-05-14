@@ -25,6 +25,7 @@ Map<String, dynamic> _$NetworkStateToJson(NetworkState instance) =>
 EndpointData _$EndpointDataFromJson(Map<String, dynamic> json) {
   return EndpointData()
     ..info = json['info'] as String
+    ..ss58 = json['ss58'] as int
     ..text = json['text'] as String
     ..value = json['value'] as String;
 }
@@ -32,6 +33,7 @@ EndpointData _$EndpointDataFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$EndpointDataToJson(EndpointData instance) =>
     <String, dynamic>{
       'info': instance.info,
+      'ss58': instance.ss58,
       'text': instance.text,
       'value': instance.value,
     };
@@ -286,6 +288,13 @@ mixin _$SettingsStore on _SettingsStore, Store {
         .run(() => super.loadCustomSS58Format());
   }
 
+  final _$setBestNodeAsyncAction = AsyncAction('setBestNode');
+
+  @override
+  Future<void> setBestNode({String info}) {
+    return _$setBestNodeAsyncAction.run(() => super.setBestNode(info: info));
+  }
+
   final _$_SettingsStoreActionController =
       ActionController(name: '_SettingsStore');
 
@@ -310,7 +319,7 @@ mixin _$SettingsStore on _SettingsStore, Store {
   }
 
   @override
-  void setEndpoint(Map<String, dynamic> value) {
+  void setEndpoint(EndpointData value) {
     final _$actionInfo = _$_SettingsStoreActionController.startAction();
     try {
       return super.setEndpoint(value);
@@ -416,6 +425,23 @@ mixin _$EndpointData on _EndpointData, Store {
       super.info = value;
       _$infoAtom.reportChanged();
     }, _$infoAtom, name: '${_$infoAtom.name}_set');
+  }
+
+  final _$ss58Atom = Atom(name: '_EndpointData.ss58');
+
+  @override
+  int get ss58 {
+    _$ss58Atom.context.enforceReadPolicy(_$ss58Atom);
+    _$ss58Atom.reportObserved();
+    return super.ss58;
+  }
+
+  @override
+  set ss58(int value) {
+    _$ss58Atom.context.conditionallyRunInAction(() {
+      super.ss58 = value;
+      _$ss58Atom.reportChanged();
+    }, _$ss58Atom, name: '${_$ss58Atom.name}_set');
   }
 
   final _$textAtom = Atom(name: '_EndpointData.text');

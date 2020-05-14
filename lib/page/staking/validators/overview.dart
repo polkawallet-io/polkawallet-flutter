@@ -11,7 +11,7 @@ import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/page/staking/validators/validator.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -50,19 +50,19 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).staking;
     bool hashData = store.staking.ledger['stakingLedger'] != null;
-    String stashId = store.staking.ledger['stashId'];
     int bonded = 0;
     List nominators = [];
     double nominatorListHeight = 48;
     if (hashData) {
-      stashId = store.staking.ledger['stakingLedger']['stash'];
       bonded = store.staking.ledger['stakingLedger']['active'];
       nominators = store.staking.ledger['nominators'];
       if (nominators.length > 0) {
         nominatorListHeight = double.parse((nominators.length * 60).toString());
       }
     }
-    bool isStash = store.staking.ledger['accountId'] == stashId;
+    String controllerId = store.staking.ledger['controllerId'] ??
+        store.staking.ledger['accountId'];
+    bool isController = store.staking.ledger['accountId'] == controllerId;
 
     Color actionButtonColor = Theme.of(context).primaryColor;
     Color disabledColor = Theme.of(context).disabledColor;
@@ -93,12 +93,12 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
               store.staking.ledger['nominators'] != null
                   ? store.staking.ledger['nominators'].length.toString()
                   : '0',
-              style: Theme.of(context).textTheme.display4,
+              style: Theme.of(context).textTheme.headline4,
             ),
             subtitle: Text(dic['nominating']),
             trailing: Container(
               width: 100,
-              child: !isStash && bonded > 0
+              child: isController && bonded > 0
                   ? GestureDetector(
                       child: nominators.length > 0
                           ? Column(
@@ -199,11 +199,12 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
           }
           validator = store.staking.validatorsInfo[validatorIndex];
 
-          int meStaked;
+          BigInt meStaked;
           int meIndex =
               validator.nominators.indexWhere((i) => i['who'] == stashAddress);
           if (meIndex >= 0) {
-            meStaked = validator.nominators[meIndex]['value'];
+            meStaked =
+                BigInt.parse(validator.nominators[meIndex]['value'].toString());
           }
 
           Map accInfo = store.account.accountIndexMap[id];

@@ -8,10 +8,13 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumPanel.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/governance.dart';
+import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+// TODO: add referendum timeline details
+// TODO: add users voting details & re-vote
+// TODO: add removeVoter
 class Democracy extends StatefulWidget {
   Democracy(this.store);
 
@@ -25,13 +28,14 @@ class _DemocracyState extends State<Democracy> {
 
   final AppStore store;
 
-  final _options = [0, 1, 2, 3, 4, 5, 6];
+  final String _bestNumberSubscribeChannel = 'BestNumber';
+
+  final List _options = [0, 1, 2, 3, 4, 5, 6];
 
   Future<void> _fetchReferendums() async {
     if (store.settings.loading) {
       return;
     }
-    webApi.gov.updateDemocracyVotes(store.account.currentAddress);
     await webApi.gov.fetchReferendums();
   }
 
@@ -69,7 +73,7 @@ class _DemocracyState extends State<Democracy> {
               // "options"
               options
             ],
-            'onFinish': (BuildContext txPageContext) {
+            'onFinish': (BuildContext txPageContext, Map res) {
               Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
               globalDemocracyRefreshKey.currentState.show();
             }
@@ -102,7 +106,10 @@ class _DemocracyState extends State<Democracy> {
   @override
   void initState() {
     super.initState();
-    webApi.subscribeBestNumber();
+    webApi.subscribeMessage(
+        'chain', 'bestNumber', [], _bestNumberSubscribeChannel, (data) {
+      store.gov.setBestNumber(data as int);
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (store.gov.referendums == null) {
@@ -113,7 +120,8 @@ class _DemocracyState extends State<Democracy> {
 
   @override
   void dispose() {
-    webApi.unsubscribeBestNumber();
+    webApi.unsubscribeMessage(_bestNumberSubscribeChannel);
+
     super.dispose();
   }
 
@@ -135,7 +143,7 @@ class _DemocracyState extends State<Democracy> {
                       padding: EdgeInsets.all(24),
                       child: Text(
                         I18n.of(context).home['data.empty'],
-                        style: Theme.of(context).textTheme.display4,
+                        style: Theme.of(context).textTheme.headline4,
                       ),
                     )
                   : ListView.builder(
@@ -144,9 +152,8 @@ class _DemocracyState extends State<Democracy> {
                         return ReferendumPanel(
                           data: list[i],
                           bestNumber: bestNumber,
-                          votes: list[i].votes,
                           symbol: symbol,
-                          voted: store.gov.votedMap[list[i].index],
+                          voted: list[i].userVoted,
                         );
                       },
                     ),

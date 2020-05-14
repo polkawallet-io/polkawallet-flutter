@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -10,7 +10,7 @@ class AccountSelectPage extends StatelessWidget {
   AccountSelectPage(this.store);
 
   static final String route = '/staking/account/list';
-  final AccountStore store;
+  final AppStore store;
 
   @override
   Widget build(BuildContext context) => Observer(
@@ -25,20 +25,22 @@ class AccountSelectPage extends StatelessWidget {
                 color: Theme.of(context).cardColor,
                 child: ListView(
                   padding: EdgeInsets.all(16),
-                  children: store.accountList.map((i) {
-                    String address = store.pubKeyAddressMap[i.pubKey];
+                  children: store.account.accountList.map((i) {
+                    String address = store.account
+                            .pubKeyAddressMap[store.settings.endpoint.ss58]
+                        [i.pubKey];
                     String unavailable;
                     String stashOf =
-                        store.pubKeyBondedMap[i.pubKey].controllerId;
+                        store.account.pubKeyBondedMap[i.pubKey].controllerId;
                     String controllerOf =
-                        store.pubKeyBondedMap[i.pubKey].stashId;
+                        store.account.pubKeyBondedMap[i.pubKey].stashId;
                     if (stashOf != null &&
-                        i.pubKey != store.currentAccount.pubKey) {
+                        i.pubKey != store.account.currentAccount.pubKey) {
                       unavailable =
                           '${I18n.of(context).staking['controller.stashOf']} ${Fmt.address(stashOf)}';
                     }
                     if (controllerOf != null &&
-                        controllerOf != store.currentAddress) {
+                        controllerOf != store.account.currentAddress) {
                       unavailable =
                           '${I18n.of(context).staking['controller.controllerOf']} ${Fmt.address(controllerOf)}';
                     }

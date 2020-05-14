@@ -5,10 +5,11 @@ import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class CreateAccountForm extends StatelessWidget {
-  CreateAccountForm(this.setNewAccount, this.onSubmit);
+  CreateAccountForm({this.setNewAccount, this.submitting, this.onSubmit});
 
   final Function setNewAccount;
   final Function onSubmit;
+  final bool submitting;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -76,12 +77,14 @@ class CreateAccountForm extends StatelessWidget {
             padding: EdgeInsets.all(16),
             child: RoundedButton(
               text: I18n.of(context).home['next'],
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  setNewAccount(_nameCtrl.text, _passCtrl.text);
-                  onSubmit();
-                }
-              },
+              onPressed: submitting
+                  ? null
+                  : () {
+                      if (_formKey.currentState.validate()) {
+                        setNewAccount(_nameCtrl.text, _passCtrl.text);
+                        onSubmit();
+                      }
+                    },
             ),
           ),
         ],

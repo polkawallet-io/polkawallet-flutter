@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/utils/format.dart';
 
+// TODO: scan image failed
 class ScanPage extends StatelessWidget {
   static final String route = '/account/scan';
   final GlobalKey<QrcodeReaderViewState> _qrViewKey = GlobalKey();
@@ -29,18 +30,22 @@ class ScanPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Future onScan(String data) async {
       String address = '';
-      for (String item in data.split(':')) {
-        if (Fmt.isAddress(item)) {
-          address = item;
-          break;
+      if (data != null) {
+        for (String item in data.split(':')) {
+          if (Fmt.isAddress(item)) {
+            address = item;
+            break;
+          }
         }
       }
       if (address.length > 0) {
         final String args = ModalRoute.of(context).settings.arguments;
         if (args == 'tx') {
           Navigator.of(context).pop();
-          Navigator.of(context).pushNamed(TransferPage.route,
-              arguments: {'address': address, 'redirect': '/'});
+          Navigator.of(context).pushNamed(
+            TransferPage.route,
+            arguments: TransferPageParams(address: address, redirect: '/'),
+          );
         } else {
           Navigator.of(context).pop(address);
         }

@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/service/substrateApi/acala/apiAcala.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiGov.dart';
@@ -19,6 +21,9 @@ class Api {
   final AppStore store;
 
   ApiAccount account;
+
+  ApiAcala acala;
+
   ApiAssets assets;
   ApiStaking staking;
   ApiGovernance gov;
@@ -30,19 +35,38 @@ class Api {
 
   void init() {
     account = ApiAccount(this);
+
+    acala = ApiAcala(this);
+
     assets = ApiAssets(this);
     staking = ApiStaking(this);
     gov = ApiGovernance(this);
 
-    _msgHandlers['txStatusChange'] = store.account.setTxStatus;
+    launchWebview();
+  }
+
+  Future<void> launchWebview() async {
+    _msgHandlers = {'txStatusChange': store.account.setTxStatus};
+
+    _evalJavascriptUID = 0;
+    _msgCompleters = {};
+
+    if (_web != null) {
+      _web.reload();
+      return;
+    }
 
     _web = FlutterWebviewPlugin();
 
     _web.onStateChanged.listen((viewState) async {
       if (viewState.type == WebViewState.finishLoad) {
-        print('webview loaded');
+        String network = store.settings.endpoint.info;
+        print('webview loaded for network $network');
+        if (network.contains('acala')) {
+          network = 'acala';
+        }
         DefaultAssetBundle.of(context)
-            .loadString('lib/polkadot_js_service/dist/main.js')
+            .loadString('lib/js_service_$network/dist/main.js')
             .then((String js) {
           print('js file loaded');
           // inject js file to webview
@@ -76,9 +100,6 @@ class Api {
                 if (_msgHandlers[path] != null) {
                   Function handler = _msgHandlers[path];
                   handler(msg['data']);
-                  if (path.contains('uid=')) {
-                    _msgHandlers.remove(path);
-                  }
                 }
               });
             }),
@@ -94,14 +115,25 @@ class Api {
     return _evalJavascriptUID++;
   }
 
-  Future<dynamic> evalJavascript(String code) async {
+  Future<dynamic> evalJavascript(
+    String code, {
+    bool wrapPromise = true,
+    bool allowRepeat = false,
+  }) async {
     // check if there's a same request loading
-    for (String i in _msgCompleters.keys) {
-      String call = code.split('(')[0];
-      if (i.contains(call)) {
-        print('request $call loading');
-        return _msgCompleters[i].future;
+    if (!allowRepeat) {
+      for (String i in _msgCompleters.keys) {
+        String call = code.split('(')[0];
+        if (i.contains(call)) {
+          print('request $call loading');
+          return _msgCompleters[i].future;
+        }
       }
+    }
+
+    if (!wrapPromise) {
+      String res = await _web.evalJavascript(code);
+      return res;
     }
 
     Completer c = new Completer();
@@ -135,14 +167,14 @@ class Api {
   Future<void> changeNode(String endpoint) async {
     store.settings.setNetworkLoading(true);
     store.staking.clearState();
-    store.gov.clearSate();
-    String res = await evalJavascript('settings.changeEndpoint("$endpoint")');
-    if (res == null) {
-      print('connect failed');
-      store.settings.setNetworkName(null);
-      return;
-    }
-    fetchNetworkProps();
+//    String res = await evalJavascript('settings.changeEndpoint("$endpoint")');
+//    if (res == null) {
+//      print('connect failed');
+//      store.settings.setNetworkName(null);
+//      return;
+//    }
+//    fetchNetworkProps();
+    launchWebview();
   }
 
   Future<void> fetchNetworkProps() async {
@@ -158,12 +190,11 @@ class Api {
 
     // fetch account balance
     if (store.account.accountList.length > 0) {
-      // reset account address format
-      if (store.settings.customSS58Format['info'] == 'default') {
-        account.setSS58Format(info[1]['ss58Format'] ?? 42);
+      if (store.settings.endpoint.info == networkEndpointAcala.info) {
+        await assets.fetchBalance(store.account.currentAccount.pubKey);
+        return;
       }
 
-      // fetch account balance
       await Future.wait([
         assets.fetchBalance(store.account.currentAccount.pubKey),
         staking.fetchAccountStaking(store.account.currentAccount.pubKey),
@@ -190,14 +221,19 @@ class Api {
     store.assets.setBlockMap(data);
   }
 
-  Future<void> subscribeBestNumber() async {
-    _msgHandlers['bestNumber'] = (data) {
-      store.gov.setBestNumber(data as int);
-    };
-    evalJavascript('gov.subBestNumber()');
+  Future<void> subscribeMessage(
+    String section,
+    String method,
+    List params,
+    String channel,
+    Function callback,
+  ) async {
+    _msgHandlers[channel] = callback;
+    evalJavascript(
+        'settings.subscribeMessage("$section", "$method", ${jsonEncode(params)}, "$channel")');
   }
 
-  Future<void> unsubscribeBestNumber() async {
-    _web.evalJavascript('unsubBestNumber()');
+  Future<void> unsubscribeMessage(String channel) async {
+    _web.evalJavascript('unsub$channel()');
   }
 }

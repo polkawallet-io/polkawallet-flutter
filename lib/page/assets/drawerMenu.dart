@@ -16,7 +16,8 @@ class DrawerMenu extends StatelessWidget {
 
   List<Widget> _buildAccList(BuildContext context) {
     return store.account.optionalAccounts.map((i) {
-      String address = store.account.pubKeyAddressMap[i.pubKey];
+      String address = store
+          .account.pubKeyAddressMap[store.settings.endpoint.info][i.pubKey];
       return ListTile(
         leading: AddressIcon(i.address, pubKey: i.pubKey, size: 36),
         title: Text(i.name ?? 'name',
@@ -31,8 +32,7 @@ class DrawerMenu extends StatelessWidget {
           // refresh balance
           store.assets.loadAccountCache();
           globalBalanceRefreshKey.currentState.show();
-          // refresh user's staking & gov info
-          store.gov.clearSate();
+          // refresh user's staking info
           store.staking.loadAccountCache();
           webApi.staking.fetchAccountStaking(i.pubKey);
         },

@@ -28,6 +28,12 @@ class _ChangeName extends State<ChangeNamePage> {
   }
 
   @override
+  void dispose() {
+    _nameCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).profile;
     return Scaffold(

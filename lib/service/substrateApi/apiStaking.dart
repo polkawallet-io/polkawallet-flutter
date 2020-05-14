@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -13,7 +11,7 @@ class ApiStaking {
 
   Future<void> fetchAccountStaking(String pubKey) async {
     if (pubKey != null && pubKey.isNotEmpty) {
-      String address = store.account.pubKeyAddressMap[pubKey];
+      String address = store.account.currentAddress;
       Map ledger = await apiRoot
           .evalJavascript('api.derive.staking.account("$address")');
 
@@ -69,7 +67,7 @@ class ApiStaking {
       int bonded = store.staking.ledger['stakingLedger']['active'];
       List unlocking = store.staking.ledger['stakingLedger']['unlocking'];
       if (pubKey != null && (bonded > 0 || unlocking.length > 0)) {
-        String address = store.account.pubKeyAddressMap[pubKey];
+        String address = store.account.currentAddress;
         print('fetching staking rewards...');
         List res = await apiRoot
             .evalJavascript('staking.loadAccountRewardsData("$address")');
@@ -81,8 +79,13 @@ class ApiStaking {
   }
 
   Future<Map> fetchStakingOverview() async {
-    var overview =
-        await apiRoot.evalJavascript('api.derive.staking.overview()');
+    List res = await Future.wait([
+      apiRoot.evalJavascript('api.derive.staking.overview()'),
+      apiRoot.evalJavascript('api.derive.staking.currentPoints()'),
+    ]);
+    if (res[0] == null || res[1] == null) return null;
+    Map overview = res[0];
+    overview['eraPoints'] = res[1];
     store.staking.setOverview(overview);
 
     fetchElectedInfo();
@@ -93,27 +96,20 @@ class ApiStaking {
     return overview;
   }
 
-  Future<List> updateStaking(int page) async {
-    String data = await PolkaScanApi.fetchTxs(store.account.currentAddress,
+  Future<Map> updateStaking(int page) async {
+    store.staking.setTxsLoading(true);
+
+    Map res = await PolkaScanApi.fetchTxs(store.account.currentAddress,
         page: page, module: PolkaScanApi.module_staking);
-    var ls = jsonDecode(data)['data'];
-    var detailReqs = List<Future<dynamic>>();
-    ls.forEach((i) => detailReqs
-        .add(PolkaScanApi.fetchTx(i['attributes']['extrinsic_hash'])));
-    var details = await Future.wait(detailReqs);
-    var index = 0;
-    ls.forEach((i) {
-      i['detail'] = jsonDecode(details[index])['data']['attributes'];
-      index++;
-    });
-    if (page == 1) {
+
+    if (page == 0) {
       store.staking.clearTxs();
     }
-    await store.staking
-        .addTxs(List<Map<String, dynamic>>.from(ls), shouldCache: page == 1);
+    await store.staking.addTxs(res, shouldCache: page == 0);
 
-    await apiRoot.updateBlocks(ls);
-    return ls;
+    store.staking.setTxsLoading(false);
+
+    return res;
   }
 
   // this query takes a long time

@@ -63,7 +63,7 @@ class _SetPayeePageState extends State<SetPayeePage> {
         // "to"
         _rewardTo,
       ],
-      'onFinish': (BuildContext txPageContext) {
+      'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalBondingRefreshKey.currentState.show();
       }

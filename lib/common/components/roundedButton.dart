@@ -2,18 +2,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class RoundedButton extends StatelessWidget {
-  RoundedButton({this.text, this.onPressed, this.icon, this.color, this.expand})
-      : assert(text != null);
+  RoundedButton({
+    this.text,
+    this.onPressed,
+    this.icon,
+    this.color,
+    this.expand,
+    this.submitting = false,
+  }) : assert(text != null);
 
   final String text;
   final Function onPressed;
   final Widget icon;
   final Color color;
   final bool expand;
+  final bool submitting;
 
   @override
   Widget build(BuildContext context) {
     List<Widget> row = <Widget>[];
+    if (submitting) {
+      row.add(CupertinoActivityIndicator());
+    }
     if (icon != null) {
       row.add(Container(
         width: 32,
@@ -26,13 +36,13 @@ class RoundedButton extends StatelessWidget {
     ));
     return RaisedButton(
       padding: EdgeInsets.fromLTRB(24, 12, 24, 12),
-      color: color ?? Colors.pink,
+      color: color ?? Theme.of(context).primaryColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: row,
       ),
-      onPressed: onPressed,
+      onPressed: submitting ? null : onPressed,
     );
   }
 }

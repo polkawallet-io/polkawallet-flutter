@@ -25,7 +25,11 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
   final AccountStore accountStore;
   final Function onSubmit;
 
-  final List<String> _keyOptions = ['Mnemonic', 'Raw Seed', 'Keystore'];
+  final List<String> _keyOptions = [
+    AccountStore.seedTypeMnemonic,
+    AccountStore.seedTypeRawSeed,
+    AccountStore.seedTypeKeystore,
+  ];
   final List<String> _typeOptions = ['sr25519', 'ed25519'];
 
   int _keySelection = 0;
@@ -185,43 +189,60 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
     );
   }
 
+  String _validateInput(String v) {
+    bool passed = false;
+    Map<String, String> dic = I18n.of(context).account;
+    String input = v.trim();
+    switch (_keySelection) {
+      case 0:
+        int len = input.split(' ').length;
+        if (len == 12 || len == 24) {
+          passed = true;
+        }
+        break;
+      case 1:
+        if (input.length <= 32 || input.length == 66) {
+          passed = true;
+        }
+        break;
+      case 2:
+        try {
+          jsonDecode(input);
+          passed = true;
+        } catch (_) {
+          // ignore
+        }
+    }
+    return passed
+        ? null
+        : '${dic['import.invalid']} ${dic[_keyOptions[_keySelection]]}';
+  }
+
+  void _onKeyChange(String v) {
+    if (_keySelection == 2) {
+      // auto set account name
+      var json = jsonDecode(v.trim());
+      if (json['meta']['name'] != null) {
+        setState(() {
+          _nameCtrl.value = TextEditingValue(text: json['meta']['name']);
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _passCtrl.dispose();
+    _pathCtrl.dispose();
+    _keyCtrl.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    String validateInput(String v) {
-      bool passed = false;
-      Map<String, String> dic = I18n.of(context).account;
-      String input = v.trim();
-      switch (_keySelection) {
-        case 0:
-          int len = input.split(' ').length;
-          if (len == 12 || len == 24) {
-            passed = true;
-          }
-          break;
-        case 1:
-          if (input.length <= 32 || input.length == 66) {
-            passed = true;
-          }
-          break;
-        case 2:
-          try {
-            Map json = jsonDecode(input);
-            passed = true;
-            // auto set account name
-            if (json['meta']['name'] != null) {
-              setState(() {
-                _nameCtrl.text = json['meta']['name'];
-              });
-            }
-          } catch (_) {
-            // ignore
-          }
-      }
-      return passed
-          ? null
-          : '${dic['import.invalid']} ${_keyOptions[_keySelection]}';
-    }
-
+    Map<String, String> dic = I18n.of(context).account;
+    String selected = dic[_keyOptions[_keySelection]];
     return Column(
       children: <Widget>[
         Expanded(
@@ -232,7 +253,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
               children: <Widget>[
                 ListTile(
                   title: Text(I18n.of(context).account['import.type']),
-                  subtitle: Text(_keyOptions[_keySelection]),
+                  subtitle: Text(selected),
                   trailing: Icon(Icons.arrow_forward_ios, size: 18),
                   onTap: () {
                     showCupertinoModalPopup(
@@ -247,7 +268,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                               initialItem: _keySelection),
                           children: _keyOptions
                               .map((i) => Padding(
-                                  padding: EdgeInsets.all(16), child: Text(i)))
+                                  padding: EdgeInsets.all(12),
+                                  child: Text(dic[i])))
                               .toList(),
                           onSelectedItemChanged: (v) {
                             setState(() {
@@ -264,12 +286,13 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                   padding: EdgeInsets.only(left: 16, right: 16),
                   child: TextFormField(
                     decoration: InputDecoration(
-                      hintText: _keyOptions[_keySelection],
-                      labelText: _keyOptions[_keySelection],
+                      hintText: selected,
+                      labelText: selected,
                     ),
                     controller: _keyCtrl,
                     maxLines: 2,
-                    validator: validateInput,
+                    validator: _validateInput,
+                    onChanged: _onKeyChange,
                   ),
                 ),
                 _keySelection == 2

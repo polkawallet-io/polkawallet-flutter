@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -11,12 +12,14 @@ class ReceivePage extends StatelessWidget {
   ReceivePage(this.store);
 
   static final String route = '/assets/receive';
-  final AccountStore store;
+  final AppStore store;
 
   @override
   Widget build(BuildContext context) {
     String codeAddress =
-        'substrate:${store.currentAddress}:${store.currentAccount.pubKey}:${store.currentAccount.name}';
+        'substrate:${store.account.currentAddress}:${store.account.currentAccount.pubKey}:${store.account.currentAccount.name}';
+    Color themeColor = Theme.of(context).primaryColor;
+    bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
@@ -32,8 +35,8 @@ class ReceivePage extends StatelessWidget {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(top: 32),
-                  child:
-                      Image.asset('assets/images/assets/sweep_code_line.png'),
+                  child: Image.asset(
+                      'assets/images/assets/receive_line_${isAcala ? 'indigo' : 'pink'}.png'),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 40),
@@ -48,17 +51,16 @@ class ReceivePage extends StatelessWidget {
                         padding: EdgeInsets.all(16),
                         child: AddressIcon(
                           '',
-                          pubKey: store.currentAccount.pubKey,
+                          pubKey: store.account.currentAccount.pubKey,
                         ),
                       ),
                       Text(
-                        store.currentAccount.name,
-                        style: Theme.of(context).textTheme.display4,
+                        store.account.currentAccount.name,
+                        style: Theme.of(context).textTheme.headline4,
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          border:
-                              Border.all(width: 4, color: Colors.pinkAccent),
+                          border: Border.all(width: 4, color: themeColor),
                           borderRadius:
                               BorderRadius.all(const Radius.circular(8)),
                         ),
@@ -74,16 +76,15 @@ class ReceivePage extends StatelessWidget {
                       ),
                       Container(
                         width: 160,
-                        child: Text(store.currentAddress),
+                        child: Text(store.account.currentAddress),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width / 2,
                         padding: EdgeInsets.only(top: 16, bottom: 32),
                         child: RoundedButton(
-                          color: Colors.pinkAccent,
                           text: I18n.of(context).assets['copy'],
-                          onPressed: () =>
-                              UI.copyAndNotify(context, store.currentAddress),
+                          onPressed: () => UI.copyAndNotify(
+                              context, store.account.currentAddress),
                         ),
                       )
                     ],

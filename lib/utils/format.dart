@@ -3,7 +3,8 @@ import 'dart:math';
 
 import 'package:convert/convert.dart';
 import 'package:intl/intl.dart';
-import 'package:polka_wallet/store/staking.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/store/staking/types/validatorData.dart';
 
 class Fmt {
   static String passwordToEncryptKey(String password) {
@@ -14,33 +15,176 @@ class Fmt {
     return passHex.padRight(32, '0');
   }
 
-  static String address(String addr, {int pad = 8}) {
+  static String address(String addr, {int pad = 6}) {
     if (addr == null || addr.length == 0) {
       return addr;
     }
     return addr.substring(0, pad) + '...' + addr.substring(addr.length - pad);
   }
 
-  static String balance(String raw, {int decimals = 12}) {
+  /// number transform 1:
+  /// from raw <String> of Api data to <BigInt>
+  static BigInt balanceInt(String raw) {
     if (raw == null || raw.length == 0) {
-      return raw;
+      return BigInt.zero;
     }
-    NumberFormat f = NumberFormat(",##0.000");
-    var num = f.parse(raw);
-    return f.format(num / pow(10, decimals));
+    if (raw.contains(',') || raw.contains('.')) {
+      return BigInt.from(NumberFormat(",##0.000").parse(raw));
+    } else {
+      return BigInt.parse(raw);
+    }
   }
 
-  static int balanceInt(String raw) {
-    if (raw == null || raw.length == 0) {
+  /// number transform 2:
+  /// from <BigInt> to <double>
+  static double bigIntToDouble(BigInt value, {int decimals = 12}) {
+    if (value == null) {
       return 0;
     }
-    return NumberFormat(",##0.000").parse(raw).toInt();
+    return value / BigInt.from(pow(10, decimals));
   }
 
-  static String token(int value, {int decimals = 12, bool fullLength = false}) {
+  /// number transform 3:
+  /// from <double> to <String> in token format of ",##0.000"
+  static String doubleFormat(
+    double value, {
+    int length = 3,
+    int round = 0,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    value.toStringAsFixed(3);
+    NumberFormat f =
+        NumberFormat(",##0${length > 0 ? '.' : ''}${'#' * length}", "en_US");
+    return f.format(value);
+  }
+
+  /// combined number transform 1-3:
+  /// from raw <String> to <String> in token format of ",##0.000"
+  static String balance(
+    String raw, {
+    int decimals = 12,
+    int length = 3,
+  }) {
+    if (raw == null || raw.length == 0) {
+      return '~';
+    }
+    return doubleFormat(bigIntToDouble(balanceInt(raw), decimals: decimals),
+        length: length);
+  }
+
+  /// combined number transform 1-2:
+  /// from raw <String> to <double>
+  static double balanceDouble(String raw, {int decimals = 12}) {
+    return bigIntToDouble(balanceInt(raw), decimals: decimals);
+  }
+
+  /// combined number transform 2-3:
+  /// from <BigInt> to <String> in token format of ",##0.000"
+  static String token(
+    BigInt value, {
+    int decimals = 12,
+    int length = 3,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    return doubleFormat(bigIntToDouble(value, decimals: decimals),
+        length: length);
+  }
+
+  /// number transform 4:
+  /// from <String of double> to <BigInt>
+  static BigInt tokenInt(String value, {int decimals = 12}) {
+    if (value == null) {
+      return BigInt.zero;
+    }
+    double v = 0;
+    if (value.contains(',') || value.contains('.')) {
+      v = NumberFormat(",##0.${"0" * decimals}").parse(value);
+    } else {
+      v = double.parse(value);
+    }
+    return BigInt.from(v * pow(10, decimals));
+  }
+
+  /// number transform 5:
+  /// from <BigInt> to <String> in price format of ",##0.00"
+  /// ceil number of last decimal
+  static String priceCeil(
+    double value, {
+    int decimals = acala_token_decimals,
+    int lengthFixed = 2,
+    int lengthMax,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    String tailDecimals =
+        lengthMax == null ? '' : "#" * (lengthMax - lengthFixed);
     NumberFormat f = NumberFormat(
-        ",##0.${fullLength == true ? '000#########' : '000'}", "en_US");
-    return f.format(value / pow(10, decimals));
+        ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
+        "en_US");
+    return f.format(value);
+  }
+
+  /// number transform 6:
+  /// from <BigInt> to <String> in price format of ",##0.00"
+  /// floor number of last decimal
+  static String priceFloor(
+    double value, {
+    int lengthFixed = 2,
+    int lengthMax,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    String tailDecimals =
+        lengthMax == null ? '' : "#" * (lengthMax - lengthFixed);
+    NumberFormat f = NumberFormat(
+        ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
+        "en_US");
+    return f.format(value);
+  }
+
+  /// number transform 7:
+  /// from number to <String> in price format of ",##0.###%"
+  static String ratio(dynamic number, {bool needSymbol = true}) {
+    NumberFormat f = NumberFormat(",##0.###${needSymbol ? '%' : ''}");
+    return f.format(number ?? 0);
+  }
+
+  static String priceCeilBigInt(
+    BigInt value, {
+    int decimals = acala_token_decimals,
+    int lengthFixed = 2,
+    int lengthMax,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    double price =
+        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
+                .ceil() /
+            pow(10, lengthMax ?? lengthFixed);
+    return priceCeil(price, lengthFixed: lengthFixed, lengthMax: lengthMax);
+  }
+
+  static String priceFloorBigInt(
+    BigInt value, {
+    int decimals = acala_token_decimals,
+    int lengthFixed = 2,
+    int lengthMax,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+    double price =
+        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
+                .floor() /
+            pow(10, lengthMax ?? lengthFixed);
+    return priceFloor(price, lengthFixed: lengthFixed, lengthMax: lengthMax);
   }
 
   static bool isAddress(String txt) {
@@ -49,7 +193,7 @@ class Fmt {
   }
 
   static bool checkPassword(String pass) {
-    var reg = RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$');
+    var reg = RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[\S]{6,20}$');
     return reg.hasMatch(pass);
   }
 
@@ -87,8 +231,8 @@ class Fmt {
     return ls;
   }
 
-  static List<List<String>> filterCandidateList(
-      List<List<String>> ls, String filter, Map accIndexMap) {
+  static List<List> filterCandidateList(
+      List<List> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
       String value = filter.toLowerCase();
       String accName = '';
