@@ -27,6 +27,12 @@ abstract class _GovernanceStore with Store {
   CouncilInfoData council;
 
   @observable
+  Map<String, Map<String, dynamic>> councilVotes;
+
+  @observable
+  Map<String, dynamic> userCouncilVotes;
+
+  @observable
   ObservableList<ReferendumInfo> referendums;
 
   @action
@@ -38,6 +44,16 @@ abstract class _GovernanceStore with Store {
       LocalStorage.setKV(
           cacheCouncilKey, {'data': info, 'cacheTime': cacheCouncilTimestamp});
     }
+  }
+
+  @action
+  void setCouncilVotes(Map votes) {
+    councilVotes = Map<String, Map<String, dynamic>>.from(votes);
+  }
+
+  @action
+  void setUserCouncilVotes(Map votes) {
+    userCouncilVotes = Map<String, dynamic>.from(votes);
   }
 
   @action

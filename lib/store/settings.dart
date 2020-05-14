@@ -203,8 +203,8 @@ abstract class _SettingsStore with Store {
     final start = DateTime.now().millisecondsSinceEpoch;
     final url = info.value.split('/').reversed.toList()[1];
     try {
-      final result =
-          await InternetAddress.lookup(url).timeout(Duration(seconds: 2));
+      final result = await InternetAddress.lookup(url.split(':')[0])
+          .timeout(Duration(seconds: 2));
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         print('$url connected');
       }

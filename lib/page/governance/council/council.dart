@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/infoItem.dart';
+import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
+import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -13,9 +15,7 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
-// TODO: add removeVoter
 class Council extends StatefulWidget {
   Council(this.store);
   final AppStore store;
@@ -29,11 +29,60 @@ class _CouncilState extends State<Council> {
 
   final AppStore store;
 
+  bool _votesExpanded = false;
+
   Future<void> _fetchCouncilInfo() async {
     if (store.settings.loading) {
       return;
     }
+    webApi.gov.fetchCouncilVotes();
+    webApi.gov.fetchUserCouncilVote();
     await webApi.gov.fetchCouncilInfo();
+  }
+
+  Future<void> _submitCancelVotes() async {
+    var govDic = I18n.of(context).gov;
+    var args = {
+      "title": govDic['vote.remove'],
+      "txInfo": {
+        "module": 'electionsPhragmen',
+        "call": 'removeVoter',
+      },
+      "detail": '{}',
+      "params": [],
+      'onFinish': (BuildContext txPageContext, Map res) {
+        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        globalCouncilRefreshKey.currentState.show();
+      }
+    };
+    Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
+  }
+
+  Future<void> _onCancelVotes() async {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Container(),
+          content: Text(I18n.of(context).gov['vote.remove.confirm']),
+          actions: [
+            CupertinoButton(
+              child: Text(I18n.of(context).home['cancel']),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            CupertinoButton(
+              child: Text(I18n.of(context).home['ok']),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _submitCancelVotes();
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -41,14 +90,25 @@ class _CouncilState extends State<Council> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (LocalStorage.checkCacheTimeout(store.gov.cacheCouncilTimestamp)) {
-        globalCouncilRefreshKey.currentState.show();
-      }
+      globalCouncilRefreshKey.currentState.show();
     });
   }
 
   Widget _buildTopCard() {
+    final int decimals = store.settings.networkState.tokenDecimals;
+    final String symbol = store.settings.networkState.tokenSymbol;
     final Map dic = I18n.of(context).gov;
+
+    Map userVotes = store.gov.userCouncilVotes;
+    BigInt voteAmount = BigInt.zero;
+    double listHeight = 48;
+    if (userVotes != null) {
+      voteAmount = BigInt.parse(userVotes['stake'].toString());
+      int listCount = List.of(userVotes['votes']).length;
+      if (listCount > 0) {
+        listHeight = double.parse((listCount * 52).toString());
+      }
+    }
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
       padding: EdgeInsets.all(24),
@@ -74,7 +134,75 @@ class _CouncilState extends State<Council> {
               )
             ],
           ),
-          Divider(height: 40),
+          Divider(height: 24),
+          Column(
+            children: <Widget>[
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      _votesExpanded
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      size: 28,
+                      color: Theme.of(context).unselectedWidgetColor,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _votesExpanded = !_votesExpanded;
+                      });
+                    },
+                  ),
+                  InfoItem(
+                    content:
+                        '${Fmt.token(voteAmount, decimals: decimals)} $symbol',
+                    title: dic['vote.my'],
+                  ),
+                  OutlinedButtonSmall(
+                    content: dic['vote.remove'],
+                    active: false,
+                    onPressed: listHeight > 48
+                        ? () {
+                            _onCancelVotes();
+                          }
+                        : null,
+                  ),
+                ],
+              ),
+              AnimatedContainer(
+                height: _votesExpanded ? listHeight : 0,
+                duration: Duration(seconds: 1),
+                curve: Curves.fastOutSlowIn,
+                child: AnimatedOpacity(
+                  opacity: _votesExpanded ? 1.0 : 0.0,
+                  duration: Duration(seconds: 1),
+                  curve: Curves.fastLinearToSlowEaseIn,
+                  child: listHeight > 48
+                      ? ListView(
+                          children: List.of(userVotes['votes']).map((i) {
+                            Map accInfo = store.account.accountIndexMap[i];
+                            return CandidateItem(
+                              iconSize: 32,
+                              accInfo: accInfo,
+                              balance: [i],
+                              tokenSymbol:
+                                  store.settings.networkState.tokenSymbol,
+                              noTap: true,
+                            );
+                          }).toList(),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.only(top: 16),
+                          child: Text(
+                            I18n.of(context).home['data.empty'],
+                            style: TextStyle(color: Colors.black54),
+                          ),
+                        ),
+                ),
+              )
+            ],
+          ),
+          Divider(height: 24),
           RoundedButton(
             text: dic['vote'],
             onPressed: () =>
@@ -171,22 +299,27 @@ class _CouncilState extends State<Council> {
 }
 
 class CandidateItem extends StatelessWidget {
-  CandidateItem(
-      {this.accInfo,
-      this.balance,
-      this.tokenSymbol,
-      this.switchValue,
-      this.onSwitch});
+  CandidateItem({
+    this.accInfo,
+    this.balance,
+    this.tokenSymbol,
+    this.switchValue,
+    this.onSwitch,
+    this.iconSize,
+    this.noTap = false,
+  });
   final Map accInfo;
   // balance == [<candidate_address>, <0x_candidate_backing_amount>]
   final List balance;
   final String tokenSymbol;
   final bool switchValue;
   final Function(bool) onSwitch;
+  final double iconSize;
+  final bool noTap;
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: AddressIcon(balance[0]),
+      leading: AddressIcon(balance[0], size: iconSize),
       title: Row(
         children: <Widget>[
           accInfo != null && accInfo['identity']['judgements'].length > 0
@@ -205,8 +338,10 @@ class CandidateItem extends StatelessWidget {
           ? null
           : Text(
               '${I18n.of(context).gov['backing']}: ${Fmt.token(BigInt.parse(balance[1].toString()))} $tokenSymbol'),
-      onTap: () => Navigator.of(context).pushNamed(CandidateDetailPage.route,
-          arguments: balance.length == 1 ? [balance[0], '0x0'] : balance),
+      onTap: noTap
+          ? null
+          : () => Navigator.of(context).pushNamed(CandidateDetailPage.route,
+              arguments: balance.length == 1 ? [balance[0], '0x0'] : balance),
       trailing: onSwitch == null
           ? Container(width: 8)
           : CupertinoSwitch(

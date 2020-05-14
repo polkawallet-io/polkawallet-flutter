@@ -21,6 +21,23 @@ class ApiGovernance {
     return info;
   }
 
+  Future<Map> fetchCouncilVotes() async {
+    Map votes = await apiRoot.evalJavascript('gov.fetchCouncilVotes()');
+    if (votes != null) {
+      store.gov.setCouncilVotes(votes);
+    }
+    return votes;
+  }
+
+  Future<Map> fetchUserCouncilVote() async {
+    Map votes = await apiRoot.evalJavascript(
+        'api.derive.council.votesOf("${store.account.currentAddress}")');
+    if (votes != null) {
+      store.gov.setUserCouncilVotes(votes);
+    }
+    return votes;
+  }
+
   Future<Map> fetchReferendums() async {
     Map data = await apiRoot.evalJavascript('gov.fetchReferendums()');
     if (data != null) {

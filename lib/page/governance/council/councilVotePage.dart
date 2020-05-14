@@ -71,42 +71,6 @@ class _CouncilVote extends State<CouncilVotePage> {
     }
   }
 
-  Widget _buildSelectedList() {
-    return Column(
-      children: List<Widget>.from(_selected.map((i) {
-        var accInfo = store.account.accountIndexMap[i[0]];
-        return Container(
-          margin: EdgeInsets.fromLTRB(16, 0, 16, 8),
-          child: Row(
-            children: <Widget>[
-              Container(
-                width: 32,
-                margin: EdgeInsets.only(right: 8),
-                child: AddressIcon(i[0], size: 32),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  accInfo != null
-                      ? accInfo['identity']['display'] != null
-                          ? Text(accInfo['identity']['display']
-                              .toString()
-                              .toUpperCase())
-                          : Container()
-                      : Container(),
-                  Text(
-                    Fmt.address(i[0]),
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                ],
-              )
-            ],
-          ),
-        );
-      })),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     var govDic = I18n.of(context).gov;
@@ -167,7 +131,42 @@ class _CouncilVote extends State<CouncilVotePage> {
                             _handleCandidateSelect();
                           },
                         ),
-                        _buildSelectedList()
+                        Column(
+                          children: _selected.map((i) {
+                            var accInfo = store.account.accountIndexMap[i[0]];
+                            return Container(
+                              margin: EdgeInsets.fromLTRB(16, 0, 16, 8),
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    width: 32,
+                                    margin: EdgeInsets.only(right: 8),
+                                    child: AddressIcon(i[0], size: 32),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      accInfo != null
+                                          ? accInfo['identity']['display'] !=
+                                                  null
+                                              ? Text(accInfo['identity']
+                                                      ['display']
+                                                  .toString()
+                                                  .toUpperCase())
+                                              : Container()
+                                          : Container(),
+                                      Text(
+                                        Fmt.address(i[0]),
+                                        style: TextStyle(color: Colors.black54),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        )
                       ],
                     ),
                   ),

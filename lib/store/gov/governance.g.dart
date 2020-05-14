@@ -63,6 +63,41 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
     }, _$councilAtom, name: '${_$councilAtom.name}_set');
   }
 
+  final _$councilVotesAtom = Atom(name: '_GovernanceStore.councilVotes');
+
+  @override
+  Map<String, Map<String, dynamic>> get councilVotes {
+    _$councilVotesAtom.context.enforceReadPolicy(_$councilVotesAtom);
+    _$councilVotesAtom.reportObserved();
+    return super.councilVotes;
+  }
+
+  @override
+  set councilVotes(Map<String, Map<String, dynamic>> value) {
+    _$councilVotesAtom.context.conditionallyRunInAction(() {
+      super.councilVotes = value;
+      _$councilVotesAtom.reportChanged();
+    }, _$councilVotesAtom, name: '${_$councilVotesAtom.name}_set');
+  }
+
+  final _$userCouncilVotesAtom =
+      Atom(name: '_GovernanceStore.userCouncilVotes');
+
+  @override
+  Map<String, dynamic> get userCouncilVotes {
+    _$userCouncilVotesAtom.context.enforceReadPolicy(_$userCouncilVotesAtom);
+    _$userCouncilVotesAtom.reportObserved();
+    return super.userCouncilVotes;
+  }
+
+  @override
+  set userCouncilVotes(Map<String, dynamic> value) {
+    _$userCouncilVotesAtom.context.conditionallyRunInAction(() {
+      super.userCouncilVotes = value;
+      _$userCouncilVotesAtom.reportChanged();
+    }, _$userCouncilVotesAtom, name: '${_$userCouncilVotesAtom.name}_set');
+  }
+
   final _$referendumsAtom = Atom(name: '_GovernanceStore.referendums');
 
   @override
@@ -95,6 +130,26 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
     final _$actionInfo = _$_GovernanceStoreActionController.startAction();
     try {
       return super.setCouncilInfo(info, shouldCache: shouldCache);
+    } finally {
+      _$_GovernanceStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setCouncilVotes(Map votes) {
+    final _$actionInfo = _$_GovernanceStoreActionController.startAction();
+    try {
+      return super.setCouncilVotes(votes);
+    } finally {
+      _$_GovernanceStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setUserCouncilVotes(Map votes) {
+    final _$actionInfo = _$_GovernanceStoreActionController.startAction();
+    try {
+      return super.setUserCouncilVotes(votes);
     } finally {
       _$_GovernanceStoreActionController.endAction(_$actionInfo);
     }
