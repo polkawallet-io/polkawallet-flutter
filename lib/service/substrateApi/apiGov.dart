@@ -39,7 +39,8 @@ class ApiGovernance {
   }
 
   Future<Map> fetchReferendums() async {
-    Map data = await apiRoot.evalJavascript('gov.fetchReferendums()');
+    Map data = await apiRoot.evalJavascript(
+        'gov.fetchReferendums("${store.account.currentAddress}")');
     if (data != null) {
       List list = data['referendums'];
       if (list.length > 0) {

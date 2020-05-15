@@ -1,3 +1,8 @@
+# 0.7.5
+- add council remove vote
+- add referendum remove vote
+- add remote node speed test & auto select
+
 # 0.7.4
 - Add Acala Liquid DOT
 - Add confirm dialog before quit app for Android

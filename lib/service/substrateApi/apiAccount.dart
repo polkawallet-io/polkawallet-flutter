@@ -141,8 +141,10 @@ class ApiAccount {
     if (addresses.length == 0) {
       return [];
     }
-    var res = await apiRoot
-        .evalJavascript('account.getAccountIndex(${jsonEncode(addresses)})');
+    var res = await apiRoot.evalJavascript(
+      'account.getAccountIndex(${jsonEncode(addresses)})',
+      allowRepeat: true,
+    );
     store.account.setAccountsIndex(res);
     return res;
   }

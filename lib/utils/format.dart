@@ -285,4 +285,23 @@ class Fmt {
       'points': points,
     };
   }
+
+  static String blockToTime(int blocks) {
+    int blocksOfMin = 10;
+    int blocksOfHour = 60 * blocksOfMin;
+    int blocksOfDay = 24 * blocksOfHour;
+
+    int day = (blocks / blocksOfDay).floor();
+    int hour = (blocks % blocksOfDay / blocksOfHour).floor();
+    int min = (blocks % blocksOfHour / blocksOfMin).floor();
+
+    String res = '$min mins';
+    if (hour > 0) {
+      res = '$hour hrs $res';
+    }
+    if (day > 0) {
+      res = '$day days $res';
+    }
+    return res;
+  }
 }
