@@ -18,6 +18,7 @@ const default_node = {
   'value': 'wss://kusama-rpc.polkadot.io/',
 };
 
+// TODO: display ping speed
 class RemoteNodeListPage extends StatelessWidget {
   RemoteNodeListPage(this.store);
 
@@ -45,7 +46,6 @@ class RemoteNodeListPage extends StatelessWidget {
                   return;
                 }
                 store.setEndpoint(i);
-                store.loadNetworkStateCache();
                 store.setNetworkLoading(true);
                 webApi.launchWebview();
                 Navigator.of(context).pop();

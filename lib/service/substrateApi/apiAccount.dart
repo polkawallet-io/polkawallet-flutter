@@ -100,29 +100,16 @@ class ApiAccount {
     store.account.setNewAccountKey(acc['mnemonic']);
   }
 
-  Future<Map<String, dynamic>> importAccount(
-      {String keyType = AccountStore.seedTypeMnemonic,
-      String cryptoType = 'sr25519',
-      String derivePath = ''}) async {
+  Future<Map<String, dynamic>> importAccount({
+    String keyType = AccountStore.seedTypeMnemonic,
+    String cryptoType = 'sr25519',
+    String derivePath = '',
+  }) async {
     String key = store.account.newAccount.key;
     String pass = store.account.newAccount.password;
     String code =
         'account.recover("$keyType", "$cryptoType", \'$key$derivePath\', "$pass")';
     Map<String, dynamic> acc = await apiRoot.evalJavascript(code);
-    if (acc != null) {
-      await store.account.addAccount(acc, pass);
-      encodeAddress([acc['pubKey']]);
-
-      store.assets.loadAccountCache();
-      store.staking.loadAccountCache();
-
-      // fetch info for the imported account
-      String pubKey = acc['pubKey'];
-      apiRoot.assets.fetchBalance(pubKey);
-      apiRoot.staking.fetchAccountStaking(pubKey);
-      fetchAccountsBonded([pubKey]);
-      getPubKeyIcons([pubKey]);
-    }
     return acc;
   }
 

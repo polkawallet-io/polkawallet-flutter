@@ -24,6 +24,7 @@ import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
+// TODO: english text display fix
 // TODO: txs list rendered in UI thread issue
 class StakingActions extends StatefulWidget {
   StakingActions(this.store);

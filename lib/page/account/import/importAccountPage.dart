@@ -4,6 +4,7 @@ import 'package:polka_wallet/page/account/create/createAccountForm.dart';
 import 'package:polka_wallet/page/account/import/importAccountForm.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ImportAccountPage extends StatefulWidget {
@@ -39,8 +40,10 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     setState(() {
       _submitting = false;
     });
+
+    /// check if account duplicate
     if (acc != null) {
-      Navigator.popUntil(context, ModalRoute.withName('/'));
+      _checkAccountDuplicate(acc);
       return;
     }
 
@@ -61,6 +64,61 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
         );
       },
     );
+  }
+
+  Future<void> _checkAccountDuplicate(Map<String, dynamic> acc) async {
+    int index =
+        store.account.accountList.indexWhere((i) => i.pubKey == acc['pubKey']);
+    if (index > -1) {
+      Map<String, String> pubKeyMap =
+          store.account.pubKeyAddressMap[store.settings.endpoint.ss58];
+      String address = pubKeyMap[acc['pubKey']];
+      if (address != null) {
+        showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            final Map<String, String> accDic = I18n.of(context).account;
+            return CupertinoAlertDialog(
+              title: Text(Fmt.address(address)),
+              content: Text(I18n.of(context).account['import.duplicate']),
+              actions: <Widget>[
+                CupertinoButton(
+                  child: Text(I18n.of(context).home['cancel']),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                CupertinoButton(
+                  child: Text(I18n.of(context).home['ok']),
+                  onPressed: () {
+                    _saveAccount(acc);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      _saveAccount(acc);
+    }
+  }
+
+  Future<void> _saveAccount(Map<String, dynamic> acc) async {
+    await store.account.addAccount(acc, store.account.newAccount.password);
+    webApi.account.encodeAddress([acc['pubKey']]);
+
+    store.assets.loadAccountCache();
+    store.staking.loadAccountCache();
+
+    // fetch info for the imported account
+    String pubKey = acc['pubKey'];
+    webApi.assets.fetchBalance(pubKey);
+    webApi.staking.fetchAccountStaking(pubKey);
+    webApi.account.fetchAccountsBonded([pubKey]);
+    webApi.account.getPubKeyIcons([pubKey]);
+
+    // go to home page
+    Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 
   @override

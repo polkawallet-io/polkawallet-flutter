@@ -101,6 +101,7 @@ class ExportAccountPage extends StatelessWidget {
             onTap: () {
               Map json = AccountData.toJson(store.currentAccount);
               json.remove('name');
+              json['meta']['name'] = store.currentAccount.name;
               Navigator.of(context)
                   .pushNamed(ExportResultPage.route, arguments: {
                 'key': jsonEncode(json),
