@@ -179,7 +179,7 @@ class _AssetsState extends State<Assets> {
       builder: (_) {
         String symbol = store.settings.networkState.tokenSymbol;
         int decimals = store.settings.networkState.tokenDecimals;
-        String networkName = store.settings.networkName;
+        String networkName = store.settings.networkName ?? '';
 
         bool isAcala =
             store.settings.endpoint.info == networkEndpointAcala.info;
