@@ -224,6 +224,7 @@ class _StakingActions extends State<StakingActions>
             redeemable: redeemable,
             available: available,
             payee: payee,
+            networkLoading: store.settings.loading,
           ),
           Divider(),
           StakingActionsPanel(
@@ -430,6 +431,7 @@ class StakingInfoPanel extends StatelessWidget {
     this.redeemable,
     this.available,
     this.payee,
+    this.networkLoading,
   });
 
   final bool hasData;
@@ -440,6 +442,7 @@ class StakingInfoPanel extends StatelessWidget {
   final BigInt redeemable;
   final BigInt available;
   final String payee;
+  final bool networkLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -528,7 +531,9 @@ class StakingInfoPanel extends StatelessWidget {
                         ),
                       ),
                       onTap: () {
-                        Navigator.of(context).pushNamed(PayoutPage.route);
+                        if (!networkLoading) {
+                          Navigator.of(context).pushNamed(PayoutPage.route);
+                        }
                       },
                     )
                   ],

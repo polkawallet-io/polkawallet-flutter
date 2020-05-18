@@ -93,7 +93,7 @@ class LoanCard extends StatelessWidget {
           Row(
             children: <Widget>[
               InfoItem(
-                title: '${dic['loan.collateral']}(${loan.token})',
+                title: dic['loan.collateral'],
                 content: collateral,
               ),
               InfoItem(
