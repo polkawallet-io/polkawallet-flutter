@@ -24,7 +24,6 @@ import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-// TODO: english text display fix
 // TODO: txs list rendered in UI thread issue
 class StakingActions extends StatefulWidget {
   StakingActions(this.store);
@@ -468,7 +467,7 @@ class StakingInfoPanel extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(dic['bond.redeemable'],
-                        style: TextStyle(fontSize: 13)),
+                        style: TextStyle(fontSize: 12)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
@@ -518,7 +517,7 @@ class StakingInfoPanel extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text(dic['payout'], style: TextStyle(fontSize: 13)),
+                    Text(dic['payout'], style: TextStyle(fontSize: 12)),
                     GestureDetector(
                       child: Container(
                         padding: EdgeInsets.all(1),
@@ -560,7 +559,7 @@ class StakingActionsPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).staking;
 
-    num actionButtonWidth = MediaQuery.of(context).size.width / 4;
+    num actionButtonWidth = (MediaQuery.of(context).size.width - 64) / 3;
     Color actionButtonColor = Theme.of(context).primaryColor;
     Color disabledColor = Theme.of(context).unselectedWidgetColor;
 
@@ -619,7 +618,7 @@ class StakingActionsPanel extends StatelessWidget {
                     bondButtonString,
                     style: TextStyle(
                       color: unbondDisabled ? disabledColor : actionButtonColor,
-                      fontSize: 12,
+                      fontSize: 11,
                     ),
                   )
                 ],
@@ -644,7 +643,7 @@ class StakingActionsPanel extends StatelessWidget {
                         color: setPayeeDisabled
                             ? disabledColor
                             : actionButtonColor,
-                        fontSize: 12),
+                        fontSize: 11),
                   )
                 ],
               ),
@@ -670,7 +669,7 @@ class StakingActionsPanel extends StatelessWidget {
                         color: setControllerDisabled
                             ? disabledColor
                             : actionButtonColor,
-                        fontSize: 12),
+                        fontSize: 11),
                   )
                 ],
               ),

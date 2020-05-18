@@ -41,7 +41,7 @@ const Map<String, String> enStaking = {
   'bond.unlocking': 'Unlocking',
   'bond.reward': 'Reward',
   'bond.redeemable': 'Redeemable',
-  'payout': 'Pending Payouts',
+  'payout': 'Payouts',
   'reward.Staked': 'Stash account (increase the amount at stake)',
   'reward.Stash': 'Stash account (do not increase the amount at stake)',
   'reward.Controller':

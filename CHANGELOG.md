@@ -2,6 +2,7 @@
 - add council remove vote
 - add referendum remove vote
 - add remote node speed test & auto select
+- add duplicate account import check
 
 # 0.7.4
 - Add Acala Liquid DOT

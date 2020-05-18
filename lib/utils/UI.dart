@@ -77,10 +77,12 @@ class UI {
   // TODO： add ios update
   static Future<void> checkUpdate(BuildContext context,
       {bool autoCheck = false}) async {
+    if (!Platform.isAndroid && !Platform.isIOS) return;
+    String platform = Platform.isAndroid ? 'android' : 'ios';
     final Map dic = I18n.of(context).home;
     Map versions = await VersionApi.getLatestVersion();
-    String latest = versions['android']['version'];
-    String latestBeta = versions['android']['version-beta'];
+    String latest = versions[platform]['version'];
+    String latestBeta = versions[platform]['version-beta'];
 
     PackageInfo info = await PackageInfo.fromPlatform();
 
@@ -124,7 +126,7 @@ class UI {
                 }
                 if (Platform.isIOS) {
                   // go to ios download page
-//                  launchURL('https://polkawallet.io/#download');
+                  launchURL('https://polkawallet.io/#download');
                 } else if (Platform.isAndroid) {
                   // download apk
                   // START LISTENING FOR DOWNLOAD PROGRESS REPORTING EVENTS
