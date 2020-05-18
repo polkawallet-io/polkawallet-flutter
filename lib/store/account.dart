@@ -145,11 +145,12 @@ abstract class _AccountStore with Store {
 
   @action
   Future<void> addAccount(Map<String, dynamic> acc, String password) async {
+    String pubKey = acc['pubKey'];
     // save seed and remove it before add account
     void saveSeed(String seedType) {
       String seed = acc[seedType];
       if (seed != null && seed.isNotEmpty) {
-        encryptSeed(acc['pubKey'], acc[seedType], seedType, password);
+        encryptSeed(pubKey, acc[seedType], seedType, password);
         acc.remove(acc[seedType]);
       }
     }
@@ -160,8 +161,13 @@ abstract class _AccountStore with Store {
     // format meta data of acc
     acc = _formatMetaData(acc);
 
+    int index = accountList.indexWhere((i) => i.pubKey == pubKey);
+    if (index > -1) {
+      await LocalStorage.removeAccount(pubKey);
+      print('removed acc: $pubKey');
+    }
     await LocalStorage.addAccount(acc);
-    await LocalStorage.setCurrentAccount(acc['pubKey']);
+    await LocalStorage.setCurrentAccount(pubKey);
 
     await loadAccount();
 

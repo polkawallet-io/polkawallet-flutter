@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/TapTooltip.dart';
+import 'package:polka_wallet/common/components/infoItem.dart';
+import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
@@ -7,22 +10,23 @@ import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-// TODO: adjust vote amount times display
 class ReferendumPanel extends StatelessWidget {
   ReferendumPanel({
     this.symbol,
     this.data,
     this.bestNumber,
-    this.voted,
+    this.onCancelVote,
   });
 
   final String symbol;
   final ReferendumInfo data;
   final int bestNumber;
-  final int voted;
+  final Function(int) onCancelVote;
 
   @override
   Widget build(BuildContext context) {
+    int endLeft = data.status['end'] - bestNumber;
+    int activateLeft = endLeft + data.status['delay'];
     var dic = I18n.of(context).gov;
     List<Widget> list = <Widget>[
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
@@ -41,12 +45,29 @@ class ReferendumPanel extends StatelessWidget {
       Row(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(right: 8),
+            width: 20,
             child: Image.asset('assets/images/gov/time.png'),
           ),
+          Expanded(
+            child: Text('${dic['remain']} ${Fmt.blockToTime(endLeft)}',
+                style: TextStyle(color: Colors.lightGreen)),
+          ),
           Text(
-            '${data.status['end'] + data.status['delay'] - bestNumber} blocks ${dic['end']}',
+            '${data.status['end'] - bestNumber} blocks',
             style: TextStyle(color: Colors.lightGreen),
+          )
+        ],
+      ),
+      Row(
+        children: <Widget>[
+          Container(width: 20),
+          Expanded(
+            child: Text('${dic['activate']} ${Fmt.blockToTime(activateLeft)}',
+                style: TextStyle(color: Colors.pink)),
+          ),
+          Text(
+            '#${data.status['end'] + data.status['delay']}',
+            style: TextStyle(color: Colors.pink),
           )
         ],
       ),
@@ -72,7 +93,7 @@ class ReferendumPanel extends StatelessWidget {
         ],
       ),
     ));
-    list.add(Divider(height: 32));
+    list.add(Divider(height: 24));
 
     double widthFull = MediaQuery.of(context).size.width - 72;
 //      int votedTotal = int.parse(votes['votedTotal'].toString());
@@ -83,39 +104,149 @@ class ReferendumPanel extends StatelessWidget {
     double widthYes =
         votedTotalCalc > BigInt.zero ? yes * widthFull : widthFull / 2;
     double widthMin = 6;
-    list.add(Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[Text(dic['no']), Text(dic['yes'])],
-    ));
-    list.add(Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.only(bottom: 4),
+    BigInt voteChange = data.isPassing
+        ? Fmt.balanceInt(data.changeNay)
+        : Fmt.balanceInt(data.changeAye);
+    double yesChange = data.isPassing
+        ? 1 - (votedNay + voteChange) / (votedTotalCalc + voteChange)
+        : (votedAye + voteChange) / (votedTotalCalc + voteChange);
+    double widthPointer =
+        votedTotalCalc > BigInt.zero ? yesChange * widthFull : widthFull / 2;
+
+    list.addAll([
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          data.isPassing
+              ? Icon(Icons.check_circle, color: Colors.lightGreen, size: 20)
+              : Icon(Icons.remove_circle, color: Colors.orange, size: 20),
+          Text(
+            dic['passing.${data.isPassing}'],
+            style: TextStyle(fontWeight: FontWeight.bold),
+          )
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[Text(dic['no']), Text(dic['yes'])],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: Container(),
+          ),
+          Container(
+            padding: EdgeInsets.only(bottom: 8),
+            width: widthPointer > widthMin ? widthPointer : widthMin,
+            decoration: BoxDecoration(
+                border: Border(left: BorderSide(width: 4, color: Colors.grey))),
+          )
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.only(bottom: 2),
+              margin: EdgeInsets.only(bottom: 4),
+              decoration: BoxDecoration(
+                  border: Border(
+                      bottom: BorderSide(width: 6, color: Colors.orange))),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(bottom: 2),
             margin: EdgeInsets.only(bottom: 4),
+            width: widthYes > widthMin ? widthYes : widthMin,
             decoration: BoxDecoration(
                 border:
-                    Border(bottom: BorderSide(width: 6, color: Colors.orange))),
+                    Border(bottom: BorderSide(width: 6, color: Colors.pink))),
+          )
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text('${Fmt.token(votedNay)} $symbol'),
+          Text('${Fmt.token(votedAye)} $symbol')
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              TapTooltip(
+                child: Icon(
+                  data.isPassing ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                  color: Theme.of(context).unselectedWidgetColor,
+                ),
+                message: data.isPassing
+                    ? dic['vote.change.up']
+                    : dic['vote.change.down'],
+              ),
+              Text(
+                '${Fmt.balance(data.changeNay)} $symbol',
+                style: TextStyle(
+                    color: Theme.of(context).unselectedWidgetColor,
+                    fontSize: 13),
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              TapTooltip(
+                child: Icon(
+                  !data.isPassing ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                  color: Theme.of(context).unselectedWidgetColor,
+                ),
+                message: !data.isPassing
+                    ? dic['vote.change.up']
+                    : dic['vote.change.down'],
+              ),
+              Text(
+                '${Fmt.balance(data.changeAye)} $symbol',
+                style: TextStyle(
+                    color: Theme.of(context).unselectedWidgetColor,
+                    fontSize: 13),
+              )
+            ],
+          )
+        ],
+      )
+    ]);
+
+    if (data.userVoted != null) {
+      String amount = Fmt.balance(data.userVoted['balance'].toString());
+      String conviction = data.userVoted['vote']['conviction'] == 'None'
+          ? '0.1x'
+          : (data.userVoted['vote']['conviction'] as String).substring(6);
+      String yes = data.userVoted['vote']['vote'] == 'Aye' ? 'yes' : 'no';
+      list.add(
+        Padding(
+          padding: EdgeInsets.only(top: 12),
+          child: Row(
+            children: [
+              InfoItem(
+                title: dic['vote.my'],
+                content: '$conviction ${dic[yes]} - $amount $symbol',
+              ),
+              OutlinedButtonSmall(
+                content: dic['vote.remove'],
+                active: false,
+                onPressed: () => onCancelVote(data.index),
+              ),
+            ],
           ),
         ),
-        Container(
-          padding: EdgeInsets.only(bottom: 4),
-          margin: EdgeInsets.only(bottom: 4),
-          width: widthYes > widthMin ? widthYes : widthMin,
-          decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(width: 6, color: Colors.pink))),
-        )
-      ],
-    ));
-    list.add(Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text('${Fmt.token(votedNay)} $symbol'),
-        Text('${Fmt.token(votedAye)} $symbol')
-      ],
-    ));
+      );
 
+      list.add(Divider());
+    }
     list.add(Container(
       margin: EdgeInsets.only(top: 16),
       child: Row(
@@ -123,23 +254,19 @@ class ReferendumPanel extends StatelessWidget {
           Expanded(
             child: RoundedButton(
               color: Colors.orange,
-              text: '${voted < 0 ? dic['voted'] : ''} ${dic['no']}',
-              onPressed: voted >= 0
-                  ? () => Navigator.of(context).pushNamed(
-                      ReferendumVotePage.route,
-                      arguments: {'referenda': data, 'voteYes': false})
-                  : null,
+              text: dic['no'],
+              onPressed: () => Navigator.of(context).pushNamed(
+                  ReferendumVotePage.route,
+                  arguments: {'referenda': data, 'voteYes': false}),
             ),
           ),
           Container(width: 8),
           Expanded(
             child: RoundedButton(
-              text: '${voted > 0 ? dic['voted'] : ''} ${dic['yes']}',
-              onPressed: voted <= 0
-                  ? () => Navigator.of(context).pushNamed(
-                      ReferendumVotePage.route,
-                      arguments: {'referenda': data, 'voteYes': true})
-                  : null,
+              text: dic['yes'],
+              onPressed: () => Navigator.of(context).pushNamed(
+                  ReferendumVotePage.route,
+                  arguments: {'referenda': data, 'voteYes': true}),
             ),
           )
         ],

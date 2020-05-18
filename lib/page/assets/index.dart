@@ -178,6 +178,7 @@ class _AssetsState extends State<Assets> {
     return Observer(
       builder: (_) {
         String symbol = store.settings.networkState.tokenSymbol;
+        int decimals = store.settings.networkState.tokenDecimals;
         String networkName = store.settings.networkName ?? '';
 
         bool isAcala =
@@ -224,8 +225,7 @@ class _AssetsState extends State<Assets> {
                               balancesInfo != null
                                   ? balancesInfo.total
                                   : BigInt.zero,
-                              decimals:
-                                  store.settings.networkState.tokenDecimals),
+                              decimals: decimals),
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
@@ -252,7 +252,7 @@ class _AssetsState extends State<Assets> {
                             title: Text(token),
                             trailing: Text(
                               Fmt.balance(store.assets.tokenBalances[i],
-                                  decimals: store.settings.acalaTokenDecimals),
+                                  decimals: decimals),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
@@ -288,8 +288,7 @@ class _AssetsState extends State<Assets> {
                                   title: Text(i),
                                   trailing: Text(
                                     Fmt.token(store.acala.airdrops[i],
-                                        decimals:
-                                            store.settings.acalaTokenDecimals),
+                                        decimals: decimals),
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20,

@@ -39,68 +39,22 @@ class _DemocracyState extends State<Democracy> {
     await webApi.gov.fetchReferendums();
   }
 
-  List<num> _calcTimes(int value) {
-    double amountX = 0.1;
-    int timeX = 0;
-    if (value > 0) {
-      amountX = value * 1.0;
-      timeX = pow(2, value - 1);
-    }
-    return [amountX, timeX];
-  }
-
-  void _onVote(int id, bool yes) {
-    final Map dic = I18n.of(context).gov;
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        title: Text(yes ? dic['yes.text'] : dic['no.text']),
-        actions: List<Widget>.from(_options.map((i) {
-          Map options = {'aye': yes, 'conviction': i};
-          var args = {
-            "title": dic['vote.proposal'],
-            "txInfo": {
-              "module": 'democracy',
-              "call": 'vote',
-            },
-            "detail": jsonEncode({
-              "id": id,
-              "options": options,
-            }),
-            "params": [
-              // "id"
-              id,
-              // "options"
-              options
-            ],
-            'onFinish': (BuildContext txPageContext, Map res) {
-              Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
-              globalDemocracyRefreshKey.currentState.show();
-            }
-          };
-          List times = _calcTimes(i);
-          String days = i == 0
-              ? dic['locked.no']
-              : '${dic['locked']} ${times[1] * 8} ${dic['day']} (${times[1]}x)';
-          return CupertinoActionSheetAction(
-            child: Text(
-              '${times[0]}x ${dic['balance']}, $days',
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context)
-                  .pushNamed(TxConfirmPage.route, arguments: args);
-            },
-          );
-        })),
-        cancelButton: CupertinoActionSheetAction(
-          child: Text(I18n.of(context).home['cancel']),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
+  Future<void> _submitCancelVote(int id) async {
+    var govDic = I18n.of(context).gov;
+    var args = {
+      "title": govDic['vote.remove'],
+      "txInfo": {
+        "module": 'democracy',
+        "call": 'removeVote',
+      },
+      "detail": jsonEncode({"id": id}),
+      "params": [id],
+      'onFinish': (BuildContext txPageContext, Map res) {
+        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        globalDemocracyRefreshKey.currentState.show();
+      }
+    };
+    Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
   }
 
   @override
@@ -112,9 +66,7 @@ class _DemocracyState extends State<Democracy> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (store.gov.referendums == null) {
-        globalDemocracyRefreshKey.currentState.show();
-      }
+      globalDemocracyRefreshKey.currentState.show();
     });
   }
 
@@ -153,7 +105,7 @@ class _DemocracyState extends State<Democracy> {
                           data: list[i],
                           bestNumber: bestNumber,
                           symbol: symbol,
-                          voted: list[i].userVoted,
+                          onCancelVote: _submitCancelVote,
                         );
                       },
                     ),

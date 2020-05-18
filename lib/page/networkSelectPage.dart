@@ -49,7 +49,45 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         _networkChanging = false;
       });
     }
+  }
+
+  Future<void> _onSelect(AccountData i, String address) async {
+    if (address != store.account.currentAddress) {
+      /// set current account
+      store.account.setCurrentAccount(i);
+      // refresh balance
+      store.assets.loadAccountCache();
+
+      if (store.settings.endpoint.info == networkEndpointKusama.info) {
+        // refresh user's staking info
+        store.staking.loadAccountCache();
+      }
+
+      if (store.settings.endpoint.info == networkEndpointAcala.info) {
+        store.acala.loadCache();
+      }
+
+      bool isCurrentNetwork =
+          _selectedNetwork.info == store.settings.endpoint.info;
+      if (isCurrentNetwork) {
+        /// reload account info
+        webApi.assets.fetchBalance(i.pubKey);
+        Navigator.of(context).pop();
+      } else {
+        /// set new network and reload web view
+        await _reloadNetwork();
+      }
+    }
     Navigator.of(context).pop();
+  }
+
+  Future<void> _onCreateAccount() async {
+    bool isCurrentNetwork =
+        _selectedNetwork.info == store.settings.endpoint.info;
+    if (!isCurrentNetwork) {
+      await _reloadNetwork();
+    }
+    Navigator.of(context).pushNamed(CreateAccountEntryPage.route);
   }
 
   List<Widget> _buildAccountList() {
@@ -67,18 +105,14 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
             icon: Image.asset(
                 'assets/images/assets/plus_${isAcala ? 'indigo' : 'pink'}.png'),
             color: primaryColor,
-            onPressed: () =>
-                Navigator.of(context).pushNamed(CreateAccountEntryPage.route),
+            onPressed: () => _onCreateAccount(),
           )
         ],
       ),
     ];
-    bool isCurrentNetwork =
-        _selectedNetwork.info == store.settings.endpoint.info;
 
     List<AccountData> accounts = [store.account.currentAccount];
     accounts.addAll(store.account.optionalAccounts);
-//    print(store.account.pubKeyAddressMap);
     res.addAll(accounts.map((i) {
       String address =
           store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
@@ -91,36 +125,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
           leading: AddressIcon('', pubKey: i.pubKey),
           title: Text(i.name),
           subtitle: Text(Fmt.address(address ?? 'address xxxx')),
-          onTap: _networkChanging
-              ? null
-              : () {
-                  if (address == store.account.currentAddress) return;
-
-                  /// set current account
-                  store.account.setCurrentAccount(i);
-                  // refresh balance
-                  store.assets.loadAccountCache();
-
-                  if (store.settings.endpoint.info ==
-                      networkEndpointKusama.info) {
-                    // refresh user's staking info
-                    store.staking.loadAccountCache();
-                  }
-
-                  if (store.settings.endpoint.info ==
-                      networkEndpointAcala.info) {
-                    store.acala.loadCache();
-                  }
-
-                  if (isCurrentNetwork) {
-                    /// reload account info
-                    webApi.assets.fetchBalance(i.pubKey);
-                    Navigator.of(context).pop();
-                  } else {
-                    /// set new network and reload web view
-                    _reloadNetwork();
-                  }
-                },
+          onTap: _networkChanging ? null : () => _onSelect(i, address),
         ),
       );
     }).toList());
