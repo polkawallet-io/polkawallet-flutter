@@ -178,7 +178,7 @@ class _AssetsState extends State<Assets> {
     return Observer(
       builder: (_) {
         String symbol = store.settings.networkState.tokenSymbol;
-        String networkName = store.settings.networkName;
+        String networkName = store.settings.networkName ?? '';
 
         bool isAcala =
             store.settings.endpoint.info == networkEndpointAcala.info;

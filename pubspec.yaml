@@ -21,9 +21,9 @@ dependencies:
   intl: ^0.16.0
   json_annotation: ^3.0.1
   # state management with mobx & provider
-  mobx: ^0.4.0
-  flutter_mobx: ^0.3.6
-  mobx_codegen: ^0.3.12
+  mobx: ^1.2.0
+  flutter_mobx: ^1.1.0
+  mobx_codegen: ^1.1.0
   provider: ^3.1.0
   shared_preferences: ^0.5.6
   flutter_aes_ecb_pkcs5: ^0.1.1
