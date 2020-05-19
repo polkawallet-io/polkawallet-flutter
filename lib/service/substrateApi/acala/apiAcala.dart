@@ -50,12 +50,18 @@ class ApiAcala {
   }
 
   Future<void> fetchAirdropTokens() async {
-    String address = store.account.currentAddress;
-    String res = await apiRoot.evalJavascript(
-        'api.registry.createType("AirDropCurrencyId").defKeys',
-        wrapPromise: false);
+    String getCurrencyIds =
+        'api.registry.createType("AirDropCurrencyId").defKeys';
+    if (Platform.isIOS) {
+      getCurrencyIds =
+          'JSON.stringify(api.registry.createType("AirDropCurrencyId").defKeys)';
+    }
+    String res =
+        await apiRoot.evalJavascript(getCurrencyIds, wrapPromise: false);
     if (res == null) return;
+
     List tokens = jsonDecode(res);
+    String address = store.account.currentAddress;
     String queries = tokens
         .map((i) => 'api.query.airDrop.airDrops("$address", "$i")')
         .join(",");

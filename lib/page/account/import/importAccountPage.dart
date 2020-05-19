@@ -32,6 +32,17 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     setState(() {
       _submitting = true;
     });
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final Map<String, String> accDic = I18n.of(context).account;
+        return CupertinoAlertDialog(
+          title: Container(),
+          content: Container(height: 64, child: CupertinoActivityIndicator()),
+        );
+      },
+    );
+
     var acc = await webApi.account.importAccount(
       keyType: _keyType,
       cryptoType: _cryptoType,
