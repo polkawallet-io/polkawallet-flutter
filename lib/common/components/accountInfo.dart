@@ -6,9 +6,10 @@ import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 class AccountInfo extends StatelessWidget {
-  AccountInfo({this.accInfo, this.address});
+  AccountInfo({this.accInfo, this.address, this.network});
   final Map accInfo;
   final String address;
+  final String network;
   @override
   Widget build(BuildContext context) {
     List<Widget> list = [];
@@ -72,12 +73,12 @@ class AccountInfo extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(right: 16),
               child: JumpToBrowserLink(
-                'https://polkascan.io/pre/kusama/module/account/$address',
+                'https://polkascan.io/pre/${network.toLowerCase()}/module/account/$address',
                 text: 'Polkascan',
               ),
             ),
             JumpToBrowserLink(
-              'https://kusama.subscan.io/account/$address',
+              'https://${network.toLowerCase()}.subscan.io/account/$address',
               text: 'Subscan',
             ),
           ],

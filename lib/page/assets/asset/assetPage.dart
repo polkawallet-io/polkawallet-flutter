@@ -49,6 +49,11 @@ class _AssetPageState extends State<AssetPage>
       webApi.staking.fetchAccountStaking(pubKey);
       res = await webApi.assets.updateTxs(_txsPage);
     }
+    // For now we just do the same for Edgeware
+    if (store.settings.endpoint.info == networkEndpointEdgeware.info) {
+      webApi.staking.fetchAccountStaking(pubKey);
+      res = await webApi.assets.updateTxs(_txsPage);
+    }
 
     if (res['transfers'] == null ||
         res['transfers'].length < tx_list_page_size) {
@@ -132,6 +137,7 @@ class _AssetPageState extends State<AssetPage>
     final String token = ModalRoute.of(context).settings.arguments;
     final bool isBaseToken = token == symbol;
     final isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
+    final isEdgeware = store.settings.endpoint.info == networkEndpointEdgeware.info;
 
     final dic = I18n.of(context).assets;
 
@@ -240,7 +246,7 @@ class _AssetPageState extends State<AssetPage>
                     ],
                   ),
                 ),
-                isKusama
+                isKusama || isEdgeware
                     ? TabBar(
                         labelColor: Colors.black87,
                         labelStyle: TextStyle(fontSize: 18),

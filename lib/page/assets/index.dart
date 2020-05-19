@@ -105,6 +105,7 @@ class _AssetsState extends State<Assets> {
     AccountData acc = store.account.currentAccount;
 
     bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    String colorSuffix = store.settings.endpoint.info == networkEndpointEdgeware.info?"green":(isAcala?"indigo":"pink");
 
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
@@ -150,7 +151,7 @@ class _AssetsState extends State<Assets> {
             title: Text(Fmt.address(store.account.currentAddress)),
             trailing: IconButton(
               icon: Image.asset(
-                  'assets/images/assets/qrcode_${isAcala ? 'indigo' : 'pink'}.png'),
+                  'assets/images/assets/qrcode_$colorSuffix.png'),
               onPressed: () {
                 if (acc.address != '') {
                   Navigator.pushNamed(context, ReceivePage.route);

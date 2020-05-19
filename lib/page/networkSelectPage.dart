@@ -38,6 +38,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
       _networkChanging = true;
     });
     await store.settings.setBestNode(info: _selectedNetwork.info);
+    store.settings.networkName=store.settings.endpoint.info;
     store.settings.loadNetworkStateCache();
     store.settings.setNetworkLoading(true);
     store.assets.clearTxs();
@@ -67,6 +68,11 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         store.acala.loadCache();
       }
 
+      if (store.settings.endpoint.info == networkEndpointEdgeware.info) {
+        // refresh user's staking info
+        store.staking.loadAccountCache();
+      }
+
       bool isCurrentNetwork =
           _selectedNetwork.info == store.settings.endpoint.info;
       if (isCurrentNetwork) {
@@ -92,7 +98,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
 
   List<Widget> _buildAccountList() {
     Color primaryColor = Theme.of(context).primaryColor;
-    bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    String colorSuffix = store.settings.endpoint.info == networkEndpointAcala.info?'indigo':(store.settings.endpoint.info == networkEndpointEdgeware.info?'green':'pink');
     List<Widget> res = [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,7 +109,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
           ),
           IconButton(
             icon: Image.asset(
-                'assets/images/assets/plus_${isAcala ? 'indigo' : 'pink'}.png'),
+                'assets/images/assets/plus_$colorSuffix.png'),
             color: primaryColor,
             onPressed: () => _onCreateAccount(),
           )
@@ -171,7 +177,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
                 ),
                 child: Column(
                   children:
-                      [networkEndpointKusama, networkEndpointAcala].map((i) {
+                      [networkEndpointKusama, networkEndpointAcala, networkEndpointEdgeware].map((i) {
                     String network = i.info;
                     bool isCurrent = network == _selectedNetwork.info;
                     String img =

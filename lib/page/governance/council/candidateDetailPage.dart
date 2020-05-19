@@ -19,6 +19,8 @@ class CandidateDetailPage extends StatelessWidget {
     final Map dic = I18n.of(context).gov;
     final List info = ModalRoute.of(context).settings.arguments;
     String symbol = store.settings.networkState.tokenSymbol;
+    int decimals = store.settings.networkState.tokenDecimals;
+    String network = store.settings.endpoint.info;
 
     Map accInfo = store.account.accountIndexMap[info[0]];
     TextStyle style = Theme.of(context).textTheme.headline4;
@@ -37,11 +39,11 @@ class CandidateDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  AccountInfo(accInfo: accInfo, address: info[0]),
+                  AccountInfo(accInfo: accInfo, address: info[0], network: network),
                   Divider(),
                   Padding(
                     padding: EdgeInsets.only(top: 8, bottom: 8),
-                    child: Text('${Fmt.token(BigInt.parse(info[1]))} $symbol',
+                    child: Text('${Fmt.token(BigInt.parse(info[1]), decimals: decimals)} $symbol',
                         style: style),
                   ),
                   Text(dic['backing'])
@@ -63,6 +65,7 @@ class CandidateDetailPage extends StatelessWidget {
                   return CandidateItem(
                     accInfo: accInfo,
                     balance: [i, voters[i]],
+                    tokenDecimals: store.settings.networkState.tokenDecimals,
                     tokenSymbol: store.settings.networkState.tokenSymbol,
                     noTap: true,
                   );

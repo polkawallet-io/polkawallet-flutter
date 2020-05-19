@@ -25,6 +25,7 @@ class ValidatorDetailPage extends StatelessWidget {
               ModalRoute.of(context).settings.arguments;
 
           Map accInfo = store.account.accountIndexMap[detail.accountId];
+          String network = store.settings.networkName;
 
           Map rewardsChartData =
               store.staking.rewardsChartDataCache[detail.accountId];
@@ -60,7 +61,7 @@ class ValidatorDetailPage extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         AccountInfo(
-                            accInfo: accInfo, address: detail.accountId),
+                            accInfo: accInfo, address: detail.accountId, network: network),
                         Divider(),
                         Padding(
                           padding: EdgeInsets.only(top: 16, left: 24),

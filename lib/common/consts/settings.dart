@@ -14,6 +14,13 @@ EndpointData networkEndpointAcala = EndpointData.fromJson(const {
   'value': 'wss://39.99.168.67/wss',
 });
 
+EndpointData networkEndpointEdgeware = EndpointData.fromJson(const {
+  'info': 'edgeware',
+  'ss58': 7,
+  'text': 'Edgeware Mainnet #3 (hosted by Commonwealth Labs)',
+  'value': 'wss://mainnet3.edgewa.re',
+});
+
 List<EndpointData> networkEndpoints = [
   networkEndpointKusama,
   EndpointData.fromJson(const {
@@ -41,6 +48,19 @@ List<EndpointData> networkEndpoints = [
     'text': 'Acala Mandala (Hosted by Acala Network)',
     'value': 'wss://testnet-node-1.acala.laminar.one/ws',
   }),
+  networkEndpointEdgeware,
+  EndpointData.fromJson(const {
+    'info': 'edgeware',
+    'ss58': 7,
+    'text': 'Edgeware Mainnet #1 (hosted by Commonwealth Labs)',
+    'value': 'wss://mainnet1.edgewa.re',
+  }),
+  EndpointData.fromJson(const {
+    'info': 'edgeware',
+    'ss58': 7,
+    'text': 'Edgeware Mainnet #2 (hosted by Commonwealth Labs)',
+    'value': 'wss://mainnet2.edgewa.re',
+  }),
 ];
 
 const network_ss58_map = {
@@ -48,6 +68,7 @@ const network_ss58_map = {
   'kusama': 2,
   'substrate': 42,
   'polkadot': 0,
+  'edgeware': 7,
 };
 
 const int acala_token_decimals = 18;

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/assets/index.dart';
 import 'package:polka_wallet/page/staking/index.dart';
 import 'package:polka_wallet/page/governance/index.dart';
@@ -23,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   _HomePageState(this.store);
 
   final AppStore store;
-
+  
   final PageController _pageController = PageController();
 
   NotificationPlugin _notificationPlugin;
@@ -37,10 +38,11 @@ class _HomePageState extends State<HomePage> {
 
   List<BottomNavigationBarItem> _navBarItems(int activeItem) {
     Map<String, String> tabs = I18n.of(context).home;
+    String colorSuffix = store.settings.endpoint.info==networkEndpointEdgeware.info?"green":"pink";
     return _tabList
         .map((i) => BottomNavigationBarItem(
               icon: Image.asset(_tabList[activeItem] == i
-                  ? 'assets/images/public/${i}_pink.png'
+                  ? 'assets/images/public/${i}_$colorSuffix.png'
                   : 'assets/images/public/${i}_dark.png'),
               title: Text(
                 tabs[i.toLowerCase()],
@@ -68,6 +70,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> _buildPages() {
+    String colorSuffix = store.settings.endpoint.info.toLowerCase()=="edgeware"?"green":"pink";
     return [0, 1, 2, 3].map((i) {
       if (i == 0) {
         // return assets page
@@ -84,7 +87,7 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   alignment: Alignment.topLeft,
-                  image: AssetImage("assets/images/assets/top_bg_pink.png"),
+                  image: AssetImage("assets/images/assets/top_bg_$colorSuffix.png"),
                   fit: BoxFit.contain,
                 ),
               ),
@@ -131,7 +134,7 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 alignment: Alignment.topLeft,
-                image: AssetImage("assets/images/staking/top_bg_pink.png"),
+                image: AssetImage("assets/images/staking/top_bg_$colorSuffix.png"),
                 fit: BoxFit.contain,
               ),
             ),

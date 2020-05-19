@@ -185,6 +185,7 @@ class _CouncilState extends State<Council> {
                               iconSize: 32,
                               accInfo: accInfo,
                               balance: [i],
+                              tokenDecimals: store.settings.networkState.tokenDecimals,
                               tokenSymbol:
                                   store.settings.networkState.tokenSymbol,
                               noTap: true,
@@ -240,6 +241,7 @@ class _CouncilState extends State<Council> {
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: i,
+                          tokenDecimals: store.settings.networkState.tokenDecimals,
                           tokenSymbol: store.settings.networkState.tokenSymbol,
                         );
                       }).toList(),
@@ -260,6 +262,7 @@ class _CouncilState extends State<Council> {
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: i,
+                          tokenDecimals: store.settings.networkState.tokenDecimals,
                           tokenSymbol: store.settings.networkState.tokenSymbol,
                         );
                       }).toList(),
@@ -281,6 +284,7 @@ class _CouncilState extends State<Council> {
                               return CandidateItem(
                                 accInfo: accInfo,
                                 balance: [i],
+                                tokenDecimals: store.settings.networkState.tokenDecimals,
                                 tokenSymbol:
                                     store.settings.networkState.tokenSymbol,
                               );
@@ -302,6 +306,7 @@ class CandidateItem extends StatelessWidget {
   CandidateItem({
     this.accInfo,
     this.balance,
+    this.tokenDecimals,
     this.tokenSymbol,
     this.switchValue,
     this.onSwitch,
@@ -311,6 +316,7 @@ class CandidateItem extends StatelessWidget {
   final Map accInfo;
   // balance == [<candidate_address>, <0x_candidate_backing_amount>]
   final List balance;
+  final int tokenDecimals;
   final String tokenSymbol;
   final bool switchValue;
   final Function(bool) onSwitch;
@@ -337,7 +343,7 @@ class CandidateItem extends StatelessWidget {
       subtitle: balance.length == 1
           ? null
           : Text(
-              '${I18n.of(context).gov['backing']}: ${Fmt.token(BigInt.parse(balance[1].toString()))} $tokenSymbol'),
+              '${I18n.of(context).gov['backing']}: ${Fmt.token(BigInt.parse(balance[1].toString()), decimals:  tokenDecimals)} $tokenSymbol'),
       onTap: noTap
           ? null
           : () => Navigator.of(context).pushNamed(CandidateDetailPage.route,

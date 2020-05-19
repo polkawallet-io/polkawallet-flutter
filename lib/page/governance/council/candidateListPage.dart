@@ -111,6 +111,7 @@ class _CandidateList extends State<CandidateListPage> {
                     return CandidateItem(
                       accInfo: accInfo,
                       balance: i,
+                      tokenDecimals: store.settings.networkState.tokenDecimals,
                       tokenSymbol: store.settings.networkState.tokenSymbol,
                       switchValue: _selectedMap[i[0]],
                       onSwitch: (value) {

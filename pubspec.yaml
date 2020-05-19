@@ -11,7 +11,7 @@ description: PolkaWallet made with Flutter.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.7.4+6
+version: 0.7.4+4
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -21,9 +21,9 @@ dependencies:
   intl: ^0.16.0
   json_annotation: ^3.0.1
   # state management with mobx & provider
-  mobx: ^1.2.0
-  flutter_mobx: ^1.1.0
-  mobx_codegen: ^1.1.0
+  mobx: ^0.4.0
+  flutter_mobx: ^0.3.6
+  mobx_codegen: ^0.3.12
   provider: ^3.1.0
   shared_preferences: ^0.5.6
   flutter_aes_ecb_pkcs5: ^0.1.1
@@ -85,6 +85,7 @@ flutter:
     # js service
     - lib/js_service_kusama/dist/main.js
     - lib/js_service_acala/dist/main.js
+    - lib/js_service_edgeware/dist/main.js
 
     # images
     ## images - settings
@@ -99,6 +100,8 @@ flutter:
     - assets/images/assets/XBTC.png
     - assets/images/assets/LDOT.png
     - assets/images/assets/KAR.png
+    - assets/images/public/edgeware.png
+    - assets/images/public/edgeware_gray.png
     ## images - acala
     - assets/images/assets/top_bg_indigo.png
     - assets/images/assets/receive_line_indigo.png
@@ -151,6 +154,50 @@ flutter:
     - assets/images/assets/KSM.png
     - assets/images/assets/FIR.png
     - assets/images/staking/top_bg_pink.png
+    - assets/images/staking/set.png
+    - assets/images/staking/ok.png
+    - assets/images/staking/error.png
+    - assets/images/staking/stake.png
+    - assets/images/staking/nominate.png
+    - assets/images/gov/time.png
+    - assets/images/profile/about.png
+    - assets/images/profile/address.png
+    - assets/images/profile/setting.png
+    ## images - edgeware
+    - assets/images/public/app.png
+    - assets/images/public/Assets_green.png
+    - assets/images/public/Governance_green.png
+    - assets/images/public/Profile_green.png
+    - assets/images/public/Staking_green.png
+    - assets/images/public/Assets_dark.png
+    - assets/images/public/Governance_dark.png
+    - assets/images/public/Profile_dark.png
+    - assets/images/public/Staking_dark.png
+    - assets/images/public/logo_about.png
+    - assets/images/public/dontscreen.png
+    - assets/images/public/copy.png
+    - assets/images/public/polkadot.png
+    - assets/images/public/westend.png
+    - assets/images/public/edgeware.png
+    - assets/images/public/substrate.png
+    - assets/images/public/default.png
+    - assets/images/assets/logo.png
+    - assets/images/assets/top_bg_green.png
+    - assets/images/assets/Assets_nav_0.png
+    - assets/images/assets/Assets_nav_1.png
+    - assets/images/assets/qrcode_green.png
+    - assets/images/assets/plus_green.png
+    - assets/images/assets/Menu_scan.png
+    - assets/images/assets/Menu_create.png
+    - assets/images/assets/assets_send.png
+    - assets/images/assets/assets_receive.png
+    - assets/images/assets/assets_up.png
+    - assets/images/assets/assets_down.png
+    - assets/images/assets/assets_fail.png
+    - assets/images/assets/success.png
+    - assets/images/assets/receive_line_green.png
+    - assets/images/assets/EDG.png
+    - assets/images/staking/top_bg_green.png
     - assets/images/staking/set.png
     - assets/images/staking/ok.png
     - assets/images/staking/error.png
