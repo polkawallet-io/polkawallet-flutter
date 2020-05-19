@@ -290,7 +290,8 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                             decimals: decimals)) {
                                       return dicAssets['amount.low'];
                                     }
-                                    if (double.parse(v.trim()) > available) {
+                                    if (_radioSelect < 2 &&
+                                        double.parse(v.trim()) > available) {
                                       return dic['homa.pool.low'];
                                     }
                                     return null;

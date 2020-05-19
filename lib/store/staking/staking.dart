@@ -2,6 +2,7 @@ import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/staking/types/txData.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'staking.g.dart';
@@ -88,11 +89,10 @@ abstract class _StakingStore with Store {
     if (ledger['rewards'] == null) {
       return null;
     }
-    BigInt res = BigInt.zero;
-    List.of(ledger['rewards']).forEach((i) {
-      res += BigInt.parse(i['total'].toString());
-    });
-    return res;
+    if (ledger['rewards']['available'] == null) {
+      return BigInt.zero;
+    }
+    return Fmt.balanceInt(ledger['rewards']['available'].toString());
   }
 
   @action

@@ -105,7 +105,7 @@ class UI {
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text('v$latest'),
+          title: Text('v$latestBeta'),
           content: Padding(
             padding: EdgeInsets.only(top: 12),
             child: Text(needUpdate ? dic['update.up'] : dic['update.latest']),

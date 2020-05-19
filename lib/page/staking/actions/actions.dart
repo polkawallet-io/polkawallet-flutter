@@ -266,6 +266,9 @@ class _StakingActions extends State<StakingActions>
 
     return Observer(
       builder: (_) {
+        if (store.settings.loading) {
+          return CupertinoActivityIndicator();
+        }
         List<Widget> list = <Widget>[
           _buildActionCard(),
           Container(

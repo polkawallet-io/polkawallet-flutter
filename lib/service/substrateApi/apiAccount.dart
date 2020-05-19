@@ -61,8 +61,9 @@ class ApiAccount {
 
   Future<Map> estimateTxFees(Map txInfo, List params, {String rawParam}) async {
     String param = rawParam != null ? rawParam : jsonEncode(params);
-    Map res = await apiRoot
-        .evalJavascript('account.txFeeEstimate(${jsonEncode(txInfo)}, $param)');
+    Map res = await apiRoot.evalJavascript(
+        'account.txFeeEstimate(${jsonEncode(txInfo)}, $param)',
+        allowRepeat: true);
     return res;
   }
 

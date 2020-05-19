@@ -39,25 +39,25 @@ class _PayoutPageState extends State<PayoutPage> {
     var dic = I18n.of(context).staking;
     final int decimals = store.settings.networkState.tokenDecimals;
 
-    List rewards = store.staking.ledger['rewards'];
-    if (rewards.length == 1) {
+    List rewards = store.staking.ledger['rewards']['validators'];
+    if (rewards.length == 1 && List.of(rewards[0]['eras']).length == 1) {
       var args = {
         "title": dic['action.payout'],
         "txInfo": {
           "module": 'staking',
-          "call": 'payoutNominator',
+          "call": 'payoutStakers',
         },
         "detail": jsonEncode({
-          'amount':
-              Fmt.token(store.staking.accountRewardTotal, length: decimals),
-          'era': rewards[0]['era'],
-          'nominating': rewards[0]['nominating'],
+          'era': rewards[0]['eras'][0]['era'],
+          'validator': rewards[0]['validatorId'],
+          'amount': Fmt.token(BigInt.parse(rewards[0]['available'].toString()),
+              length: decimals),
         }),
         "params": [
+          // validatorId
+          rewards[0]['validatorId'],
           // era
-          rewards[0]['era'],
-          // nominating
-          jsonEncode(rewards[0]['nominating']),
+          rewards[0]['eras'][0]['era'],
         ],
         'onFinish': (BuildContext txPageContext, Map res) {
           Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
@@ -68,11 +68,14 @@ class _PayoutPageState extends State<PayoutPage> {
       return;
     }
 
-    var params = rewards
-        .map((i) =>
-            'api.tx.staking.payoutNominator(${i['era']}, ${jsonEncode(i['nominating'])})')
-        .toList()
-        .join(',');
+    List params = [];
+    rewards.forEach((i) {
+      String validatorId = i['validatorId'];
+      List.of(i['eras']).forEach((era) {
+        params
+            .add('api.tx.staking.payoutStakers("$validatorId", ${era['era']})');
+      });
+    });
     var args = {
       "title": dic['action.payout'],
       "txInfo": {
@@ -81,12 +84,10 @@ class _PayoutPageState extends State<PayoutPage> {
       },
       "detail": jsonEncode({
         'amount': Fmt.token(store.staking.accountRewardTotal, length: decimals),
-        'txs': rewards
-            .map((i) => {'era': i['era'], 'nominating': i['nominating']})
-            .toList(),
+        'txs': params,
       }),
       "params": [],
-      "rawParam": '[[$params]]',
+      "rawParam": '[[${params.join(',')}]]',
       'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalBondingRefreshKey.currentState.show();
