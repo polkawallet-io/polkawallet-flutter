@@ -25,6 +25,8 @@ const Map<String, String> enAccount = {
   'backup.confirm':
       'Please click on the mnemonic in the correct order to confirm that the backup is correct',
   'backup.reset': 'Reset',
+  'backup.error':
+      'This device does not support encrypt type sr25519, you can select [Advanced Options -> Encrypt Type -> ed25519] to continue.',
   'import.type': 'Source Type',
   'import.encrypt': 'Encrypt Type',
   'import.invalid': 'Invalid',
@@ -57,6 +59,7 @@ const Map<String, String> zhAccount = {
   'backup': '确认助记词',
   'backup.confirm': '请按正确顺序点击助记词，以确认备份正确',
   'backup.reset': '重置',
+  'backup.error': '该设备不支持 sr25519 加密方式，请选择【高级选项 -> 加密类型 -> ed25519】',
   'import.type': '导入类型',
   'import.encrypt': '加密类型',
   'import.invalid': '无效的',

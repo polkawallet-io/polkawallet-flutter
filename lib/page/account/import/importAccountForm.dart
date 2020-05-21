@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/accountAdvanceOption.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -30,14 +30,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
     AccountStore.seedTypeRawSeed,
     AccountStore.seedTypeKeystore,
   ];
-  final List<String> _typeOptions = ['sr25519', 'ed25519'];
 
   int _keySelection = 0;
-  int _typeSelection = 0;
-
-  bool _expanded = false;
-  String _derivePath = '';
-  String _pathError;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -45,103 +39,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
   final TextEditingController _nameCtrl = new TextEditingController();
   final TextEditingController _passCtrl = new TextEditingController();
 
-  final TextEditingController _pathCtrl = new TextEditingController();
-
-  String _checkDerivePath(String path) {
-    String seed = _keyCtrl.text.trim();
-    if (seed != "" && path != _derivePath) {
-      webApi.account
-          .checkDerivePath(seed, path, _typeOptions[_typeSelection])
-          .then((res) {
-        setState(() {
-          _derivePath = path;
-          _pathError = res != null ? 'Invalid derive path' : null;
-        });
-      });
-    }
-    return _pathError;
-  }
-
-  Widget _buildAdvancedOptions() {
-    final dic = I18n.of(context).account;
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 8),
-          child: GestureDetector(
-            child: Padding(
-              padding: EdgeInsets.only(left: 8, top: 8),
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    _expanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                    size: 30,
-                    color: Theme.of(context).unselectedWidgetColor,
-                  ),
-                  Text(dic['advanced'])
-                ],
-              ),
-            ),
-            onTap: () {
-              // clear state while advanced options closed
-              if (_expanded) {
-                setState(() {
-                  _typeSelection = 0;
-                  _pathCtrl.text = '';
-                });
-              }
-              setState(() {
-                _expanded = !_expanded;
-              });
-            },
-          ),
-        ),
-        _expanded
-            ? ListTile(
-                title: Text(I18n.of(context).account['import.encrypt']),
-                subtitle: Text(_typeOptions[_typeSelection]),
-                trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                onTap: () {
-                  showCupertinoModalPopup(
-                    context: context,
-                    builder: (_) => Container(
-                      height: MediaQuery.of(context).copyWith().size.height / 3,
-                      child: CupertinoPicker(
-                        backgroundColor: Colors.white,
-                        itemExtent: 56,
-                        scrollController: FixedExtentScrollController(
-                            initialItem: _typeSelection),
-                        children: _typeOptions
-                            .map((i) => Padding(
-                                padding: EdgeInsets.all(16), child: Text(i)))
-                            .toList(),
-                        onSelectedItemChanged: (v) {
-                          setState(() {
-                            _typeSelection = v;
-                          });
-                        },
-                      ),
-                    ),
-                  );
-                },
-              )
-            : Container(),
-        _expanded
-            ? Padding(
-                padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: '//hard/soft///password',
-                    labelText: dic['path'],
-                  ),
-                  controller: _pathCtrl,
-                  validator: _checkDerivePath,
-                ),
-              )
-            : Container(),
-      ],
-    );
-  }
+  String _keyCtrlText = '';
+  AccountAdvanceOptionParams _advanceOptions = AccountAdvanceOptionParams();
 
   Widget _buildNameAndPassInput() {
     final Map<String, String> dic = I18n.of(context).account;
@@ -228,13 +127,15 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
         });
       }
     }
+    setState(() {
+      _keyCtrlText = v.trim();
+    });
   }
 
   @override
   void dispose() {
     _nameCtrl.dispose();
     _passCtrl.dispose();
-    _pathCtrl.dispose();
     _keyCtrl.dispose();
     super.dispose();
   }
@@ -297,7 +198,14 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                 ),
                 _keySelection == 2
                     ? _buildNameAndPassInput()
-                    : _buildAdvancedOptions(),
+                    : AccountAdvanceOption(
+                        seed: _keyCtrlText,
+                        onChange: (data) {
+                          setState(() {
+                            _advanceOptions = data;
+                          });
+                        },
+                      ),
               ],
             ),
           ),
@@ -306,8 +214,9 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
           padding: EdgeInsets.all(16),
           child: RoundedButton(
             text: I18n.of(context).home['next'],
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
+            onPressed: () async {
+              if (_formKey.currentState.validate() &&
+                  !(_advanceOptions.error ?? false)) {
                 if (_keySelection == 2) {
                   accountStore.setNewAccount(
                       _nameCtrl.text.trim(), _passCtrl.text.trim());
@@ -315,8 +224,9 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                 accountStore.setNewAccountKey(_keyCtrl.text.trim());
                 onSubmit({
                   'keyType': _keyOptions[_keySelection],
-                  'cryptoType': _typeOptions[_typeSelection],
-                  'derivePath': _pathCtrl.text.trim(),
+                  'cryptoType': _advanceOptions.type ??
+                      AccountAdvanceOptionParams.encryptTypeSR,
+                  'derivePath': _advanceOptions.path ?? '',
                   'finish': _keySelection == 2 ? true : null,
                 });
               }

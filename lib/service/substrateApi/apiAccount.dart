@@ -163,7 +163,9 @@ class ApiAccount {
   Future<String> checkDerivePath(
       String seed, String path, String pairType) async {
     String res = await apiRoot.evalJavascript(
-        'account.checkDerivePath("$seed", "$path", "$pairType")');
+      'account.checkDerivePath("$seed", "$path", "$pairType")',
+      allowRepeat: true,
+    );
     return res;
   }
 }
