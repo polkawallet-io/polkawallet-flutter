@@ -136,7 +136,7 @@ abstract class _SettingsStore with Store {
   @action
   Future<void> addContact(Map<String, dynamic> con) async {
     await LocalStorage.addContact(con);
-    loadContacts();
+    await loadContacts();
   }
 
   @action

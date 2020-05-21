@@ -182,7 +182,7 @@ class _StakingActions extends State<StakingActions>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      store.account.currentAccount.name,
+                      Fmt.accountName(context, store.account.currentAccount),
                       style: Theme.of(context).textTheme.headline4,
                     ),
                     Text(Fmt.address(store.account.currentAddress))

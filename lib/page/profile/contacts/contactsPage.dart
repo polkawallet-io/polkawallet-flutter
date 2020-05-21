@@ -55,7 +55,7 @@ class ContactsPage extends StatelessWidget {
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: Text(dic['contact.delete.warn']),
-          content: Text(i.name),
+          content: Text(Fmt.accountName(context, i)),
           actions: <Widget>[
             CupertinoButton(
               child: Text(I18n.of(context).home['cancel']),
@@ -80,7 +80,7 @@ class ContactsPage extends StatelessWidget {
           List<Widget> ls = store.contactList.map((i) {
             return ListTile(
               leading: AddressIcon(i.address),
-              title: Text(i.name),
+              title: Text(Fmt.accountName(context, i)),
               subtitle: Text(Fmt.address(i.address)),
               trailing: IconButton(
                 icon: Icon(Icons.more_vert),

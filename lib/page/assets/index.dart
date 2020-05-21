@@ -113,7 +113,7 @@ class _AssetsState extends State<Assets> {
         children: <Widget>[
           ListTile(
             leading: AddressIcon('', pubKey: acc.pubKey),
-            title: Text(acc.name ?? ''),
+            title: Text(Fmt.accountName(context, acc)),
             subtitle: Text(network),
             trailing: isAcala
                 ? GestureDetector(

@@ -33,7 +33,7 @@ class Profile extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 16),
               child: ListTile(
                 leading: AddressIcon('', pubKey: store.currentAccount.pubKey),
-                title: Text(acc.name ?? 'name',
+                title: Text(Fmt.accountName(context, acc),
                     style: TextStyle(fontSize: 16, color: Colors.white)),
                 subtitle: Text(
                   Fmt.address(store.currentAddress) ?? '',
@@ -41,26 +41,28 @@ class Profile extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              padding: EdgeInsets.all(24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  RaisedButton(
-                    padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
-                    color: primaryColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24)),
-                    child: Text(
-                      dic['account'],
-                      style: Theme.of(context).textTheme.button,
+            !(acc.observation ?? false)
+                ? Container(
+                    padding: EdgeInsets.all(24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        RaisedButton(
+                          padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
+                          color: primaryColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24)),
+                          child: Text(
+                            dic['account'],
+                            style: Theme.of(context).textTheme.button,
+                          ),
+                          onPressed: () => Navigator.pushNamed(
+                              context, AccountManagePage.route),
+                        )
+                      ],
                     ),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, AccountManagePage.route),
                   )
-                ],
-              ),
-            ),
+                : Container(height: 24),
             ListTile(
               leading: Image.asset('assets/images/profile/address.png'),
               title: Text(dic['contact']),

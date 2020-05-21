@@ -110,8 +110,12 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
       ),
     ];
 
+    /// first item is current account
     List<AccountData> accounts = [store.account.currentAccount];
+
+    /// add optional accounts
     accounts.addAll(store.account.optionalAccounts);
+
     res.addAll(accounts.map((i) {
       String address =
           store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
@@ -122,7 +126,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         margin: EdgeInsets.only(bottom: 16),
         child: ListTile(
           leading: AddressIcon('', pubKey: i.pubKey),
-          title: Text(i.name),
+          title: Text(Fmt.accountName(context, i)),
           subtitle: Text(Fmt.address(address ?? 'address xxxx')),
           onTap: _networkChanging ? null : () => _onSelect(i, address),
         ),

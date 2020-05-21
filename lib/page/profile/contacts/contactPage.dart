@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/TapTooltip.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/store/account.dart';
-import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -12,7 +13,7 @@ class ContactPage extends StatefulWidget {
   ContactPage(this.store);
 
   static final String route = '/profile/contact';
-  final SettingsStore store;
+  final AppStore store;
 
   @override
   _Contact createState() => _Contact(store);
@@ -20,13 +21,15 @@ class ContactPage extends StatefulWidget {
 
 class _Contact extends State<ContactPage> {
   _Contact(this.store);
-  final SettingsStore store;
+  final AppStore store;
 
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _addressCtrl = new TextEditingController();
   final TextEditingController _nameCtrl = new TextEditingController();
   final TextEditingController _memoCtrl = new TextEditingController();
+
+  bool _isObservation = false;
 
   AccountData _args;
 
@@ -39,21 +42,27 @@ class _Contact extends State<ContactPage> {
       _addressCtrl.text = _args.address;
       _nameCtrl.text = _args.name;
       _memoCtrl.text = _args.memo;
+      _isObservation = _args.observation;
     }
   }
 
-  void _onSave() {
+  Future<void> _onSave() async {
     if (_formKey.currentState.validate()) {
       var dic = I18n.of(context).profile;
       String addr = _addressCtrl.text.trim();
+      Map pubKeyAddress = await webApi.account.decodeAddress([addr]);
+      String pubKey = pubKeyAddress.keys.toList()[0];
       Map<String, dynamic> con = {
         'address': addr,
         'name': _nameCtrl.text,
-        'memo': _memoCtrl.text
+        'memo': _memoCtrl.text,
+        'observation': _isObservation,
+        'pubKey': pubKey,
       };
       if (_args == null) {
         // create new contact
-        int exist = store.contactList.indexWhere((i) => i.address == addr);
+        int exist =
+            store.settings.contactList.indexWhere((i) => i.address == addr);
         if (exist > -1) {
           showCupertinoDialog(
             context: context,
@@ -70,16 +79,22 @@ class _Contact extends State<ContactPage> {
               );
             },
           );
+          return;
         } else {
-          store.addContact(con);
-          webApi.account.getAddressIcons([addr]);
-          Navigator.of(context).pop();
+          store.settings.addContact(con);
         }
       } else {
         // edit contact
-        store.updateContact(con);
-        Navigator.of(context).pop();
+        store.settings.updateContact(con);
       }
+
+      // get contact info
+      if (_isObservation) {
+        webApi.account.encodeAddress([pubKey]);
+        webApi.account.getPubKeyIcons([pubKey]);
+      }
+      webApi.account.getAddressIcons([addr]);
+      Navigator.of(context).pop();
     }
   }
 
@@ -105,7 +120,7 @@ class _Contact extends State<ContactPage> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: Text(I18n.of(context).profile['contact']),
+        title: Text(dic['contact']),
         centerTitle: true,
         actions: _args == null ? action : null,
       ),
@@ -116,41 +131,77 @@ class _Contact extends State<ContactPage> {
               child: Form(
                 key: _formKey,
                 child: ListView(
-                  padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  padding: EdgeInsets.only(top: 8, bottom: 8),
                   children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(
-                        hintText: dic['contact.address'],
-                        labelText: dic['contact.address'],
+                    Padding(
+                      padding: EdgeInsets.only(left: 16, right: 16),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          hintText: dic['contact.address'],
+                          labelText: dic['contact.address'],
+                        ),
+                        controller: _addressCtrl,
+                        validator: (v) {
+                          if (!Fmt.isAddress(v.trim())) {
+                            return dic['contact.address.error'];
+                          }
+                          return null;
+                        },
+                        readOnly: _args != null,
                       ),
-                      controller: _addressCtrl,
-                      validator: (v) {
-                        if (!Fmt.isAddress(v.trim())) {
-                          return dic['contact.address.error'];
-                        }
-                        return null;
-                      },
-                      readOnly: _args != null,
                     ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        hintText: dic['contact.name'],
-                        labelText: dic['contact.name'],
+                    Padding(
+                      padding: EdgeInsets.only(left: 16, right: 16),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          hintText: dic['contact.name'],
+                          labelText: dic['contact.name'],
+                        ),
+                        controller: _nameCtrl,
+                        validator: (v) {
+                          return v.trim().length > 0
+                              ? null
+                              : dic['contact.name.error'];
+                        },
                       ),
-                      controller: _nameCtrl,
-                      validator: (v) {
-                        return v.trim().length > 0
-                            ? null
-                            : dic['contact.name.error'];
-                      },
                     ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        hintText: dic['contact.memo'],
-                        labelText: dic['contact.memo'],
+                    Padding(
+                      padding: EdgeInsets.only(left: 16, right: 16),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          hintText: dic['contact.memo'],
+                          labelText: dic['contact.memo'],
+                        ),
+                        controller: _memoCtrl,
                       ),
-                      controller: _memoCtrl,
                     ),
+                    Row(
+                      children: <Widget>[
+                        Checkbox(
+                          value: _isObservation,
+                          onChanged: (v) {
+                            setState(() {
+                              _isObservation = v;
+                            });
+                          },
+                        ),
+                        GestureDetector(
+                          child: Text(I18n.of(context).account['observe']),
+                          onTap: () {
+                            setState(() {
+                              _isObservation = !_isObservation;
+                            });
+                          },
+                        ),
+                        TapTooltip(
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 8),
+                            child: Icon(Icons.info_outline, size: 16),
+                          ),
+                          message: I18n.of(context).account['observe.brief'],
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -159,7 +210,7 @@ class _Contact extends State<ContactPage> {
               margin: EdgeInsets.all(16),
               child: RoundedButton(
                 text: dic['contact.save'],
-                onPressed: _onSave,
+                onPressed: () => _onSave(),
               ),
             ),
           ],

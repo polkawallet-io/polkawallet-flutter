@@ -71,14 +71,18 @@ abstract class _AccountStore with Store {
 
   @computed
   ObservableList<AccountData> get optionalAccounts {
-    int ss58 = rootStore.settings.customSS58Format['value'];
-    if (rootStore.settings.customSS58Format['info'] ==
-        default_ss58_prefix['info']) {
-      ss58 = rootStore.settings.endpoint.ss58;
-      print(ss58);
-    }
-    return ObservableList.of(accountList.where((i) =>
-        (pubKeyAddressMap[ss58][i.pubKey] ?? i.address) != currentAddress));
+    return ObservableList.of(
+        accountListAll.where((i) => i.pubKey != currentAccount.pubKey));
+  }
+
+  /// accountList with observations
+  @computed
+  ObservableList<AccountData> get accountListAll {
+    ObservableList<AccountData> accList = ObservableList.of(accountList);
+    List<AccountData> contactList = rootStore.settings.contactList.toList();
+    contactList.retainWhere((i) => i.observation ?? false);
+    accList.addAll(contactList);
+    return accList;
   }
 
   @computed
@@ -200,12 +204,14 @@ abstract class _AccountStore with Store {
     accountList =
         ObservableList.of(accList.map((i) => AccountData.fromJson(i)));
 
-    if (accountList.length > 0) {
-      String pubKey = await LocalStorage.getCurrentAccount();
-      int accIndex = accList.indexWhere((i) => i['pubKey'] == pubKey);
+    String pubKey = await LocalStorage.getCurrentAccount();
+    if (accountListAll.length > 0) {
+      int accIndex = accountListAll.indexWhere((i) => i.pubKey == pubKey);
       if (accIndex >= 0) {
-        Map<String, dynamic> acc = accList[accIndex];
-        currentAccount = AccountData.fromJson(acc);
+        currentAccount = accountListAll[accIndex];
+        print(currentAccount);
+      } else {
+        currentAccount = accountListAll[0];
       }
     }
     loading = false;
@@ -290,7 +296,6 @@ abstract class _AccountStore with Store {
       Map.of(data[ss58]).forEach((k, v) {
         addresses[k] = v;
       });
-      print(addresses);
       // update state
       pubKeyAddressMap[int.parse(ss58)] = addresses;
     });
@@ -360,6 +365,9 @@ abstract class _AccountData with Store {
 
   @observable
   String memo = '';
+
+  @observable
+  bool observation = false;
 }
 
 class AccountBondedInfo {

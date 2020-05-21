@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 import 'package:polka_wallet/page/profile/account/changeNamePage.dart';
 import 'package:polka_wallet/page/profile/account/changePasswordPage.dart';
 import 'package:polka_wallet/page/profile/account/exportAccountPage.dart';
@@ -17,76 +18,24 @@ class AccountManagePage extends StatelessWidget {
   final Api api = webApi;
   final AppStore store;
 
-  final TextEditingController _passCtrl = new TextEditingController();
-
   void _onDeleteAccount(BuildContext context) {
-    final Map<String, String> dic = I18n.of(context).profile;
-    final Map<String, String> accDic = I18n.of(context).account;
-
-    Future<void> onOk() async {
-      var res = await api.account.checkAccountPassword(_passCtrl.text);
-      if (res == null) {
-        showCupertinoDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CupertinoAlertDialog(
-              title: Text(dic['pass.error']),
-              content: Text(dic['pass.error.txt']),
-              actions: <Widget>[
-                CupertinoButton(
-                  child: Text(I18n.of(context).home['ok']),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        store.account.removeAccount(store.account.currentAccount).then((_) {
-          String pubKey = store.account.currentAccount.pubKey;
-          // refresh balance
-          store.assets.loadAccountCache();
-          webApi.assets.fetchBalance(pubKey);
-          // refresh user's staking info
-          store.staking.loadAccountCache();
-          webApi.staking.fetchAccountStaking(pubKey);
-        });
-        Navigator.popUntil(context, ModalRoute.withName('/'));
-      }
-    }
-
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text(dic['delete.confirm']),
-          content: Padding(
-            padding: EdgeInsets.only(top: 16),
-            child: CupertinoTextField(
-              placeholder: dic['pass.old'],
-              controller: _passCtrl,
-              onChanged: (v) {
-                return Fmt.checkPassword(v.trim())
-                    ? null
-                    : accDic['create.password.error'];
-              },
-              obscureText: true,
-              clearButtonMode: OverlayVisibilityMode.editing,
-            ),
-          ),
-          actions: <Widget>[
-            CupertinoButton(
-              child: Text(I18n.of(context).home['cancel']),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _passCtrl.clear();
-              },
-            ),
-            CupertinoButton(
-              child: Text(I18n.of(context).home['ok']),
-              onPressed: onOk,
-            ),
-          ],
+        return PasswordInputDialog(
+          title: Text(I18n.of(context).profile['delete.confirm']),
+          onOk: (_) {
+            store.account.removeAccount(store.account.currentAccount).then((_) {
+              String pubKey = store.account.currentAccount.pubKey;
+              // refresh balance
+              store.assets.loadAccountCache();
+              webApi.assets.fetchBalance(pubKey);
+              // refresh user's staking info
+              store.staking.loadAccountCache();
+              webApi.staking.fetchAccountStaking(pubKey);
+            });
+            Navigator.popUntil(context, ModalRoute.withName('/'));
+          },
         );
       },
     );

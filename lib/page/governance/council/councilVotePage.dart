@@ -36,7 +36,9 @@ class _CouncilVote extends State<CouncilVotePage> {
     var res = await Navigator.of(context)
         .pushNamed(CandidateListPage.route, arguments: _selected);
     if (res != null) {
-      _selected = List<List>.of(res);
+      setState(() {
+        _selected = List<List>.of(res);
+      });
     }
   }
 

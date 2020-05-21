@@ -32,6 +32,10 @@ const Map<String, String> enAccount = {
       'account exist, do you want to override the existing account?',
   'advanced': 'Advanced Options',
   'path': 'Secret derivation path',
+  'observe': 'Observation',
+  'observe.brief':
+      '\nMark this address as observation,\nthen you can select this address\nin account select page, to watch\nit\'s assets and actions\n',
+  'observe.tx': 'For observing only',
 };
 
 const Map<String, String> zhAccount = {
@@ -63,4 +67,8 @@ const Map<String, String> zhAccount = {
   'import.duplicate': '账户已存在，要覆盖原有账户吗？',
   'advanced': '高级选项',
   'path': '加密派生路径',
+  'observe': '观察账户',
+  'observe.brief':
+      '\n将该地址标记为观察账户后，\n您可以在账户切换页面选择该地址，\n在钱包中观察该地址的资产、\n操作记录等信息。\n',
+  'observe.tx': '仅供查看',
 };

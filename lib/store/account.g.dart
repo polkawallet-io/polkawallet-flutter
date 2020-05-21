@@ -14,7 +14,8 @@ AccountData _$AccountDataFromJson(Map<String, dynamic> json) {
     ..pubKey = json['pubKey'] as String
     ..encoding = json['encoding'] as Map<String, dynamic>
     ..meta = json['meta'] as Map<String, dynamic>
-    ..memo = json['memo'] as String;
+    ..memo = json['memo'] as String
+    ..observation = json['observation'] as bool;
 }
 
 Map<String, dynamic> _$AccountDataToJson(AccountData instance) =>
@@ -26,6 +27,7 @@ Map<String, dynamic> _$AccountDataToJson(AccountData instance) =>
       'encoding': instance.encoding,
       'meta': instance.meta,
       'memo': instance.memo,
+      'observation': instance.observation,
     };
 
 // **************************************************************************
@@ -575,6 +577,21 @@ mixin _$AccountData on _AccountData, Store {
     });
   }
 
+  final _$observationAtom = Atom(name: '_AccountData.observation');
+
+  @override
+  bool get observation {
+    _$observationAtom.reportRead();
+    return super.observation;
+  }
+
+  @override
+  set observation(bool value) {
+    _$observationAtom.reportWrite(value, super.observation, () {
+      super.observation = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
@@ -584,7 +601,8 @@ encoded: ${encoded},
 pubKey: ${pubKey},
 encoding: ${encoding},
 meta: ${meta},
-memo: ${memo}
+memo: ${memo},
+observation: ${observation}
     ''';
   }
 }

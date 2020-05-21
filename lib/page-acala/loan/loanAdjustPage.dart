@@ -292,7 +292,6 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
         globalLoanRefreshKey.currentState.show();
       }
     };
-    print(jsonEncode(params['params']));
     Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
   }
 

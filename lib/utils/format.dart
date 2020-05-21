@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:convert/convert.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Fmt {
   static String passwordToEncryptKey(String password) {
@@ -303,5 +306,9 @@ class Fmt {
       res = '$day days $res';
     }
     return res;
+  }
+
+  static String accountName(BuildContext context, AccountData acc) {
+    return '${acc.name ?? ''}${(acc.observation ?? false) ? ' (${I18n.of(context).account['observe']})' : ''}';
   }
 }

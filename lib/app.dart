@@ -131,7 +131,9 @@ class _WalletAppState extends State<WalletApp> {
       UI.checkUpdate(context, autoCheck: true);
     }
 
-    return _appStore.account.accountList.length;
+//    List accList = _appStore.account.accountList.toList();
+//    accList.addAll(_appStore.settings.contactList);
+    return _appStore.account.accountListAll.length;
   }
 
   @override
@@ -230,7 +232,7 @@ class _WalletAppState extends State<WalletApp> {
         AccountManagePage.route: (_) => AccountManagePage(_appStore),
         ContactsPage.route: (_) => ContactsPage(_appStore.settings),
         ContactListPage.route: (_) => ContactListPage(_appStore.settings),
-        ContactPage.route: (_) => ContactPage(_appStore.settings),
+        ContactPage.route: (_) => ContactPage(_appStore),
         ChangeNamePage.route: (_) => ChangeNamePage(_appStore.account),
         ChangePasswordPage.route: (_) => ChangePasswordPage(_appStore.account),
         SettingsPage.route: (_) =>

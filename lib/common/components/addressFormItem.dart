@@ -45,7 +45,7 @@ class AddressFormItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(account.name),
+                    Text(Fmt.accountName(context, account)),
                     Text(
                       Fmt.address(address),
                       style: TextStyle(fontSize: 14, color: grey),
