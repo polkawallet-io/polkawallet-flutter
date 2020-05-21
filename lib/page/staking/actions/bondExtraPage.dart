@@ -81,8 +81,7 @@ class _BondExtraPageState extends State<BondExtraPage> {
                             return assetDic['amount.error'];
                           }
                           if (double.parse(v.trim()) >=
-                              available / BigInt.from(pow(10, decimals)) -
-                                  0.02) {
+                              available / BigInt.from(pow(10, decimals))) {
                             return assetDic['amount.low'];
                           }
                           return null;

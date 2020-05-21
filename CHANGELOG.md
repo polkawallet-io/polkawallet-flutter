@@ -5,6 +5,8 @@
 - add duplicate account import check
 - fix airdrop bug in IOS
 - add loading dialog while importing account
+- add advanced options in create account page
+- fix staking unbond button bug
 
 # 0.7.4
 - Add Acala Liquid DOT

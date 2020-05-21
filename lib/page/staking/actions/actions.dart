@@ -571,18 +571,13 @@ class StakingActionsPanel extends StatelessWidget {
     Color actionButtonColor = Theme.of(context).primaryColor;
     Color disabledColor = Theme.of(context).unselectedWidgetColor;
 
-    String bondButtonString;
-    bool unbondDisabled = false;
-    Function onBondTap = () => null;
+    String bondButtonString = dic['action.bondAdjust'];
     bool setPayeeDisabled = true;
     Function onSetPayeeTap = () => null;
     bool setControllerDisabled = true;
     Function onSetControllerTap = () => null;
     if (isStash) {
       if (bonded > BigInt.zero) {
-        bondButtonString = dic['action.bondExtra'];
-        onBondTap = () => Navigator.of(context).pushNamed(BondExtraPage.route);
-
         setControllerDisabled = false;
         onSetControllerTap = () => Navigator.of(context)
             .pushNamed(SetControllerPage.route, arguments: controller);
@@ -594,18 +589,12 @@ class StakingActionsPanel extends StatelessWidget {
         }
       } else {
         bondButtonString = dic['action.bond'];
-        onBondTap = () => Navigator.of(context).pushNamed(BondPage.route);
       }
     } else {
-      bondButtonString = dic['action.unbond'];
       if (bonded > BigInt.zero) {
-        onBondTap = () => Navigator.of(context).pushNamed(UnBondPage.route);
-
         setPayeeDisabled = false;
         onSetPayeeTap =
             () => Navigator.of(context).pushNamed(SetPayeePage.route);
-      } else {
-        unbondDisabled = true;
       }
     }
 
@@ -619,19 +608,51 @@ class StakingActionsPanel extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   OutlinedCircle(
-                    icon: isStash ? Icons.add : Icons.remove,
-                    color: unbondDisabled ? disabledColor : actionButtonColor,
+                    icon: Icons.add,
+                    color: actionButtonColor,
                   ),
                   Text(
                     bondButtonString,
                     style: TextStyle(
-                      color: unbondDisabled ? disabledColor : actionButtonColor,
+                      color: actionButtonColor,
                       fontSize: 11,
                     ),
                   )
                 ],
               ),
-              onTap: onBondTap,
+              onTap: () {
+                if (isStash && bonded == BigInt.zero) {
+                  Navigator.of(context).pushNamed(BondPage.route);
+                  return;
+                }
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (BuildContext context) => CupertinoActionSheet(
+                    actions: <Widget>[
+                      CupertinoActionSheetAction(
+                        child: Text(dic['action.bondExtra']),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pushNamed(BondExtraPage.route);
+                        },
+                      ),
+                      CupertinoActionSheetAction(
+                        child: Text(dic['action.unbond']),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pushNamed(UnBondPage.route);
+                        },
+                      ),
+                    ],
+                    cancelButton: CupertinoActionSheetAction(
+                      child: Text(I18n.of(context).home['cancel']),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),
