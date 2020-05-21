@@ -150,6 +150,27 @@ class UI {
       },
     );
   }
+
+  static Future<void> alertWASM(BuildContext context, Function onCancel) async {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Container(),
+          content: Text(I18n.of(context).account['backup.error']),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(I18n.of(context).home['ok']),
+              onPressed: () {
+                Navigator.of(context).pop();
+                onCancel();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 // access the refreshIndicator globally

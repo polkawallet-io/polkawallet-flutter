@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/accountAdvanceOption.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class BackupAccountPage extends StatefulWidget {
@@ -21,10 +23,44 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
 
   final AppStore store;
 
+  AccountAdvanceOptionParams _advanceOptions = AccountAdvanceOptionParams();
   int _step = 0;
 
   List<String> _wordsSelected;
   List<String> _wordsLeft;
+
+  Future<void> _importAccount() async {
+    var acc = await webApi.account.importAccount(
+      cryptoType:
+          _advanceOptions.type ?? AccountAdvanceOptionParams.encryptTypeSR,
+      derivePath: _advanceOptions.path ?? '',
+    );
+
+    if (acc['error'] != null) {
+      UI.alertWASM(context, () {
+        setState(() {
+          _step = 0;
+        });
+      });
+      return;
+    }
+
+    await store.account.addAccount(acc, store.account.newAccount.password);
+    webApi.account.encodeAddress([acc['pubKey']]);
+
+    store.assets.loadAccountCache();
+    store.staking.loadAccountCache();
+
+    // fetch info for the imported account
+    String pubKey = acc['pubKey'];
+    webApi.assets.fetchBalance(pubKey);
+    webApi.staking.fetchAccountStaking(pubKey);
+    webApi.account.fetchAccountsBonded([pubKey]);
+    webApi.account.getPubKeyIcons([pubKey]);
+
+    // go to home page
+    Navigator.popUntil(context, ModalRoute.withName('/'));
+  }
 
   @override
   void initState() {
@@ -47,19 +83,24 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
             children: <Widget>[
               Expanded(
                 child: ListView(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.only(top: 16),
                   children: <Widget>[
-                    Text(
-                      i18n['create.warn3'],
-                      style: Theme.of(context).textTheme.headline4,
+                    Padding(
+                      padding: EdgeInsets.only(left: 16, right: 16),
+                      child: Text(
+                        i18n['create.warn3'],
+                        style: Theme.of(context).textTheme.headline4,
+                      ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(top: 16, bottom: 32),
+                      padding: EdgeInsets.all(16),
                       child: Text(
                         i18n['create.warn4'],
                       ),
                     ),
                     Container(
+                      margin: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
@@ -67,11 +108,18 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
                             width: 1,
                           ),
                           borderRadius: BorderRadius.all(Radius.circular(4))),
-                      padding: EdgeInsets.all(16),
                       child: Text(
                         store.account.newAccount.key ?? '',
                         style: Theme.of(context).textTheme.headline4,
                       ),
+                    ),
+                    AccountAdvanceOption(
+                      seed: store.account.newAccount.key ?? '',
+                      onChange: (data) {
+                        setState(() {
+                          _advanceOptions = data;
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -81,6 +129,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
                 child: RoundedButton(
                   text: I18n.of(context).home['next'],
                   onPressed: () {
+                    if (_advanceOptions.error ?? false) return;
                     setState(() {
                       _step = 1;
                       _wordsSelected = <String>[];
@@ -172,13 +221,10 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
               padding: EdgeInsets.all(16),
               child: RoundedButton(
                 text: I18n.of(context).home['next'],
-                onPressed: _wordsSelected.join(' ') ==
-                        store.account.newAccount.key
-                    ? () async {
-                        webApi.account.importAccount();
-                        Navigator.popUntil(context, ModalRoute.withName('/'));
-                      }
-                    : null,
+                onPressed:
+                    _wordsSelected.join(' ') == store.account.newAccount.key
+                        ? () => _importAccount()
+                        : null,
               ),
             ),
           ],

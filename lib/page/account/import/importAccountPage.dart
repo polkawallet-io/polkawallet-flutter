@@ -4,6 +4,7 @@ import 'package:polka_wallet/page/account/create/createAccountForm.dart';
 import 'package:polka_wallet/page/account/import/importAccountForm.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -35,7 +36,6 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        final Map<String, String> accDic = I18n.of(context).account;
         return CupertinoAlertDialog(
           title: Container(),
           content: Container(height: 64, child: CupertinoActivityIndicator()),
@@ -51,9 +51,18 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     setState(() {
       _submitting = false;
     });
+    Navigator.of(context).pop();
 
     /// check if account duplicate
     if (acc != null) {
+      if (acc['error'] != null) {
+        UI.alertWASM(context, () {
+          setState(() {
+            _step = 0;
+          });
+        });
+        return;
+      }
       _checkAccountDuplicate(acc);
       return;
     }
@@ -88,7 +97,6 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
         showCupertinoDialog(
           context: context,
           builder: (BuildContext context) {
-            final Map<String, String> accDic = I18n.of(context).account;
             return CupertinoAlertDialog(
               title: Text(Fmt.address(address)),
               content: Text(I18n.of(context).account['import.duplicate']),
