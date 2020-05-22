@@ -144,7 +144,7 @@ class _BondPageState extends State<BondPage> {
                             if (v.isEmpty) {
                               return assetDic['amount.error'];
                             }
-                            if (double.parse(v.trim()) >= balance - 0.02) {
+                            if (double.parse(v.trim()) >= balance) {
                               return assetDic['amount.low'];
                             }
                             return null;

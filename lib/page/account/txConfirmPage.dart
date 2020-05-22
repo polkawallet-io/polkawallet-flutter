@@ -36,7 +36,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     final Map args = ModalRoute.of(context).settings.arguments;
     Map txInfo = args['txInfo'];
     txInfo['address'] = store.account.currentAddress;
-    Map fee = await webApi.account.estimateTxFees(txInfo, args['params']);
+    Map fee = await webApi.account
+        .estimateTxFees(txInfo, args['params'], rawParam: args['rawParam']);
     setState(() {
       _fee = fee;
     });

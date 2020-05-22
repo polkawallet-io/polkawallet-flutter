@@ -2,6 +2,11 @@
 - add council remove vote
 - add referendum remove vote
 - add remote node speed test & auto select
+- add duplicate account import check
+- fix airdrop bug in IOS
+- add loading dialog while importing account
+- add advanced options in create account page
+- fix staking unbond button bug
 
 # 0.7.4
 - Add Acala Liquid DOT

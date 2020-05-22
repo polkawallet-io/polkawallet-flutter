@@ -61,8 +61,9 @@ class ApiAccount {
 
   Future<Map> estimateTxFees(Map txInfo, List params, {String rawParam}) async {
     String param = rawParam != null ? rawParam : jsonEncode(params);
-    Map res = await apiRoot
-        .evalJavascript('account.txFeeEstimate(${jsonEncode(txInfo)}, $param)');
+    Map res = await apiRoot.evalJavascript(
+        'account.txFeeEstimate(${jsonEncode(txInfo)}, $param)',
+        allowRepeat: true);
     return res;
   }
 
@@ -109,7 +110,9 @@ class ApiAccount {
     String pass = store.account.newAccount.password;
     String code =
         'account.recover("$keyType", "$cryptoType", \'$key$derivePath\', "$pass")';
-    Map<String, dynamic> acc = await apiRoot.evalJavascript(code);
+    code = code.replaceAll(RegExp(r'\t|\n|\r'), '');
+    Map<String, dynamic> acc =
+        await apiRoot.evalJavascript(code, allowRepeat: true);
     return acc;
   }
 
@@ -128,6 +131,7 @@ class ApiAccount {
     if (addresses.length == 0) {
       return [];
     }
+
     var res = await apiRoot.evalJavascript(
       'account.getAccountIndex(${jsonEncode(addresses)})',
       allowRepeat: true,
@@ -162,7 +166,9 @@ class ApiAccount {
   Future<String> checkDerivePath(
       String seed, String path, String pairType) async {
     String res = await apiRoot.evalJavascript(
-        'account.checkDerivePath("$seed", "$path", "$pairType")');
+      'account.checkDerivePath("$seed", "$path", "$pairType")',
+      allowRepeat: true,
+    );
     return res;
   }
 }

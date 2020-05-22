@@ -13,210 +13,197 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   ObservableList<TransferData> get txsView => (_$txsViewComputed ??=
-          Computed<ObservableList<TransferData>>(() => super.txsView))
+          Computed<ObservableList<TransferData>>(() => super.txsView,
+              name: '_AssetsStore.txsView'))
       .value;
 
   final _$cacheTxsTimestampAtom = Atom(name: '_AssetsStore.cacheTxsTimestamp');
 
   @override
   int get cacheTxsTimestamp {
-    _$cacheTxsTimestampAtom.context.enforceReadPolicy(_$cacheTxsTimestampAtom);
-    _$cacheTxsTimestampAtom.reportObserved();
+    _$cacheTxsTimestampAtom.reportRead();
     return super.cacheTxsTimestamp;
   }
 
   @override
   set cacheTxsTimestamp(int value) {
-    _$cacheTxsTimestampAtom.context.conditionallyRunInAction(() {
+    _$cacheTxsTimestampAtom.reportWrite(value, super.cacheTxsTimestamp, () {
       super.cacheTxsTimestamp = value;
-      _$cacheTxsTimestampAtom.reportChanged();
-    }, _$cacheTxsTimestampAtom, name: '${_$cacheTxsTimestampAtom.name}_set');
+    });
   }
 
   final _$isTxsLoadingAtom = Atom(name: '_AssetsStore.isTxsLoading');
 
   @override
   bool get isTxsLoading {
-    _$isTxsLoadingAtom.context.enforceReadPolicy(_$isTxsLoadingAtom);
-    _$isTxsLoadingAtom.reportObserved();
+    _$isTxsLoadingAtom.reportRead();
     return super.isTxsLoading;
   }
 
   @override
   set isTxsLoading(bool value) {
-    _$isTxsLoadingAtom.context.conditionallyRunInAction(() {
+    _$isTxsLoadingAtom.reportWrite(value, super.isTxsLoading, () {
       super.isTxsLoading = value;
-      _$isTxsLoadingAtom.reportChanged();
-    }, _$isTxsLoadingAtom, name: '${_$isTxsLoadingAtom.name}_set');
+    });
   }
 
   final _$submittingAtom = Atom(name: '_AssetsStore.submitting');
 
   @override
   bool get submitting {
-    _$submittingAtom.context.enforceReadPolicy(_$submittingAtom);
-    _$submittingAtom.reportObserved();
+    _$submittingAtom.reportRead();
     return super.submitting;
   }
 
   @override
   set submitting(bool value) {
-    _$submittingAtom.context.conditionallyRunInAction(() {
+    _$submittingAtom.reportWrite(value, super.submitting, () {
       super.submitting = value;
-      _$submittingAtom.reportChanged();
-    }, _$submittingAtom, name: '${_$submittingAtom.name}_set');
+    });
   }
 
   final _$balancesAtom = Atom(name: '_AssetsStore.balances');
 
   @override
   ObservableMap<String, BalancesInfo> get balances {
-    _$balancesAtom.context.enforceReadPolicy(_$balancesAtom);
-    _$balancesAtom.reportObserved();
+    _$balancesAtom.reportRead();
     return super.balances;
   }
 
   @override
   set balances(ObservableMap<String, BalancesInfo> value) {
-    _$balancesAtom.context.conditionallyRunInAction(() {
+    _$balancesAtom.reportWrite(value, super.balances, () {
       super.balances = value;
-      _$balancesAtom.reportChanged();
-    }, _$balancesAtom, name: '${_$balancesAtom.name}_set');
+    });
   }
 
   final _$tokenBalancesAtom = Atom(name: '_AssetsStore.tokenBalances');
 
   @override
   Map<String, String> get tokenBalances {
-    _$tokenBalancesAtom.context.enforceReadPolicy(_$tokenBalancesAtom);
-    _$tokenBalancesAtom.reportObserved();
+    _$tokenBalancesAtom.reportRead();
     return super.tokenBalances;
   }
 
   @override
   set tokenBalances(Map<String, String> value) {
-    _$tokenBalancesAtom.context.conditionallyRunInAction(() {
+    _$tokenBalancesAtom.reportWrite(value, super.tokenBalances, () {
       super.tokenBalances = value;
-      _$tokenBalancesAtom.reportChanged();
-    }, _$tokenBalancesAtom, name: '${_$tokenBalancesAtom.name}_set');
+    });
   }
 
   final _$txsCountAtom = Atom(name: '_AssetsStore.txsCount');
 
   @override
   int get txsCount {
-    _$txsCountAtom.context.enforceReadPolicy(_$txsCountAtom);
-    _$txsCountAtom.reportObserved();
+    _$txsCountAtom.reportRead();
     return super.txsCount;
   }
 
   @override
   set txsCount(int value) {
-    _$txsCountAtom.context.conditionallyRunInAction(() {
+    _$txsCountAtom.reportWrite(value, super.txsCount, () {
       super.txsCount = value;
-      _$txsCountAtom.reportChanged();
-    }, _$txsCountAtom, name: '${_$txsCountAtom.name}_set');
+    });
   }
 
   final _$txsAtom = Atom(name: '_AssetsStore.txs');
 
   @override
   ObservableList<TransferData> get txs {
-    _$txsAtom.context.enforceReadPolicy(_$txsAtom);
-    _$txsAtom.reportObserved();
+    _$txsAtom.reportRead();
     return super.txs;
   }
 
   @override
   set txs(ObservableList<TransferData> value) {
-    _$txsAtom.context.conditionallyRunInAction(() {
+    _$txsAtom.reportWrite(value, super.txs, () {
       super.txs = value;
-      _$txsAtom.reportChanged();
-    }, _$txsAtom, name: '${_$txsAtom.name}_set');
+    });
   }
 
   final _$txsFilterAtom = Atom(name: '_AssetsStore.txsFilter');
 
   @override
   int get txsFilter {
-    _$txsFilterAtom.context.enforceReadPolicy(_$txsFilterAtom);
-    _$txsFilterAtom.reportObserved();
+    _$txsFilterAtom.reportRead();
     return super.txsFilter;
   }
 
   @override
   set txsFilter(int value) {
-    _$txsFilterAtom.context.conditionallyRunInAction(() {
+    _$txsFilterAtom.reportWrite(value, super.txsFilter, () {
       super.txsFilter = value;
-      _$txsFilterAtom.reportChanged();
-    }, _$txsFilterAtom, name: '${_$txsFilterAtom.name}_set');
+    });
   }
 
   final _$blockMapAtom = Atom(name: '_AssetsStore.blockMap');
 
   @override
   ObservableMap<int, BlockData> get blockMap {
-    _$blockMapAtom.context.enforceReadPolicy(_$blockMapAtom);
-    _$blockMapAtom.reportObserved();
+    _$blockMapAtom.reportRead();
     return super.blockMap;
   }
 
   @override
   set blockMap(ObservableMap<int, BlockData> value) {
-    _$blockMapAtom.context.conditionallyRunInAction(() {
+    _$blockMapAtom.reportWrite(value, super.blockMap, () {
       super.blockMap = value;
-      _$blockMapAtom.reportChanged();
-    }, _$blockMapAtom, name: '${_$blockMapAtom.name}_set');
+    });
   }
 
-  final _$setAccountBalancesAsyncAction = AsyncAction('setAccountBalances');
+  final _$setAccountBalancesAsyncAction =
+      AsyncAction('_AssetsStore.setAccountBalances');
 
   @override
-  Future<void> setAccountBalances(String pubKey, Map amt,
+  Future<void> setAccountBalances(String pubKey, Map<dynamic, dynamic> amt,
       {bool needCache = true}) {
     return _$setAccountBalancesAsyncAction
         .run(() => super.setAccountBalances(pubKey, amt, needCache: needCache));
   }
 
   final _$setAccountTokenBalancesAsyncAction =
-      AsyncAction('setAccountTokenBalances');
+      AsyncAction('_AssetsStore.setAccountTokenBalances');
 
   @override
-  Future<void> setAccountTokenBalances(String pubKey, Map amt) {
+  Future<void> setAccountTokenBalances(
+      String pubKey, Map<dynamic, dynamic> amt) {
     return _$setAccountTokenBalancesAsyncAction
         .run(() => super.setAccountTokenBalances(pubKey, amt));
   }
 
-  final _$clearTxsAsyncAction = AsyncAction('clearTxs');
+  final _$clearTxsAsyncAction = AsyncAction('_AssetsStore.clearTxs');
 
   @override
   Future<void> clearTxs() {
     return _$clearTxsAsyncAction.run(() => super.clearTxs());
   }
 
-  final _$addTxsAsyncAction = AsyncAction('addTxs');
+  final _$addTxsAsyncAction = AsyncAction('_AssetsStore.addTxs');
 
   @override
-  Future<void> addTxs(Map res, String address, {bool shouldCache = false}) {
+  Future<void> addTxs(Map<dynamic, dynamic> res, String address,
+      {bool shouldCache = false}) {
     return _$addTxsAsyncAction
         .run(() => super.addTxs(res, address, shouldCache: shouldCache));
   }
 
-  final _$setBlockMapAsyncAction = AsyncAction('setBlockMap');
+  final _$setBlockMapAsyncAction = AsyncAction('_AssetsStore.setBlockMap');
 
   @override
   Future<void> setBlockMap(String data) {
     return _$setBlockMapAsyncAction.run(() => super.setBlockMap(data));
   }
 
-  final _$loadAccountCacheAsyncAction = AsyncAction('loadAccountCache');
+  final _$loadAccountCacheAsyncAction =
+      AsyncAction('_AssetsStore.loadAccountCache');
 
   @override
   Future<void> loadAccountCache() {
     return _$loadAccountCacheAsyncAction.run(() => super.loadAccountCache());
   }
 
-  final _$loadCacheAsyncAction = AsyncAction('loadCache');
+  final _$loadCacheAsyncAction = AsyncAction('_AssetsStore.loadCache');
 
   @override
   Future<void> loadCache() {
@@ -227,7 +214,8 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   void setTxsLoading(bool isLoading) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(
+        name: '_AssetsStore.setTxsLoading');
     try {
       return super.setTxsLoading(isLoading);
     } finally {
@@ -237,7 +225,8 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   void setTxsFilter(int filter) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(
+        name: '_AssetsStore.setTxsFilter');
     try {
       return super.setTxsFilter(filter);
     } finally {
@@ -247,11 +236,28 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   void setSubmitting(bool isSubmitting) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction();
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(
+        name: '_AssetsStore.setSubmitting');
     try {
       return super.setSubmitting(isSubmitting);
     } finally {
       _$_AssetsStoreActionController.endAction(_$actionInfo);
     }
+  }
+
+  @override
+  String toString() {
+    return '''
+cacheTxsTimestamp: ${cacheTxsTimestamp},
+isTxsLoading: ${isTxsLoading},
+submitting: ${submitting},
+balances: ${balances},
+tokenBalances: ${tokenBalances},
+txsCount: ${txsCount},
+txs: ${txs},
+txsFilter: ${txsFilter},
+blockMap: ${blockMap},
+txsView: ${txsView}
+    ''';
   }
 }

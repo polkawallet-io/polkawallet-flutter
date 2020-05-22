@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.8.3",
-    "@polkadot/api": "^1.13.1",
+    "@polkadot/api": "^1.14.1",
     "@polkadot/ui-shared": "^0.51.1",
     "bn.js": "^5.1.1"
   },

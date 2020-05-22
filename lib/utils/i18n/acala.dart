@@ -32,7 +32,7 @@ const Map<String, String> enDex = {
   'collateral.ratio': 'Interest Rate',
   'collateral.ratio.year': 'Annual Interest Rate',
   'collateral.interest': 'Daily Interest',
-  'collateral.require': 'Required for Safety',
+  'collateral.require': 'Required',
   'borrow.able': 'Able to Borrow',
   'withdraw.able': 'Able to Withdraw',
   'loan.amount': 'Amount',

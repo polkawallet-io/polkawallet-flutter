@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
@@ -39,61 +40,68 @@ class AcalaEntry extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(16),
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 16),
-                    child: GestureDetector(
-                      child: _AcalaCard(
-                        dic['loan.title'],
-                        dic['loan.bref'],
-                        'assets/images/acala/loan.svg',
+              child: Observer(
+                builder: (_) {
+                  if (store.settings.loading) {
+                    return CupertinoActivityIndicator();
+                  }
+                  return ListView(
+                    padding: EdgeInsets.all(16),
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: GestureDetector(
+                          child: _AcalaCard(
+                            dic['loan.title'],
+                            dic['loan.bref'],
+                            'assets/images/acala/loan.svg',
+                          ),
+                          onTap: () =>
+                              Navigator.of(context).pushNamed(LoanPage.route),
+                        ),
                       ),
-                      onTap: () =>
-                          Navigator.of(context).pushNamed(LoanPage.route),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 16),
-                    child: GestureDetector(
-                      child: _AcalaCard(
-                        dic['dex.title'],
-                        dic['dex.bref'],
-                        'assets/images/acala/exchange.svg',
-                        color: Theme.of(context).primaryColor,
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: GestureDetector(
+                          child: _AcalaCard(
+                            dic['dex.title'],
+                            dic['dex.bref'],
+                            'assets/images/acala/exchange.svg',
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          onTap: () =>
+                              Navigator.of(context).pushNamed(SwapPage.route),
+                        ),
                       ),
-                      onTap: () =>
-                          Navigator.of(context).pushNamed(SwapPage.route),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 16),
-                    child: GestureDetector(
-                      child: _AcalaCard(
-                        dic['earn.title'],
-                        dic['earn.bref'],
-                        'assets/images/acala/loan.svg',
-                        color: Colors.blueAccent,
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: GestureDetector(
+                          child: _AcalaCard(
+                            dic['earn.title'],
+                            dic['earn.bref'],
+                            'assets/images/acala/loan.svg',
+                            color: Colors.blueAccent,
+                          ),
+                          onTap: () =>
+                              Navigator.of(context).pushNamed(EarnPage.route),
+                        ),
                       ),
-                      onTap: () =>
-                          Navigator.of(context).pushNamed(EarnPage.route),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 16),
-                    child: GestureDetector(
-                      child: _AcalaCard(
-                        dic['homa.title'],
-                        dic['homa.bref'],
-                        'assets/images/acala/exchange.svg',
-                        color: Theme.of(context).primaryColor,
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: GestureDetector(
+                          child: _AcalaCard(
+                            dic['homa.title'],
+                            dic['homa.bref'],
+                            'assets/images/acala/exchange.svg',
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          onTap: () =>
+                              Navigator.of(context).pushNamed(HomaPage.route),
+                        ),
                       ),
-                      onTap: () =>
-                          Navigator.of(context).pushNamed(HomaPage.route),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
             )
           ],

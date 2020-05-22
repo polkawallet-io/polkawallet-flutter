@@ -69,13 +69,13 @@ class ApiStaking {
       if (pubKey != null && (bonded > 0 || unlocking.length > 0)) {
         String address = store.account.currentAddress;
         print('fetching staking rewards...');
-        List res = await apiRoot
+        Map res = await apiRoot
             .evalJavascript('staking.loadAccountRewardsData("$address")');
         store.staking.setLedger(pubKey, {'rewards': res});
         return;
       }
     }
-    store.staking.setLedger(pubKey, {'rewards': []});
+    store.staking.setLedger(pubKey, {'rewards': {}});
   }
 
   Future<Map> fetchStakingOverview() async {

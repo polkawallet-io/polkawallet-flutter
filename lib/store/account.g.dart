@@ -40,222 +40,205 @@ mixin _$AccountStore on _AccountStore, Store {
   @override
   ObservableList<AccountData> get optionalAccounts =>
       (_$optionalAccountsComputed ??= Computed<ObservableList<AccountData>>(
-              () => super.optionalAccounts))
+              () => super.optionalAccounts,
+              name: '_AccountStore.optionalAccounts'))
           .value;
   Computed<String> _$currentAddressComputed;
 
   @override
-  String get currentAddress => (_$currentAddressComputed ??=
-          Computed<String>(() => super.currentAddress))
-      .value;
+  String get currentAddress =>
+      (_$currentAddressComputed ??= Computed<String>(() => super.currentAddress,
+              name: '_AccountStore.currentAddress'))
+          .value;
 
   final _$loadingAtom = Atom(name: '_AccountStore.loading');
 
   @override
   bool get loading {
-    _$loadingAtom.context.enforceReadPolicy(_$loadingAtom);
-    _$loadingAtom.reportObserved();
+    _$loadingAtom.reportRead();
     return super.loading;
   }
 
   @override
   set loading(bool value) {
-    _$loadingAtom.context.conditionallyRunInAction(() {
+    _$loadingAtom.reportWrite(value, super.loading, () {
       super.loading = value;
-      _$loadingAtom.reportChanged();
-    }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
+    });
   }
 
   final _$txStatusAtom = Atom(name: '_AccountStore.txStatus');
 
   @override
   String get txStatus {
-    _$txStatusAtom.context.enforceReadPolicy(_$txStatusAtom);
-    _$txStatusAtom.reportObserved();
+    _$txStatusAtom.reportRead();
     return super.txStatus;
   }
 
   @override
   set txStatus(String value) {
-    _$txStatusAtom.context.conditionallyRunInAction(() {
+    _$txStatusAtom.reportWrite(value, super.txStatus, () {
       super.txStatus = value;
-      _$txStatusAtom.reportChanged();
-    }, _$txStatusAtom, name: '${_$txStatusAtom.name}_set');
+    });
   }
 
   final _$newAccountAtom = Atom(name: '_AccountStore.newAccount');
 
   @override
   AccountCreate get newAccount {
-    _$newAccountAtom.context.enforceReadPolicy(_$newAccountAtom);
-    _$newAccountAtom.reportObserved();
+    _$newAccountAtom.reportRead();
     return super.newAccount;
   }
 
   @override
   set newAccount(AccountCreate value) {
-    _$newAccountAtom.context.conditionallyRunInAction(() {
+    _$newAccountAtom.reportWrite(value, super.newAccount, () {
       super.newAccount = value;
-      _$newAccountAtom.reportChanged();
-    }, _$newAccountAtom, name: '${_$newAccountAtom.name}_set');
+    });
   }
 
   final _$currentAccountAtom = Atom(name: '_AccountStore.currentAccount');
 
   @override
   AccountData get currentAccount {
-    _$currentAccountAtom.context.enforceReadPolicy(_$currentAccountAtom);
-    _$currentAccountAtom.reportObserved();
+    _$currentAccountAtom.reportRead();
     return super.currentAccount;
   }
 
   @override
   set currentAccount(AccountData value) {
-    _$currentAccountAtom.context.conditionallyRunInAction(() {
+    _$currentAccountAtom.reportWrite(value, super.currentAccount, () {
       super.currentAccount = value;
-      _$currentAccountAtom.reportChanged();
-    }, _$currentAccountAtom, name: '${_$currentAccountAtom.name}_set');
+    });
   }
 
   final _$accountListAtom = Atom(name: '_AccountStore.accountList');
 
   @override
   ObservableList<AccountData> get accountList {
-    _$accountListAtom.context.enforceReadPolicy(_$accountListAtom);
-    _$accountListAtom.reportObserved();
+    _$accountListAtom.reportRead();
     return super.accountList;
   }
 
   @override
   set accountList(ObservableList<AccountData> value) {
-    _$accountListAtom.context.conditionallyRunInAction(() {
+    _$accountListAtom.reportWrite(value, super.accountList, () {
       super.accountList = value;
-      _$accountListAtom.reportChanged();
-    }, _$accountListAtom, name: '${_$accountListAtom.name}_set');
+    });
   }
 
   final _$accountIndexMapAtom = Atom(name: '_AccountStore.accountIndexMap');
 
   @override
-  ObservableMap<String, Map> get accountIndexMap {
-    _$accountIndexMapAtom.context.enforceReadPolicy(_$accountIndexMapAtom);
-    _$accountIndexMapAtom.reportObserved();
+  ObservableMap<String, Map<dynamic, dynamic>> get accountIndexMap {
+    _$accountIndexMapAtom.reportRead();
     return super.accountIndexMap;
   }
 
   @override
-  set accountIndexMap(ObservableMap<String, Map> value) {
-    _$accountIndexMapAtom.context.conditionallyRunInAction(() {
+  set accountIndexMap(ObservableMap<String, Map<dynamic, dynamic>> value) {
+    _$accountIndexMapAtom.reportWrite(value, super.accountIndexMap, () {
       super.accountIndexMap = value;
-      _$accountIndexMapAtom.reportChanged();
-    }, _$accountIndexMapAtom, name: '${_$accountIndexMapAtom.name}_set');
+    });
   }
 
   final _$pubKeyBondedMapAtom = Atom(name: '_AccountStore.pubKeyBondedMap');
 
   @override
   ObservableMap<String, AccountBondedInfo> get pubKeyBondedMap {
-    _$pubKeyBondedMapAtom.context.enforceReadPolicy(_$pubKeyBondedMapAtom);
-    _$pubKeyBondedMapAtom.reportObserved();
+    _$pubKeyBondedMapAtom.reportRead();
     return super.pubKeyBondedMap;
   }
 
   @override
   set pubKeyBondedMap(ObservableMap<String, AccountBondedInfo> value) {
-    _$pubKeyBondedMapAtom.context.conditionallyRunInAction(() {
+    _$pubKeyBondedMapAtom.reportWrite(value, super.pubKeyBondedMap, () {
       super.pubKeyBondedMap = value;
-      _$pubKeyBondedMapAtom.reportChanged();
-    }, _$pubKeyBondedMapAtom, name: '${_$pubKeyBondedMapAtom.name}_set');
+    });
   }
 
   final _$pubKeyAddressMapAtom = Atom(name: '_AccountStore.pubKeyAddressMap');
 
   @override
   ObservableMap<int, Map<String, String>> get pubKeyAddressMap {
-    _$pubKeyAddressMapAtom.context.enforceReadPolicy(_$pubKeyAddressMapAtom);
-    _$pubKeyAddressMapAtom.reportObserved();
+    _$pubKeyAddressMapAtom.reportRead();
     return super.pubKeyAddressMap;
   }
 
   @override
   set pubKeyAddressMap(ObservableMap<int, Map<String, String>> value) {
-    _$pubKeyAddressMapAtom.context.conditionallyRunInAction(() {
+    _$pubKeyAddressMapAtom.reportWrite(value, super.pubKeyAddressMap, () {
       super.pubKeyAddressMap = value;
-      _$pubKeyAddressMapAtom.reportChanged();
-    }, _$pubKeyAddressMapAtom, name: '${_$pubKeyAddressMapAtom.name}_set');
+    });
   }
 
   final _$pubKeyIconsMapAtom = Atom(name: '_AccountStore.pubKeyIconsMap');
 
   @override
   ObservableMap<String, String> get pubKeyIconsMap {
-    _$pubKeyIconsMapAtom.context.enforceReadPolicy(_$pubKeyIconsMapAtom);
-    _$pubKeyIconsMapAtom.reportObserved();
+    _$pubKeyIconsMapAtom.reportRead();
     return super.pubKeyIconsMap;
   }
 
   @override
   set pubKeyIconsMap(ObservableMap<String, String> value) {
-    _$pubKeyIconsMapAtom.context.conditionallyRunInAction(() {
+    _$pubKeyIconsMapAtom.reportWrite(value, super.pubKeyIconsMap, () {
       super.pubKeyIconsMap = value;
-      _$pubKeyIconsMapAtom.reportChanged();
-    }, _$pubKeyIconsMapAtom, name: '${_$pubKeyIconsMapAtom.name}_set');
+    });
   }
 
   final _$addressIconsMapAtom = Atom(name: '_AccountStore.addressIconsMap');
 
   @override
   ObservableMap<String, String> get addressIconsMap {
-    _$addressIconsMapAtom.context.enforceReadPolicy(_$addressIconsMapAtom);
-    _$addressIconsMapAtom.reportObserved();
+    _$addressIconsMapAtom.reportRead();
     return super.addressIconsMap;
   }
 
   @override
   set addressIconsMap(ObservableMap<String, String> value) {
-    _$addressIconsMapAtom.context.conditionallyRunInAction(() {
+    _$addressIconsMapAtom.reportWrite(value, super.addressIconsMap, () {
       super.addressIconsMap = value;
-      _$addressIconsMapAtom.reportChanged();
-    }, _$addressIconsMapAtom, name: '${_$addressIconsMapAtom.name}_set');
+    });
   }
 
-  final _$updateAccountAsyncAction = AsyncAction('updateAccount');
+  final _$updateAccountAsyncAction = AsyncAction('_AccountStore.updateAccount');
 
   @override
   Future<void> updateAccount(Map<String, dynamic> acc) {
     return _$updateAccountAsyncAction.run(() => super.updateAccount(acc));
   }
 
-  final _$addAccountAsyncAction = AsyncAction('addAccount');
+  final _$addAccountAsyncAction = AsyncAction('_AccountStore.addAccount');
 
   @override
   Future<void> addAccount(Map<String, dynamic> acc, String password) {
     return _$addAccountAsyncAction.run(() => super.addAccount(acc, password));
   }
 
-  final _$removeAccountAsyncAction = AsyncAction('removeAccount');
+  final _$removeAccountAsyncAction = AsyncAction('_AccountStore.removeAccount');
 
   @override
   Future<void> removeAccount(AccountData acc) {
     return _$removeAccountAsyncAction.run(() => super.removeAccount(acc));
   }
 
-  final _$loadAccountAsyncAction = AsyncAction('loadAccount');
+  final _$loadAccountAsyncAction = AsyncAction('_AccountStore.loadAccount');
 
   @override
   Future<void> loadAccount() {
     return _$loadAccountAsyncAction.run(() => super.loadAccount());
   }
 
-  final _$setAccountsBondedAsyncAction = AsyncAction('setAccountsBonded');
+  final _$setAccountsBondedAsyncAction =
+      AsyncAction('_AccountStore.setAccountsBonded');
 
   @override
-  Future<void> setAccountsBonded(List ls) {
+  Future<void> setAccountsBonded(List<dynamic> ls) {
     return _$setAccountsBondedAsyncAction
         .run(() => super.setAccountsBonded(ls));
   }
 
-  final _$encryptSeedAsyncAction = AsyncAction('encryptSeed');
+  final _$encryptSeedAsyncAction = AsyncAction('_AccountStore.encryptSeed');
 
   @override
   Future<void> encryptSeed(
@@ -264,7 +247,7 @@ mixin _$AccountStore on _AccountStore, Store {
         .run(() => super.encryptSeed(pubKey, seed, seedType, password));
   }
 
-  final _$decryptSeedAsyncAction = AsyncAction('decryptSeed');
+  final _$decryptSeedAsyncAction = AsyncAction('_AccountStore.decryptSeed');
 
   @override
   Future<String> decryptSeed(String pubKey, String seedType, String password) {
@@ -272,7 +255,8 @@ mixin _$AccountStore on _AccountStore, Store {
         .run(() => super.decryptSeed(pubKey, seedType, password));
   }
 
-  final _$checkSeedExistAsyncAction = AsyncAction('checkSeedExist');
+  final _$checkSeedExistAsyncAction =
+      AsyncAction('_AccountStore.checkSeedExist');
 
   @override
   Future<bool> checkSeedExist(String seedType, String pubKey) {
@@ -280,7 +264,7 @@ mixin _$AccountStore on _AccountStore, Store {
         .run(() => super.checkSeedExist(seedType, pubKey));
   }
 
-  final _$updateSeedAsyncAction = AsyncAction('updateSeed');
+  final _$updateSeedAsyncAction = AsyncAction('_AccountStore.updateSeed');
 
   @override
   Future<void> updateSeed(
@@ -289,7 +273,7 @@ mixin _$AccountStore on _AccountStore, Store {
         .run(() => super.updateSeed(pubKey, passwordOld, passwordNew));
   }
 
-  final _$deleteSeedAsyncAction = AsyncAction('deleteSeed');
+  final _$deleteSeedAsyncAction = AsyncAction('_AccountStore.deleteSeed');
 
   @override
   Future<void> deleteSeed(String seedType, String pubKey) {
@@ -302,7 +286,8 @@ mixin _$AccountStore on _AccountStore, Store {
 
   @override
   void setTxStatus(String status) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setTxStatus');
     try {
       return super.setTxStatus(status);
     } finally {
@@ -312,7 +297,8 @@ mixin _$AccountStore on _AccountStore, Store {
 
   @override
   void setNewAccount(String name, String password) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setNewAccount');
     try {
       return super.setNewAccount(name, password);
     } finally {
@@ -322,7 +308,8 @@ mixin _$AccountStore on _AccountStore, Store {
 
   @override
   void setNewAccountKey(String key) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setNewAccountKey');
     try {
       return super.setNewAccountKey(key);
     } finally {
@@ -332,7 +319,8 @@ mixin _$AccountStore on _AccountStore, Store {
 
   @override
   void resetNewAccount(String name, String password) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.resetNewAccount');
     try {
       return super.resetNewAccount(name, password);
     } finally {
@@ -342,7 +330,8 @@ mixin _$AccountStore on _AccountStore, Store {
 
   @override
   void setCurrentAccount(AccountData acc) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setCurrentAccount');
     try {
       return super.setCurrentAccount(acc);
     } finally {
@@ -352,7 +341,8 @@ mixin _$AccountStore on _AccountStore, Store {
 
   @override
   void updateAccountName(String name) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction();
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.updateAccountName');
     try {
       return super.updateAccountName(name);
     } finally {
@@ -361,8 +351,9 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void setPubKeyAddressMap(Map<String, Map> data) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction();
+  void setPubKeyAddressMap(Map<String, Map<dynamic, dynamic>> data) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setPubKeyAddressMap');
     try {
       return super.setPubKeyAddressMap(data);
     } finally {
@@ -371,8 +362,9 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void setPubKeyIconsMap(List list) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction();
+  void setPubKeyIconsMap(List<dynamic> list) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setPubKeyIconsMap');
     try {
       return super.setPubKeyIconsMap(list);
     } finally {
@@ -381,8 +373,9 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void setAddressIconsMap(List list) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction();
+  void setAddressIconsMap(List<dynamic> list) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setAddressIconsMap');
     try {
       return super.setAddressIconsMap(list);
     } finally {
@@ -391,13 +384,32 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void setAccountsIndex(List list) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction();
+  void setAccountsIndex(List<dynamic> list) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setAccountsIndex');
     try {
       return super.setAccountsIndex(list);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }
+  }
+
+  @override
+  String toString() {
+    return '''
+loading: ${loading},
+txStatus: ${txStatus},
+newAccount: ${newAccount},
+currentAccount: ${currentAccount},
+accountList: ${accountList},
+accountIndexMap: ${accountIndexMap},
+pubKeyBondedMap: ${pubKeyBondedMap},
+pubKeyAddressMap: ${pubKeyAddressMap},
+pubKeyIconsMap: ${pubKeyIconsMap},
+addressIconsMap: ${addressIconsMap},
+optionalAccounts: ${optionalAccounts},
+currentAddress: ${currentAddress}
+    ''';
   }
 }
 
@@ -406,51 +418,54 @@ mixin _$AccountCreate on _AccountCreate, Store {
 
   @override
   String get name {
-    _$nameAtom.context.enforceReadPolicy(_$nameAtom);
-    _$nameAtom.reportObserved();
+    _$nameAtom.reportRead();
     return super.name;
   }
 
   @override
   set name(String value) {
-    _$nameAtom.context.conditionallyRunInAction(() {
+    _$nameAtom.reportWrite(value, super.name, () {
       super.name = value;
-      _$nameAtom.reportChanged();
-    }, _$nameAtom, name: '${_$nameAtom.name}_set');
+    });
   }
 
   final _$passwordAtom = Atom(name: '_AccountCreate.password');
 
   @override
   String get password {
-    _$passwordAtom.context.enforceReadPolicy(_$passwordAtom);
-    _$passwordAtom.reportObserved();
+    _$passwordAtom.reportRead();
     return super.password;
   }
 
   @override
   set password(String value) {
-    _$passwordAtom.context.conditionallyRunInAction(() {
+    _$passwordAtom.reportWrite(value, super.password, () {
       super.password = value;
-      _$passwordAtom.reportChanged();
-    }, _$passwordAtom, name: '${_$passwordAtom.name}_set');
+    });
   }
 
   final _$keyAtom = Atom(name: '_AccountCreate.key');
 
   @override
   String get key {
-    _$keyAtom.context.enforceReadPolicy(_$keyAtom);
-    _$keyAtom.reportObserved();
+    _$keyAtom.reportRead();
     return super.key;
   }
 
   @override
   set key(String value) {
-    _$keyAtom.context.conditionallyRunInAction(() {
+    _$keyAtom.reportWrite(value, super.key, () {
       super.key = value;
-      _$keyAtom.reportChanged();
-    }, _$keyAtom, name: '${_$keyAtom.name}_set');
+    });
+  }
+
+  @override
+  String toString() {
+    return '''
+name: ${name},
+password: ${password},
+key: ${key}
+    ''';
   }
 }
 
@@ -459,118 +474,117 @@ mixin _$AccountData on _AccountData, Store {
 
   @override
   String get name {
-    _$nameAtom.context.enforceReadPolicy(_$nameAtom);
-    _$nameAtom.reportObserved();
+    _$nameAtom.reportRead();
     return super.name;
   }
 
   @override
   set name(String value) {
-    _$nameAtom.context.conditionallyRunInAction(() {
+    _$nameAtom.reportWrite(value, super.name, () {
       super.name = value;
-      _$nameAtom.reportChanged();
-    }, _$nameAtom, name: '${_$nameAtom.name}_set');
+    });
   }
 
   final _$addressAtom = Atom(name: '_AccountData.address');
 
   @override
   String get address {
-    _$addressAtom.context.enforceReadPolicy(_$addressAtom);
-    _$addressAtom.reportObserved();
+    _$addressAtom.reportRead();
     return super.address;
   }
 
   @override
   set address(String value) {
-    _$addressAtom.context.conditionallyRunInAction(() {
+    _$addressAtom.reportWrite(value, super.address, () {
       super.address = value;
-      _$addressAtom.reportChanged();
-    }, _$addressAtom, name: '${_$addressAtom.name}_set');
+    });
   }
 
   final _$encodedAtom = Atom(name: '_AccountData.encoded');
 
   @override
   String get encoded {
-    _$encodedAtom.context.enforceReadPolicy(_$encodedAtom);
-    _$encodedAtom.reportObserved();
+    _$encodedAtom.reportRead();
     return super.encoded;
   }
 
   @override
   set encoded(String value) {
-    _$encodedAtom.context.conditionallyRunInAction(() {
+    _$encodedAtom.reportWrite(value, super.encoded, () {
       super.encoded = value;
-      _$encodedAtom.reportChanged();
-    }, _$encodedAtom, name: '${_$encodedAtom.name}_set');
+    });
   }
 
   final _$pubKeyAtom = Atom(name: '_AccountData.pubKey');
 
   @override
   String get pubKey {
-    _$pubKeyAtom.context.enforceReadPolicy(_$pubKeyAtom);
-    _$pubKeyAtom.reportObserved();
+    _$pubKeyAtom.reportRead();
     return super.pubKey;
   }
 
   @override
   set pubKey(String value) {
-    _$pubKeyAtom.context.conditionallyRunInAction(() {
+    _$pubKeyAtom.reportWrite(value, super.pubKey, () {
       super.pubKey = value;
-      _$pubKeyAtom.reportChanged();
-    }, _$pubKeyAtom, name: '${_$pubKeyAtom.name}_set');
+    });
   }
 
   final _$encodingAtom = Atom(name: '_AccountData.encoding');
 
   @override
   Map<String, dynamic> get encoding {
-    _$encodingAtom.context.enforceReadPolicy(_$encodingAtom);
-    _$encodingAtom.reportObserved();
+    _$encodingAtom.reportRead();
     return super.encoding;
   }
 
   @override
   set encoding(Map<String, dynamic> value) {
-    _$encodingAtom.context.conditionallyRunInAction(() {
+    _$encodingAtom.reportWrite(value, super.encoding, () {
       super.encoding = value;
-      _$encodingAtom.reportChanged();
-    }, _$encodingAtom, name: '${_$encodingAtom.name}_set');
+    });
   }
 
   final _$metaAtom = Atom(name: '_AccountData.meta');
 
   @override
   Map<String, dynamic> get meta {
-    _$metaAtom.context.enforceReadPolicy(_$metaAtom);
-    _$metaAtom.reportObserved();
+    _$metaAtom.reportRead();
     return super.meta;
   }
 
   @override
   set meta(Map<String, dynamic> value) {
-    _$metaAtom.context.conditionallyRunInAction(() {
+    _$metaAtom.reportWrite(value, super.meta, () {
       super.meta = value;
-      _$metaAtom.reportChanged();
-    }, _$metaAtom, name: '${_$metaAtom.name}_set');
+    });
   }
 
   final _$memoAtom = Atom(name: '_AccountData.memo');
 
   @override
   String get memo {
-    _$memoAtom.context.enforceReadPolicy(_$memoAtom);
-    _$memoAtom.reportObserved();
+    _$memoAtom.reportRead();
     return super.memo;
   }
 
   @override
   set memo(String value) {
-    _$memoAtom.context.conditionallyRunInAction(() {
+    _$memoAtom.reportWrite(value, super.memo, () {
       super.memo = value;
-      _$memoAtom.reportChanged();
-    }, _$memoAtom, name: '${_$memoAtom.name}_set');
+    });
+  }
+
+  @override
+  String toString() {
+    return '''
+name: ${name},
+address: ${address},
+encoded: ${encoded},
+pubKey: ${pubKey},
+encoding: ${encoding},
+meta: ${meta},
+memo: ${memo}
+    ''';
   }
 }

@@ -196,7 +196,7 @@ class _MintPageState extends State<MintPage> {
                                     if (v.isEmpty) {
                                       return dicAssets['amount.error'];
                                     }
-                                    if (double.parse(v.trim()) >
+                                    if (double.parse(v.trim()) >=
                                         Fmt.bigIntToDouble(balance,
                                             decimals: decimals)) {
                                       return dicAssets['amount.low'];

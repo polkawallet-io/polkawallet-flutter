@@ -72,7 +72,6 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
       if (isCurrentNetwork) {
         /// reload account info
         webApi.assets.fetchBalance(i.pubKey);
-        Navigator.of(context).pop();
       } else {
         /// set new network and reload web view
         await _reloadNetwork();
