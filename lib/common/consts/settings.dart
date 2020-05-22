@@ -59,4 +59,4 @@ const String acala_stable_coin = 'AUSD';
 const String acala_stable_coin_view = 'aUSD';
 
 /// test app versions
-const String app_beta_version = '0.7.5-beta.4';
+const String app_beta_version = '0.7.5-beta.6';
