@@ -56,15 +56,13 @@ class AboutPage extends StatelessWidget {
                     : Container();
               },
             ),
-            Platform.isAndroid
-                ? Padding(
-                    padding: EdgeInsets.all(16),
-                    child: RoundedButton(
-                      text: I18n.of(context).home['update'],
-                      onPressed: () => UI.checkUpdate(context),
-                    ),
-                  )
-                : Container()
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: RoundedButton(
+                text: I18n.of(context).home['update'],
+                onPressed: () => UI.checkUpdate(context),
+              ),
+            )
           ],
         ),
       ),
