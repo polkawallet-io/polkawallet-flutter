@@ -26,7 +26,7 @@ const Map<String, String> enStaking = {
   'value': 'Value',
   'action.bond': 'Bond Funds',
   'action.bondExtra': 'Bond More',
-  'action.bondAdjust': 'Adjust Bond',
+  'action.bondAdjust': 'Adjust Bonded',
   'action.unbond': 'Unbond',
   'action.redeem': 'Redeem Unbonded',
   'action.payout': 'Payout',

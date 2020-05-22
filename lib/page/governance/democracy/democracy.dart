@@ -30,8 +30,6 @@ class _DemocracyState extends State<Democracy> {
 
   final String _bestNumberSubscribeChannel = 'BestNumber';
 
-  final List _options = [0, 1, 2, 3, 4, 5, 6];
-
   Future<void> _fetchReferendums() async {
     if (store.settings.loading) {
       return;
