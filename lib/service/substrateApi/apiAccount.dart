@@ -131,7 +131,9 @@ class ApiAccount {
     String pass = store.account.newAccount.password;
     String code =
         'account.recover("$keyType", "$cryptoType", \'$key$derivePath\', "$pass")';
-    Map<String, dynamic> acc = await apiRoot.evalJavascript(code);
+    code = code.replaceAll(RegExp(r'\t|\n|\r'), '');
+    Map<String, dynamic> acc =
+        await apiRoot.evalJavascript(code, allowRepeat: true);
     return acc;
   }
 
@@ -150,6 +152,7 @@ class ApiAccount {
     if (addresses.length == 0) {
       return [];
     }
+
     var res = await apiRoot.evalJavascript(
       'account.getAccountIndex(${jsonEncode(addresses)})',
       allowRepeat: true,
