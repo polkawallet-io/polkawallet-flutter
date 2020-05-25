@@ -37,8 +37,11 @@ import 'package:polka_wallet/page/profile/aboutPage.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
 import 'package:polka_wallet/page/profile/account/changeNamePage.dart';
 import 'package:polka_wallet/page/profile/account/changePasswordPage.dart';
+import 'package:polka_wallet/page/profile/account/createRecoveryPage.dart';
 import 'package:polka_wallet/page/profile/account/exportAccountPage.dart';
 import 'package:polka_wallet/page/profile/account/exportResultPage.dart';
+import 'package:polka_wallet/page/profile/account/friendListPage.dart';
+import 'package:polka_wallet/page/profile/account/recoverySettingPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
@@ -239,6 +242,9 @@ class _WalletAppState extends State<WalletApp> {
             SettingsPage(_appStore.settings, _changeLang),
         ExportAccountPage.route: (_) => ExportAccountPage(_appStore.account),
         ExportResultPage.route: (_) => ExportResultPage(),
+        RecoverySettingPage.route: (_) => RecoverySettingPage(_appStore),
+        CreateRecoveryPage.route: (_) => CreateRecoveryPage(_appStore),
+        FriendListPage.route: (_) => FriendListPage(_appStore),
         RemoteNodeListPage.route: (_) => RemoteNodeListPage(_appStore.settings),
         SS58PrefixListPage.route: (_) => SS58PrefixListPage(_appStore.settings),
         AboutPage.route: (_) => AboutPage(),

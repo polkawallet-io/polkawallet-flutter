@@ -194,4 +194,24 @@ class ApiAccount {
     );
     return res;
   }
+
+  Future<Map> queryRecoverable() async {
+    String address = store.account.currentAddress;
+    final res = await apiRoot
+        .evalJavascript('api.query.recovery.recoverable("$address")');
+    return res;
+  }
+
+  Future<Map> queryActiveRecovery(String address, String addressNew) async {
+    final res = await apiRoot.evalJavascript(
+        'api.query.recovery.activeRecoveries("$address", "$addressNew")');
+    return res;
+  }
+
+  Future<Map> queryRecoveryProxy() async {
+    String address = store.account.currentAddress;
+    final res =
+        await apiRoot.evalJavascript('api.query.recovery.proxy("$address")');
+    return res;
+  }
 }

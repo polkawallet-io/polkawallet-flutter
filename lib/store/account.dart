@@ -337,36 +337,23 @@ abstract class _AccountCreate with Store {
 }
 
 @JsonSerializable()
-class AccountData extends _AccountData with _$AccountData {
+class AccountData extends _AccountData {
   static AccountData fromJson(Map<String, dynamic> json) =>
       _$AccountDataFromJson(json);
   static Map<String, dynamic> toJson(AccountData acc) =>
       _$AccountDataToJson(acc);
 }
 
-abstract class _AccountData with Store {
-  @observable
+abstract class _AccountData {
   String name = '';
-
-  @observable
   String address = '';
-
-  @observable
   String encoded = '';
-
-  @observable
   String pubKey = '';
 
-  @observable
   Map<String, dynamic> encoding = Map<String, dynamic>();
-
-  @observable
   Map<String, dynamic> meta = Map<String, dynamic>();
 
-  @observable
   String memo = '';
-
-  @observable
   bool observation = false;
 }
 

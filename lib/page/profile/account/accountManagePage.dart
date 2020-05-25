@@ -6,6 +6,7 @@ import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 import 'package:polka_wallet/page/profile/account/changeNamePage.dart';
 import 'package:polka_wallet/page/profile/account/changePasswordPage.dart';
 import 'package:polka_wallet/page/profile/account/exportAccountPage.dart';
+import 'package:polka_wallet/page/profile/account/recoverySettingPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -94,6 +95,12 @@ class AccountManagePage extends StatelessWidget {
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
                       onTap: () => Navigator.of(context)
                           .pushNamed(ExportAccountPage.route),
+                    ),
+                    ListTile(
+                      title: Text('recovery settings'),
+                      trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                      onTap: () => Navigator.of(context)
+                          .pushNamed(RecoverySettingPage.route),
                     ),
                   ],
                 ),
