@@ -192,6 +192,9 @@ final GlobalKey<RefreshIndicatorState> globalCouncilRefreshKey =
 // democracy page:
 final GlobalKey<RefreshIndicatorState> globalDemocracyRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
+// recovery settings page:
+final GlobalKey<RefreshIndicatorState> globalRecoverySettingsRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
 
 // acala loan page:
 final GlobalKey<RefreshIndicatorState> globalLoanRefreshKey =

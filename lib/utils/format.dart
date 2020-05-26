@@ -5,7 +5,7 @@ import 'package:convert/convert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -289,8 +289,8 @@ class Fmt {
     };
   }
 
-  static String blockToTime(int blocks) {
-    int blocksOfMin = 10;
+  static String blockToTime(int blocks, int blockDuration) {
+    int blocksOfMin = 60000 ~/ blockDuration;
     int blocksOfHour = 60 * blocksOfMin;
     int blocksOfDay = 24 * blocksOfHour;
 

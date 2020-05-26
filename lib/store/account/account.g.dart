@@ -3,34 +3,6 @@
 part of 'account.dart';
 
 // **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
-
-AccountData _$AccountDataFromJson(Map<String, dynamic> json) {
-  return AccountData()
-    ..name = json['name'] as String
-    ..address = json['address'] as String
-    ..encoded = json['encoded'] as String
-    ..pubKey = json['pubKey'] as String
-    ..encoding = json['encoding'] as Map<String, dynamic>
-    ..meta = json['meta'] as Map<String, dynamic>
-    ..memo = json['memo'] as String
-    ..observation = json['observation'] as bool;
-}
-
-Map<String, dynamic> _$AccountDataToJson(AccountData instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'address': instance.address,
-      'encoded': instance.encoded,
-      'pubKey': instance.pubKey,
-      'encoding': instance.encoding,
-      'meta': instance.meta,
-      'memo': instance.memo,
-      'observation': instance.observation,
-    };
-
-// **************************************************************************
 // StoreGenerator
 // **************************************************************************
 
@@ -208,6 +180,21 @@ mixin _$AccountStore on _AccountStore, Store {
   set addressIconsMap(ObservableMap<String, String> value) {
     _$addressIconsMapAtom.reportWrite(value, super.addressIconsMap, () {
       super.addressIconsMap = value;
+    });
+  }
+
+  final _$recoveryInfoAtom = Atom(name: '_AccountStore.recoveryInfo');
+
+  @override
+  AccountRecoveryInfo get recoveryInfo {
+    _$recoveryInfoAtom.reportRead();
+    return super.recoveryInfo;
+  }
+
+  @override
+  set recoveryInfo(AccountRecoveryInfo value) {
+    _$recoveryInfoAtom.reportWrite(value, super.recoveryInfo, () {
+      super.recoveryInfo = value;
     });
   }
 
@@ -405,6 +392,17 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
+  void setAccountRecoveryInfo(Map<dynamic, dynamic> json) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setAccountRecoveryInfo');
+    try {
+      return super.setAccountRecoveryInfo(json);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 loading: ${loading},
@@ -417,6 +415,7 @@ pubKeyBondedMap: ${pubKeyBondedMap},
 pubKeyAddressMap: ${pubKeyAddressMap},
 pubKeyIconsMap: ${pubKeyIconsMap},
 addressIconsMap: ${addressIconsMap},
+recoveryInfo: ${recoveryInfo},
 optionalAccounts: ${optionalAccounts},
 accountListAll: ${accountListAll},
 currentAddress: ${currentAddress}

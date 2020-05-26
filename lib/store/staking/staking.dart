@@ -1,5 +1,5 @@
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/account.dart';
 import 'package:polka_wallet/store/staking/types/txData.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/format.dart';

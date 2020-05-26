@@ -40,6 +40,19 @@ const Map<String, String> enProfile = {
   'delete.confirm': 'Input your password to confirm',
   'about.brif': 'Mobile Wallet for Polkadot',
   'about.version': 'Version',
+  'recovery': 'Recovery Settings',
+  'recovery.empty': 'no recovery info',
+  'recovery.create': 'Create Recovery',
+  'recovery.modify': 'Modify Recovery',
+  'recovery.friends': 'Friends',
+  'recovery.threshold': 'Threshold',
+  'recovery.delay': 'Delay Period',
+  'recovery.delay.error': 'Invalid number',
+  'recovery.delay.warn':
+      'Recommended delay period is 1～7 days, are you sure to use the customized value?',
+  'recovery.custom': 'Custom',
+  'recovery.day': 'Days',
+  'recovery.deposit': 'Deposit',
 };
 
 const Map<String, String> zhProfile = {
@@ -83,4 +96,15 @@ const Map<String, String> zhProfile = {
   'delete.confirm': '输入密码确认操作',
   'about.brif': 'Mobile Wallet for Polkadot',
   'about.version': '版本',
+  'recovery': '账户恢复设置',
+  'recovery.create': '创建恢复信息',
+  'recovery.modify': '修改恢复信息',
+  'recovery.friends': '好友账户',
+  'recovery.threshold': '激活所需好友数',
+  'recovery.delay': '延迟期',
+  'recovery.delay.error': '输入格式错误',
+  'recovery.delay.warn': '延迟期建议设置1～7天，确定使用当前设置吗？',
+  'recovery.custom': '自定义',
+  'recovery.day': '天',
+  'recovery.deposit': '配置押金',
 };

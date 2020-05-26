@@ -35,7 +35,7 @@ class AccountManagePage extends StatelessWidget {
               store.staking.loadAccountCache();
               webApi.staking.fetchAccountStaking(pubKey);
             });
-            Navigator.popUntil(context, ModalRoute.withName('/'));
+            Navigator.of(context).pop();
           },
         );
       },
@@ -97,7 +97,7 @@ class AccountManagePage extends StatelessWidget {
                           .pushNamed(ExportAccountPage.route),
                     ),
                     ListTile(
-                      title: Text('recovery settings'),
+                      title: Text(dic['recovery']),
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
                       onTap: () => Navigator.of(context)
                           .pushNamed(RecoverySettingPage.route),

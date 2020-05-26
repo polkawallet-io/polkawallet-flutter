@@ -1,5 +1,5 @@
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/account.dart';
 import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/store/gov/types/councilInfoData.dart';
 import 'package:polka_wallet/utils/localStorage.dart';

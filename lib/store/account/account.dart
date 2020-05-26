@@ -1,7 +1,9 @@
 import 'package:flutter_aes_ecb_pkcs5/flutter_aes_ecb_pkcs5.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
+import 'package:polka_wallet/store/account/types/accountBondedInfo.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
+import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -68,6 +70,9 @@ abstract class _AccountStore with Store {
   @observable
   ObservableMap<String, String> addressIconsMap =
       ObservableMap<String, String>();
+
+  @observable
+  AccountRecoveryInfo recoveryInfo = AccountRecoveryInfo();
 
   @computed
   ObservableList<AccountData> get optionalAccounts {
@@ -321,6 +326,11 @@ abstract class _AccountStore with Store {
       accountIndexMap[i['accountId']] = i;
     });
   }
+
+  @action
+  void setAccountRecoveryInfo(Map json) {
+    recoveryInfo = AccountRecoveryInfo.fromJson(json);
+  }
 }
 
 class AccountCreate extends _AccountCreate with _$AccountCreate {}
@@ -334,34 +344,4 @@ abstract class _AccountCreate with Store {
 
   @observable
   String key = '';
-}
-
-@JsonSerializable()
-class AccountData extends _AccountData {
-  static AccountData fromJson(Map<String, dynamic> json) =>
-      _$AccountDataFromJson(json);
-  static Map<String, dynamic> toJson(AccountData acc) =>
-      _$AccountDataToJson(acc);
-}
-
-abstract class _AccountData {
-  String name = '';
-  String address = '';
-  String encoded = '';
-  String pubKey = '';
-
-  Map<String, dynamic> encoding = Map<String, dynamic>();
-  Map<String, dynamic> meta = Map<String, dynamic>();
-
-  String memo = '';
-  bool observation = false;
-}
-
-class AccountBondedInfo {
-  AccountBondedInfo(this.pubKey, this.controllerId, this.stashId);
-  final String pubKey;
-  // controllerId != null, means the account is a stash
-  final String controllerId;
-  // stashId != null, means the account is a controller
-  final String stashId;
 }

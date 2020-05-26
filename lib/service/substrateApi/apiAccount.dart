@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/account.dart';
 
 class ApiAccount {
   ApiAccount(this.apiRoot);
@@ -197,8 +198,14 @@ class ApiAccount {
 
   Future<Map> queryRecoverable() async {
     String address = store.account.currentAddress;
-    final res = await apiRoot
-        .evalJavascript('api.query.recovery.recoverable("$address")');
+    final res = await apiRoot.evalJavascript(
+        'api.query.recovery.recoverable("J4sW13h2HNerfxTzPGpLT66B3HVvuU32S6upxwSeFJQnAzg")');
+    if (res != null) {
+      store.account.setAccountRecoveryInfo(res);
+      if (List.of(res['friends']).length > 0) {
+        getAddressIcons(res['friends']);
+      }
+    }
     return res;
   }
 

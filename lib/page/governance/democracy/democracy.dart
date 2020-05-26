@@ -104,6 +104,8 @@ class _DemocracyState extends State<Democracy> {
                           bestNumber: bestNumber,
                           symbol: symbol,
                           onCancelVote: _submitCancelVote,
+                          blockDuration: store.settings.networkConst['babe']
+                              ['expectedBlockTime'],
                         );
                       },
                     ),
