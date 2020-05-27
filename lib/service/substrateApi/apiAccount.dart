@@ -198,8 +198,8 @@ class ApiAccount {
 
   Future<Map> queryRecoverable() async {
     String address = store.account.currentAddress;
-    final res = await apiRoot.evalJavascript(
-        'api.query.recovery.recoverable("J4sW13h2HNerfxTzPGpLT66B3HVvuU32S6upxwSeFJQnAzg")');
+    final res = await apiRoot
+        .evalJavascript('api.query.recovery.recoverable("$address")');
     if (res != null) {
       store.account.setAccountRecoveryInfo(res);
       if (List.of(res['friends']).length > 0) {

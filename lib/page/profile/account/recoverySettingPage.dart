@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/profile/account/createRecoveryPage.dart';
+import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
@@ -23,8 +27,63 @@ class RecoverySettingPage extends StatefulWidget {
 }
 
 class _RecoverySettingPage extends State<RecoverySettingPage> {
+  List _activeRecoveries = [];
+
   Future<void> _fetchData() async {
     await webApi.account.queryRecoverable();
+    Map res = await PolkaScanApi.fetchRecoveryAttempts();
+    List txs = List.of(res['extrinsics']);
+    txs.retainWhere((e) {
+      List params = jsonDecode(e['params']);
+      return params[0]['value'] == widget.store.account.currentAccount.pubKey;
+    });
+    print('_activeRecoveries');
+    print(txs);
+    if (txs.length > 0) {
+      setState(() {
+        _activeRecoveries = txs;
+      });
+    }
+  }
+
+  Future<void> _onRemoveRecovery() async {
+    final Map dic = I18n.of(context).profile;
+    bool couldRemove = true;
+    if (couldRemove) {
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Container(),
+            content: Text(dic['recovery.remove.warn']),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      var args = {
+        "title": dic['recovery.remove'],
+        "txInfo": {
+          "module": 'recovery',
+          "call": 'removeRecovery',
+        },
+        "detail": '{}',
+        "params": [],
+        'onFinish': (BuildContext txPageContext, Map res) {
+          Navigator.popUntil(
+              txPageContext, ModalRoute.withName('/profile/recovery'));
+          globalRecoverySettingsRefreshKey.currentState.show();
+        }
+      };
+      Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
+    }
   }
 
   @override
@@ -49,7 +108,7 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
                 widget.store.settings.networkState.tokenSymbol;
             AccountRecoveryInfo info = widget.store.account.recoveryInfo;
             List<AccountData> friends = [];
-            if (info != null) {
+            if (info.friends != null) {
               friends.addAll(info.friends.map((e) {
                 int friendIndex = widget.store.settings.contactList
                     .indexWhere((c) => c.address == e);
@@ -82,26 +141,27 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
                                   blockDuration:
                                       widget.store.settings.networkConst['babe']
                                           ['expectedBlockTime'],
+                                  onRemove: _onRemoveRecovery,
                                 ),
                         )
                       ],
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: RoundedButton(
-                    text: info != null
-                        ? dic['recovery.modify']
-                        : dic['recovery.create'],
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(
-                        CreateRecoveryPage.route,
-                        arguments: friends,
-                      );
-                    },
-                  ),
-                )
+                info.friends == null
+                    ? Padding(
+                        padding: EdgeInsets.all(16),
+                        child: RoundedButton(
+                          text: dic['recovery.create'],
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                              CreateRecoveryPage.route,
+                              arguments: friends,
+                            );
+                          },
+                        ),
+                      )
+                    : Container()
               ],
             );
           },
@@ -118,6 +178,7 @@ class _RecoveryInfo extends StatelessWidget {
     this.decimals,
     this.symbol,
     this.blockDuration,
+    this.onRemove,
   });
 
   final AccountRecoveryInfo recoveryInfo;
@@ -125,6 +186,7 @@ class _RecoveryInfo extends StatelessWidget {
   final int decimals;
   final String symbol;
   final int blockDuration;
+  final Function onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -172,6 +234,31 @@ class _RecoveryInfo extends StatelessWidget {
             Text(
               '${Fmt.token(recoveryInfo.deposit, decimals: decimals)} $symbol',
               style: valueStyle,
+            )
+          ],
+        ),
+        Divider(height: 32),
+        Row(
+          children: [
+            Expanded(
+              child: RoundedButton(
+                color: Colors.orange,
+                text: 'remove',
+                onPressed: () => onRemove(),
+              ),
+            ),
+            Container(width: 16),
+            Expanded(
+              child: RoundedButton(
+                color: Theme.of(context).primaryColor,
+                text: 'modify',
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    CreateRecoveryPage.route,
+                    arguments: friends,
+                  );
+                },
+              ),
             )
           ],
         )

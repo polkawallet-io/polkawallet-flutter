@@ -69,7 +69,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
     }
   }
 
-  void _onValidateSubmit() {
+  void _onValidateSubmit(String pageTitle) {
     if (_delay > 7 || _delay < 1) {
       showCupertinoDialog(
         context: context,
@@ -95,7 +95,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
                 child: Text(I18n.of(context).home['ok']),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _onSubmit('title');
+                  _onSubmit(pageTitle);
                 },
               ),
             ],
@@ -103,7 +103,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
         },
       );
     } else {
-      _onSubmit('title');
+      _onSubmit(pageTitle);
     }
   }
 
@@ -140,7 +140,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
           widget.store.account.recoveryInfo;
       final List<AccountData> friends =
           ModalRoute.of(context).settings.arguments;
-      if (recoveryInfo != null) {
+      if (recoveryInfo.friends != null) {
         int delaySeconds = recoveryInfo.delayPeriod *
             widget.store.settings.networkConst['babe']['expectedBlockTime'] ~/
             1000;
@@ -165,12 +165,11 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
     final Color grey = Theme.of(context).disabledColor;
     final List<AccountData> friends = ModalRoute.of(context).settings.arguments;
 
-    print(_delay);
+    final String pageTitle =
+        friends.length > 0 ? dic['recovery.modify'] : dic['recovery.create'];
     return Scaffold(
       appBar: AppBar(
-        title: Text(friends.length > 0
-            ? dic['recovery.modify']
-            : dic['recovery.create']),
+        title: Text(pageTitle),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -308,7 +307,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
                   text: I18n.of(context).home['next'],
                   onPressed: _friends.length > 0 && _delayError == null
                       ? () {
-                          _onValidateSubmit();
+                          _onValidateSubmit(pageTitle);
                         }
                       : null,
                 ),
