@@ -115,6 +115,16 @@ flutter:
     - assets/images/acala/loan.svg
     - assets/images/acala/loan-start.svg
     ## images - kusama
+    - assets/images/public/Assets_pink800.png
+    - assets/images/public/Governance_pink800.png
+    - assets/images/public/Profile_pink800.png
+    - assets/images/public/Staking_pink800.png
+    - assets/images/assets/top_bg_pink800.png
+    - assets/images/assets/qrcode_pink800.png
+    - assets/images/assets/plus_pink800.png
+    - assets/images/assets/receive_line_pink800.png
+    - assets/images/staking/top_bg_pink800.png
+    ## images - polkadot
     - assets/images/public/app.png
     - assets/images/public/Assets_pink.png
     - assets/images/public/Governance_pink.png
@@ -128,6 +138,7 @@ flutter:
     - assets/images/public/dontscreen.png
     - assets/images/public/copy.png
     - assets/images/public/polkadot.png
+    - assets/images/public/polkadot_gray.png
     - assets/images/public/westend.png
     - assets/images/public/kusama.png
     - assets/images/public/substrate.png

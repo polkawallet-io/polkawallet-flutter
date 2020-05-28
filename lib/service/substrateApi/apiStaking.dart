@@ -99,8 +99,12 @@ class ApiStaking {
   Future<Map> updateStaking(int page) async {
     store.staking.setTxsLoading(true);
 
-    Map res = await PolkaScanApi.fetchTxs(store.account.currentAddress,
-        page: page, module: PolkaScanApi.module_staking);
+    Map res = await PolkaScanApi.fetchTxs(
+      store.account.currentAddress,
+      page: page,
+      module: PolkaScanApi.module_staking,
+      network: store.settings.networkName.toLowerCase(),
+    );
 
     if (page == 0) {
       store.staking.clearTxs();
