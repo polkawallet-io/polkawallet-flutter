@@ -82,4 +82,20 @@ class PolkaScanApi {
     Response res = await get('${getPnEndpoint(network)}/extrinsic/0x$hash');
     return res.body;
   }
+
+  static Future<Map> fetchRecoveryAttempts({String network = 'kusama'}) async {
+    String url = '${getSnEndpoint(network)}/extrinsics';
+    Map<String, String> headers = {"Content-type": "application/json"};
+    String body = jsonEncode({
+      "page": 0,
+      "row": 99,
+      "module": 'Recovery',
+      "call": 'initiate_recovery',
+    });
+    Response res = await post(url, headers: headers, body: body);
+    if (res.body != null) {
+      return jsonDecode(res.body)['data'];
+    }
+    return {};
+  }
 }

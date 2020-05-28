@@ -5,7 +5,7 @@ import 'package:mobx/mobx.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
@@ -136,7 +136,7 @@ abstract class _SettingsStore with Store {
   @action
   Future<void> addContact(Map<String, dynamic> con) async {
     await LocalStorage.addContact(con);
-    loadContacts();
+    await loadContacts();
   }
 
   @action
@@ -217,45 +217,31 @@ abstract class _SettingsStore with Store {
 }
 
 @JsonSerializable()
-class NetworkState extends _NetworkState with _$NetworkState {
+class NetworkState extends _NetworkState {
   static NetworkState fromJson(Map<String, dynamic> json) =>
       _$NetworkStateFromJson(json);
   static Map<String, dynamic> toJson(NetworkState net) =>
       _$NetworkStateToJson(net);
 }
 
-abstract class _NetworkState with Store {
-  @observable
+abstract class _NetworkState {
   String endpoint = '';
-
-  @observable
   int ss58Format = 0;
-
-  @observable
   int tokenDecimals = 0;
-
-  @observable
   String tokenSymbol = '';
 }
 
 @JsonSerializable()
-class EndpointData extends _EndpointData with _$EndpointData {
+class EndpointData extends _EndpointData {
   static EndpointData fromJson(Map<String, dynamic> json) =>
       _$EndpointDataFromJson(json);
   static Map<String, dynamic> toJson(EndpointData data) =>
       _$EndpointDataToJson(data);
 }
 
-abstract class _EndpointData with Store {
-  @observable
+abstract class _EndpointData {
   String info = '';
-
-  @observable
   int ss58 = 42;
-
-  @observable
   String text = '';
-
-  @observable
   String value = '';
 }

@@ -53,7 +53,7 @@ class AcalaEntry extends StatelessWidget {
                         child: GestureDetector(
                           child: _AcalaCard(
                             dic['loan.title'],
-                            dic['loan.bref'],
+                            dic['loan.brief'],
                             'assets/images/acala/loan.svg',
                           ),
                           onTap: () =>
@@ -65,7 +65,7 @@ class AcalaEntry extends StatelessWidget {
                         child: GestureDetector(
                           child: _AcalaCard(
                             dic['dex.title'],
-                            dic['dex.bref'],
+                            dic['dex.brief'],
                             'assets/images/acala/exchange.svg',
                             color: Theme.of(context).primaryColor,
                           ),
@@ -78,7 +78,7 @@ class AcalaEntry extends StatelessWidget {
                         child: GestureDetector(
                           child: _AcalaCard(
                             dic['earn.title'],
-                            dic['earn.bref'],
+                            dic['earn.brief'],
                             'assets/images/acala/loan.svg',
                             color: Colors.blueAccent,
                           ),
@@ -91,7 +91,7 @@ class AcalaEntry extends StatelessWidget {
                         child: GestureDetector(
                           child: _AcalaCard(
                             dic['homa.title'],
-                            dic['homa.bref'],
+                            dic['homa.brief'],
                             'assets/images/acala/exchange.svg',
                             color: Theme.of(context).primaryColor,
                           ),
@@ -112,11 +112,11 @@ class AcalaEntry extends StatelessWidget {
 }
 
 class _AcalaCard extends StatelessWidget {
-  _AcalaCard(this.title, this.bref, this.icon, {this.color});
+  _AcalaCard(this.title, this.brief, this.icon, {this.color});
 
   final String icon;
   final String title;
-  final String bref;
+  final String brief;
   final Color color;
 
   @override
@@ -154,7 +154,7 @@ class _AcalaCard extends StatelessWidget {
                 width: MediaQuery.of(context).size.width / 2,
                 height: 60,
                 child: Text(
-                  bref,
+                  brief,
                   style: TextStyle(
                       fontSize: 13,
                       color: Theme.of(context).unselectedWidgetColor),

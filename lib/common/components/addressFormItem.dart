@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -45,7 +45,7 @@ class AddressFormItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(account.name),
+                    Text(Fmt.accountName(context, account)),
                     Text(
                       Fmt.address(address),
                       style: TextStyle(fontSize: 14, color: grey),

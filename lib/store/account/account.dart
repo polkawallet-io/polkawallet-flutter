@@ -1,7 +1,9 @@
 import 'package:flutter_aes_ecb_pkcs5/flutter_aes_ecb_pkcs5.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
+import 'package:polka_wallet/store/account/types/accountBondedInfo.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
+import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -69,16 +71,23 @@ abstract class _AccountStore with Store {
   ObservableMap<String, String> addressIconsMap =
       ObservableMap<String, String>();
 
+  @observable
+  AccountRecoveryInfo recoveryInfo = AccountRecoveryInfo();
+
   @computed
   ObservableList<AccountData> get optionalAccounts {
-    int ss58 = rootStore.settings.customSS58Format['value'];
-    if (rootStore.settings.customSS58Format['info'] ==
-        default_ss58_prefix['info']) {
-      ss58 = rootStore.settings.endpoint.ss58;
-      print(ss58);
-    }
-    return ObservableList.of(accountList.where((i) =>
-        (pubKeyAddressMap[ss58][i.pubKey] ?? i.address) != currentAddress));
+    return ObservableList.of(
+        accountListAll.where((i) => i.pubKey != currentAccount.pubKey));
+  }
+
+  /// accountList with observations
+  @computed
+  ObservableList<AccountData> get accountListAll {
+    ObservableList<AccountData> accList = ObservableList.of(accountList);
+    List<AccountData> contactList = rootStore.settings.contactList.toList();
+    contactList.retainWhere((i) => i.observation ?? false);
+    accList.addAll(contactList);
+    return accList;
   }
 
   @computed
@@ -200,12 +209,14 @@ abstract class _AccountStore with Store {
     accountList =
         ObservableList.of(accList.map((i) => AccountData.fromJson(i)));
 
-    if (accountList.length > 0) {
-      String pubKey = await LocalStorage.getCurrentAccount();
-      int accIndex = accList.indexWhere((i) => i['pubKey'] == pubKey);
+    String pubKey = await LocalStorage.getCurrentAccount();
+    if (accountListAll.length > 0) {
+      int accIndex = accountListAll.indexWhere((i) => i.pubKey == pubKey);
       if (accIndex >= 0) {
-        Map<String, dynamic> acc = accList[accIndex];
-        currentAccount = AccountData.fromJson(acc);
+        currentAccount = accountListAll[accIndex];
+        print(currentAccount);
+      } else {
+        currentAccount = accountListAll[0];
       }
     }
     loading = false;
@@ -290,7 +301,6 @@ abstract class _AccountStore with Store {
       Map.of(data[ss58]).forEach((k, v) {
         addresses[k] = v;
       });
-      print(addresses);
       // update state
       pubKeyAddressMap[int.parse(ss58)] = addresses;
     });
@@ -316,6 +326,11 @@ abstract class _AccountStore with Store {
       accountIndexMap[i['accountId']] = i;
     });
   }
+
+  @action
+  void setAccountRecoveryInfo(Map json) {
+    recoveryInfo = AccountRecoveryInfo.fromJson(json);
+  }
 }
 
 class AccountCreate extends _AccountCreate with _$AccountCreate {}
@@ -329,44 +344,4 @@ abstract class _AccountCreate with Store {
 
   @observable
   String key = '';
-}
-
-@JsonSerializable()
-class AccountData extends _AccountData with _$AccountData {
-  static AccountData fromJson(Map<String, dynamic> json) =>
-      _$AccountDataFromJson(json);
-  static Map<String, dynamic> toJson(AccountData acc) =>
-      _$AccountDataToJson(acc);
-}
-
-abstract class _AccountData with Store {
-  @observable
-  String name = '';
-
-  @observable
-  String address = '';
-
-  @observable
-  String encoded = '';
-
-  @observable
-  String pubKey = '';
-
-  @observable
-  Map<String, dynamic> encoding = Map<String, dynamic>();
-
-  @observable
-  Map<String, dynamic> meta = Map<String, dynamic>();
-
-  @observable
-  String memo = '';
-}
-
-class AccountBondedInfo {
-  AccountBondedInfo(this.pubKey, this.controllerId, this.stashId);
-  final String pubKey;
-  // controllerId != null, means the account is a stash
-  final String controllerId;
-  // stashId != null, means the account is a controller
-  final String stashId;
 }

@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/account.dart';
 
 class ApiAccount {
   ApiAccount(this.apiRoot);
@@ -14,21 +15,30 @@ class ApiAccount {
   final store = globalAppStore;
 
   Future<void> initAccounts() async {
-    if (store.account.accountList.length < 1) return;
+    if (store.account.accountList.length > 0) {
+      String accounts = jsonEncode(
+          store.account.accountList.map((i) => AccountData.toJson(i)).toList());
 
-    String accounts = jsonEncode(
-        store.account.accountList.map((i) => AccountData.toJson(i)).toList());
+      String ss58 = jsonEncode(network_ss58_map.values.toSet().toList());
+      Map keys =
+          await apiRoot.evalJavascript('account.initKeys($accounts, $ss58)');
+      store.account.setPubKeyAddressMap(Map<String, Map>.from(keys));
 
-    String ss58 = jsonEncode(network_ss58_map.values.toSet().toList());
-    Map keys =
-        await apiRoot.evalJavascript('account.initKeys($accounts, $ss58)');
-    store.account.setPubKeyAddressMap(Map<String, Map>.from(keys));
-
-    // get accounts icons
-    getPubKeyIcons(store.account.accountList.map((i) => i.pubKey).toList());
+      // get accounts icons
+      getPubKeyIcons(store.account.accountList.map((i) => i.pubKey).toList());
+    }
 
     // and contacts icons
-    getAddressIcons(store.settings.contactList.map((i) => i.address).toList());
+    List<AccountData> contacts =
+        List<AccountData>.of(store.settings.contactList);
+    getAddressIcons(contacts.map((i) => i.address).toList());
+    // set pubKeyAddressMap for observation accounts
+    contacts.retainWhere((i) => i.observation);
+    List<String> observations = contacts.map((i) => i.pubKey).toList();
+    if (observations.length > 0) {
+      encodeAddress(observations);
+      getPubKeyIcons(observations);
+    }
   }
 
   /// encode addresses to publicKeys
@@ -42,14 +52,26 @@ class ApiAccount {
   }
 
   /// decode addresses to publicKeys
-  Future<void> decodeAddress(List<String> addresses) async {
+  Future<Map> decodeAddress(List<String> addresses) async {
     Map res = await apiRoot
         .evalJavascript('account.decodeAddress(${jsonEncode(addresses)})');
     if (res != null) {
       store.account.setPubKeyAddressMap(Map<String, Map>.from(
           {store.settings.endpoint.ss58.toString(): res}));
     }
+    return res;
   }
+
+//  Future<Map> getObservationAddressPubKey(String address) async {
+//    String ss58 = jsonEncode(network_ss58_map.values.toSet().toList());
+//    Map res = await apiRoot.evalJavascript('account.decodeAddress(["$address"])'
+//        '.then(res => account.encodeAddress(Object.keys(res), $ss58))');
+//    if (res != null) {
+//      Map<String, Map> addressMap = Map<String, Map>.from(res);
+//      store.account.setPubKeyAddressMap(addressMap);
+//    }
+//    return res;
+//  }
 
   Future<void> fetchAccountsBonded(List<String> pubKeys) async {
     if (pubKeys.length > 0) {
@@ -145,8 +167,9 @@ class ApiAccount {
     if (keys.length == 0) {
       return [];
     }
-    List res = await apiRoot
-        .evalJavascript('account.genPubKeyIcons(${jsonEncode(keys)})');
+    List res = await apiRoot.evalJavascript(
+        'account.genPubKeyIcons(${jsonEncode(keys)})',
+        allowRepeat: true);
     store.account.setPubKeyIconsMap(res);
     return res;
   }
@@ -157,8 +180,9 @@ class ApiAccount {
     if (addresses.length == 0) {
       return [];
     }
-    List res = await apiRoot
-        .evalJavascript('account.genIcons(${jsonEncode(addresses)})');
+    List res = await apiRoot.evalJavascript(
+        'account.genIcons(${jsonEncode(addresses)})',
+        allowRepeat: true);
     store.account.setAddressIconsMap(res);
     return res;
   }
@@ -169,6 +193,32 @@ class ApiAccount {
       'account.checkDerivePath("$seed", "$path", "$pairType")',
       allowRepeat: true,
     );
+    return res;
+  }
+
+  Future<Map> queryRecoverable() async {
+    String address = store.account.currentAddress;
+    final res = await apiRoot
+        .evalJavascript('api.query.recovery.recoverable("$address")');
+    if (res != null) {
+      store.account.setAccountRecoveryInfo(res);
+      if (List.of(res['friends']).length > 0) {
+        getAddressIcons(res['friends']);
+      }
+    }
+    return res;
+  }
+
+  Future<Map> queryActiveRecovery(String address, String addressNew) async {
+    final res = await apiRoot.evalJavascript(
+        'api.query.recovery.activeRecoveries("$address", "$addressNew")');
+    return res;
+  }
+
+  Future<Map> queryRecoveryProxy() async {
+    String address = store.account.currentAddress;
+    final res =
+        await apiRoot.evalJavascript('api.query.recovery.proxy("$address")');
     return res;
   }
 }

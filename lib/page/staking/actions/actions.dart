@@ -18,7 +18,7 @@ import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/outlinedCircle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -182,7 +182,7 @@ class _StakingActions extends State<StakingActions>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      store.account.currentAccount.name,
+                      Fmt.accountName(context, store.account.currentAccount),
                       style: Theme.of(context).textTheme.headline4,
                     ),
                     Text(Fmt.address(store.account.currentAddress))

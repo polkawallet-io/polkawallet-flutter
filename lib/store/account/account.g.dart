@@ -3,32 +3,6 @@
 part of 'account.dart';
 
 // **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
-
-AccountData _$AccountDataFromJson(Map<String, dynamic> json) {
-  return AccountData()
-    ..name = json['name'] as String
-    ..address = json['address'] as String
-    ..encoded = json['encoded'] as String
-    ..pubKey = json['pubKey'] as String
-    ..encoding = json['encoding'] as Map<String, dynamic>
-    ..meta = json['meta'] as Map<String, dynamic>
-    ..memo = json['memo'] as String;
-}
-
-Map<String, dynamic> _$AccountDataToJson(AccountData instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'address': instance.address,
-      'encoded': instance.encoded,
-      'pubKey': instance.pubKey,
-      'encoding': instance.encoding,
-      'meta': instance.meta,
-      'memo': instance.memo,
-    };
-
-// **************************************************************************
 // StoreGenerator
 // **************************************************************************
 
@@ -42,6 +16,14 @@ mixin _$AccountStore on _AccountStore, Store {
       (_$optionalAccountsComputed ??= Computed<ObservableList<AccountData>>(
               () => super.optionalAccounts,
               name: '_AccountStore.optionalAccounts'))
+          .value;
+  Computed<ObservableList<AccountData>> _$accountListAllComputed;
+
+  @override
+  ObservableList<AccountData> get accountListAll =>
+      (_$accountListAllComputed ??= Computed<ObservableList<AccountData>>(
+              () => super.accountListAll,
+              name: '_AccountStore.accountListAll'))
           .value;
   Computed<String> _$currentAddressComputed;
 
@@ -198,6 +180,21 @@ mixin _$AccountStore on _AccountStore, Store {
   set addressIconsMap(ObservableMap<String, String> value) {
     _$addressIconsMapAtom.reportWrite(value, super.addressIconsMap, () {
       super.addressIconsMap = value;
+    });
+  }
+
+  final _$recoveryInfoAtom = Atom(name: '_AccountStore.recoveryInfo');
+
+  @override
+  AccountRecoveryInfo get recoveryInfo {
+    _$recoveryInfoAtom.reportRead();
+    return super.recoveryInfo;
+  }
+
+  @override
+  set recoveryInfo(AccountRecoveryInfo value) {
+    _$recoveryInfoAtom.reportWrite(value, super.recoveryInfo, () {
+      super.recoveryInfo = value;
     });
   }
 
@@ -395,6 +392,17 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
+  void setAccountRecoveryInfo(Map<dynamic, dynamic> json) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setAccountRecoveryInfo');
+    try {
+      return super.setAccountRecoveryInfo(json);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 loading: ${loading},
@@ -407,7 +415,9 @@ pubKeyBondedMap: ${pubKeyBondedMap},
 pubKeyAddressMap: ${pubKeyAddressMap},
 pubKeyIconsMap: ${pubKeyIconsMap},
 addressIconsMap: ${addressIconsMap},
+recoveryInfo: ${recoveryInfo},
 optionalAccounts: ${optionalAccounts},
+accountListAll: ${accountListAll},
 currentAddress: ${currentAddress}
     ''';
   }
@@ -465,126 +475,6 @@ mixin _$AccountCreate on _AccountCreate, Store {
 name: ${name},
 password: ${password},
 key: ${key}
-    ''';
-  }
-}
-
-mixin _$AccountData on _AccountData, Store {
-  final _$nameAtom = Atom(name: '_AccountData.name');
-
-  @override
-  String get name {
-    _$nameAtom.reportRead();
-    return super.name;
-  }
-
-  @override
-  set name(String value) {
-    _$nameAtom.reportWrite(value, super.name, () {
-      super.name = value;
-    });
-  }
-
-  final _$addressAtom = Atom(name: '_AccountData.address');
-
-  @override
-  String get address {
-    _$addressAtom.reportRead();
-    return super.address;
-  }
-
-  @override
-  set address(String value) {
-    _$addressAtom.reportWrite(value, super.address, () {
-      super.address = value;
-    });
-  }
-
-  final _$encodedAtom = Atom(name: '_AccountData.encoded');
-
-  @override
-  String get encoded {
-    _$encodedAtom.reportRead();
-    return super.encoded;
-  }
-
-  @override
-  set encoded(String value) {
-    _$encodedAtom.reportWrite(value, super.encoded, () {
-      super.encoded = value;
-    });
-  }
-
-  final _$pubKeyAtom = Atom(name: '_AccountData.pubKey');
-
-  @override
-  String get pubKey {
-    _$pubKeyAtom.reportRead();
-    return super.pubKey;
-  }
-
-  @override
-  set pubKey(String value) {
-    _$pubKeyAtom.reportWrite(value, super.pubKey, () {
-      super.pubKey = value;
-    });
-  }
-
-  final _$encodingAtom = Atom(name: '_AccountData.encoding');
-
-  @override
-  Map<String, dynamic> get encoding {
-    _$encodingAtom.reportRead();
-    return super.encoding;
-  }
-
-  @override
-  set encoding(Map<String, dynamic> value) {
-    _$encodingAtom.reportWrite(value, super.encoding, () {
-      super.encoding = value;
-    });
-  }
-
-  final _$metaAtom = Atom(name: '_AccountData.meta');
-
-  @override
-  Map<String, dynamic> get meta {
-    _$metaAtom.reportRead();
-    return super.meta;
-  }
-
-  @override
-  set meta(Map<String, dynamic> value) {
-    _$metaAtom.reportWrite(value, super.meta, () {
-      super.meta = value;
-    });
-  }
-
-  final _$memoAtom = Atom(name: '_AccountData.memo');
-
-  @override
-  String get memo {
-    _$memoAtom.reportRead();
-    return super.memo;
-  }
-
-  @override
-  set memo(String value) {
-    _$memoAtom.reportWrite(value, super.memo, () {
-      super.memo = value;
-    });
-  }
-
-  @override
-  String toString() {
-    return '''
-name: ${name},
-address: ${address},
-encoded: ${encoded},
-pubKey: ${pubKey},
-encoding: ${encoding},
-meta: ${meta},
-memo: ${memo}
     ''';
   }
 }
