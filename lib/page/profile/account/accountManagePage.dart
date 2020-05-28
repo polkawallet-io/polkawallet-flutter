@@ -96,12 +96,12 @@ class AccountManagePage extends StatelessWidget {
                       onTap: () => Navigator.of(context)
                           .pushNamed(ExportAccountPage.route),
                     ),
-                    ListTile(
-                      title: Text(dic['recovery']),
-                      trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                      onTap: () => Navigator.of(context)
-                          .pushNamed(RecoverySettingPage.route),
-                    ),
+//                    ListTile(
+//                      title: Text(dic['recovery']),
+//                      trailing: Icon(Icons.arrow_forward_ios, size: 18),
+//                      onTap: () => Navigator.of(context)
+//                          .pushNamed(RecoverySettingPage.route),
+//                    ),
                   ],
                 ),
               ),
