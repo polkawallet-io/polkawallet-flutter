@@ -107,13 +107,13 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
       builder: (_) {
         return PasswordInputDialog(
           title: Text(I18n.of(context).home['unlock']),
-          onOk: (password) => _onSubmit(context, password),
+          onOk: (password) => _onSubmit(context, password: password),
         );
       },
     );
   }
 
-  Future<void> _onSubmit(BuildContext context, String password) async {
+  Future<void> _onSubmit(BuildContext context, {String password}) async {
     final Map<String, String> dic = I18n.of(context).home;
     final Map args = ModalRoute.of(context).settings.arguments;
 
@@ -160,6 +160,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
 
+    bool isUnsigned = args['txInfo']['isUnsigned'] ?? false;
     return Scaffold(
       appBar: AppBar(
         title: Text(args['title']),
@@ -180,13 +181,15 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                           style: Theme.of(context).textTheme.headline4,
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: AddressFormItem(
-                          dic["submit.from"],
-                          store.account.currentAccount,
-                        ),
-                      ),
+                      isUnsigned
+                          ? Container()
+                          : Padding(
+                              padding: EdgeInsets.only(left: 16, right: 16),
+                              child: AddressFormItem(
+                                dic["submit.from"],
+                                store.account.currentAccount,
+                              ),
+                            ),
                       Padding(
                         padding: EdgeInsets.all(16),
                         child: Row(
@@ -224,60 +227,62 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                           ],
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(top: 8),
-                              width: 64,
-                              child: Text(
-                                dic["submit.fees"],
+                      isUnsigned
+                          ? Container()
+                          : Padding(
+                              padding: EdgeInsets.only(left: 16, right: 16),
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(top: 8),
+                                    width: 64,
+                                    child: Text(
+                                      dic["submit.fees"],
+                                    ),
+                                  ),
+                                  FutureBuilder<String>(
+                                    future: _getTxFee(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<String> snapshot) {
+                                      if (snapshot.hasData) {
+                                        String fee = Fmt.balance(
+                                          _fee['partialFee'].toString(),
+                                          decimals: decimals,
+                                          length: 6,
+                                        );
+                                        return Container(
+                                          margin: EdgeInsets.only(top: 8),
+                                          width: MediaQuery.of(context)
+                                                  .copyWith()
+                                                  .size
+                                                  .width -
+                                              120,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                '$fee $symbol',
+                                              ),
+                                              Text(
+                                                '${_fee['weight']} Weight',
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Theme.of(context)
+                                                      .unselectedWidgetColor,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      } else {
+                                        return CupertinoActivityIndicator();
+                                      }
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
-                            FutureBuilder<String>(
-                              future: _getTxFee(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<String> snapshot) {
-                                if (snapshot.hasData) {
-                                  String fee = Fmt.balance(
-                                    _fee['partialFee'].toString(),
-                                    decimals: decimals,
-                                    length: 6,
-                                  );
-                                  return Container(
-                                    margin: EdgeInsets.only(top: 8),
-                                    width: MediaQuery.of(context)
-                                            .copyWith()
-                                            .size
-                                            .width -
-                                        120,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '$fee $symbol',
-                                        ),
-                                        Text(
-                                          '${_fee['weight']} Weight',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: Theme.of(context)
-                                                .unselectedWidgetColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                } else {
-                                  return CupertinoActivityIndicator();
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
 //                      Padding(
 //                        padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
 //                        child: TextFormField(
@@ -345,13 +350,17 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                               child: FlatButton(
                                 padding: EdgeInsets.all(16),
                                 child: Text(
-                                  dic['submit'],
+                                  isUnsigned
+                                      ? dic['submit.no.sign']
+                                      : dic['submit'],
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                onPressed: _fee['partialFee'] == null ||
-                                        store.assets.submitting
-                                    ? null
-                                    : () => _showPasswordDialog(context),
+                                onPressed: isUnsigned
+                                    ? () => _onSubmit(context)
+                                    : _fee['partialFee'] == null ||
+                                            store.assets.submitting
+                                        ? null
+                                        : () => _showPasswordDialog(context),
                               ),
                             ),
                           ),

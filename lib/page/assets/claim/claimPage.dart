@@ -109,6 +109,7 @@ class _ClaimPageState extends State<ClaimPage> {
       "txInfo": {
         "module": 'claims',
         "call": 'claimAttest',
+        "isUnsigned": true,
       },
       "detail": jsonEncode({
         "accountId": accountId,
@@ -120,7 +121,6 @@ class _ClaimPageState extends State<ClaimPage> {
         _ethSignature,
         statement,
       ],
-      "isUnsigned": true,
       'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalBalanceRefreshKey.currentState.show();

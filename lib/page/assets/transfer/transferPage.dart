@@ -239,7 +239,7 @@ class _TransferPageState extends State<TransferPage> {
                                 }
                                 if (double.parse(v.trim()) >=
                                     available / BigInt.from(pow(10, decimals)) -
-                                        0.02) {
+                                        0.001) {
                                   return dic['amount.low'];
                                 }
                                 return null;

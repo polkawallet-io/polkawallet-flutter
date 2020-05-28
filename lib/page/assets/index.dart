@@ -54,7 +54,6 @@ class _AssetsState extends State<Assets> {
     String address = store.account.currentAddress;
     String ethAddress =
         await webApi.evalJavascript('api.query.claims.preclaims("$address")');
-    print(ethAddress);
     if (ethAddress == null) {
       return '';
     }
