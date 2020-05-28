@@ -24,6 +24,8 @@ import 'package:polka_wallet/page-acala/swap/swapPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
+import 'package:polka_wallet/page/assets/claim/attestPage.dart';
+import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
@@ -88,6 +90,10 @@ class _WalletAppState extends State<WalletApp> {
     if (_appStore.settings.endpoint.info == networkEndpointAcala.info) {
       setState(() {
         _theme = appThemeAcala;
+      });
+    } else if (_appStore.settings.endpoint.info == networkEndpointKusama.info) {
+      setState(() {
+        _theme = appThemeKusama;
       });
     } else {
       setState(() {
@@ -209,6 +215,8 @@ class _WalletAppState extends State<WalletApp> {
         ReceivePage.route: (_) => ReceivePage(_appStore),
         TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
         CurrencySelectPage.route: (_) => CurrencySelectPage(),
+        ClaimPage.route: (_) => ClaimPage(_appStore),
+        AttestPage.route: (_) => AttestPage(_appStore),
         // staking
         StakingDetailPage.route: (_) => StakingDetailPage(_appStore),
         ValidatorDetailPage.route: (_) => ValidatorDetailPage(_appStore),

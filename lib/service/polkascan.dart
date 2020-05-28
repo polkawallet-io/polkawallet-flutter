@@ -21,6 +21,9 @@ class PolkaScanApi {
   static const String module_democracy = 'democracy';
 
   static String getSnEndpoint(String network) {
+    if (network.contains('polkadot')) {
+      network = 'polkadot-cc1';
+    }
     return 'https://$network.subscan.io/api/scan';
   }
 

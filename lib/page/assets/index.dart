@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
+import 'package:polka_wallet/page/assets/claim/attestPage.dart';
+import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -46,6 +48,17 @@ class _AssetsState extends State<Assets> {
         webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
       ]);
     }
+  }
+
+  Future<String> _checkPreclaim() async {
+    String address = store.account.currentAddress;
+    String ethAddress =
+        await webApi.evalJavascript('api.query.claims.preclaims("$address")');
+    print(ethAddress);
+    if (ethAddress == null) {
+      return '';
+    }
+    return ethAddress;
   }
 
   Future<void> _getTokensFromFaucet() async {
@@ -105,6 +118,9 @@ class _AssetsState extends State<Assets> {
     AccountData acc = store.account.currentAccount;
 
     bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
+    bool isPolkadot =
+        store.settings.endpoint.info == networkEndpointPolkadot.info;
 
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
@@ -144,13 +160,60 @@ class _AssetsState extends State<Assets> {
                       }
                     },
                   )
-                : Container(width: 8),
+                : isPolkadot
+                    ? !store.settings.loading
+                        ? FutureBuilder(
+                            future: _checkPreclaim(),
+                            builder: (_, AsyncSnapshot<String> snapshot) {
+                              if (snapshot.hasData) {
+                                return GestureDetector(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(4),
+                                    child: Column(
+                                      children: <Widget>[
+                                        _faucetSubmitting
+                                            ? CupertinoActivityIndicator()
+                                            : Icon(
+                                                Icons.card_giftcard,
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                                size: 20,
+                                              ),
+                                        Text(
+                                          'claim',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    if (snapshot.data.isEmpty) {
+                                      Navigator.of(context).pushNamed(
+                                          ClaimPage.route,
+                                          arguments: snapshot.data);
+                                    } else {
+                                      Navigator.of(context).pushNamed(
+                                          AttestPage.route,
+                                          arguments: snapshot.data);
+                                    }
+                                  },
+                                );
+                              }
+                              return Container(width: 8);
+                            },
+                          )
+                        : Container(width: 8)
+                    : Container(width: 8),
           ),
           ListTile(
             title: Text(Fmt.address(store.account.currentAddress)),
             trailing: IconButton(
               icon: Image.asset(
-                  'assets/images/assets/qrcode_${isAcala ? 'indigo' : 'pink'}.png'),
+                  'assets/images/assets/qrcode_${isAcala ? 'indigo' : isKusama ? 'pink800' : 'pink'}.png'),
               onPressed: () {
                 if (acc.address != '') {
                   Navigator.pushNamed(context, ReceivePage.route);

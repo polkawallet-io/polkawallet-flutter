@@ -30,6 +30,12 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   final AppStore store;
   final Function changeTheme;
 
+  final List<EndpointData> networks = [
+    networkEndpointPolkadot,
+    networkEndpointKusama,
+    networkEndpointAcala,
+  ];
+
   EndpointData _selectedNetwork;
   bool _networkChanging = false;
 
@@ -58,13 +64,11 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
       // refresh balance
       store.assets.loadAccountCache();
 
-      if (store.settings.endpoint.info == networkEndpointKusama.info) {
-        // refresh user's staking info
-        store.staking.loadAccountCache();
-      }
-
       if (store.settings.endpoint.info == networkEndpointAcala.info) {
         store.acala.loadCache();
+      } else {
+        // refresh user's staking info if network is kusama or polkadot
+        store.staking.loadAccountCache();
       }
 
       bool isCurrentNetwork =
@@ -92,6 +96,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   List<Widget> _buildAccountList() {
     Color primaryColor = Theme.of(context).primaryColor;
     bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
     List<Widget> res = [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,7 +107,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
           ),
           IconButton(
             icon: Image.asset(
-                'assets/images/assets/plus_${isAcala ? 'indigo' : 'pink'}.png'),
+                'assets/images/assets/plus_${isAcala ? 'indigo' : isKusama ? 'pink800' : 'pink'}.png'),
             color: primaryColor,
             onPressed: () => _onCreateAccount(),
           )
@@ -169,8 +174,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
                   ],
                 ),
                 child: Column(
-                  children:
-                      [networkEndpointKusama, networkEndpointAcala].map((i) {
+                  children: networks.map((i) {
                     String network = i.info;
                     bool isCurrent = network == _selectedNetwork.info;
                     String img =

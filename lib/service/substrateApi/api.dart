@@ -60,9 +60,9 @@ class Api {
 
     _web.onStateChanged.listen((viewState) async {
       if (viewState.type == WebViewState.finishLoad) {
-        String network = store.settings.endpoint.info;
+        String network = 'kusama';
         print('webview loaded for network $network');
-        if (network.contains('acala')) {
+        if (store.settings.endpoint.info.contains('acala')) {
           network = 'acala';
         }
         DefaultAssetBundle.of(context)

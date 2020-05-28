@@ -47,7 +47,7 @@ class _StakingActions extends State<StakingActions>
       return;
     }
     Map res = await webApi.staking.updateStaking(_txsPage);
-    if (res['extrinsics'] == null ||
+    if (mounted && res['extrinsics'] == null ||
         res['extrinsics'].length < tx_list_page_size) {
       setState(() {
         _isLastPage = true;
