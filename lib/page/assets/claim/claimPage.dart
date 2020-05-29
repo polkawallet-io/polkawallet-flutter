@@ -114,7 +114,6 @@ class _ClaimPageState extends State<ClaimPage> {
   Future<void> _onSubmit() async {
     final Map dic = I18n.of(context).assets;
     final String statement = ClaimUtil.getStatementSentence(_statementKind);
-    final String payload = '$_claimPrefix$statement';
     final String pubKey = widget.store.account.currentAccount.pubKey;
     final String accountId = widget.store.account.pubKeyAddressMap[0][pubKey];
     var args = {
@@ -127,12 +126,12 @@ class _ClaimPageState extends State<ClaimPage> {
       "detail": jsonEncode({
         "accountId": accountId,
         "ethereumSignature": _ethSignature,
-        "statement": payload,
+        "statement": statement,
       }),
       "params": [
         accountId,
         _ethSignature,
-        payload,
+        statement,
       ],
       'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
