@@ -57,7 +57,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
       bonded = store.staking.ledger['stakingLedger']['active'];
       nominators = store.staking.ledger['nominators'];
       if (nominators.length > 0) {
-        nominatorListHeight = double.parse((nominators.length * 60).toString());
+        nominatorListHeight = double.parse((nominators.length * 56).toString());
       }
     }
     String controllerId = store.staking.ledger['controllerId'] ??
@@ -208,6 +208,9 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
           }
 
           Map accInfo = store.account.accountIndexMap[id];
+
+          bool hasPhalaAirdrop =
+              store.staking.phalaAirdropWhiteList[validator.accountId] ?? false;
           return Expanded(
             child: ListTile(
               leading: AddressIcon(id),
@@ -219,7 +222,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
                       : Fmt.address(validator.accountId, pad: 6)),
               trailing: Container(
                 width: 120,
-                height: 40,
+                height: 48,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -230,7 +233,27 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
                       child: Text(validator.commission.isNotEmpty
                           ? validator.commission
                           : '~'),
-                    )
+                    ),
+                    Expanded(
+                      child: hasPhalaAirdrop
+                          ? Container(
+                              child: Text(
+                                I18n.of(context).staking['phala'],
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Theme.of(context).cardColor,
+                                ),
+                              ),
+                              margin: EdgeInsets.only(left: 4),
+                              padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4)),
+                              ),
+                            )
+                          : Container(),
+                    ),
                   ],
                 ),
               ),

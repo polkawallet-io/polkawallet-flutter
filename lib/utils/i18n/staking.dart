@@ -56,6 +56,7 @@ const Map<String, String> enStaking = {
   'filter': 'Filter with Address/Name',
   'sort': 'Sort by',
   'notElected': 'Not Elected',
+  'phala': 'Phala Airdrop',
 };
 
 const Map<String, String> zhStaking = {
@@ -114,4 +115,5 @@ const Map<String, String> zhStaking = {
   'filter': '地址/名称筛选',
   'sort': '排序',
   'notElected': '未选中',
+  'phala': 'Phala 空投',
 };

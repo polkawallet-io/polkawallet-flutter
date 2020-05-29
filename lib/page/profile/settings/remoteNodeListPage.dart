@@ -32,7 +32,10 @@ class RemoteNodeListPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     store.endpoint.value == i.value
-                        ? Image.asset('assets/images/assets/success.png')
+                        ? Image.asset(
+                            'assets/images/assets/success.png',
+                            width: 16,
+                          )
                         : Container(),
                     Icon(Icons.arrow_forward_ios, size: 18)
                   ],

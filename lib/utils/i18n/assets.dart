@@ -36,7 +36,7 @@ const Map<String, String> enAssets = {
   'lock.phrelect': 'via Council/Vote',
   'lock.staking': 'via Staking/Bond',
   'lock.vesting': 'via Vesting',
-  'claim': 'Claim DOT Tokens',
+  'claim': 'Claim DOT',
   'claim.agree': 'I Agree',
   'claim.terms': 'Terms and Conditions',
   'claim.terms.url': 'You can also find them at',

@@ -103,9 +103,9 @@ class ApiAccount {
       Map txInfo, List params, String pageTile, String notificationTitle,
       {String rawParam}) async {
     String param = rawParam != null ? rawParam : jsonEncode(params);
-    Map res = await apiRoot
-        .evalJavascript('account.sendTx(${jsonEncode(txInfo)}, $param)');
-//    var res = await _testSendTx();
+    String call = 'account.sendTx(${jsonEncode(txInfo)}, $param)';
+    print(call);
+    Map res = await apiRoot.evalJavascript(call);
 
     if (res['hash'] != null) {
       String hash = res['hash'];

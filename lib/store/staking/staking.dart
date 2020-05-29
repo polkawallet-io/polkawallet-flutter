@@ -61,6 +61,9 @@ abstract class _StakingStore with Store {
   ObservableMap<String, dynamic> stakesChartDataCache =
       ObservableMap<String, dynamic>();
 
+  @observable
+  Map phalaAirdropWhiteList = {};
+
   @computed
   ObservableList<ValidatorData> get nominatingList {
     return ObservableList.of(validatorsInfo.where((i) {
@@ -265,5 +268,15 @@ abstract class _StakingStore with Store {
     }
 
     loadAccountCache();
+  }
+
+  @action
+  Future<void> setPhalaAirdropWhiteList(List ls) async {
+    Map res = {};
+    ls.forEach((i) {
+      res[i['stash']] = true;
+      res[i['controller']] = true;
+    });
+    phalaAirdropWhiteList = res;
   }
 }

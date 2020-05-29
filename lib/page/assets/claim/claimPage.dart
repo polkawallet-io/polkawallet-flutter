@@ -40,6 +40,7 @@ class _ClaimPageState extends State<ClaimPage> {
   String _amount;
   String _ethSignature;
   String _signError;
+  String _claimPrefix;
 
   Future<void> _onCheckEthAddress(String v) async {
     String ethAddress = v.trim();
@@ -47,6 +48,9 @@ class _ClaimPageState extends State<ClaimPage> {
     setState(() {
       _statementKind = statement ?? '';
     });
+    if (statement != null) {
+      _getClaimPrefix();
+    }
     return statement;
   }
 
@@ -99,9 +103,18 @@ class _ClaimPageState extends State<ClaimPage> {
     }
   }
 
+  Future<void> _getClaimPrefix() async {
+    String prefix = await webApi.evalJavascript(
+        'claim.getClaimPrefix("${widget.store.account.currentAddress}")');
+    setState(() {
+      _claimPrefix = prefix;
+    });
+  }
+
   Future<void> _onSubmit() async {
     final Map dic = I18n.of(context).assets;
     final String statement = ClaimUtil.getStatementSentence(_statementKind);
+    final String payload = '$_claimPrefix$statement';
     final String pubKey = widget.store.account.currentAccount.pubKey;
     final String accountId = widget.store.account.pubKeyAddressMap[0][pubKey];
     var args = {
@@ -114,12 +127,12 @@ class _ClaimPageState extends State<ClaimPage> {
       "detail": jsonEncode({
         "accountId": accountId,
         "ethereumSignature": _ethSignature,
-        "statement": statement,
+        "statement": payload,
       }),
       "params": [
         accountId,
         _ethSignature,
-        statement,
+        payload,
       ],
       'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
@@ -130,10 +143,19 @@ class _ClaimPageState extends State<ClaimPage> {
   }
 
   @override
+  void dispose() {
+    _addressCtrl.dispose();
+    _signCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).assets;
 
     bool isRegular = _statementKind == 'Regular';
+    String statementSentence = ClaimUtil.getStatementSentence(_statementKind);
+    final String payload = '$_claimPrefix$statementSentence';
     return Scaffold(
       appBar: AppBar(
         title: Text(dic['claim']),
@@ -227,11 +249,9 @@ class _ClaimPageState extends State<ClaimPage> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(4)),
                               ),
-                              child: Text(
-                                ClaimUtil.getStatementSentence(_statementKind),
-                              ),
+                              child: Text(payload),
                             ),
-                            onTap: () => UI.copyAndNotify(context, 'text'),
+                            onTap: () => UI.copyAndNotify(context, payload),
                           ),
                           TextFormField(
                             maxLines: 6,

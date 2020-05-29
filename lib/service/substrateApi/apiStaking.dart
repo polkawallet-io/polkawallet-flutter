@@ -1,3 +1,5 @@
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/service/phalaAirdrop.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -89,6 +91,10 @@ class ApiStaking {
     store.staking.setOverview(overview);
 
     fetchElectedInfo();
+    // phala airdrop for kusama
+    if (store.settings.endpoint.info == networkEndpointKusama.info) {
+      fetchPhalaAirdropList();
+    }
 
     List validatorAddressList = List.of(overview['validators']);
     await apiRoot.account.fetchAccountsIndex(validatorAddressList);
@@ -139,5 +145,17 @@ class ApiStaking {
       store.staking.setRewardsChartData(accountId, chartData);
     }
     return data;
+  }
+
+  Future<List> fetchPhalaAirdropList() async {
+    final today = DateTime.now();
+    // airdrop till 20200816
+    if (today.month > 6 && today.day > 15) {
+      return [];
+    }
+    List res = await PhalaAirdropApi.fetchWhiteList();
+    print(res);
+    store.staking.setPhalaAirdropWhiteList(res);
+    return res;
   }
 }

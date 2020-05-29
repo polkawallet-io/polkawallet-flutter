@@ -20,6 +20,9 @@ class Validator extends StatelessWidget {
     Map accInfo = store.account.accountIndexMap[validator.accountId];
 //    print(accInfo['identity']);
     bool hasDetail = validator.commission.isNotEmpty;
+
+    bool hasPhalaAirdrop =
+        store.staking.phalaAirdropWhiteList[validator.accountId] ?? false;
     return GestureDetector(
       child: Container(
         color: Colors.white,
@@ -51,6 +54,24 @@ class Validator extends StatelessWidget {
                               .toString()
                               .toUpperCase()
                           : Fmt.address(validator.accountId, pad: 6)),
+                      hasPhalaAirdrop
+                          ? Container(
+                              child: Text(
+                                dic['phala'],
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Theme.of(context).cardColor,
+                                ),
+                              ),
+                              margin: EdgeInsets.only(left: 4),
+                              padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4)),
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                   Text(
@@ -73,7 +94,7 @@ class Validator extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(dic['points']),
-                Text(hasDetail ? validator.points.toString() : '~')
+                Text(hasDetail ? validator.points.toString() : '~'),
               ],
             )
           ],

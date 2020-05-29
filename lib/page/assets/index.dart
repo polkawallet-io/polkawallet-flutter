@@ -167,7 +167,7 @@ class _AssetsState extends State<Assets> {
                               if (snapshot.hasData) {
                                 return GestureDetector(
                                   child: Padding(
-                                    padding: EdgeInsets.all(4),
+                                    padding: EdgeInsets.only(top: 8),
                                     child: Column(
                                       children: <Widget>[
                                         _faucetSubmitting
@@ -179,7 +179,7 @@ class _AssetsState extends State<Assets> {
                                                 size: 20,
                                               ),
                                         Text(
-                                          'claim',
+                                          dic['claim'],
                                           style: TextStyle(
                                             fontSize: 13,
                                             color:

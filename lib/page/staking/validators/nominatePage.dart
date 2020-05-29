@@ -77,7 +77,10 @@ class _NominatePageState extends State<NominatePage> {
   }
 
   Widget _buildListItem(BuildContext context, int i, List<ValidatorData> list) {
+    final dic = I18n.of(context).staking;
     Map accInfo = store.account.accountIndexMap[list[i].accountId];
+    bool hasPhalaAirdrop =
+        store.staking.phalaAirdropWhiteList[list[i].accountId] ?? false;
     return GestureDetector(
       child: Container(
         padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -112,25 +115,47 @@ class _NominatePageState extends State<NominatePage> {
                     ],
                   ),
                   Text(
-                    '${I18n.of(context).staking['total']}: ${Fmt.token(list[i].total)}',
+                    '${dic['total']}: ${Fmt.token(list[i].total)}',
                     style: TextStyle(
                       color: Theme.of(context).unselectedWidgetColor,
                       fontSize: 12,
                     ),
                   ),
                   Text(
-                    '${I18n.of(context).staking['commission']}: ${list[i].commission}',
+                    '${dic['commission']}: ${list[i].commission}',
                     style: TextStyle(
                       color: Theme.of(context).unselectedWidgetColor,
                       fontSize: 12,
                     ),
                   ),
-                  Text(
-                    '${I18n.of(context).staking['points']}: ${list[i].points}',
-                    style: TextStyle(
-                      color: Theme.of(context).unselectedWidgetColor,
-                      fontSize: 12,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        '${dic['points']}: ${list[i].points}',
+                        style: TextStyle(
+                          color: Theme.of(context).unselectedWidgetColor,
+                          fontSize: 12,
+                        ),
+                      ),
+                      hasPhalaAirdrop
+                          ? Container(
+                              child: Text(
+                                dic['phala'],
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Theme.of(context).cardColor,
+                                ),
+                              ),
+                              margin: EdgeInsets.only(left: 4),
+                              padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(4)),
+                              ),
+                            )
+                          : Container(),
+                    ],
                   ),
                 ],
               ),

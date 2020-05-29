@@ -761,6 +761,13 @@
     pirates "^4.0.0"
     source-map-support "^0.5.16"
 
+"@babel/runtime@^7.10.1":
+  version "7.10.1"
+  resolved "https://registry.npm.taobao.org/@babel/runtime/download/@babel/runtime-7.10.1.tgz?cache=0&sync_timestamp=1590617432757&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40babel%2Fruntime%2Fdownload%2F%40babel%2Fruntime-7.10.1.tgz#b6eb75cac279588d3100baecd1b9894ea2840822"
+  integrity sha1-tut1ysJ5WI0xALrs0bmJTqKECCI=
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime@^7.8.4":
   version "7.8.4"
   resolved "https://registry.npm.taobao.org/@babel/runtime/download/@babel/runtime-7.8.4.tgz#d79f5a2040f7caa24d53e563aad49cbc05581308"
@@ -977,35 +984,35 @@
   resolved "https://registry.npm.taobao.org/@nodelib/fs.stat/download/@nodelib/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha1-K1o6s/kYzKSKjHVMCBaOPwPrphs=
 
-"@polkadot/api-derive@1.16.1":
-  version "1.16.1"
-  resolved "https://registry.npm.taobao.org/@polkadot/api-derive/download/@polkadot/api-derive-1.16.1.tgz#a0560d1788fff69a1f7cdd209f40b3e37e7263b0"
-  integrity sha1-oFYNF4j/9poffN0gn0Cz435yY7A=
+"@polkadot/api-derive@1.17.0-beta.2":
+  version "1.17.0-beta.2"
+  resolved "https://registry.npm.taobao.org/@polkadot/api-derive/download/@polkadot/api-derive-1.17.0-beta.2.tgz#e4b9e6b1e4572219b95f743fd87a5dabd26839b0"
+  integrity sha1-5LnmseRXIhm5X3Q/2Hpdq9JoObA=
   dependencies:
-    "@babel/runtime" "^7.9.6"
-    "@polkadot/api" "1.16.1"
-    "@polkadot/rpc-core" "1.16.1"
-    "@polkadot/rpc-provider" "1.16.1"
-    "@polkadot/types" "1.16.1"
+    "@babel/runtime" "^7.10.1"
+    "@polkadot/api" "1.17.0-beta.2"
+    "@polkadot/rpc-core" "1.17.0-beta.2"
+    "@polkadot/rpc-provider" "1.17.0-beta.2"
+    "@polkadot/types" "1.17.0-beta.2"
     "@polkadot/util" "^2.11.1"
     "@polkadot/util-crypto" "^2.11.1"
     bn.js "^5.1.2"
     memoizee "^0.4.14"
     rxjs "^6.5.5"
 
-"@polkadot/api@1.16.1", "@polkadot/api@^1.16.1":
-  version "1.16.1"
-  resolved "https://registry.npm.taobao.org/@polkadot/api/download/@polkadot/api-1.16.1.tgz#a0ff0e7307bae71a202a2e3be818ecce81f96c51"
-  integrity sha1-oP8Ocwe65xogKi476BjszoH5bFE=
+"@polkadot/api@1.17.0-beta.2", "@polkadot/api@^1.17.0-beta.5":
+  version "1.17.0-beta.2"
+  resolved "https://registry.npm.taobao.org/@polkadot/api/download/@polkadot/api-1.17.0-beta.2.tgz#eb93890947d0d4b7e63bb3a73ef670f1b8fd5a0d"
+  integrity sha1-65OJCUfQ1LfmO7OnPvZw8bj9Wg0=
   dependencies:
-    "@babel/runtime" "^7.9.6"
-    "@polkadot/api-derive" "1.16.1"
+    "@babel/runtime" "^7.10.1"
+    "@polkadot/api-derive" "1.17.0-beta.2"
     "@polkadot/keyring" "^2.11.1"
-    "@polkadot/metadata" "1.16.1"
-    "@polkadot/rpc-core" "1.16.1"
-    "@polkadot/rpc-provider" "1.16.1"
-    "@polkadot/types" "1.16.1"
-    "@polkadot/types-known" "1.16.1"
+    "@polkadot/metadata" "1.17.0-beta.2"
+    "@polkadot/rpc-core" "1.17.0-beta.2"
+    "@polkadot/rpc-provider" "1.17.0-beta.2"
+    "@polkadot/types" "1.17.0-beta.2"
+    "@polkadot/types-known" "1.17.0-beta.2"
     "@polkadot/util" "^2.11.1"
     "@polkadot/util-crypto" "^2.11.1"
     bn.js "^5.1.2"
@@ -1021,39 +1028,39 @@
     "@polkadot/util" "2.11.1"
     "@polkadot/util-crypto" "2.11.1"
 
-"@polkadot/metadata@1.16.1":
-  version "1.16.1"
-  resolved "https://registry.npm.taobao.org/@polkadot/metadata/download/@polkadot/metadata-1.16.1.tgz#ed96227ec046e53a4a9e0ad21a9d582daa4b07fa"
-  integrity sha1-7ZYifsBG5TpKngrSGp1YLapLB/o=
+"@polkadot/metadata@1.17.0-beta.2":
+  version "1.17.0-beta.2"
+  resolved "https://registry.npm.taobao.org/@polkadot/metadata/download/@polkadot/metadata-1.17.0-beta.2.tgz#4a6da5d317169dd7c3df2cf84e69cd0339d6b66f"
+  integrity sha1-Sm2l0xcWndfD3yz4TmnNAznWtm8=
   dependencies:
-    "@babel/runtime" "^7.9.6"
-    "@polkadot/types" "1.16.1"
-    "@polkadot/types-known" "1.16.1"
+    "@babel/runtime" "^7.10.1"
+    "@polkadot/types" "1.17.0-beta.2"
+    "@polkadot/types-known" "1.17.0-beta.2"
     "@polkadot/util" "^2.11.1"
     "@polkadot/util-crypto" "^2.11.1"
     bn.js "^5.1.2"
 
-"@polkadot/rpc-core@1.16.1":
-  version "1.16.1"
-  resolved "https://registry.npm.taobao.org/@polkadot/rpc-core/download/@polkadot/rpc-core-1.16.1.tgz#be1a7e04e74092dd0c10b0ad22f8a92cd0e49aa8"
-  integrity sha1-vhp+BOdAkt0MELCtIvipLNDkmqg=
+"@polkadot/rpc-core@1.17.0-beta.2":
+  version "1.17.0-beta.2"
+  resolved "https://registry.npm.taobao.org/@polkadot/rpc-core/download/@polkadot/rpc-core-1.17.0-beta.2.tgz#5e57a3da3f86ff51e4a1ff925a7758ada74b2fd1"
+  integrity sha1-Xlej2j+G/1Hkof+SWndYradLL9E=
   dependencies:
-    "@babel/runtime" "^7.9.6"
-    "@polkadot/metadata" "1.16.1"
-    "@polkadot/rpc-provider" "1.16.1"
-    "@polkadot/types" "1.16.1"
+    "@babel/runtime" "^7.10.1"
+    "@polkadot/metadata" "1.17.0-beta.2"
+    "@polkadot/rpc-provider" "1.17.0-beta.2"
+    "@polkadot/types" "1.17.0-beta.2"
     "@polkadot/util" "^2.11.1"
     memoizee "^0.4.14"
     rxjs "^6.5.5"
 
-"@polkadot/rpc-provider@1.16.1":
-  version "1.16.1"
-  resolved "https://registry.npm.taobao.org/@polkadot/rpc-provider/download/@polkadot/rpc-provider-1.16.1.tgz#7709ea14851a8c6f0ee35cfaeb8217f722cf5b68"
-  integrity sha1-dwnqFIUajG8O41z664IX9yLPW2g=
+"@polkadot/rpc-provider@1.17.0-beta.2":
+  version "1.17.0-beta.2"
+  resolved "https://registry.npm.taobao.org/@polkadot/rpc-provider/download/@polkadot/rpc-provider-1.17.0-beta.2.tgz#16b71a09a18a5f7021baaf23ae7e1c986254fac8"
+  integrity sha1-FrcaCaGKX3Ahuq8jrn4cmGJU+sg=
   dependencies:
-    "@babel/runtime" "^7.9.6"
-    "@polkadot/metadata" "1.16.1"
-    "@polkadot/types" "1.16.1"
+    "@babel/runtime" "^7.10.1"
+    "@polkadot/metadata" "1.17.0-beta.2"
+    "@polkadot/types" "1.17.0-beta.2"
     "@polkadot/util" "^2.11.1"
     "@polkadot/util-crypto" "^2.11.1"
     bn.js "^5.1.2"
@@ -1061,23 +1068,23 @@
     isomorphic-fetch "^2.2.1"
     websocket "^1.0.31"
 
-"@polkadot/types-known@1.16.1":
-  version "1.16.1"
-  resolved "https://registry.npm.taobao.org/@polkadot/types-known/download/@polkadot/types-known-1.16.1.tgz#748c07c7b613e01c69fd780c71aab8583eecef63"
-  integrity sha1-dIwHx7YT4Bxp/XgMcaq4WD7s72M=
+"@polkadot/types-known@1.17.0-beta.2":
+  version "1.17.0-beta.2"
+  resolved "https://registry.npm.taobao.org/@polkadot/types-known/download/@polkadot/types-known-1.17.0-beta.2.tgz#3abd9c998c66a163f3987fddddbaa6d9810fae2d"
+  integrity sha1-Or2cmYxmoWPzmH/d3bqm2YEPri0=
   dependencies:
-    "@babel/runtime" "^7.9.6"
-    "@polkadot/types" "1.16.1"
+    "@babel/runtime" "^7.10.1"
+    "@polkadot/types" "1.17.0-beta.2"
     "@polkadot/util" "^2.11.1"
     bn.js "^5.1.2"
 
-"@polkadot/types@1.16.1":
-  version "1.16.1"
-  resolved "https://registry.npm.taobao.org/@polkadot/types/download/@polkadot/types-1.16.1.tgz#6f43abdaa8c037bd6f06a7dcf6e7e4ae0fcbc716"
-  integrity sha1-b0Or2qjAN71vBqfc9ufkrg/LxxY=
+"@polkadot/types@1.17.0-beta.2":
+  version "1.17.0-beta.2"
+  resolved "https://registry.npm.taobao.org/@polkadot/types/download/@polkadot/types-1.17.0-beta.2.tgz#94b34495e4e3ca4d608168de1d20905355fadc19"
+  integrity sha1-lLNEleTjyk1ggWjeHSCQU1X63Bk=
   dependencies:
-    "@babel/runtime" "^7.9.6"
-    "@polkadot/metadata" "1.16.1"
+    "@babel/runtime" "^7.10.1"
+    "@polkadot/metadata" "1.17.0-beta.2"
     "@polkadot/util" "^2.11.1"
     "@polkadot/util-crypto" "^2.11.1"
     "@types/bn.js" "^4.11.6"
