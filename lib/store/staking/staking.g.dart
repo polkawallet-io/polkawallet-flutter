@@ -216,6 +216,23 @@ mixin _$StakingStore on _StakingStore, Store {
     });
   }
 
+  final _$phalaAirdropWhiteListAtom =
+      Atom(name: '_StakingStore.phalaAirdropWhiteList');
+
+  @override
+  Map<dynamic, dynamic> get phalaAirdropWhiteList {
+    _$phalaAirdropWhiteListAtom.reportRead();
+    return super.phalaAirdropWhiteList;
+  }
+
+  @override
+  set phalaAirdropWhiteList(Map<dynamic, dynamic> value) {
+    _$phalaAirdropWhiteListAtom.reportWrite(value, super.phalaAirdropWhiteList,
+        () {
+      super.phalaAirdropWhiteList = value;
+    });
+  }
+
   final _$clearTxsAsyncAction = AsyncAction('_StakingStore.clearTxs');
 
   @override
@@ -251,6 +268,15 @@ mixin _$StakingStore on _StakingStore, Store {
   @override
   Future<void> loadCache() {
     return _$loadCacheAsyncAction.run(() => super.loadCache());
+  }
+
+  final _$setPhalaAirdropWhiteListAsyncAction =
+      AsyncAction('_StakingStore.setPhalaAirdropWhiteList');
+
+  @override
+  Future<void> setPhalaAirdropWhiteList(List<dynamic> ls) {
+    return _$setPhalaAirdropWhiteListAsyncAction
+        .run(() => super.setPhalaAirdropWhiteList(ls));
   }
 
   final _$_StakingStoreActionController =
@@ -350,6 +376,7 @@ txsCount: ${txsCount},
 txs: ${txs},
 rewardsChartDataCache: ${rewardsChartDataCache},
 stakesChartDataCache: ${stakesChartDataCache},
+phalaAirdropWhiteList: ${phalaAirdropWhiteList},
 nominatingList: ${nominatingList},
 accountUnlockingTotal: ${accountUnlockingTotal},
 accountRewardTotal: ${accountRewardTotal}

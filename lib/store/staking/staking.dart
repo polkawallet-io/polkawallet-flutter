@@ -1,5 +1,5 @@
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/store/account/account.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking/types/txData.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -8,13 +8,13 @@ import 'package:polka_wallet/utils/localStorage.dart';
 part 'staking.g.dart';
 
 class StakingStore extends _StakingStore with _$StakingStore {
-  StakingStore(AccountStore store) : super(store);
+  StakingStore(AppStore store) : super(store);
 }
 
 abstract class _StakingStore with Store {
-  _StakingStore(this.account);
+  _StakingStore(this.rootStore);
 
-  final AccountStore account;
+  final AppStore rootStore;
 
   final String localStorageOverviewKey = 'staking_overview';
   final String localStorageValidatorsKey = 'validators';
@@ -22,6 +22,11 @@ abstract class _StakingStore with Store {
   final String cacheAccountStakingKey = 'account_staking';
   final String cacheStakingTxsKey = 'staking_txs';
   final String cacheTimeKey = 'staking_cache_time';
+
+  String _getCacheKey(String key) {
+    return '${rootStore.settings.endpoint.info}_$key';
+  }
+
   @observable
   int cacheTxsTimestamp = 0;
 
@@ -67,7 +72,7 @@ abstract class _StakingStore with Store {
   @computed
   ObservableList<ValidatorData> get nominatingList {
     return ObservableList.of(validatorsInfo.where((i) {
-      String address = account.currentAddress;
+      String address = rootStore.account.currentAddress;
       return i.nominators
               .indexWhere((nominator) => nominator['who'] == address) >=
           0;
@@ -120,7 +125,7 @@ abstract class _StakingStore with Store {
 
     // cache data
     if (shouldCache) {
-      LocalStorage.setKV(localStorageValidatorsKey, data);
+      LocalStorage.setKV(_getCacheKey(localStorageValidatorsKey), data);
     }
   }
 
@@ -150,7 +155,7 @@ abstract class _StakingStore with Store {
     }
 
     if (shouldCache) {
-      LocalStorage.setKV(localStorageOverviewKey, data);
+      LocalStorage.setKV(_getCacheKey(localStorageOverviewKey), data);
     }
   }
 
@@ -161,7 +166,7 @@ abstract class _StakingStore with Store {
     bool shouldCache = true,
     bool reset = false,
   }) {
-    if (account.currentAccount.pubKey != pubKey) return;
+    if (rootStore.account.currentAccount.pubKey != pubKey) return;
 
     if (reset) {
       ledger = ObservableMap.of(data);
@@ -175,7 +180,10 @@ abstract class _StakingStore with Store {
         cache[key] = ledger[key];
       });
       LocalStorage.setAccountCache(
-          account.currentAccount.pubKey, cacheAccountStakingKey, cache);
+        rootStore.account.currentAccount.pubKey,
+        _getCacheKey(cacheAccountStakingKey),
+        cache,
+      );
     }
   }
 
@@ -201,12 +209,13 @@ abstract class _StakingStore with Store {
     txs.addAll(ls);
 
     if (shouldCache) {
+      String pubKey = rootStore.account.currentAccount.pubKey;
       LocalStorage.setAccountCache(
-          account.currentAccount.pubKey, cacheStakingTxsKey, res);
+          pubKey, _getCacheKey(cacheStakingTxsKey), res);
 
       cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
       LocalStorage.setAccountCache(
-          account.currentAccount.pubKey, cacheTimeKey, cacheTxsTimestamp);
+          pubKey, _getCacheKey(cacheTimeKey), cacheTxsTimestamp);
     }
   }
 
@@ -229,18 +238,19 @@ abstract class _StakingStore with Store {
   @action
   Future<void> loadAccountCache() async {
     // return if currentAccount not exist
-    String pubKey = account.currentAccount.pubKey;
+    String pubKey = rootStore.account.currentAccount.pubKey;
     if (pubKey == null) {
       return;
     }
 
     List cache = await Future.wait([
-      LocalStorage.getAccountCache(pubKey, cacheAccountStakingKey),
-      LocalStorage.getAccountCache(pubKey, cacheStakingTxsKey),
-      LocalStorage.getAccountCache(pubKey, cacheTimeKey),
+      LocalStorage.getAccountCache(
+          pubKey, _getCacheKey(cacheAccountStakingKey)),
+      LocalStorage.getAccountCache(pubKey, _getCacheKey(cacheStakingTxsKey)),
+      LocalStorage.getAccountCache(pubKey, _getCacheKey(cacheTimeKey)),
     ]);
     if (cache[0] != null) {
-      setLedger(account.currentAddress, cache[0], shouldCache: false);
+      setLedger(rootStore.account.currentAddress, cache[0], shouldCache: false);
     } else {
       ledger = ObservableMap<String, dynamic>();
     }
@@ -257,8 +267,8 @@ abstract class _StakingStore with Store {
   @action
   Future<void> loadCache() async {
     List cacheOverview = await Future.wait([
-      LocalStorage.getKV(localStorageOverviewKey),
-      LocalStorage.getKV(localStorageValidatorsKey),
+      LocalStorage.getKV(_getCacheKey(localStorageOverviewKey)),
+      LocalStorage.getKV(_getCacheKey(localStorageValidatorsKey)),
     ]);
     if (cacheOverview[0] != null) {
       setOverview(cacheOverview[0], shouldCache: false);

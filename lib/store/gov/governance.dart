@@ -1,5 +1,5 @@
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/store/account/account.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/store/gov/types/councilInfoData.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
@@ -7,15 +7,19 @@ import 'package:polka_wallet/utils/localStorage.dart';
 part 'governance.g.dart';
 
 class GovernanceStore extends _GovernanceStore with _$GovernanceStore {
-  GovernanceStore(AccountStore store) : super(store);
+  GovernanceStore(AppStore store) : super(store);
 }
 
 abstract class _GovernanceStore with Store {
-  _GovernanceStore(this.account);
+  _GovernanceStore(this.rootStore);
 
-  final AccountStore account;
+  final AppStore rootStore;
 
   final String cacheCouncilKey = 'council';
+
+  String _getCacheKey(String key) {
+    return '${rootStore.settings.endpoint.info}_$key';
+  }
 
   @observable
   int cacheCouncilTimestamp = 0;
@@ -41,8 +45,8 @@ abstract class _GovernanceStore with Store {
 
     if (shouldCache) {
       cacheCouncilTimestamp = DateTime.now().millisecondsSinceEpoch;
-      LocalStorage.setKV(
-          cacheCouncilKey, {'data': info, 'cacheTime': cacheCouncilTimestamp});
+      LocalStorage.setKV(_getCacheKey(cacheCouncilKey),
+          {'data': info, 'cacheTime': cacheCouncilTimestamp});
     }
   }
 
@@ -64,12 +68,12 @@ abstract class _GovernanceStore with Store {
   @action
   void setReferendums(List ls) {
     referendums = ObservableList.of(ls.map((i) => ReferendumInfo.fromJson(
-        i as Map<String, dynamic>, account.currentAddress)));
+        i as Map<String, dynamic>, rootStore.account.currentAddress)));
   }
 
   @action
   Future<void> loadCache() async {
-    Map data = await LocalStorage.getKV(cacheCouncilKey);
+    Map data = await LocalStorage.getKV(_getCacheKey(cacheCouncilKey));
     if (data != null) {
       setCouncilInfo(data['data'], shouldCache: false);
       cacheCouncilTimestamp = data['cacheTime'];

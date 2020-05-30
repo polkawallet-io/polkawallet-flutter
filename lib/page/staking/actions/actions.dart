@@ -386,7 +386,8 @@ class RowAccount02 extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(left: 4, right: 20),
                   child: acc02 != null
-                      ? AddressIcon('', pubKey: acc02.pubKey, size: 32)
+                      ? AddressIcon(acc02.address,
+                          pubKey: acc02.pubKey, size: 32)
                       : AddressIcon(isStash ? controllerId : stashId, size: 32),
                 ),
                 Expanded(

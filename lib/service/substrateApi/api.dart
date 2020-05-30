@@ -204,7 +204,7 @@ class Api {
     }
 
     // fetch staking overview data as initializing
-    staking.fetchStakingOverview();
+//    staking.fetchStakingOverview();
   }
 
   Future<void> updateBlocks(List txs) async {

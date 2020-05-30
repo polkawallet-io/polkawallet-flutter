@@ -36,6 +36,7 @@ class _AssetsState extends State<Assets> {
   final AppStore store;
 
   bool _faucetSubmitting = false;
+  bool _preclaimChecking = false;
 
   Future<void> _fetchBalance() async {
     if (store.settings.endpoint.info == networkEndpointAcala.info) {
@@ -51,11 +52,19 @@ class _AssetsState extends State<Assets> {
   }
 
   Future<String> _checkPreclaim() async {
+    setState(() {
+      _preclaimChecking = true;
+    });
     String address = store.account.currentAddress;
     String ethAddress =
         await webApi.evalJavascript('api.query.claims.preclaims("$address")');
+    setState(() {
+      _preclaimChecking = false;
+    });
     if (ethAddress == null) {
-      return '';
+      Navigator.of(context).pushNamed(ClaimPage.route, arguments: '');
+    } else {
+      Navigator.of(context).pushNamed(AttestPage.route, arguments: ethAddress);
     }
     return ethAddress;
   }
@@ -161,49 +170,33 @@ class _AssetsState extends State<Assets> {
                   )
                 : isPolkadot
                     ? !store.settings.loading
-                        ? FutureBuilder(
-                            future: _checkPreclaim(),
-                            builder: (_, AsyncSnapshot<String> snapshot) {
-                              if (snapshot.hasData) {
-                                return GestureDetector(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(top: 8),
-                                    child: Column(
-                                      children: <Widget>[
-                                        _faucetSubmitting
-                                            ? CupertinoActivityIndicator()
-                                            : Icon(
-                                                Icons.card_giftcard,
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                                size: 20,
-                                              ),
-                                        Text(
-                                          dic['claim'],
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                          ),
-                                        )
-                                      ],
+                        ? GestureDetector(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 8),
+                              child: Column(
+                                children: <Widget>[
+                                  _faucetSubmitting
+                                      ? CupertinoActivityIndicator()
+                                      : Icon(
+                                          Icons.card_giftcard,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 20,
+                                        ),
+                                  Text(
+                                    dic['claim'],
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Theme.of(context).primaryColor,
                                     ),
-                                  ),
-                                  onTap: () {
-                                    if (snapshot.data.isEmpty) {
-                                      Navigator.of(context).pushNamed(
-                                          ClaimPage.route,
-                                          arguments: snapshot.data);
-                                    } else {
-                                      Navigator.of(context).pushNamed(
-                                          AttestPage.route,
-                                          arguments: snapshot.data);
-                                    }
+                                  )
+                                ],
+                              ),
+                            ),
+                            onTap: _preclaimChecking
+                                ? null
+                                : () {
+                                    _checkPreclaim();
                                   },
-                                );
-                              }
-                              return Container(width: 8);
-                            },
                           )
                         : Container(width: 8)
                     : Container(width: 8),

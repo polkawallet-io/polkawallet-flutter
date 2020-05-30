@@ -1,3 +1,8 @@
+# 0.7.6
+- add polkadot-cc1 support
+- add observation account
+- add claim DOT pages
+
 # 0.7.5
 - add council remove vote
 - add referendum remove vote

@@ -43,8 +43,8 @@ abstract class _AppStore with Store {
     await account.loadAccount();
 
     assets = AssetsStore(this);
-    staking = StakingStore(account);
-    gov = GovernanceStore(account);
+    staking = StakingStore(this);
+    gov = GovernanceStore(this);
 
     assets.loadCache();
     staking.loadCache();
