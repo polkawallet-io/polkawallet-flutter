@@ -61,6 +61,7 @@ dev_dependencies:
   flutter_launcher_icons: "^0.7.3"
   build_runner: ^1.7.4
   json_serializable: ^3.0.0
+  mockito: ^4.1.1
   flutter_test:
     sdk: flutter
 

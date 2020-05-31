@@ -10,7 +10,6 @@ import 'package:polka_wallet/store/acala/types/txSwapData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/transferData.dart';
 import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'acala.g.dart';
 
@@ -245,13 +244,14 @@ abstract class _AcalaStore with Store {
   @action
   Future<void> _cacheTxs(List list, String cacheKey) async {
     String pubKey = rootStore.account.currentAccount.pubKey;
-    List cached = await LocalStorage.getAccountCache(pubKey, cacheKey);
+    List cached =
+        await rootStore.localStorage.getAccountCache(pubKey, cacheKey);
     if (cached != null) {
       cached.addAll(list);
     } else {
       cached = list;
     }
-    LocalStorage.setAccountCache(pubKey, cacheKey, cached);
+    rootStore.localStorage.setAccountCache(pubKey, cacheKey, cached);
   }
 
   @action
@@ -263,11 +263,11 @@ abstract class _AcalaStore with Store {
   Future<void> loadCache() async {
     String pubKey = rootStore.account.currentAccount.pubKey;
     List cached = await Future.wait([
-      LocalStorage.getAccountCache(pubKey, cacheTxsLoanKey),
-      LocalStorage.getAccountCache(pubKey, cacheTxsDexLiquidityKey),
-      LocalStorage.getAccountCache(pubKey, cacheTxsSwapKey),
-      LocalStorage.getAccountCache(pubKey, cacheTxsHomaKey),
-      LocalStorage.getAccountCache(pubKey, cacheTxsTransferKey),
+      rootStore.localStorage.getAccountCache(pubKey, cacheTxsLoanKey),
+      rootStore.localStorage.getAccountCache(pubKey, cacheTxsDexLiquidityKey),
+      rootStore.localStorage.getAccountCache(pubKey, cacheTxsSwapKey),
+      rootStore.localStorage.getAccountCache(pubKey, cacheTxsHomaKey),
+      rootStore.localStorage.getAccountCache(pubKey, cacheTxsTransferKey),
     ]);
 
     if (cached[0] != null) {
