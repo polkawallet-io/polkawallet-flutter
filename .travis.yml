@@ -15,8 +15,8 @@ addons:
 before_script:
   - git clone https://github.com/flutter/flutter.git -b beta
   - ./flutter/bin/flutter doctor
-  - cd ./lib/js_service_kusama && npm install && npm run build
-  - cd ../js_service_acala && npm install && npm run build
+  - cd ./lib/js_service_kusama && npm install && npm run build && cd ../..
+  - cd ./lib/js_service_acala && npm install && npm run build && cd ../..
 script:
   - ./flutter/bin/flutter test
 cache:
