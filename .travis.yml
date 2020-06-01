@@ -1,4 +1,6 @@
-language: generic
+language: node_js
+node_js:
+  - 12
 os:
   - linux
 sudo: false
@@ -13,6 +15,8 @@ addons:
 before_script:
   - git clone https://github.com/flutter/flutter.git -b beta
   - ./flutter/bin/flutter doctor
+  - cd ./lib/js_service_kusama && npm install && npm run build
+  - cd ../js_service_acala && npm install && npm run build
 script:
   - ./flutter/bin/flutter test
 cache:
