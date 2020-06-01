@@ -5,6 +5,7 @@ import 'package:polka_wallet/store/staking/staking.dart';
 import 'package:polka_wallet/store/account/account.dart';
 import 'package:polka_wallet/store/assets/assets.dart';
 import 'package:polka_wallet/store/gov/governance.dart';
+import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'app.g.dart';
 
@@ -14,7 +15,7 @@ class AppStore extends _AppStore with _$AppStore {}
 
 abstract class _AppStore with Store {
   @observable
-  SettingsStore settings = SettingsStore();
+  SettingsStore settings;
 
   @observable
   AccountStore account;
@@ -34,9 +35,12 @@ abstract class _AppStore with Store {
   @observable
   bool isReady = false;
 
+  LocalStorage localStorage = LocalStorage();
+
   @action
   Future<void> init(String sysLocaleCode) async {
     // wait settings store loaded
+    settings = SettingsStore(this);
     await settings.init(sysLocaleCode);
 
     account = AccountStore(this);

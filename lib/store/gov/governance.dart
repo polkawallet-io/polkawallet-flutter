@@ -2,7 +2,6 @@ import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/store/gov/types/councilInfoData.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'governance.g.dart';
 
@@ -45,7 +44,7 @@ abstract class _GovernanceStore with Store {
 
     if (shouldCache) {
       cacheCouncilTimestamp = DateTime.now().millisecondsSinceEpoch;
-      LocalStorage.setKV(_getCacheKey(cacheCouncilKey),
+      rootStore.localStorage.setObject(_getCacheKey(cacheCouncilKey),
           {'data': info, 'cacheTime': cacheCouncilTimestamp});
     }
   }
@@ -73,7 +72,8 @@ abstract class _GovernanceStore with Store {
 
   @action
   Future<void> loadCache() async {
-    Map data = await LocalStorage.getKV(_getCacheKey(cacheCouncilKey));
+    Map data =
+        await rootStore.localStorage.getObject(_getCacheKey(cacheCouncilKey));
     if (data != null) {
       setCouncilInfo(data['data'], shouldCache: false);
       cacheCouncilTimestamp = data['cacheTime'];

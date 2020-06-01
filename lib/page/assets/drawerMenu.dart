@@ -96,7 +96,7 @@ class DrawerMenu extends StatelessWidget {
               leading: Container(
                 width: 40,
                 height: 40,
-                child: Image.asset('assets/images/assets/Menu_create.png'),
+                child: Image.asset('assets/images/assets/Menu_wallet.png'),
               ),
               title: Text(I18n.of(context).home['create'],
                   style: TextStyle(fontSize: 16, color: Colors.white)),

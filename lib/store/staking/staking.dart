@@ -3,7 +3,6 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking/types/txData.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'staking.g.dart';
 
@@ -125,7 +124,8 @@ abstract class _StakingStore with Store {
 
     // cache data
     if (shouldCache) {
-      LocalStorage.setKV(_getCacheKey(localStorageValidatorsKey), data);
+      rootStore.localStorage
+          .setObject(_getCacheKey(localStorageValidatorsKey), data);
     }
   }
 
@@ -155,7 +155,8 @@ abstract class _StakingStore with Store {
     }
 
     if (shouldCache) {
-      LocalStorage.setKV(_getCacheKey(localStorageOverviewKey), data);
+      rootStore.localStorage
+          .setObject(_getCacheKey(localStorageOverviewKey), data);
     }
   }
 
@@ -179,7 +180,7 @@ abstract class _StakingStore with Store {
       ledger.keys.forEach((key) {
         cache[key] = ledger[key];
       });
-      LocalStorage.setAccountCache(
+      rootStore.localStorage.setAccountCache(
         rootStore.account.currentAccount.pubKey,
         _getCacheKey(cacheAccountStakingKey),
         cache,
@@ -210,11 +211,11 @@ abstract class _StakingStore with Store {
 
     if (shouldCache) {
       String pubKey = rootStore.account.currentAccount.pubKey;
-      LocalStorage.setAccountCache(
-          pubKey, _getCacheKey(cacheStakingTxsKey), res);
+      rootStore.localStorage
+          .setAccountCache(pubKey, _getCacheKey(cacheStakingTxsKey), res);
 
       cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
-      LocalStorage.setAccountCache(
+      rootStore.localStorage.setAccountCache(
           pubKey, _getCacheKey(cacheTimeKey), cacheTxsTimestamp);
     }
   }
@@ -244,10 +245,12 @@ abstract class _StakingStore with Store {
     }
 
     List cache = await Future.wait([
-      LocalStorage.getAccountCache(
-          pubKey, _getCacheKey(cacheAccountStakingKey)),
-      LocalStorage.getAccountCache(pubKey, _getCacheKey(cacheStakingTxsKey)),
-      LocalStorage.getAccountCache(pubKey, _getCacheKey(cacheTimeKey)),
+      rootStore.localStorage
+          .getAccountCache(pubKey, _getCacheKey(cacheAccountStakingKey)),
+      rootStore.localStorage
+          .getAccountCache(pubKey, _getCacheKey(cacheStakingTxsKey)),
+      rootStore.localStorage
+          .getAccountCache(pubKey, _getCacheKey(cacheTimeKey)),
     ]);
     if (cache[0] != null) {
       setLedger(rootStore.account.currentAddress, cache[0], shouldCache: false);
@@ -267,8 +270,8 @@ abstract class _StakingStore with Store {
   @action
   Future<void> loadCache() async {
     List cacheOverview = await Future.wait([
-      LocalStorage.getKV(_getCacheKey(localStorageOverviewKey)),
-      LocalStorage.getKV(_getCacheKey(localStorageValidatorsKey)),
+      rootStore.localStorage.getObject(_getCacheKey(localStorageOverviewKey)),
+      rootStore.localStorage.getObject(_getCacheKey(localStorageValidatorsKey)),
     ]);
     if (cacheOverview[0] != null) {
       setOverview(cacheOverview[0], shouldCache: false);

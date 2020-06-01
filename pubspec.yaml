@@ -61,6 +61,7 @@ dev_dependencies:
   flutter_launcher_icons: "^0.7.3"
   build_runner: ^1.7.4
   json_serializable: ^3.0.0
+  mockito: ^4.1.1
   flutter_test:
     sdk: flutter
 
@@ -150,7 +151,7 @@ flutter:
     - assets/images/assets/qrcode_pink.png
     - assets/images/assets/plus_pink.png
     - assets/images/assets/Menu_scan.png
-    - assets/images/assets/Menu_create.png
+    - assets/images/assets/Menu_wallet.png
     - assets/images/assets/assets_send.png
     - assets/images/assets/assets_receive.png
     - assets/images/assets/assets_up.png

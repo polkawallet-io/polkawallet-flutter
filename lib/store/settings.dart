@@ -6,14 +6,20 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'settings.g.dart';
 
-class SettingsStore = _SettingsStore with _$SettingsStore;
+class SettingsStore extends _SettingsStore with _$SettingsStore {
+  SettingsStore(AppStore store) : super(store);
+}
 
 abstract class _SettingsStore with Store {
+  _SettingsStore(this.rootStore);
+
+  final AppStore rootStore;
+
   final String localStorageLocaleKey = 'locale';
   final String localStorageEndpointKey = 'endpoint';
   final String localStorageSS58Key = 'custom_ss58';
@@ -81,13 +87,14 @@ abstract class _SettingsStore with Store {
 
   @action
   Future<void> setLocalCode(String code) async {
-    await LocalStorage.setKV(localStorageLocaleKey, code);
-    loadLocalCode();
+    await rootStore.localStorage.setObject(localStorageLocaleKey, code);
+    localeCode = code;
   }
 
   @action
   Future<void> loadLocalCode() async {
-    String stored = await LocalStorage.getKV(localStorageLocaleKey);
+    String stored =
+        await rootStore.localStorage.getObject(localStorageLocaleKey);
     if (stored != null) {
       localeCode = stored;
     }
@@ -106,15 +113,16 @@ abstract class _SettingsStore with Store {
 
   @action
   Future<void> setNetworkState(Map<String, dynamic> data) async {
-    LocalStorage.setKV('${cacheNetworkStateKey}_${endpoint.info}', data);
+    rootStore.localStorage
+        .setObject('${cacheNetworkStateKey}_${endpoint.info}', data);
 
     networkState = NetworkState.fromJson(data);
   }
 
   @action
   Future<void> loadNetworkStateCache() async {
-    var data =
-        await LocalStorage.getKV('${cacheNetworkStateKey}_${endpoint.info}');
+    var data = await rootStore.localStorage
+        .getObject('${cacheNetworkStateKey}_${endpoint.info}');
     if (data != null) {
       networkState = NetworkState.fromJson(data);
     } else {
@@ -129,38 +137,40 @@ abstract class _SettingsStore with Store {
 
   @action
   Future<void> loadContacts() async {
-    List<Map<String, dynamic>> ls = await LocalStorage.getContractList();
+    List<Map<String, dynamic>> ls =
+        await rootStore.localStorage.getContactList();
     contactList = ObservableList.of(ls.map((i) => AccountData.fromJson(i)));
   }
 
   @action
   Future<void> addContact(Map<String, dynamic> con) async {
-    await LocalStorage.addContact(con);
+    await rootStore.localStorage.addContact(con);
     await loadContacts();
   }
 
   @action
   Future<void> removeContact(AccountData con) async {
-    await LocalStorage.removeContact(con.address);
+    await rootStore.localStorage.removeContact(con.address);
     loadContacts();
   }
 
   @action
   Future<void> updateContact(Map<String, dynamic> con) async {
-    await LocalStorage.updateContact(con);
+    await rootStore.localStorage.updateContact(con);
     loadContacts();
   }
 
   @action
   void setEndpoint(EndpointData value) {
     endpoint = value;
-    LocalStorage.setKV(localStorageEndpointKey, EndpointData.toJson(value));
+    rootStore.localStorage
+        .setObject(localStorageEndpointKey, EndpointData.toJson(value));
   }
 
   @action
   Future<void> loadEndpoint(String sysLocaleCode) async {
     Map<String, dynamic> value =
-        await LocalStorage.getKV(localStorageEndpointKey);
+        await rootStore.localStorage.getObject(localStorageEndpointKey);
     if (value == null) {
       endpoint = networkEndpointKusama;
     } else {
@@ -171,12 +181,13 @@ abstract class _SettingsStore with Store {
   @action
   void setCustomSS58Format(Map<String, dynamic> value) {
     customSS58Format = value;
-    LocalStorage.setKV(localStorageSS58Key, value);
+    rootStore.localStorage.setObject(localStorageSS58Key, value);
   }
 
   @action
   Future<void> loadCustomSS58Format() async {
-    Map<String, dynamic> ss58 = await LocalStorage.getKV(localStorageSS58Key);
+    Map<String, dynamic> ss58 =
+        await rootStore.localStorage.getObject(localStorageSS58Key);
 
     customSS58Format = ss58 ?? default_ss58_prefix;
   }
