@@ -198,6 +198,15 @@ mixin _$AccountStore on _AccountStore, Store {
     });
   }
 
+  final _$updateAccountNameAsyncAction =
+      AsyncAction('_AccountStore.updateAccountName');
+
+  @override
+  Future<void> updateAccountName(String name) {
+    return _$updateAccountNameAsyncAction
+        .run(() => super.updateAccountName(name));
+  }
+
   final _$updateAccountAsyncAction = AsyncAction('_AccountStore.updateAccount');
 
   @override
@@ -315,11 +324,11 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void resetNewAccount(String name, String password) {
+  void resetNewAccount() {
     final _$actionInfo = _$_AccountStoreActionController.startAction(
         name: '_AccountStore.resetNewAccount');
     try {
-      return super.resetNewAccount(name, password);
+      return super.resetNewAccount();
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }
@@ -331,17 +340,6 @@ mixin _$AccountStore on _AccountStore, Store {
         name: '_AccountStore.setCurrentAccount');
     try {
       return super.setCurrentAccount(acc);
-    } finally {
-      _$_AccountStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void updateAccountName(String name) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction(
-        name: '_AccountStore.updateAccountName');
-    try {
-      return super.updateAccountName(name);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }

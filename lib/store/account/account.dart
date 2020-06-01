@@ -23,11 +23,8 @@ abstract class _AccountStore with Store {
   final AppStore rootStore;
 
   Map<String, dynamic> _formatMetaData(Map<String, dynamic> acc) {
-    String name = acc['meta']['name'];
-    if (name == null) {
-      name = newAccount.name;
-    }
-    acc['name'] = name;
+    acc['name'] =
+        newAccount.name.isEmpty ? acc['meta']['name'] : newAccount.name;
     if (acc['meta']['whenCreated'] == null) {
       acc['meta']['whenCreated'] = DateTime.now().millisecondsSinceEpoch;
     }
@@ -120,7 +117,7 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  void resetNewAccount(String name, String password) {
+  void resetNewAccount() {
     newAccount = AccountCreate();
   }
 
@@ -132,11 +129,11 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  void updateAccountName(String name) {
+  Future<void> updateAccountName(String name) async {
     Map<String, dynamic> acc = AccountData.toJson(currentAccount);
     acc['meta']['name'] = name;
 
-    updateAccount(acc);
+    await updateAccount(acc);
   }
 
   @action
@@ -214,7 +211,6 @@ abstract class _AccountStore with Store {
       int accIndex = accountListAll.indexWhere((i) => i.pubKey == pubKey);
       if (accIndex >= 0) {
         currentAccount = accountListAll[accIndex];
-        print(currentAccount);
       } else {
         currentAccount = accountListAll[0];
       }

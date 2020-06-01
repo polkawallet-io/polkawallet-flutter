@@ -1,17 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/settings.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
-class MockLocalStorage extends Mock implements LocalStorage {}
+import 'localStorage_mock.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('SettingsStore test', () {
     final AppStore root = AppStore();
-    root.localStorage = MockLocalStorage();
+    root.localStorage = getMockLocalStorage();
     final store = SettingsStore(root);
 
     test('settings store created', () {

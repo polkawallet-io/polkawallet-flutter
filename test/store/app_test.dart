@@ -1,33 +1,32 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
-class MockLocalStorage extends Mock implements LocalStorage {}
+import 'localStorage_mock.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  final AppStore store = AppStore();
+  store.localStorage = getMockLocalStorage();
 
-  group('AppStore test', () {
-    final AppStore store = AppStore();
-    store.localStorage = MockLocalStorage();
-    when(store.localStorage.getContactList())
-        .thenAnswer((_) => Future.value([]));
-    when(store.localStorage.getAccountList())
-        .thenAnswer((_) => Future.value([]));
-    when(store.localStorage.getObject(any))
-        .thenAnswer((_) => Future.value(null));
-    when(store.localStorage.getAccountCache(any, any))
-        .thenAnswer((_) => Future.value(null));
-
+  group('store test', () {
     test('app store created and not ready', () {
       expect(store.isReady, false);
+      expect(store.settings, isNull);
     });
 
     test('app store init and ready', () async {
       await store.init('_en');
+
+      expect(store.settings, isNotNull);
+      expect(store.account, isNotNull);
+      expect(store.assets, isNotNull);
+      expect(store.staking, isNotNull);
+      expect(store.gov, isNotNull);
+      expect(store.acala, isNotNull);
+
       expect(store.isReady, true);
-      expect(store.account.accountList.length, 0);
+
+      expect(store.account.accountList.length, 1);
     });
   });
 }
