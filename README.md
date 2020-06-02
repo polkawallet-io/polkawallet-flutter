@@ -1,4 +1,5 @@
 # polkawallet-flutter
+[![Build Status](https://travis-ci.com/polkawallet-io/polkawallet-flutter.svg?branch=master)](https://travis-ci.com/polkawallet-io/polkawallet-flutter)
 
 Polkawallet Flutter Implementation, https://polkawallet.io
 

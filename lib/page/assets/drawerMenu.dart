@@ -28,7 +28,7 @@ class DrawerMenu extends StatelessWidget {
         ),
         onTap: () {
           Navigator.pop(context);
-          store.account.setCurrentAccount(i);
+          store.account.setCurrentAccount(i.pubKey);
           // refresh balance
           store.assets.loadAccountCache();
           globalBalanceRefreshKey.currentState.show();

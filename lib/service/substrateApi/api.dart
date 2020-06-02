@@ -88,7 +88,6 @@ class Api {
             onMessageReceived: (JavascriptMessage message) {
               print('received msg: ${message.message}');
               compute(jsonDecode, message.message).then((msg) {
-                final msg = jsonDecode(message.message);
                 final String path = msg['path'];
                 if (_msgCompleters[path] != null) {
                   Completer handler = _msgCompleters[path];

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 class PhalaAirdropApi {
@@ -9,7 +10,7 @@ class PhalaAirdropApi {
   static Future<List> fetchWhiteList() async {
     Response res = await get(endpoint);
     try {
-      final data = jsonDecode(res.body);
+      final data = await compute(jsonDecode, res.body);
       if (data['status'] == "ok") {
         return data['result'];
       }

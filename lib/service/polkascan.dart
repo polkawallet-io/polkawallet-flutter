@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 
@@ -51,7 +52,8 @@ class PolkaScanApi {
     });
     Response res = await post(url, headers: headers, body: body);
     if (res.body != null) {
-      return jsonDecode(res.body)['data'];
+      final obj = await compute(jsonDecode, res.body);
+      return obj['data'];
     }
     return {};
   }
@@ -72,7 +74,8 @@ class PolkaScanApi {
     });
     Response res = await post(url, headers: headers, body: body);
     if (res.body != null) {
-      return jsonDecode(res.body)['data'];
+      final obj = await compute(jsonDecode, res.body);
+      return obj['data'];
     }
     return {};
   }
@@ -94,7 +97,8 @@ class PolkaScanApi {
     });
     Response res = await post(url, headers: headers, body: body);
     if (res.body != null) {
-      return jsonDecode(res.body)['data'];
+      final obj = await compute(jsonDecode, res.body);
+      return obj['data'];
     }
     return {};
   }

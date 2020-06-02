@@ -60,7 +60,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   Future<void> _onSelect(AccountData i, String address) async {
     if (address != store.account.currentAddress) {
       /// set current account
-      store.account.setCurrentAccount(i);
+      store.account.setCurrentAccount(i.pubKey);
       // refresh balance
       store.assets.loadAccountCache();
 

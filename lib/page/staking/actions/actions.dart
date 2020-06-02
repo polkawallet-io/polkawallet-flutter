@@ -68,7 +68,7 @@ class _StakingActions extends State<StakingActions>
   }
 
   void _changeCurrentAccount(AccountData acc) {
-    store.account.setCurrentAccount(acc);
+    store.account.setCurrentAccount(acc.pubKey);
     // refresh user's assets info
     store.assets.loadAccountCache();
     // refresh user's staking info
@@ -150,10 +150,11 @@ class _StakingActions extends State<StakingActions>
 
     String symbol = store.settings.networkState.tokenSymbol;
 
-    BigInt balance = store.assets.balances[symbol].total;
+    BigInt balance = BigInt.zero;
     BigInt bonded = BigInt.zero;
     BigInt redeemable = BigInt.zero;
     if (hasData) {
+      balance = store.assets.balances[symbol].total;
       bonded = BigInt.parse(
           store.staking.ledger['stakingLedger']['active'].toString());
       redeemable = BigInt.parse(store.staking.ledger['redeemable'].toString());

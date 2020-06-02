@@ -42,7 +42,7 @@ abstract class _AccountStore with Store {
   AccountCreate newAccount = AccountCreate();
 
   @observable
-  AccountData currentAccount = AccountData();
+  String currentAccountPubKey = '';
 
   @observable
   ObservableList<AccountData> accountList = ObservableList<AccountData>();
@@ -70,9 +70,18 @@ abstract class _AccountStore with Store {
   AccountRecoveryInfo recoveryInfo = AccountRecoveryInfo();
 
   @computed
+  AccountData get currentAccount {
+    int i = accountListAll.indexWhere((i) => i.pubKey == currentAccountPubKey);
+    if (i < 0) {
+      return accountListAll[0] ?? AccountData();
+    }
+    return accountListAll[i];
+  }
+
+  @computed
   ObservableList<AccountData> get optionalAccounts {
     return ObservableList.of(
-        accountListAll.where((i) => i.pubKey != currentAccount.pubKey));
+        accountListAll.where((i) => i.pubKey != currentAccountPubKey));
   }
 
   /// accountList with observations
@@ -95,8 +104,7 @@ abstract class _AccountStore with Store {
 //      print(ss58);
     }
     return pubKeyAddressMap[ss58] != null
-        ? pubKeyAddressMap[ss58][currentAccount.pubKey] ??
-            currentAccount.address
+        ? pubKeyAddressMap[ss58][currentAccountPubKey] ?? currentAccount.address
         : currentAccount.address;
   }
 
@@ -122,10 +130,10 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  void setCurrentAccount(AccountData acc) {
-    currentAccount = acc;
+  void setCurrentAccount(String pubKey) {
+    currentAccountPubKey = pubKey;
 
-    rootStore.localStorage.setCurrentAccount(acc.pubKey);
+    rootStore.localStorage.setCurrentAccount(pubKey);
   }
 
   @action
@@ -191,10 +199,11 @@ abstract class _AccountStore with Store {
     List<Map<String, dynamic>> accounts =
         await rootStore.localStorage.getAccountList();
     if (accounts.length > 0) {
-      await rootStore.localStorage.setCurrentAccount(accounts[0]['pubKey']);
+      currentAccountPubKey = accounts[0]['pubKey'];
     } else {
-      await rootStore.localStorage.setCurrentAccount('');
+      currentAccountPubKey = '';
     }
+    await rootStore.localStorage.setCurrentAccount(currentAccountPubKey);
 
     await loadAccount();
   }
@@ -206,15 +215,7 @@ abstract class _AccountStore with Store {
     accountList =
         ObservableList.of(accList.map((i) => AccountData.fromJson(i)));
 
-    String pubKey = await rootStore.localStorage.getCurrentAccount();
-    if (accountListAll.length > 0) {
-      int accIndex = accountListAll.indexWhere((i) => i.pubKey == pubKey);
-      if (accIndex >= 0) {
-        currentAccount = accountListAll[accIndex];
-      } else {
-        currentAccount = accountListAll[0];
-      }
-    }
+    currentAccountPubKey = await rootStore.localStorage.getCurrentAccount();
     loading = false;
   }
 

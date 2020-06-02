@@ -54,9 +54,10 @@ Map<String, dynamic> accNew = {
 
 String currentAccountPubKey = accList[0]['pubKey'];
 
+List<Map<String, dynamic>> contactList = [];
+
 MockLocalStorage getMockLocalStorage() {
   final localStorage = MockLocalStorage();
-  when(localStorage.getContactList()).thenAnswer((_) => Future.value([]));
   when(localStorage.getAccountList()).thenAnswer((_) {
     return Future.value(accList);
   });
@@ -80,5 +81,23 @@ MockLocalStorage getMockLocalStorage() {
   when(localStorage.getSeeds(any)).thenAnswer((_) => Future.value({}));
   when(localStorage.getAccountCache(any, any))
       .thenAnswer((_) => Future.value(null));
+
+  when(localStorage.getContactList())
+      .thenAnswer((_) => Future.value(contactList));
+  when(localStorage.addContact(any)).thenAnswer((invocation) {
+    contactList.add(invocation.positionalArguments[0]);
+    return Future.value();
+  });
+  when(localStorage.removeContact(any)).thenAnswer((invocation) {
+    contactList
+        .removeWhere((i) => i['address'] == invocation.positionalArguments[0]);
+    return Future.value();
+  });
+  when(localStorage.updateContact(any)).thenAnswer((invocation) {
+    contactList.removeWhere(
+        (i) => i['pubKey'] == invocation.positionalArguments[0]['pubKey']);
+    contactList.add(invocation.positionalArguments[0]);
+    return Future.value();
+  });
   return localStorage;
 }

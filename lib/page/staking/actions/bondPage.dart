@@ -90,8 +90,10 @@ class _BondPageState extends State<BondPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    double balance =
-        Fmt.bigIntToDouble(store.assets.balances[symbol].freeBalance);
+    double balance = 0;
+    if (store.assets.balances[symbol] != null) {
+      balance = Fmt.bigIntToDouble(store.assets.balances[symbol].freeBalance);
+    }
 
     var rewardToOptions =
         _rewardToOptions.map((i) => dic['reward.$i']).toList();
@@ -172,7 +174,10 @@ class _BondPageState extends State<BondPage> {
                                 children: rewardToOptions
                                     .map((i) => Padding(
                                         padding: EdgeInsets.all(12),
-                                        child: Text(i)))
+                                        child: Text(
+                                          i,
+                                          style: TextStyle(fontSize: 16),
+                                        )))
                                     .toList(),
                                 onSelectedItemChanged: (v) {
                                   setState(() {

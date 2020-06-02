@@ -9,6 +9,13 @@ part of 'account.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AccountStore on _AccountStore, Store {
+  Computed<AccountData> _$currentAccountComputed;
+
+  @override
+  AccountData get currentAccount => (_$currentAccountComputed ??=
+          Computed<AccountData>(() => super.currentAccount,
+              name: '_AccountStore.currentAccount'))
+      .value;
   Computed<ObservableList<AccountData>> _$optionalAccountsComputed;
 
   @override
@@ -78,18 +85,20 @@ mixin _$AccountStore on _AccountStore, Store {
     });
   }
 
-  final _$currentAccountAtom = Atom(name: '_AccountStore.currentAccount');
+  final _$currentAccountPubKeyAtom =
+      Atom(name: '_AccountStore.currentAccountPubKey');
 
   @override
-  AccountData get currentAccount {
-    _$currentAccountAtom.reportRead();
-    return super.currentAccount;
+  String get currentAccountPubKey {
+    _$currentAccountPubKeyAtom.reportRead();
+    return super.currentAccountPubKey;
   }
 
   @override
-  set currentAccount(AccountData value) {
-    _$currentAccountAtom.reportWrite(value, super.currentAccount, () {
-      super.currentAccount = value;
+  set currentAccountPubKey(String value) {
+    _$currentAccountPubKeyAtom.reportWrite(value, super.currentAccountPubKey,
+        () {
+      super.currentAccountPubKey = value;
     });
   }
 
@@ -335,11 +344,11 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void setCurrentAccount(AccountData acc) {
+  void setCurrentAccount(String pubKey) {
     final _$actionInfo = _$_AccountStoreActionController.startAction(
         name: '_AccountStore.setCurrentAccount');
     try {
-      return super.setCurrentAccount(acc);
+      return super.setCurrentAccount(pubKey);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }
@@ -406,7 +415,7 @@ mixin _$AccountStore on _AccountStore, Store {
 loading: ${loading},
 txStatus: ${txStatus},
 newAccount: ${newAccount},
-currentAccount: ${currentAccount},
+currentAccountPubKey: ${currentAccountPubKey},
 accountList: ${accountList},
 accountIndexMap: ${accountIndexMap},
 pubKeyBondedMap: ${pubKeyBondedMap},
@@ -414,6 +423,7 @@ pubKeyAddressMap: ${pubKeyAddressMap},
 pubKeyIconsMap: ${pubKeyIconsMap},
 addressIconsMap: ${addressIconsMap},
 recoveryInfo: ${recoveryInfo},
+currentAccount: ${currentAccount},
 optionalAccounts: ${optionalAccounts},
 accountListAll: ${accountListAll},
 currentAddress: ${currentAddress}
