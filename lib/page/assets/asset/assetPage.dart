@@ -41,6 +41,8 @@ class _AssetPageState extends State<AssetPage>
   ScrollController _scrollController;
 
   Future<void> _updateData() async {
+    if (store.settings.loading) return;
+
     String pubKey = store.account.currentAccount.pubKey;
     webApi.assets.fetchBalance(pubKey);
     Map res = {"transfers": []};

@@ -223,7 +223,7 @@ class _AssetsState extends State<Assets> {
     // if network connected failed, reconnect
     if (!store.settings.loading && store.settings.networkName == null) {
       store.settings.setNetworkLoading(true);
-      webApi.connectNode();
+      webApi.connectNodeAll();
     }
     super.initState();
   }

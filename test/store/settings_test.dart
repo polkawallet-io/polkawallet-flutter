@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/settings.dart';
 
@@ -44,6 +45,18 @@ void main() {
       expect(store.networkState.ss58Format, 2);
       expect(store.networkState.tokenDecimals, 12);
       expect(store.networkState.tokenSymbol, 'KSM');
+    });
+
+    test('network endpoint test', () async {
+      await store.init('_en');
+      expect(store.endpoint.info, networkEndpointKusama.info);
+      expect(store.endpointList.length, 3);
+      store.setEndpoint(networkEndpointPolkadot);
+      expect(store.endpoint.info, networkEndpointPolkadot.info);
+      expect(store.endpointList.length, 3);
+      store.setEndpoint(networkEndpointAcala);
+      expect(store.endpoint.info, networkEndpointAcala.info);
+      expect(store.endpointList.length, 4);
     });
   });
 }

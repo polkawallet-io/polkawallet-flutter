@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:mobx/mobx.dart';
 
 import 'package:json_annotation/json_annotation.dart';
@@ -49,6 +47,13 @@ abstract class _SettingsStore with Store {
 
   @observable
   ObservableList<AccountData> contactList = ObservableList<AccountData>();
+
+  @computed
+  List<EndpointData> get endpointList {
+    List<EndpointData> ls = List<EndpointData>.of(networkEndpoints);
+    ls.retainWhere((i) => i.info == endpoint.info);
+    return ls;
+  }
 
   @computed
   String get existentialDeposit {
@@ -190,40 +195,6 @@ abstract class _SettingsStore with Store {
         await rootStore.localStorage.getObject(localStorageSS58Key);
 
     customSS58Format = ss58 ?? default_ss58_prefix;
-  }
-
-  @action
-  Future<void> setBestNode({String info}) async {
-    String selected = info ?? endpoint.info;
-    List<EndpointData> ls = List.of(networkEndpoints);
-    ls.retainWhere((i) => i.info == selected);
-
-    final res = await Future.wait(ls.map((i) {
-      return _pingSpeed(i);
-    }));
-
-    res.sort((a, b) => a['time'] - b['time']);
-    EndpointData best = res[0]['endpoint'] as EndpointData;
-    setEndpoint(best);
-    print('${best.value} latency ${res[0]['time']} ms');
-  }
-
-  Future<Map> _pingSpeed(EndpointData info) async {
-    final start = DateTime.now().millisecondsSinceEpoch;
-    final url = info.value.split('/').reversed.toList()[1];
-    try {
-      final result = await InternetAddress.lookup(url.split(':')[0])
-          .timeout(Duration(seconds: 2));
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        print('$url connected');
-      }
-    } catch (_) {
-      print('$url not connected');
-    }
-    return {
-      "endpoint": info,
-      "time": DateTime.now().millisecondsSinceEpoch - start,
-    };
   }
 }
 

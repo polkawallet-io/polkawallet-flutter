@@ -48,7 +48,7 @@ class RemoteNodeListPage extends StatelessWidget {
                 }
                 store.setEndpoint(i);
                 store.setNetworkLoading(true);
-                webApi.launchWebview();
+                webApi.launchWebview(customNode: true);
                 Navigator.of(context).pop();
               },
             ))

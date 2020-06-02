@@ -69,13 +69,20 @@ abstract class _StakingStore with Store {
   Map phalaAirdropWhiteList = {};
 
   @computed
-  ObservableList<ValidatorData> get nominatingList {
+  ObservableList<ValidatorData> get activeNominatingList {
     return ObservableList.of(validatorsInfo.where((i) {
       String address = rootStore.account.currentAddress;
       return i.nominators
               .indexWhere((nominator) => nominator['who'] == address) >=
           0;
     }));
+  }
+
+  @computed
+  ObservableList<ValidatorData> get nominatingList {
+    List nominators = ledger['nominators'];
+    return ObservableList.of(
+        validatorsInfo.where((i) => nominators.indexOf(i.accountId) >= 0));
   }
 
   @computed

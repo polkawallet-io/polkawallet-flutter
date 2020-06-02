@@ -10,6 +10,7 @@ import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiGov.dart';
 import 'package:polka_wallet/service/substrateApi/apiStaking.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/settings.dart';
 
 // global api instance
 Api webApi;
@@ -33,6 +34,8 @@ class Api {
   FlutterWebviewPlugin _web;
   int _evalJavascriptUID = 0;
 
+  Function _connectFunc;
+
   void init() {
     account = ApiAccount(this);
 
@@ -45,11 +48,13 @@ class Api {
     launchWebview();
   }
 
-  Future<void> launchWebview() async {
+  Future<void> launchWebview({bool customNode = false}) async {
     _msgHandlers = {'txStatusChange': store.account.setTxStatus};
 
     _evalJavascriptUID = 0;
     _msgCompleters = {};
+
+    _connectFunc = customNode ? connectNode : connectNodeAll;
 
     if (_web != null) {
       _web.reload();
@@ -75,7 +80,7 @@ class Api {
           // load keyPairs from local data
           account.initAccounts();
           // connect remote node
-          connectNode();
+          _connectFunc();
         });
       }
     });
@@ -151,10 +156,9 @@ class Api {
   }
 
   Future<void> connectNode() async {
-    String endpoint = store.settings.endpoint.value;
-    print(endpoint);
+    String node = store.settings.endpoint.value;
     // do connect
-    String res = await evalJavascript('settings.connect("$endpoint")');
+    String res = await evalJavascript('settings.connect("$node")');
     if (res == null) {
       print('connect failed');
       store.settings.setNetworkName(null);
@@ -163,17 +167,21 @@ class Api {
     fetchNetworkProps();
   }
 
-  Future<void> changeNode(String endpoint) async {
-    store.settings.setNetworkLoading(true);
-    store.staking.clearState();
-//    String res = await evalJavascript('settings.changeEndpoint("$endpoint")');
-//    if (res == null) {
-//      print('connect failed');
-//      store.settings.setNetworkName(null);
-//      return;
-//    }
-//    fetchNetworkProps();
-    launchWebview();
+  Future<void> connectNodeAll() async {
+    List<String> nodes =
+        store.settings.endpointList.map((e) => e.value).toList();
+    // do connect
+    String res =
+        await evalJavascript('settings.connectAll(${jsonEncode(nodes)})');
+    if (res == null) {
+      print('connect failed');
+      store.settings.setNetworkName(null);
+      return;
+    }
+    EndpointData connected =
+        store.settings.endpointList.firstWhere((i) => i.value == res);
+    store.settings.setEndpoint(connected);
+    fetchNetworkProps();
   }
 
   Future<void> fetchNetworkProps() async {
