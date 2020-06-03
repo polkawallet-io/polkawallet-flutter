@@ -43,12 +43,10 @@ class ApiGovernance {
         'gov.fetchReferendums("${store.account.currentAddress}")');
     if (data != null) {
       List list = data['referendums'];
-      if (list.length > 0) {
-        list.asMap().forEach((k, v) {
-          v['detail'] = data['details'][k];
-        });
-        store.gov.setReferendums(List<Map<String, dynamic>>.from(list));
-      }
+      list.asMap().forEach((k, v) {
+        v['detail'] = data['details'][k];
+      });
+      store.gov.setReferendums(List<Map<String, dynamic>>.from(list));
     }
     return data;
   }

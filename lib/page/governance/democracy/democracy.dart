@@ -12,9 +12,6 @@ import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-// TODO: add referendum timeline details
-// TODO: add users voting details & re-vote
-// TODO: add removeVoter
 class Democracy extends StatefulWidget {
   Democracy(this.store);
 
@@ -58,10 +55,12 @@ class _DemocracyState extends State<Democracy> {
   @override
   void initState() {
     super.initState();
-    webApi.subscribeMessage(
-        'chain', 'bestNumber', [], _bestNumberSubscribeChannel, (data) {
-      store.gov.setBestNumber(data as int);
-    });
+    if (!store.settings.loading) {
+      webApi.subscribeMessage(
+          'chain', 'bestNumber', [], _bestNumberSubscribeChannel, (data) {
+        store.gov.setBestNumber(data as int);
+      });
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       globalDemocracyRefreshKey.currentState.show();

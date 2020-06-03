@@ -40,6 +40,8 @@ final darkTheme = ThemeData(
 );
 
 final appThemeKusama = ThemeData(
+  primaryColorDark: Colors.pink[900],
+  primaryColorLight: Colors.pink[600],
   primaryColor: Colors.pink[800],
   accentColor: Colors.pink[700],
   textTheme: TextTheme(

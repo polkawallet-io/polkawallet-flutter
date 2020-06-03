@@ -62,6 +62,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     store.settings.loadNetworkStateCache();
     store.settings.setNetworkLoading(true);
 
+    store.gov.setReferendums([]);
     _loadAccountCache();
 
     webApi.launchWebview();

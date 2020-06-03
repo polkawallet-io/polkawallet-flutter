@@ -5,11 +5,30 @@ import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/service/version.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-class AboutPage extends StatelessWidget {
+class AboutPage extends StatefulWidget {
   static final String route = '/profile/about';
+
+  @override
+  _AboutPage createState() => _AboutPage();
+}
+
+class _AboutPage extends State<AboutPage> {
+  bool _loading = false;
+
+  Future<void> _checkUpdate() async {
+    setState(() {
+      _loading = true;
+    });
+    Map versions = await VersionApi.getLatestVersion();
+    setState(() {
+      _loading = false;
+    });
+    UI.checkUpdate(context, versions);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +79,10 @@ class AboutPage extends StatelessWidget {
               padding: EdgeInsets.all(16),
               child: RoundedButton(
                 text: I18n.of(context).home['update'],
-                onPressed: () => UI.checkUpdate(context),
+                onPressed: () {
+                  _checkUpdate();
+                },
+                submitting: _loading,
               ),
             )
           ],
