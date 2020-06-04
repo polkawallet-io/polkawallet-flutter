@@ -32,6 +32,11 @@ class StakingDetailPage extends StatelessWidget {
         case "Compact<BalanceOf>":
           value = Fmt.balance(value);
           break;
+        case "AccountId":
+          String address = store
+              .account.pubKeyAddressMap[store.settings.endpoint.ss58][value];
+          value = Fmt.address(address);
+          break;
       }
       return DetailInfoItem(
         label: i['name'],

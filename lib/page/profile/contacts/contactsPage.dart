@@ -77,17 +77,6 @@ class ContactsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Observer(
         builder: (_) {
-          List<Widget> ls = store.contactList.map((i) {
-            return ListTile(
-              leading: AddressIcon(i.address),
-              title: Text(Fmt.accountName(context, i)),
-              subtitle: Text(Fmt.address(i.address)),
-              trailing: IconButton(
-                icon: Icon(Icons.more_vert),
-                onPressed: () => _showActions(context, i),
-              ),
-            );
-          }).toList();
           return Scaffold(
             appBar: AppBar(
               title: Text(I18n.of(context).profile['contact']),
@@ -104,11 +93,21 @@ class ContactsPage extends StatelessWidget {
               ],
             ),
             body: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.only(top: 8, left: 8),
-                child: ListView(
-                  children: ls,
-                ),
+              child: ListView(
+                children: store.contactList.map((i) {
+                  return ListTile(
+                    leading: AddressIcon(i.address),
+                    title: Text(Fmt.accountName(context, i)),
+                    subtitle: Text(Fmt.address(i.address)),
+                    trailing: Container(
+                      width: 36,
+                      child: IconButton(
+                        icon: Icon(Icons.more_vert),
+                        onPressed: () => _showActions(context, i),
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           );

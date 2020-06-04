@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/TapTooltip.dart';
 import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
-import 'package:polka_wallet/page/profile/account/friendListPage.dart';
-import 'package:polka_wallet/page/profile/account/recoverySettingPage.dart';
+import 'package:polka_wallet/page/profile/recovery/friendListPage.dart';
+import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -30,7 +31,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
 
   List<AccountData> _friends = [];
   double _threshold = 1;
-  double _delay = 3;
+  double _delay = 90;
   String _delayError;
 
   Future<void> _handleFriendsSelect() async {
@@ -70,7 +71,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
   }
 
   void _onValidateSubmit(String pageTitle) {
-    if (_delay > 7 || _delay < 1) {
+    if (_delay < 30) {
       showCupertinoDialog(
         context: context,
         builder: (BuildContext context) {
@@ -110,6 +111,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
   void _onSubmit(String pageTitle) {
     final Map dic = I18n.of(context).profile;
     List<String> friends = _friends.map((e) => e.address).toList();
+    friends.sort();
     int delayBlocks = _delay * SECONDS_OF_DAY ~/ 6;
     var args = {
       "title": pageTitle,
@@ -121,6 +123,8 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
         'friends': friends,
         'threshold': _threshold.toInt(),
         'delay': '$_delay ${dic['recovery.day']}',
+        'deposit':
+            '${5 + _friends.length * 0.5} ${widget.store.settings.networkState.tokenSymbol}'
       }),
       "params": [friends, _threshold.toInt(), delayBlocks],
       'onFinish': (BuildContext txPageContext, Map res) {
@@ -164,9 +168,20 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
     final Color primary = Theme.of(context).primaryColor;
     final Color grey = Theme.of(context).disabledColor;
     final List<AccountData> friends = ModalRoute.of(context).settings.arguments;
+    final String symbol = widget.store.settings.networkState.tokenSymbol;
 
     final String pageTitle =
         friends.length > 0 ? dic['recovery.modify'] : dic['recovery.create'];
+
+    final String depositMsg = '''
+
+${dic['recovery.deposit']} = ${dic['recovery.deposit.base']} +
+${dic['recovery.deposit.factor']} * ${dic['recovery.deposit.friends']}
+
+${dic['recovery.deposit.base']} = 5 $symbol
+${dic['recovery.deposit.factor']} = 0.5 $symbol
+''';
+
     return Scaffold(
       appBar: AppBar(
         title: Text(pageTitle),
@@ -235,19 +250,19 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           OutlinedButtonSmall(
-                            content: '1 ${dic['recovery.day']}',
-                            active: _delay == 1,
-                            onPressed: () => _setDelay('1'),
+                            content: '30 ${dic['recovery.day']}',
+                            active: _delay == 30,
+                            onPressed: () => _setDelay('30'),
                           ),
                           OutlinedButtonSmall(
-                            content: '3 ${dic['recovery.day']}',
-                            active: _delay == 3,
-                            onPressed: () => _setDelay('3'),
+                            content: '90 ${dic['recovery.day']}',
+                            active: _delay == 90,
+                            onPressed: () => _setDelay('90'),
                           ),
                           OutlinedButtonSmall(
-                            content: '7 ${dic['recovery.day']}',
-                            active: _delay == 7,
-                            onPressed: () => _setDelay('7'),
+                            content: '180 ${dic['recovery.day']}',
+                            active: _delay == 180,
+                            onPressed: () => _setDelay('180'),
                           ),
                           Expanded(
                             child: Column(
@@ -296,6 +311,30 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
                             ),
                           )
                         ],
+                      ),
+                    ),
+                    ListTile(
+                      title: Container(
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 8),
+                              child: Text(dic['recovery.deposit']),
+                            ),
+                            TapTooltip(
+                              message: depositMsg,
+                              child: Icon(
+                                Icons.info,
+                                color: Theme.of(context).unselectedWidgetColor,
+                                size: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      trailing: Text(
+                        '${5 + _friends.length * 0.5} $symbol',
+                        style: Theme.of(context).textTheme.headline4,
                       ),
                     )
                   ],

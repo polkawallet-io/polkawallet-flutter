@@ -7,8 +7,8 @@ import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
-import 'package:polka_wallet/page/profile/account/createRecoveryPage.dart';
-import 'package:polka_wallet/service/polkascan.dart';
+import 'package:polka_wallet/page/profile/recovery/createRecoveryPage.dart';
+import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
@@ -30,8 +30,11 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
   List _activeRecoveries = [];
 
   Future<void> _fetchData() async {
-    await webApi.account.queryRecoverable();
-    Map res = await PolkaScanApi.fetchRecoveryAttempts();
+    await webApi.account.queryRecoverable(widget.store.account.currentAddress);
+    Map res = await SubScanApi.fetchTxs(
+      SubScanApi.module_Recovery,
+      call: 'initiate_recovery',
+    );
     List txs = List.of(res['extrinsics']);
     txs.retainWhere((e) {
       List params = jsonDecode(e['params']);
@@ -49,7 +52,7 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
   Future<void> _onRemoveRecovery() async {
     final Map dic = I18n.of(context).profile;
     bool couldRemove = true;
-    if (couldRemove) {
+    if (!couldRemove) {
       showCupertinoDialog(
         context: context,
         builder: (BuildContext context) {
@@ -132,7 +135,7 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
                           margin: EdgeInsets.all(16),
                           padding: EdgeInsets.all(16),
                           child: friends.length == 0
-                              ? Text('status')
+                              ? Text(dic['recovery.brief'])
                               : _RecoveryInfo(
                                   recoveryInfo: info,
                                   friends: friends,
@@ -161,7 +164,7 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
                           },
                         ),
                       )
-                    : Container()
+                    : Container(),
               ],
             );
           },
@@ -230,7 +233,7 @@ class _RecoveryInfo extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('deposit', style: titleStyle),
+            Text(dic['recovery.deposit'], style: titleStyle),
             Text(
               '${Fmt.token(recoveryInfo.deposit, decimals: decimals)} $symbol',
               style: valueStyle,

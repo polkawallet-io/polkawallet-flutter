@@ -39,14 +39,18 @@ import 'package:polka_wallet/page/profile/aboutPage.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
 import 'package:polka_wallet/page/profile/account/changeNamePage.dart';
 import 'package:polka_wallet/page/profile/account/changePasswordPage.dart';
-import 'package:polka_wallet/page/profile/account/createRecoveryPage.dart';
 import 'package:polka_wallet/page/profile/account/exportAccountPage.dart';
 import 'package:polka_wallet/page/profile/account/exportResultPage.dart';
-import 'package:polka_wallet/page/profile/account/friendListPage.dart';
-import 'package:polka_wallet/page/profile/account/recoverySettingPage.dart';
+import 'package:polka_wallet/page/profile/recovery/createRecoveryPage.dart';
+import 'package:polka_wallet/page/profile/recovery/friendListPage.dart';
+import 'package:polka_wallet/page/profile/recovery/initiateRecoveryPage.dart';
+import 'package:polka_wallet/page/profile/recovery/recoveryProofPage.dart';
+import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
+import 'package:polka_wallet/page/profile/recovery/recoveryStatePage.dart';
+import 'package:polka_wallet/page/profile/recovery/vouchRecoveryPage.dart';
 import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:polka_wallet/page/profile/settings/settingsPage.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
@@ -252,12 +256,16 @@ class _WalletAppState extends State<WalletApp> {
             SettingsPage(_appStore.settings, _changeLang),
         ExportAccountPage.route: (_) => ExportAccountPage(_appStore.account),
         ExportResultPage.route: (_) => ExportResultPage(),
-        RecoverySettingPage.route: (_) => RecoverySettingPage(_appStore),
-        CreateRecoveryPage.route: (_) => CreateRecoveryPage(_appStore),
-        FriendListPage.route: (_) => FriendListPage(_appStore),
         RemoteNodeListPage.route: (_) => RemoteNodeListPage(_appStore.settings),
         SS58PrefixListPage.route: (_) => SS58PrefixListPage(_appStore.settings),
         AboutPage.route: (_) => AboutPage(),
+        RecoverySettingPage.route: (_) => RecoverySettingPage(_appStore),
+        RecoveryStatePage.route: (_) => RecoveryStatePage(_appStore),
+        RecoveryProofPage.route: (_) => RecoveryProofPage(_appStore),
+        CreateRecoveryPage.route: (_) => CreateRecoveryPage(_appStore),
+        FriendListPage.route: (_) => FriendListPage(_appStore),
+        InitiateRecoveryPage.route: (_) => InitiateRecoveryPage(_appStore),
+        VouchRecoveryPage.route: (_) => VouchRecoveryPage(_appStore),
 
         // acala-network
         SwapPage.route: (_) => SwapPage(_appStore),

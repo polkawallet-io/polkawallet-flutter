@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
       case 2:
         return Governance(store);
       default:
-        return Profile(store.account);
+        return Profile(store);
     }
   }
 

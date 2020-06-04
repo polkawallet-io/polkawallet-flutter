@@ -12,7 +12,7 @@ import 'package:polka_wallet/page/staking/actions/redeemPage.dart';
 import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
 import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
-import 'package:polka_wallet/service/polkascan.dart';
+import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
