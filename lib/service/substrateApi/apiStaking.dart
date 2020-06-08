@@ -11,7 +11,8 @@ class ApiStaking {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<void> fetchAccountStaking(String pubKey) async {
+  Future<void> fetchAccountStaking() async {
+    String pubKey = store.account.currentAccountPubKey;
     if (pubKey != null && pubKey.isNotEmpty) {
       String address = store.account.currentAddress;
       Map ledger = await apiRoot

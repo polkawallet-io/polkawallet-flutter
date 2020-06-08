@@ -26,7 +26,7 @@ const Map<String, String> enAccount = {
       'Please click on the mnemonic in the correct order to confirm that the backup is correct',
   'backup.reset': 'Reset',
   'backup.error':
-      'This device does not support encrypt type sr25519, you can select [Advanced Options -> Encrypt Type -> ed25519] to continue.',
+      'This device does not support key type sr25519, you can select [Advanced Options -> Encrypt Type -> ed25519] to continue.',
   'import.type': 'Source Type',
   'import.encrypt': 'Encrypt Type',
   'import.invalid': 'Invalid',

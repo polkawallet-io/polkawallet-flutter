@@ -43,12 +43,11 @@ class _AssetPageState extends State<AssetPage>
   Future<void> _updateData() async {
     if (store.settings.loading) return;
 
-    String pubKey = store.account.currentAccount.pubKey;
-    webApi.assets.fetchBalance(pubKey);
+    webApi.assets.fetchBalance();
     Map res = {"transfers": []};
 
     if (store.settings.endpoint.info != networkEndpointAcala.info) {
-      webApi.staking.fetchAccountStaking(pubKey);
+      webApi.staking.fetchAccountStaking();
       res = await webApi.assets.updateTxs(_txsPage);
     }
 

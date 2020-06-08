@@ -41,12 +41,12 @@ class _AssetsState extends State<Assets> {
   Future<void> _fetchBalance() async {
     if (store.settings.endpoint.info == networkEndpointAcala.info) {
       await Future.wait([
-        webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
+        webApi.assets.fetchBalance(),
       ]);
     } else {
       await Future.wait([
-        webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
-        webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
+        webApi.assets.fetchBalance(),
+        webApi.staking.fetchAccountStaking(),
       ]);
     }
   }

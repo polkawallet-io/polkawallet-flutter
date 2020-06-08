@@ -46,8 +46,7 @@ class _SwapPageState extends State<SwapPage> {
   String _slippageError;
 
   Future<void> _refreshData() async {
-    String pubKey = store.account.currentAccount.pubKey;
-    webApi.assets.fetchBalance(pubKey);
+    webApi.assets.fetchBalance();
     webApi.acala.fetchTokenSwapRatio();
 
     // then fetch txs history

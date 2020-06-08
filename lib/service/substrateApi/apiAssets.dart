@@ -9,7 +9,8 @@ class ApiAssets {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<void> fetchBalance(String pubKey) async {
+  Future<void> fetchBalance() async {
+    String pubKey = store.account.currentAccountPubKey;
     if (pubKey != null && pubKey.isNotEmpty) {
       String address = store.account.currentAddress;
       Map res = await apiRoot.evalJavascript('account.getBalance("$address")');

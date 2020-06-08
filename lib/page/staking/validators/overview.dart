@@ -42,8 +42,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
     if (store.settings.loading) {
       return;
     }
-    await webApi.staking
-        .fetchAccountStaking(store.account.currentAccount.pubKey);
+    await webApi.staking.fetchAccountStaking();
     webApi.staking.fetchStakingOverview();
   }
 

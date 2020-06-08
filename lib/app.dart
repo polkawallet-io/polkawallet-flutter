@@ -127,7 +127,7 @@ class _WalletAppState extends State<WalletApp> {
     });
   }
 
-  Future<void> _checkUpdate() async {
+  Future<void> _checkUpdate(BuildContext context) async {
     final versions = await VersionApi.getLatestVersion();
     UI.checkUpdate(context, versions, autoCheck: true);
   }
@@ -146,7 +146,7 @@ class _WalletAppState extends State<WalletApp> {
       _changeLang(context, _appStore.settings.localeCode);
       _changeTheme();
 
-      _checkUpdate();
+      _checkUpdate(context);
     }
     return _appStore.account.accountListAll.length;
   }

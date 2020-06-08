@@ -44,8 +44,10 @@ class ApiAccount {
   /// encode addresses to publicKeys
   Future<void> encodeAddress(List<String> pubKeys) async {
     String ss58 = jsonEncode(network_ss58_map.values.toSet().toList());
-    Map res = await apiRoot
-        .evalJavascript('account.encodeAddress(${jsonEncode(pubKeys)}, $ss58)');
+    Map res = await apiRoot.evalJavascript(
+      'account.encodeAddress(${jsonEncode(pubKeys)}, $ss58)',
+      allowRepeat: true,
+    );
     if (res != null) {
       store.account.setPubKeyAddressMap(Map<String, Map>.from(res));
     }
@@ -104,8 +106,8 @@ class ApiAccount {
       {String rawParam}) async {
     String param = rawParam != null ? rawParam : jsonEncode(params);
     String call = 'account.sendTx(${jsonEncode(txInfo)}, $param)';
-    print(call);
-    Map res = await apiRoot.evalJavascript(call);
+//    print(call);
+    Map res = await apiRoot.evalJavascript(call, allowRepeat: true);
 
     if (res['hash'] != null) {
       String hash = res['hash'];
@@ -203,21 +205,60 @@ class ApiAccount {
     store.account.setAccountRecoveryInfo(res);
 
     if (res != null && List.of(res['friends']).length > 0) {
+      res['address'] = address;
       getAddressIcons(res['friends']);
     }
     return res;
   }
 
-  Future<Map> queryActiveRecovery(String address, String addressNew) async {
-    final res = await apiRoot.evalJavascript(
-        'api.query.recovery.activeRecoveries("$address", "$addressNew")');
+  Future<List> queryRecoverableList(List<String> addresses) async {
+    List queries =
+        addresses.map((e) => 'api.query.recovery.recoverable("$e")').toList();
+    final List ls = await apiRoot.evalJavascript(
+      'Promise.all([${queries.join(',')}])',
+      allowRepeat: true,
+    );
+
+    List res = [];
+    ls.asMap().forEach((k, v) {
+      v['address'] = addresses[k];
+      res.add(v);
+    });
+
     return res;
   }
 
-  Future<Map> queryRecoveryProxy() async {
-    String address = store.account.currentAddress;
-    final res =
-        await apiRoot.evalJavascript('api.query.recovery.proxy("$address")');
+  Future<List> queryActiveRecoveryAttempts(
+      String address, List<String> addressNew) async {
+    List queries = addressNew
+        .map((e) => 'api.query.recovery.activeRecoveries("$address", "$e")')
+        .toList();
+    final res = await apiRoot.evalJavascript(
+      'Promise.all([${queries.join(',')}])',
+      allowRepeat: true,
+    );
+    return res;
+  }
+
+  Future<List> queryActiveRecoveries(
+      List<String> addresses, String addressNew) async {
+    List queries = addresses
+        .map((e) => 'api.query.recovery.activeRecoveries("$e", "$addressNew")')
+        .toList();
+    final res = await apiRoot.evalJavascript(
+      'Promise.all([${queries.join(',')}])',
+      allowRepeat: true,
+    );
+    return res;
+  }
+
+  Future<List> queryRecoveryProxies(List<String> addresses) async {
+    List queries =
+        addresses.map((e) => 'api.query.recovery.proxy("$e")').toList();
+    final res = await apiRoot.evalJavascript(
+      'Promise.all([${queries.join(',')}])',
+      allowRepeat: true,
+    );
     return res;
   }
 }

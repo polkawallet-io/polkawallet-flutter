@@ -26,13 +26,12 @@ class AccountManagePage extends StatelessWidget {
           title: Text(I18n.of(context).profile['delete.confirm']),
           onOk: (_) {
             store.account.removeAccount(store.account.currentAccount).then((_) {
-              String pubKey = store.account.currentAccount.pubKey;
               // refresh balance
               store.assets.loadAccountCache();
-              webApi.assets.fetchBalance(pubKey);
+              webApi.assets.fetchBalance();
               // refresh user's staking info
               store.staking.loadAccountCache();
-              webApi.staking.fetchAccountStaking(pubKey);
+              webApi.staking.fetchAccountStaking();
             });
             Navigator.of(context).pop();
           },

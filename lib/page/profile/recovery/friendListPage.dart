@@ -37,6 +37,31 @@ class _FriendListPage extends State<FriendListPage> {
     });
   }
 
+  void _onFinish() {
+    if (_selected.length > 9) {
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          final Map dic = I18n.of(context).profile;
+          return CupertinoAlertDialog(
+            title: Container(),
+            content: Text(dic['recovery.friends.max']),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      Navigator.of(context).pop(_selected.toList());
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -101,9 +126,7 @@ class _FriendListPage extends State<FriendListPage> {
               padding: EdgeInsets.all(16),
               child: RoundedButton(
                 text: I18n.of(context).home['ok'],
-                onPressed: () {
-                  Navigator.of(context).pop(_selected.toList());
-                },
+                onPressed: _onFinish,
               ),
             )
           ],

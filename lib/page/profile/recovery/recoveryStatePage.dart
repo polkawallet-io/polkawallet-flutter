@@ -1,11 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/profile/recovery/initiateRecoveryPage.dart';
+import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
 import 'package:polka_wallet/service/subscan.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/staking/types/txData.dart';
 import 'package:polka_wallet/utils/UI.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class RecoveryStatePage extends StatefulWidget {
@@ -18,10 +26,18 @@ class RecoveryStatePage extends StatefulWidget {
 }
 
 class _RecoveryStatePage extends State<RecoveryStatePage> {
-  List _txs = [];
+  final String _actionClaimRecovery = 'claim';
+  final String _actionCancelRecovery = 'cancel';
+
+  List<TxData> _txs = [];
+  List<AccountRecoveryInfo> _recoverableInfoList = [];
+  List _activeRecoveriesStatus = [];
+  List _proxyStatus = [];
+  int _currentBlock = 0;
   bool _loading = false;
 
   Future<void> _fetchData() async {
+    webApi.assets.fetchBalance();
     Map res = await SubScanApi.fetchTxs(
       SubScanApi.module_Recovery,
       call: 'initiate_recovery',
@@ -29,13 +45,61 @@ class _RecoveryStatePage extends State<RecoveryStatePage> {
     );
     if (res['extrinsics'] == null) return;
     List txs = List.of(res['extrinsics']);
-    print('_activeRecoveries');
-    print(txs);
     if (txs.length > 0) {
+      List<TxData> ls = txs.map((e) => TxData.fromJson(e)).toList();
+      ls.retainWhere((i) => i.success);
+      List<String> pubKeys = [];
+      ls.forEach((i) {
+        pubKeys.add('0x${List.of(jsonDecode(i.params))[0]['value']}');
+      });
+      await webApi.account.encodeAddress(pubKeys);
+
+      List<String> addresses = pubKeys
+          .map((e) => widget.store.account
+              .pubKeyAddressMap[widget.store.settings.endpoint.ss58][e])
+          .toList();
+
+      /// fetch active recovery status
+      List status = await Future.wait([
+        webApi.evalJavascript('api.derive.chain.bestNumber()'),
+        webApi.account.queryRecoverableList(addresses),
+        webApi.account.queryActiveRecoveries(
+          addresses,
+          widget.store.account.currentAddress,
+        ),
+        webApi.account
+            .queryRecoveryProxies([widget.store.account.currentAddress]),
+      ]);
+
       setState(() {
-        _txs = txs;
+        _txs = ls;
+        _currentBlock = status[0];
+        _recoverableInfoList = List.of(status[1])
+            .map((e) => AccountRecoveryInfo.fromJson(e))
+            .toList();
+        _activeRecoveriesStatus = status[2];
+        _proxyStatus = status[3];
       });
     }
+  }
+
+  void _onAction(AccountRecoveryInfo info, String action) {
+    final Map dic = I18n.of(context).profile;
+    var args = {
+      "title": dic['recovery.$action'],
+      "txInfo": {
+        "module": 'recovery',
+        "call": '${action}Recovery',
+      },
+      "detail": jsonEncode({"accountId": info.address}),
+      "params": [info.address],
+      'onFinish': (BuildContext txPageContext, Map res) {
+        Navigator.popUntil(
+            txPageContext, ModalRoute.withName('/profile/recovery/state'));
+        globalRecoveryStateRefreshKey.currentState.show();
+      }
+    };
+    Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
   }
 
   @override
@@ -50,6 +114,19 @@ class _RecoveryStatePage extends State<RecoveryStatePage> {
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).profile;
 
+    List<List> activeList = List<List>();
+    _txs.asMap().forEach((i, v) {
+      activeList.add([
+        v,
+        _activeRecoveriesStatus[i],
+        _recoverableInfoList[i],
+        _proxyStatus[i]
+      ]);
+    });
+
+    final int blockDuration =
+        widget.store.settings.networkConst['babe']['expectedBlockTime'];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(dic['recovery.init']),
@@ -59,39 +136,71 @@ class _RecoveryStatePage extends State<RecoveryStatePage> {
         child: Container(
           color: Theme.of(context).cardColor,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Padding(
+                padding: EdgeInsets.only(left: 16, top: 16, bottom: 16),
+                child: BorderedTitle(
+                  title: dic['recovery.recoveries'],
+                ),
+              ),
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: _fetchData,
                   key: globalRecoveryStateRefreshKey,
                   child: ListView(
-                    padding: EdgeInsets.all(16),
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 16),
-                        child: BorderedTitle(
-                          title: dic['recovery.history'],
-                        ),
-                      ),
-                      _txs.length > 0
-                          ? Column(
-                              children: _txs.map((e) {
-                                return ListTile(
-                                  title: Text('address'),
-                                  subtitle: Text('time'),
-                                  trailing: Container(
-                                    child: Column(
-                                      children: [
-                                        Text('status'),
-                                        Text('time left'),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
+                    children: _txs.length > 0
+                        ? activeList.map((e) {
+                            final int createdBlock = e[1]['created'];
+                            final String start = Fmt.blockToTime(
+                              _currentBlock - createdBlock,
+                              blockDuration,
+                            );
+                            final AccountRecoveryInfo info = e[2];
+                            final bool canClaim =
+                                List.of(e[1]['friends']).length >=
+                                        info.threshold &&
+                                    (createdBlock + info.delayPeriod) <
+                                        _currentBlock;
+                            bool canCancel = false;
+                            if (canClaim && e[3] != null) {
+                              canCancel = e[3] == info.address;
+                            }
+                            final String delay = Fmt.blockToTime(
+                                info.delayPeriod, blockDuration);
+                            return ActiveRecovery(
+                              tx: e[0],
+                              status: e[1],
+                              info: info,
+                              start: start,
+                              delay: delay,
+                              networkState: widget.store.settings.networkState,
+                              isRescuer: true,
+                              proxy: canCancel,
+                              action: CupertinoActionSheetAction(
+                                child: Text(canCancel
+                                    ? dic['recovery.cancel']
+                                    : dic['recovery.claim']),
+                                onPressed: canClaim
+                                    ? () {
+                                        Navigator.of(context).pop();
+                                        if (canCancel) {
+                                          _onAction(
+                                              info, _actionCancelRecovery);
+                                        } else {
+                                          _onAction(info, _actionClaimRecovery);
+                                        }
+                                      }
+                                    : () => {},
+                              ),
+                            );
+                          }).toList()
+                        : [
+                            Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Text(I18n.of(context).home['data.empty']),
                             )
-                          : Text(I18n.of(context).home['data.empty'])
-                    ],
+                          ],
                   ),
                 ),
               ),

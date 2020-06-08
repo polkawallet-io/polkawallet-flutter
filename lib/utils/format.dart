@@ -299,11 +299,11 @@ class Fmt {
     int min = (blocks % blocksOfHour / blocksOfMin).floor();
 
     String res = '$min mins';
-    if (hour > 0) {
-      res = '$hour hrs $res';
-    }
+
     if (day > 0) {
-      res = '$day days $res';
+      res = '$day days $hour hrs';
+    } else if (hour > 0) {
+      res = '$hour hrs $res';
     }
     return res;
   }

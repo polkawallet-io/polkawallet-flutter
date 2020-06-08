@@ -8,6 +8,7 @@ import 'package:package_info/package_info.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/downloadDialog.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -185,6 +186,31 @@ class UI {
         );
       },
     );
+  }
+
+  static bool checkBalanceAndAlert(
+      BuildContext context, AppStore store, BigInt amountNeeded) {
+    String symbol = store.settings.networkState.tokenSymbol;
+    if (store.assets.balances[symbol].transferable <= amountNeeded) {
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text(I18n.of(context).assets['amount.low']),
+            content: Container(),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        },
+      );
+      return false;
+    } else {
+      return true;
+    }
   }
 }
 

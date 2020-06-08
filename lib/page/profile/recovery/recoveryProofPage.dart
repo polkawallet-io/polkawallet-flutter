@@ -30,12 +30,10 @@ class _RecoveryStatePage extends State<RecoveryProofPage> {
     Map res = await SubScanApi.fetchTxs(
       SubScanApi.module_Recovery,
       call: 'vouch_recovery',
-//      sender: widget.store.account.currentAddress,
+      sender: widget.store.account.currentAddress,
     );
     if (res['extrinsics'] == null) return;
     List txs = List.of(res['extrinsics']);
-    print('_activeRecoveries');
-    print(txs);
     if (txs.length > 0) {
       List<TxData> ls = txs.map((e) => TxData.fromJson(e)).toList();
       List<String> pubKeys = [];
@@ -84,7 +82,10 @@ class _RecoveryStatePage extends State<RecoveryProofPage> {
                   key: globalRecoveryProofRefreshKey,
                   child: _txs.length > 0
                       ? TxList(_txs)
-                      : Text(I18n.of(context).home['data.empty']),
+                      : Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Text(I18n.of(context).home['data.empty']),
+                        ),
                 ),
               ),
               Padding(

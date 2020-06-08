@@ -11,9 +11,9 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/profile/recovery/friendListPage.dart';
 import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
-import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class CreateRecoveryPage extends StatefulWidget {
@@ -70,7 +70,17 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
     }
   }
 
-  void _onValidateSubmit(String pageTitle) {
+  void _onValidateSubmit() {
+    int decimals = widget.store.settings.networkState.tokenDecimals;
+    String deposit = (5 + _friends.length * 0.5).toString();
+    if (!UI.checkBalanceAndAlert(
+      context,
+      widget.store,
+      Fmt.tokenInt(deposit, decimals: decimals),
+    )) {
+      return;
+    }
+
     if (_delay < 30) {
       showCupertinoDialog(
         context: context,
@@ -96,7 +106,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
                 child: Text(I18n.of(context).home['ok']),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _onSubmit(pageTitle);
+                  _onSubmit();
                 },
               ),
             ],
@@ -104,17 +114,17 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
         },
       );
     } else {
-      _onSubmit(pageTitle);
+      _onSubmit();
     }
   }
 
-  void _onSubmit(String pageTitle) {
+  void _onSubmit() {
     final Map dic = I18n.of(context).profile;
     List<String> friends = _friends.map((e) => e.address).toList();
     friends.sort();
     int delayBlocks = _delay * SECONDS_OF_DAY ~/ 6;
     var args = {
-      "title": pageTitle,
+      "title": dic['recovery.create'],
       "txInfo": {
         "module": 'recovery',
         "call": 'createRecovery',
@@ -137,41 +147,11 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final AccountRecoveryInfo recoveryInfo =
-          widget.store.account.recoveryInfo;
-      final List<AccountData> friends =
-          ModalRoute.of(context).settings.arguments;
-      if (recoveryInfo.friends != null) {
-        int delaySeconds = recoveryInfo.delayPeriod *
-            widget.store.settings.networkConst['babe']['expectedBlockTime'] ~/
-            1000;
-        double delayDays = delaySeconds / SECONDS_OF_DAY;
-        setState(() {
-          _friends = friends;
-          _threshold = recoveryInfo.threshold.toDouble();
-          _delay = delayDays;
-          _delayCtrl.text = delayDays.toString();
-        });
-        if (delayDays != 1 && delayDays != 3 && delayDays != 7) {
-          _delayFocusNode.requestFocus();
-        }
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).profile;
     final Color primary = Theme.of(context).primaryColor;
     final Color grey = Theme.of(context).disabledColor;
-    final List<AccountData> friends = ModalRoute.of(context).settings.arguments;
     final String symbol = widget.store.settings.networkState.tokenSymbol;
-
-    final String pageTitle =
-        friends.length > 0 ? dic['recovery.modify'] : dic['recovery.create'];
 
     final String depositMsg = '''
 
@@ -184,7 +164,7 @@ ${dic['recovery.deposit.factor']} = 0.5 $symbol
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(pageTitle),
+        title: Text(dic['recovery.create']),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -346,7 +326,7 @@ ${dic['recovery.deposit.factor']} = 0.5 $symbol
                   text: I18n.of(context).home['next'],
                   onPressed: _friends.length > 0 && _delayError == null
                       ? () {
-                          _onValidateSubmit(pageTitle);
+                          _onValidateSubmit();
                         }
                       : null,
                 ),

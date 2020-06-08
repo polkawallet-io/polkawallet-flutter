@@ -6,7 +6,6 @@ import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
-import 'package:polka_wallet/page/profile/recovery/friendListPage.dart';
 import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
@@ -38,6 +37,17 @@ class _InitiateRecoveryPage extends State<InitiateRecoveryPage> {
   }
 
   Future<void> _onValidateSubmit() async {
+    /// check if balance enough for deposit
+    int decimals = widget.store.settings.networkState.tokenDecimals;
+    if (!UI.checkBalanceAndAlert(
+      context,
+      widget.store,
+      Fmt.tokenInt('5', decimals: decimals),
+    )) {
+      return;
+    }
+
+    /// check if account is recoverable
     setState(() {
       _loading = true;
     });
@@ -89,7 +99,7 @@ class _InitiateRecoveryPage extends State<InitiateRecoveryPage> {
       'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(
             txPageContext, ModalRoute.withName('/profile/recovery/state'));
-        globalRecoverySettingsRefreshKey.currentState.show();
+        globalRecoveryStateRefreshKey.currentState.show();
       }
     };
     Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);

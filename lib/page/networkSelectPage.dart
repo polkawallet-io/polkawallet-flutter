@@ -85,7 +85,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         _loadAccountCache();
 
         /// reload account info
-        webApi.assets.fetchBalance(i.pubKey);
+        webApi.assets.fetchBalance();
       } else {
         /// set new network and reload web view
         await _reloadNetwork();

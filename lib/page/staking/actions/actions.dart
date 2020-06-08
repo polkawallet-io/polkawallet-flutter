@@ -60,10 +60,9 @@ class _StakingActions extends State<StakingActions>
     if (store.settings.loading) {
       return;
     }
-    String pubKey = store.account.currentAccount.pubKey;
     await Future.wait([
-      webApi.assets.fetchBalance(pubKey),
-      webApi.staking.fetchAccountStaking(pubKey),
+      webApi.assets.fetchBalance(),
+      webApi.staking.fetchAccountStaking(),
     ]);
   }
 
