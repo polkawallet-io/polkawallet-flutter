@@ -341,7 +341,12 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
               if (i < 3) {
                 return list[i];
               }
-              return Validator(store, list[i] as ValidatorData);
+              ValidatorData acc = list[i];
+              Map accInfo = store.account.accountIndexMap[acc.accountId];
+
+              bool hasPhalaAirdrop =
+                  store.staking.phalaAirdropWhiteList[acc.accountId] ?? false;
+              return Validator(acc, accInfo, hasPhalaAirdrop: hasPhalaAirdrop);
             },
           ),
         );
