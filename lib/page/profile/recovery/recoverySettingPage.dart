@@ -36,6 +36,7 @@ class RecoverySettingPage extends StatefulWidget {
 class _RecoverySettingPage extends State<RecoverySettingPage> {
   List<TxData> _activeRecoveries = [];
   List _activeRecoveriesStatus = [];
+  List _proxyStatus = [];
   int _currentBlock = 0;
 
   Future<void> _fetchData() async {
@@ -57,18 +58,22 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
       return '0x$pubKey' == widget.store.account.currentAccount.pubKey;
     });
     if (txs.length > 0) {
+      List<String> addressesNew = txs.map((e) => e.accountId).toList();
+
       /// fetch active recovery status
       final status = await Future.wait([
         webApi.evalJavascript('api.derive.chain.bestNumber()'),
         webApi.account.queryActiveRecoveryAttempts(
           widget.store.account.currentAddress,
-          txs.map((e) => e.accountId).toList(),
-        )
+          addressesNew,
+        ),
+        webApi.account.queryRecoveryProxies(addressesNew),
       ]);
       setState(() {
         _activeRecoveries = txs;
         _currentBlock = status[0];
         _activeRecoveriesStatus = status[1];
+        _proxyStatus = status[2];
       });
     }
   }
@@ -168,7 +173,7 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
             }
             List<List> activeList = List<List>();
             _activeRecoveries.asMap().forEach((i, v) {
-              activeList.add([v, _activeRecoveriesStatus[i]]);
+              activeList.add([v, _activeRecoveriesStatus[i], _proxyStatus[i]]);
             });
 
             final int blockDuration =
@@ -211,19 +216,25 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
                                   String start = Fmt.blockToTime(
                                       _currentBlock - e[1]['created'],
                                       blockDuration);
+                                  TxData tx = e[0];
+                                  bool hasProxy = false;
+                                  if (e[2] != null) {
+                                    hasProxy = e[2] == info.address;
+                                  }
                                   return ActiveRecovery(
-                                    tx: e[0],
+                                    tx: tx,
                                     status: e[1],
                                     info: info,
                                     start: start,
                                     delay: delay,
+                                    proxy: hasProxy,
                                     networkState:
                                         widget.store.settings.networkState,
                                     action: CupertinoActionSheetAction(
                                       child: Text(dic['recovery.close']),
                                       onPressed: () {
                                         Navigator.of(context).pop();
-                                        _closeRecovery(e[0]);
+                                        _closeRecovery(tx);
                                       },
                                     ),
                                   );
@@ -438,8 +449,12 @@ class ActiveRecovery extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(isRescuer
-                      ? proxy ? 'proxy' : dic['recovery.init.old']
-                      : dic['recovery.init.new']),
+                      ? proxy
+                          ? dic['recovery.recovered']
+                          : dic['recovery.init.old']
+                      : proxy
+                          ? dic['recovery.proxy']
+                          : dic['recovery.init.new']),
                   Row(
                     children: [
                       Padding(

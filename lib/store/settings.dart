@@ -56,6 +56,13 @@ abstract class _SettingsStore with Store {
   }
 
   @computed
+  List<AccountData> get contactListAll {
+    List<AccountData> ls = List<AccountData>.of(rootStore.account.accountList);
+    ls.addAll(contactList);
+    return ls;
+  }
+
+  @computed
   String get existentialDeposit {
     return Fmt.token(
         BigInt.parse(networkConst['balances']['existentialDeposit'].toString()),

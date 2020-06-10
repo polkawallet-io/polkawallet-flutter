@@ -80,7 +80,9 @@ const Map<String, String> enProfile = {
   'recovery.recoveries': 'My Recoveries',
   'recovery.actions': 'Actions',
   'recovery.claim': 'Claim Recovery',
-  'recovery.cancel': 'Cancel Recovery',
+  'recovery.cancel': 'Cancel Recovered',
+  'recovery.recovered': 'Recovered Account',
+  'recovery.proxy': 'Proxy Account',
 };
 
 const Map<String, String> zhProfile = {
@@ -162,4 +164,6 @@ const Map<String, String> zhProfile = {
   'recovery.actions': '操作',
   'recovery.claim': '完成账户代理',
   'recovery.cancel': '取消账户代理',
+  'recovery.recovered': '已恢复账户',
+  'recovery.proxy': '代理账户',
 };

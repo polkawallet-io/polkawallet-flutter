@@ -101,4 +101,4 @@ We got grants from Web3 Foundation, at the same time, we are helping Acala Netwo
 
 ### Tipping address
 
-Kusama address: `E8Yd2tgy9BQi2dGPAMc9GgiGJy3wsibhL1EU4kCLf1g1A3V`
+Kusama address: `EyWJe5kRSpDXLSaUxE3WcoDSgSos2TpRL2rSSd45R61YRqH`

@@ -290,6 +290,8 @@ class Fmt {
   }
 
   static String blockToTime(int blocks, int blockDuration) {
+    if (blocks == null) return '~';
+
     int blocksOfMin = 60000 ~/ blockDuration;
     int blocksOfHour = 60 * blocksOfMin;
     int blocksOfDay = 24 * blocksOfHour;

@@ -140,10 +140,13 @@ class ApiAccount {
     return acc;
   }
 
-  Future<dynamic> checkAccountPassword(String pass) async {
-    String pubKey = store.account.currentAccount.pubKey;
+  Future<dynamic> checkAccountPassword(AccountData account, String pass) async {
+    String pubKey = account.pubKey;
     print('checkpass: $pubKey, $pass');
-    return apiRoot.evalJavascript('account.checkPassword("$pubKey", "$pass")');
+    return apiRoot.evalJavascript(
+      'account.checkPassword("$pubKey", "$pass")',
+      allowRepeat: true,
+    );
   }
 
   Future<List> fetchAccountsIndex(List addresses) async {
@@ -200,12 +203,14 @@ class ApiAccount {
 
   Future<Map> queryRecoverable(String address) async {
 //    address = "J4sW13h2HNerfxTzPGpLT66B3HVvuU32S6upxwSeFJQnAzg";
-    final res = await apiRoot
+    Map res = await apiRoot
         .evalJavascript('api.query.recovery.recoverable("$address")');
+    if (res != null) {
+      res['address'] = address;
+    }
     store.account.setAccountRecoveryInfo(res);
 
     if (res != null && List.of(res['friends']).length > 0) {
-      res['address'] = address;
       getAddressIcons(res['friends']);
     }
     return res;

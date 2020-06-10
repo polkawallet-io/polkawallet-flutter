@@ -24,6 +24,7 @@ class AccountManagePage extends StatelessWidget {
       builder: (BuildContext context) {
         return PasswordInputDialog(
           title: Text(I18n.of(context).profile['delete.confirm']),
+          account: store.account.currentAccount,
           onOk: (_) {
             store.account.removeAccount(store.account.currentAccount).then((_) {
               // refresh balance

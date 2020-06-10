@@ -38,6 +38,11 @@ const Map<String, String> enAccount = {
   'observe.brief':
       '\nMark this address as observation,\nthen you can select this address\nin account select page, to watch\nit\'s assets and actions\n',
   'observe.tx': 'For observing only',
+  'observe.proxy': 'sign with proxy account',
+  'observe.proxy.brief':
+      '\nA recoverable account can\nsend Tx through a proxy account\n',
+  'observe.proxy.invalid': 'Invalid proxy account',
+  'list': 'Account Select',
 };
 
 const Map<String, String> zhAccount = {
@@ -74,4 +79,8 @@ const Map<String, String> zhAccount = {
   'observe.brief':
       '\n将该地址标记为观察账户后，\n您可以在账户切换页面选择该地址，\n在钱包中观察该地址的资产、\n操作记录等信息。\n',
   'observe.tx': '仅供查看',
+  'observe.proxy': '使用代理账户签名',
+  'observe.proxy.brief': '\n完成社交恢复流程的账户\n可以使用代理账户发送交易\n',
+  'observe.proxy.invalid': '代理账户不可用',
+  'list': '选择账户',
 };

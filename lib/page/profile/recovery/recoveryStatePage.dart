@@ -89,7 +89,9 @@ class _RecoveryStatePage extends State<RecoveryStatePage> {
       "title": dic['recovery.$action'],
       "txInfo": {
         "module": 'recovery',
-        "call": '${action}Recovery',
+        "call": action == _actionClaimRecovery
+            ? 'claimRecovery'
+            : 'cancelRecovered',
       },
       "detail": jsonEncode({"accountId": info.address}),
       "params": [info.address],

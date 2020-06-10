@@ -3,9 +3,14 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/TapTooltip.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/passwordInputDialog.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
+import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -27,11 +32,16 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   final AppStore store;
 
   Map _fee = {};
+  AccountData _proxyAccount;
 
   Future<String> _getTxFee() async {
     if (_fee['partialFee'] != null) {
       return _fee['partialFee'].toString();
     }
+    if (store.account.currentAccount.observation ?? false) {
+      webApi.account.queryRecoverable(store.account.currentAddress);
+    }
+
     final Map args = ModalRoute.of(context).settings.arguments;
     Map txInfo = args['txInfo'];
     txInfo['address'] = store.account.currentAddress;
@@ -41,6 +51,34 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
       _fee = fee;
     });
     return fee['partialFee'].toString();
+  }
+
+  Future<void> _onSwitch(bool value) async {
+    if (value) {
+      final acc = await Navigator.of(context).pushNamed(
+        ContactListPage.route,
+        arguments: store.account.accountListAll.toList(),
+      );
+      if (acc != null) {
+        setState(() {
+          _proxyAccount = acc;
+        });
+      }
+    } else {
+      setState(() {
+        _proxyAccount = null;
+      });
+    }
+  }
+
+  Future<void> _showTxQrCode(BuildContext context) async {
+    final Map args = ModalRoute.of(context).settings.arguments;
+
+    Map txInfo = args['txInfo'];
+    txInfo['pubKey'] = store.account.currentAccount.pubKey;
+    print(txInfo);
+    print(args['params']);
+//    Navigator.of(context).pushNamed(routeName, arguments: );
   }
 
   void _onTxFinish(BuildContext context, Map res) {
@@ -101,12 +139,48 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     );
   }
 
+  Future<bool> _validateProxy() async {
+    List proxies =
+        await webApi.account.queryRecoveryProxies([_proxyAccount.address]);
+    print(proxies);
+    return proxies[0] == store.account.currentAddress;
+  }
+
   Future<void> _showPasswordDialog(BuildContext context) async {
+    bool isProxyAvailable = await _validateProxy();
+    if (!isProxyAvailable) {
+      String address = store.account
+          .pubKeyAddressMap[store.settings.endpoint.ss58][_proxyAccount.pubKey];
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text(Fmt.address(address)),
+            content: Text(I18n.of(context).account['observe.proxy.invalid']),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(
+                  I18n.of(context).home['cancel'],
+                  style: TextStyle(
+                    color: Theme.of(context).unselectedWidgetColor,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
     showCupertinoDialog(
       context: context,
       builder: (_) {
         return PasswordInputDialog(
           title: Text(I18n.of(context).home['unlock']),
+          account: _proxyAccount ?? store.account.currentAccount,
           onOk: (password) => _onSubmit(context, password: password),
         );
       },
@@ -134,6 +208,9 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     Map txInfo = args['txInfo'];
     txInfo['pubKey'] = store.account.currentAccount.pubKey;
     txInfo['password'] = password;
+    if (_proxyAccount != null) {
+      txInfo['proxy'] = _proxyAccount.pubKey;
+    }
     print(txInfo);
     print(args['params']);
     Map res = await webApi.account.sendTx(
@@ -155,10 +232,14 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).home;
+    final Map<String, String> dicAcc = I18n.of(context).account;
     final String symbol = store.settings.networkState.tokenSymbol;
     final int decimals = store.settings.networkState.tokenDecimals;
 
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
+
+    final bool isKusama =
+        store.settings.endpoint.info == networkEndpointKusama.info;
 
     bool isUnsigned = args['txInfo']['isUnsigned'] ?? false;
     return Scaffold(
@@ -167,207 +248,214 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Builder(builder: (BuildContext context) {
-          return Observer(
-            builder: (_) => Column(
-              children: <Widget>[
-                Expanded(
-                  child: ListView(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Text(
-                          dic['submit.tx'],
-                          style: Theme.of(context).textTheme.headline4,
-                        ),
+        child: Observer(builder: (BuildContext context) {
+          final bool isObservation =
+              store.account.currentAccount.observation ?? false;
+          final bool isProxyObservation = _proxyAccount != null
+              ? _proxyAccount.observation ?? false
+              : false;
+          final AccountRecoveryInfo recoverable = store.account.recoveryInfo;
+
+          return Column(
+            children: <Widget>[
+              Expanded(
+                child: ListView(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        dic['submit.tx'],
+                        style: Theme.of(context).textTheme.headline4,
                       ),
-                      isUnsigned
-                          ? Container()
-                          : Padding(
+                    ),
+                    isUnsigned
+                        ? Container()
+                        : Padding(
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: AddressFormItem(
+                              dic["submit.from"],
+                              store.account.currentAccount,
+                            ),
+                          ),
+                    isKusama && isObservation && recoverable.address != null
+                        ? Padding(
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: Row(
+                              children: [
+                                TapTooltip(
+                                  message: dicAcc['observe.proxy.brief'],
+                                  child: Icon(Icons.info_outline, size: 16),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 4),
+                                    child: Text(dicAcc['observe.proxy']),
+                                  ),
+                                ),
+                                CupertinoSwitch(
+                                  value: _proxyAccount != null,
+                                  onChanged: (res) => _onSwitch(res),
+                                )
+                              ],
+                            ),
+                          )
+                        : Container(),
+                    _proxyAccount != null
+                        ? GestureDetector(
+                            child: Padding(
                               padding: EdgeInsets.only(left: 16, right: 16),
                               child: AddressFormItem(
-                                dic["submit.from"],
-                                store.account.currentAccount,
+                                I18n.of(context).profile["recovery.proxy"],
+                                _proxyAccount,
                               ),
                             ),
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              width: 64,
-                              child: Text(
-                                dic["submit.call"],
-                              ),
-                            ),
-                            Text(
-                              '${args['txInfo']['module']}.${args['txInfo']['call']}',
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              width: 64,
-                              child: Text(
-                                dic["detail"],
-                              ),
-                            ),
-                            Container(
-                              width:
-                                  MediaQuery.of(context).copyWith().size.width -
-                                      120,
-                              child: Text(
-                                args['detail'],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      isUnsigned
-                          ? Container()
-                          : Padding(
-                              padding: EdgeInsets.only(left: 16, right: 16),
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    margin: EdgeInsets.only(top: 8),
-                                    width: 64,
-                                    child: Text(
-                                      dic["submit.fees"],
-                                    ),
-                                  ),
-                                  FutureBuilder<String>(
-                                    future: _getTxFee(),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<String> snapshot) {
-                                      if (snapshot.hasData) {
-                                        String fee = Fmt.balance(
-                                          _fee['partialFee'].toString(),
-                                          decimals: decimals,
-                                          length: 6,
-                                        );
-                                        return Container(
-                                          margin: EdgeInsets.only(top: 8),
-                                          width: MediaQuery.of(context)
-                                                  .copyWith()
-                                                  .size
-                                                  .width -
-                                              120,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(
-                                                '$fee $symbol',
-                                              ),
-                                              Text(
-                                                '${_fee['weight']} Weight',
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  color: Theme.of(context)
-                                                      .unselectedWidgetColor,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      } else {
-                                        return CupertinoActivityIndicator();
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-//                      Padding(
-//                        padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-//                        child: TextFormField(
-//                          decoration: InputDecoration(
-//                            icon: Icon(Icons.lock),
-//                            hintText: dic['unlock'],
-//                            labelText: dic['unlock'],
-//                            suffixIcon: IconButton(
-//                              iconSize: 18,
-//                              icon: Icon(
-//                                CupertinoIcons.clear_thick_circled,
-//                                color: Theme.of(context).unselectedWidgetColor,
-//                              ),
-//                              onPressed: () {
-//                                WidgetsBinding.instance.addPostFrameCallback(
-//                                    (_) => _passCtrl.clear());
-//                              },
-//                            ),
-//                          ),
-//                          obscureText: true,
-//                          controller: _passCtrl,
-//                        ),
-//                      ),
-                    ],
-                  ),
-                ),
-                store.account.currentAccount.observation ?? false
-                    ? Row(
+                            onTap: () => _onSwitch(true),
+                          )
+                        : Container(),
+                    Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Row(
                         children: <Widget>[
-                          Expanded(
-                            child: Container(
-                              color: Colors.orange,
-                              child: FlatButton(
-                                padding: EdgeInsets.all(16),
-                                child: Text(
-                                    I18n.of(context).account['observe.tx'],
-                                    style: TextStyle(color: Colors.white)),
-                              ),
+                          Container(
+                            width: 64,
+                            child: Text(
+                              dic["submit.call"],
+                            ),
+                          ),
+                          Text(
+                            '${args['txInfo']['module']}.${args['txInfo']['call']}',
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 16, right: 16),
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            width: 64,
+                            child: Text(
+                              dic["detail"],
+                            ),
+                          ),
+                          Container(
+                            width:
+                                MediaQuery.of(context).copyWith().size.width -
+                                    120,
+                            child: Text(
+                              args['detail'],
                             ),
                           ),
                         ],
-                      )
-                    : Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Container(
-                              color: store.assets.submitting
-                                  ? Colors.black12
-                                  : Colors.orange,
-                              child: FlatButton(
-                                padding: EdgeInsets.all(16),
-                                child: Text(dic['cancel'],
-                                    style: TextStyle(color: Colors.white)),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              color: store.assets.submitting
-                                  ? Colors.black12
-                                  : Theme.of(context).primaryColor,
-                              child: FlatButton(
-                                padding: EdgeInsets.all(16),
-                                child: Text(
-                                  isUnsigned
-                                      ? dic['submit.no.sign']
-                                      : dic['submit'],
-                                  style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    isUnsigned
+                        ? Container()
+                        : Padding(
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(top: 8),
+                                  width: 64,
+                                  child: Text(
+                                    dic["submit.fees"],
+                                  ),
                                 ),
-                                onPressed: isUnsigned
-                                    ? () => _onSubmit(context)
-                                    : _fee['partialFee'] == null ||
-                                            store.assets.submitting
-                                        ? null
-                                        : () => _showPasswordDialog(context),
-                              ),
+                                FutureBuilder<String>(
+                                  future: _getTxFee(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<String> snapshot) {
+                                    if (snapshot.hasData) {
+                                      String fee = Fmt.balance(
+                                        _fee['partialFee'].toString(),
+                                        decimals: decimals,
+                                        length: 6,
+                                      );
+                                      return Container(
+                                        margin: EdgeInsets.only(top: 8),
+                                        width: MediaQuery.of(context)
+                                                .copyWith()
+                                                .size
+                                                .width -
+                                            120,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              '$fee $symbol',
+                                            ),
+                                            Text(
+                                              '${_fee['weight']} Weight',
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                color: Theme.of(context)
+                                                    .unselectedWidgetColor,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    } else {
+                                      return CupertinoActivityIndicator();
+                                    }
+                                  },
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      )
-              ],
-            ),
+                  ],
+                ),
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      color: store.assets.submitting
+                          ? Colors.black12
+                          : Colors.orange,
+                      child: FlatButton(
+                        padding: EdgeInsets.all(16),
+                        child: Text(dic['cancel'],
+                            style: TextStyle(color: Colors.white)),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      color: store.assets.submitting
+                          ? Colors.black12
+                          : Theme.of(context).primaryColor,
+                      child: FlatButton(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          isUnsigned
+                              ? dic['submit.no.sign']
+                              : (isObservation && _proxyAccount == null) ||
+                                      isProxyObservation
+                                  ? dic['submit.qr']
+                                  : dic['submit'],
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: isUnsigned
+                            ? () => _onSubmit(context)
+                            : (isObservation && _proxyAccount == null) ||
+                                    isProxyObservation
+                                ? () => _showTxQrCode(context)
+                                : _fee['partialFee'] == null ||
+                                        store.assets.submitting
+                                    ? null
+                                    : () => _showPasswordDialog(context),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
           );
         }),
       ),
