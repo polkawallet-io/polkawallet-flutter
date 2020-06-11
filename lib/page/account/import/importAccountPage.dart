@@ -167,7 +167,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['import'])),
       body: SafeArea(
-        child: ImportAccountForm(store.account, (Map<String, dynamic> data) {
+        child: ImportAccountForm(store, (Map<String, dynamic> data) {
           if (data['finish'] == null) {
             setState(() {
               _keyType = data['keyType'];

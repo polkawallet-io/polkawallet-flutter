@@ -113,8 +113,8 @@ class _Contact extends State<ContactPage> {
       IconButton(
         icon: Image.asset('assets/images/assets/Menu_scan.png'),
         onPressed: () async {
-          var to = await Navigator.of(context).pushNamed(ScanPage.route);
-          _addressCtrl.text = to;
+          final to = await Navigator.of(context).pushNamed(ScanPage.route);
+          _addressCtrl.text = (to as QRCodeAddressResult).address;
         },
       )
     ];

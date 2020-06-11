@@ -177,10 +177,10 @@ class _TransferPageState extends State<TransferPage> {
               IconButton(
                 icon: Image.asset('assets/images/assets/Menu_scan.png'),
                 onPressed: () async {
-                  var to =
+                  final to =
                       await Navigator.of(context).pushNamed(ScanPage.route);
                   setState(() {
-                    _addressCtrl.text = to;
+                    _addressCtrl.text = (to as QRCodeAddressResult).address;
                   });
                 },
               )
