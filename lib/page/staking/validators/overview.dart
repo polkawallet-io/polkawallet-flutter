@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/page/staking/validators/nominatePage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -10,6 +11,7 @@ import 'package:polka_wallet/common/components/outlinedCircle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/page/staking/validators/validator.dart';
+import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -43,7 +45,15 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
       return;
     }
     await webApi.staking.fetchAccountStaking();
-    webApi.staking.fetchStakingOverview();
+    await webApi.staking.fetchStakingOverview();
+    _fetchRecommendedValidators();
+  }
+
+  Future<void> _fetchRecommendedValidators() async {
+    Map res = await WalletApi.getRecommended();
+    if (res != null && res['validators'] != null) {
+      store.staking.setRecommendedValidatorList(res['validators']);
+    }
   }
 
   Widget _buildTopCard(BuildContext context) {
@@ -273,9 +283,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (LocalStorage.checkCacheTimeout(store.staking.cacheTxsTimestamp)) {
-        globalNominatingRefreshKey.currentState.show();
-      }
+      globalNominatingRefreshKey.currentState.show();
     });
   }
 
@@ -317,6 +325,41 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
               },
             ),
           ));
+          // index_3: the recommended validators
+          // add recommended
+          List<ValidatorData> recommended =
+              store.staking.validatorsInfo.toList();
+          recommended.retainWhere((i) =>
+              store.staking.recommendedValidatorList.indexOf(i.accountId) > -1);
+          list.add(Container(
+            color: Theme.of(context).cardColor,
+            child: recommended.length > 0
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextTag(
+                        I18n.of(context).staking['recommend'],
+                        color: Colors.green,
+                        fontSize: 12,
+                        margin: EdgeInsets.only(left: 16, top: 8),
+                      ),
+                      Column(
+                        children: recommended.map((acc) {
+                          Map accInfo =
+                              store.account.accountIndexMap[acc.accountId];
+                          bool hasPhalaAirdrop = store.staking
+                                  .phalaAirdropWhiteList[acc.accountId] ??
+                              false;
+                          return Validator(acc, accInfo,
+                              hasPhalaAirdrop: hasPhalaAirdrop);
+                        }).toList(),
+                      ),
+                      Divider()
+                    ],
+                  )
+                : Container(),
+          ));
+          // add validators
           List<ValidatorData> ls =
               List<ValidatorData>.of(store.staking.validatorsInfo);
           // filter list
@@ -337,8 +380,8 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
           child: ListView.builder(
             itemCount: list.length,
             itemBuilder: (BuildContext context, int i) {
-              // we already have the index_0 - index_2 Widget
-              if (i < 3) {
+              // we already have the index_0 - index_3 Widget
+              if (i < 4) {
                 return list[i];
               }
               ValidatorData acc = list[i];

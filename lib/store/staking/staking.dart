@@ -68,6 +68,9 @@ abstract class _StakingStore with Store {
   @observable
   Map phalaAirdropWhiteList = {};
 
+  @observable
+  Map recommendedValidators = {};
+
   @computed
   ObservableList<ValidatorData> get activeNominatingList {
     return ObservableList.of(validatorsInfo.where((i) {
@@ -107,6 +110,15 @@ abstract class _StakingStore with Store {
       return BigInt.zero;
     }
     return Fmt.balanceInt(ledger['rewards']['available'].toString());
+  }
+
+  @computed
+  List<String> get recommendedValidatorList {
+    if (recommendedValidators[rootStore.settings.endpoint.info] == null) {
+      return [];
+    }
+    return List<String>.from(
+        recommendedValidators[rootStore.settings.endpoint.info]);
   }
 
   @action
@@ -212,7 +224,6 @@ abstract class _StakingStore with Store {
     if (res['extrinsics'] == null) return;
     List<TxData> ls =
         List.of(res['extrinsics']).map((i) => TxData.fromJson(i)).toList();
-    print(ls.length);
 
     txs.addAll(ls);
 
@@ -298,5 +309,10 @@ abstract class _StakingStore with Store {
       res[i['controller']] = true;
     });
     phalaAirdropWhiteList = res;
+  }
+
+  @action
+  Future<void> setRecommendedValidatorList(Map data) async {
+    recommendedValidators = data;
   }
 }

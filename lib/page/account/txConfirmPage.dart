@@ -74,10 +74,11 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   Future<void> _showTxQrCode(BuildContext context) async {
     final Map args = ModalRoute.of(context).settings.arguments;
 
-    Map txInfo = args['txInfo'];
-    txInfo['pubKey'] = store.account.currentAccount.pubKey;
-    print(txInfo);
-    print(args['params']);
+    print('show qr');
+//    Map txInfo = args['txInfo'];
+//    txInfo['pubKey'] = store.account.currentAccount.pubKey;
+//    print(txInfo);
+//    print(args['params']);
 //    Navigator.of(context).pushNamed(routeName, arguments: );
   }
 
@@ -436,7 +437,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                               ? dic['submit.no.sign']
                               : (isObservation && _proxyAccount == null) ||
                                       isProxyObservation
-                                  ? dic['submit.qr']
+                                  ? 'invalid' // dic['submit.qr']
                                   : dic['submit'],
                           style: TextStyle(color: Colors.white),
                         ),

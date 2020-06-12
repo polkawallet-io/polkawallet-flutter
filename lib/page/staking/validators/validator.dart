@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -51,24 +52,7 @@ class Validator extends StatelessWidget {
                               .toString()
                               .toUpperCase()
                           : Fmt.address(validator.accountId, pad: 6)),
-                      hasPhalaAirdrop
-                          ? Container(
-                              child: Text(
-                                dic['phala'],
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Theme.of(context).cardColor,
-                                ),
-                              ),
-                              margin: EdgeInsets.only(left: 4),
-                              padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
-                              ),
-                            )
-                          : Container(),
+                      hasPhalaAirdrop ? TextTag(dic['phala']) : Container(),
                     ],
                   ),
                   Text(

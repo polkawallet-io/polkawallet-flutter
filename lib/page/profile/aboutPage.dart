@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/service/version.dart';
+import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -23,7 +23,7 @@ class _AboutPage extends State<AboutPage> {
     setState(() {
       _loading = true;
     });
-    Map versions = await VersionApi.getLatestVersion();
+    Map versions = await WalletApi.getLatestVersion();
     setState(() {
       _loading = false;
     });

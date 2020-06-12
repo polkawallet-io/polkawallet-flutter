@@ -205,7 +205,7 @@ class _AssetsState extends State<Assets> {
             title: Text(Fmt.address(store.account.currentAddress)),
             trailing: IconButton(
               icon: Image.asset(
-                  'assets/images/assets/qrcode_${isAcala ? 'indigo' : isKusama ? 'pink800' : 'pink'}.png'),
+                  'assets/images/assets/qrcode_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png'),
               onPressed: () {
                 if (acc.address != '') {
                   Navigator.pushNamed(context, ReceivePage.route);

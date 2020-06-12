@@ -40,6 +40,14 @@ mixin _$StakingStore on _StakingStore, Store {
           Computed<BigInt>(() => super.accountRewardTotal,
               name: '_StakingStore.accountRewardTotal'))
       .value;
+  Computed<List<String>> _$recommendedValidatorListComputed;
+
+  @override
+  List<String> get recommendedValidatorList =>
+      (_$recommendedValidatorListComputed ??= Computed<List<String>>(
+              () => super.recommendedValidatorList,
+              name: '_StakingStore.recommendedValidatorList'))
+          .value;
 
   final _$cacheTxsTimestampAtom = Atom(name: '_StakingStore.cacheTxsTimestamp');
 
@@ -242,6 +250,23 @@ mixin _$StakingStore on _StakingStore, Store {
     });
   }
 
+  final _$recommendedValidatorsAtom =
+      Atom(name: '_StakingStore.recommendedValidators');
+
+  @override
+  Map<dynamic, dynamic> get recommendedValidators {
+    _$recommendedValidatorsAtom.reportRead();
+    return super.recommendedValidators;
+  }
+
+  @override
+  set recommendedValidators(Map<dynamic, dynamic> value) {
+    _$recommendedValidatorsAtom.reportWrite(value, super.recommendedValidators,
+        () {
+      super.recommendedValidators = value;
+    });
+  }
+
   final _$clearTxsAsyncAction = AsyncAction('_StakingStore.clearTxs');
 
   @override
@@ -286,6 +311,15 @@ mixin _$StakingStore on _StakingStore, Store {
   Future<void> setPhalaAirdropWhiteList(List<dynamic> ls) {
     return _$setPhalaAirdropWhiteListAsyncAction
         .run(() => super.setPhalaAirdropWhiteList(ls));
+  }
+
+  final _$setRecommendedValidatorListAsyncAction =
+      AsyncAction('_StakingStore.setRecommendedValidatorList');
+
+  @override
+  Future<void> setRecommendedValidatorList(Map<dynamic, dynamic> data) {
+    return _$setRecommendedValidatorListAsyncAction
+        .run(() => super.setRecommendedValidatorList(data));
   }
 
   final _$_StakingStoreActionController =
@@ -386,10 +420,12 @@ txs: ${txs},
 rewardsChartDataCache: ${rewardsChartDataCache},
 stakesChartDataCache: ${stakesChartDataCache},
 phalaAirdropWhiteList: ${phalaAirdropWhiteList},
+recommendedValidators: ${recommendedValidators},
 activeNominatingList: ${activeNominatingList},
 nominatingList: ${nominatingList},
 accountUnlockingTotal: ${accountUnlockingTotal},
-accountRewardTotal: ${accountRewardTotal}
+accountRewardTotal: ${accountRewardTotal},
+recommendedValidatorList: ${recommendedValidatorList}
     ''';
   }
 }

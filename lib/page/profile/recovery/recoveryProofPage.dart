@@ -82,9 +82,13 @@ class _RecoveryStatePage extends State<RecoveryProofPage> {
                   key: globalRecoveryProofRefreshKey,
                   child: _txs.length > 0
                       ? TxList(_txs)
-                      : Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Text(I18n.of(context).home['data.empty']),
+                      : ListView(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Text(I18n.of(context).home['data.empty']),
+                            )
+                          ],
                         ),
                 ),
               ),

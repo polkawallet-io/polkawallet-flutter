@@ -37,7 +37,7 @@ class ReceivePage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(top: 32),
                   child: Image.asset(
-                      'assets/images/assets/receive_line_${isAcala ? 'indigo' : isKusama ? 'pink800' : 'pink'}.png'),
+                      'assets/images/assets/receive_line_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png'),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 40),

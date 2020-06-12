@@ -67,7 +67,7 @@ import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
-import 'package:polka_wallet/service/version.dart';
+import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -128,7 +128,7 @@ class _WalletAppState extends State<WalletApp> {
   }
 
   Future<void> _checkUpdate(BuildContext context) async {
-    final versions = await VersionApi.getLatestVersion();
+    final versions = await WalletApi.getLatestVersion();
     UI.checkUpdate(context, versions, autoCheck: true);
   }
 

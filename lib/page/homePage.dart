@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     return _tabList
         .map((i) => BottomNavigationBarItem(
               icon: Image.asset(_tabList[activeItem] == i
-                  ? 'assets/images/public/${i}_pink${isKusama ? '800' : ''}.png'
+                  ? 'assets/images/public/${i}_${isKusama ? 'black' : 'pink'}.png'
                   : 'assets/images/public/${i}_dark.png'),
               title: Text(
                 tabs[i.toLowerCase()],
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> _buildPages() {
     bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
-    String imageColor = isKusama ? 'pink800' : 'pink';
+    String imageColor = isKusama ? 'black' : 'pink';
     return [0, 1, 2, 3].map((i) {
       if (i == 0) {
         // return assets page

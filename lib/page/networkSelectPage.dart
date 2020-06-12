@@ -117,7 +117,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
           ),
           IconButton(
             icon: Image.asset(
-                'assets/images/assets/plus_${isAcala ? 'indigo' : isKusama ? 'pink800' : 'pink'}.png'),
+                'assets/images/assets/plus_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png'),
             color: primaryColor,
             onPressed: () => _onCreateAccount(),
           )

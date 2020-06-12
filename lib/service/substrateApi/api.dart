@@ -196,7 +196,7 @@ class Api {
     store.settings.setNetworkName(info[2]);
 
     // fetch account balance
-    if (store.account.accountList.length > 0) {
+    if (store.account.accountListAll.length > 0) {
       if (store.settings.endpoint.info == networkEndpointAcala.info) {
         await assets.fetchBalance();
         return;

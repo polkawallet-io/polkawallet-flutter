@@ -203,6 +203,16 @@ class _NominatePageState extends State<NominatePage> {
         _notSelected.removeWhere((item) => item.accountId == i.accountId);
         _selectedMap[i.accountId] = true;
       });
+
+      // set recommended selected
+      List<ValidatorData> recommended = _notSelected.toList();
+      recommended.retainWhere((i) =>
+          store.staking.recommendedValidatorList.indexOf(i.accountId) > -1);
+      recommended.forEach((i) {
+        _selected.add(i);
+        _notSelected.removeWhere((item) => item.accountId == i.accountId);
+        _selectedMap[i.accountId] = true;
+      });
     });
   }
 
@@ -212,6 +222,13 @@ class _NominatePageState extends State<NominatePage> {
 
     List<ValidatorData> list = [];
     list.addAll(_selected);
+    // add recommended
+    List<ValidatorData> recommended = _notSelected.toList();
+    recommended.retainWhere((i) =>
+        store.staking.recommendedValidatorList.indexOf(i.accountId) > -1);
+    list.addAll(recommended);
+
+    // add validators
     // filter the _notSelected list
     List<ValidatorData> retained = List.of(_notSelected);
     retained = Fmt.filterValidatorList(

@@ -57,6 +57,7 @@ const Map<String, String> enStaking = {
   'sort': 'Sort by',
   'notElected': 'Not Elected',
   'phala': 'Phala Airdrop',
+  'recommend': 'Recommended',
 };
 
 const Map<String, String> zhStaking = {
@@ -116,4 +117,5 @@ const Map<String, String> zhStaking = {
   'sort': '排序',
   'notElected': '未选中',
   'phala': 'Phala 空投',
+  'recommend': '推荐节点',
 };

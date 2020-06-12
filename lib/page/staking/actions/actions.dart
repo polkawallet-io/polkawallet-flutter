@@ -256,7 +256,9 @@ class _StakingActions extends State<StakingActions>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      globalBondingRefreshKey.currentState.show();
+      if (globalBondingRefreshKey.currentState != null) {
+        globalBondingRefreshKey.currentState.show();
+      }
     });
   }
 

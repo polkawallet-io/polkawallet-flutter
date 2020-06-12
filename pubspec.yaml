@@ -11,7 +11,7 @@ description: PolkaWallet made with Flutter.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.7.7+770
+version: 0.7.7+771
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -116,15 +116,15 @@ flutter:
     - assets/images/acala/loan.svg
     - assets/images/acala/loan-start.svg
     ## images - kusama
-    - assets/images/public/Assets_pink800.png
-    - assets/images/public/Governance_pink800.png
-    - assets/images/public/Profile_pink800.png
-    - assets/images/public/Staking_pink800.png
-    - assets/images/assets/top_bg_pink800.png
-    - assets/images/assets/qrcode_pink800.png
-    - assets/images/assets/plus_pink800.png
-    - assets/images/assets/receive_line_pink800.png
-    - assets/images/staking/top_bg_pink800.png
+    - assets/images/public/Assets_black.png
+    - assets/images/public/Governance_black.png
+    - assets/images/public/Profile_black.png
+    - assets/images/public/Staking_black.png
+    - assets/images/assets/top_bg_black.png
+    - assets/images/assets/qrcode_black.png
+    - assets/images/assets/plus_black.png
+    - assets/images/assets/receive_line_black.png
+    - assets/images/staking/top_bg_black.png
     ## images - polkadot
     - assets/images/public/app.png
     - assets/images/public/Assets_pink.png

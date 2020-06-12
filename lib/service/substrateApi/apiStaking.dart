@@ -155,7 +155,6 @@ class ApiStaking {
       return [];
     }
     List res = await PhalaAirdropApi.fetchWhiteList();
-    print(res);
     store.staking.setPhalaAirdropWhiteList(res);
     return res;
   }
