@@ -46,12 +46,14 @@ class Validator extends StatelessWidget {
                                   'assets/images/assets/success.png'),
                             )
                           : Container(),
-                      Text(accInfo != null &&
-                              accInfo['identity']['display'] != null
-                          ? accInfo['identity']['display']
-                              .toString()
-                              .toUpperCase()
-                          : Fmt.address(validator.accountId, pad: 6)),
+                      Expanded(
+                        child: Text(accInfo != null &&
+                                accInfo['identity']['display'] != null
+                            ? accInfo['identity']['display']
+                                .toString()
+                                .toUpperCase()
+                            : Fmt.address(validator.accountId, pad: 6)),
+                      ),
                       hasPhalaAirdrop ? TextTag(dic['phala']) : Container(),
                     ],
                   ),

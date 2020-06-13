@@ -83,7 +83,7 @@ class ApiStaking {
 
   Future<Map> fetchStakingOverview() async {
     List res = await Future.wait([
-      apiRoot.evalJavascript('api.derive.staking.overview()'),
+      apiRoot.evalJavascript('staking.fetchStakingOverview()'),
       apiRoot.evalJavascript('api.derive.staking.currentPoints()'),
     ]);
     if (res[0] == null || res[1] == null) return null;
@@ -98,6 +98,7 @@ class ApiStaking {
     }
 
     List validatorAddressList = List.of(overview['validators']);
+    validatorAddressList.addAll(overview['waiting']);
     await apiRoot.account.fetchAccountsIndex(validatorAddressList);
     apiRoot.account.getAddressIcons(validatorAddressList);
     return overview;

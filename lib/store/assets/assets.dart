@@ -195,9 +195,9 @@ abstract class _AssetsStore with Store {
 
   @action
   Future<void> loadAccountCache() async {
-    // loadCache if currentAccount exist
-    String pubKey = rootStore.account.currentAccount.pubKey;
-    if (pubKey == null) {
+    // return if currentAccount not exist
+    String pubKey = rootStore.account.currentAccountPubKey;
+    if (pubKey == null || pubKey.isEmpty) {
       return;
     }
 

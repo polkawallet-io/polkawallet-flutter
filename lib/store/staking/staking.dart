@@ -39,11 +39,10 @@ abstract class _StakingStore with Store {
   int nominatorCount = 0;
 
   @observable
-  ObservableList<ValidatorData> validatorsInfo =
-      ObservableList<ValidatorData>();
+  List<ValidatorData> validatorsInfo = List<ValidatorData>();
 
   @observable
-  ObservableList<ValidatorData> nextUpsInfo = ObservableList<ValidatorData>();
+  List<ValidatorData> nextUpsInfo = List<ValidatorData>();
 
   @observable
   ObservableMap<String, dynamic> ledger = ObservableMap<String, dynamic>();
@@ -72,8 +71,8 @@ abstract class _StakingStore with Store {
   Map recommendedValidators = {};
 
   @computed
-  ObservableList<ValidatorData> get activeNominatingList {
-    return ObservableList.of(validatorsInfo.where((i) {
+  List<ValidatorData> get activeNominatingList {
+    return List.of(validatorsInfo.where((i) {
       String address = rootStore.account.currentAddress;
       return i.nominators
               .indexWhere((nominator) => nominator['who'] == address) >=
@@ -82,10 +81,18 @@ abstract class _StakingStore with Store {
   }
 
   @computed
-  ObservableList<ValidatorData> get nominatingList {
+  List<ValidatorData> get nominatingList {
     List nominators = ledger['nominators'];
-    return ObservableList.of(
+    return List.of(
         validatorsInfo.where((i) => nominators.indexOf(i.accountId) >= 0));
+  }
+
+  @computed
+  Map<String, List<String>> get nominationsAll {
+    if (overview['nominators'] == null) {
+      return {};
+    }
+    return Map<String, List<String>>.from(overview['nominators']);
   }
 
   @computed
@@ -137,7 +144,7 @@ abstract class _StakingStore with Store {
       ls.add(data);
     });
     ls.sort((a, b) => a.total > b.total ? -1 : 1);
-    validatorsInfo = ObservableList.of(ls);
+    validatorsInfo = ls;
     staked = totalStaked;
     nominatorCount = nominators.keys.length;
 
@@ -170,7 +177,15 @@ abstract class _StakingStore with Store {
         validator.accountId = i;
         return validator;
       }).toList();
-      validatorsInfo = ObservableList.of(list);
+      validatorsInfo = list;
+    }
+    if (nextUpsInfo.length == 0 && data['waiting'] != null) {
+      List<ValidatorData> list = List.of(data['waiting']).map((i) {
+        ValidatorData validator = ValidatorData();
+        validator.accountId = i;
+        return validator;
+      }).toList();
+      nextUpsInfo = list;
     }
 
     if (shouldCache) {
@@ -257,8 +272,8 @@ abstract class _StakingStore with Store {
   @action
   Future<void> loadAccountCache() async {
     // return if currentAccount not exist
-    String pubKey = rootStore.account.currentAccount.pubKey;
-    if (pubKey == null) {
+    String pubKey = rootStore.account.currentAccountPubKey;
+    if (pubKey == null || pubKey.isEmpty) {
       return;
     }
 

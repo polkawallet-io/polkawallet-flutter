@@ -261,7 +261,12 @@ abstract class _AcalaStore with Store {
 
   @action
   Future<void> loadCache() async {
-    String pubKey = rootStore.account.currentAccount.pubKey;
+    // return if currentAccount not exist
+    String pubKey = rootStore.account.currentAccountPubKey;
+    if (pubKey == null || pubKey.isEmpty) {
+      return;
+    }
+
     List cached = await Future.wait([
       rootStore.localStorage.getAccountCache(pubKey, cacheTxsLoanKey),
       rootStore.localStorage.getAccountCache(pubKey, cacheTxsDexLiquidityKey),

@@ -9,23 +9,28 @@ part of 'staking.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$StakingStore on _StakingStore, Store {
-  Computed<ObservableList<ValidatorData>> _$activeNominatingListComputed;
+  Computed<List<ValidatorData>> _$activeNominatingListComputed;
 
   @override
-  ObservableList<ValidatorData> get activeNominatingList =>
-      (_$activeNominatingListComputed ??=
-              Computed<ObservableList<ValidatorData>>(
-                  () => super.activeNominatingList,
-                  name: '_StakingStore.activeNominatingList'))
+  List<ValidatorData> get activeNominatingList =>
+      (_$activeNominatingListComputed ??= Computed<List<ValidatorData>>(
+              () => super.activeNominatingList,
+              name: '_StakingStore.activeNominatingList'))
           .value;
-  Computed<ObservableList<ValidatorData>> _$nominatingListComputed;
+  Computed<List<ValidatorData>> _$nominatingListComputed;
 
   @override
-  ObservableList<ValidatorData> get nominatingList =>
-      (_$nominatingListComputed ??= Computed<ObservableList<ValidatorData>>(
-              () => super.nominatingList,
+  List<ValidatorData> get nominatingList => (_$nominatingListComputed ??=
+          Computed<List<ValidatorData>>(() => super.nominatingList,
               name: '_StakingStore.nominatingList'))
-          .value;
+      .value;
+  Computed<Map<String, List<String>>> _$nominationsAllComputed;
+
+  @override
+  Map<String, List<String>> get nominationsAll => (_$nominationsAllComputed ??=
+          Computed<Map<String, List<String>>>(() => super.nominationsAll,
+              name: '_StakingStore.nominationsAll'))
+      .value;
   Computed<BigInt> _$accountUnlockingTotalComputed;
 
   @override
@@ -112,13 +117,13 @@ mixin _$StakingStore on _StakingStore, Store {
   final _$validatorsInfoAtom = Atom(name: '_StakingStore.validatorsInfo');
 
   @override
-  ObservableList<ValidatorData> get validatorsInfo {
+  List<ValidatorData> get validatorsInfo {
     _$validatorsInfoAtom.reportRead();
     return super.validatorsInfo;
   }
 
   @override
-  set validatorsInfo(ObservableList<ValidatorData> value) {
+  set validatorsInfo(List<ValidatorData> value) {
     _$validatorsInfoAtom.reportWrite(value, super.validatorsInfo, () {
       super.validatorsInfo = value;
     });
@@ -127,13 +132,13 @@ mixin _$StakingStore on _StakingStore, Store {
   final _$nextUpsInfoAtom = Atom(name: '_StakingStore.nextUpsInfo');
 
   @override
-  ObservableList<ValidatorData> get nextUpsInfo {
+  List<ValidatorData> get nextUpsInfo {
     _$nextUpsInfoAtom.reportRead();
     return super.nextUpsInfo;
   }
 
   @override
-  set nextUpsInfo(ObservableList<ValidatorData> value) {
+  set nextUpsInfo(List<ValidatorData> value) {
     _$nextUpsInfoAtom.reportWrite(value, super.nextUpsInfo, () {
       super.nextUpsInfo = value;
     });
@@ -423,6 +428,7 @@ phalaAirdropWhiteList: ${phalaAirdropWhiteList},
 recommendedValidators: ${recommendedValidators},
 activeNominatingList: ${activeNominatingList},
 nominatingList: ${nominatingList},
+nominationsAll: ${nominationsAll},
 accountUnlockingTotal: ${accountUnlockingTotal},
 accountRewardTotal: ${accountRewardTotal},
 recommendedValidatorList: ${recommendedValidatorList}
