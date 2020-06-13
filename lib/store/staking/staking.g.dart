@@ -9,6 +9,13 @@ part of 'staking.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$StakingStore on _StakingStore, Store {
+  Computed<List<ValidatorData>> _$validatorsAllComputed;
+
+  @override
+  List<ValidatorData> get validatorsAll => (_$validatorsAllComputed ??=
+          Computed<List<ValidatorData>>(() => super.validatorsAll,
+              name: '_StakingStore.validatorsAll'))
+      .value;
   Computed<List<ValidatorData>> _$activeNominatingListComputed;
 
   @override
@@ -24,11 +31,11 @@ mixin _$StakingStore on _StakingStore, Store {
           Computed<List<ValidatorData>>(() => super.nominatingList,
               name: '_StakingStore.nominatingList'))
       .value;
-  Computed<Map<String, List<String>>> _$nominationsAllComputed;
+  Computed<Map<String, List<dynamic>>> _$nominationsAllComputed;
 
   @override
-  Map<String, List<String>> get nominationsAll => (_$nominationsAllComputed ??=
-          Computed<Map<String, List<String>>>(() => super.nominationsAll,
+  Map<String, List<dynamic>> get nominationsAll => (_$nominationsAllComputed ??=
+          Computed<Map<String, List<dynamic>>>(() => super.nominationsAll,
               name: '_StakingStore.nominationsAll'))
       .value;
   Computed<BigInt> _$accountUnlockingTotalComputed;
@@ -342,17 +349,6 @@ mixin _$StakingStore on _StakingStore, Store {
   }
 
   @override
-  void setNextUpsInfo(dynamic list) {
-    final _$actionInfo = _$_StakingStoreActionController.startAction(
-        name: '_StakingStore.setNextUpsInfo');
-    try {
-      return super.setNextUpsInfo(list);
-    } finally {
-      _$_StakingStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   void setOverview(Map<String, dynamic> data, {bool shouldCache = true}) {
     final _$actionInfo = _$_StakingStoreActionController.startAction(
         name: '_StakingStore.setOverview');
@@ -426,6 +422,7 @@ rewardsChartDataCache: ${rewardsChartDataCache},
 stakesChartDataCache: ${stakesChartDataCache},
 phalaAirdropWhiteList: ${phalaAirdropWhiteList},
 recommendedValidators: ${recommendedValidators},
+validatorsAll: ${validatorsAll},
 activeNominatingList: ${activeNominatingList},
 nominatingList: ${nominatingList},
 nominationsAll: ${nominationsAll},

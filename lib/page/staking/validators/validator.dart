@@ -4,16 +4,22 @@ import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Validator extends StatelessWidget {
-  Validator(this.validator, this.accInfo, {this.hasPhalaAirdrop = false});
+  Validator(
+    this.validator,
+    this.accInfo,
+    this.nominations, {
+    this.hasPhalaAirdrop = false,
+  }) : isWaiting = validator.total == BigInt.zero;
 
   final ValidatorData validator;
   final Map accInfo;
+  final bool isWaiting;
+  final List nominations;
   final bool hasPhalaAirdrop;
 
   @override
@@ -46,6 +52,7 @@ class Validator extends StatelessWidget {
                                   'assets/images/assets/success.png'),
                             )
                           : Container(),
+                      hasPhalaAirdrop ? TextTag(dic['phala']) : Container(),
                       Expanded(
                         child: Text(accInfo != null &&
                                 accInfo['identity']['display'] != null
@@ -54,32 +61,38 @@ class Validator extends StatelessWidget {
                                 .toUpperCase()
                             : Fmt.address(validator.accountId, pad: 6)),
                       ),
-                      hasPhalaAirdrop ? TextTag(dic['phala']) : Container(),
                     ],
                   ),
                   Text(
-                    '${dic['total']}: ${hasDetail ? Fmt.token(validator.total) : '~'}',
+                    !isWaiting
+                        ? '${dic['total']}: ${hasDetail ? Fmt.token(validator.total) : '~'}'
+                        : '${dic['nominating']}: ${nominations.length}',
                     style: TextStyle(
                       color: Theme.of(context).unselectedWidgetColor,
                       fontSize: 12,
                     ),
                   ),
-                  Text(
-                      '${dic['commission']}: ${hasDetail ? validator.commission : '~'}',
-                      style: TextStyle(
-                        color: Theme.of(context).unselectedWidgetColor,
-                        fontSize: 12,
-                      ))
+                  !isWaiting
+                      ? Text(
+                          '${dic['commission']}: ${hasDetail ? validator.commission : '~'}',
+                          style: TextStyle(
+                            color: Theme.of(context).unselectedWidgetColor,
+                            fontSize: 12,
+                          ),
+                        )
+                      : Container()
                 ],
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(dic['points']),
-                Text(hasDetail ? validator.points.toString() : '~'),
-              ],
-            )
+            !isWaiting
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(dic['points']),
+                      Text(hasDetail ? validator.points.toString() : '~'),
+                    ],
+                  )
+                : Container()
           ],
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
@@ -78,9 +79,11 @@ class _NominatePageState extends State<NominatePage> {
 
   Widget _buildListItem(BuildContext context, int i, List<ValidatorData> list) {
     final dic = I18n.of(context).staking;
-    Map accInfo = store.account.accountIndexMap[list[i].accountId];
-    bool hasPhalaAirdrop =
+    final Map accInfo = store.account.accountIndexMap[list[i].accountId];
+    final bool hasPhalaAirdrop =
         store.staking.phalaAirdropWhiteList[list[i].accountId] ?? false;
+    final bool isWaiting = list[i].total == BigInt.zero;
+    final nominations = store.staking.nominationsAll[list[i].accountId] ?? [];
     return GestureDetector(
       child: Container(
         padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -114,15 +117,19 @@ class _NominatePageState extends State<NominatePage> {
                           : Fmt.address(list[i].accountId, pad: 6)),
                     ],
                   ),
+                  !isWaiting
+                      ? Text(
+                          '${dic['total']}: ${Fmt.token(list[i].total)}',
+                          style: TextStyle(
+                            color: Theme.of(context).unselectedWidgetColor,
+                            fontSize: 12,
+                          ),
+                        )
+                      : Container(),
                   Text(
-                    '${dic['total']}: ${Fmt.token(list[i].total)}',
-                    style: TextStyle(
-                      color: Theme.of(context).unselectedWidgetColor,
-                      fontSize: 12,
-                    ),
-                  ),
-                  Text(
-                    '${dic['commission']}: ${list[i].commission}',
+                    isWaiting
+                        ? dic['waiting']
+                        : '${dic['commission']}: ${list[i].commission}',
                     style: TextStyle(
                       color: Theme.of(context).unselectedWidgetColor,
                       fontSize: 12,
@@ -131,30 +138,15 @@ class _NominatePageState extends State<NominatePage> {
                   Row(
                     children: [
                       Text(
-                        '${dic['points']}: ${list[i].points}',
+                        isWaiting
+                            ? '${dic['nominating']}: ${nominations.length}'
+                            : '${dic['points']}: ${list[i].points}',
                         style: TextStyle(
                           color: Theme.of(context).unselectedWidgetColor,
                           fontSize: 12,
                         ),
                       ),
-                      hasPhalaAirdrop
-                          ? Container(
-                              child: Text(
-                                dic['phala'],
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Theme.of(context).cardColor,
-                                ),
-                              ),
-                              margin: EdgeInsets.only(left: 4),
-                              padding: EdgeInsets.fromLTRB(4, 2, 4, 2),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
-                              ),
-                            )
-                          : Container(),
+                      hasPhalaAirdrop ? TextTag(dic['phala']) : Container(),
                     ],
                   ),
                 ],
@@ -194,7 +186,7 @@ class _NominatePageState extends State<NominatePage> {
     super.initState();
 
     setState(() {
-      store.staking.validatorsInfo.forEach((i) {
+      store.staking.validatorsAll.forEach((i) {
         _notSelected.add(i);
         _selectedMap[i.accountId] = false;
       });

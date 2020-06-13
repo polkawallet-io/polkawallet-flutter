@@ -71,6 +71,13 @@ abstract class _StakingStore with Store {
   Map recommendedValidators = {};
 
   @computed
+  List<ValidatorData> get validatorsAll {
+    List<ValidatorData> res = validatorsInfo.toList();
+    res.addAll(nextUpsInfo);
+    return res;
+  }
+
+  @computed
   List<ValidatorData> get activeNominatingList {
     return List.of(validatorsInfo.where((i) {
       String address = rootStore.account.currentAddress;
@@ -83,16 +90,19 @@ abstract class _StakingStore with Store {
   @computed
   List<ValidatorData> get nominatingList {
     List nominators = ledger['nominators'];
+    if (nominators == null) {
+      return [];
+    }
     return List.of(
         validatorsInfo.where((i) => nominators.indexOf(i.accountId) >= 0));
   }
 
   @computed
-  Map<String, List<String>> get nominationsAll {
+  Map<String, List> get nominationsAll {
     if (overview['nominators'] == null) {
       return {};
     }
-    return Map<String, List<String>>.from(overview['nominators']);
+    return Map<String, List>.from(overview['nominators']);
   }
 
   @computed
@@ -156,17 +166,6 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void setNextUpsInfo(list) {
-    List<ValidatorData> ls = List<ValidatorData>();
-    list.forEach((i) {
-      ValidatorData data = ValidatorData.fromJson(i);
-      ls.add(data);
-    });
-    ls.sort((a, b) => a.total > b.total ? -1 : 1);
-    nextUpsInfo = ObservableList.of(ls);
-  }
-
-  @action
   void setOverview(Map<String, dynamic> data, {bool shouldCache = true}) {
     data.keys.forEach((key) => overview[key] = data[key]);
 
@@ -179,7 +178,7 @@ abstract class _StakingStore with Store {
       }).toList();
       validatorsInfo = list;
     }
-    if (nextUpsInfo.length == 0 && data['waiting'] != null) {
+    if (data['waiting'] != null) {
       List<ValidatorData> list = List.of(data['waiting']).map((i) {
         ValidatorData validator = ValidatorData();
         validator.accountId = i;
@@ -257,6 +256,7 @@ abstract class _StakingStore with Store {
   void clearState() {
     txs.clear();
     ledger = ObservableMap<String, dynamic>();
+    overview = ObservableMap<String, dynamic>();
   }
 
   @action

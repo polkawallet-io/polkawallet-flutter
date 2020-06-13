@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -90,10 +89,7 @@ class _DemocracyState extends State<Democracy> {
                   ? Container(
                       height: 80,
                       padding: EdgeInsets.all(24),
-                      child: Text(
-                        I18n.of(context).home['data.empty'],
-                        style: Theme.of(context).textTheme.headline4,
-                      ),
+                      child: Text(I18n.of(context).home['data.empty']),
                     )
                   : ListView.builder(
                       itemCount: list.length,

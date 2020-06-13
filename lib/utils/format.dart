@@ -204,6 +204,9 @@ class Fmt {
     if (a.commission == null || a.commission.isEmpty) {
       return 1;
     }
+    if (b.commission == null || b.commission.isEmpty) {
+      return -1;
+    }
     double comA = double.parse(a.commission.split('%')[0]);
     double comB = double.parse(b.commission.split('%')[0]);
     var cmpStake = a.total < b.total ? 1 : -1;
@@ -215,7 +218,7 @@ class Fmt {
       case 2:
         return comA == comB ? cmpStake : comA > comB ? 1 : -1;
       default:
-        return 1;
+        return -1;
     }
   }
 

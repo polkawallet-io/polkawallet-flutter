@@ -65,6 +65,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     store.gov.setReferendums([]);
     store.assets.clearTxs();
     store.assets.loadCache();
+    store.staking.clearState();
     store.staking.loadCache();
 
     webApi.launchWebview();

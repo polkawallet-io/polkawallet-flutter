@@ -5,7 +5,6 @@ import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/page/staking/validators/nominatePage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/outlinedCircle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
@@ -17,7 +16,6 @@ import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 const validator_list_page_size = 100;
 
@@ -30,7 +28,8 @@ class StakingOverviewPage extends StatefulWidget {
   _StakingOverviewPageState createState() => _StakingOverviewPageState(store);
 }
 
-class _StakingOverviewPageState extends State<StakingOverviewPage> {
+class _StakingOverviewPageState extends State<StakingOverviewPage>
+    with SingleTickerProviderStateMixin {
   _StakingOverviewPageState(this.store);
 
   final AppStore store;
@@ -39,6 +38,9 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
 
   int _sort = 0;
   String _filter = '';
+
+  TabController _tabController;
+  int _tab = 0;
 
   Future<void> _refreshData() async {
     if (store.settings.loading) {
@@ -282,28 +284,52 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
   void initState() {
     super.initState();
 
+    _tabController = TabController(vsync: this, length: 2);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       globalNominatingRefreshKey.currentState.show();
     });
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final Map dic = I18n.of(context).staking;
     return Observer(
       builder: (_) {
+        final List<Tab> _listTabs = <Tab>[
+          Tab(
+            text: '${dic['elected']} (${store.staking.validatorsInfo.length})',
+          ),
+          Tab(
+            text: '${dic['waiting']} (${store.staking.nextUpsInfo.length})',
+          ),
+        ];
         List list = [
           // index_0: the overview card
           _buildTopCard(context),
           // index_1: the 'Validators' label
           Container(
             color: Theme.of(context).cardColor,
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
-            child: BorderedTitle(
-              title: I18n.of(context).staking['validators'],
+            child: TabBar(
+              labelColor: Colors.black87,
+              labelStyle: TextStyle(fontSize: 18),
+              controller: _tabController,
+              tabs: _listTabs,
+              onTap: (i) {
+                setState(() {
+                  _tab = i;
+                });
+              },
             ),
           ),
         ];
-        if (store.staking.validatorsInfo.length > 0) {
+        if (store.staking.validatorsAll.length > 0) {
           // index_2: the filter Widget
           list.add(Container(
             color: Colors.white,
@@ -327,8 +353,9 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
           ));
           // index_3: the recommended validators
           // add recommended
-          List<ValidatorData> recommended =
-              store.staking.validatorsInfo.toList();
+          List<ValidatorData> recommended = _tab == 0
+              ? store.staking.validatorsInfo.toList()
+              : store.staking.nextUpsInfo.toList();
           recommended.retainWhere((i) =>
               store.staking.recommendedValidatorList.indexOf(i.accountId) > -1);
           list.add(Container(
@@ -338,7 +365,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TextTag(
-                        I18n.of(context).staking['recommend'],
+                        dic['recommend'],
                         color: Colors.green,
                         fontSize: 12,
                         margin: EdgeInsets.only(left: 16, top: 8),
@@ -350,8 +377,12 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
                           bool hasPhalaAirdrop = store.staking
                                   .phalaAirdropWhiteList[acc.accountId] ??
                               false;
-                          return Validator(acc, accInfo,
-                              hasPhalaAirdrop: hasPhalaAirdrop);
+                          return Validator(
+                            acc,
+                            accInfo,
+                            store.staking.nominationsAll[acc.accountId] ?? [],
+                            hasPhalaAirdrop: hasPhalaAirdrop,
+                          );
                         }).toList(),
                       ),
                       Divider()
@@ -360,8 +391,9 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
                 : Container(),
           ));
           // add validators
-          List<ValidatorData> ls =
-              List<ValidatorData>.of(store.staking.validatorsInfo);
+          List<ValidatorData> ls = _tab == 0
+              ? store.staking.validatorsInfo.toList()
+              : store.staking.nextUpsInfo.toList();
           // filter list
           ls = Fmt.filterValidatorList(
               ls, _filter, store.account.accountIndexMap);
@@ -389,7 +421,12 @@ class _StakingOverviewPageState extends State<StakingOverviewPage> {
 
               bool hasPhalaAirdrop =
                   store.staking.phalaAirdropWhiteList[acc.accountId] ?? false;
-              return Validator(acc, accInfo, hasPhalaAirdrop: hasPhalaAirdrop);
+              return Validator(
+                acc,
+                accInfo,
+                store.staking.nominationsAll[acc.accountId] ?? [],
+                hasPhalaAirdrop: hasPhalaAirdrop,
+              );
             },
           ),
         );
