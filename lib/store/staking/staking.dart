@@ -42,9 +42,6 @@ abstract class _StakingStore with Store {
   List<ValidatorData> validatorsInfo = List<ValidatorData>();
 
   @observable
-  List<ValidatorData> nextUpsInfo = List<ValidatorData>();
-
-  @observable
   ObservableMap<String, dynamic> ledger = ObservableMap<String, dynamic>();
 
   @observable
@@ -69,6 +66,19 @@ abstract class _StakingStore with Store {
 
   @observable
   Map recommendedValidators = {};
+
+  @computed
+  List<ValidatorData> get nextUpsInfo {
+    if (overview['waiting'] != null) {
+      List<ValidatorData> list = List.of(overview['waiting']).map((i) {
+        ValidatorData validator = ValidatorData();
+        validator.accountId = i;
+        return validator;
+      }).toList();
+      return list;
+    }
+    return [];
+  }
 
   @computed
   List<ValidatorData> get validatorsAll {
@@ -177,14 +187,6 @@ abstract class _StakingStore with Store {
         return validator;
       }).toList();
       validatorsInfo = list;
-    }
-    if (data['waiting'] != null) {
-      List<ValidatorData> list = List.of(data['waiting']).map((i) {
-        ValidatorData validator = ValidatorData();
-        validator.accountId = i;
-        return validator;
-      }).toList();
-      nextUpsInfo = list;
     }
 
     if (shouldCache) {

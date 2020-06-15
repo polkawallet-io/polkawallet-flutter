@@ -1,3 +1,8 @@
+# 0.7.7
+- add social recovery
+- add waiting validators
+- add recommended validators
+
 # 0.7.6
 - add polkadot-cc1 support
 - add observation account

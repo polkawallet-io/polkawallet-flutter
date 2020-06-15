@@ -9,6 +9,13 @@ part of 'staking.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$StakingStore on _StakingStore, Store {
+  Computed<List<ValidatorData>> _$nextUpsInfoComputed;
+
+  @override
+  List<ValidatorData> get nextUpsInfo => (_$nextUpsInfoComputed ??=
+          Computed<List<ValidatorData>>(() => super.nextUpsInfo,
+              name: '_StakingStore.nextUpsInfo'))
+      .value;
   Computed<List<ValidatorData>> _$validatorsAllComputed;
 
   @override
@@ -133,21 +140,6 @@ mixin _$StakingStore on _StakingStore, Store {
   set validatorsInfo(List<ValidatorData> value) {
     _$validatorsInfoAtom.reportWrite(value, super.validatorsInfo, () {
       super.validatorsInfo = value;
-    });
-  }
-
-  final _$nextUpsInfoAtom = Atom(name: '_StakingStore.nextUpsInfo');
-
-  @override
-  List<ValidatorData> get nextUpsInfo {
-    _$nextUpsInfoAtom.reportRead();
-    return super.nextUpsInfo;
-  }
-
-  @override
-  set nextUpsInfo(List<ValidatorData> value) {
-    _$nextUpsInfoAtom.reportWrite(value, super.nextUpsInfo, () {
-      super.nextUpsInfo = value;
     });
   }
 
@@ -413,7 +405,6 @@ overview: ${overview},
 staked: ${staked},
 nominatorCount: ${nominatorCount},
 validatorsInfo: ${validatorsInfo},
-nextUpsInfo: ${nextUpsInfo},
 ledger: ${ledger},
 txsLoading: ${txsLoading},
 txsCount: ${txsCount},
@@ -422,6 +413,7 @@ rewardsChartDataCache: ${rewardsChartDataCache},
 stakesChartDataCache: ${stakesChartDataCache},
 phalaAirdropWhiteList: ${phalaAirdropWhiteList},
 recommendedValidators: ${recommendedValidators},
+nextUpsInfo: ${nextUpsInfo},
 validatorsAll: ${validatorsAll},
 activeNominatingList: ${activeNominatingList},
 nominatingList: ${nominatingList},
