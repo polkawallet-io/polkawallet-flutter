@@ -24,6 +24,8 @@ class InitiateRecoveryPage extends StatefulWidget {
 }
 
 class _InitiateRecoveryPage extends State<InitiateRecoveryPage> {
+  final double _recoveryDeposit = 5 / 6;
+
   AccountData _recoverable;
   bool _loading = false;
 
@@ -42,7 +44,7 @@ class _InitiateRecoveryPage extends State<InitiateRecoveryPage> {
     if (!UI.checkBalanceAndAlert(
       context,
       widget.store,
-      Fmt.tokenInt('5', decimals: decimals),
+      Fmt.tokenInt(_recoveryDeposit.toString(), decimals: decimals),
     )) {
       return;
     }
@@ -93,7 +95,8 @@ class _InitiateRecoveryPage extends State<InitiateRecoveryPage> {
       },
       "detail": jsonEncode({
         'accountId': _recoverable.address,
-        'deposit': '5 ${widget.store.settings.networkState.tokenSymbol}'
+        'deposit':
+            '${Fmt.doubleFormat(_recoveryDeposit)} ${widget.store.settings.networkState.tokenSymbol}'
       }),
       "params": [_recoverable.address],
       'onFinish': (BuildContext txPageContext, Map res) {
@@ -126,26 +129,27 @@ class _InitiateRecoveryPage extends State<InitiateRecoveryPage> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                       child: AddressFormItem(
-                        dic['recovery.init.new'],
                         widget.store.account.currentAccount,
+                        label: dic['recovery.init.new'],
                       ),
                     ),
                     ListTile(
                       title: Text(dic['recovery.init.old']),
-                      subtitle: Text('tap to select'),
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
                       onTap: () => _handleRecoverableSelect(),
                     ),
                     _recoverable != null
                         ? Padding(
-                            padding: EdgeInsets.only(left: 16),
-                            child: RecoveryFriendList(friends: [_recoverable]),
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: AddressFormItem(
+                              _recoverable,
+                            ),
                           )
                         : Container(),
                     ListTile(
                       title: Text(dic['recovery.deposit']),
                       trailing: Text(
-                        '5 $symbol',
+                        '${Fmt.doubleFormat(_recoveryDeposit)} $symbol',
                         style: Theme.of(context).textTheme.headline4,
                       ),
                     )

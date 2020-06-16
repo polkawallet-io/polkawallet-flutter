@@ -29,6 +29,9 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
   final FocusNode _delayFocusNode = FocusNode();
   final TextEditingController _delayCtrl = new TextEditingController();
 
+  final double _configDepositBase = 5 / 6;
+  final double _friendDepositFactor = 0.5 / 6;
+
   List<AccountData> _friends = [];
   double _threshold = 1;
   double _delay = 90;
@@ -55,7 +58,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
       double value = double.parse(v.trim());
       if (value == 0) {
         setState(() {
-          _delayError = 'err';
+          _delayError = I18n.of(context).home['input.invalid'];
         });
       } else {
         setState(() {
@@ -65,7 +68,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
       }
     } catch (err) {
       setState(() {
-        _delayError = 'err';
+        _delayError = I18n.of(context).home['input.invalid'];
       });
     }
   }
@@ -123,6 +126,8 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
     List<String> friends = _friends.map((e) => e.address).toList();
     friends.sort();
     int delayBlocks = _delay * SECONDS_OF_DAY ~/ 6;
+    double deposit =
+        _configDepositBase + _friends.length * _friendDepositFactor;
     var args = {
       "title": dic['recovery.create'],
       "txInfo": {
@@ -134,7 +139,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
         'threshold': _threshold.toInt(),
         'delay': '$_delay ${dic['recovery.day']}',
         'deposit':
-            '${5 + _friends.length * 0.5} ${widget.store.settings.networkState.tokenSymbol}'
+            '${Fmt.doubleFormat(deposit)} ${widget.store.settings.networkState.tokenSymbol}'
       }),
       "params": [friends, _threshold.toInt(), delayBlocks],
       'onFinish': (BuildContext txPageContext, Map res) {
@@ -158,10 +163,12 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
 ${dic['recovery.deposit']} = ${dic['recovery.deposit.base']} +
 ${dic['recovery.deposit.factor']} * ${dic['recovery.deposit.friends']}
 
-${dic['recovery.deposit.base']} = 5 $symbol
-${dic['recovery.deposit.factor']} = 0.5 $symbol
+${dic['recovery.deposit.base']} = ${Fmt.doubleFormat(_configDepositBase)} $symbol
+${dic['recovery.deposit.factor']} = ${Fmt.doubleFormat(_friendDepositFactor)} $symbol
 ''';
 
+    double deposit =
+        _configDepositBase + _friends.length * _friendDepositFactor;
     return Scaffold(
       appBar: AppBar(
         title: Text(dic['recovery.create']),
@@ -246,6 +253,7 @@ ${dic['recovery.deposit.factor']} = 0.5 $symbol
                           ),
                           Expanded(
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 CupertinoTextField(
                                   padding: EdgeInsets.fromLTRB(12, 3, 12, 3),
@@ -313,7 +321,7 @@ ${dic['recovery.deposit.factor']} = 0.5 $symbol
                         ),
                       ),
                       trailing: Text(
-                        '${5 + _friends.length * 0.5} $symbol',
+                        '${Fmt.doubleFormat(deposit)} $symbol',
                         style: Theme.of(context).textTheme.headline4,
                       ),
                     )

@@ -51,11 +51,17 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
     );
     List<TxData> txs =
         List.of(res['extrinsics']).map((e) => TxData.fromJson(e)).toList();
+    List pubKeys = [];
     txs.retainWhere((e) {
       if (!e.success) return false;
       List params = jsonDecode(e.params);
       String pubKey = params[0]['valueRaw'] ?? params[0]['value_raw'];
-      return '0x$pubKey' == widget.store.account.currentAccount.pubKey;
+      if (pubKeys.contains(pubKey)) {
+        return false;
+      } else {
+        pubKeys.add(pubKey);
+        return '0x$pubKey' == widget.store.account.currentAccount.pubKey;
+      }
     });
     if (txs.length > 0) {
       List<String> addressesNew = txs.map((e) => e.accountId).toList();
@@ -80,7 +86,9 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
 
   Future<void> _onRemoveRecovery() async {
     final Map dic = I18n.of(context).profile;
-    bool couldRemove = _activeRecoveriesStatus.length == 0;
+    List activeList = _activeRecoveriesStatus.toList();
+    activeList.retainWhere((e) => e != null);
+    bool couldRemove = activeList.length == 0;
     if (!couldRemove) {
       showCupertinoDialog(
         context: context,
@@ -173,7 +181,11 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
             }
             List<List> activeList = List<List>();
             _activeRecoveries.asMap().forEach((i, v) {
-              activeList.add([v, _activeRecoveriesStatus[i], _proxyStatus[i]]);
+              // status is null if recovery process was closed
+              if (_activeRecoveriesStatus[i] != null) {
+                activeList
+                    .add([v, _activeRecoveriesStatus[i], _proxyStatus[i]]);
+              }
             });
 
             final int blockDuration =
@@ -212,33 +224,41 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
                             : Container(),
                         friends.length > 0
                             ? Column(
-                                children: activeList.map((e) {
-                                  String start = Fmt.blockToTime(
-                                      _currentBlock - e[1]['created'],
-                                      blockDuration);
-                                  TxData tx = e[0];
-                                  bool hasProxy = false;
-                                  if (e[2] != null) {
-                                    hasProxy = e[2] == info.address;
-                                  }
-                                  return ActiveRecovery(
-                                    tx: tx,
-                                    status: e[1],
-                                    info: info,
-                                    start: start,
-                                    delay: delay,
-                                    proxy: hasProxy,
-                                    networkState:
-                                        widget.store.settings.networkState,
-                                    action: CupertinoActionSheetAction(
-                                      child: Text(dic['recovery.close']),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        _closeRecovery(tx);
-                                      },
-                                    ),
-                                  );
-                                }).toList(),
+                                children: activeList.length > 0
+                                    ? activeList.map((e) {
+                                        String start = Fmt.blockToTime(
+                                            _currentBlock - e[1]['created'],
+                                            blockDuration);
+                                        TxData tx = e[0];
+                                        bool hasProxy = false;
+                                        if (e[2] != null) {
+                                          hasProxy = e[2] == info.address;
+                                        }
+                                        return ActiveRecovery(
+                                          tx: tx,
+                                          status: e[1],
+                                          info: info,
+                                          start: start,
+                                          delay: delay,
+                                          proxy: hasProxy,
+                                          networkState: widget
+                                              .store.settings.networkState,
+                                          action: CupertinoActionSheetAction(
+                                            child: Text(dic['recovery.close']),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              _closeRecovery(tx);
+                                            },
+                                          ),
+                                        );
+                                      }).toList()
+                                    : [
+                                        Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: Text(I18n.of(context)
+                                              .home['data.empty']),
+                                        )
+                                      ],
                               )
                             : Container()
                       ],
@@ -361,7 +381,7 @@ class RecoveryFriendList extends StatelessWidget {
               Container(
                 width: 32,
                 margin: EdgeInsets.only(right: 8),
-                child: AddressIcon(e.address, size: 32),
+                child: AddressIcon(e.address, pubKey: e.pubKey, size: 32),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -479,7 +499,7 @@ class ActiveRecovery extends StatelessWidget {
                 ],
               ),
               OutlinedButtonSmall(
-                content: 'actions',
+                content: dic['recovery.actions'],
                 active: true,
                 onPressed: () => _showActions(context),
               )

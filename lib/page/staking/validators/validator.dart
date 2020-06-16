@@ -66,7 +66,7 @@ class Validator extends StatelessWidget {
                   Text(
                     !isWaiting
                         ? '${dic['total']}: ${hasDetail ? Fmt.token(validator.total) : '~'}'
-                        : '${dic['nominating']}: ${nominations.length}',
+                        : '${dic['nominators']}: ${nominations.length}',
                     style: TextStyle(
                       color: Theme.of(context).unselectedWidgetColor,
                       fontSize: 12,

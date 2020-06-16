@@ -116,8 +116,8 @@ class _PayoutPageState extends State<PayoutPage> {
                   padding: EdgeInsets.all(16),
                   children: <Widget>[
                     AddressFormItem(
-                      dic['controller'],
                       store.account.currentAccount,
+                      label: dic['controller'],
                     ),
                     rewardLoading
                         ? Column(
@@ -138,8 +138,10 @@ class _PayoutPageState extends State<PayoutPage> {
                               labelText: I18n.of(context).assets['amount'],
                             ),
                             initialValue: Fmt.token(
-                                store.staking.accountRewardTotal,
-                                decimals: decimals),
+                              store.staking.accountRewardTotal,
+                              decimals: decimals,
+                              length: 8,
+                            ),
                             readOnly: true,
                           ),
                   ],

@@ -115,15 +115,15 @@ class _BondPageState extends State<BondPage> {
                       Padding(
                         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
                         child: AddressFormItem(
-                          dic['stash'],
                           store.account.currentAccount,
+                          label: dic['stash'],
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 16, right: 16),
                         child: AddressFormItem(
-                          dic['controller'],
                           _controller ?? store.account.currentAccount,
+                          label: dic['controller'],
                           onTap: () => _changeControllerId(context),
                         ),
                       ),

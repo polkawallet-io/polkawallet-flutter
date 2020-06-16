@@ -9,7 +9,6 @@ import 'package:polka_wallet/page/profile/recovery/recoveryProofPage.dart';
 import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
 import 'package:polka_wallet/page/profile/recovery/recoveryStatePage.dart';
-import 'package:polka_wallet/page/profile/recovery/vouchRecoveryPage.dart';
 import 'package:polka_wallet/page/profile/settings/settingsPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -129,15 +128,6 @@ class Profile extends StatelessWidget {
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
               onTap: () => Navigator.of(context).pushNamed(SettingsPage.route),
             ),
-            ListTile(
-              leading: Container(
-                width: 32,
-                child: Icon(Icons.info_outline, color: grey, size: 22),
-              ),
-              title: Text(dic['about']),
-              trailing: Icon(Icons.arrow_forward_ios, size: 18),
-              onTap: () => Navigator.of(context).pushNamed(AboutPage.route),
-            ),
             isKusama
                 ? ListTile(
                     leading: Container(
@@ -149,6 +139,15 @@ class Profile extends StatelessWidget {
                     onTap: () => _showRecoveryMenu(context),
                   )
                 : Container(),
+            ListTile(
+              leading: Container(
+                width: 32,
+                child: Icon(Icons.info_outline, color: grey, size: 22),
+              ),
+              title: Text(dic['about']),
+              trailing: Icon(Icons.arrow_forward_ios, size: 18),
+              onTap: () => Navigator.of(context).pushNamed(AboutPage.route),
+            ),
           ],
         ),
       );

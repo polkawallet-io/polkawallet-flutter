@@ -273,8 +273,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                         : Padding(
                             padding: EdgeInsets.only(left: 16, right: 16),
                             child: AddressFormItem(
-                              dic["submit.from"],
                               store.account.currentAccount,
+                              label: dic["submit.from"],
                             ),
                           ),
                     isKusama && isObservation && recoverable.address != null
@@ -305,8 +305,9 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                             child: Padding(
                               padding: EdgeInsets.only(left: 16, right: 16),
                               child: AddressFormItem(
-                                I18n.of(context).profile["recovery.proxy"],
                                 _proxyAccount,
+                                label:
+                                    I18n.of(context).profile["recovery.proxy"],
                               ),
                             ),
                             onTap: () => _onSwitch(true),
@@ -437,7 +438,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                               ? dic['submit.no.sign']
                               : (isObservation && _proxyAccount == null) ||
                                       isProxyObservation
-                                  ? 'invalid' // dic['submit.qr']
+                                  ? // dic['submit.qr']
+                                  dicAcc['observe.invalid']
                                   : dic['submit'],
                           style: TextStyle(color: Colors.white),
                         ),

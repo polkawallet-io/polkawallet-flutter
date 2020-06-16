@@ -139,7 +139,7 @@ class _NominatePageState extends State<NominatePage> {
                     children: [
                       Text(
                         isWaiting
-                            ? '${dic['nominating']}: ${nominations.length}'
+                            ? '${dic['nominators']}: ${nominations.length}'
                             : '${dic['points']}: ${list[i].points}',
                         style: TextStyle(
                           color: Theme.of(context).unselectedWidgetColor,

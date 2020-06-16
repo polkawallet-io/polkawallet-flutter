@@ -42,6 +42,7 @@ const Map<String, String> enAccount = {
   'observe.proxy.brief':
       '\nA recoverable account can\nsend Tx through a proxy account\n',
   'observe.proxy.invalid': 'Invalid proxy account',
+  'observe.invalid': 'Invalid',
   'list': 'Account Select',
 };
 
@@ -82,5 +83,6 @@ const Map<String, String> zhAccount = {
   'observe.proxy': '使用代理账户签名',
   'observe.proxy.brief': '\n完成社交恢复流程的账户\n可以使用代理账户发送交易\n',
   'observe.proxy.invalid': '代理账户不可用',
+  'observe.invalid': '不可用',
   'list': '选择账户',
 };

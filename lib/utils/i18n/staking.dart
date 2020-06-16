@@ -68,7 +68,7 @@ const Map<String, String> zhStaking = {
   'validator': '验证人',
   'elected': '验证人',
   'waiting': '候选验证人',
-  'nominators': '见证人',
+  'nominators': '提名人',
   'session': '时期',
   'era': '时代',
   'total': '总质押',

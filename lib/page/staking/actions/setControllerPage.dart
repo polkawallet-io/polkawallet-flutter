@@ -106,12 +106,12 @@ class _SetControllerPageState extends State<SetControllerPage> {
                   padding: EdgeInsets.all(16),
                   children: <Widget>[
                     AddressFormItem(
-                      dic['stash'],
                       store.account.currentAccount,
+                      label: dic['stash'],
                     ),
                     AddressFormItem(
-                      dic['controller'],
                       _controller ?? store.account.currentAccount,
+                      label: dic['controller'],
                       onTap: () => _changeControllerId(context),
                     ),
                   ],

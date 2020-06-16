@@ -49,8 +49,13 @@ class _RecoveryStatePage extends State<RecoveryStatePage> {
       List<TxData> ls = txs.map((e) => TxData.fromJson(e)).toList();
       ls.retainWhere((i) => i.success);
       List<String> pubKeys = [];
-      ls.forEach((i) {
-        pubKeys.add('0x${List.of(jsonDecode(i.params))[0]['value']}');
+      ls.toList().forEach((i) {
+        String key = '0x${List.of(jsonDecode(i.params))[0]['value']}';
+        if (!pubKeys.contains(key)) {
+          pubKeys.add(key);
+        } else {
+          ls.remove(i);
+        }
       });
       await webApi.account.encodeAddress(pubKeys);
 
@@ -71,13 +76,26 @@ class _RecoveryStatePage extends State<RecoveryStatePage> {
             .queryRecoveryProxies([widget.store.account.currentAddress]),
       ]);
 
+      List<AccountRecoveryInfo> infoList = List.of(status[1])
+          .map((e) => AccountRecoveryInfo.fromJson(e))
+          .toList();
+      List statusList = List.of(status[2]);
+
+      statusList.toList().asMap().forEach((k, v) {
+        // recovery status is null if recovery was closed
+        if (v == null) {
+          print('remove $k');
+          ls.removeAt(k);
+          infoList.removeAt(k);
+          statusList.removeAt(k);
+        }
+      });
+
       setState(() {
         _txs = ls;
         _currentBlock = status[0];
-        _recoverableInfoList = List.of(status[1])
-            .map((e) => AccountRecoveryInfo.fromJson(e))
-            .toList();
-        _activeRecoveriesStatus = status[2];
+        _recoverableInfoList = infoList;
+        _activeRecoveriesStatus = statusList;
         _proxyStatus = status[3];
       });
     }
@@ -118,11 +136,13 @@ class _RecoveryStatePage extends State<RecoveryStatePage> {
 
     List<List> activeList = List<List>();
     _txs.asMap().forEach((i, v) {
+      bool isRecovered =
+          _proxyStatus.indexOf(_recoverableInfoList[i].address) >= 0;
       activeList.add([
         v,
         _activeRecoveriesStatus[i],
         _recoverableInfoList[i],
-        _proxyStatus[i]
+        isRecovered,
       ]);
     });
 
@@ -165,8 +185,8 @@ class _RecoveryStatePage extends State<RecoveryStatePage> {
                                     (createdBlock + info.delayPeriod) <
                                         _currentBlock;
                             bool canCancel = false;
-                            if (canClaim && e[3] != null) {
-                              canCancel = e[3] == info.address;
+                            if (canClaim && e[3]) {
+                              canCancel = true;
                             }
                             final String delay = Fmt.blockToTime(
                                 info.delayPeriod, blockDuration);

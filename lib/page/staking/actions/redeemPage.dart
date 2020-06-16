@@ -64,8 +64,8 @@ class _RedeemPageState extends State<RedeemPage> {
                   padding: EdgeInsets.all(16),
                   children: <Widget>[
                     AddressFormItem(
-                      dic['controller'],
                       store.account.currentAccount,
+                      label: dic['controller'],
                     ),
                     TextFormField(
                       decoration: InputDecoration(

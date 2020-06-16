@@ -60,8 +60,8 @@ class _BondExtraPageState extends State<BondExtraPage> {
                     padding: EdgeInsets.all(16),
                     children: <Widget>[
                       AddressFormItem(
-                        dic['stash'],
                         store.account.currentAccount,
+                        label: dic['stash'],
                       ),
                       TextFormField(
                         decoration: InputDecoration(
