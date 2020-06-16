@@ -136,7 +136,9 @@ class Profile extends StatelessWidget {
                     ),
                     title: Text(dic['recovery']),
                     trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                    onTap: () => _showRecoveryMenu(context),
+                    onTap: store.settings.loading
+                        ? null
+                        : () => _showRecoveryMenu(context),
                   )
                 : Container(),
             ListTile(

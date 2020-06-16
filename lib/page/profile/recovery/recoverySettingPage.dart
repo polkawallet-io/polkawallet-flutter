@@ -357,7 +357,7 @@ class _RecoveryInfo extends StatelessWidget {
         Divider(height: 32),
         RoundedButton(
           color: Colors.orange,
-          text: 'remove',
+          text: dic['recovery.remove'],
           onPressed: () => onRemove(),
         ),
       ],
