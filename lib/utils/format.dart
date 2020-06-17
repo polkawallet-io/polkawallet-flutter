@@ -225,14 +225,10 @@ class Fmt {
   static List<ValidatorData> filterValidatorList(
       List<ValidatorData> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
-      String value = filter.toLowerCase();
-      String accName = '';
       Map accInfo = accIndexMap[i.accountId];
-      if (accInfo != null) {
-        accName = accInfo['identity']['display'] ?? '';
-      }
-      return i.accountId.toLowerCase().contains(value) ||
-          accName.toLowerCase().contains(value);
+      return Fmt.validatorDisplayName(i, accInfo)
+          .toLowerCase()
+          .contains(filter.trim().toLowerCase());
     });
     return ls;
   }
@@ -240,7 +236,7 @@ class Fmt {
   static List<List> filterCandidateList(
       List<List> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
-      String value = filter.toLowerCase();
+      String value = filter.trim().toLowerCase();
       String accName = '';
       Map accInfo = accIndexMap[i[0]];
       if (accInfo != null) {
@@ -315,5 +311,17 @@ class Fmt {
 
   static String accountName(BuildContext context, AccountData acc) {
     return '${acc.name ?? ''}${(acc.observation ?? false) ? ' (${I18n.of(context).account['observe']})' : ''}';
+  }
+
+  static String validatorDisplayName(ValidatorData validator, Map accInfo) {
+    String display = Fmt.address(validator.accountId, pad: 6);
+    if (accInfo != null && accInfo['identity']['display'] != null) {
+      display = accInfo['identity']['display'];
+      if (accInfo['identity']['displayParent'] != null) {
+        display = '${accInfo['identity']['displayParent']}/$display';
+      }
+      display = display.toUpperCase();
+    }
+    return display;
   }
 }

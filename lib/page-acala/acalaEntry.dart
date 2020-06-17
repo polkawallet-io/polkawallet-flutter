@@ -79,7 +79,7 @@ class AcalaEntry extends StatelessWidget {
                           child: _AcalaCard(
                             dic['earn.title'],
                             dic['earn.brief'],
-                            'assets/images/acala/loan.svg',
+                            'assets/images/acala/deposit.svg',
                             color: Colors.blueAccent,
                           ),
                           onTap: () =>
@@ -92,7 +92,7 @@ class AcalaEntry extends StatelessWidget {
                           child: _AcalaCard(
                             dic['homa.title'],
                             dic['homa.brief'],
-                            'assets/images/acala/exchange.svg',
+                            'assets/images/acala/swap.svg',
                             color: Theme.of(context).primaryColor,
                           ),
                           onTap: () =>
@@ -127,7 +127,7 @@ class _AcalaCard extends StatelessWidget {
         children: <Widget>[
           Container(
             padding: EdgeInsets.all(28),
-            width: 120,
+            width: 110,
             decoration: BoxDecoration(
               color: color ?? Colors.blue,
               borderRadius: const BorderRadius.only(
@@ -136,7 +136,7 @@ class _AcalaCard extends StatelessWidget {
             ),
             child: SvgPicture.asset(
               icon,
-              height: 68,
+              height: 56,
             ),
           ),
           Column(
@@ -152,12 +152,13 @@ class _AcalaCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(left: 16),
                 width: MediaQuery.of(context).size.width / 2,
-                height: 60,
                 child: Text(
                   brief,
                   style: TextStyle(
                       fontSize: 13,
                       color: Theme.of(context).unselectedWidgetColor),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
