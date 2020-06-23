@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
@@ -67,6 +68,18 @@ class _AssetsState extends State<Assets> {
       Navigator.of(context).pushNamed(AttestPage.route, arguments: ethAddress);
     }
     return ethAddress;
+  }
+
+  Future<void> _handleScan() async {
+    final data = await Navigator.pushNamed(
+      context,
+      ScanPage.route,
+      arguments: 'tx',
+    );
+    if (data != null) {
+      print('rawData detected');
+      print(data);
+    }
   }
 
   Future<void> _getTokensFromFaucet() async {
@@ -202,13 +215,31 @@ class _AssetsState extends State<Assets> {
                     : Container(width: 8),
           ),
           ListTile(
-            title: Text(Fmt.address(store.account.currentAddress)),
+            title: Row(
+              children: [
+                GestureDetector(
+                  child: Image.asset(
+                    'assets/images/assets/qrcode_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png',
+                    width: 18,
+                  ),
+                  onTap: () {
+                    if (acc.address != '') {
+                      Navigator.pushNamed(context, ReceivePage.route);
+                    }
+                  },
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Text(Fmt.address(store.account.currentAddress)),
+                )
+              ],
+            ),
             trailing: IconButton(
               icon: Image.asset(
-                  'assets/images/assets/qrcode_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png'),
+                  'assets/images/assets/scanner_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png'),
               onPressed: () {
                 if (acc.address != '') {
-                  Navigator.pushNamed(context, ReceivePage.route);
+                  _handleScan();
                 }
               },
             ),

@@ -85,6 +85,7 @@ const Map<String, String> enDex = {
   'homa.redeem.era': 'Current Era',
   'homa.redeem.period': 'Unbonding Period',
   'homa.redeem.day': 'Days',
+  'tx.fee.or': 'or equivalent in other tokens',
 };
 
 const Map<String, String> zhDex = {
@@ -171,4 +172,5 @@ const Map<String, String> zhDex = {
   'homa.redeem.era': '当前 Era',
   'homa.redeem.period': '解锁周期',
   'homa.redeem.day': '天',
+  'tx.fee.or': '或等额其他代币',
 };

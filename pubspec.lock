@@ -263,13 +263,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.7"
-  flutter_qr_reader:
+  flutter_qr_scan:
     dependency: "direct main"
     description:
-      name: flutter_qr_reader
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
+      path: "."
+      ref: master
+      resolved-ref: "3551b2269c8fb922b4c1af9ee22eb47db123fe8d"
+      url: "https://github.com/polkawallet-io/flutter_qr_reader.git"
+    source: git
+    version: "1.0.6"
   flutter_svg:
     dependency: "direct main"
     description:

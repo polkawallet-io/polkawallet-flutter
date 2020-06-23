@@ -297,7 +297,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
         Expanded(
           child: Form(
             key: _formKey,
-            autovalidate: true,
+//            autovalidate: true,
             child: ListView(
               children: <Widget>[
                 ListTile(

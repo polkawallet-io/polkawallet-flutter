@@ -46,7 +46,10 @@ dependencies:
   cupertino_icons: ^0.1.2
   # QR code generator & reader
   qr_flutter: ^3.1.0
-  flutter_qr_reader: ^1.0.3
+  flutter_qr_scan:
+    git:
+      url: https://github.com/polkawallet-io/flutter_qr_reader.git
+      ref: master
   permission_handler: ^4.2.0
   # PackageInfo
   package_info: ^0.4.0
@@ -101,6 +104,7 @@ flutter:
     - assets/images/assets/LDOT.png
     - assets/images/assets/KAR.png
     ## images - acala
+    - assets/images/assets/scanner_indigo.png
     - assets/images/assets/top_bg_indigo.png
     - assets/images/assets/receive_line_indigo.png
     - assets/images/assets/qrcode_indigo.png
@@ -118,6 +122,7 @@ flutter:
     - assets/images/acala/loan.svg
     - assets/images/acala/loan-start.svg
     ## images - kusama
+    - assets/images/assets/scanner_black.png
     - assets/images/public/Assets_black.png
     - assets/images/public/Governance_black.png
     - assets/images/public/Profile_black.png
@@ -128,6 +133,7 @@ flutter:
     - assets/images/assets/receive_line_black.png
     - assets/images/staking/top_bg_black.png
     ## images - polkadot
+    - assets/images/assets/scanner_pink.png
     - assets/images/public/app.png
     - assets/images/public/Assets_pink.png
     - assets/images/public/Governance_pink.png
