@@ -45,7 +45,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   # QR code generator & reader
-  qr_flutter: ^3.1.0
+  qr_flutter:
+    git:
+      url: https://github.com/polkawallet-io/qr.flutter.git
+      ref: master
   flutter_qr_scan:
     git:
       url: https://github.com/polkawallet-io/flutter_qr_reader.git
@@ -103,6 +106,7 @@ flutter:
     - assets/images/assets/XBTC.png
     - assets/images/assets/LDOT.png
     - assets/images/assets/KAR.png
+    - assets/images/assets/scanner.png
     ## images - acala
     - assets/images/assets/scanner_indigo.png
     - assets/images/assets/top_bg_indigo.png

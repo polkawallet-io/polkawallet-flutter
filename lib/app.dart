@@ -23,6 +23,8 @@ import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
+import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
@@ -220,6 +222,8 @@ class _WalletAppState extends State<WalletApp> {
         ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
         ScanPage.route: (_) => ScanPage(),
         TxConfirmPage.route: (_) => TxConfirmPage(_appStore),
+        QrSignerPage.route: (_) => QrSignerPage(),
+        QrSenderPage.route: (_) => QrSenderPage(),
         // assets
         AssetPage.route: (_) => AssetPage(_appStore),
         TransferPage.route: (_) => TransferPage(_appStore),

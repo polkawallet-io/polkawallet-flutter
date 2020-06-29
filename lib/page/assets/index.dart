@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
+import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
@@ -79,7 +81,38 @@ class _AssetsState extends State<Assets> {
     if (data != null) {
       print('rawData detected');
       print(data);
+      final String sender =
+          await webApi.account.parseQrCode(data.toString().trim());
+      if (sender != store.account.currentAddress) {
+        print('sender not match');
+      } else {
+        showCupertinoDialog(
+          context: context,
+          builder: (_) {
+            return PasswordInputDialog(
+              account: store.account.currentAccount,
+              title: Text('unlock to sign'),
+              onOk: (password) {
+                print('pass ok: $password');
+                _signAsync(password);
+              },
+            );
+          },
+        );
+      }
     }
+  }
+
+  Future<void> _signAsync(String password) async {
+    final Map signed = await webApi.account.signAsync(password);
+    print('signed: $signed');
+    if (signed['error'] != null) {
+      return;
+    }
+    Navigator.of(context).pushNamed(
+      QrSignerPage.route,
+      arguments: signed['signature'].toString().substring(2),
+    );
   }
 
   Future<void> _getTokensFromFaucet() async {

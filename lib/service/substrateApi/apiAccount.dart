@@ -266,4 +266,47 @@ class ApiAccount {
     );
     return res;
   }
+
+  Future<String> parseQrCode(String data) async {
+    final res = await apiRoot.evalJavascript('account.parseQrCode("$data")');
+    print('rawData: $data');
+    return res.toString();
+  }
+
+  Future<Map> signAsync(String password) async {
+    final res = await apiRoot.evalJavascript('account.signAsync("$password")');
+    return res;
+  }
+
+  Future<Map> makeQrCode(Map txInfo, List params, {String rawParam}) async {
+    String param = rawParam != null ? rawParam : jsonEncode(params);
+    final Map res = await apiRoot.evalJavascript(
+      'account.makeTx(${jsonEncode(txInfo)}, $param)',
+      allowRepeat: true,
+    );
+    return res;
+  }
+
+  Future<Map> addSignatureAndSend(
+    String signed,
+    Map txInfo,
+    String pageTile,
+    String notificationTitle,
+  ) async {
+    final String address = store.account.currentAddress;
+    final Map res = await apiRoot.evalJavascript(
+      'account.addSignatureAndSend("$address", "$signed")',
+      allowRepeat: true,
+    );
+
+    if (res['hash'] != null) {
+      String hash = res['hash'];
+      NotificationPlugin.showNotification(
+        int.parse(hash.substring(0, 6)),
+        notificationTitle,
+        '$pageTile - ${txInfo['module']}.${txInfo['call']}',
+      );
+    }
+    return res;
+  }
 }

@@ -28,8 +28,9 @@ class ScanPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future onScan(String data, String rawData) async {
+    Future onScan(String txt, String rawData) async {
       String address = '';
+      final String data = txt.trim();
       if (data != null) {
         List<String> ls = data.split(':');
         for (String item in ls) {
@@ -40,6 +41,7 @@ class ScanPage extends StatelessWidget {
         }
 
         if (address.length > 0) {
+          print('address detected in Qr');
           final String args = ModalRoute.of(context).settings.arguments;
           if (args == 'tx') {
             Navigator.of(context).popAndPushNamed(
@@ -49,8 +51,12 @@ class ScanPage extends StatelessWidget {
           } else {
             Navigator.of(context).pop(QRCodeAddressResult(ls));
           }
+        } else if (Fmt.isHexString(data)) {
+          print('hex detected in Qr');
+          Navigator.of(context).pop(data);
         } else if (rawData != null && rawData.endsWith('ec') ||
             rawData.endsWith('ec11')) {
+          print('rawBytes detected in Qr');
           Navigator.of(context).pop(rawData);
         } else {
           _qrViewKey.currentState.startScan();

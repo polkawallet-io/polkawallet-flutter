@@ -596,14 +596,14 @@ packages:
       name: qr
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.0"
+    version: "1.3.0"
   qr_flutter:
     dependency: "direct main"
     description:
-      name: qr_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.2.0"
+      path: "../qr.flutter"
+      relative: true
+    source: path
+    version: "3.2.1"
   quiver:
     dependency: transitive
     description:

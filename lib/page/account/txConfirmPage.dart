@@ -7,6 +7,7 @@ import 'package:polka_wallet/common/components/TapTooltip.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
@@ -69,17 +70,6 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
         _proxyAccount = null;
       });
     }
-  }
-
-  Future<void> _showTxQrCode(BuildContext context) async {
-    final Map args = ModalRoute.of(context).settings.arguments;
-
-    print('show qr');
-//    Map txInfo = args['txInfo'];
-//    txInfo['pubKey'] = store.account.currentAccount.pubKey;
-//    print(txInfo);
-//    print(args['params']);
-//    Navigator.of(context).pushNamed(routeName, arguments: );
   }
 
   void _onTxFinish(BuildContext context, Map res) {
@@ -209,13 +199,48 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     txInfo['pubKey'] = store.account.currentAccount.pubKey;
     txInfo['password'] = password;
     if (_proxyAccount != null) {
+      txInfo['address'] = store.account.currentAddress;
       txInfo['proxy'] = _proxyAccount.pubKey;
     }
     print(txInfo);
     print(args['params']);
-    Map res = await webApi.account.sendTx(
+    final Map res = await webApi.account.sendTx(
         txInfo, args['params'], args['title'], dic['notify.submitted'],
         rawParam: args['rawParam']);
+    if (res['hash'] == null) {
+      _onTxError(context, res['error']);
+    } else {
+      _onTxFinish(context, res);
+    }
+  }
+
+  Future<void> _showTxQrCode(BuildContext context) async {
+    final Map args = ModalRoute.of(context).settings.arguments;
+    store.assets.setSubmitting(true);
+
+    Map txInfo = args['txInfo'];
+    txInfo['pubKey'] = store.account.currentAccount.pubKey;
+    if (_proxyAccount != null) {
+      txInfo['address'] = store.account.currentAddress;
+      txInfo['proxy'] = _proxyAccount.pubKey;
+    }
+    print(txInfo);
+    print(args['params']);
+
+    print('show qr');
+    final signed = await Navigator.of(context)
+        .pushNamed(QrSenderPage.route, arguments: args);
+    if (signed == null) {
+      store.assets.setSubmitting(false);
+      return;
+    }
+
+    final Map res = await webApi.account.addSignatureAndSend(
+      signed.toString(),
+      txInfo,
+      args['title'],
+      I18n.of(context).home['notify.submitted'],
+    );
     if (res['hash'] == null) {
       _onTxError(context, res['error']);
     } else {
@@ -449,8 +474,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                               ? dic['submit.no.sign']
                               : (isObservation && _proxyAccount == null) ||
                                       isProxyObservation
-                                  ? // dic['submit.qr']
-                                  dicAcc['observe.invalid']
+                                  ? dic['submit.qr']
+                                  // dicAcc['observe.invalid']
                                   : dic['submit'],
                           style: TextStyle(color: Colors.white),
                         ),
