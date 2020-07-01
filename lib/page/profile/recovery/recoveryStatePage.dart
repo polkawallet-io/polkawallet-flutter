@@ -86,7 +86,9 @@ class _RecoveryStatePage extends State<RecoveryStatePage> {
         if (v == null) {
           print('remove $k');
           ls.removeAt(k);
-          infoList.removeAt(k);
+          if (infoList.length > k) {
+            infoList.removeAt(k);
+          }
           statusList.removeAt(k);
         }
       });

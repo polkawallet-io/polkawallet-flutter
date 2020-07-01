@@ -226,8 +226,10 @@ class ApiAccount {
 
     List res = [];
     ls.asMap().forEach((k, v) {
-      v['address'] = addresses[k];
-      res.add(v);
+      if (v != null) {
+        v['address'] = addresses[k];
+        res.add(v);
+      }
     });
 
     return res;

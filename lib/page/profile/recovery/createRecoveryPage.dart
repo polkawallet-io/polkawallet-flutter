@@ -75,7 +75,9 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
 
   void _onValidateSubmit() {
     int decimals = widget.store.settings.networkState.tokenDecimals;
-    String deposit = (5 + _friends.length * 0.5).toString();
+    String deposit =
+        (_configDepositBase + _friends.length * _friendDepositFactor)
+            .toString();
     if (!UI.checkBalanceAndAlert(
       context,
       widget.store,

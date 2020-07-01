@@ -175,6 +175,7 @@ class _WalletAppState extends State<WalletApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PolkaWallet',
+      debugShowCheckedModeBanner: false,
       localizationsDelegates: [
         AppLocalizationsDelegate(_locale),
         GlobalMaterialLocalizations.delegate,
