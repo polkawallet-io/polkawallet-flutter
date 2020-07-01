@@ -79,6 +79,7 @@ class _TransferPageState extends State<TransferPage> {
         },
         "detail": jsonEncode({
           "destination": _addressCtrl.text.trim(),
+          "currency": symbol,
           "amount": _amountCtrl.text.trim(),
         }),
         "params": [

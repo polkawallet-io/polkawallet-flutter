@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_qr_scan/qrcode_reader_view.dart';
 
 import 'package:permission_handler/permission_handler.dart';
+import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -40,9 +41,9 @@ class ScanPage extends StatelessWidget {
           }
         }
 
+        final String args = ModalRoute.of(context).settings.arguments;
         if (address.length > 0) {
           print('address detected in Qr');
-          final String args = ModalRoute.of(context).settings.arguments;
           if (args == 'tx') {
             Navigator.of(context).popAndPushNamed(
               TransferPage.route,
@@ -51,11 +52,11 @@ class ScanPage extends StatelessWidget {
           } else {
             Navigator.of(context).pop(QRCodeAddressResult(ls));
           }
-        } else if (Fmt.isHexString(data)) {
+        } else if (args == QrSenderPage.route && Fmt.isHexString(data)) {
           print('hex detected in Qr');
           Navigator.of(context).pop(data);
-        } else if (rawData != null && rawData.endsWith('ec') ||
-            rawData.endsWith('ec11')) {
+        } else if (rawData != null &&
+            (rawData.endsWith('ec') || rawData.endsWith('ec11'))) {
           print('rawBytes detected in Qr');
           Navigator.of(context).pop(rawData);
         } else {

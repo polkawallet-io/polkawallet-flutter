@@ -1,5 +1,5 @@
-# 0.7.8
-- update Acalanetwork to TC4
+# 0.8.0
+- Offline signature support
 
 # 0.7.7
 - add social recovery

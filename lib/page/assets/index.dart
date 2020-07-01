@@ -73,25 +73,60 @@ class _AssetsState extends State<Assets> {
   }
 
   Future<void> _handleScan() async {
+    final Map dic = I18n.of(context).account;
     final data = await Navigator.pushNamed(
       context,
       ScanPage.route,
       arguments: 'tx',
     );
+    if (store.account.currentAccount.observation ?? false) {
+      showCupertinoDialog(
+        context: context,
+        builder: (_) {
+          return CupertinoAlertDialog(
+            title: Text(dic['uos.title']),
+            content: Text(dic['uos.acc.invalid']),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
     if (data != null) {
-      print('rawData detected');
-      print(data);
-      final String sender =
+      final Map sender =
           await webApi.account.parseQrCode(data.toString().trim());
-      if (sender != store.account.currentAddress) {
-        print('sender not match');
+      if (sender['signer'] != store.account.currentAddress) {
+        showCupertinoDialog(
+          context: context,
+          builder: (_) {
+            return CupertinoAlertDialog(
+              title: Text(dic['uos.title']),
+              content: sender['error'] != null
+                  ? Text(sender['error'])
+                  : sender['signer'] == null
+                      ? Text(dic['uos.qr.invalid'])
+                      : Text(dic['uos.acc.mismatch']),
+              actions: <Widget>[
+                CupertinoButton(
+                  child: Text(I18n.of(context).home['ok']),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            );
+          },
+        );
       } else {
         showCupertinoDialog(
           context: context,
           builder: (_) {
             return PasswordInputDialog(
               account: store.account.currentAccount,
-              title: Text('unlock to sign'),
+              title: Text(dic['uos.title']),
               onOk: (password) {
                 print('pass ok: $password');
                 _signAsync(password);
@@ -104,9 +139,25 @@ class _AssetsState extends State<Assets> {
   }
 
   Future<void> _signAsync(String password) async {
+    final Map dic = I18n.of(context).account;
     final Map signed = await webApi.account.signAsync(password);
     print('signed: $signed');
     if (signed['error'] != null) {
+      showCupertinoDialog(
+        context: context,
+        builder: (_) {
+          return CupertinoAlertDialog(
+            title: Text(dic['uos.title']),
+            content: Text(signed['error']),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        },
+      );
       return;
     }
     Navigator.of(context).pushNamed(

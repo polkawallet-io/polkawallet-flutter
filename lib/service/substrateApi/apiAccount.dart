@@ -267,10 +267,10 @@ class ApiAccount {
     return res;
   }
 
-  Future<String> parseQrCode(String data) async {
+  Future<Map> parseQrCode(String data) async {
     final res = await apiRoot.evalJavascript('account.parseQrCode("$data")');
     print('rawData: $data');
-    return res.toString();
+    return res;
   }
 
   Future<Map> signAsync(String password) async {

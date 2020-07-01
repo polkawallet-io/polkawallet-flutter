@@ -44,6 +44,14 @@ const Map<String, String> enAccount = {
   'observe.proxy.invalid': 'Invalid proxy account',
   'observe.invalid': 'Invalid',
   'list': 'Account Select',
+  'uos.title': 'Offline Signature',
+  'uos.acc.mismatch': 'Account mismatch',
+  'uos.acc.invalid': 'Account invalid',
+  'uos.signer': 'Signer',
+  'uos.push': 'Scan to publish',
+  'uos.canceled': 'Tx canceled',
+  'uos.scan': 'Scan signed and send',
+  'uos.qr.invalid': 'Invalid QR code',
 };
 
 const Map<String, String> zhAccount = {
@@ -85,4 +93,12 @@ const Map<String, String> zhAccount = {
   'observe.proxy.invalid': '代理账户不可用',
   'observe.invalid': '不可用',
   'list': '选择账户',
+  'uos.title': '离线签名',
+  'uos.acc.mismatch': '账户不匹配',
+  'uos.acc.invalid': '账户不可用',
+  'uos.signer': '签名账户',
+  'uos.push': '扫码发送交易',
+  'uos.canceled': '交易取消',
+  'uos.scan': '扫描签名结果并发送',
+  'uos.qr.invalid': '无效二维码',
 };

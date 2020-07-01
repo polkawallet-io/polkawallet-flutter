@@ -600,9 +600,11 @@ packages:
   qr_flutter:
     dependency: "direct main"
     description:
-      path: "../qr.flutter"
-      relative: true
-    source: path
+      path: "."
+      ref: master
+      resolved-ref: "8e482e2d54636f1825c59f43de393b7bebbf2ba4"
+      url: "https://github.com/polkawallet-io/qr.flutter.git"
+    source: git
     version: "3.2.1"
   quiver:
     dependency: transitive

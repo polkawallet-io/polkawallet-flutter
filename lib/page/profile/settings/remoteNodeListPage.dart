@@ -5,7 +5,6 @@ import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-// TODO: display ping speed
 class RemoteNodeListPage extends StatelessWidget {
   RemoteNodeListPage(this.store);
 

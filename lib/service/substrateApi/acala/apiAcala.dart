@@ -37,8 +37,9 @@ class ApiAcala {
           List<String>.from(store.settings.networkConst['currencyIds']);
       tokens.retainWhere((i) => i != symbol);
       String queries =
-          tokens.map((i) => 'acala.getTokens("$address", "$i")').join(",");
-      print(queries);
+          // TODO: for acala - TC4
+          // tokens.map((i) => 'acala.getTokens("$address", "$i")').join(",");
+          tokens.map((i) => 'acala.getTokens("$i", "$address")').join(",");
       var res = await apiRoot.evalJavascript('Promise.all([$queries])',
           allowRepeat: true);
       Map balances = {};

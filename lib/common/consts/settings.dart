@@ -48,26 +48,25 @@ List<EndpointData> networkEndpoints = [
     'text': 'Kusama (Polkadot Canary, hosted by Web3 Foundation)',
     'value': 'wss://cc3-5.kusama.network/',
   }),
-//  networkEndpointAcala,
+  networkEndpointAcala,
   EndpointData.fromJson(const {
     'info': 'acala-mandala',
     'ss58': 42,
     'text': 'Mandala TC3 Node 1 (Hosted by OnFinality)',
-    'value':
-        'wss://node-6680668387259867136.jm.onfinality.io/ws?apikey=a382f87e-cf1d-4d64-ad0d-8d0869f12bfb'
+    'value': 'wss://node-6661046769230852096.jm.onfinality.io/ws'
   }),
-//  EndpointData.fromJson(const {
-//    'info': 'acala-mandala',
-//    'ss58': 42,
-//    'text': 'Mandala TC3 Node 2 (Hosted by OnFinality)',
-//    'value': 'wss://node-6661046769218965504.rz.onfinality.io/ws'
-//  }),
-//  EndpointData.fromJson(const {
-//    'info': 'acala-mandala',
-//    'ss58': 42,
-//    'text': 'Acala Mandala (Hosted by Acala Network)',
-//    'value': 'wss://testnet-node-1.acala.laminar.one/ws',
-//  }),
+  EndpointData.fromJson(const {
+    'info': 'acala-mandala',
+    'ss58': 42,
+    'text': 'Mandala TC3 Node 2 (Hosted by OnFinality)',
+    'value': 'wss://node-6661046769218965504.rz.onfinality.io/ws'
+  }),
+  EndpointData.fromJson(const {
+    'info': 'acala-mandala',
+    'ss58': 42,
+    'text': 'Acala Mandala (Hosted by Acala Network)',
+    'value': 'wss://testnet-node-1.acala.laminar.one/ws',
+  }),
 ];
 
 const network_ss58_map = {
@@ -86,4 +85,4 @@ const String acala_stable_coin = 'AUSD';
 const String acala_stable_coin_view = 'aUSD';
 
 /// test app versions
-const String app_beta_version = '0.7.7-beta.4';
+const String app_beta_version = '0.8.0-beta.0';

@@ -177,7 +177,11 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     );
   }
 
-  Future<void> _onSubmit(BuildContext context, {String password}) async {
+  Future<void> _onSubmit(
+    BuildContext context, {
+    String password,
+    bool viaQr = false,
+  }) async {
     final Map<String, String> dic = I18n.of(context).home;
     final Map args = ModalRoute.of(context).settings.arguments;
 
@@ -201,12 +205,14 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     if (_proxyAccount != null) {
       txInfo['address'] = store.account.currentAddress;
       txInfo['proxy'] = _proxyAccount.pubKey;
+      txInfo['ss58'] = store.settings.endpoint.ss58;
     }
     print(txInfo);
     print(args['params']);
-    final Map res = await webApi.account.sendTx(
-        txInfo, args['params'], args['title'], dic['notify.submitted'],
-        rawParam: args['rawParam']);
+
+    final Map res = viaQr
+        ? await _sendTxViaQr(context, args)
+        : await _sendTx(context, args);
     if (res['hash'] == null) {
       _onTxError(context, res['error']);
     } else {
@@ -214,38 +220,31 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     }
   }
 
-  Future<void> _showTxQrCode(BuildContext context) async {
-    final Map args = ModalRoute.of(context).settings.arguments;
-    store.assets.setSubmitting(true);
+  Future<Map> _sendTx(BuildContext context, Map args) async {
+    return await webApi.account.sendTx(
+      args['txInfo'],
+      args['params'],
+      args['title'],
+      I18n.of(context).home['notify.submitted'],
+      rawParam: args['rawParam'],
+    );
+  }
 
-    Map txInfo = args['txInfo'];
-    txInfo['pubKey'] = store.account.currentAccount.pubKey;
-    if (_proxyAccount != null) {
-      txInfo['address'] = store.account.currentAddress;
-      txInfo['proxy'] = _proxyAccount.pubKey;
-    }
-    print(txInfo);
-    print(args['params']);
-
+  Future<Map> _sendTxViaQr(BuildContext context, Map args) async {
+    final Map dic = I18n.of(context).account;
     print('show qr');
     final signed = await Navigator.of(context)
         .pushNamed(QrSenderPage.route, arguments: args);
     if (signed == null) {
       store.assets.setSubmitting(false);
-      return;
+      return {'error': dic['uos.canceled']};
     }
-
-    final Map res = await webApi.account.addSignatureAndSend(
+    return await webApi.account.addSignatureAndSend(
       signed.toString(),
-      txInfo,
+      args['txInfo'],
       args['title'],
       I18n.of(context).home['notify.submitted'],
     );
-    if (res['hash'] == null) {
-      _onTxError(context, res['error']);
-    } else {
-      _onTxFinish(context, res);
-    }
   }
 
   @override
@@ -265,8 +264,10 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
     final bool isKusama =
         store.settings.endpoint.info == networkEndpointKusama.info;
-    final bool isAcala =
-        store.settings.endpoint.info == networkEndpointAcala.info;
+
+    // TODO: for acala - TC4
+    final bool isAcala = false;
+    // store.settings.endpoint.info == networkEndpointAcala.info;
 
     bool isUnsigned = args['txInfo']['isUnsigned'] ?? false;
     return Scaffold(
@@ -483,7 +484,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                             ? () => _onSubmit(context)
                             : (isObservation && _proxyAccount == null) ||
                                     isProxyObservation
-                                ? () => _showTxQrCode(context)
+                                ? () => _onSubmit(context, viaQr: true)
                                 : _fee['partialFee'] == null ||
                                         store.assets.submitting
                                     ? null

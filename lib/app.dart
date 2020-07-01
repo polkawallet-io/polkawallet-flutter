@@ -222,7 +222,7 @@ class _WalletAppState extends State<WalletApp> {
         ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
         ScanPage.route: (_) => ScanPage(),
         TxConfirmPage.route: (_) => TxConfirmPage(_appStore),
-        QrSignerPage.route: (_) => QrSignerPage(),
+        QrSignerPage.route: (_) => QrSignerPage(_appStore),
         QrSenderPage.route: (_) => QrSenderPage(),
         // assets
         AssetPage.route: (_) => AssetPage(_appStore),

@@ -1,11 +1,42 @@
 # polkawallet-flutter
 [![Build Status](https://travis-ci.com/polkawallet-io/polkawallet-flutter.svg?branch=master)](https://travis-ci.com/polkawallet-io/polkawallet-flutter)
 
-Polkawallet Flutter Implementation, https://polkawallet.io
+Polkawallet built with Flutter, https://polkawallet.io
 
 ![](https://github.com/jiangfuyao/polkawallet-flutter-images/raw/master/cover-eb14f464e002642772ffad6d4c9debd5.png)
 
-### How to compile
+### Introduction
+
+ [Polkawallet](http://polkawallet.io) provide one-stop management for cross-chain assets, convenient staking and governance operations, and the private key is self-owned. 
+
+![Polkawallet-overview](./polkawallet-overview.png)
+
+Polkawallet is aiming to provide a more convenient entrance of the polkadot network for all the users of Polkadot/Kusama/Substrate-based-blockchains.
+
+- Friendly UI.
+- Secure local accounts storage.
+- Intuitive Tokens management.
+- Simplified staking & governance operations.
+- Offline signature supported.
+- Available for both IOS and Android.
+
+### Features
+- [x] Account management for all Substrate-based-blockchains(i.e. Polkadot, Kusama, Acala...).
+- [x] Import account with Mnemonics, Raw Seed and Keystore. Encrypt type Sr/Ed25519 supported, HD Derivation supported.
+- [x] Social recovery.
+- [x] Token transfer/staking/governance supported in Kusama/Polkadot.
+- [x] DOT claim in Polkadot.
+- [x] Token transfer/loan/swap/liquid-DOT supported in Acala Network testnet.
+- [x] Basic account settings: changing name/password/address prefix/language/remote node.
+
+### Todos
+
+- [ ] Support all available operations of Council/Democracy module.
+- [ ] Treasury module of Kusama/Polkadot.
+- [ ] Login polkassembly with a wallet account.
+- [ ] Refactor the App to support any Substrate-based-blockchain to integrate as plugins.
+
+### Building
 
 #### Install Flutter 
 `polkawallet_flutter` is built with [Flutter](https://flutter.dev/), you need to have `Flutter` dev tools
@@ -30,55 +61,7 @@ While `main.js` was built in `lib/polkadot_js_service/` directory, you may build
 >substrate `sr25519` keyPair is generated within an `WASM` virtual
 >machine which is **not supported** by IOS simulators.
 
-### Project introduce
-
- [Polkawallet](http://polkawallet.io) provide Cross-chain asset one-stop management, convenient staking and governance, the private key is self-owned. 
-
-![](https://github.com/jiangfuyao/polkawallet-flutter-images/raw/master/Simulator%20Screen%20Shot%20-%20iPhone%2011%20Pro%20Max%20-%202020-03-09%20at%2018.05.11-iPhone%20X.png)
-
-In order to give users a more humane and more convenient experience, as the entrance of the polkadot network, the user is provided with more intuitive visual data and status change display to guarantee the user's right to know and network participation.
-
-
-- Users can add assets, support Relaychain and Parachain to transfer, receive, and view the transfer history and state. Have the visual asset change analysis chart, make it easier for users to analyze assets. Users are notified when they receive the asset and can view the transfer details data.
-
-  The private key is self-owned, and have the Gesture,Fingerprint, Facial recognition, Hot and cold wallet mechanism, users can set their own scheme. Our team is developing a new encryption scheme -- high - dimensional fractal encryption, will be used to safeguard the security of a user using the polkawallet.
-
-![](https://github.com/jiangfuyao/polkawallet-flutter-images/raw/master/Simulator%20Screen%20Shot%20-%20iPhone%208%20Plus%20-%202020-03-17%20at%2010.57.14-iPhone%207.png)
-
-- Polkawallet makes it easier for validators and nominal ators to make their contributions, by making the charts more intuitive and having a detailed history of each validators, for better analysis and research.
-
-![](https://github.com/jiangfuyao/polkawallet-flutter-images/raw/master/Simulator%20Screen%20Shot%20-%20iPhone%2011%20Pro%20-%202020-03-19%20at%2015.11.09-iPhone%20X.png)
-![](https://github.com/jiangfuyao/polkawallet-flutter-images/raw/master/Simulator%20Screen%20Shot%20-%20iPhone%208%20Plus%20-%202020-03-17%20at%2010.57.48-iPhone%207.png)
-
-- Polkawallet provides a more intuitive and convenient entry point for participating in governance. If there is a new referendum/proposals, the user is reminded and you can view the details. Users can governance directly from polkawallet and view the history governance records. So polkawallet also improves public Referenda engagement.
-
-  ![](https://github.com/jiangfuyao/polkawallet-flutter-images/raw/master/Simulator%20Screen%20Shot%20-%20iPhone%2011%20Pro%20Max%20-%202020-03-09%20at%2018.06.47-iPhone%20X.png)
-
-![](https://github.com/jiangfuyao/polkawallet-flutter-images/raw/master/Simulator%20Screen%20Shot%20-%20iPhone%208%20Plus%20-%202020-03-17%20at%2010.58.27-Pixel.png)
-
-
-- Available for all major mobile platforms. Currently Flutter is used as a cross-platform solution.
-
-### Let's see what this version can do
-- [x] We redeveloped Polkawallet with Flutter, which greatly improved the fluency.
-- [x] You can create Kusama Network account and use Sr25519 by default.
-- [x] Import account support Mnemonics, Raw Seed, Keystore.
-- [x] Import account support Sr/Ed25519, also supports HD Derivation.
-- [x] Basic balance display and transfer functions, transaction history query, Qr code interaction.
-- [x] Staking module basic account status information, including: Bonded, Unlocking, Reward, and more.
-- [x] Staking Operation Records.
-- [x] Staking account operation functions, including: Bond，Unbond，Reward Type change，Reward，payout reward, and more.
-- [x] Governance module displays information about the Council and can perform voting.
-- [x] Governance module, Democracy can view the referendum information, and can cast your vote in addition to the lock-up period.
-- [x] Some basic account settings, such as changing name, password. And can choose network nodes, address prefix, Language.
-
-### Next Plan
-
-- Support for the Acala Network account module.
-- Integrated Acala Network Honzon operating platform.
-- Support for other Parachain accounts and functional modules.
-
-### Questions
+### FAQ
 
 > Why use Flutter to develop?
 
