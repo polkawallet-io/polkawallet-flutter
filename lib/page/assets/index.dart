@@ -302,9 +302,12 @@ class _AssetsState extends State<Assets> {
             title: Row(
               children: [
                 GestureDetector(
-                  child: Image.asset(
-                    'assets/images/assets/qrcode_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png',
-                    width: 18,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4),
+                    child: Image.asset(
+                      'assets/images/assets/qrcode_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png',
+                      width: 18,
+                    ),
                   ),
                   onTap: () {
                     if (acc.address != '') {

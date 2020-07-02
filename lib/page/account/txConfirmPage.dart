@@ -205,7 +205,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     if (_proxyAccount != null) {
       txInfo['address'] = store.account.currentAddress;
       txInfo['proxy'] = _proxyAccount.pubKey;
-      txInfo['ss58'] = store.settings.endpoint.ss58;
+      txInfo['ss58'] = store.settings.endpoint.ss58.toString();
     }
     print(txInfo);
     print(args['params']);
