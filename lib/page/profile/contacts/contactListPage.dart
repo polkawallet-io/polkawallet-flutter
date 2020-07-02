@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/accountSelectList.dart';
 import 'package:polka_wallet/page/profile/contacts/contactPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
@@ -35,9 +36,13 @@ class ContactListPage extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: AccountSelectList(
-          store,
-          args ?? store.settings.contactListAll.toList(),
+        child: Observer(
+          builder: (_) {
+            return AccountSelectList(
+              store,
+              args ?? store.settings.contactListAll.toList(),
+            );
+          },
         ),
       ),
     );

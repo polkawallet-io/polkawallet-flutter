@@ -64,16 +64,37 @@ class ApiAccount {
     return res;
   }
 
-//  Future<Map> getObservationAddressPubKey(String address) async {
-//    String ss58 = jsonEncode(network_ss58_map.values.toSet().toList());
-//    Map res = await apiRoot.evalJavascript('account.decodeAddress(["$address"])'
-//        '.then(res => account.encodeAddress(Object.keys(res), $ss58))');
-//    if (res != null) {
-//      Map<String, Map> addressMap = Map<String, Map>.from(res);
-//      store.account.setPubKeyAddressMap(addressMap);
-//    }
-//    return res;
-//  }
+  Future<void> changeCurrentAccount({
+    String pubKey,
+    bool fetchData = false,
+  }) async {
+    String current = pubKey;
+    if (pubKey == null) {
+      if (store.account.accountListAll.length > 0) {
+        current = store.account.accountListAll[0].pubKey;
+      } else {
+        current = '';
+      }
+    }
+    store.account.setCurrentAccount(current);
+
+    // refresh balance
+    store.assets.clearTxs();
+    store.assets.loadAccountCache();
+    if (fetchData) {
+      webApi.assets.fetchBalance();
+    }
+    if (store.settings.endpoint.info == networkEndpointAcala.info) {
+      store.acala.loadCache();
+    } else {
+      // refresh user's staking info if network is kusama or polkadot
+      store.staking.clearState();
+      store.staking.loadAccountCache();
+      if (fetchData) {
+        webApi.staking.fetchAccountStaking();
+      }
+    }
+  }
 
   Future<void> fetchAccountsBonded(List<String> pubKeys) async {
     if (pubKeys.length > 0) {
@@ -228,8 +249,8 @@ class ApiAccount {
     ls.asMap().forEach((k, v) {
       if (v != null) {
         v['address'] = addresses[k];
-        res.add(v);
       }
+      res.add(v);
     });
 
     return res;

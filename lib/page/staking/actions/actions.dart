@@ -67,11 +67,7 @@ class _StakingActions extends State<StakingActions>
   }
 
   void _changeCurrentAccount(AccountData acc) {
-    store.account.setCurrentAccount(acc.pubKey);
-    // refresh user's assets info
-    store.assets.loadAccountCache();
-    // refresh user's staking info
-    store.staking.loadAccountCache();
+    webApi.account.changeCurrentAccount(pubKey: acc.pubKey);
     globalBondingRefreshKey.currentState.show();
   }
 

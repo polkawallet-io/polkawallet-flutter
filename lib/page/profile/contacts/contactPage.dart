@@ -92,6 +92,12 @@ class _Contact extends State<ContactPage> {
       if (_isObservation) {
         webApi.account.encodeAddress([pubKey]);
         webApi.account.getPubKeyIcons([pubKey]);
+      } else {
+        // if this address was used as observation and current account,
+        // we need to change current account
+        if (pubKey == store.account.currentAccountPubKey) {
+          webApi.account.changeCurrentAccount(fetchData: true);
+        }
       }
       webApi.account.getAddressIcons([addr]);
       Navigator.of(context).pop();

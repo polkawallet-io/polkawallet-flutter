@@ -206,8 +206,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
       );
     } else {
       await widget.store.settings.addContact(acc);
-      widget.store.account.setCurrentAccount(pubKey);
-      _loadAccountCache();
+
+      webApi.account.changeCurrentAccount(pubKey: pubKey);
       webApi.assets.fetchBalance();
       webApi.account.encodeAddress([pubKey]);
       webApi.account.getPubKeyIcons([pubKey]);
@@ -216,20 +216,6 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
       });
       // go to home page
       Navigator.popUntil(context, ModalRoute.withName('/'));
-    }
-  }
-
-  void _loadAccountCache() {
-    // refresh balance
-    widget.store.assets.clearTxs();
-    widget.store.assets.loadAccountCache();
-
-    if (widget.store.settings.endpoint.info == networkEndpointAcala.info) {
-      widget.store.acala.loadCache();
-    } else {
-      // refresh user's staking info if network is kusama or polkadot
-      widget.store.staking.clearState();
-      widget.store.staking.loadAccountCache();
     }
   }
 

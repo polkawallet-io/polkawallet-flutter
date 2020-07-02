@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/page/profile/contacts/contactPage.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
-import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -12,7 +13,7 @@ class ContactsPage extends StatelessWidget {
   ContactsPage(this.store);
 
   static final String route = '/profile/contacts';
-  final SettingsStore store;
+  final AppStore store;
 
   void _showActions(BuildContext pageContext, AccountData i) {
     showCupertinoModalPopup(
@@ -65,7 +66,10 @@ class ContactsPage extends StatelessWidget {
               child: Text(I18n.of(context).home['ok']),
               onPressed: () {
                 Navigator.of(context).pop();
-                store.removeContact(i);
+                store.settings.removeContact(i);
+                if (i.pubKey == store.account.currentAccountPubKey) {
+                  webApi.account.changeCurrentAccount(fetchData: true);
+                }
               },
             ),
           ],
@@ -94,7 +98,7 @@ class ContactsPage extends StatelessWidget {
             ),
             body: SafeArea(
               child: ListView(
-                children: store.contactList.map((i) {
+                children: store.settings.contactList.map((i) {
                   return ListTile(
                     leading: AddressIcon(i.address),
                     title: Text(Fmt.accountName(context, i)),

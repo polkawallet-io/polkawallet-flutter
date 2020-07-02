@@ -1,6 +1,9 @@
 class AccountRecoveryInfo extends _AccountRecoveryInfo {
   static AccountRecoveryInfo fromJson(Map<String, dynamic> json) {
     AccountRecoveryInfo info = AccountRecoveryInfo();
+    if (json == null) {
+      return info;
+    }
     info.address = json['address'];
     info.delayPeriod = json['delayPeriod'];
     info.threshold = json['threshold'];

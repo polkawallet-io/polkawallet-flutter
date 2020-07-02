@@ -1,5 +1,6 @@
 # 0.8.0
 - Offline signature support
+- fix bugs of social recovery
 
 # 0.7.7
 - add social recovery

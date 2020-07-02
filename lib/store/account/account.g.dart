@@ -6,7 +6,7 @@ part of 'account.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AccountStore on _AccountStore, Store {
   Computed<AccountData> _$currentAccountComputed;
@@ -16,22 +16,20 @@ mixin _$AccountStore on _AccountStore, Store {
           Computed<AccountData>(() => super.currentAccount,
               name: '_AccountStore.currentAccount'))
       .value;
-  Computed<ObservableList<AccountData>> _$optionalAccountsComputed;
+  Computed<List<AccountData>> _$optionalAccountsComputed;
 
   @override
-  ObservableList<AccountData> get optionalAccounts =>
-      (_$optionalAccountsComputed ??= Computed<ObservableList<AccountData>>(
-              () => super.optionalAccounts,
+  List<AccountData> get optionalAccounts => (_$optionalAccountsComputed ??=
+          Computed<List<AccountData>>(() => super.optionalAccounts,
               name: '_AccountStore.optionalAccounts'))
-          .value;
-  Computed<ObservableList<AccountData>> _$accountListAllComputed;
+      .value;
+  Computed<List<AccountData>> _$accountListAllComputed;
 
   @override
-  ObservableList<AccountData> get accountListAll =>
-      (_$accountListAllComputed ??= Computed<ObservableList<AccountData>>(
-              () => super.accountListAll,
+  List<AccountData> get accountListAll => (_$accountListAllComputed ??=
+          Computed<List<AccountData>>(() => super.accountListAll,
               name: '_AccountStore.accountListAll'))
-          .value;
+      .value;
   Computed<String> _$currentAddressComputed;
 
   @override

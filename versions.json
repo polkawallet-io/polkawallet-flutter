@@ -1,34 +1,34 @@
 {
   "android": {
-    "version": "0.7.7",
-    "version-beta": "0.7.7-beta.3",
-    "url": "https://apps.acala.network/polkawallet/polkawallet-v0.7.7-beta.3.apk",
+    "version": "0.8.0",
+    "version-beta": "0.8.0-beta.1",
+    "url": "https://apps.acala.network/polkawallet/polkawallet-v0.8.0-beta.1.apk",
     "info": {
       "en": [
-        "add social recovery",
-        "add waiting validators",
-        "add recommended validators"
+        "You need to UNINSTALL the App to update to new version, BACKUP your mnemonics before that.",
+        "add offline signature",
+        "fix bugs of social recovery"
       ],
       "zh": [
-        "Kusama 新增链上社交恢复模块",
-        "新增候选验证人列表",
-        "新增推荐验证人列表"
+        "该版本与旧版本不兼容，需要先卸载旧版本，请保存好助记词。",
+        "新增离线签名功能",
+        "修复社交恢复的bug"
       ]
     }
   },
   "ios": {
-    "version": "0.7.7",
-    "version-beta": "0.7.7-beta.3",
+    "version": "0.8.0",
+    "version-beta": "0.8.0-beta.1",
     "info": {
       "en": [
-        "add social recovery",
-        "add waiting validators",
-        "add recommended validators"
+        "You need to UNINSTALL the App to update to new version, BACKUP your mnemonics before that.",
+        "add offline signature",
+        "fix bugs of social recovery"
       ],
       "zh": [
-        "Kusama 新增链上社交恢复模块",
-        "新增候选验证人列表",
-        "新增推荐验证人列表"
+        "该版本与旧版本不兼容，需要先卸载旧版本，请保存好助记词。",
+        "新增离线签名功能",
+        "修复社交恢复的bug"
       ]
     }
   }

@@ -79,15 +79,16 @@ abstract class _AccountStore with Store {
   }
 
   @computed
-  ObservableList<AccountData> get optionalAccounts {
-    return ObservableList.of(
-        accountListAll.where((i) => i.pubKey != currentAccountPubKey));
+  List<AccountData> get optionalAccounts {
+    return accountListAll
+        .where((i) => i.pubKey != currentAccountPubKey)
+        .toList();
   }
 
   /// accountList with observations
   @computed
-  ObservableList<AccountData> get accountListAll {
-    ObservableList<AccountData> accList = ObservableList.of(accountList);
+  List<AccountData> get accountListAll {
+    List<AccountData> accList = accountList.toList();
     List<AccountData> contactList = rootStore.settings.contactList.toList();
     contactList.retainWhere((i) => i.observation ?? false);
     accList.addAll(contactList);

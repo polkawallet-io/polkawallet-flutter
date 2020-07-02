@@ -41,7 +41,12 @@ class _RecoverySettingPage extends State<RecoverySettingPage> {
 
   Future<void> _fetchData() async {
     /// fetch recovery config
-    webApi.account.queryRecoverable(widget.store.account.currentAddress);
+    final config = await webApi.account
+        .queryRecoverable(widget.store.account.currentAddress);
+    if (config == null) {
+      print('no recoverable config');
+      return;
+    }
     webApi.assets.fetchBalance();
 
     /// fetch active recoveries from txs
