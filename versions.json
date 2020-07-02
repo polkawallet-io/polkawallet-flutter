@@ -1,7 +1,7 @@
 {
   "android": {
-    "version": "0.8.0",
-    "version-beta": "0.8.0-beta.1",
+    "version": "0.8.1",
+    "version-beta": "0.8.1-beta.1",
     "url": "https://apps.acala.network/polkawallet/polkawallet-v0.8.0-beta.1.apk",
     "info": {
       "en": [
@@ -17,8 +17,8 @@
     }
   },
   "ios": {
-    "version": "0.8.0",
-    "version-beta": "0.8.0-beta.1",
+    "version": "0.8.1",
+    "version-beta": "0.8.1-beta.1",
     "info": {
       "en": [
         "You need to UNINSTALL the App to update to new version, BACKUP your mnemonics before that.",
