@@ -1,5 +1,7 @@
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/service/phalaAirdrop.dart';
+import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -9,7 +11,8 @@ class ApiStaking {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<void> fetchAccountStaking(String pubKey) async {
+  Future<void> fetchAccountStaking() async {
+    String pubKey = store.account.currentAccountPubKey;
     if (pubKey != null && pubKey.isNotEmpty) {
       String address = store.account.currentAddress;
       Map ledger = await apiRoot
@@ -80,7 +83,7 @@ class ApiStaking {
 
   Future<Map> fetchStakingOverview() async {
     List res = await Future.wait([
-      apiRoot.evalJavascript('api.derive.staking.overview()'),
+      apiRoot.evalJavascript('staking.fetchStakingOverview()'),
       apiRoot.evalJavascript('api.derive.staking.currentPoints()'),
     ]);
     if (res[0] == null || res[1] == null) return null;
@@ -89,8 +92,13 @@ class ApiStaking {
     store.staking.setOverview(overview);
 
     fetchElectedInfo();
+    // phala airdrop for kusama
+    if (store.settings.endpoint.info == networkEndpointKusama.info) {
+      fetchPhalaAirdropList();
+    }
 
     List validatorAddressList = List.of(overview['validators']);
+    validatorAddressList.addAll(overview['waiting']);
     await apiRoot.account.fetchAccountsIndex(validatorAddressList);
     apiRoot.account.getAddressIcons(validatorAddressList);
     return overview;
@@ -99,8 +107,12 @@ class ApiStaking {
   Future<Map> updateStaking(int page) async {
     store.staking.setTxsLoading(true);
 
-    Map res = await PolkaScanApi.fetchTxs(store.account.currentAddress,
-        page: page, module: PolkaScanApi.module_staking);
+    Map res = await SubScanApi.fetchTxs(
+      SubScanApi.module_staking,
+      page: page,
+      sender: store.account.currentAddress,
+      network: store.settings.networkName.toLowerCase(),
+    );
 
     if (page == 0) {
       store.staking.clearTxs();
@@ -135,5 +147,16 @@ class ApiStaking {
       store.staking.setRewardsChartData(accountId, chartData);
     }
     return data;
+  }
+
+  Future<List> fetchPhalaAirdropList() async {
+    final today = DateTime.now();
+    // airdrop till 20200816
+    if (today.month > 6 && today.day > 15) {
+      return [];
+    }
+    List res = await PhalaAirdropApi.fetchWhiteList();
+    store.staking.setPhalaAirdropWhiteList(res);
+    return res;
   }
 }

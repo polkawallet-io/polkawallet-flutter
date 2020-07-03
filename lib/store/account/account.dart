@@ -1,11 +1,11 @@
 import 'package:flutter_aes_ecb_pkcs5/flutter_aes_ecb_pkcs5.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
+import 'package:polka_wallet/store/account/types/accountBondedInfo.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
+import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
-
-import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'account.g.dart';
 
@@ -23,11 +23,8 @@ abstract class _AccountStore with Store {
   final AppStore rootStore;
 
   Map<String, dynamic> _formatMetaData(Map<String, dynamic> acc) {
-    String name = acc['meta']['name'];
-    if (name == null) {
-      name = newAccount.name;
-    }
-    acc['name'] = name;
+    acc['name'] =
+        newAccount.name.isEmpty ? acc['meta']['name'] : newAccount.name;
     if (acc['meta']['whenCreated'] == null) {
       acc['meta']['whenCreated'] = DateTime.now().millisecondsSinceEpoch;
     }
@@ -45,7 +42,7 @@ abstract class _AccountStore with Store {
   AccountCreate newAccount = AccountCreate();
 
   @observable
-  AccountData currentAccount = AccountData();
+  String currentAccountPubKey = '';
 
   @observable
   ObservableList<AccountData> accountList = ObservableList<AccountData>();
@@ -69,16 +66,33 @@ abstract class _AccountStore with Store {
   ObservableMap<String, String> addressIconsMap =
       ObservableMap<String, String>();
 
+  @observable
+  AccountRecoveryInfo recoveryInfo = AccountRecoveryInfo();
+
   @computed
-  ObservableList<AccountData> get optionalAccounts {
-    int ss58 = rootStore.settings.customSS58Format['value'];
-    if (rootStore.settings.customSS58Format['info'] ==
-        default_ss58_prefix['info']) {
-      ss58 = rootStore.settings.endpoint.ss58;
-      print(ss58);
+  AccountData get currentAccount {
+    int i = accountListAll.indexWhere((i) => i.pubKey == currentAccountPubKey);
+    if (i < 0) {
+      return accountListAll[0] ?? AccountData();
     }
-    return ObservableList.of(accountList.where((i) =>
-        (pubKeyAddressMap[ss58][i.pubKey] ?? i.address) != currentAddress));
+    return accountListAll[i];
+  }
+
+  @computed
+  List<AccountData> get optionalAccounts {
+    return accountListAll
+        .where((i) => i.pubKey != currentAccountPubKey)
+        .toList();
+  }
+
+  /// accountList with observations
+  @computed
+  List<AccountData> get accountListAll {
+    List<AccountData> accList = accountList.toList();
+    List<AccountData> contactList = rootStore.settings.contactList.toList();
+    contactList.retainWhere((i) => i.observation ?? false);
+    accList.addAll(contactList);
+    return accList;
   }
 
   @computed
@@ -91,8 +105,7 @@ abstract class _AccountStore with Store {
 //      print(ss58);
     }
     return pubKeyAddressMap[ss58] != null
-        ? pubKeyAddressMap[ss58][currentAccount.pubKey] ??
-            currentAccount.address
+        ? pubKeyAddressMap[ss58][currentAccountPubKey] ?? currentAccount.address
         : currentAccount.address;
   }
 
@@ -113,23 +126,23 @@ abstract class _AccountStore with Store {
   }
 
   @action
-  void resetNewAccount(String name, String password) {
+  void resetNewAccount() {
     newAccount = AccountCreate();
   }
 
   @action
-  void setCurrentAccount(AccountData acc) {
-    currentAccount = acc;
+  void setCurrentAccount(String pubKey) {
+    currentAccountPubKey = pubKey;
 
-    LocalStorage.setCurrentAccount(acc.pubKey);
+    rootStore.localStorage.setCurrentAccount(pubKey);
   }
 
   @action
-  void updateAccountName(String name) {
+  Future<void> updateAccountName(String name) async {
     Map<String, dynamic> acc = AccountData.toJson(currentAccount);
     acc['meta']['name'] = name;
 
-    updateAccount(acc);
+    await updateAccount(acc);
   }
 
   @action
@@ -137,8 +150,8 @@ abstract class _AccountStore with Store {
     acc = _formatMetaData(acc);
 
     AccountData accNew = AccountData.fromJson(acc);
-    await LocalStorage.removeAccount(accNew.pubKey);
-    await LocalStorage.addAccount(acc);
+    await rootStore.localStorage.removeAccount(accNew.pubKey);
+    await rootStore.localStorage.addAccount(acc);
 
     await loadAccount();
   }
@@ -163,11 +176,11 @@ abstract class _AccountStore with Store {
 
     int index = accountList.indexWhere((i) => i.pubKey == pubKey);
     if (index > -1) {
-      await LocalStorage.removeAccount(pubKey);
+      await rootStore.localStorage.removeAccount(pubKey);
       print('removed acc: $pubKey');
     }
-    await LocalStorage.addAccount(acc);
-    await LocalStorage.setCurrentAccount(pubKey);
+    await rootStore.localStorage.addAccount(acc);
+    await rootStore.localStorage.setCurrentAccount(pubKey);
 
     await loadAccount();
 
@@ -177,37 +190,33 @@ abstract class _AccountStore with Store {
 
   @action
   Future<void> removeAccount(AccountData acc) async {
-    await LocalStorage.removeAccount(acc.pubKey);
+    await rootStore.localStorage.removeAccount(acc.pubKey);
 
     // remove encrypted seed after removing account
     deleteSeed(AccountStore.seedTypeMnemonic, acc.pubKey);
     deleteSeed(AccountStore.seedTypeRawSeed, acc.pubKey);
 
     // set new currentAccount after currentAccount was removed
-    List<Map<String, dynamic>> accounts = await LocalStorage.getAccountList();
+    List<Map<String, dynamic>> accounts =
+        await rootStore.localStorage.getAccountList();
     if (accounts.length > 0) {
-      await LocalStorage.setCurrentAccount(accounts[0]['pubKey']);
+      currentAccountPubKey = accounts[0]['pubKey'];
     } else {
-      await LocalStorage.setCurrentAccount('');
+      currentAccountPubKey = '';
     }
+    await rootStore.localStorage.setCurrentAccount(currentAccountPubKey);
 
     await loadAccount();
   }
 
   @action
   Future<void> loadAccount() async {
-    List<Map<String, dynamic>> accList = await LocalStorage.getAccountList();
+    List<Map<String, dynamic>> accList =
+        await rootStore.localStorage.getAccountList();
     accountList =
         ObservableList.of(accList.map((i) => AccountData.fromJson(i)));
 
-    if (accountList.length > 0) {
-      String pubKey = await LocalStorage.getCurrentAccount();
-      int accIndex = accList.indexWhere((i) => i['pubKey'] == pubKey);
-      if (accIndex >= 0) {
-        Map<String, dynamic> acc = accList[accIndex];
-        currentAccount = AccountData.fromJson(acc);
-      }
-    }
+    currentAccountPubKey = await rootStore.localStorage.getCurrentAccount();
     loading = false;
   }
 
@@ -223,15 +232,15 @@ abstract class _AccountStore with Store {
       String pubKey, String seed, String seedType, String password) async {
     String key = Fmt.passwordToEncryptKey(password);
     String encrypted = await FlutterAesEcbPkcs5.encryptString(seed, key);
-    Map stored = await LocalStorage.getSeeds(seedType);
+    Map stored = await rootStore.localStorage.getSeeds(seedType);
     stored[pubKey] = encrypted;
-    LocalStorage.setSeeds(seedType, stored);
+    rootStore.localStorage.setSeeds(seedType, stored);
   }
 
   @action
   Future<String> decryptSeed(
       String pubKey, String seedType, String password) async {
-    Map stored = await LocalStorage.getSeeds(seedType);
+    Map stored = await rootStore.localStorage.getSeeds(seedType);
     String encrypted = stored[pubKey];
     if (encrypted == null) {
       return null;
@@ -242,7 +251,7 @@ abstract class _AccountStore with Store {
 
   @action
   Future<bool> checkSeedExist(String seedType, String pubKey) async {
-    Map stored = await LocalStorage.getSeeds(seedType);
+    Map stored = await rootStore.localStorage.getSeeds(seedType);
     String encrypted = stored[pubKey];
     return encrypted != null;
   }
@@ -251,9 +260,9 @@ abstract class _AccountStore with Store {
   Future<void> updateSeed(
       String pubKey, String passwordOld, String passwordNew) async {
     Map storedMnemonics =
-        await LocalStorage.getSeeds(AccountStore.seedTypeMnemonic);
+        await rootStore.localStorage.getSeeds(AccountStore.seedTypeMnemonic);
     Map storedRawSeeds =
-        await LocalStorage.getSeeds(AccountStore.seedTypeRawSeed);
+        await rootStore.localStorage.getSeeds(AccountStore.seedTypeRawSeed);
     String encryptedSeed = '';
     String seedType = '';
     if (storedMnemonics[pubKey] != null) {
@@ -273,10 +282,10 @@ abstract class _AccountStore with Store {
 
   @action
   Future<void> deleteSeed(String seedType, String pubKey) async {
-    Map stored = await LocalStorage.getSeeds(seedType);
+    Map stored = await rootStore.localStorage.getSeeds(seedType);
     if (stored[pubKey] != null) {
       stored.remove(pubKey);
-      LocalStorage.setSeeds(seedType, stored);
+      rootStore.localStorage.setSeeds(seedType, stored);
     }
   }
 
@@ -290,7 +299,6 @@ abstract class _AccountStore with Store {
       Map.of(data[ss58]).forEach((k, v) {
         addresses[k] = v;
       });
-      print(addresses);
       // update state
       pubKeyAddressMap[int.parse(ss58)] = addresses;
     });
@@ -316,6 +324,13 @@ abstract class _AccountStore with Store {
       accountIndexMap[i['accountId']] = i;
     });
   }
+
+  @action
+  void setAccountRecoveryInfo(Map json) {
+    recoveryInfo = json != null
+        ? AccountRecoveryInfo.fromJson(json)
+        : AccountRecoveryInfo();
+  }
 }
 
 class AccountCreate extends _AccountCreate with _$AccountCreate {}
@@ -329,44 +344,4 @@ abstract class _AccountCreate with Store {
 
   @observable
   String key = '';
-}
-
-@JsonSerializable()
-class AccountData extends _AccountData with _$AccountData {
-  static AccountData fromJson(Map<String, dynamic> json) =>
-      _$AccountDataFromJson(json);
-  static Map<String, dynamic> toJson(AccountData acc) =>
-      _$AccountDataToJson(acc);
-}
-
-abstract class _AccountData with Store {
-  @observable
-  String name = '';
-
-  @observable
-  String address = '';
-
-  @observable
-  String encoded = '';
-
-  @observable
-  String pubKey = '';
-
-  @observable
-  Map<String, dynamic> encoding = Map<String, dynamic>();
-
-  @observable
-  Map<String, dynamic> meta = Map<String, dynamic>();
-
-  @observable
-  String memo = '';
-}
-
-class AccountBondedInfo {
-  AccountBondedInfo(this.pubKey, this.controllerId, this.stashId);
-  final String pubKey;
-  // controllerId != null, means the account is a stash
-  final String controllerId;
-  // stashId != null, means the account is a controller
-  final String stashId;
 }

@@ -16,9 +16,9 @@ const Map<String, String> enGov = {
   'vote.candidate': 'Vote for Candidate',
   'vote.proposal': 'Vote on Proposal',
   'vote.change.up':
-      'The amount this total can be reduced by \nto change the referendum outcome. \nThis assumes changes to the convictions of \nthe existing votes, with no additional turnout.',
+      '\nThe amount this total can be reduced by \nto change the referendum outcome. \nThis assumes changes to the convictions of \nthe existing votes, with no additional turnout.\n',
   'vote.change.down':
-      'The amount this total should be increased \nby to change the referendum outcome. \nThis assumes additional turnout with \nnew votes at 1x conviction.',
+      '\nThe amount this total should be increased \nby to change the referendum outcome. \nThis assumes additional turnout with \nnew votes at 1x conviction.\n',
   'referenda': 'Referenda',
   'proposal': 'Proposal',
   'remain': 'Remaining',

@@ -1,20 +1,19 @@
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking/types/txData.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'staking.g.dart';
 
 class StakingStore extends _StakingStore with _$StakingStore {
-  StakingStore(AccountStore store) : super(store);
+  StakingStore(AppStore store) : super(store);
 }
 
 abstract class _StakingStore with Store {
-  _StakingStore(this.account);
+  _StakingStore(this.rootStore);
 
-  final AccountStore account;
+  final AppStore rootStore;
 
   final String localStorageOverviewKey = 'staking_overview';
   final String localStorageValidatorsKey = 'validators';
@@ -22,6 +21,11 @@ abstract class _StakingStore with Store {
   final String cacheAccountStakingKey = 'account_staking';
   final String cacheStakingTxsKey = 'staking_txs';
   final String cacheTimeKey = 'staking_cache_time';
+
+  String _getCacheKey(String key) {
+    return '${rootStore.settings.endpoint.info}_$key';
+  }
+
   @observable
   int cacheTxsTimestamp = 0;
 
@@ -35,11 +39,7 @@ abstract class _StakingStore with Store {
   int nominatorCount = 0;
 
   @observable
-  ObservableList<ValidatorData> validatorsInfo =
-      ObservableList<ValidatorData>();
-
-  @observable
-  ObservableList<ValidatorData> nextUpsInfo = ObservableList<ValidatorData>();
+  List<ValidatorData> validatorsInfo = List<ValidatorData>();
 
   @observable
   ObservableMap<String, dynamic> ledger = ObservableMap<String, dynamic>();
@@ -61,14 +61,58 @@ abstract class _StakingStore with Store {
   ObservableMap<String, dynamic> stakesChartDataCache =
       ObservableMap<String, dynamic>();
 
+  @observable
+  Map phalaAirdropWhiteList = {};
+
+  @observable
+  Map recommendedValidators = {};
+
   @computed
-  ObservableList<ValidatorData> get nominatingList {
-    return ObservableList.of(validatorsInfo.where((i) {
-      String address = account.currentAddress;
+  List<ValidatorData> get nextUpsInfo {
+    if (overview['waiting'] != null) {
+      List<ValidatorData> list = List.of(overview['waiting']).map((i) {
+        ValidatorData validator = ValidatorData();
+        validator.accountId = i;
+        return validator;
+      }).toList();
+      return list;
+    }
+    return [];
+  }
+
+  @computed
+  List<ValidatorData> get validatorsAll {
+    List<ValidatorData> res = validatorsInfo.toList();
+    res.addAll(nextUpsInfo);
+    return res;
+  }
+
+  @computed
+  List<ValidatorData> get activeNominatingList {
+    return List.of(validatorsInfo.where((i) {
+      String address = rootStore.account.currentAddress;
       return i.nominators
               .indexWhere((nominator) => nominator['who'] == address) >=
           0;
     }));
+  }
+
+  @computed
+  List<ValidatorData> get nominatingList {
+    List nominators = ledger['nominators'];
+    if (nominators == null) {
+      return [];
+    }
+    return List.of(
+        validatorsInfo.where((i) => nominators.indexOf(i.accountId) >= 0));
+  }
+
+  @computed
+  Map<String, List> get nominationsAll {
+    if (overview['nominators'] == null) {
+      return {};
+    }
+    return Map<String, List>.from(overview['nominators']);
   }
 
   @computed
@@ -95,6 +139,15 @@ abstract class _StakingStore with Store {
     return Fmt.balanceInt(ledger['rewards']['available'].toString());
   }
 
+  @computed
+  List<String> get recommendedValidatorList {
+    if (recommendedValidators[rootStore.settings.endpoint.info] == null) {
+      return [];
+    }
+    return List<String>.from(
+        recommendedValidators[rootStore.settings.endpoint.info]);
+  }
+
   @action
   void setValidatorsInfo(Map<String, dynamic> data, {bool shouldCache = true}) {
     BigInt totalStaked = BigInt.zero;
@@ -111,25 +164,15 @@ abstract class _StakingStore with Store {
       ls.add(data);
     });
     ls.sort((a, b) => a.total > b.total ? -1 : 1);
-    validatorsInfo = ObservableList.of(ls);
+    validatorsInfo = ls;
     staked = totalStaked;
     nominatorCount = nominators.keys.length;
 
     // cache data
     if (shouldCache) {
-      LocalStorage.setKV(localStorageValidatorsKey, data);
+      rootStore.localStorage
+          .setObject(_getCacheKey(localStorageValidatorsKey), data);
     }
-  }
-
-  @action
-  void setNextUpsInfo(list) {
-    List<ValidatorData> ls = List<ValidatorData>();
-    list.forEach((i) {
-      ValidatorData data = ValidatorData.fromJson(i);
-      ls.add(data);
-    });
-    ls.sort((a, b) => a.total > b.total ? -1 : 1);
-    nextUpsInfo = ObservableList.of(ls);
   }
 
   @action
@@ -143,11 +186,12 @@ abstract class _StakingStore with Store {
         validator.accountId = i;
         return validator;
       }).toList();
-      validatorsInfo = ObservableList.of(list);
+      validatorsInfo = list;
     }
 
     if (shouldCache) {
-      LocalStorage.setKV(localStorageOverviewKey, data);
+      rootStore.localStorage
+          .setObject(_getCacheKey(localStorageOverviewKey), data);
     }
   }
 
@@ -158,7 +202,7 @@ abstract class _StakingStore with Store {
     bool shouldCache = true,
     bool reset = false,
   }) {
-    if (account.currentAccount.pubKey != pubKey) return;
+    if (rootStore.account.currentAccount.pubKey != pubKey) return;
 
     if (reset) {
       ledger = ObservableMap.of(data);
@@ -171,8 +215,11 @@ abstract class _StakingStore with Store {
       ledger.keys.forEach((key) {
         cache[key] = ledger[key];
       });
-      LocalStorage.setAccountCache(
-          account.currentAccount.pubKey, cacheAccountStakingKey, cache);
+      rootStore.localStorage.setAccountCache(
+        rootStore.account.currentAccount.pubKey,
+        _getCacheKey(cacheAccountStakingKey),
+        cache,
+      );
     }
   }
 
@@ -193,17 +240,17 @@ abstract class _StakingStore with Store {
     if (res['extrinsics'] == null) return;
     List<TxData> ls =
         List.of(res['extrinsics']).map((i) => TxData.fromJson(i)).toList();
-    print(ls.length);
 
     txs.addAll(ls);
 
     if (shouldCache) {
-      LocalStorage.setAccountCache(
-          account.currentAccount.pubKey, cacheStakingTxsKey, res);
+      String pubKey = rootStore.account.currentAccount.pubKey;
+      rootStore.localStorage
+          .setAccountCache(pubKey, _getCacheKey(cacheStakingTxsKey), res);
 
       cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
-      LocalStorage.setAccountCache(
-          account.currentAccount.pubKey, cacheTimeKey, cacheTxsTimestamp);
+      rootStore.localStorage.setAccountCache(
+          pubKey, _getCacheKey(cacheTimeKey), cacheTxsTimestamp);
     }
   }
 
@@ -211,6 +258,7 @@ abstract class _StakingStore with Store {
   void clearState() {
     txs.clear();
     ledger = ObservableMap<String, dynamic>();
+    overview = ObservableMap<String, dynamic>();
   }
 
   @action
@@ -226,18 +274,21 @@ abstract class _StakingStore with Store {
   @action
   Future<void> loadAccountCache() async {
     // return if currentAccount not exist
-    String pubKey = account.currentAccount.pubKey;
-    if (pubKey == null) {
+    String pubKey = rootStore.account.currentAccountPubKey;
+    if (pubKey == null || pubKey.isEmpty) {
       return;
     }
 
     List cache = await Future.wait([
-      LocalStorage.getAccountCache(pubKey, cacheAccountStakingKey),
-      LocalStorage.getAccountCache(pubKey, cacheStakingTxsKey),
-      LocalStorage.getAccountCache(pubKey, cacheTimeKey),
+      rootStore.localStorage
+          .getAccountCache(pubKey, _getCacheKey(cacheAccountStakingKey)),
+      rootStore.localStorage
+          .getAccountCache(pubKey, _getCacheKey(cacheStakingTxsKey)),
+      rootStore.localStorage
+          .getAccountCache(pubKey, _getCacheKey(cacheTimeKey)),
     ]);
     if (cache[0] != null) {
-      setLedger(account.currentAddress, cache[0], shouldCache: false);
+      setLedger(rootStore.account.currentAddress, cache[0], shouldCache: false);
     } else {
       ledger = ObservableMap<String, dynamic>();
     }
@@ -254,8 +305,8 @@ abstract class _StakingStore with Store {
   @action
   Future<void> loadCache() async {
     List cacheOverview = await Future.wait([
-      LocalStorage.getKV(localStorageOverviewKey),
-      LocalStorage.getKV(localStorageValidatorsKey),
+      rootStore.localStorage.getObject(_getCacheKey(localStorageOverviewKey)),
+      rootStore.localStorage.getObject(_getCacheKey(localStorageValidatorsKey)),
     ]);
     if (cacheOverview[0] != null) {
       setOverview(cacheOverview[0], shouldCache: false);
@@ -265,5 +316,20 @@ abstract class _StakingStore with Store {
     }
 
     loadAccountCache();
+  }
+
+  @action
+  Future<void> setPhalaAirdropWhiteList(List ls) async {
+    Map res = {};
+    ls.forEach((i) {
+      res[i['stash']] = true;
+      res[i['controller']] = true;
+    });
+    phalaAirdropWhiteList = res;
+  }
+
+  @action
+  Future<void> setRecommendedValidatorList(Map data) async {
+    recommendedValidators = data;
   }
 }

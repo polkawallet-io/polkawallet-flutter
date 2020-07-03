@@ -8,7 +8,7 @@ import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/staking/actions/accountSelectPage.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -90,8 +90,10 @@ class _BondPageState extends State<BondPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    double balance =
-        Fmt.bigIntToDouble(store.assets.balances[symbol].freeBalance);
+    double balance = 0;
+    if (store.assets.balances[symbol] != null) {
+      balance = Fmt.bigIntToDouble(store.assets.balances[symbol].freeBalance);
+    }
 
     var rewardToOptions =
         _rewardToOptions.map((i) => dic['reward.$i']).toList();
@@ -113,15 +115,15 @@ class _BondPageState extends State<BondPage> {
                       Padding(
                         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
                         child: AddressFormItem(
-                          dic['stash'],
                           store.account.currentAccount,
+                          label: dic['stash'],
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 16, right: 16),
                         child: AddressFormItem(
-                          dic['controller'],
                           _controller ?? store.account.currentAccount,
+                          label: dic['controller'],
                           onTap: () => _changeControllerId(context),
                         ),
                       ),
@@ -172,7 +174,10 @@ class _BondPageState extends State<BondPage> {
                                 children: rewardToOptions
                                     .map((i) => Padding(
                                         padding: EdgeInsets.all(12),
-                                        child: Text(i)))
+                                        child: Text(
+                                          i,
+                                          style: TextStyle(fontSize: 16),
+                                        )))
                                     .toList(),
                                 onSelectedItemChanged: (v) {
                                   setState(() {

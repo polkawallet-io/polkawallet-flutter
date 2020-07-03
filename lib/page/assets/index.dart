@@ -3,20 +3,25 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page/account/scanPage.dart';
+import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
+import 'package:polka_wallet/page/assets/claim/attestPage.dart';
+import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 
-import 'package:polka_wallet/store/account.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Assets extends StatefulWidget {
@@ -34,18 +39,131 @@ class _AssetsState extends State<Assets> {
   final AppStore store;
 
   bool _faucetSubmitting = false;
+  bool _preclaimChecking = false;
 
   Future<void> _fetchBalance() async {
     if (store.settings.endpoint.info == networkEndpointAcala.info) {
       await Future.wait([
-        webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
+        webApi.assets.fetchBalance(),
       ]);
     } else {
       await Future.wait([
-        webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
-        webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
+        webApi.assets.fetchBalance(),
+        webApi.staking.fetchAccountStaking(),
       ]);
     }
+  }
+
+  Future<String> _checkPreclaim() async {
+    setState(() {
+      _preclaimChecking = true;
+    });
+    String address = store.account.currentAddress;
+    String ethAddress =
+        await webApi.evalJavascript('api.query.claims.preclaims("$address")');
+    setState(() {
+      _preclaimChecking = false;
+    });
+    if (ethAddress == null) {
+      Navigator.of(context).pushNamed(ClaimPage.route, arguments: '');
+    } else {
+      Navigator.of(context).pushNamed(AttestPage.route, arguments: ethAddress);
+    }
+    return ethAddress;
+  }
+
+  Future<void> _handleScan() async {
+    final Map dic = I18n.of(context).account;
+    final data = await Navigator.pushNamed(
+      context,
+      ScanPage.route,
+      arguments: 'tx',
+    );
+    if (store.account.currentAccount.observation ?? false) {
+      showCupertinoDialog(
+        context: context,
+        builder: (_) {
+          return CupertinoAlertDialog(
+            title: Text(dic['uos.title']),
+            content: Text(dic['uos.acc.invalid']),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+    if (data != null) {
+      final Map sender =
+          await webApi.account.parseQrCode(data.toString().trim());
+      if (sender['signer'] != store.account.currentAddress) {
+        showCupertinoDialog(
+          context: context,
+          builder: (_) {
+            return CupertinoAlertDialog(
+              title: Text(dic['uos.title']),
+              content: sender['error'] != null
+                  ? Text(sender['error'])
+                  : sender['signer'] == null
+                      ? Text(dic['uos.qr.invalid'])
+                      : Text(dic['uos.acc.mismatch']),
+              actions: <Widget>[
+                CupertinoButton(
+                  child: Text(I18n.of(context).home['ok']),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        showCupertinoDialog(
+          context: context,
+          builder: (_) {
+            return PasswordInputDialog(
+              account: store.account.currentAccount,
+              title: Text(dic['uos.title']),
+              onOk: (password) {
+                print('pass ok: $password');
+                _signAsync(password);
+              },
+            );
+          },
+        );
+      }
+    }
+  }
+
+  Future<void> _signAsync(String password) async {
+    final Map dic = I18n.of(context).account;
+    final Map signed = await webApi.account.signAsync(password);
+    print('signed: $signed');
+    if (signed['error'] != null) {
+      showCupertinoDialog(
+        context: context,
+        builder: (_) {
+          return CupertinoAlertDialog(
+            title: Text(dic['uos.title']),
+            content: Text(signed['error']),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+    Navigator.of(context).pushNamed(
+      QrSignerPage.route,
+      arguments: signed['signature'].toString().substring(2),
+    );
   }
 
   Future<void> _getTokensFromFaucet() async {
@@ -105,6 +223,9 @@ class _AssetsState extends State<Assets> {
     AccountData acc = store.account.currentAccount;
 
     bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
+    bool isPolkadot =
+        store.settings.endpoint.info == networkEndpointPolkadot.info;
 
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
@@ -113,7 +234,7 @@ class _AssetsState extends State<Assets> {
         children: <Widget>[
           ListTile(
             leading: AddressIcon('', pubKey: acc.pubKey),
-            title: Text(acc.name ?? ''),
+            title: Text(Fmt.accountName(context, acc)),
             subtitle: Text(network),
             trailing: isAcala
                 ? GestureDetector(
@@ -144,16 +265,68 @@ class _AssetsState extends State<Assets> {
                       }
                     },
                   )
-                : Container(width: 8),
+                : isPolkadot
+                    ? !store.settings.loading
+                        ? GestureDetector(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 8),
+                              child: Column(
+                                children: <Widget>[
+                                  _faucetSubmitting
+                                      ? CupertinoActivityIndicator()
+                                      : Icon(
+                                          Icons.card_giftcard,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 20,
+                                        ),
+                                  Text(
+                                    dic['claim'],
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            onTap: _preclaimChecking
+                                ? null
+                                : () {
+                                    _checkPreclaim();
+                                  },
+                          )
+                        : Container(width: 8)
+                    : Container(width: 8),
           ),
           ListTile(
-            title: Text(Fmt.address(store.account.currentAddress)),
+            title: Row(
+              children: [
+                GestureDetector(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4),
+                    child: Image.asset(
+                      'assets/images/assets/qrcode_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png',
+                      width: 18,
+                    ),
+                  ),
+                  onTap: () {
+                    if (acc.address != '') {
+                      Navigator.pushNamed(context, ReceivePage.route);
+                    }
+                  },
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Text(Fmt.address(store.account.currentAddress)),
+                )
+              ],
+            ),
             trailing: IconButton(
               icon: Image.asset(
-                  'assets/images/assets/qrcode_${isAcala ? 'indigo' : 'pink'}.png'),
+                  'assets/images/assets/scanner_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png'),
               onPressed: () {
                 if (acc.address != '') {
-                  Navigator.pushNamed(context, ReceivePage.route);
+                  _handleScan();
                 }
               },
             ),
@@ -168,7 +341,7 @@ class _AssetsState extends State<Assets> {
     // if network connected failed, reconnect
     if (!store.settings.loading && store.settings.networkName == null) {
       store.settings.setNetworkLoading(true);
-      webApi.connectNode();
+      webApi.connectNodeAll();
     }
     super.initState();
   }

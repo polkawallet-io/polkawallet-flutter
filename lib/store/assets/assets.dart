@@ -5,7 +5,6 @@ import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
 import 'package:polka_wallet/store/assets/types/transferData.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'assets.g.dart';
 
@@ -23,6 +22,11 @@ abstract class _AssetsStore with Store {
   final String cacheBalanceKey = 'balance';
   final String cacheTxsKey = 'txs';
   final String cacheTimeKey = 'assets_cache_time';
+
+  String _getCacheKey(String key) {
+    return '${rootStore.settings.endpoint.info}_$key';
+  }
+
   @observable
   int cacheTxsTimestamp = 0;
 
@@ -99,7 +103,7 @@ abstract class _AssetsStore with Store {
     });
 
     if (!needCache) return;
-    Map cache = await LocalStorage.getAccountCache(
+    Map cache = await rootStore.localStorage.getAccountCache(
       rootStore.account.currentAccount.pubKey,
       cacheBalanceKey,
     );
@@ -110,7 +114,7 @@ abstract class _AssetsStore with Store {
         cache[k] = v;
       });
     }
-    LocalStorage.setAccountCache(
+    rootStore.localStorage.setAccountCache(
       rootStore.account.currentAccount.pubKey,
       cacheBalanceKey,
       cache,
@@ -151,12 +155,16 @@ abstract class _AssetsStore with Store {
     });
 
     if (shouldCache) {
-      LocalStorage.setAccountCache(
-          rootStore.account.currentAccount.pubKey, cacheTxsKey, ls);
+      rootStore.localStorage.setAccountCache(
+          rootStore.account.currentAccount.pubKey,
+          _getCacheKey(cacheTxsKey),
+          ls);
 
       cacheTxsTimestamp = DateTime.now().millisecondsSinceEpoch;
-      LocalStorage.setAccountCache(rootStore.account.currentAccount.pubKey,
-          cacheTimeKey, cacheTxsTimestamp);
+      rootStore.localStorage.setAccountCache(
+          rootStore.account.currentAccount.pubKey,
+          _getCacheKey(cacheTimeKey),
+          cacheTxsTimestamp);
     }
   }
 
@@ -175,7 +183,7 @@ abstract class _AssetsStore with Store {
     });
 
     if (List.of(ls).length > 0) {
-      LocalStorage.setKV(localStorageBlocksKey,
+      rootStore.localStorage.setObject(localStorageBlocksKey,
           blockMap.values.map((i) => BlockData.toJson(i)).toList());
     }
   }
@@ -187,16 +195,17 @@ abstract class _AssetsStore with Store {
 
   @action
   Future<void> loadAccountCache() async {
-    // loadCache if currentAccount exist
-    String pubKey = rootStore.account.currentAccount.pubKey;
-    if (pubKey == null) {
+    // return if currentAccount not exist
+    String pubKey = rootStore.account.currentAccountPubKey;
+    if (pubKey == null || pubKey.isEmpty) {
       return;
     }
 
     List cache = await Future.wait([
-      LocalStorage.getAccountCache(pubKey, cacheBalanceKey),
-      LocalStorage.getAccountCache(pubKey, cacheTxsKey),
-      LocalStorage.getAccountCache(pubKey, cacheTimeKey),
+      rootStore.localStorage.getAccountCache(pubKey, cacheBalanceKey),
+      rootStore.localStorage.getAccountCache(pubKey, _getCacheKey(cacheTxsKey)),
+      rootStore.localStorage
+          .getAccountCache(pubKey, _getCacheKey(cacheTimeKey)),
     ]);
     if (cache[0] != null) {
       setAccountBalances(pubKey, cache[0], needCache: false);
@@ -212,7 +221,7 @@ abstract class _AssetsStore with Store {
 
   @action
   Future<void> loadCache() async {
-    List ls = await LocalStorage.getKV(localStorageBlocksKey);
+    List ls = await rootStore.localStorage.getObject(localStorageBlocksKey);
     if (ls != null) {
       ls.forEach((i) {
         if (blockMap[i['id']] == null) {

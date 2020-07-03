@@ -61,7 +61,7 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
 //      case 2:
 //        return Governance(store);
       default:
-        return Profile(store.account);
+        return Profile(store);
     }
   }
 

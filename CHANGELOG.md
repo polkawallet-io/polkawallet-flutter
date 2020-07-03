@@ -1,3 +1,17 @@
+# 0.8.0
+- Offline signature support
+- fix bugs of social recovery
+
+# 0.7.7
+- add social recovery
+- add waiting validators
+- add recommended validators
+
+# 0.7.6
+- add polkadot-cc1 support
+- add observation account
+- add claim DOT pages
+
 # 0.7.5
 - add council remove vote
 - add referendum remove vote

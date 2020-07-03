@@ -26,7 +26,7 @@ const Map<String, String> enAccount = {
       'Please click on the mnemonic in the correct order to confirm that the backup is correct',
   'backup.reset': 'Reset',
   'backup.error':
-      'This device does not support encrypt type sr25519, you can select [Advanced Options -> Encrypt Type -> ed25519] to continue.',
+      'This device does not support key type sr25519, you can select [Advanced Options -> Encrypt Type -> ed25519] to continue.',
   'import.type': 'Source Type',
   'import.encrypt': 'Encrypt Type',
   'import.invalid': 'Invalid',
@@ -34,6 +34,24 @@ const Map<String, String> enAccount = {
       'account exist, do you want to override the existing account?',
   'advanced': 'Advanced Options',
   'path': 'Secret derivation path',
+  'observe': 'Observation',
+  'observe.brief':
+      '\nMark this address as observation,\nthen you can select this address\nin account select page, to watch\nit\'s assets and actions\n',
+  'observe.tx': 'For observing only',
+  'observe.proxy': 'sign with proxy account',
+  'observe.proxy.brief':
+      '\nA recoverable account can\nsend Tx through a proxy account\n',
+  'observe.proxy.invalid': 'Invalid proxy account',
+  'observe.invalid': 'Invalid',
+  'list': 'Account Select',
+  'uos.title': 'Offline Signature',
+  'uos.acc.mismatch': 'Account mismatch',
+  'uos.acc.invalid': 'Account invalid',
+  'uos.signer': 'Signer',
+  'uos.push': 'Scan to publish',
+  'uos.canceled': 'Tx canceled',
+  'uos.scan': 'Scan signed and send',
+  'uos.qr.invalid': 'Invalid QR code',
 };
 
 const Map<String, String> zhAccount = {
@@ -66,4 +84,21 @@ const Map<String, String> zhAccount = {
   'import.duplicate': '账户已存在，要覆盖原有账户吗？',
   'advanced': '高级选项',
   'path': '加密派生路径',
+  'observe': '观察账户',
+  'observe.brief':
+      '\n将该地址标记为观察账户后，\n您可以在账户切换页面选择该地址，\n在钱包中观察该地址的资产、\n操作记录等信息。\n',
+  'observe.tx': '仅供查看',
+  'observe.proxy': '使用代理账户签名',
+  'observe.proxy.brief': '\n完成社交恢复流程的账户\n可以使用代理账户发送交易\n',
+  'observe.proxy.invalid': '代理账户不可用',
+  'observe.invalid': '不可用',
+  'list': '选择账户',
+  'uos.title': '离线签名',
+  'uos.acc.mismatch': '账户不匹配',
+  'uos.acc.invalid': '账户不可用',
+  'uos.signer': '签名账户',
+  'uos.push': '扫码发送交易',
+  'uos.canceled': '交易取消',
+  'uos.scan': '扫描签名结果并发送',
+  'uos.qr.invalid': '无效二维码',
 };

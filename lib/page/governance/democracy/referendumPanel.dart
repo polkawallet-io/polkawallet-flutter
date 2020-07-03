@@ -16,12 +16,14 @@ class ReferendumPanel extends StatelessWidget {
     this.data,
     this.bestNumber,
     this.onCancelVote,
+    this.blockDuration,
   });
 
   final String symbol;
   final ReferendumInfo data;
   final int bestNumber;
   final Function(int) onCancelVote;
+  final int blockDuration;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,8 @@ class ReferendumPanel extends StatelessWidget {
             child: Image.asset('assets/images/gov/time.png'),
           ),
           Expanded(
-            child: Text('${dic['remain']} ${Fmt.blockToTime(endLeft)}',
+            child: Text(
+                '${dic['remain']} ${Fmt.blockToTime(endLeft, blockDuration)}',
                 style: TextStyle(color: Colors.lightGreen)),
           ),
           Text(
@@ -62,7 +65,8 @@ class ReferendumPanel extends StatelessWidget {
         children: <Widget>[
           Container(width: 20),
           Expanded(
-            child: Text('${dic['activate']} ${Fmt.blockToTime(activateLeft)}',
+            child: Text(
+                '${dic['activate']} ${Fmt.blockToTime(activateLeft, blockDuration)}',
                 style: TextStyle(color: Colors.pink)),
           ),
           Text(
@@ -164,8 +168,13 @@ class ReferendumPanel extends StatelessWidget {
             margin: EdgeInsets.only(bottom: 4),
             width: widthYes > widthMin ? widthYes : widthMin,
             decoration: BoxDecoration(
-                border:
-                    Border(bottom: BorderSide(width: 6, color: Colors.pink))),
+              border: Border(
+                bottom: BorderSide(
+                  width: 6,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+            ),
           )
         ],
       ),

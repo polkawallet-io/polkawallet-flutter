@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 
 const int tx_list_page_size = 10;
 
@@ -15,20 +15,17 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-class PolkaScanApi {
-  static const String module_balances = 'balances';
-  static const String module_staking = 'staking';
-  static const String module_democracy = 'democracy';
+class SubScanApi {
+  static const String module_balances = 'Balances';
+  static const String module_staking = 'Staking';
+  static const String module_democracy = 'Democracy';
+  static const String module_Recovery = 'Recovery';
 
   static String getSnEndpoint(String network) {
-    return 'https://$network.subscan.io/api/scan';
-  }
-
-  static String getPnEndpoint(String network) {
-    if (network == networkEndpointAcala.info) {
-      return 'https://api-03.polkascan.io/$network/api/v1';
+    if (network.contains('polkadot')) {
+      network = 'polkadot-cc1';
     }
-    return 'https://api-01.polkascan.io/$network/api/v1';
+    return 'https://$network.subscan.io/api/scan';
   }
 
   static Future<Map> fetchTransfers(
@@ -48,35 +45,39 @@ class PolkaScanApi {
     });
     Response res = await post(url, headers: headers, body: body);
     if (res.body != null) {
-      return jsonDecode(res.body)['data'];
+      final obj = await compute(jsonDecode, res.body);
+      return obj['data'];
     }
     return {};
   }
 
   static Future<Map> fetchTxs(
-    String address, {
-    String module,
+    String module, {
+    String call,
     int page = 0,
+    int size = tx_list_page_size,
+    String sender,
     String network = 'kusama',
   }) async {
     String url = '${getSnEndpoint(network)}/extrinsics';
     Map<String, String> headers = {"Content-type": "application/json"};
-    String body = jsonEncode({
+    Map params = {
       "page": page,
-      "row": tx_list_page_size,
-      "address": address,
+      "row": size,
       "module": module,
-    });
+    };
+    if (sender != null) {
+      params['address'] = sender;
+    }
+    if (call != null) {
+      params['call'] = call;
+    }
+    String body = jsonEncode(params);
     Response res = await post(url, headers: headers, body: body);
     if (res.body != null) {
-      return jsonDecode(res.body)['data'];
+      final obj = await compute(jsonDecode, res.body);
+      return obj['data'];
     }
     return {};
-  }
-
-  static Future<String> fetchTx(String hash,
-      {String network = 'kusama'}) async {
-    Response res = await get('${getPnEndpoint(network)}/extrinsic/0x$hash');
-    return res.body;
   }
 }

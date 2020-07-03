@@ -8,8 +8,8 @@ import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
+import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
 import 'package:polka_wallet/store/assets/types/transferData.dart';
@@ -41,12 +41,13 @@ class _AssetPageState extends State<AssetPage>
   ScrollController _scrollController;
 
   Future<void> _updateData() async {
-    String pubKey = store.account.currentAccount.pubKey;
-    webApi.assets.fetchBalance(pubKey);
+    if (store.settings.loading) return;
+
+    webApi.assets.fetchBalance();
     Map res = {"transfers": []};
 
-    if (store.settings.endpoint.info == networkEndpointKusama.info) {
-      webApi.staking.fetchAccountStaking(pubKey);
+    if (store.settings.endpoint.info != networkEndpointAcala.info) {
+      webApi.staking.fetchAccountStaking();
       res = await webApi.assets.updateTxs(_txsPage);
     }
 
@@ -131,7 +132,7 @@ class _AssetPageState extends State<AssetPage>
     final String symbol = store.settings.networkState.tokenSymbol;
     final String token = ModalRoute.of(context).settings.arguments;
     final bool isBaseToken = token == symbol;
-    final isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
+    final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
 
     final dic = I18n.of(context).assets;
 
@@ -240,7 +241,7 @@ class _AssetPageState extends State<AssetPage>
                     ],
                   ),
                 ),
-                isKusama
+                !isAcala
                     ? TabBar(
                         labelColor: Colors.black87,
                         labelStyle: TextStyle(fontSize: 18),

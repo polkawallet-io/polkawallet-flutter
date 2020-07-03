@@ -196,8 +196,6 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
     String symbol = params.token;
 
     String pageTitle = '${dic['loan.create']} $symbol';
-    print(params.actionType);
-//    print(params.token);
 
     int decimals = acala_token_decimals;
 

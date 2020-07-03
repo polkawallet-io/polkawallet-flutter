@@ -5,20 +5,6 @@ import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-const default_node_zh = {
-  'info': 'kusama',
-  'ss58': 2,
-  'text': 'Kusama (Polkadot Canary, hosted by Polkawallet)',
-  'value': 'ws://mandala-01.acala.network:9954/',
-};
-const default_node = {
-  'info': 'kusama',
-  'ss58': 2,
-  'text': 'Kusama (Polkadot Canary, hosted by Parity)',
-  'value': 'wss://kusama-rpc.polkadot.io/',
-};
-
-// TODO: display ping speed
 class RemoteNodeListPage extends StatelessWidget {
   RemoteNodeListPage(this.store);
 
@@ -39,7 +25,21 @@ class RemoteNodeListPage extends StatelessWidget {
               ),
               title: Text(i.info),
               subtitle: Text(i.text),
-              trailing: Icon(Icons.arrow_forward_ios, size: 18),
+              trailing: Container(
+                width: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    store.endpoint.value == i.value
+                        ? Image.asset(
+                            'assets/images/assets/success.png',
+                            width: 16,
+                          )
+                        : Container(),
+                    Icon(Icons.arrow_forward_ios, size: 18)
+                  ],
+                ),
+              ),
               onTap: () {
                 if (store.endpoint.value == i.value) {
                   Navigator.of(context).pop();
@@ -47,7 +47,7 @@ class RemoteNodeListPage extends StatelessWidget {
                 }
                 store.setEndpoint(i);
                 store.setNetworkLoading(true);
-                webApi.launchWebview();
+                webApi.launchWebview(customNode: true);
                 Navigator.of(context).pop();
               },
             ))

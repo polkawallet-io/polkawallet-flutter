@@ -94,8 +94,8 @@ class _SetPayeePageState extends State<SetPayeePage> {
                     Padding(
                       padding: EdgeInsets.only(left: 16, right: 16, top: 8),
                       child: AddressFormItem(
-                        dic['controller'],
                         store.account.currentAccount,
+                        label: dic['controller'],
                       ),
                     ),
                     ListTile(

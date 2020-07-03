@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +11,6 @@ import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-// TODO: add referendum timeline details
-// TODO: add users voting details & re-vote
-// TODO: add removeVoter
 class Democracy extends StatefulWidget {
   Democracy(this.store);
 
@@ -58,10 +54,12 @@ class _DemocracyState extends State<Democracy> {
   @override
   void initState() {
     super.initState();
-    webApi.subscribeMessage(
-        'chain', 'bestNumber', [], _bestNumberSubscribeChannel, (data) {
-      store.gov.setBestNumber(data as int);
-    });
+    if (!store.settings.loading) {
+      webApi.subscribeMessage(
+          'chain', 'bestNumber', [], _bestNumberSubscribeChannel, (data) {
+        store.gov.setBestNumber(data as int);
+      });
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       globalDemocracyRefreshKey.currentState.show();
@@ -91,10 +89,7 @@ class _DemocracyState extends State<Democracy> {
                   ? Container(
                       height: 80,
                       padding: EdgeInsets.all(24),
-                      child: Text(
-                        I18n.of(context).home['data.empty'],
-                        style: Theme.of(context).textTheme.headline4,
-                      ),
+                      child: Text(I18n.of(context).home['data.empty']),
                     )
                   : ListView.builder(
                       itemCount: list.length,
@@ -104,6 +99,8 @@ class _DemocracyState extends State<Democracy> {
                           bestNumber: bestNumber,
                           symbol: symbol,
                           onCancelVote: _submitCancelVote,
+                          blockDuration: store.settings.networkConst['babe']
+                              ['expectedBlockTime'],
                         );
                       },
                     ),

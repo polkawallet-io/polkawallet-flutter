@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
@@ -76,8 +77,13 @@ class _NominatePageState extends State<NominatePage> {
     Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
   }
 
-  Widget _buildListItem(BuildContext context, int i, List<ValidatorData> list) {
-    Map accInfo = store.account.accountIndexMap[list[i].accountId];
+  Widget _buildListItem(BuildContext context, ValidatorData validator) {
+    final dic = I18n.of(context).staking;
+    final Map accInfo = store.account.accountIndexMap[validator.accountId];
+    final bool hasPhalaAirdrop =
+        store.staking.phalaAirdropWhiteList[validator.accountId] ?? false;
+    final bool isWaiting = validator.total == BigInt.zero;
+    final nominations = store.staking.nominationsAll[validator.accountId] ?? [];
     return GestureDetector(
       child: Container(
         padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -86,7 +92,7 @@ class _NominatePageState extends State<NominatePage> {
           children: <Widget>[
             Container(
               margin: EdgeInsets.only(right: 16),
-              child: AddressIcon(list[i].accountId),
+              child: AddressIcon(validator.accountId),
             ),
             Expanded(
               child: Column(
@@ -103,54 +109,63 @@ class _NominatePageState extends State<NominatePage> {
                                   'assets/images/assets/success.png'),
                             )
                           : Container(),
-                      Text(accInfo != null &&
-                              accInfo['identity']['display'] != null
-                          ? accInfo['identity']['display']
-                              .toString()
-                              .toUpperCase()
-                          : Fmt.address(list[i].accountId, pad: 6)),
+                      Expanded(
+                        child:
+                            Text(Fmt.validatorDisplayName(validator, accInfo)),
+                      ),
                     ],
                   ),
+                  !isWaiting
+                      ? Text(
+                          '${dic['total']}: ${Fmt.token(validator.total)}',
+                          style: TextStyle(
+                            color: Theme.of(context).unselectedWidgetColor,
+                            fontSize: 12,
+                          ),
+                        )
+                      : Container(),
                   Text(
-                    '${I18n.of(context).staking['total']}: ${Fmt.token(list[i].total)}',
+                    isWaiting
+                        ? dic['waiting']
+                        : '${dic['commission']}: ${validator.commission}',
                     style: TextStyle(
                       color: Theme.of(context).unselectedWidgetColor,
                       fontSize: 12,
                     ),
                   ),
-                  Text(
-                    '${I18n.of(context).staking['commission']}: ${list[i].commission}',
-                    style: TextStyle(
-                      color: Theme.of(context).unselectedWidgetColor,
-                      fontSize: 12,
-                    ),
-                  ),
-                  Text(
-                    '${I18n.of(context).staking['points']}: ${list[i].points}',
-                    style: TextStyle(
-                      color: Theme.of(context).unselectedWidgetColor,
-                      fontSize: 12,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        isWaiting
+                            ? '${dic['nominators']}: ${nominations.length}'
+                            : '${dic['points']}: ${validator.points}',
+                        style: TextStyle(
+                          color: Theme.of(context).unselectedWidgetColor,
+                          fontSize: 12,
+                        ),
+                      ),
+                      hasPhalaAirdrop ? TextTag(dic['phala']) : Container(),
+                    ],
                   ),
                 ],
               ),
             ),
             CupertinoSwitch(
-              value: _selectedMap[list[i].accountId],
+              value: _selectedMap[validator.accountId],
               onChanged: (bool value) {
                 setState(() {
-                  _selectedMap[list[i].accountId] = value;
+                  _selectedMap[validator.accountId] = value;
                 });
                 Timer(Duration(milliseconds: 300), () {
                   setState(() {
                     if (value) {
-                      _selected.add(list[i]);
+                      _selected.add(validator);
                       _notSelected.removeWhere(
-                          (item) => item.accountId == list[i].accountId);
+                          (item) => item.accountId == validator.accountId);
                     } else {
                       _selected.removeWhere(
-                          (item) => item.accountId == list[i].accountId);
-                      _notSelected.add(list[i]);
+                          (item) => item.accountId == validator.accountId);
+                      _notSelected.add(validator);
                     }
                   });
                 });
@@ -160,7 +175,7 @@ class _NominatePageState extends State<NominatePage> {
         ),
       ),
       onTap: () => Navigator.of(context)
-          .pushNamed(ValidatorDetailPage.route, arguments: list[i]),
+          .pushNamed(ValidatorDetailPage.route, arguments: validator),
     );
   }
 
@@ -169,11 +184,21 @@ class _NominatePageState extends State<NominatePage> {
     super.initState();
 
     setState(() {
-      store.staking.validatorsInfo.forEach((i) {
+      store.staking.validatorsAll.forEach((i) {
         _notSelected.add(i);
         _selectedMap[i.accountId] = false;
       });
       store.staking.nominatingList.forEach((i) {
+        _selected.add(i);
+        _notSelected.removeWhere((item) => item.accountId == i.accountId);
+        _selectedMap[i.accountId] = true;
+      });
+
+      // set recommended selected
+      List<ValidatorData> recommended = _notSelected.toList();
+      recommended.retainWhere((i) =>
+          store.staking.recommendedValidatorList.indexOf(i.accountId) > -1);
+      recommended.forEach((i) {
         _selected.add(i);
         _notSelected.removeWhere((item) => item.accountId == i.accountId);
         _selectedMap[i.accountId] = true;
@@ -187,6 +212,13 @@ class _NominatePageState extends State<NominatePage> {
 
     List<ValidatorData> list = [];
     list.addAll(_selected);
+    // add recommended
+    List<ValidatorData> recommended = _notSelected.toList();
+    recommended.retainWhere((i) =>
+        store.staking.recommendedValidatorList.indexOf(i.accountId) > -1);
+    list.addAll(recommended);
+
+    // add validators
     // filter the _notSelected list
     List<ValidatorData> retained = List.of(_notSelected);
     retained = Fmt.filterValidatorList(
@@ -228,7 +260,7 @@ class _NominatePageState extends State<NominatePage> {
                 child: ListView.builder(
                   itemCount: list.length,
                   itemBuilder: (BuildContext context, int i) {
-                    return _buildListItem(context, i, list);
+                    return _buildListItem(context, list[i]);
                   },
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/assets/index.dart';
 import 'package:polka_wallet/page/staking/index.dart';
 import 'package:polka_wallet/page/governance/index.dart';
@@ -37,10 +38,11 @@ class _HomePageState extends State<HomePage> {
 
   List<BottomNavigationBarItem> _navBarItems(int activeItem) {
     Map<String, String> tabs = I18n.of(context).home;
+    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
     return _tabList
         .map((i) => BottomNavigationBarItem(
               icon: Image.asset(_tabList[activeItem] == i
-                  ? 'assets/images/public/${i}_pink.png'
+                  ? 'assets/images/public/${i}_${isKusama ? 'black' : 'pink'}.png'
                   : 'assets/images/public/${i}_dark.png'),
               title: Text(
                 tabs[i.toLowerCase()],
@@ -63,11 +65,13 @@ class _HomePageState extends State<HomePage> {
       case 2:
         return Governance(store);
       default:
-        return Profile(store.account);
+        return Profile(store);
     }
   }
 
   List<Widget> _buildPages() {
+    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
+    String imageColor = isKusama ? 'black' : 'pink';
     return [0, 1, 2, 3].map((i) {
       if (i == 0) {
         // return assets page
@@ -84,7 +88,8 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   alignment: Alignment.topLeft,
-                  image: AssetImage("assets/images/assets/top_bg_pink.png"),
+                  image:
+                      AssetImage("assets/images/assets/top_bg_$imageColor.png"),
                   fit: BoxFit.contain,
                 ),
               ),
@@ -131,7 +136,8 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 alignment: Alignment.topLeft,
-                image: AssetImage("assets/images/staking/top_bg_pink.png"),
+                image:
+                    AssetImage("assets/images/staking/top_bg_$imageColor.png"),
                 fit: BoxFit.contain,
               ),
             ),

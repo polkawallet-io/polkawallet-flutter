@@ -6,7 +6,7 @@ import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/staking/actions/accountSelectPage.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -106,12 +106,12 @@ class _SetControllerPageState extends State<SetControllerPage> {
                   padding: EdgeInsets.all(16),
                   children: <Widget>[
                     AddressFormItem(
-                      dic['stash'],
                       store.account.currentAccount,
+                      label: dic['stash'],
                     ),
                     AddressFormItem(
-                      dic['controller'],
                       _controller ?? store.account.currentAccount,
+                      label: dic['controller'],
                       onTap: () => _changeControllerId(context),
                     ),
                   ],

@@ -3,7 +3,8 @@ const Map<String, String> enStaking = {
   'actions': 'Account Actions',
   'validators': 'Validators',
   'validator': 'Validator',
-  'waitting': 'Waitting',
+  'elected': 'Elected',
+  'waiting': 'Waiting',
   'nominators': 'Nominators',
   'session': 'Session',
   'era': 'Era',
@@ -16,7 +17,7 @@ const Map<String, String> enStaking = {
   'commission': 'Commission',
   'points': 'Points',
   'txs': 'Staking Records',
-  'nominating': 'My Nominating',
+  'nominating': 'Nominations',
   'controller': 'Controller',
   'stash': 'Stash',
   'balance': 'Balance',
@@ -56,6 +57,8 @@ const Map<String, String> enStaking = {
   'filter': 'Filter with Address/Name',
   'sort': 'Sort by',
   'notElected': 'Not Elected',
+  'phala': 'Phala Airdrop',
+  'recommend': 'Recommended',
 };
 
 const Map<String, String> zhStaking = {
@@ -63,8 +66,9 @@ const Map<String, String> zhStaking = {
   'actions': '账户操作',
   'validators': '验证人',
   'validator': '验证人',
-  'waitting': '候选验证人',
-  'nominators': '见证人',
+  'elected': '验证人',
+  'waiting': '候选验证人',
+  'nominators': '提名人',
   'session': '时期',
   'era': '时代',
   'total': '总质押',
@@ -114,4 +118,6 @@ const Map<String, String> zhStaking = {
   'filter': '地址/名称筛选',
   'sort': '排序',
   'notElected': '未选中',
+  'phala': 'Phala 空投',
+  'recommend': '推荐节点',
 };

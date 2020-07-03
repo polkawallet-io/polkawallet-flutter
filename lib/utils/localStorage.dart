@@ -4,56 +4,56 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
-  static const accountsKey = 'wallet_account_list';
-  static const currentAccountKey = 'wallet_current_account';
-  static const contactsKey = 'wallet_contact_list';
-  static const seedKey = 'wallet_seed';
-  static const customKVKey = 'wallet_kv';
+  final accountsKey = 'wallet_account_list';
+  final currentAccountKey = 'wallet_current_account';
+  final contactsKey = 'wallet_contact_list';
+  final seedKey = 'wallet_seed';
+  final customKVKey = 'wallet_kv';
 
-  static final storage = new _LocalStorage();
+  final storage = _LocalStorage();
 
-  static Future<void> addAccount(Map<String, dynamic> acc) async {
+  Future<void> addAccount(Map<String, dynamic> acc) async {
     return storage.addItemToList(accountsKey, acc);
   }
 
-  static Future<void> removeAccount(String pubKey) async {
+  Future<void> removeAccount(String pubKey) async {
     return storage.removeItemFromList(accountsKey, 'pubKey', pubKey);
   }
 
-  static Future<List<Map<String, dynamic>>> getAccountList() async {
+  Future<List<Map<String, dynamic>>> getAccountList() async {
     return storage.getList(accountsKey);
   }
 
-  static Future<void> setCurrentAccount(String pubKey) async {
+  Future<void> setCurrentAccount(String pubKey) async {
     return storage.setKV(currentAccountKey, pubKey);
   }
 
-  static Future<String> getCurrentAccount() async {
+  Future<String> getCurrentAccount() async {
     return storage.getKV(currentAccountKey);
   }
 
-  static Future<void> addContact(Map<String, dynamic> con) async {
+  Future<void> addContact(Map<String, dynamic> con) async {
     return storage.addItemToList(contactsKey, con);
   }
 
-  static Future<void> removeContact(String address) async {
+  Future<void> removeContact(String address) async {
     return storage.removeItemFromList(contactsKey, 'address', address);
   }
 
-  static Future<void> updateContact(Map<String, dynamic> con) async {
+  Future<void> updateContact(Map<String, dynamic> con) async {
     return storage.updateItemInList(
         contactsKey, 'address', con['address'], con);
   }
 
-  static Future<List<Map<String, dynamic>>> getContractList() async {
+  Future<List<Map<String, dynamic>>> getContactList() async {
     return storage.getList(contactsKey);
   }
 
-  static Future<void> setSeeds(String seedType, Map value) async {
+  Future<void> setSeeds(String seedType, Map value) async {
     return storage.setKV('${seedKey}_$seedType', jsonEncode(value));
   }
 
-  static Future<Map> getSeeds(String seedType) async {
+  Future<Map> getSeeds(String seedType) async {
     String value = await storage.getKV('${seedKey}_$seedType');
     if (value != null) {
       return jsonDecode(value);
@@ -61,12 +61,12 @@ class LocalStorage {
     return {};
   }
 
-  static Future<void> setKV(String key, Object value) async {
+  Future<void> setObject(String key, Object value) async {
     String str = await compute(jsonEncode, value);
     return storage.setKV('${customKVKey}_$key', str);
   }
 
-  static Future<Object> getKV(String key) async {
+  Future<Object> getObject(String key) async {
     String value = await storage.getKV('${customKVKey}_$key');
     if (value != null) {
       Object data = await compute(jsonDecode, value);
@@ -75,18 +75,18 @@ class LocalStorage {
     return null;
   }
 
-  static Future<void> setAccountCache(
+  Future<void> setAccountCache(
       String accPubKey, String key, Object value) async {
-    Map data = await getKV(key);
+    Map data = await getObject(key);
     if (data == null) {
       data = {};
     }
     data[accPubKey] = value;
-    setKV(key, data);
+    setObject(key, data);
   }
 
-  static Future<Object> getAccountCache(String accPubKey, String key) async {
-    Map data = await getKV(key);
+  Future<Object> getAccountCache(String accPubKey, String key) async {
+    Map data = await getObject(key);
     if (data == null) {
       return null;
     }

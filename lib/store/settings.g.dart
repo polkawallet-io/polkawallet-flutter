@@ -42,9 +42,23 @@ Map<String, dynamic> _$EndpointDataToJson(EndpointData instance) =>
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$SettingsStore on _SettingsStore, Store {
+  Computed<List<EndpointData>> _$endpointListComputed;
+
+  @override
+  List<EndpointData> get endpointList => (_$endpointListComputed ??=
+          Computed<List<EndpointData>>(() => super.endpointList,
+              name: '_SettingsStore.endpointList'))
+      .value;
+  Computed<List<AccountData>> _$contactListAllComputed;
+
+  @override
+  List<AccountData> get contactListAll => (_$contactListAllComputed ??=
+          Computed<List<AccountData>>(() => super.contactListAll,
+              name: '_SettingsStore.contactListAll'))
+      .value;
   Computed<String> _$existentialDepositComputed;
 
   @override
@@ -281,13 +295,6 @@ mixin _$SettingsStore on _SettingsStore, Store {
         .run(() => super.loadCustomSS58Format());
   }
 
-  final _$setBestNodeAsyncAction = AsyncAction('_SettingsStore.setBestNode');
-
-  @override
-  Future<void> setBestNode({String info}) {
-    return _$setBestNodeAsyncAction.run(() => super.setBestNode(info: info));
-  }
-
   final _$_SettingsStoreActionController =
       ActionController(name: '_SettingsStore');
 
@@ -346,153 +353,11 @@ networkName: ${networkName},
 networkState: ${networkState},
 networkConst: ${networkConst},
 contactList: ${contactList},
+endpointList: ${endpointList},
+contactListAll: ${contactListAll},
 existentialDeposit: ${existentialDeposit},
 transactionBaseFee: ${transactionBaseFee},
 transactionByteFee: ${transactionByteFee}
-    ''';
-  }
-}
-
-mixin _$NetworkState on _NetworkState, Store {
-  final _$endpointAtom = Atom(name: '_NetworkState.endpoint');
-
-  @override
-  String get endpoint {
-    _$endpointAtom.reportRead();
-    return super.endpoint;
-  }
-
-  @override
-  set endpoint(String value) {
-    _$endpointAtom.reportWrite(value, super.endpoint, () {
-      super.endpoint = value;
-    });
-  }
-
-  final _$ss58FormatAtom = Atom(name: '_NetworkState.ss58Format');
-
-  @override
-  int get ss58Format {
-    _$ss58FormatAtom.reportRead();
-    return super.ss58Format;
-  }
-
-  @override
-  set ss58Format(int value) {
-    _$ss58FormatAtom.reportWrite(value, super.ss58Format, () {
-      super.ss58Format = value;
-    });
-  }
-
-  final _$tokenDecimalsAtom = Atom(name: '_NetworkState.tokenDecimals');
-
-  @override
-  int get tokenDecimals {
-    _$tokenDecimalsAtom.reportRead();
-    return super.tokenDecimals;
-  }
-
-  @override
-  set tokenDecimals(int value) {
-    _$tokenDecimalsAtom.reportWrite(value, super.tokenDecimals, () {
-      super.tokenDecimals = value;
-    });
-  }
-
-  final _$tokenSymbolAtom = Atom(name: '_NetworkState.tokenSymbol');
-
-  @override
-  String get tokenSymbol {
-    _$tokenSymbolAtom.reportRead();
-    return super.tokenSymbol;
-  }
-
-  @override
-  set tokenSymbol(String value) {
-    _$tokenSymbolAtom.reportWrite(value, super.tokenSymbol, () {
-      super.tokenSymbol = value;
-    });
-  }
-
-  @override
-  String toString() {
-    return '''
-endpoint: ${endpoint},
-ss58Format: ${ss58Format},
-tokenDecimals: ${tokenDecimals},
-tokenSymbol: ${tokenSymbol}
-    ''';
-  }
-}
-
-mixin _$EndpointData on _EndpointData, Store {
-  final _$infoAtom = Atom(name: '_EndpointData.info');
-
-  @override
-  String get info {
-    _$infoAtom.reportRead();
-    return super.info;
-  }
-
-  @override
-  set info(String value) {
-    _$infoAtom.reportWrite(value, super.info, () {
-      super.info = value;
-    });
-  }
-
-  final _$ss58Atom = Atom(name: '_EndpointData.ss58');
-
-  @override
-  int get ss58 {
-    _$ss58Atom.reportRead();
-    return super.ss58;
-  }
-
-  @override
-  set ss58(int value) {
-    _$ss58Atom.reportWrite(value, super.ss58, () {
-      super.ss58 = value;
-    });
-  }
-
-  final _$textAtom = Atom(name: '_EndpointData.text');
-
-  @override
-  String get text {
-    _$textAtom.reportRead();
-    return super.text;
-  }
-
-  @override
-  set text(String value) {
-    _$textAtom.reportWrite(value, super.text, () {
-      super.text = value;
-    });
-  }
-
-  final _$valueAtom = Atom(name: '_EndpointData.value');
-
-  @override
-  String get value {
-    _$valueAtom.reportRead();
-    return super.value;
-  }
-
-  @override
-  set value(String value) {
-    _$valueAtom.reportWrite(value, super.value, () {
-      super.value = value;
-    });
-  }
-
-  @override
-  String toString() {
-    return '''
-info: ${info},
-ss58: ${ss58},
-text: ${text},
-value: ${value}
     ''';
   }
 }

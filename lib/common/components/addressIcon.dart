@@ -14,10 +14,9 @@ class AddressIcon extends StatelessWidget {
     return Observer(
       builder: (_) {
         String rawSvg;
+        rawSvg = globalAppStore.account.addressIconsMap[address];
         if (pubKey != null) {
-          rawSvg = globalAppStore.account.pubKeyIconsMap[pubKey];
-        } else {
-          rawSvg = globalAppStore.account.addressIconsMap[address];
+          rawSvg = globalAppStore.account.pubKeyIconsMap[pubKey] ?? rawSvg;
         }
         return Container(
           width: size ?? 40,

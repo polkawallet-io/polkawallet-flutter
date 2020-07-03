@@ -1,6 +1,6 @@
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/service/polkascan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 
 class ApiAssets {
@@ -9,7 +9,8 @@ class ApiAssets {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<void> fetchBalance(String pubKey) async {
+  Future<void> fetchBalance() async {
+    String pubKey = store.account.currentAccountPubKey;
     if (pubKey != null && pubKey.isNotEmpty) {
       String address = store.account.currentAddress;
       Map res = await apiRoot.evalJavascript('account.getBalance("$address")');
@@ -26,7 +27,7 @@ class ApiAssets {
     store.assets.setTxsLoading(true);
 
     String address = store.account.currentAddress;
-    Map res = await PolkaScanApi.fetchTransfers(address, page);
+    Map res = await SubScanApi.fetchTransfers(address, page);
 
     if (page == 0) {
       store.assets.clearTxs();

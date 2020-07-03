@@ -6,7 +6,7 @@ import 'package:polka_wallet/app.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:polka_wallet/service/notification.dart';
-import 'package:polka_wallet/service/polkascan.dart';
+import 'package:polka_wallet/service/subscan.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

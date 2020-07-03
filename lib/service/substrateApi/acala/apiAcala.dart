@@ -37,6 +37,8 @@ class ApiAcala {
           List<String>.from(store.settings.networkConst['currencyIds']);
       tokens.retainWhere((i) => i != symbol);
       String queries =
+          // TODO: for acala - TC4
+          // tokens.map((i) => 'acala.getTokens("$address", "$i")').join(",");
           tokens.map((i) => 'acala.getTokens("$i", "$address")').join(",");
       var res = await apiRoot.evalJavascript('Promise.all([$queries])',
           allowRepeat: true);
@@ -125,7 +127,9 @@ class ApiAcala {
     int baseCoin =
         swapPair.indexWhere((i) => i.toUpperCase() == acala_stable_coin);
     String output = await apiRoot.evalJavascript(
-        'acala.calcTokenSwapAmount(api, $supplyAmount, $targetAmount, ${jsonEncode(swapPair)}, $baseCoin, $slippage)');
+      'acala.calcTokenSwapAmount(api, $supplyAmount, $targetAmount, ${jsonEncode(swapPair)}, $baseCoin, $slippage)',
+      allowRepeat: true,
+    );
     return output;
   }
 

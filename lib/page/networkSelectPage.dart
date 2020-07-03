@@ -6,7 +6,7 @@ import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -30,18 +30,44 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   final AppStore store;
   final Function changeTheme;
 
+  final List<EndpointData> networks = [
+    networkEndpointPolkadot,
+    networkEndpointKusama,
+    networkEndpointAcala,
+  ];
+
   EndpointData _selectedNetwork;
   bool _networkChanging = false;
+
+  void _loadAccountCache() {
+    // refresh balance
+    store.assets.clearTxs();
+    store.assets.loadAccountCache();
+
+    if (store.settings.endpoint.info == networkEndpointAcala.info) {
+      store.acala.loadCache();
+    } else {
+      // refresh user's staking info if network is kusama or polkadot
+      store.staking.clearState();
+      store.staking.loadAccountCache();
+    }
+  }
 
   Future<void> _reloadNetwork() async {
     setState(() {
       _networkChanging = true;
     });
-    await store.settings.setBestNode(info: _selectedNetwork.info);
+    store.settings.setEndpoint(_selectedNetwork);
+
     store.settings.loadNetworkStateCache();
     store.settings.setNetworkLoading(true);
+
+    store.gov.setReferendums([]);
     store.assets.clearTxs();
+    store.assets.loadCache();
     store.staking.clearState();
+    store.staking.loadCache();
+
     webApi.launchWebview();
     changeTheme();
     if (mounted) {
@@ -54,24 +80,15 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   Future<void> _onSelect(AccountData i, String address) async {
     if (address != store.account.currentAddress) {
       /// set current account
-      store.account.setCurrentAccount(i);
-      // refresh balance
-      store.assets.loadAccountCache();
-
-      if (store.settings.endpoint.info == networkEndpointKusama.info) {
-        // refresh user's staking info
-        store.staking.loadAccountCache();
-      }
-
-      if (store.settings.endpoint.info == networkEndpointAcala.info) {
-        store.acala.loadCache();
-      }
+      store.account.setCurrentAccount(i.pubKey);
 
       bool isCurrentNetwork =
           _selectedNetwork.info == store.settings.endpoint.info;
       if (isCurrentNetwork) {
+        _loadAccountCache();
+
         /// reload account info
-        webApi.assets.fetchBalance(i.pubKey);
+        webApi.assets.fetchBalance();
       } else {
         /// set new network and reload web view
         await _reloadNetwork();
@@ -92,6 +109,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   List<Widget> _buildAccountList() {
     Color primaryColor = Theme.of(context).primaryColor;
     bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
     List<Widget> res = [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,7 +120,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
           ),
           IconButton(
             icon: Image.asset(
-                'assets/images/assets/plus_${isAcala ? 'indigo' : 'pink'}.png'),
+                'assets/images/assets/plus_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png'),
             color: primaryColor,
             onPressed: () => _onCreateAccount(),
           )
@@ -110,8 +128,12 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
       ),
     ];
 
+    /// first item is current account
     List<AccountData> accounts = [store.account.currentAccount];
+
+    /// add optional accounts
     accounts.addAll(store.account.optionalAccounts);
+
     res.addAll(accounts.map((i) {
       String address =
           store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
@@ -122,7 +144,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         margin: EdgeInsets.only(bottom: 16),
         child: ListTile(
           leading: AddressIcon('', pubKey: i.pubKey),
-          title: Text(i.name),
+          title: Text(Fmt.accountName(context, i)),
           subtitle: Text(Fmt.address(address ?? 'address xxxx')),
           onTap: _networkChanging ? null : () => _onSelect(i, address),
         ),
@@ -169,8 +191,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
                   ],
                 ),
                 child: Column(
-                  children:
-                      [networkEndpointKusama, networkEndpointAcala].map((i) {
+                  children: networks.map((i) {
                     String network = i.info;
                     bool isCurrent = network == _selectedNetwork.info;
                     String img =

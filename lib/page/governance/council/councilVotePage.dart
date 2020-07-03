@@ -36,7 +36,9 @@ class _CouncilVote extends State<CouncilVotePage> {
     var res = await Navigator.of(context)
         .pushNamed(CandidateListPage.route, arguments: _selected);
     if (res != null) {
-      _selected = List<List>.of(res);
+      setState(() {
+        _selected = List<List>.of(res);
+      });
     }
   }
 
@@ -117,7 +119,7 @@ class _CouncilVote extends State<CouncilVotePage> {
                               }
                               if (double.parse(v.trim()) >=
                                   balance / BigInt.from(pow(10, decimals)) -
-                                      0.02) {
+                                      0.001) {
                                 return dic['amount.low'];
                               }
                               return null;

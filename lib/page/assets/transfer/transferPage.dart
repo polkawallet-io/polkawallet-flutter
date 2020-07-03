@@ -14,7 +14,7 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -79,6 +79,7 @@ class _TransferPageState extends State<TransferPage> {
         },
         "detail": jsonEncode({
           "destination": _addressCtrl.text.trim(),
+          "currency": symbol,
           "amount": _amountCtrl.text.trim(),
         }),
         "params": [
@@ -166,6 +167,9 @@ class _TransferPageState extends State<TransferPage> {
             ? store.assets.balances[symbol.toUpperCase()].transferable
             : Fmt.balanceInt(store.assets.tokenBalances[symbol.toUpperCase()]);
 
+        final Map pubKeyAddressMap =
+            store.account.pubKeyAddressMap[store.settings.endpoint.ss58];
+
         return Scaffold(
           appBar: AppBar(
             title: Text(dic['transfer']),
@@ -174,10 +178,10 @@ class _TransferPageState extends State<TransferPage> {
               IconButton(
                 icon: Image.asset('assets/images/assets/Menu_scan.png'),
                 onPressed: () async {
-                  var to =
+                  final to =
                       await Navigator.of(context).pushNamed(ScanPage.route);
                   setState(() {
-                    _addressCtrl.text = to;
+                    _addressCtrl.text = (to as QRCodeAddressResult).address;
                   });
                 },
               )
@@ -205,9 +209,11 @@ class _TransferPageState extends State<TransferPage> {
                                     var to = await Navigator.of(context)
                                         .pushNamed(ContactListPage.route);
                                     if (to != null) {
+                                      AccountData acc = to as AccountData;
                                       setState(() {
-                                        _addressCtrl.text =
-                                            (to as AccountData).address;
+                                        _addressCtrl.text = acc.encoded == null
+                                            ? acc.address
+                                            : pubKeyAddressMap[acc.pubKey];
                                       });
                                     }
                                   },
@@ -239,7 +245,7 @@ class _TransferPageState extends State<TransferPage> {
                                 }
                                 if (double.parse(v.trim()) >=
                                     available / BigInt.from(pow(10, decimals)) -
-                                        0.02) {
+                                        0.001) {
                                   return dic['amount.low'];
                                 }
                                 return null;

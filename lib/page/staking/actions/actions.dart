@@ -12,13 +12,13 @@ import 'package:polka_wallet/page/staking/actions/redeemPage.dart';
 import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
 import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
-import 'package:polka_wallet/service/polkascan.dart';
+import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/outlinedCircle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/store/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -47,8 +47,9 @@ class _StakingActions extends State<StakingActions>
       return;
     }
     Map res = await webApi.staking.updateStaking(_txsPage);
-    if (res['extrinsics'] == null ||
-        res['extrinsics'].length < tx_list_page_size) {
+    if (mounted &&
+        (res['extrinsics'] == null ||
+            res['extrinsics'].length < tx_list_page_size)) {
       setState(() {
         _isLastPage = true;
       });
@@ -59,19 +60,14 @@ class _StakingActions extends State<StakingActions>
     if (store.settings.loading) {
       return;
     }
-    String pubKey = store.account.currentAccount.pubKey;
     await Future.wait([
-      webApi.assets.fetchBalance(pubKey),
-      webApi.staking.fetchAccountStaking(pubKey),
+      webApi.assets.fetchBalance(),
+      webApi.staking.fetchAccountStaking(),
     ]);
   }
 
   void _changeCurrentAccount(AccountData acc) {
-    store.account.setCurrentAccount(acc);
-    // refresh user's assets info
-    store.assets.loadAccountCache();
-    // refresh user's staking info
-    store.staking.loadAccountCache();
+    webApi.account.changeCurrentAccount(pubKey: acc.pubKey);
     globalBondingRefreshKey.currentState.show();
   }
 
@@ -182,7 +178,7 @@ class _StakingActions extends State<StakingActions>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      store.account.currentAccount.name,
+                      Fmt.accountName(context, store.account.currentAccount),
                       style: Theme.of(context).textTheme.headline4,
                     ),
                     Text(Fmt.address(store.account.currentAddress))
@@ -256,7 +252,9 @@ class _StakingActions extends State<StakingActions>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      globalBondingRefreshKey.currentState.show();
+      if (globalBondingRefreshKey.currentState != null) {
+        globalBondingRefreshKey.currentState.show();
+      }
     });
   }
 
@@ -385,7 +383,8 @@ class RowAccount02 extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(left: 4, right: 20),
                   child: acc02 != null
-                      ? AddressIcon('', pubKey: acc02.pubKey, size: 32)
+                      ? AddressIcon(acc02.address,
+                          pubKey: acc02.pubKey, size: 32)
                       : AddressIcon(isStash ? controllerId : stashId, size: 32),
                 ),
                 Expanded(

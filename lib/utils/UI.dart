@@ -8,7 +8,7 @@ import 'package:package_info/package_info.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/downloadDialog.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/service/version.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -74,13 +74,11 @@ class UI {
     );
   }
 
-  // TODO： add ios update
-  static Future<void> checkUpdate(BuildContext context,
+  static Future<void> checkUpdate(BuildContext context, Map versions,
       {bool autoCheck = false}) async {
-    if (!Platform.isAndroid && !Platform.isIOS) return;
+    if (versions == null || !Platform.isAndroid && !Platform.isIOS) return;
     String platform = Platform.isAndroid ? 'android' : 'ios';
     final Map dic = I18n.of(context).home;
-    Map versions = await VersionApi.getLatestVersion();
     String latest = versions[platform]['version'];
     String latestBeta = versions[platform]['version-beta'];
 
@@ -104,11 +102,29 @@ class UI {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
+        List versionInfo = versions[platform]['info']
+            [I18n.of(context).locale.toString().contains('zh') ? 'zh' : 'en'];
         return CupertinoAlertDialog(
           title: Text('v$latestBeta'),
-          content: Padding(
-            padding: EdgeInsets.only(top: 12),
-            child: Text(needUpdate ? dic['update.up'] : dic['update.latest']),
+          content: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 12, bottom: 8),
+                child:
+                    Text(needUpdate ? dic['update.up'] : dic['update.latest']),
+              ),
+              needUpdate
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: versionInfo
+                          .map((e) => Text(
+                                '- $e',
+                                textAlign: TextAlign.left,
+                              ))
+                          .toList(),
+                    )
+                  : Container()
+            ],
           ),
           actions: <Widget>[
             CupertinoButton(
@@ -171,6 +187,31 @@ class UI {
       },
     );
   }
+
+  static bool checkBalanceAndAlert(
+      BuildContext context, AppStore store, BigInt amountNeeded) {
+    String symbol = store.settings.networkState.tokenSymbol;
+    if (store.assets.balances[symbol].transferable <= amountNeeded) {
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text(I18n.of(context).assets['amount.low']),
+            content: Container(),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        },
+      );
+      return false;
+    } else {
+      return true;
+    }
+  }
 }
 
 // access the refreshIndicator globally
@@ -191,6 +232,15 @@ final GlobalKey<RefreshIndicatorState> globalCouncilRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
 // democracy page:
 final GlobalKey<RefreshIndicatorState> globalDemocracyRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+// recovery settings page:
+final GlobalKey<RefreshIndicatorState> globalRecoverySettingsRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+// recovery state page:
+final GlobalKey<RefreshIndicatorState> globalRecoveryStateRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+// recovery vouch page:
+final GlobalKey<RefreshIndicatorState> globalRecoveryProofRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
 
 // acala loan page:

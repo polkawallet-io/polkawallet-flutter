@@ -17,6 +17,8 @@ const Map<String, String> enHome = {
   'ok': 'OK',
   'cancel': 'Cancel',
   'submit': 'Sign and Submit',
+  'submit.qr': 'Sign via QR',
+  'submit.no.sign': 'Submit (no sign)',
   'submit.tx': 'Submit Transaction',
   'submit.from': 'You are about to sign a transaction from ',
   'submit.call': 'Calling ',
@@ -43,6 +45,8 @@ const Map<String, String> enHome = {
   'update.install': 'Installing...',
   'update.error': 'Update Failed',
   'exit.confirm': 'Do you want to exit the App?',
+  'input.invalid': 'Invalid input',
+  'loading': 'Loading...',
 };
 
 const Map<String, String> zhHome = {
@@ -61,6 +65,8 @@ const Map<String, String> zhHome = {
   'ok': '确认',
   'cancel': '取消',
   'submit': '签名并发送',
+  'submit.qr': '二维码签名',
+  'submit.no.sign': '发送(不签名)',
   'submit.tx': '发送交易',
   'submit.from': '你将使用以下账户发送交易：',
   'submit.call': '调用 ',
@@ -87,4 +93,6 @@ const Map<String, String> zhHome = {
   'update.install': '开始安装',
   'update.error': '更新失败',
   'exit.confirm': '确定要退出 App 吗？',
+  'input.invalid': '输入格式错误',
+  'loading': '载入中。。。',
 };

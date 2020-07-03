@@ -23,7 +23,11 @@ import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
+import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
+import 'package:polka_wallet/page/assets/claim/attestPage.dart';
+import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
@@ -39,9 +43,16 @@ import 'package:polka_wallet/page/profile/account/changeNamePage.dart';
 import 'package:polka_wallet/page/profile/account/changePasswordPage.dart';
 import 'package:polka_wallet/page/profile/account/exportAccountPage.dart';
 import 'package:polka_wallet/page/profile/account/exportResultPage.dart';
+import 'package:polka_wallet/page/profile/recovery/createRecoveryPage.dart';
+import 'package:polka_wallet/page/profile/recovery/friendListPage.dart';
+import 'package:polka_wallet/page/profile/recovery/initiateRecoveryPage.dart';
+import 'package:polka_wallet/page/profile/recovery/recoveryProofPage.dart';
+import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
+import 'package:polka_wallet/page/profile/recovery/recoveryStatePage.dart';
+import 'package:polka_wallet/page/profile/recovery/vouchRecoveryPage.dart';
 import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:polka_wallet/page/profile/settings/settingsPage.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
@@ -58,6 +69,7 @@ import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
+import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -89,6 +101,10 @@ class _WalletAppState extends State<WalletApp> {
       setState(() {
         _theme = appThemeAcala;
       });
+    } else if (_appStore.settings.endpoint.info == networkEndpointKusama.info) {
+      setState(() {
+        _theme = appThemeKusama;
+      });
     } else {
       setState(() {
         _theme = appTheme;
@@ -113,6 +129,11 @@ class _WalletAppState extends State<WalletApp> {
     });
   }
 
+  Future<void> _checkUpdate(BuildContext context) async {
+    final versions = await WalletApi.getLatestVersion();
+    UI.checkUpdate(context, versions, autoCheck: true);
+  }
+
   Future<int> _initStore(BuildContext context) async {
     if (_appStore == null) {
       _appStore = globalAppStore;
@@ -120,7 +141,6 @@ class _WalletAppState extends State<WalletApp> {
       print('sys locale: ${Localizations.localeOf(context)}');
       await _appStore.init(Localizations.localeOf(context).toString());
 
-      await _appStore.settings.setBestNode();
       // init webApi after store initiated
       webApi = Api(context, _appStore);
       webApi.init();
@@ -128,10 +148,9 @@ class _WalletAppState extends State<WalletApp> {
       _changeLang(context, _appStore.settings.localeCode);
       _changeTheme();
 
-      UI.checkUpdate(context, autoCheck: true);
+      _checkUpdate(context);
     }
-
-    return _appStore.account.accountList.length;
+    return _appStore.account.accountListAll.length;
   }
 
   @override
@@ -156,6 +175,7 @@ class _WalletAppState extends State<WalletApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PolkaWallet',
+      debugShowCheckedModeBanner: false,
       localizationsDelegates: [
         AppLocalizationsDelegate(_locale),
         GlobalMaterialLocalizations.delegate,
@@ -203,12 +223,16 @@ class _WalletAppState extends State<WalletApp> {
         ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
         ScanPage.route: (_) => ScanPage(),
         TxConfirmPage.route: (_) => TxConfirmPage(_appStore),
+        QrSignerPage.route: (_) => QrSignerPage(_appStore),
+        QrSenderPage.route: (_) => QrSenderPage(),
         // assets
         AssetPage.route: (_) => AssetPage(_appStore),
         TransferPage.route: (_) => TransferPage(_appStore),
         ReceivePage.route: (_) => ReceivePage(_appStore),
         TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
         CurrencySelectPage.route: (_) => CurrencySelectPage(),
+        ClaimPage.route: (_) => ClaimPage(_appStore),
+        AttestPage.route: (_) => AttestPage(_appStore),
         // staking
         StakingDetailPage.route: (_) => StakingDetailPage(_appStore),
         ValidatorDetailPage.route: (_) => ValidatorDetailPage(_appStore),
@@ -228,9 +252,9 @@ class _WalletAppState extends State<WalletApp> {
         ReferendumVotePage.route: (_) => ReferendumVotePage(_appStore),
         // profile
         AccountManagePage.route: (_) => AccountManagePage(_appStore),
-        ContactsPage.route: (_) => ContactsPage(_appStore.settings),
-        ContactListPage.route: (_) => ContactListPage(_appStore.settings),
-        ContactPage.route: (_) => ContactPage(_appStore.settings),
+        ContactsPage.route: (_) => ContactsPage(_appStore),
+        ContactListPage.route: (_) => ContactListPage(_appStore),
+        ContactPage.route: (_) => ContactPage(_appStore),
         ChangeNamePage.route: (_) => ChangeNamePage(_appStore.account),
         ChangePasswordPage.route: (_) => ChangePasswordPage(_appStore.account),
         SettingsPage.route: (_) =>
@@ -240,6 +264,13 @@ class _WalletAppState extends State<WalletApp> {
         RemoteNodeListPage.route: (_) => RemoteNodeListPage(_appStore.settings),
         SS58PrefixListPage.route: (_) => SS58PrefixListPage(_appStore.settings),
         AboutPage.route: (_) => AboutPage(),
+        RecoverySettingPage.route: (_) => RecoverySettingPage(_appStore),
+        RecoveryStatePage.route: (_) => RecoveryStatePage(_appStore),
+        RecoveryProofPage.route: (_) => RecoveryProofPage(_appStore),
+        CreateRecoveryPage.route: (_) => CreateRecoveryPage(_appStore),
+        FriendListPage.route: (_) => FriendListPage(_appStore),
+        InitiateRecoveryPage.route: (_) => InitiateRecoveryPage(_appStore),
+        VouchRecoveryPage.route: (_) => VouchRecoveryPage(_appStore),
 
         // acala-network
         SwapPage.route: (_) => SwapPage(_appStore),

@@ -2,7 +2,7 @@ const Map<String, String> enDex = {
   'acala': 'Acala Platform',
   'airdrop': 'Airdrop',
   'dex.title': 'Swap',
-  'dex.bref':
+  'dex.brief':
       'Decentralized token exchange with the liquid pool of the Acala platform.',
   'dex.pay': 'Payment amount',
   'dex.receive': 'Received amount',
@@ -12,7 +12,7 @@ const Map<String, String> enDex = {
   'dex.tx.pay': 'Pay with',
   'dex.tx.receive': 'Receive',
   'loan.title': 'Self Serviced Loan',
-  'loan.bref':
+  'loan.brief':
       'Lock your digital assets(i.e. DOT, XBTC) in Acala platform to borrow equivalent aUSD.',
   'loan.borrowed': 'My Debt',
   'loan.collateral': 'Collateral',
@@ -43,7 +43,7 @@ const Map<String, String> enDex = {
   'txs.action': 'Action',
   'payback.small': 'The remaining debt is too small.',
   'earn.title': 'Deposit & Earn',
-  'earn.bref':
+  'earn.brief':
       'Deposit your digital assets and stable coins into the liquid pool to earn interests and rewards',
   'earn.deposit': 'Deposit Liquidity',
   'earn.withdraw': 'Withdraw Liquidity',
@@ -56,12 +56,12 @@ const Map<String, String> enDex = {
   'earn.reward': 'System Rewards',
   'earn.available': 'Available',
   'faucet.title': 'Faucet',
-  'faucet.bref': 'Get test Tokens of Acala testnet.',
+  'faucet.brief': 'Get test Tokens of Acala testnet.',
   'faucet.ok': 'Test Tokens were sent.',
   'faucet.limit': 'Exceeds daily limit.',
   'faucet.error': 'Request error, try again later.',
   'homa.title': 'Liquid DOT',
-  'homa.bref':
+  'homa.brief':
       'Deposit DOT & Mint Liquid DOT (L-DOT). Your DOTs will be staked to earn returns, meanwhile you can use, trade and invest L-DOT balance in your wallet.',
   'homa.mint': 'Mint L-DOT',
   'homa.redeem': 'Redeem DOT',
@@ -85,13 +85,14 @@ const Map<String, String> enDex = {
   'homa.redeem.era': 'Current Era',
   'homa.redeem.period': 'Unbonding Period',
   'homa.redeem.day': 'Days',
+  'tx.fee.or': 'or equivalent in other tokens',
 };
 
 const Map<String, String> zhDex = {
   'acala': 'Acala 稳定币平台',
   'airdrop': '空投',
   'dex.title': '兑换',
-  'dex.bref': '与 Acala 平台的流动性池进行去中心化 Token 交易.',
+  'dex.brief': '与 Acala 平台的流动性池进行去中心化 Token 交易.',
   'dex.pay': '支付数量',
   'dex.receive': '收到数量',
   'dex.rate': '汇率',
@@ -100,7 +101,7 @@ const Map<String, String> zhDex = {
   'dex.tx.pay': '支付',
   'dex.tx.receive': '收到',
   'loan.title': '自助借贷',
-  'loan.bref': '将您的数字资产（如：DOT、XBTC）锁定在 Acala 平台作为质押，可以借出相应数量的 aUSD。',
+  'loan.brief': '将您的数字资产（如：DOT、XBTC）锁定在 Acala 平台作为质押，可以借出相应数量的 aUSD。',
   'loan.borrowed': '债务',
   'loan.collateral': '质押',
   'loan.borrow': '借贷',
@@ -130,7 +131,7 @@ const Map<String, String> zhDex = {
   'txs.action': '操作类型',
   'payback.small': '剩余债务过小',
   'earn.title': '存款盈利',
-  'earn.bref': '将你的数字资产和稳定币存入流动性池，并获取交易费收益和系统奖励。',
+  'earn.brief': '将你的数字资产和稳定币存入流动性池，并获取交易费收益和系统奖励。',
   'earn.deposit': '存入流动性',
   'earn.withdraw': '提取流动性',
   'earn.get': '领取奖励',
@@ -142,12 +143,12 @@ const Map<String, String> zhDex = {
   'earn.reward': '系统奖励',
   'earn.available': '可用',
   'faucet.title': '水龙头',
-  'faucet.bref': '领取 Acala 测试网使用的测试 Token.',
+  'faucet.brief': '领取 Acala 测试网使用的测试 Token.',
   'faucet.ok': '领取成功。',
   'faucet.limit': '每天领取次数有限哦。',
   'faucet.error': '可能领取姿势不太对，等会儿再试试吧。',
   'homa.title': 'L-DOT 质押/提取',
-  'homa.bref':
+  'homa.brief':
       '存入 DOT 并生成 Liquid DOT (L-DOT). 你存入的 DOT 将用于 Staking 获取收益, 同时你可以使用你钱包中的 L-DOT 进行日常交易和投资.',
   'homa.mint': '生成 L-DOT',
   'homa.redeem': '提取 DOT',
@@ -171,4 +172,5 @@ const Map<String, String> zhDex = {
   'homa.redeem.era': '当前 Era',
   'homa.redeem.period': '解锁周期',
   'homa.redeem.day': '天',
+  'tx.fee.or': '或等额其他代币',
 };

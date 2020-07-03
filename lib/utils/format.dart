@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:convert/convert.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Fmt {
   static String passwordToEncryptKey(String password) {
@@ -192,6 +195,11 @@ class Fmt {
     return reg.hasMatch(txt);
   }
 
+  static bool isHexString(String hex) {
+    var reg = RegExp(r'^[a-f0-9]+$');
+    return reg.hasMatch(hex);
+  }
+
   static bool checkPassword(String pass) {
     var reg = RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[\S]{6,20}$');
     return reg.hasMatch(pass);
@@ -200,6 +208,9 @@ class Fmt {
   static int sortValidatorList(ValidatorData a, ValidatorData b, int sortType) {
     if (a.commission == null || a.commission.isEmpty) {
       return 1;
+    }
+    if (b.commission == null || b.commission.isEmpty) {
+      return -1;
     }
     double comA = double.parse(a.commission.split('%')[0]);
     double comB = double.parse(b.commission.split('%')[0]);
@@ -212,21 +223,17 @@ class Fmt {
       case 2:
         return comA == comB ? cmpStake : comA > comB ? 1 : -1;
       default:
-        return 1;
+        return -1;
     }
   }
 
   static List<ValidatorData> filterValidatorList(
       List<ValidatorData> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
-      String value = filter.toLowerCase();
-      String accName = '';
       Map accInfo = accIndexMap[i.accountId];
-      if (accInfo != null) {
-        accName = accInfo['identity']['display'] ?? '';
-      }
-      return i.accountId.toLowerCase().contains(value) ||
-          accName.toLowerCase().contains(value);
+      return Fmt.validatorDisplayName(i, accInfo)
+          .toLowerCase()
+          .contains(filter.trim().toLowerCase());
     });
     return ls;
   }
@@ -234,7 +241,7 @@ class Fmt {
   static List<List> filterCandidateList(
       List<List> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
-      String value = filter.toLowerCase();
+      String value = filter.trim().toLowerCase();
       String accName = '';
       Map accInfo = accIndexMap[i[0]];
       if (accInfo != null) {
@@ -286,8 +293,10 @@ class Fmt {
     };
   }
 
-  static String blockToTime(int blocks) {
-    int blocksOfMin = 10;
+  static String blockToTime(int blocks, int blockDuration) {
+    if (blocks == null) return '~';
+
+    int blocksOfMin = 60000 ~/ blockDuration;
     int blocksOfHour = 60 * blocksOfMin;
     int blocksOfDay = 24 * blocksOfHour;
 
@@ -296,12 +305,28 @@ class Fmt {
     int min = (blocks % blocksOfHour / blocksOfMin).floor();
 
     String res = '$min mins';
-    if (hour > 0) {
+
+    if (day > 0) {
+      res = '$day days $hour hrs';
+    } else if (hour > 0) {
       res = '$hour hrs $res';
     }
-    if (day > 0) {
-      res = '$day days $res';
-    }
     return res;
+  }
+
+  static String accountName(BuildContext context, AccountData acc) {
+    return '${acc.name ?? ''}${(acc.observation ?? false) ? ' (${I18n.of(context).account['observe']})' : ''}';
+  }
+
+  static String validatorDisplayName(ValidatorData validator, Map accInfo) {
+    String display = Fmt.address(validator.accountId, pad: 6);
+    if (accInfo != null && accInfo['identity']['display'] != null) {
+      display = accInfo['identity']['display'];
+      if (accInfo['identity']['displayParent'] != null) {
+        display = '${accInfo['identity']['displayParent']}/$display';
+      }
+      display = display.toUpperCase();
+    }
+    return display;
   }
 }

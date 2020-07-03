@@ -11,7 +11,7 @@ description: PolkaWallet made with Flutter.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.7.5+756
+version: 0.8.1+813
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -45,22 +45,29 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   # QR code generator & reader
-  qr_flutter: ^3.1.0
-  flutter_qr_reader: ^1.0.3
+  qr_flutter:
+    git:
+      url: https://github.com/polkawallet-io/qr.flutter.git
+      ref: master
+  flutter_qr_scan:
+    git:
+      url: https://github.com/polkawallet-io/flutter_qr_reader.git
+      ref: master
   permission_handler: ^4.2.0
   # PackageInfo
   package_info: ^0.4.0
   # charts
   charts_flutter: ^0.8.1
   # svg renderer
-  flutter_svg: ^0.17.2
+  flutter_svg: ^0.18.0
   # open link in browser
   url_launcher: ^5.4.2
 
 dev_dependencies:
-  flutter_launcher_icons: "^0.7.3"
+#  flutter_launcher_icons: ^0.7.5
   build_runner: ^1.7.4
   json_serializable: ^3.0.0
+  mockito: ^4.1.1
   flutter_test:
     sdk: flutter
 
@@ -99,7 +106,9 @@ flutter:
     - assets/images/assets/XBTC.png
     - assets/images/assets/LDOT.png
     - assets/images/assets/KAR.png
+    - assets/images/assets/scanner.png
     ## images - acala
+    - assets/images/assets/scanner_indigo.png
     - assets/images/assets/top_bg_indigo.png
     - assets/images/assets/receive_line_indigo.png
     - assets/images/assets/qrcode_indigo.png
@@ -112,9 +121,23 @@ flutter:
     - assets/images/public/Acala_indigo.png
     - assets/images/public/Acala_dark.png
     - assets/images/acala/exchange.svg
+    - assets/images/acala/swap.svg
+    - assets/images/acala/deposit.svg
     - assets/images/acala/loan.svg
     - assets/images/acala/loan-start.svg
     ## images - kusama
+    - assets/images/assets/scanner_black.png
+    - assets/images/public/Assets_black.png
+    - assets/images/public/Governance_black.png
+    - assets/images/public/Profile_black.png
+    - assets/images/public/Staking_black.png
+    - assets/images/assets/top_bg_black.png
+    - assets/images/assets/qrcode_black.png
+    - assets/images/assets/plus_black.png
+    - assets/images/assets/receive_line_black.png
+    - assets/images/staking/top_bg_black.png
+    ## images - polkadot
+    - assets/images/assets/scanner_pink.png
     - assets/images/public/app.png
     - assets/images/public/Assets_pink.png
     - assets/images/public/Governance_pink.png
@@ -128,6 +151,7 @@ flutter:
     - assets/images/public/dontscreen.png
     - assets/images/public/copy.png
     - assets/images/public/polkadot.png
+    - assets/images/public/polkadot_gray.png
     - assets/images/public/westend.png
     - assets/images/public/kusama.png
     - assets/images/public/substrate.png
@@ -139,7 +163,7 @@ flutter:
     - assets/images/assets/qrcode_pink.png
     - assets/images/assets/plus_pink.png
     - assets/images/assets/Menu_scan.png
-    - assets/images/assets/Menu_create.png
+    - assets/images/assets/Menu_wallet.png
     - assets/images/assets/assets_send.png
     - assets/images/assets/assets_receive.png
     - assets/images/assets/assets_up.png

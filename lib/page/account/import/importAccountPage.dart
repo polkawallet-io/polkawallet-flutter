@@ -37,7 +37,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Container(),
+          title: Text(I18n.of(context).home['loading']),
           content: Container(height: 64, child: CupertinoActivityIndicator()),
         );
       },
@@ -131,8 +131,8 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
 
     // fetch info for the imported account
     String pubKey = acc['pubKey'];
-    webApi.assets.fetchBalance(pubKey);
-    webApi.staking.fetchAccountStaking(pubKey);
+    webApi.assets.fetchBalance();
+    webApi.staking.fetchAccountStaking();
     webApi.account.fetchAccountsBonded([pubKey]);
     webApi.account.getPubKeyIcons([pubKey]);
 
@@ -167,7 +167,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['import'])),
       body: SafeArea(
-        child: ImportAccountForm(store.account, (Map<String, dynamic> data) {
+        child: ImportAccountForm(store, (Map<String, dynamic> data) {
           if (data['finish'] == null) {
             setState(() {
               _keyType = data['keyType'];
