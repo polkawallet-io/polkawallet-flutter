@@ -22,7 +22,10 @@ sudo installer -store -pkg "$HOME/Downloads/node-installer.pkg" -target "/"
 cd ./lib/js_service_kusama && yarn install && yarn run build && cd ../..
 cd ./lib/js_service_acala && yarn install && yarn run build && cd ../..
 
+flutter build apk --release
 flutter build appbundle --release
 
 # copy the APK where AppCenter will find it
-mv build/app/outputs/bundle/release/app-release.aab $_
+mkdir -p android/app/build/outputs/apk/; mv build/app/outputs/apk/release/app-release.apk $_
+# copy the AAB where AppCenter will find it
+mkdir -p android/app/build/outputs/bundle/; mv build/app/outputs/bundle/release/app-release.aab $_
