@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/acala/apiAcala.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
@@ -28,6 +29,8 @@ class Api {
   ApiAssets assets;
   ApiStaking staking;
   ApiGovernance gov;
+
+  SubScanApi subScanApi = SubScanApi();
 
   Map<String, Function> _msgHandlers = {};
   Map<String, Completer> _msgCompleters = {};

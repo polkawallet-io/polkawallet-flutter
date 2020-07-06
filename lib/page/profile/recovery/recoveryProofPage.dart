@@ -6,7 +6,6 @@ import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/TxList.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/profile/recovery/vouchRecoveryPage.dart';
-import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking/types/txData.dart';
@@ -27,8 +26,8 @@ class _RecoveryStatePage extends State<RecoveryProofPage> {
   bool _loading = false;
 
   Future<void> _fetchData() async {
-    Map res = await SubScanApi.fetchTxs(
-      SubScanApi.module_Recovery,
+    Map res = await webApi.subScanApi.fetchTxsAsync(
+      webApi.subScanApi.moduleRecovery,
       call: 'vouch_recovery',
       sender: widget.store.account.currentAddress,
     );

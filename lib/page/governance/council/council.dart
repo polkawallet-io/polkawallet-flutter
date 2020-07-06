@@ -329,9 +329,12 @@ class CandidateItem extends StatelessWidget {
                   child: Image.asset('assets/images/assets/success.png'),
                 )
               : Container(),
-          Text(accInfo != null && accInfo['identity']['display'] != null
-              ? accInfo['identity']['display'].toString().toUpperCase()
-              : Fmt.address(balance[0], pad: 6))
+          Expanded(
+            child: Text(
+                accInfo != null && accInfo['identity']['display'] != null
+                    ? accInfo['identity']['display'].toString().toUpperCase()
+                    : Fmt.address(balance[0], pad: 6)),
+          )
         ],
       ),
       subtitle: balance.length == 1

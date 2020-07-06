@@ -264,10 +264,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
     final bool isKusama =
         store.settings.endpoint.info == networkEndpointKusama.info;
-
-    // TODO: for acala - TC4
-    final bool isAcala = false;
-    // store.settings.endpoint.info == networkEndpointAcala.info;
+    final bool isAcala =
+        store.settings.endpoint.info == networkEndpointAcala.info;
 
     bool isUnsigned = args['txInfo']['isUnsigned'] ?? false;
     return Scaffold(

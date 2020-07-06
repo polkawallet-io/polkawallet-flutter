@@ -23,8 +23,12 @@ class CandidateDetailPage extends StatelessWidget {
     Map accInfo = store.account.accountIndexMap[info[0]];
     TextStyle style = Theme.of(context).textTheme.headline4;
 
-    Map voters = store.gov.councilVotes[info[0]];
-    List voterList = voters.keys.toList();
+    Map voters;
+    List voterList = [];
+    if (store.gov.councilVotes != null) {
+      voters = store.gov.councilVotes[info[0]];
+      voterList = voters.keys.toList();
+    }
     return Scaffold(
       appBar: AppBar(
           title: Text(I18n.of(context).home['detail']), centerTitle: true),

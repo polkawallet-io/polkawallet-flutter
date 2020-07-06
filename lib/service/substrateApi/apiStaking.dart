@@ -1,6 +1,5 @@
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/phalaAirdrop.dart';
-import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -107,8 +106,8 @@ class ApiStaking {
   Future<Map> updateStaking(int page) async {
     store.staking.setTxsLoading(true);
 
-    Map res = await SubScanApi.fetchTxs(
-      SubScanApi.module_staking,
+    Map res = await apiRoot.subScanApi.fetchTxsAsync(
+      apiRoot.subScanApi.moduleStaking,
       page: page,
       sender: store.account.currentAddress,
       network: store.settings.networkName.toLowerCase(),

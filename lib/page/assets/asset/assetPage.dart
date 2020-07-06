@@ -35,13 +35,18 @@ class _AssetPageState extends State<AssetPage>
 
   final AppStore store;
 
+  bool _loading = false;
+
   TabController _tabController;
   int _txsPage = 0;
   bool _isLastPage = false;
   ScrollController _scrollController;
 
   Future<void> _updateData() async {
-    if (store.settings.loading) return;
+    if (store.settings.loading || _loading) return;
+    setState(() {
+      _loading = true;
+    });
 
     webApi.assets.fetchBalance();
     Map res = {"transfers": []};
@@ -50,6 +55,9 @@ class _AssetPageState extends State<AssetPage>
       webApi.staking.fetchAccountStaking();
       res = await webApi.assets.updateTxs(_txsPage);
     }
+    setState(() {
+      _loading = false;
+    });
 
     if (res['transfers'] == null ||
         res['transfers'].length < tx_list_page_size) {
