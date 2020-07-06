@@ -1,5 +1,6 @@
 # 0.8.2
 - add acala TC4 support
+- fix UI stall issue in IOS
 
 # 0.8.1
 - fix bugs of social recovery

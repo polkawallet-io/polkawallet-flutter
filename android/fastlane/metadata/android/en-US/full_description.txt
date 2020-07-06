@@ -1,8 +1,0 @@
-Polkawallet is aiming to provide a more convenient entrance of the polkadot
-ecosystem for all the users of Polkadot/Kusama/Substrate-based-blockchains.
-
- - Friendly UI.
- - Secure local accounts storage.
- - Intuitive Tokens management.
- - Simplified staking & governance operations.
- - Offline signature supported.
