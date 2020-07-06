@@ -1,6 +1,11 @@
+# 0.8.2
+- add acala TC4 support
+
+# 0.8.1
+- fix bugs of social recovery
+
 # 0.8.0
 - Offline signature support
-- fix bugs of social recovery
 
 # 0.7.7
 - add social recovery
