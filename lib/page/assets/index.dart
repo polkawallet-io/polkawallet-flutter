@@ -43,9 +43,7 @@ class _AssetsState extends State<Assets> {
 
   Future<void> _fetchBalance() async {
     if (store.settings.endpoint.info == networkEndpointAcala.info) {
-      await Future.wait([
-        webApi.assets.fetchBalance(),
-      ]);
+      await webApi.assets.fetchBalance();
     } else {
       await Future.wait([
         webApi.assets.fetchBalance(),
@@ -79,25 +77,26 @@ class _AssetsState extends State<Assets> {
       ScanPage.route,
       arguments: 'tx',
     );
-    if (store.account.currentAccount.observation ?? false) {
-      showCupertinoDialog(
-        context: context,
-        builder: (_) {
-          return CupertinoAlertDialog(
-            title: Text(dic['uos.title']),
-            content: Text(dic['uos.acc.invalid']),
-            actions: <Widget>[
-              CupertinoButton(
-                child: Text(I18n.of(context).home['ok']),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    }
     if (data != null) {
+      if (store.account.currentAccount.observation ?? false) {
+        showCupertinoDialog(
+          context: context,
+          builder: (_) {
+            return CupertinoAlertDialog(
+              title: Text(dic['uos.title']),
+              content: Text(dic['uos.acc.invalid']),
+              actions: <Widget>[
+                CupertinoButton(
+                  child: Text(I18n.of(context).home['ok']),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            );
+          },
+        );
+        return;
+      }
+
       final Map sender =
           await webApi.account.parseQrCode(data.toString().trim());
       if (sender['signer'] != store.account.currentAddress) {
@@ -343,6 +342,11 @@ class _AssetsState extends State<Assets> {
       store.settings.setNetworkLoading(true);
       webApi.connectNodeAll();
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!store.settings.loading) {
+        globalBalanceRefreshKey.currentState.show();
+      }
+    });
     super.initState();
   }
 

@@ -1,3 +1,8 @@
+# 0.8.3
+- add tx sending with tips
+- fix Acala token transfer history bug
+- fix staking history display bug
+
 # 0.8.2
 - add acala TC4 support
 - fix UI stall issue in IOS

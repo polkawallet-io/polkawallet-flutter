@@ -71,6 +71,9 @@ android {
     // add a product flavor for fdroid release
     flavorDimensions "deploy"
     productFlavors {
+        prod {
+            getIsDefault().set(true)
+        }
         fdroid {
             dimension "deploy"
             signingConfig null

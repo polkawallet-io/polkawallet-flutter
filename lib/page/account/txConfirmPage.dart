@@ -33,6 +33,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   final AppStore store;
 
   Map _fee = {};
+  double _tip = 0;
+  BigInt _tipValue = BigInt.zero;
   AccountData _proxyAccount;
 
   Future<String> _getTxFee() async {
@@ -117,10 +119,6 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
           content: Text(errorMsg),
           actions: <Widget>[
             CupertinoButton(
-              child: Text(dic['cancel']),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            CupertinoButton(
               child: Text(dic['ok']),
               onPressed: () => Navigator.of(context).pop(),
             ),
@@ -202,6 +200,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     Map txInfo = args['txInfo'];
     txInfo['pubKey'] = store.account.currentAccount.pubKey;
     txInfo['password'] = password;
+    txInfo['tip'] = _tipValue.toString();
     if (_proxyAccount != null) {
       txInfo['address'] = store.account.currentAddress;
       txInfo['proxy'] = _proxyAccount.pubKey;
@@ -245,6 +244,24 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
       args['title'],
       I18n.of(context).home['notify.submitted'],
     );
+  }
+
+  void _onTipChanged(double tip) {
+    final decimals = store.settings.networkState.tokenDecimals;
+
+    /// tip division from 0 to 19:
+    /// 0-10 for 0-0.1
+    /// 10-19 for 0.1-1
+    BigInt value =
+        Fmt.tokenInt('0.01', decimals: decimals) * BigInt.from(tip.toInt());
+    if (tip > 10) {
+      value = Fmt.tokenInt('0.1', decimals: decimals) *
+          BigInt.from((tip - 9).toInt());
+    }
+    setState(() {
+      _tip = tip;
+      _tipValue = value;
+    });
   }
 
   @override
@@ -441,6 +458,37 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                               ],
                             ),
                           ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            width: 64,
+                            child: Text('Tip'),
+                          ),
+                          Text(
+                              '${Fmt.token(_tipValue, decimals: decimals)} $symbol'),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 16, right: 16),
+                      child: Row(
+                        children: <Widget>[
+                          Text('0'),
+                          Expanded(
+                            child: Slider(
+                              min: 0,
+                              max: 19,
+                              divisions: 19,
+                              value: _tip,
+                              onChanged: _onTipChanged,
+                            ),
+                          ),
+                          Text('1')
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),

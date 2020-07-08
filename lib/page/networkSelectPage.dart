@@ -45,6 +45,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     store.assets.loadAccountCache();
 
     if (store.settings.endpoint.info == networkEndpointAcala.info) {
+      store.acala.setTransferTxs([], reset: true);
       store.acala.loadCache();
     } else {
       // refresh user's staking info if network is kusama or polkadot

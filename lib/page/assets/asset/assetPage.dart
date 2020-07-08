@@ -114,8 +114,7 @@ class _AssetPageState extends State<AssetPage>
       List<TransferData> ls = store.acala.txsTransfer.reversed.toList();
       ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
       res.addAll(ls.map((i) {
-        return TransferListItem(
-            i, token, i.from == store.account.currentAddress, false);
+        return TransferListItem(i, token, true, false);
       }));
       res.add(ListTail(
         isEmpty: ls.length == 0,
@@ -363,12 +362,15 @@ class TransferListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String address = isOut ? data.to : data.from;
     return Container(
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(width: 0.5, color: Colors.black12)),
       ),
       child: ListTile(
-        title: Text(data.extrinsicIndex ?? Fmt.address(data.hash)),
+        title: Text(Fmt.address(address) ??
+            data.extrinsicIndex ??
+            Fmt.address(data.hash)),
         subtitle: Text(
             DateTime.fromMillisecondsSinceEpoch(data.blockTimestamp * 1000)
                 .toString()),

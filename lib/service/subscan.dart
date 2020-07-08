@@ -95,6 +95,7 @@ class SubScanApi {
         SubScanRequestParams(
           sendPort: receivePort.sendPort,
           network: network,
+          module: module,
           address: sender,
           page: page,
           row: tx_list_page_size,

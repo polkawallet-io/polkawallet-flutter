@@ -9,6 +9,20 @@ class JumpToBrowserLink extends StatelessWidget {
   final String url;
   final MainAxisAlignment mainAxisAlignment;
 
+  Future<void> _launchUrl(BuildContext context) async {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Container(),
+          content: CupertinoActivityIndicator(),
+        );
+      },
+    );
+    await UI.launchURL(url);
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -27,7 +41,7 @@ class JumpToBrowserLink extends StatelessWidget {
               size: 16, color: Theme.of(context).primaryColor)
         ],
       ),
-      onTap: () => UI.launchURL(url),
+      onTap: () => _launchUrl(context),
     );
   }
 }

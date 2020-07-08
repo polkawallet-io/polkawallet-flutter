@@ -14,6 +14,7 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -141,6 +142,8 @@ class _TransferPageState extends State<TransferPage> {
           _tokenSymbol = args.symbol;
         });
       }
+
+      webApi.assets.fetchBalance();
     });
   }
 
@@ -180,6 +183,7 @@ class _TransferPageState extends State<TransferPage> {
                 onPressed: () async {
                   final to =
                       await Navigator.of(context).pushNamed(ScanPage.route);
+                  if (to == null) return;
                   setState(() {
                     _addressCtrl.text = (to as QRCodeAddressResult).address;
                   });

@@ -154,7 +154,7 @@ abstract class _AcalaStore with Store {
       {bool reset = false, needCache = true}) async {
     List transfers = list.map((i) {
       return {
-        "block_timestamp": i['time'],
+        "block_timestamp": int.parse(i['time'].toString().substring(0, 10)),
         "hash": i['hash'],
         "success": true,
         "from": rootStore.account.currentAddress,
@@ -172,7 +172,7 @@ abstract class _AcalaStore with Store {
     }
 
     if (needCache && txsTransfer.length > 0) {
-      _cacheTxs(transfers, cacheTxsTransferKey);
+      _cacheTxs(list, cacheTxsTransferKey);
     }
   }
 

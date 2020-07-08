@@ -8,11 +8,19 @@
     "build": "webpack -p --mode production",
     "build-dev": "webpack -d --mode development"
   },
+  "resolutions": {
+    "@polkadot/api": "1.18.1",
+    "@polkadot/types": "1.18.1",
+    "@polkadot/api-derive": "1.18.1",
+    "@polkadot/metadata": "1.18.1",
+    "@polkadot/rpc-core": "1.18.1",
+    "**/@polkadot/api": "~1.18.1"
+  },
   "dependencies": {
-    "@acala-network/api": "^0.2.0-beta.33",
-    "@acala-network/app-util": "^0.2.0-beta.33",
+    "@acala-network/api": "^0.2.0-beta.55",
+    "@acala-network/app-util": "^0.2.0-beta.55",
     "@babel/polyfill": "^7.8.3",
-    "@polkadot/api": "^1.9.0-beta.22",
+    "@polkadot/api": "1.18.1",
     "@polkadot/ui-shared": "^0.51.1",
     "bn.js": "^5.1.1"
   },

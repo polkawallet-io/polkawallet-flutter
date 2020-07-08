@@ -87,7 +87,10 @@ class ApiAcala {
   }
 
   Future<Map> _fetchPriceOfLDOT() async {
-    var res = await apiRoot.evalJavascript('acala.fetchLDOTPrice(api)');
+    var res = await apiRoot.evalJavascript(
+      'acala.fetchLDOTPrice(api)',
+      allowRepeat: true,
+    );
     return {
       "token": 'LDOT',
       "price": {
