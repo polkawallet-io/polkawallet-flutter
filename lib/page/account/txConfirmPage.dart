@@ -274,6 +274,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).home;
     final Map<String, String> dicAcc = I18n.of(context).account;
+    final Map<String, String> dicAsset = I18n.of(context).assets;
     final String symbol = store.settings.networkState.tokenSymbol;
     final int decimals = store.settings.networkState.tokenDecimals;
 
@@ -464,10 +465,18 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                         children: <Widget>[
                           Container(
                             width: 64,
-                            child: Text('Tip'),
+                            child: Text(dicAsset['tip']),
                           ),
                           Text(
                               '${Fmt.token(_tipValue, decimals: decimals)} $symbol'),
+                          TapTooltip(
+                            message: dicAsset['tip.tip'],
+                            child: Icon(
+                              Icons.info,
+                              color: Theme.of(context).unselectedWidgetColor,
+                              size: 16,
+                            ),
+                          ),
                         ],
                       ),
                     ),

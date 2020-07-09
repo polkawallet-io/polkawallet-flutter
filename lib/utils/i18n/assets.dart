@@ -25,6 +25,9 @@ const Map<String, String> enAssets = {
   'fail': 'Failed',
   'value': 'Value',
   'fee': 'Fee',
+  'tip': 'Tip',
+  'tip.tip':
+      '\nAdding a tip to this Tx, paying\nthe block author for greater priority.\n',
   'from': 'From',
   'to': 'To',
   'block': 'Block',
@@ -78,6 +81,8 @@ const Map<String, String> zhAssets = {
   'fail': '失败',
   'value': '金额',
   'fee': '手续费',
+  'tip': '小费',
+  'tip.tip': '\n为出块人支付额外的费用，\n可以提高交易打包优先级。\n',
   'from': '付款地址',
   'to': '收款地址',
   'block': '区块',
