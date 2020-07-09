@@ -1,7 +1,9 @@
 # 0.8.3
 - add tx sending with tips
 - fix Acala token transfer history bug
+- fix UI bugs of Acala pages
 - fix staking history display bug
+- fix scan to transfer balance display
 
 # 0.8.2
 - add acala TC4 support

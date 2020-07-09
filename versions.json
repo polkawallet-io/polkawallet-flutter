@@ -1,34 +1,36 @@
 {
   "android": {
-    "version": "0.8.1",
-    "version-beta": "0.8.1-beta.3",
-    "url": "https://apps.acala.network/polkawallet/polkawallet-v0.8.0-beta.3.apk",
+    "version": "0.8.3",
+    "version-beta": "0.8.3-beta.2",
+    "url": "https://apps.acala.network/polkawallet/polkawallet-v0.8.3-beta.2.apk",
     "info": {
       "en": [
         "You need to UNINSTALL the App to update to new version, BACKUP your mnemonics before that.",
         "add offline signature",
-        "fix bugs of social recovery"
+        "fix bugs of social recovery",
+        "fix UI of Acala pages"
       ],
       "zh": [
-        "该版本与旧版本不兼容，需要先卸载旧版本，请保存好助记词。",
+        "该版本与 v0.7.x 旧版本不兼容，需要先卸载旧版本，请保存好助记词。",
         "新增离线签名功能",
-        "修复社交恢复的bug"
+        "修复社交恢复的bug",
+        "修复Acala页面的UI问题"
       ]
     }
   },
   "ios": {
-    "version": "0.8.1",
-    "version-beta": "0.8.1-beta.3",
+    "version": "0.8.3",
+    "version-beta": "0.8.3-beta.2",
     "info": {
       "en": [
-        "You need to UNINSTALL the App to update to new version, BACKUP your mnemonics before that.",
         "add offline signature",
-        "fix bugs of social recovery"
+        "fix bugs of social recovery",
+        "fix UI of Acala pages"
       ],
       "zh": [
-        "该版本与旧版本不兼容，需要先卸载旧版本，请保存好助记词。",
         "新增离线签名功能",
-        "修复社交恢复的bug"
+        "修复社交恢复的bug",
+        "修复Acala页面的UI问题"
       ]
     }
   }
