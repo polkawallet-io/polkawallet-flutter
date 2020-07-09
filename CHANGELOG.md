@@ -1,3 +1,8 @@
+# 0.7.6 Encointer adaptations
+- based on polkawallet-flutter 0.7.6
+- support testnet Gesell
+- support Testnet Cantillon incomplete
+
 # 0.7.6
 - add polkadot-cc1 support
 - add observation account
