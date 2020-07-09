@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/service/substrateApi/acala/apiAcala.dart';
+import 'package:polka_wallet/service/substrateApi/encointer/apiEncointer.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiGov.dart';
@@ -23,13 +23,13 @@ class Api {
 
   ApiAccount account;
 
-  ApiAcala acala;
+  ApiEncointer encointer;
 
   ApiAssets assets;
   ApiStaking staking;
   ApiGovernance gov;
 
-  Map<String, Function> _msgHandlers = {};
+  Map<String, Function> msgHandlers = {};
   Map<String, Completer> _msgCompleters = {};
   FlutterWebviewPlugin _web;
   int _evalJavascriptUID = 0;
@@ -39,7 +39,7 @@ class Api {
   void init() {
     account = ApiAccount(this);
 
-    acala = ApiAcala(this);
+    encointer = ApiEncointer(this);
 
     assets = ApiAssets(this);
     staking = ApiStaking(this);
@@ -49,7 +49,7 @@ class Api {
   }
 
   Future<void> launchWebview({bool customNode = false}) async {
-    _msgHandlers = {'txStatusChange': store.account.setTxStatus};
+    msgHandlers = {'txStatusChange': store.account.setTxStatus};
 
     _evalJavascriptUID = 0;
     _msgCompleters = {};
@@ -66,10 +66,15 @@ class Api {
     _web.onStateChanged.listen((viewState) async {
       if (viewState.type == WebViewState.finishLoad) {
         String network = 'kusama';
-        print('webview loaded for network $network');
-        if (store.settings.endpoint.info.contains('acala')) {
-          network = 'acala';
+
+        if (store.settings.endpoint.info.contains('nctr-gsl') ||
+            store.settings.endpoint.info.contains('nctr-gsl-dev') ||
+            store.settings.endpoint.info.contains('nctr-cln')) {
+          network = 'encointer';
         }
+
+        print('webview loaded for network $network');
+
         DefaultAssetBundle.of(context)
             .loadString('lib/js_service_$network/dist/main.js')
             .then((String js) {
@@ -101,8 +106,8 @@ class Api {
                     _msgCompleters.remove(path);
                   }
                 }
-                if (_msgHandlers[path] != null) {
-                  Function handler = _msgHandlers[path];
+                if (msgHandlers[path] != null) {
+                  Function handler = msgHandlers[path];
                   handler(msg['data']);
                 }
               });
@@ -164,6 +169,13 @@ class Api {
       store.settings.setNetworkName(null);
       return;
     }
+
+    // untested
+    if (store.settings.endpoint.info == networkEndpointEncointerCantillon.info) {
+      var worker = store.settings.endpoint.worker;
+      String res = await evalJavascript('settings.setWorkerEndpoint("$worker")');
+    }
+
     fetchNetworkProps();
   }
 
@@ -178,6 +190,13 @@ class Api {
       store.settings.setNetworkName(null);
       return;
     }
+
+    // setWorker endpoint on js side
+    if (store.settings.endpoint.info == networkEndpointEncointerCantillon.info) {
+      var worker = store.settings.endpoint.worker;
+      String res = await evalJavascript('settings.setWorkerEndpoint("$worker")');
+    }
+
     EndpointData connected =
         store.settings.endpointList.firstWhere((i) => i.value == res);
     store.settings.setEndpoint(connected);
@@ -189,7 +208,7 @@ class Api {
     List<dynamic> info = await Future.wait([
       evalJavascript('settings.getNetworkConst()'),
       evalJavascript('api.rpc.system.properties()'),
-      evalJavascript('api.rpc.system.chain()'),
+      evalJavascript('api.rpc.system.chain()'),  // "Development" or "Encointer Testnet Gesell" or whatever
     ]);
     store.settings.setNetworkConst(info[0]);
     store.settings.setNetworkState(info[1]);
@@ -197,7 +216,11 @@ class Api {
 
     // fetch account balance
     if (store.account.accountList.length > 0) {
-      if (store.settings.endpoint.info == networkEndpointAcala.info) {
+      bool isEncointer = store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
+              store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
+              store.settings.endpoint.info == networkEndpointEncointerCantillon.info;
+
+      if (isEncointer) {
         await assets.fetchBalance(store.account.currentAccount.pubKey);
         return;
       }
@@ -235,7 +258,7 @@ class Api {
     String channel,
     Function callback,
   ) async {
-    _msgHandlers[channel] = callback;
+    msgHandlers[channel] = callback;
     evalJavascript(
         'settings.subscribeMessage("$section", "$method", ${jsonEncode(params)}, "$channel")');
   }
@@ -243,4 +266,11 @@ class Api {
   Future<void> unsubscribeMessage(String channel) async {
     _web.evalJavascript('unsub$channel()');
   }
+
+  Future<void> closeWebView() async {
+    print("closing webview");
+    _web.close();
+    _web = null;
+  }
+
 }

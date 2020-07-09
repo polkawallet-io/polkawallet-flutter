@@ -49,6 +49,7 @@ const Map<String, String> enAssets = {
   'claim.empty': 'does not appear to have a valid claim.',
   'claim.empty2':
       'Please double check that you have signed the transaction correctly on the correct ETH account.',
+  'done?' : 'done?'
 };
 
 const Map<String, String> zhAssets = {

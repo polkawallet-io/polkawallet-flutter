@@ -47,7 +47,8 @@ class _AssetPageState extends State<AssetPage>
     webApi.assets.fetchBalance(pubKey);
     Map res = {"transfers": []};
 
-    if (store.settings.endpoint.info != networkEndpointAcala.info) {
+    if (store.settings.endpoint.info == networkEndpointKusama.info ||
+        store.settings.endpoint.info == networkEndpointPolkadot.info) {
       webApi.staking.fetchAccountStaking(pubKey);
       res = await webApi.assets.updateTxs(_txsPage);
     }
@@ -103,8 +104,10 @@ class _AssetPageState extends State<AssetPage>
   List<Widget> _buildTxList() {
     List<Widget> res = [];
     final String token = ModalRoute.of(context).settings.arguments;
-    if (store.settings.endpoint.info == networkEndpointAcala.info) {
-      List<TransferData> ls = store.acala.txsTransfer.reversed.toList();
+    if (store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
+        store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
+        store.settings.endpoint.info == networkEndpointEncointerCantillon.info) {
+      List<TransferData> ls = store.encointer.txsTransfer.reversed.toList();
       ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
       res.addAll(ls.map((i) {
         return TransferListItem(
@@ -133,7 +136,9 @@ class _AssetPageState extends State<AssetPage>
     final String symbol = store.settings.networkState.tokenSymbol;
     final String token = ModalRoute.of(context).settings.arguments;
     final bool isBaseToken = token == symbol;
-    final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    final isEncointer = store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
+        store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
+        store.settings.endpoint.info == networkEndpointEncointerCantillon.info;
 
     final dic = I18n.of(context).assets;
 
@@ -242,7 +247,7 @@ class _AssetPageState extends State<AssetPage>
                     ],
                   ),
                 ),
-                !isAcala
+                !isEncointer
                     ? TabBar(
                         labelColor: Colors.black87,
                         labelStyle: TextStyle(fontSize: 18),
@@ -258,7 +263,7 @@ class _AssetPageState extends State<AssetPage>
                         child: Row(
                           children: <Widget>[
                             BorderedTitle(
-                              title: I18n.of(context).acala['loan.txs'],
+                              title: I18n.of(context).encointer['loan.txs'],
                             )
                           ],
                         ),

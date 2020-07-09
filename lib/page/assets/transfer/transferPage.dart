@@ -88,10 +88,12 @@ class _TransferPageState extends State<TransferPage> {
           Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
         ],
       };
-      bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
-      if (isAcala) {
+      bool isEncointer = (store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
+          store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
+          store.settings.endpoint.info == networkEndpointEncointerCantillon.info);
+      if (isEncointer) {
         args['txInfo'] = {
-          "module": 'currencies',
+          "module": 'encointer_balances',
           "call": 'transfer',
         };
         args['params'] = [
@@ -106,8 +108,8 @@ class _TransferPageState extends State<TransferPage> {
       args['onFinish'] = (BuildContext txPageContext, Map res) {
         final TransferPageParams routeArgs =
             ModalRoute.of(context).settings.arguments;
-        if (isAcala) {
-          store.acala.setTransferTxs([res]);
+        if (isEncointer) {
+          store.encointer.setTransferTxs([res]);
         }
         Navigator.popUntil(
             txPageContext, ModalRoute.withName(routeArgs.redirect));

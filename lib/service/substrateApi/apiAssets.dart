@@ -16,10 +16,9 @@ class ApiAssets {
       store.assets.setAccountBalances(
           pubKey, Map.of({store.settings.networkState.tokenSymbol: res}));
     }
-    if (store.settings.endpoint.info == networkEndpointAcala.info) {
-      apiRoot.acala.fetchTokens(store.account.currentAccount.pubKey);
-      apiRoot.acala.fetchAirdropTokens();
-    }
+    //if (store.settings.endpoint.info == networkEndpointEncointerGesell.info) {
+      //apiRoot.encointer.fetchCurrencies(store.account.currentAccount.pubKey);
+    //}
   }
 
   Future<Map> updateTxs(int page) async {

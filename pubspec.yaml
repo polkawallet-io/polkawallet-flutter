@@ -1,5 +1,5 @@
 name: polka_wallet
-description: PolkaWallet made with Flutter.
+description: EncointerWallet made with Flutter.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -14,7 +14,7 @@ description: PolkaWallet made with Flutter.
 version: 0.7.6+763
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   # intl - format numbers
@@ -36,6 +36,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_map: ^0.9.0
   ota_update: ^2.2.1
   flutter_downloader: ^1.4.4
   path_provider:
@@ -85,16 +86,19 @@ flutter:
   assets:
     # js service
     - lib/js_service_kusama/dist/main.js
-    - lib/js_service_acala/dist/main.js
+    - lib/js_service_encointer/dist/main.js
 
     # images
     ## images - settings
     - assets/images/public/kusama.png
     - assets/images/public/kusama_gray.png
-    - assets/images/public/acala-mandala.png
-    - assets/images/public/acala-mandala_gray.png
-    - assets/images/public/acala.png
-    - assets/images/public/acala_gray.png
+    - assets/images/public/nctr-cln.png
+    - assets/images/public/nctr-cln_gray.png
+    - assets/images/public/nctr-gsl-dev.png
+    - assets/images/public/nctr-gsl-dev_gray.png
+    - assets/images/public/nctr-gsl.png
+    - assets/images/public/nctr-gsl_gray.png
+    - assets/images/assets/ERT.png
     - assets/images/assets/ACA.png
     - assets/images/assets/AUSD.png
     - assets/images/assets/XBTC.png
@@ -110,8 +114,8 @@ flutter:
     - assets/images/public/Governance_indigo.png
     - assets/images/public/Profile_indigo.png
     - assets/images/public/Staking_indigo.png
-    - assets/images/public/Acala_indigo.png
-    - assets/images/public/Acala_dark.png
+    - assets/images/public/Ceremonies_indigo.png
+    - assets/images/public/Ceremonies_dark.png
     - assets/images/acala/exchange.svg
     - assets/images/acala/loan.svg
     - assets/images/acala/loan-start.svg

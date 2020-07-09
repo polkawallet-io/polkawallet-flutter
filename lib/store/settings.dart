@@ -116,6 +116,7 @@ abstract class _SettingsStore with Store {
     loading = false;
   }
 
+  //TODO: this doesn't work for Development network. Fields of rpc.system.properties() are empty
   @action
   Future<void> setNetworkState(Map<String, dynamic> data) async {
     rootStore.localStorage
@@ -181,6 +182,8 @@ abstract class _SettingsStore with Store {
     } else {
       endpoint = EndpointData.fromJson(value);
     }
+    //TODO: remove this. it will force Kusama for safe start
+    //endpoint = networkEndpointKusama;
   }
 
   @action
@@ -206,11 +209,12 @@ class NetworkState extends _NetworkState {
       _$NetworkStateToJson(net);
 }
 
+// TODO: these were empty before, but had to add defaults for development chain
 abstract class _NetworkState {
   String endpoint = '';
-  int ss58Format = 0;
-  int tokenDecimals = 0;
-  String tokenSymbol = '';
+  int ss58Format = 42;
+  int tokenDecimals = 12;
+  String tokenSymbol = 'DOT';
 }
 
 @JsonSerializable()
@@ -226,4 +230,5 @@ abstract class _EndpointData {
   int ss58 = 42;
   String text = '';
   String value = '';
+  String worker = ''; // only relevant for cantillon
 }

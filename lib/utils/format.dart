@@ -19,10 +19,14 @@ class Fmt {
   }
 
   static String address(String addr, {int pad = 6}) {
-    if (addr == null || addr.length == 0) {
+    if (addr == null || addr.length < pad) {
       return addr;
     }
     return addr.substring(0, pad) + '...' + addr.substring(addr.length - pad);
+  }
+
+  static String currencyIdentifier(String cid, {int pad = 8}) {
+    return address(cid, pad: pad);
   }
 
   /// number transform 1:
@@ -117,7 +121,7 @@ class Fmt {
   /// ceil number of last decimal
   static String priceCeil(
     double value, {
-    int decimals = acala_token_decimals,
+    int decimals = encointer_token_decimals,
     int lengthFixed = 2,
     int lengthMax,
   }) {
@@ -160,7 +164,7 @@ class Fmt {
 
   static String priceCeilBigInt(
     BigInt value, {
-    int decimals = acala_token_decimals,
+    int decimals = encointer_token_decimals,
     int lengthFixed = 2,
     int lengthMax,
   }) {
@@ -176,7 +180,7 @@ class Fmt {
 
   static String priceFloorBigInt(
     BigInt value, {
-    int decimals = acala_token_decimals,
+    int decimals = encointer_token_decimals,
     int lengthFixed = 2,
     int lengthMax,
   }) {

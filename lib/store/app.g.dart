@@ -6,7 +6,7 @@ part of 'app.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$AppStore on _AppStore, Store {
   final _$settingsAtom = Atom(name: '_AppStore.settings');
@@ -84,18 +84,18 @@ mixin _$AppStore on _AppStore, Store {
     });
   }
 
-  final _$acalaAtom = Atom(name: '_AppStore.acala');
+  final _$encointerAtom = Atom(name: '_AppStore.encointer');
 
   @override
-  AcalaStore get acala {
-    _$acalaAtom.reportRead();
-    return super.acala;
+  EncointerStore get encointer {
+    _$encointerAtom.reportRead();
+    return super.encointer;
   }
 
   @override
-  set acala(AcalaStore value) {
-    _$acalaAtom.reportWrite(value, super.acala, () {
-      super.acala = value;
+  set encointer(EncointerStore value) {
+    _$encointerAtom.reportWrite(value, super.encointer, () {
+      super.encointer = value;
     });
   }
 
@@ -129,7 +129,7 @@ account: ${account},
 assets: ${assets},
 staking: ${staking},
 gov: ${gov},
-acala: ${acala},
+encointer: ${encointer},
 isReady: ${isReady}
     ''';
   }

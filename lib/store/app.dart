@@ -1,5 +1,5 @@
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/store/acala/acala.dart';
+import 'package:polka_wallet/store/encointer/encointer.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking/staking.dart';
 import 'package:polka_wallet/store/account/account.dart';
@@ -30,7 +30,7 @@ abstract class _AppStore with Store {
   GovernanceStore gov;
 
   @observable
-  AcalaStore acala;
+  EncointerStore encointer;
 
   @observable
   bool isReady = false;
@@ -54,8 +54,8 @@ abstract class _AppStore with Store {
     staking.loadCache();
     gov.loadCache();
 
-    acala = AcalaStore(this);
-    acala.loadCache();
+    encointer = EncointerStore(this);
+    encointer.loadCache();
 
     isReady = true;
   }

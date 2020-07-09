@@ -54,9 +54,9 @@ void main() {
       store.setEndpoint(networkEndpointPolkadot);
       expect(store.endpoint.info, networkEndpointPolkadot.info);
       expect(store.endpointList.length, 3);
-      store.setEndpoint(networkEndpointAcala);
-      expect(store.endpoint.info, networkEndpointAcala.info);
-      expect(store.endpointList.length, 4);
+      store.setEndpoint(networkEndpointEncointerGesell);
+      expect(store.endpoint.info, networkEndpointEncointerGesell.info);
+      expect(store.endpointList.length, 1);
     });
   });
 }

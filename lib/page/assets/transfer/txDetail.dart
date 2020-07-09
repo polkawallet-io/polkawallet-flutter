@@ -80,9 +80,10 @@ class TxDetail extends StatelessWidget {
         'https://polkascan.io/pre/${networkName.toLowerCase()}/transaction/$hash';
     String snLink =
         'https://${networkName.toLowerCase()}.subscan.io/extrinsic/$hash';
-    if (networkName == networkEndpointAcala.info) {
-      pnLink =
-          'https://polkascan.io/pre/${networkName.toLowerCase()}/balances/transfer/$eventId';
+    if (networkName == networkEndpointEncointerGesell.info ||
+        networkName == networkEndpointEncointerGesellDev.info ||
+        networkName == networkEndpointEncointerCantillon.info) {
+      pnLink = null;
       snLink = null;
     }
     list.addAll(<Widget>[

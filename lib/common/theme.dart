@@ -61,7 +61,7 @@ final appThemeKusama = ThemeData(
       )),
 );
 
-final appThemeAcala = ThemeData(
+final appThemeEncointer = ThemeData(
   primarySwatch: Colors.indigo,
   textTheme: TextTheme(
       headline1: TextStyle(
