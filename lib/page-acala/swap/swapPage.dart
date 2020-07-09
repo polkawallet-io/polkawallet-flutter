@@ -226,8 +226,6 @@ class _SwapPageState extends State<SwapPage> {
         int decimals = store.settings.networkState.tokenDecimals;
         List<String> swapPair = store.acala.currentSwapPair;
 
-        final double inputWidth = MediaQuery.of(context).size.width / 3;
-
         BigInt balance = BigInt.zero;
         if (store.acala.swapTokens != null && swapPair.length > 0) {
           balance = Fmt.balanceInt(
@@ -236,7 +234,6 @@ class _SwapPageState extends State<SwapPage> {
 
         Color primary = Theme.of(context).primaryColor;
         Color grey = Theme.of(context).unselectedWidgetColor;
-        Color lightGrey = Theme.of(context).dividerColor;
 
         return Scaffold(
           appBar: AppBar(title: Text(dic['dex.title']), centerTitle: true),
@@ -253,39 +250,6 @@ class _SwapPageState extends State<SwapPage> {
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  GestureDetector(
-                                    child: CurrencyWithIcon(
-                                      swapPair[0],
-                                      textWidth: 48,
-                                      textStyle:
-                                          Theme.of(context).textTheme.headline4,
-                                      trailing: Icon(Icons.keyboard_arrow_down),
-                                    ),
-                                    onTap: () => _selectCurrencyPay(),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.repeat,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                    onPressed: () => _switchPair(),
-                                  ),
-                                  GestureDetector(
-                                    child: CurrencyWithIcon(
-                                      swapPair[1],
-                                      textWidth: 48,
-                                      textStyle:
-                                          Theme.of(context).textTheme.headline4,
-                                      trailing: Icon(Icons.keyboard_arrow_down),
-                                    ),
-                                    onTap: () => _selectCurrencyReceive(),
-                                  )
-                                ],
-                              ),
                               Form(
                                 key: _formKey,
                                 child: Row(
@@ -293,102 +257,150 @@ class _SwapPageState extends State<SwapPage> {
                                       MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Container(
-                                      width: inputWidth,
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          hintText: dic['dex.pay'],
-                                          labelText: dic['dex.pay'],
-                                          suffix: GestureDetector(
-                                            child: Icon(
-                                              CupertinoIcons
-                                                  .clear_thick_circled,
-                                              color: Theme.of(context)
-                                                  .disabledColor,
-                                              size: 18,
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          GestureDetector(
+                                            child: CurrencyWithIcon(
+                                              swapPair[0],
+                                              textStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .headline4,
+                                              trailing: Icon(
+                                                  Icons.keyboard_arrow_down),
                                             ),
-                                            onTap: () {
-                                              WidgetsBinding.instance
-                                                  .addPostFrameCallback((_) =>
-                                                      _amountPayCtrl.clear());
-                                            },
+                                            onTap: () => _selectCurrencyPay(),
                                           ),
-                                        ),
-                                        inputFormatters: [
-                                          RegExInputFormatter.withRegex(
-                                              '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                          TextFormField(
+                                            decoration: InputDecoration(
+                                              hintText: dic['dex.pay'],
+                                              labelText: dic['dex.pay'],
+                                              suffix: GestureDetector(
+                                                child: Icon(
+                                                  CupertinoIcons
+                                                      .clear_thick_circled,
+                                                  color: Theme.of(context)
+                                                      .disabledColor,
+                                                  size: 18,
+                                                ),
+                                                onTap: () {
+                                                  WidgetsBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (_) => _amountPayCtrl
+                                                              .clear());
+                                                },
+                                              ),
+                                            ),
+                                            inputFormatters: [
+                                              RegExInputFormatter.withRegex(
+                                                  '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                            ],
+                                            controller: _amountPayCtrl,
+                                            keyboardType:
+                                                TextInputType.numberWithOptions(
+                                                    decimal: true),
+                                            validator: (v) {
+                                              if (v.isEmpty) {
+                                                return dicAssets[
+                                                    'amount.error'];
+                                              }
+                                              if (double.parse(v.trim()) >
+                                                  Fmt.bigIntToDouble(balance,
+                                                      decimals: decimals)) {
+                                                return dicAssets['amount.low'];
+                                              }
+                                              return null;
+                                            },
+                                            onChanged: _onSupplyAmountChange,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 8),
+                                            child: Text(
+                                              '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} ${swapPair[0]}',
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .unselectedWidgetColor),
+                                            ),
+                                          ),
                                         ],
-                                        controller: _amountPayCtrl,
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                decimal: true),
-                                        validator: (v) {
-                                          if (v.isEmpty) {
-                                            return dicAssets['amount.error'];
-                                          }
-                                          if (double.parse(v.trim()) >
-                                              Fmt.bigIntToDouble(balance,
-                                                  decimals: decimals)) {
-                                            return dicAssets['amount.low'];
-                                          }
-                                          return null;
-                                        },
-                                        onChanged: _onSupplyAmountChange,
                                       ),
                                     ),
-                                    Container(
-                                      width: inputWidth,
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          hintText: dic['dex.receive'],
-                                          labelText: dic['dex.receive'],
-                                          suffix: GestureDetector(
-                                            child: Icon(
-                                              CupertinoIcons
-                                                  .clear_thick_circled,
-                                              color: Theme.of(context)
-                                                  .disabledColor,
-                                              size: 18,
-                                            ),
-                                            onTap: () {
-                                              WidgetsBinding.instance
-                                                  .addPostFrameCallback((_) =>
-                                                      _amountReceiveCtrl
-                                                          .clear());
-                                            },
-                                          ),
+                                    GestureDetector(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(8, 2, 8, 0),
+                                        child: Icon(
+                                          Icons.repeat,
+                                          color: Theme.of(context).primaryColor,
                                         ),
-                                        inputFormatters: [
-                                          RegExInputFormatter.withRegex(
-                                              '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                                        ],
-                                        controller: _amountReceiveCtrl,
-                                        keyboardType:
-                                            TextInputType.numberWithOptions(
-                                                decimal: true),
-                                        validator: (v) {
-                                          if (v.isEmpty) {
-                                            return dicAssets['amount.error'];
-                                          }
-                                          // check if pool has sufficient assets
+                                      ),
+                                      onTap: () => _switchPair(),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          GestureDetector(
+                                            child: CurrencyWithIcon(
+                                              swapPair[1],
+                                              textStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .headline4,
+                                              trailing: Icon(
+                                                  Icons.keyboard_arrow_down),
+                                            ),
+                                            onTap: () =>
+                                                _selectCurrencyReceive(),
+                                          ),
+                                          TextFormField(
+                                            decoration: InputDecoration(
+                                              hintText: dic['dex.receive'],
+                                              labelText: dic['dex.receive'],
+                                              suffix: GestureDetector(
+                                                child: Icon(
+                                                  CupertinoIcons
+                                                      .clear_thick_circled,
+                                                  color: Theme.of(context)
+                                                      .disabledColor,
+                                                  size: 18,
+                                                ),
+                                                onTap: () {
+                                                  WidgetsBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (_) =>
+                                                              _amountReceiveCtrl
+                                                                  .clear());
+                                                },
+                                              ),
+                                            ),
+                                            inputFormatters: [
+                                              RegExInputFormatter.withRegex(
+                                                  '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                            ],
+                                            controller: _amountReceiveCtrl,
+                                            keyboardType:
+                                                TextInputType.numberWithOptions(
+                                                    decimal: true),
+                                            validator: (v) {
+                                              if (v.isEmpty) {
+                                                return dicAssets[
+                                                    'amount.error'];
+                                              }
+                                              // check if pool has sufficient assets
 //                                    if (true) {
 //                                      return dicAssets['amount.low'];
 //                                    }
-                                          return null;
-                                        },
-                                        onChanged: _onTargetAmountChange,
+                                              return null;
+                                            },
+                                            onChanged: _onTargetAmountChange,
+                                          ),
+                                        ],
                                       ),
                                     )
                                   ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 8),
-                                child: Text(
-                                  '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} ${swapPair[0]}',
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .unselectedWidgetColor),
                                 ),
                               ),
                               Divider(),

@@ -50,7 +50,7 @@ const Map<String, String> enDex = {
   'earn.get': 'Withdraw Rewards',
   'earn.reward.year': 'Annualized Rewards',
   'earn.fee': 'Swap Fee',
-  'earn.pool': 'Current Pool Size',
+  'earn.pool': 'Current Pool',
   'earn.deposit.user': 'My Deposit',
   'earn.share': 'Pool Share',
   'earn.reward': 'System Rewards',

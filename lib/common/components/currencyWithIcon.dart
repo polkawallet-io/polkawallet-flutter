@@ -5,13 +5,11 @@ class CurrencyWithIcon extends StatelessWidget {
   CurrencyWithIcon(
     this.symbol, {
     this.textStyle,
-    this.textWidth,
     this.trailing,
     this.mainAxisAlignment,
   });
 
   final String symbol;
-  final double textWidth;
   final TextStyle textStyle;
   final MainAxisAlignment mainAxisAlignment;
   final Widget trailing;
@@ -27,8 +25,8 @@ class CurrencyWithIcon extends StatelessWidget {
           child:
               Image.asset('assets/images/assets/${symbol.toUpperCase()}.png'),
         ),
-        Container(
-          width: textWidth ?? 64,
+        Expanded(
+          flex: 0,
           child: Text(
             symbol,
             style: textStyle,
