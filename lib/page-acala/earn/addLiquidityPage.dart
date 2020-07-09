@@ -179,7 +179,6 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                             width: inputWidth,
                             child: CurrencyWithIcon(
                               token,
-                              textWidth: 48,
                               textStyle: Theme.of(context).textTheme.headline4,
                             ),
                           ),
@@ -192,7 +191,6 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                             width: inputWidth,
                             child: CurrencyWithIcon(
                               acala_stable_coin_view,
-                              textWidth: 48,
                               textStyle: Theme.of(context).textTheme.headline4,
                             ),
                           ),
@@ -289,39 +287,47 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                           ],
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Container(
-                            width: inputWidth,
-                            child: Text(
-                              '${dicAssets['balance']}: ${Fmt.priceFloorBigInt(balanceTokenUser, lengthMax: 3)}',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context).unselectedWidgetColor,
+                      Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Container(
+                              width: inputWidth,
+                              child: Text(
+                                '${dicAssets['balance']}: ${Fmt.priceFloorBigInt(balanceTokenUser, lengthMax: 3)}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color:
+                                      Theme.of(context).unselectedWidgetColor,
+                                ),
                               ),
                             ),
-                          ),
-                          Container(
-                            width: inputWidth,
-                            child: Text(
-                              '${dicAssets['balance']}: ${Fmt.priceFloorBigInt(balanceStableCoinUser, lengthMax: 2)}',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context).unselectedWidgetColor,
+                            Container(
+                              width: inputWidth,
+                              child: Text(
+                                '${dicAssets['balance']}: ${Fmt.priceFloorBigInt(balanceStableCoinUser, lengthMax: 2)}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color:
+                                      Theme.of(context).unselectedWidgetColor,
+                                ),
                               ),
-                            ),
-                          )
-                        ],
+                            )
+                          ],
+                        ),
                       ),
                       Divider(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(
-                            dic['dex.rate'],
-                            style: TextStyle(
-                                color: Theme.of(context).unselectedWidgetColor),
+                          Expanded(
+                            child: Text(
+                              dic['dex.rate'],
+                              style: TextStyle(
+                                color: Theme.of(context).unselectedWidgetColor,
+                              ),
+                            ),
                           ),
                           Text(
                               '1 $token = ${Fmt.doubleFormat(swapRatio, length: 2)} $acala_stable_coin_view'),
@@ -330,22 +336,30 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(
-                            dic['earn.pool'],
-                            style: TextStyle(
-                                color: Theme.of(context).unselectedWidgetColor),
+                          Expanded(
+                            child: Text(
+                              dic['earn.pool'],
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).unselectedWidgetColor),
+                            ),
                           ),
                           Text(
-                              '${Fmt.doubleFormat(amountToken)} $token + ${Fmt.doubleFormat(amountStableCoin, length: 2)} $acala_stable_coin_view'),
+                            '${Fmt.doubleFormat(amountToken)} $token\n+ ${Fmt.doubleFormat(amountStableCoin, length: 2)} $acala_stable_coin_view',
+                            textAlign: TextAlign.right,
+                          ),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(
-                            dic['earn.share'],
-                            style: TextStyle(
-                                color: Theme.of(context).unselectedWidgetColor),
+                          Expanded(
+                            child: Text(
+                              dic['earn.share'],
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).unselectedWidgetColor),
+                            ),
                           ),
                           Text(Fmt.ratio(userShareNew)),
                         ],

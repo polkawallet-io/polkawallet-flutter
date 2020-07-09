@@ -344,7 +344,7 @@ class _AssetsState extends State<Assets> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!store.settings.loading) {
-        globalBalanceRefreshKey.currentState.show();
+        globalBalanceRefreshKey.currentState?.show();
       }
     });
     super.initState();

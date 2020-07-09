@@ -119,8 +119,6 @@ class _MintPageState extends State<MintPage> {
         final Map dicAssets = I18n.of(context).assets;
         int decimals = store.settings.networkState.tokenDecimals;
 
-        final double inputWidth = MediaQuery.of(context).size.width / 3;
-
         BigInt balance = Fmt.balanceInt(store.assets.tokenBalances['DOT']);
 
         StakingPoolInfoData pool = store.acala.stakingPoolInfo;
@@ -141,94 +139,102 @@ class _MintPageState extends State<MintPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            CurrencyWithIcon(
-                              'DOT',
-                              textWidth: 48,
-                              textStyle: Theme.of(context).textTheme.headline4,
-                            ),
-                            Icon(
-                              Icons.repeat,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            CurrencyWithIcon(
-                              'LDOT',
-                              textWidth: 48,
-                              textStyle: Theme.of(context).textTheme.headline4,
-                            ),
-                          ],
-                        ),
                         Form(
                           key: _formKey,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Container(
-                                width: inputWidth,
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                    hintText: dic['dex.pay'],
-                                    labelText: dic['dex.pay'],
-                                    suffix: GestureDetector(
-                                      child: Icon(
-                                        CupertinoIcons.clear_thick_circled,
-                                        color: Theme.of(context).disabledColor,
-                                        size: 18,
-                                      ),
-                                      onTap: () {
-                                        WidgetsBinding.instance
-                                            .addPostFrameCallback(
-                                                (_) => _amountPayCtrl.clear());
-                                      },
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    CurrencyWithIcon(
+                                      'DOT',
+                                      textStyle:
+                                          Theme.of(context).textTheme.headline4,
                                     ),
-                                  ),
-                                  inputFormatters: [
-                                    RegExInputFormatter.withRegex(
-                                        '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                        hintText: dic['dex.pay'],
+                                        labelText: dic['dex.pay'],
+                                        suffix: GestureDetector(
+                                          child: Icon(
+                                            CupertinoIcons.clear_thick_circled,
+                                            color:
+                                                Theme.of(context).disabledColor,
+                                            size: 18,
+                                          ),
+                                          onTap: () {
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback((_) =>
+                                                    _amountPayCtrl.clear());
+                                          },
+                                        ),
+                                      ),
+                                      inputFormatters: [
+                                        RegExInputFormatter.withRegex(
+                                            '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                      ],
+                                      controller: _amountPayCtrl,
+                                      keyboardType:
+                                          TextInputType.numberWithOptions(
+                                              decimal: true),
+                                      validator: (v) {
+                                        if (v.isEmpty) {
+                                          return dicAssets['amount.error'];
+                                        }
+                                        if (double.parse(v.trim()) >=
+                                            Fmt.bigIntToDouble(balance,
+                                                decimals: decimals)) {
+                                          return dicAssets['amount.low'];
+                                        }
+                                        return null;
+                                      },
+                                      onChanged: _onSupplyAmountChange,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 8),
+                                      child: Text(
+                                        '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} DOT',
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .unselectedWidgetColor),
+                                      ),
+                                    ),
                                   ],
-                                  controller: _amountPayCtrl,
-                                  keyboardType: TextInputType.numberWithOptions(
-                                      decimal: true),
-                                  validator: (v) {
-                                    if (v.isEmpty) {
-                                      return dicAssets['amount.error'];
-                                    }
-                                    if (double.parse(v.trim()) >=
-                                        Fmt.bigIntToDouble(balance,
-                                            decimals: decimals)) {
-                                      return dicAssets['amount.low'];
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: _onSupplyAmountChange,
                                 ),
                               ),
-                              Container(
-                                width: inputWidth,
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                    labelText: dic['dex.receive'],
-                                    suffix: Container(
-                                      height: 21,
-                                      width: 8,
-                                    ),
-                                  ),
-                                  controller: _amountReceiveCtrl,
-                                  readOnly: true,
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
+                                child: Icon(
+                                  Icons.repeat,
+                                  color: Theme.of(context).primaryColor,
                                 ),
-                              )
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: <Widget>[
+                                    CurrencyWithIcon(
+                                      'LDOT',
+                                      textStyle:
+                                          Theme.of(context).textTheme.headline4,
+                                    ),
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: dic['dex.receive'],
+                                        suffix: Container(
+                                          height: 16,
+                                          width: 8,
+                                        ),
+                                      ),
+                                      controller: _amountReceiveCtrl,
+                                      readOnly: true,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 8),
-                          child: Text(
-                            '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} DOT',
-                            style: TextStyle(
-                                color: Theme.of(context).unselectedWidgetColor),
                           ),
                         ),
                         Divider(),

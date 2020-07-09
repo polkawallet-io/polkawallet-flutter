@@ -137,11 +137,9 @@ class _TransferPageState extends State<TransferPage> {
           _addressCtrl.text = args.address;
         });
       }
-      if (args.symbol != null) {
-        setState(() {
-          _tokenSymbol = args.symbol;
-        });
-      }
+      setState(() {
+        _tokenSymbol = args.symbol ?? store.settings.networkState.tokenSymbol;
+      });
 
       webApi.assets.fetchBalance();
     });

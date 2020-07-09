@@ -44,36 +44,6 @@ class UI {
     }
   }
 
-  static void showCurrencyPicker(BuildContext context, List<String> currencyIds,
-      String selected, Function(String) onChange) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (_) => Container(
-        height: MediaQuery.of(context).copyWith().size.height / 3,
-        child: CupertinoPicker(
-          backgroundColor: Colors.white,
-          itemExtent: 56,
-          scrollController: FixedExtentScrollController(
-              initialItem: currencyIds.indexOf(selected)),
-          children: currencyIds
-              .map(
-                (i) => Padding(
-                  padding: EdgeInsets.all(16),
-                  child: CurrencyWithIcon(
-                    i,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                  ),
-                ),
-              )
-              .toList(),
-          onSelectedItemChanged: (v) {
-            onChange(currencyIds[v]);
-          },
-        ),
-      ),
-    );
-  }
-
   static Future<void> checkUpdate(BuildContext context, Map versions,
       {bool autoCheck = false}) async {
     if (versions == null || !Platform.isAndroid && !Platform.isIOS) return;

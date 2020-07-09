@@ -255,10 +255,13 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(
-                            dic['dex.rate'],
-                            style: TextStyle(
-                                color: Theme.of(context).unselectedWidgetColor),
+                          Expanded(
+                            child: Text(
+                              dic['dex.rate'],
+                              style: TextStyle(
+                                color: Theme.of(context).unselectedWidgetColor,
+                              ),
+                            ),
                           ),
                           Text(
                               '1 $token = ${Fmt.doubleFormat(swapRatio, length: 2)} $acala_stable_coin_view'),
@@ -267,22 +270,30 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(
-                            dic['earn.pool'],
-                            style: TextStyle(
-                                color: Theme.of(context).unselectedWidgetColor),
+                          Expanded(
+                            child: Text(
+                              dic['earn.pool'],
+                              style: TextStyle(
+                                color: Theme.of(context).unselectedWidgetColor,
+                              ),
+                            ),
                           ),
                           Text(
-                              '${Fmt.doubleFormat(poolToken)} $token + ${Fmt.doubleFormat(poolStableCoin, length: 2)} $acala_stable_coin_view'),
+                            '${Fmt.doubleFormat(poolToken)} $token\n+ ${Fmt.doubleFormat(poolStableCoin, length: 2)} $acala_stable_coin_view',
+                            textAlign: TextAlign.right,
+                          ),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(
-                            dic['earn.share'],
-                            style: TextStyle(
-                                color: Theme.of(context).unselectedWidgetColor),
+                          Expanded(
+                            child: Text(
+                              dic['earn.share'],
+                              style: TextStyle(
+                                color: Theme.of(context).unselectedWidgetColor,
+                              ),
+                            ),
                           ),
                           Text(Fmt.ratio(shareRatioNew)),
                         ],
