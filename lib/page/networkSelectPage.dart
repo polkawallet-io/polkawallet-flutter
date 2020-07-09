@@ -118,6 +118,9 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         /// reload account info
         webApi.assets.fetchBalance();
       } else {
+        await store.assets
+            .setAccountTokenBalances(store.account.currentAccountPubKey, {});
+
         /// set new network and reload web view
         await _reloadNetwork();
       }

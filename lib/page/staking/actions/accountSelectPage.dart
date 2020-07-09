@@ -26,9 +26,7 @@ class AccountSelectPage extends StatelessWidget {
                 child: ListView(
                   padding: EdgeInsets.all(16),
                   children: store.account.accountList.map((i) {
-                    String address = store.account
-                            .pubKeyAddressMap[store.settings.endpoint.ss58]
-                        [i.pubKey];
+                    String address = Fmt.addressOfAccount(i, store);
                     String unavailable;
                     String stashOf =
                         store.account.pubKeyBondedMap[i.pubKey].controllerId;

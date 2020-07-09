@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/common/components/entryPageCard.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
 import 'package:polka_wallet/page-acala/homa/homaPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanPage.dart';
@@ -51,10 +51,13 @@ class AcalaEntry extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(bottom: 16),
                         child: GestureDetector(
-                          child: _AcalaCard(
+                          child: EntryPageCard(
                             dic['loan.title'],
                             dic['loan.brief'],
-                            'assets/images/acala/loan.svg',
+                            SvgPicture.asset(
+                              'assets/images/acala/loan.svg',
+                              height: 56,
+                            ),
                           ),
                           onTap: () =>
                               Navigator.of(context).pushNamed(LoanPage.route),
@@ -63,10 +66,13 @@ class AcalaEntry extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(bottom: 16),
                         child: GestureDetector(
-                          child: _AcalaCard(
+                          child: EntryPageCard(
                             dic['dex.title'],
                             dic['dex.brief'],
-                            'assets/images/acala/exchange.svg',
+                            SvgPicture.asset(
+                              'assets/images/acala/exchange.svg',
+                              height: 56,
+                            ),
                             color: Theme.of(context).primaryColor,
                           ),
                           onTap: () =>
@@ -76,10 +82,13 @@ class AcalaEntry extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(bottom: 16),
                         child: GestureDetector(
-                          child: _AcalaCard(
+                          child: EntryPageCard(
                             dic['earn.title'],
                             dic['earn.brief'],
-                            'assets/images/acala/deposit.svg',
+                            SvgPicture.asset(
+                              'assets/images/acala/deposit.svg',
+                              height: 56,
+                            ),
                             color: Colors.blueAccent,
                           ),
                           onTap: () =>
@@ -89,10 +98,13 @@ class AcalaEntry extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(bottom: 16),
                         child: GestureDetector(
-                          child: _AcalaCard(
+                          child: EntryPageCard(
                             dic['homa.title'],
                             dic['homa.brief'],
-                            'assets/images/acala/swap.svg',
+                            SvgPicture.asset(
+                              'assets/images/acala/swap.svg',
+                              height: 56,
+                            ),
                             color: Theme.of(context).primaryColor,
                           ),
                           onTap: () =>
@@ -106,64 +118,6 @@ class AcalaEntry extends StatelessWidget {
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _AcalaCard extends StatelessWidget {
-  _AcalaCard(this.title, this.brief, this.icon, {this.color});
-
-  final String icon;
-  final String title;
-  final String brief;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return RoundedCard(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(28),
-            width: 110,
-            decoration: BoxDecoration(
-              color: color ?? Colors.blue,
-              borderRadius: const BorderRadius.only(
-                  topLeft: const Radius.circular(8),
-                  bottomLeft: const Radius.circular(8)),
-            ),
-            child: SvgPicture.asset(
-              icon,
-              height: 56,
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.fromLTRB(16, 8, 8, 8),
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.headline4,
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 16),
-                width: MediaQuery.of(context).size.width / 2,
-                child: Text(
-                  brief,
-                  style: TextStyle(
-                      fontSize: 13,
-                      color: Theme.of(context).unselectedWidgetColor),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          )
-        ],
       ),
     );
   }

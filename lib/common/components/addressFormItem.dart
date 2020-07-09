@@ -15,9 +15,7 @@ class AddressFormItem extends StatelessWidget {
   Widget build(BuildContext context) {
     Color grey = Theme.of(context).unselectedWidgetColor;
 
-    String address = globalAppStore
-            .account.pubKeyAddressMap[globalAppStore.settings.endpoint.ss58]
-        [account.pubKey];
+    String address = Fmt.addressOfAccount(account, globalAppStore);
 
     Column content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,

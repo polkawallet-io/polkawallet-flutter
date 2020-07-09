@@ -37,8 +37,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   BigInt _tipValue = BigInt.zero;
   AccountData _proxyAccount;
 
-  Future<String> _getTxFee() async {
-    if (_fee['partialFee'] != null) {
+  Future<String> _getTxFee({bool reload = false}) async {
+    if (_fee['partialFee'] != null && !reload) {
       return _fee['partialFee'].toString();
     }
     if (store.account.currentAccount.observation ?? false) {
@@ -47,7 +47,11 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
     final Map args = ModalRoute.of(context).settings.arguments;
     Map txInfo = args['txInfo'];
-    txInfo['address'] = store.account.currentAddress;
+    txInfo['pubKey'] = store.account.currentAccount.pubKey;
+    if (_proxyAccount != null) {
+      txInfo['address'] = store.account.currentAddress;
+      txInfo['proxy'] = _proxyAccount.pubKey;
+    }
     Map fee = await webApi.account
         .estimateTxFees(txInfo, args['params'], rawParam: args['rawParam']);
     setState(() {
@@ -72,6 +76,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
         _proxyAccount = null;
       });
     }
+    _getTxFee(reload: true);
   }
 
   void _onTxFinish(BuildContext context, Map res) {
@@ -137,8 +142,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
   Future<void> _showPasswordDialog(BuildContext context) async {
     if (_proxyAccount != null && !(await _validateProxy())) {
-      String address = store.account
-          .pubKeyAddressMap[store.settings.endpoint.ss58][_proxyAccount.pubKey];
+      String address = Fmt.addressOfAccount(_proxyAccount, store);
       showCupertinoDialog(
         context: context,
         builder: (BuildContext context) {
@@ -275,8 +279,9 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     final Map<String, String> dic = I18n.of(context).home;
     final Map<String, String> dicAcc = I18n.of(context).account;
     final Map<String, String> dicAsset = I18n.of(context).assets;
-    final String symbol = store.settings.networkState.tokenSymbol;
-    final int decimals = store.settings.networkState.tokenDecimals;
+    final String symbol = store.settings.networkState.tokenSymbol ?? '';
+    final int decimals =
+        store.settings.networkState.tokenDecimals ?? kusama_token_decimals;
 
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
 

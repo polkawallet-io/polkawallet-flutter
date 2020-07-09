@@ -62,7 +62,7 @@ class _CouncilVote extends State<CouncilVotePage> {
           // "votes"
           selected,
           // "voteValue"
-          (double.parse(amt) * pow(10, decimals)).toInt(),
+          Fmt.tokenInt(amt, decimals: decimals).toString(),
         ],
         'onFinish': (BuildContext txPageContext, Map res) {
           Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
@@ -145,24 +145,19 @@ class _CouncilVote extends State<CouncilVotePage> {
                                     margin: EdgeInsets.only(right: 8),
                                     child: AddressIcon(i[0], size: 32),
                                   ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      accInfo != null
-                                          ? accInfo['identity']['display'] !=
-                                                  null
-                                              ? Text(accInfo['identity']
-                                                      ['display']
-                                                  .toString()
-                                                  .toUpperCase())
-                                              : Container()
-                                          : Container(),
-                                      Text(
-                                        Fmt.address(i[0]),
-                                        style: TextStyle(color: Colors.black54),
-                                      ),
-                                    ],
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Fmt.accountDisplayName(i[0], accInfo),
+                                        Text(
+                                          Fmt.address(i[0]),
+                                          style:
+                                              TextStyle(color: Colors.black54),
+                                        ),
+                                      ],
+                                    ),
                                   )
                                 ],
                               ),

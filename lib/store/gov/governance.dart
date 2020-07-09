@@ -1,7 +1,10 @@
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/gov/types/proposalInfoData.dart';
 import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/store/gov/types/councilInfoData.dart';
+import 'package:polka_wallet/store/gov/types/treasuryOverviewData.dart';
+import 'package:polka_wallet/store/gov/types/treasuryTipData.dart';
 
 part 'governance.g.dart';
 
@@ -27,7 +30,10 @@ abstract class _GovernanceStore with Store {
   int bestNumber = 0;
 
   @observable
-  CouncilInfoData council;
+  CouncilInfoData council = CouncilInfoData();
+
+  @observable
+  List<CouncilMotionData> councilMotions = [];
 
   @observable
   Map<String, Map<String, dynamic>> councilVotes;
@@ -37,6 +43,15 @@ abstract class _GovernanceStore with Store {
 
   @observable
   ObservableList<ReferendumInfo> referendums;
+
+  @observable
+  List<ProposalInfoData> proposals = [];
+
+  @observable
+  TreasuryOverviewData treasuryOverview = TreasuryOverviewData();
+
+  @observable
+  List<TreasuryTipData> treasuryTips;
 
   @action
   void setCouncilInfo(Map info, {bool shouldCache = true}) {
@@ -71,6 +86,13 @@ abstract class _GovernanceStore with Store {
   }
 
   @action
+  void setProposals(List ls) {
+    proposals = ls
+        .map((i) => ProposalInfoData.fromJson(Map<String, dynamic>.of(i)))
+        .toList();
+  }
+
+  @action
   Future<void> loadCache() async {
     Map data =
         await rootStore.localStorage.getObject(_getCacheKey(cacheCouncilKey));
@@ -78,5 +100,24 @@ abstract class _GovernanceStore with Store {
       setCouncilInfo(data['data'], shouldCache: false);
       cacheCouncilTimestamp = data['cacheTime'];
     }
+  }
+
+  @action
+  void setTreasuryOverview(Map data) {
+    treasuryOverview = TreasuryOverviewData.fromJson(data);
+  }
+
+  @action
+  void setTreasuryTips(List data) {
+    treasuryTips = data
+        .map((e) => TreasuryTipData.fromJson(Map<String, dynamic>.of(e)))
+        .toList();
+  }
+
+  @action
+  void setCouncilMotions(List data) {
+    councilMotions = data
+        .map((e) => CouncilMotionData.fromJson(Map<String, dynamic>.of(e)))
+        .toList();
   }
 }

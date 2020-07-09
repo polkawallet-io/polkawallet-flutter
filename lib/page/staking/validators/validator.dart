@@ -54,8 +54,10 @@ class Validator extends StatelessWidget {
                           : Container(),
                       hasPhalaAirdrop ? TextTag(dic['phala']) : Container(),
                       Expanded(
-                        child:
-                            Text(Fmt.validatorDisplayName(validator, accInfo)),
+                        child: Fmt.accountDisplayName(
+                          validator.accountId,
+                          accInfo,
+                        ),
                       ),
                     ],
                   ),

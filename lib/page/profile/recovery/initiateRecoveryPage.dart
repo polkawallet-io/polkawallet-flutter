@@ -6,7 +6,6 @@ import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
-import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
