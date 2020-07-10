@@ -1,0 +1,6 @@
+The Encointer wallet is your tool to participate in local communitiy currencies, to perform Encointer key-signing ceremonies and receive your universal basic income. The wallet keeps custody of your accounts' private keys and allows you to transfer funds to other users.
+<ul>
+  <li>send and receive encointer local currencies</li>
+  <li>register for ceremonies</li>
+  <li>perform ceremony meetups</li>
+</ul>
