@@ -275,6 +275,9 @@ class _AssetsState extends State<Assets> {
           currencyIds.retainWhere((i) => i != symbol);
         }
 
+        Map<String, BalanceEntry> nonZeroEntointerEntries = store.encointer.balanceEntries
+          ..removeWhere((key, value) => value.principal == 0);
+
         BalancesInfo balancesInfo = store.assets.balances[symbol];
         return RefreshIndicator(
           key: globalBalanceRefreshKey,
@@ -348,7 +351,7 @@ class _AssetsState extends State<Assets> {
                     ),
                     store.encointer.balanceEntries.isNotEmpty ?
                     Column(
-                      children: store.encointer.balanceEntries.entries.map((balanceData) {
+                      children: nonZeroEntointerEntries.entries.map((balanceData) {
 //                        print("balance data: " + balanceData.toString());
                         var cid = balanceData.key;
                         var balanceEntry = balanceData.value;
