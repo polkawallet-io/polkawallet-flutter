@@ -149,6 +149,21 @@ mixin _$EncointerStore on _EncointerStore, Store {
     });
   }
 
+  final _$balanceEntriesAtom = Atom(name: '_EncointerStore.balanceEntries');
+
+  @override
+  Map<String, BalanceEntry> get balanceEntries {
+    _$balanceEntriesAtom.reportRead();
+    return super.balanceEntries;
+  }
+
+  @override
+  set balanceEntries(Map<String, BalanceEntry> value) {
+    _$balanceEntriesAtom.reportWrite(value, super.balanceEntries, () {
+      super.balanceEntries = value;
+    });
+  }
+
   final _$currencyIdentifiersAtom =
       Atom(name: '_EncointerStore.currencyIdentifiers');
 
@@ -337,6 +352,28 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
+  void purgeAttestations() {
+    final _$actionInfo = _$_EncointerStoreActionController.startAction(
+        name: '_EncointerStore.purgeAttestations');
+    try {
+      return super.purgeAttestations();
+    } finally {
+      _$_EncointerStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void addBalanceEntry(dynamic cid, dynamic balanceEntry) {
+    final _$actionInfo = _$_EncointerStoreActionController.startAction(
+        name: '_EncointerStore.addBalanceEntry');
+    try {
+      return super.addBalanceEntry(cid, balanceEntry);
+    } finally {
+      _$_EncointerStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setParticipantIndex(int pIndex) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
         name: '_EncointerStore.setParticipantIndex');
@@ -381,6 +418,7 @@ nextMeetupLocation: ${nextMeetupLocation},
 participantIndex: ${participantIndex},
 participantCount: ${participantCount},
 timeStamp: ${timeStamp},
+balanceEntries: ${balanceEntries},
 currencyIdentifiers: ${currencyIdentifiers},
 chosenCid: ${chosenCid},
 attestations: ${attestations},

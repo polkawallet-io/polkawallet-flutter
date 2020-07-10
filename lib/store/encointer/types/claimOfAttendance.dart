@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:polka_wallet/store/encointer/types/location.dart';
 
@@ -19,6 +21,11 @@ class ClaimOfAttendance {
   Location location;
   int timestamp;
   int numberOfParticipantsConfirmed;
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 
   factory ClaimOfAttendance.fromJson(Map<String, dynamic> json) =>
       _$ClaimOfAttendanceFromJson(json);

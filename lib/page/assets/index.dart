@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
+import 'package:polka_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -149,6 +151,7 @@ class _AssetsState extends State<Assets> {
             title: Text(Fmt.accountName(context, acc)),
             subtitle: Text(network),
             trailing: isEncointer
+                ? !store.settings.loading
                 ? GestureDetector(
                     child: Padding(
                       padding: EdgeInsets.all(4),
@@ -177,6 +180,7 @@ class _AssetsState extends State<Assets> {
                       }
                     },
                   )
+                : Container(width: 8)
                 : isPolkadot
                     ? !store.settings.loading
                         ? GestureDetector(
@@ -234,6 +238,10 @@ class _AssetsState extends State<Assets> {
       store.settings.setNetworkLoading(true);
       webApi.connectNodeAll();
     }
+
+    if (!store.settings.loading && store.settings.networkName != null) {
+      webApi.encointer.getBalances();
+    }
     super.initState();
   }
 
@@ -259,8 +267,9 @@ class _AssetsState extends State<Assets> {
           currencyIds.retainWhere((i) => i != symbol);
         }
 
-        BalancesInfo balancesInfo = store.assets.balances[symbol];
+        print("encointer balances" + store.encointer.balanceEntries.toString());
 
+        BalancesInfo balancesInfo = store.assets.balances[symbol];
         return RefreshIndicator(
           key: globalBalanceRefreshKey,
           onRefresh: _fetchBalance,
@@ -331,6 +340,37 @@ class _AssetsState extends State<Assets> {
                         );
                       }).toList(),
                     ),
+                    store.encointer.balanceEntries.isNotEmpty ?
+                    Column(
+                      children: store.encointer.balanceEntries.entries.map((balanceData) {
+                        print("balance data: " + balanceData.toString());
+                        var cid = balanceData.key;
+                        var balanceEntry = balanceData.value;
+                        return RoundedCard(
+                          margin: EdgeInsets.only(top: 16),
+                          child: ListTile(
+                            leading: Container(
+                              width: 36,
+                              child: Image.asset('assets/images/assets/ERT.png'),
+                            ),
+                            title: Text(Fmt.currencyIdentifier(cid)),
+                            trailing: Text(
+                              Fmt.balance(balanceEntry.principal.toString(),
+                                  decimals: decimals),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black54),
+                            ),
+                            onTap: () {
+//                                      Navigator.pushNamed(context, AssetPage.route,
+//                                          arguments: token);
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    )
+                        : Container(),
                     Container(
                       padding: EdgeInsets.only(bottom: 32),
                     ),

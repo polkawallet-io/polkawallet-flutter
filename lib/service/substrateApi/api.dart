@@ -216,21 +216,23 @@ class Api {
 
     // fetch account balance
     if (store.account.accountList.length > 0) {
-      bool isEncointer = store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
-              store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
-              store.settings.endpoint.info == networkEndpointEncointerCantillon.info;
+      bool isEncointer = store.settings.endpoint.info ==
+          networkEndpointEncointerGesell.info ||
+          store.settings.endpoint.info ==
+              networkEndpointEncointerGesellDev.info ||
+          store.settings.endpoint.info ==
+              networkEndpointEncointerCantillon.info;
 
       if (isEncointer) {
         await assets.fetchBalance(store.account.currentAccount.pubKey);
-        return;
+      } else {
+        await Future.wait([
+          assets.fetchBalance(store.account.currentAccount.pubKey),
+          staking.fetchAccountStaking(store.account.currentAccount.pubKey),
+          account.fetchAccountsBonded(
+              store.account.accountList.map((i) => i.pubKey).toList()),
+        ]);
       }
-
-      await Future.wait([
-        assets.fetchBalance(store.account.currentAccount.pubKey),
-        staking.fetchAccountStaking(store.account.currentAccount.pubKey),
-        account.fetchAccountsBonded(
-            store.account.accountList.map((i) => i.pubKey).toList()),
-      ]);
     }
 
     // fetch staking overview data as initializing

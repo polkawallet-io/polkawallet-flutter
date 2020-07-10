@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 
@@ -18,6 +20,11 @@ abstract class _AttestationState with Store {
 
   @observable
   String yourAttestation;
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 
   @action
   void setAttestation(String att) {

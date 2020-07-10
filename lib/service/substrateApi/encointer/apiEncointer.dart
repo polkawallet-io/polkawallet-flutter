@@ -6,6 +6,7 @@ import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/faucet.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:polka_wallet/store/encointer/types/attestation.dart';
 import 'package:polka_wallet/store/encointer/types/claimOfAttendance.dart';
 import 'package:polka_wallet/store/encointer/types/location.dart';
@@ -161,11 +162,24 @@ class ApiEncointer {
     return att;
   }
 
-  Future<dynamic> attestClaimOfAttendance(String claimHex, String password) async{
+  Future<dynamic> attestClaimOfAttendance(String claimHex, String password) async {
     var pubKey = store.account.currentAccountPubKey;
     print("Public key:" + pubKey);
     var att = await apiRoot.evalJavascript('account.attestClaimOfAttendance("$claimHex", "$pubKey", "$password")');
     return att;
+  }
+
+  Future<List<dynamic>> getBalances() async {
+    var pubKey = store.account.currentAccountPubKey;
+    var data = await apiRoot.evalJavascript('encointer.getBalances("$pubKey")');
+
+    List<dynamic> encointerBalances = data.map((e) =>
+        EncointerBalanceData.fromJson(e)).toList();
+
+    print("encointerBalances list: " + encointerBalances.toString());
+    encointerBalances.forEach((e) {store.encointer.addBalanceEntry(e.cid, e.balanceEntry);});
+
+    return encointerBalances;
   }
 
 // untested

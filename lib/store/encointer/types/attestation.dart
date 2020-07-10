@@ -1,5 +1,7 @@
 
 // Run: `flutter pub run build_runner build` in order to create/update the *.g.dart
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 
 import 'claimOfAttendance.dart';
@@ -16,6 +18,11 @@ class Attestation {
   ClaimOfAttendance claim;
   Map signature;
   String public;
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 
   factory Attestation.fromJson(Map<String, dynamic> json) =>
       _$AttestationFromJson(json);

@@ -16,9 +16,11 @@ class ApiAssets {
       store.assets.setAccountBalances(
           pubKey, Map.of({store.settings.networkState.tokenSymbol: res}));
     }
-    //if (store.settings.endpoint.info == networkEndpointEncointerGesell.info) {
-      //apiRoot.encointer.fetchCurrencies(store.account.currentAccount.pubKey);
-    //}
+    if (store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
+        store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
+        store.settings.endpoint.info == networkEndpointEncointerCantillon.info) {
+      apiRoot.encointer.getBalances();
+    }
   }
 
   Future<Map> updateTxs(int page) async {
