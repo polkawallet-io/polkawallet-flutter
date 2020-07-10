@@ -77,18 +77,27 @@ class _AssetsState extends State<Assets> {
   }
 
   Future<void> _getTokensFromFaucet() async {
+    String symbol = store.settings.networkState.tokenSymbol;
+    BalancesInfo balancesInfo = store.assets.balances[symbol];
+    bool aboveLimit = false;
     setState(() {
       _faucetSubmitting = true;
     });
-/*    String res = await webApi.encointer.fetchFaucet();
+
+    var res;
+    if (balancesInfo.freeBalance - Fmt.tokenInt('0.0001') > BigInt.zero) {
+      aboveLimit = true;
+    } else {
+      res = await webApi.encointer.sendFaucetTx();
+    }
 
     Timer(Duration(seconds: 3), () {
-      String dialogContent = I18n.of(context).acala['faucet.ok'];
+      String dialogContent = I18n.of(context).encointer['faucet.ok'];
       bool isOK = false;
-      if (res == null) {
-        dialogContent = I18n.of(context).acala['faucet.error'];
-      } else if (res == "LIMIT") {
-        dialogContent = I18n.of(context).acala['faucet.limit'];
+      if (aboveLimit) {
+        dialogContent = I18n.of(context).encointer['faucet.limit'];
+      } else if (res == null) {
+        dialogContent = I18n.of(context).encointer['faucet.error'];
       } else {
         isOK = true;
       }
@@ -110,9 +119,9 @@ class _AssetsState extends State<Assets> {
                   if (isOK) {
                     globalBalanceRefreshKey.currentState.show();
                     NotificationPlugin.showNotification(
-                      int.parse(res.substring(0, 6)),
+                      int.parse(res['params'][1]), // todo: Id is used to group notifications. This is probably not a good idea
                       I18n.of(context).assets['notify.receive'],
-                      '{"ACA": 2, "aUSD": 2, "DOT": 2, "XBTC": 0.2}',
+                      'ERT ' + Fmt.balance(res['params'][1]).toString(),
                     );
                   }
                 },
@@ -122,7 +131,6 @@ class _AssetsState extends State<Assets> {
         },
       );
     });
-  */
   }
 
 
@@ -176,7 +184,7 @@ class _AssetsState extends State<Assets> {
                     ),
                     onTap: () {
                       if (acc.address != '') {
-                        //_getTokensFromFaucet();
+                        _getTokensFromFaucet();
                       }
                     },
                   )
@@ -267,8 +275,6 @@ class _AssetsState extends State<Assets> {
           currencyIds.retainWhere((i) => i != symbol);
         }
 
-        print("encointer balances" + store.encointer.balanceEntries.toString());
-
         BalancesInfo balancesInfo = store.assets.balances[symbol];
         return RefreshIndicator(
           key: globalBalanceRefreshKey,
@@ -343,7 +349,7 @@ class _AssetsState extends State<Assets> {
                     store.encointer.balanceEntries.isNotEmpty ?
                     Column(
                       children: store.encointer.balanceEntries.entries.map((balanceData) {
-                        print("balance data: " + balanceData.toString());
+//                        print("balance data: " + balanceData.toString());
                         var cid = balanceData.key;
                         var balanceEntry = balanceData.value;
                         return RoundedCard(

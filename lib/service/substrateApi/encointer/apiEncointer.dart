@@ -164,9 +164,16 @@ class ApiEncointer {
 
   Future<dynamic> attestClaimOfAttendance(String claimHex, String password) async {
     var pubKey = store.account.currentAccountPubKey;
-    print("Public key:" + pubKey);
     var att = await apiRoot.evalJavascript('account.attestClaimOfAttendance("$claimHex", "$pubKey", "$password")');
     return att;
+  }
+
+  Future<dynamic> sendFaucetTx() async {
+    var address = store.account.currentAddress;
+    var amount = Fmt.tokenInt('0.001');
+    var res = await apiRoot.evalJavascript('account.sendFaucetTx("$address", "$amount")');
+//    print("Faucet Result :" + res.toString());
+    return res;
   }
 
   Future<List<dynamic>> getBalances() async {
@@ -176,9 +183,8 @@ class ApiEncointer {
     List<dynamic> encointerBalances = data.map((e) =>
         EncointerBalanceData.fromJson(e)).toList();
 
-    print("encointerBalances list: " + encointerBalances.toString());
+//    print("encointerBalances list: " + encointerBalances.toString());
     encointerBalances.forEach((e) {store.encointer.addBalanceEntry(e.cid, e.balanceEntry);});
-
     return encointerBalances;
   }
 
