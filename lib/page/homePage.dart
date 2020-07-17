@@ -38,11 +38,10 @@ class _HomePageState extends State<HomePage> {
 
   List<BottomNavigationBarItem> _navBarItems(int activeItem) {
     Map<String, String> tabs = I18n.of(context).home;
-    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
     return _tabList
         .map((i) => BottomNavigationBarItem(
               icon: Image.asset(_tabList[activeItem] == i
-                  ? 'assets/images/public/${i}_${isKusama ? 'black' : 'pink'}.png'
+                  ? 'assets/images/public/${i}_${store.settings.endpoint.color ?? 'pink'}.png'
                   : 'assets/images/public/${i}_dark.png'),
               title: Text(
                 tabs[i.toLowerCase()],
@@ -70,8 +69,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> _buildPages() {
-    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
-    String imageColor = isKusama ? 'black' : 'pink';
+    String imageColor = store.settings.endpoint.color ?? 'pink';
     return [0, 1, 2, 3].map((i) {
       if (i == 0) {
         // return assets page

@@ -101,6 +101,11 @@ class _WalletAppState extends State<WalletApp> {
       setState(() {
         _theme = appThemeAcala;
       });
+    } else if (_appStore.settings.endpoint.info ==
+        networkEndpointLaminar.info) {
+      setState(() {
+        _theme = appThemeLaminar;
+      });
     } else if (_appStore.settings.endpoint.info == networkEndpointKusama.info) {
       setState(() {
         _theme = appThemeKusama;

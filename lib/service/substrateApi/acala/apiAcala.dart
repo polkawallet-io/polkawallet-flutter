@@ -14,6 +14,8 @@ class ApiAcala {
   final Api apiRoot;
   final store = globalAppStore;
 
+  final String tokenPricesSubscribeChannel = 'TokenPrices';
+
   Future<String> fetchFaucet() async {
     String address = store.account.currentAddress;
     String deviceId = address;
@@ -101,7 +103,9 @@ class ApiAcala {
   }
 
   Future<void> subscribeTokenPrices() async {
-    await apiRoot.subscribeMessage('price', 'allPrices', [], 'TokenPrices',
+    final String code =
+        'settings.subscribeMessage("price", "allPrices", [], "$tokenPricesSubscribeChannel")';
+    await apiRoot.subscribeMessage(code, tokenPricesSubscribeChannel,
         (List res) async {
       var priceOfLDOT = await _fetchPriceOfLDOT();
       res.add(priceOfLDOT);
@@ -110,7 +114,7 @@ class ApiAcala {
   }
 
   Future<void> unsubscribeTokenPrices() async {
-    await apiRoot.unsubscribeMessage('TokenPrices');
+    await apiRoot.unsubscribeMessage(tokenPricesSubscribeChannel);
   }
 
   Future<String> fetchTokenSwapRatio() async {

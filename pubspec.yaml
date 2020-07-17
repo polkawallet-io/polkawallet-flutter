@@ -92,6 +92,7 @@ flutter:
     # js service
     - lib/js_service_kusama/dist/main.js
     - lib/js_service_acala/dist/main.js
+    - lib/js_service_laminar/dist/main.js
 
     # images
     ## images - settings
@@ -101,7 +102,10 @@ flutter:
     - assets/images/public/acala-mandala_gray.png
     - assets/images/public/acala.png
     - assets/images/public/acala_gray.png
+    - assets/images/public/laminar.png
+    - assets/images/public/laminar_gray.png
     - assets/images/assets/ACA.png
+    - assets/images/assets/LAMI.png
     - assets/images/assets/AUSD.png
     - assets/images/assets/XBTC.png
     - assets/images/assets/LDOT.png
@@ -125,6 +129,17 @@ flutter:
     - assets/images/acala/deposit.svg
     - assets/images/acala/loan.svg
     - assets/images/acala/loan-start.svg
+    ## images - laminar
+    - assets/images/assets/scanner_purple.png
+    - assets/images/assets/top_bg_purple.png
+    - assets/images/assets/receive_line_purple.png
+    - assets/images/assets/qrcode_purple.png
+    - assets/images/assets/plus_purple.png
+    - assets/images/staking/top_bg_purple.png
+    - assets/images/public/Assets_purple.png
+    - assets/images/public/Governance_purple.png
+    - assets/images/public/Profile_purple.png
+    - assets/images/public/Staking_purple.png
     ## images - kusama
     - assets/images/assets/scanner_black.png
     - assets/images/public/Assets_black.png

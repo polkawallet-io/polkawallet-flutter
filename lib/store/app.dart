@@ -1,5 +1,6 @@
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/acala/acala.dart';
+import 'package:polka_wallet/store/laminar/laminar.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/store/staking/staking.dart';
 import 'package:polka_wallet/store/account/account.dart';
@@ -33,6 +34,9 @@ abstract class _AppStore with Store {
   AcalaStore acala;
 
   @observable
+  LaminarStore laminar;
+
+  @observable
   bool isReady = false;
 
   LocalStorage localStorage = LocalStorage();
@@ -56,6 +60,8 @@ abstract class _AppStore with Store {
 
     acala = AcalaStore(this);
     acala.loadCache();
+    laminar = LaminarStore(this);
+    laminar.loadCache();
 
     isReady = true;
   }

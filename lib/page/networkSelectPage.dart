@@ -34,6 +34,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     networkEndpointPolkadot,
     networkEndpointKusama,
     networkEndpointAcala,
+    networkEndpointLaminar,
   ];
 
   EndpointData _selectedNetwork;
@@ -109,8 +110,6 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
 
   List<Widget> _buildAccountList() {
     Color primaryColor = Theme.of(context).primaryColor;
-    bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
-    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
     List<Widget> res = [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -121,7 +120,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
           ),
           IconButton(
             icon: Image.asset(
-                'assets/images/assets/plus_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png'),
+                'assets/images/assets/plus_${store.settings.endpoint.color ?? 'pink'}.png'),
             color: primaryColor,
             onPressed: () => _onCreateAccount(),
           )

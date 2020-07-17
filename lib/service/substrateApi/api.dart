@@ -10,6 +10,7 @@ import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiGov.dart';
 import 'package:polka_wallet/service/substrateApi/apiStaking.dart';
+import 'package:polka_wallet/service/substrateApi/laminar/apiLaminar.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/settings.dart';
 
@@ -25,6 +26,7 @@ class Api {
   ApiAccount account;
 
   ApiAcala acala;
+  ApiLaminar laminar;
 
   ApiAssets assets;
   ApiStaking staking;
@@ -43,6 +45,7 @@ class Api {
     account = ApiAccount(this);
 
     acala = ApiAcala(this);
+    laminar = ApiLaminar(this);
 
     assets = ApiAssets(this);
     staking = ApiStaking(this);
@@ -71,6 +74,8 @@ class Api {
         String network = 'kusama';
         if (store.settings.endpoint.info.contains('acala')) {
           network = 'acala';
+        } else if (store.settings.endpoint.info.contains('laminar')) {
+          network = 'laminar';
         }
         print('webview loaded for network $network');
         DefaultAssetBundle.of(context)
@@ -200,7 +205,8 @@ class Api {
 
     // fetch account balance
     if (store.account.accountListAll.length > 0) {
-      if (store.settings.endpoint.info == networkEndpointAcala.info) {
+      if (store.settings.endpoint.info == networkEndpointAcala.info ||
+          store.settings.endpoint.info == networkEndpointLaminar.info) {
         await assets.fetchBalance();
         return;
       }
@@ -231,16 +237,25 @@ class Api {
     store.assets.setBlockMap(data);
   }
 
+  Future<void> subscribeBestNumber(Function callback) async {
+    final String channel = "BestNumber";
+    subscribeMessage(
+        'settings.subscribeMessage("chain", "bestNumber", [], "$channel")',
+        channel,
+        callback);
+  }
+
+  Future<void> unsubscribeBestNumber() async {
+    unsubscribeMessage('BestNumber');
+  }
+
   Future<void> subscribeMessage(
-    String section,
-    String method,
-    List params,
+    String code,
     String channel,
     Function callback,
   ) async {
     _msgHandlers[channel] = callback;
-    evalJavascript(
-        'settings.subscribeMessage("$section", "$method", ${jsonEncode(params)}, "$channel")');
+    evalJavascript(code);
   }
 
   Future<void> unsubscribeMessage(String channel) async {

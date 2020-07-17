@@ -1,6 +1,7 @@
 import 'package:polka_wallet/store/settings.dart';
 
 EndpointData networkEndpointPolkadot = EndpointData.fromJson(const {
+  'color': 'pink',
   'info': 'polkadot',
   'ss58': 0,
   'text': 'Polkadot (Live, hosted by Parity)',
@@ -8,6 +9,7 @@ EndpointData networkEndpointPolkadot = EndpointData.fromJson(const {
 });
 
 EndpointData networkEndpointKusama = EndpointData.fromJson(const {
+  'color': 'black',
   'info': 'kusama',
   'ss58': 2,
   'text': 'Kusama (Polkadot Canary, hosted by Polkawallet)',
@@ -15,21 +17,32 @@ EndpointData networkEndpointKusama = EndpointData.fromJson(const {
 });
 
 EndpointData networkEndpointAcala = EndpointData.fromJson(const {
+  'color': 'indigo',
   'info': 'acala-mandala',
   'ss58': 42,
   'text': 'Acala Mandala (Hosted by Acala Network)',
   'value': 'wss://testnet-node-1.acala.laminar.one/ws',
 });
 
+EndpointData networkEndpointLaminar = EndpointData.fromJson(const {
+  'color': 'purple',
+  'info': 'laminar',
+  'ss58': 42,
+  'text': 'Laminar TC1',
+  'value': 'wss://node-6685729082874970112.jm.onfinality.io/ws',
+});
+
 List<EndpointData> networkEndpoints = [
   networkEndpointPolkadot,
   EndpointData.fromJson(const {
+    'color': 'pink',
     'info': 'polkadot',
     'ss58': 0,
     'text': 'Polkadot (Live, hosted by Web3 Foundation)',
     'value': 'wss://cc1-1.polkadot.network',
   }),
   EndpointData.fromJson(const {
+    'color': 'pink',
     'info': 'polkadot',
     'ss58': 0,
     'text': 'Polkadot (Live, hosted by Polkawallet)',
@@ -37,12 +50,14 @@ List<EndpointData> networkEndpoints = [
   }),
   networkEndpointKusama,
   EndpointData.fromJson(const {
+    'color': 'black',
     'info': 'kusama',
     'ss58': 2,
     'text': 'Kusama (Polkadot Canary, hosted by Parity)',
     'value': 'wss://kusama-rpc.polkadot.io/',
   }),
   EndpointData.fromJson(const {
+    'color': 'black',
     'info': 'kusama',
     'ss58': 2,
     'text': 'Kusama (Polkadot Canary, hosted by Web3 Foundation)',
@@ -50,21 +65,32 @@ List<EndpointData> networkEndpoints = [
   }),
   networkEndpointAcala,
   EndpointData.fromJson(const {
+    'color': 'indigo',
     'info': 'acala-mandala',
     'ss58': 42,
     'text': 'Mandala TC4 Node 1 (Hosted by OnFinality)',
     'value': 'wss://node-6684611762228215808.jm.onfinality.io/ws'
   }),
   EndpointData.fromJson(const {
+    'color': 'indigo',
     'info': 'acala-mandala',
     'ss58': 42,
     'text': 'Mandala TC4 Node 2 (Hosted by OnFinality)',
     'value': 'wss://node-6684611760525328384.rz.onfinality.io/ws'
   }),
+  networkEndpointLaminar,
+  EndpointData.fromJson(const {
+    'color': 'purple',
+    'info': 'laminar',
+    'ss58': 42,
+    'text': 'Laminar TC1',
+    'value': 'wss://testnet-node-1.laminar-chain.laminar.one/ws',
+  }),
 ];
 
 const network_ss58_map = {
   'acala': 42,
+  'laminar': 42,
   'kusama': 2,
   'substrate': 42,
   'polkadot': 0,

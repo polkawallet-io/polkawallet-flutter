@@ -304,7 +304,7 @@ class _AssetsState extends State<Assets> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 4),
                     child: Image.asset(
-                      'assets/images/assets/qrcode_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png',
+                      'assets/images/assets/qrcode_${store.settings.endpoint.color ?? 'pink'}.png',
                       width: 18,
                     ),
                   ),
@@ -322,7 +322,7 @@ class _AssetsState extends State<Assets> {
             ),
             trailing: IconButton(
               icon: Image.asset(
-                  'assets/images/assets/scanner_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png'),
+                  'assets/images/assets/scanner_${store.settings.endpoint.color ?? 'pink'}.png'),
               onPressed: () {
                 if (acc.address != '') {
                   _handleScan();
@@ -360,6 +360,8 @@ class _AssetsState extends State<Assets> {
 
         bool isAcala =
             store.settings.endpoint.info == networkEndpointAcala.info;
+        bool isLaminar =
+            store.settings.endpoint.info == networkEndpointLaminar.info;
 
         List<String> currencyIds = [];
         if (isAcala && networkName != null) {
@@ -419,12 +421,21 @@ class _AssetsState extends State<Assets> {
 //                  print(store.assets.balances[i]);
                         String token =
                             i == acala_stable_coin ? acala_stable_coin_view : i;
+
+                        bool hasIcon = true;
+                        if (isLaminar && token != acala_stable_coin_view) {
+                          hasIcon = false;
+                        }
                         return RoundedCard(
                           margin: EdgeInsets.only(top: 16),
                           child: ListTile(
                             leading: Container(
                               width: 36,
-                              child: Image.asset('assets/images/assets/$i.png'),
+                              child: hasIcon
+                                  ? Image.asset('assets/images/assets/$i.png')
+                                  : CircleAvatar(
+                                      child: Text(token.substring(0, 2)),
+                                    ),
                             ),
                             title: Text(token),
                             trailing: Text(
