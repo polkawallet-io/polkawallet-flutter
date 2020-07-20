@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:package_info/package_info.dart';
-import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/downloadDialog.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -128,6 +130,90 @@ class UI {
                   } catch (e) {
                     print('Failed to make OTA update. Details: $e');
                   }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static Future<bool> checkJSCodeUpdate(
+    BuildContext context,
+    int jsVersion,
+    String network,
+  ) async {
+    if (jsVersion != null) {
+      final currentVersion = WalletApi.getPolkadotJSVersion(
+        webApi.jsStorage,
+        network,
+      );
+      if (jsVersion > currentVersion) {
+        final Map dic = I18n.of(context).home;
+        final bool isOk = await showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: Text('metadata v$jsVersion'),
+              content: Text(dic['update.js.up']),
+              actions: <Widget>[
+                CupertinoButton(
+                  child: Text(dic['cancel']),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                    exit(0);
+                  },
+                ),
+                CupertinoButton(
+                  child: Text(dic['ok']),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        return isOk;
+      }
+    }
+    return false;
+  }
+
+  static Future<void> updateJSCode(
+    BuildContext context,
+    GetStorage jsStorage,
+    String network,
+    int version,
+  ) async {
+    final Map dic = I18n.of(context).home;
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(dic['update.download']),
+          content: CupertinoActivityIndicator(),
+        );
+      },
+    );
+    final String code = await WalletApi.fetchPolkadotJSCode(network);
+    Navigator.of(context).pop();
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Container(),
+          content:
+              code == null ? Text(dic['update.error']) : Text(dic['success']),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(dic['ok']),
+              onPressed: () {
+                WalletApi.setPolkadotJSCode(jsStorage, network, code, version);
+                Navigator.of(context).pop();
+                if (code == null) {
+                  exit(0);
                 }
               },
             ),

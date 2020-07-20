@@ -42,7 +42,8 @@ class _AssetsState extends State<Assets> {
   bool _preclaimChecking = false;
 
   Future<void> _fetchBalance() async {
-    if (store.settings.endpoint.info == networkEndpointAcala.info) {
+    if (store.settings.endpoint.info == networkEndpointAcala.info ||
+        store.settings.endpoint.info == networkEndpointLaminar.info) {
       await webApi.assets.fetchBalance();
     } else {
       await Future.wait([
@@ -304,7 +305,7 @@ class _AssetsState extends State<Assets> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 4),
                     child: Image.asset(
-                      'assets/images/assets/qrcode_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png',
+                      'assets/images/assets/qrcode_${store.settings.endpoint.color ?? 'pink'}.png',
                       width: 18,
                     ),
                   ),
@@ -322,7 +323,7 @@ class _AssetsState extends State<Assets> {
             ),
             trailing: IconButton(
               icon: Image.asset(
-                  'assets/images/assets/scanner_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png'),
+                  'assets/images/assets/scanner_${store.settings.endpoint.color ?? 'pink'}.png'),
               onPressed: () {
                 if (acc.address != '') {
                   _handleScan();
@@ -360,9 +361,11 @@ class _AssetsState extends State<Assets> {
 
         bool isAcala =
             store.settings.endpoint.info == networkEndpointAcala.info;
+        bool isLaminar =
+            store.settings.endpoint.info == networkEndpointLaminar.info;
 
         List<String> currencyIds = [];
-        if (isAcala && networkName != null) {
+        if ((isAcala || isLaminar) && networkName != null) {
           if (store.settings.networkConst['currencyIds'] != null) {
             currencyIds.addAll(
                 List<String>.from(store.settings.networkConst['currencyIds']));
@@ -384,8 +387,29 @@ class _AssetsState extends State<Assets> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(top: 24),
-                      child: BorderedTitle(
-                        title: I18n.of(context).home['assets'],
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          BorderedTitle(
+                            title: I18n.of(context).home['assets'],
+                          ),
+                          isAcala || isLaminar
+                              ? Expanded(
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.only(bottom: 2, left: 8),
+                                    child: Text(
+                                      '(${I18n.of(context).assets['assets.test']})',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Theme.of(context)
+                                            .unselectedWidgetColor,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container()
+                        ],
                       ),
                     ),
                     RoundedCard(
@@ -419,12 +443,21 @@ class _AssetsState extends State<Assets> {
 //                  print(store.assets.balances[i]);
                         String token =
                             i == acala_stable_coin ? acala_stable_coin_view : i;
+
+                        bool hasIcon = true;
+                        if (isLaminar && token != acala_stable_coin_view) {
+                          hasIcon = false;
+                        }
                         return RoundedCard(
                           margin: EdgeInsets.only(top: 16),
                           child: ListTile(
                             leading: Container(
                               width: 36,
-                              child: Image.asset('assets/images/assets/$i.png'),
+                              child: hasIcon
+                                  ? Image.asset('assets/images/assets/$i.png')
+                                  : CircleAvatar(
+                                      child: Text(token.substring(0, 2)),
+                                    ),
                             ),
                             title: Text(token),
                             trailing: Text(

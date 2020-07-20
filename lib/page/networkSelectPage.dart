@@ -34,6 +34,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     networkEndpointPolkadot,
     networkEndpointKusama,
     networkEndpointAcala,
+    networkEndpointLaminar,
   ];
 
   EndpointData _selectedNetwork;
@@ -44,7 +45,10 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     store.assets.clearTxs();
     store.assets.loadAccountCache();
 
-    if (store.settings.endpoint.info == networkEndpointAcala.info) {
+    final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    final isLaminar =
+        store.settings.endpoint.info == networkEndpointLaminar.info;
+    if (isAcala || isLaminar) {
       store.acala.setTransferTxs([], reset: true);
       store.acala.loadCache();
     } else {
@@ -58,9 +62,10 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     setState(() {
       _networkChanging = true;
     });
+    await store.settings.setNetworkConst({});
     store.settings.setEndpoint(_selectedNetwork);
 
-    store.settings.loadNetworkStateCache();
+    await store.settings.loadNetworkStateCache();
     store.settings.setNetworkLoading(true);
 
     store.gov.setReferendums([]);
@@ -79,18 +84,21 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   }
 
   Future<void> _onSelect(AccountData i, String address) async {
-    if (address != store.account.currentAddress) {
+    bool isCurrentNetwork =
+        _selectedNetwork.info == store.settings.endpoint.info;
+    if (address != store.account.currentAddress || !isCurrentNetwork) {
       /// set current account
       store.account.setCurrentAccount(i.pubKey);
 
-      bool isCurrentNetwork =
-          _selectedNetwork.info == store.settings.endpoint.info;
       if (isCurrentNetwork) {
         _loadAccountCache();
 
         /// reload account info
         webApi.assets.fetchBalance();
       } else {
+        await store.assets
+            .setAccountTokenBalances(store.account.currentAccountPubKey, {});
+
         /// set new network and reload web view
         await _reloadNetwork();
       }
@@ -109,8 +117,6 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
 
   List<Widget> _buildAccountList() {
     Color primaryColor = Theme.of(context).primaryColor;
-    bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
-    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
     List<Widget> res = [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -121,7 +127,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
           ),
           IconButton(
             icon: Image.asset(
-                'assets/images/assets/plus_${isAcala ? 'indigo' : isKusama ? 'black' : 'pink'}.png'),
+                'assets/images/assets/plus_${store.settings.endpoint.color ?? 'pink'}.png'),
             color: primaryColor,
             onPressed: () => _onCreateAccount(),
           )

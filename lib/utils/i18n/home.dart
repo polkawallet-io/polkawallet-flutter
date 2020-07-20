@@ -44,9 +44,11 @@ const Map<String, String> enHome = {
   'update.download': 'Downloading...',
   'update.install': 'Installing...',
   'update.error': 'Update Failed',
+  'update.js.up': 'Metadata needs to be updated to continue.',
   'exit.confirm': 'Do you want to exit the App?',
   'input.invalid': 'Invalid input',
   'loading': 'Loading...',
+  'success': 'Success',
 };
 
 const Map<String, String> zhHome = {
@@ -92,7 +94,9 @@ const Map<String, String> zhHome = {
   'update.download': '正在下载...',
   'update.install': '开始安装',
   'update.error': '更新失败',
+  'update.js.up': '发现网络 Metadata 更新，需要下载才能继续使用。',
   'exit.confirm': '确定要退出 App 吗？',
   'input.invalid': '输入格式错误',
   'loading': '载入中。。。',
+  'success': '操作成功',
 };

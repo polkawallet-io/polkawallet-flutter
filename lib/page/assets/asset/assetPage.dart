@@ -51,7 +51,8 @@ class _AssetPageState extends State<AssetPage>
     webApi.assets.fetchBalance();
     Map res = {"transfers": []};
 
-    if (store.settings.endpoint.info != networkEndpointAcala.info) {
+    if (store.settings.endpoint.info != networkEndpointAcala.info &&
+        store.settings.endpoint.info != networkEndpointLaminar.info) {
       webApi.staking.fetchAccountStaking();
       res = await webApi.assets.updateTxs(_txsPage);
     }
@@ -110,7 +111,8 @@ class _AssetPageState extends State<AssetPage>
   List<Widget> _buildTxList() {
     List<Widget> res = [];
     final String token = ModalRoute.of(context).settings.arguments;
-    if (store.settings.endpoint.info == networkEndpointAcala.info) {
+    if (store.settings.endpoint.info == networkEndpointAcala.info ||
+        store.settings.endpoint.info == networkEndpointLaminar.info) {
       List<TransferData> ls = store.acala.txsTransfer.reversed.toList();
       ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
       res.addAll(ls.map((i) {

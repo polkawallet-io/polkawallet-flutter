@@ -24,8 +24,6 @@ class _DemocracyState extends State<Democracy> {
 
   final AppStore store;
 
-  final String _bestNumberSubscribeChannel = 'BestNumber';
-
   Future<void> _fetchReferendums() async {
     if (store.settings.loading) {
       return;
@@ -55,8 +53,7 @@ class _DemocracyState extends State<Democracy> {
   void initState() {
     super.initState();
     if (!store.settings.loading) {
-      webApi.subscribeMessage(
-          'chain', 'bestNumber', [], _bestNumberSubscribeChannel, (data) {
+      webApi.subscribeBestNumber((data) {
         store.gov.setBestNumber(data as int);
       });
     }
@@ -68,7 +65,7 @@ class _DemocracyState extends State<Democracy> {
 
   @override
   void dispose() {
-    webApi.unsubscribeMessage(_bestNumberSubscribeChannel);
+    webApi.unsubscribeBestNumber();
 
     super.dispose();
   }

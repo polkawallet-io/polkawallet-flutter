@@ -29,20 +29,26 @@ class _HomePageState extends State<HomePage> {
 
   NotificationPlugin _notificationPlugin;
 
-  final List<String> _tabList = [
+  List<String> _tabList = [];
+
+  final List<String> _tabListKusama = [
     'Assets',
     'Staking',
     'Governance',
     'Profile',
   ];
 
+  final List<String> _tabListLaminar = [
+    'Assets',
+    'Profile',
+  ];
+
   List<BottomNavigationBarItem> _navBarItems(int activeItem) {
     Map<String, String> tabs = I18n.of(context).home;
-    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
     return _tabList
         .map((i) => BottomNavigationBarItem(
               icon: Image.asset(_tabList[activeItem] == i
-                  ? 'assets/images/public/${i}_${isKusama ? 'black' : 'pink'}.png'
+                  ? 'assets/images/public/${i}_${store.settings.endpoint.color ?? 'pink'}.png'
                   : 'assets/images/public/${i}_dark.png'),
               title: Text(
                 tabs[i.toLowerCase()],
@@ -57,6 +63,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _getPage(i) {
+    final isLaminar =
+        networkEndpointLaminar.info == store.settings.endpoint.info;
+    if (isLaminar) {
+      switch (i) {
+        case 0:
+          return Assets(store);
+        default:
+          return Profile(store);
+      }
+    }
     switch (i) {
       case 0:
         return Assets(store);
@@ -70,9 +86,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> _buildPages() {
-    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
-    String imageColor = isKusama ? 'black' : 'pink';
-    return [0, 1, 2, 3].map((i) {
+    String imageColor = store.settings.endpoint.color ?? 'pink';
+    return _tabList.asMap().keys.map((i) {
       if (i == 0) {
         // return assets page
         return Stack(
@@ -167,6 +182,26 @@ class _HomePageState extends State<HomePage> {
     }
 
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final isLaminar =
+          networkEndpointLaminar.info == store.settings.endpoint.info;
+      if (isLaminar && _tabList.length != _tabListLaminar.length) {
+        setState(() {
+          _tabList = _tabListLaminar;
+        });
+      }
+      if (!isLaminar && _tabList.length != _tabListKusama.length) {
+        setState(() {
+          _tabList = _tabListKusama;
+        });
+      }
+    });
   }
 
   @override

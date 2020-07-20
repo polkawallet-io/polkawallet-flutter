@@ -229,6 +229,7 @@ class EndpointData extends _EndpointData {
 }
 
 abstract class _EndpointData {
+  String color = 'pink';
   String info = '';
   int ss58 = 42;
   String text = '';

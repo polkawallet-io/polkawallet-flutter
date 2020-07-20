@@ -11,7 +11,7 @@ description: PolkaWallet made with Flutter.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.8.3+833
+version: 0.8.4+841
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -26,6 +26,7 @@ dependencies:
   mobx_codegen: ^1.1.0
   provider: ^3.1.0
   shared_preferences: ^0.5.6
+  get_storage: ^1.2.1
   flutter_aes_ecb_pkcs5: ^0.1.1
   convert: ^2.1.1
   http: ^0.12.0
@@ -92,6 +93,7 @@ flutter:
     # js service
     - lib/js_service_kusama/dist/main.js
     - lib/js_service_acala/dist/main.js
+    - lib/js_service_laminar/dist/main.js
 
     # images
     ## images - settings
@@ -101,9 +103,13 @@ flutter:
     - assets/images/public/acala-mandala_gray.png
     - assets/images/public/acala.png
     - assets/images/public/acala_gray.png
+    - assets/images/public/laminar-turbulence.png
+    - assets/images/public/laminar-turbulence_gray.png
     - assets/images/assets/ACA.png
+    - assets/images/assets/LAMI.png
     - assets/images/assets/AUSD.png
     - assets/images/assets/XBTC.png
+    - assets/images/assets/RENBTC.png
     - assets/images/assets/LDOT.png
     - assets/images/assets/KAR.png
     - assets/images/assets/scanner.png
@@ -125,6 +131,17 @@ flutter:
     - assets/images/acala/deposit.svg
     - assets/images/acala/loan.svg
     - assets/images/acala/loan-start.svg
+    ## images - laminar
+    - assets/images/assets/scanner_purple.png
+    - assets/images/assets/top_bg_purple.png
+    - assets/images/assets/receive_line_purple.png
+    - assets/images/assets/qrcode_purple.png
+    - assets/images/assets/plus_purple.png
+    - assets/images/staking/top_bg_purple.png
+    - assets/images/public/Assets_purple.png
+    - assets/images/public/Governance_purple.png
+    - assets/images/public/Profile_purple.png
+    - assets/images/public/Staking_purple.png
     ## images - kusama
     - assets/images/assets/scanner_black.png
     - assets/images/public/Assets_black.png

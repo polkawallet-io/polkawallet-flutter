@@ -166,10 +166,10 @@ mixin _$AssetsStore on _AssetsStore, Store {
       AsyncAction('_AssetsStore.setAccountTokenBalances');
 
   @override
-  Future<void> setAccountTokenBalances(
-      String pubKey, Map<dynamic, dynamic> amt) {
-    return _$setAccountTokenBalancesAsyncAction
-        .run(() => super.setAccountTokenBalances(pubKey, amt));
+  Future<void> setAccountTokenBalances(String pubKey, Map<dynamic, dynamic> amt,
+      {bool needCache = true}) {
+    return _$setAccountTokenBalancesAsyncAction.run(
+        () => super.setAccountTokenBalances(pubKey, amt, needCache: needCache));
   }
 
   final _$clearTxsAsyncAction = AsyncAction('_AssetsStore.clearTxs');

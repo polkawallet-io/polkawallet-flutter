@@ -92,3 +92,22 @@ final appThemeAcala = ThemeData(
         fontSize: 18,
       )),
 );
+
+final appThemeLaminar = ThemeData(
+  primarySwatch: Colors.deepPurple,
+  textTheme: TextTheme(
+      headline1: TextStyle(
+        fontSize: 24,
+      ),
+      headline2: TextStyle(
+        fontSize: 22,
+      ),
+      headline3: TextStyle(
+        fontSize: 20,
+      ),
+      headline4: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      button: TextStyle(
+        color: Colors.white,
+        fontSize: 18,
+      )),
+);
