@@ -42,7 +42,8 @@ class _AssetsState extends State<Assets> {
   bool _preclaimChecking = false;
 
   Future<void> _fetchBalance() async {
-    if (store.settings.endpoint.info == networkEndpointAcala.info) {
+    if (store.settings.endpoint.info == networkEndpointAcala.info ||
+        store.settings.endpoint.info == networkEndpointLaminar.info) {
       await webApi.assets.fetchBalance();
     } else {
       await Future.wait([
@@ -364,7 +365,7 @@ class _AssetsState extends State<Assets> {
             store.settings.endpoint.info == networkEndpointLaminar.info;
 
         List<String> currencyIds = [];
-        if (isAcala && networkName != null) {
+        if ((isAcala || isLaminar) && networkName != null) {
           if (store.settings.networkConst['currencyIds'] != null) {
             currencyIds.addAll(
                 List<String>.from(store.settings.networkConst['currencyIds']));

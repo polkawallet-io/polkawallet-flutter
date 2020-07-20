@@ -20,6 +20,9 @@ class ApiAssets {
       apiRoot.acala.fetchTokens(store.account.currentAccount.pubKey);
       apiRoot.acala.fetchAirdropTokens();
     }
+    if (store.settings.endpoint.info == networkEndpointLaminar.info) {
+      apiRoot.laminar.fetchTokens(store.account.currentAccount.pubKey);
+    }
   }
 
   Future<Map> updateTxs(int page) async {

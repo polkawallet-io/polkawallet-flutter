@@ -29,10 +29,17 @@ class _HomePageState extends State<HomePage> {
 
   NotificationPlugin _notificationPlugin;
 
-  final List<String> _tabList = [
+  List<String> _tabList = [];
+
+  final List<String> _tabListKusama = [
     'Assets',
     'Staking',
     'Governance',
+    'Profile',
+  ];
+
+  final List<String> _tabListLaminar = [
+    'Assets',
     'Profile',
   ];
 
@@ -56,6 +63,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _getPage(i) {
+    final isLaminar =
+        networkEndpointLaminar.info == store.settings.endpoint.info;
+    if (isLaminar) {
+      switch (i) {
+        case 0:
+          return Assets(store);
+        default:
+          return Profile(store);
+      }
+    }
     switch (i) {
       case 0:
         return Assets(store);
@@ -70,7 +87,7 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> _buildPages() {
     String imageColor = store.settings.endpoint.color ?? 'pink';
-    return [0, 1, 2, 3].map((i) {
+    return _tabList.asMap().keys.map((i) {
       if (i == 0) {
         // return assets page
         return Stack(
@@ -165,6 +182,26 @@ class _HomePageState extends State<HomePage> {
     }
 
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final isLaminar =
+          networkEndpointLaminar.info == store.settings.endpoint.info;
+      if (isLaminar && _tabList.length != _tabListLaminar.length) {
+        setState(() {
+          _tabList = _tabListLaminar;
+        });
+      }
+      if (!isLaminar && _tabList.length != _tabListKusama.length) {
+        setState(() {
+          _tabList = _tabListKusama;
+        });
+      }
+    });
   }
 
   @override

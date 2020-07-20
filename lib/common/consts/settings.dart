@@ -103,6 +103,10 @@ const int SECONDS_OF_YEAR = 365 * 24 * 60 * 60; // seconds of one year
 
 const String acala_stable_coin = 'AUSD';
 const String acala_stable_coin_view = 'aUSD';
+const String cross_chain_transfer_address_acala =
+    '5CAca1aAUSDCrossChainTransferxxxxxxxxxxxxxxxxikw';
+const String cross_chain_transfer_address_laminar =
+    '5CLaminarAUSDCrossChainTransferxxxxxxxxxxxxxwisu';
 
 /// test app versions
 const String app_beta_version = '0.8.3-beta.3';

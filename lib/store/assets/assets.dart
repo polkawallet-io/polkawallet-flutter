@@ -227,6 +227,8 @@ abstract class _AssetsStore with Store {
     }
     if (cache[3] != null) {
       setAccountTokenBalances(pubKey, cache[3], needCache: false);
+    } else {
+      setAccountTokenBalances(pubKey, {});
     }
   }
 
