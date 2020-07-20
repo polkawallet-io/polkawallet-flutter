@@ -17,6 +17,7 @@ before_script:
   - ./flutter/bin/flutter doctor
   - cd ./lib/js_service_kusama && npm install && npm run build && cd ../..
   - cd ./lib/js_service_acala && npm install && npm run build && cd ../..
+  - cd ./lib/js_service_laminar && npm install && npm run build && cd ../..
 script:
   - ./flutter/bin/flutter test
 cache:
