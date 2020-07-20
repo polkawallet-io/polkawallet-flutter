@@ -65,6 +65,14 @@ class _TransferPageState extends State<TransferPage> {
         .pushNamed(CurrencySelectPage.route, arguments: symbolOptions);
 
     if (currency != null) {
+      if (_crossChain &&
+          (_tokenSymbol == acala_stable_coin_view ||
+              _tokenSymbol == acala_stable_coin) &&
+          _tokenSymbol != currency) {
+        setState(() {
+          _addressCtrl.text = '';
+        });
+      }
       setState(() {
         _tokenSymbol = currency;
       });

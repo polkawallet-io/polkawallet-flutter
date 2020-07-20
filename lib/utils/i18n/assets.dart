@@ -54,6 +54,7 @@ const Map<String, String> enAssets = {
       'Please double check that you have signed the transaction correctly on the correct ETH account.',
   'cross.acala': 'Cross chain to Acala Network',
   'cross.laminar': 'Cross chain to Laminar',
+  'assets.test': 'Test Tokens',
 };
 
 const Map<String, String> zhAssets = {
@@ -109,4 +110,5 @@ const Map<String, String> zhAssets = {
   'claim.empty2': '，请检查您的以太坊地址和签名信息。',
   'cross.acala': '跨链转至Acala Network',
   'cross.laminar': '跨链转至Laminar',
+  'assets.test': '测试 Token',
 };

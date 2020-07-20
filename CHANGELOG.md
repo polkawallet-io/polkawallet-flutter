@@ -1,3 +1,8 @@
+# 0.8.4
+- add laminar-turbulence
+- add cross chain aUSD transfer of Acala&Laminar
+- fix redeem unbonded token bug
+
 # 0.8.3
 - add tx sending with tips
 - fix Acala token transfer history bug

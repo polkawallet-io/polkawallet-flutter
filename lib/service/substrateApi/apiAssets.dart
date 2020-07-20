@@ -12,7 +12,10 @@ class ApiAssets {
     String pubKey = store.account.currentAccountPubKey;
     if (pubKey != null && pubKey.isNotEmpty) {
       String address = store.account.currentAddress;
-      Map res = await apiRoot.evalJavascript('account.getBalance("$address")');
+      Map res = await apiRoot.evalJavascript(
+        'account.getBalance("$address")',
+        allowRepeat: true,
+      );
       store.assets.setAccountBalances(
           pubKey, Map.of({store.settings.networkState.tokenSymbol: res}));
     }

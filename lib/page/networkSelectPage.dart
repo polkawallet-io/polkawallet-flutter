@@ -62,10 +62,10 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     setState(() {
       _networkChanging = true;
     });
+    await store.settings.setNetworkConst({});
     store.settings.setEndpoint(_selectedNetwork);
 
     await store.settings.loadNetworkStateCache();
-    await store.settings.setNetworkConst({});
     store.settings.setNetworkLoading(true);
 
     store.gov.setReferendums([]);
