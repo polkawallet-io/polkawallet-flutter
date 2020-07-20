@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/acala/apiAcala.dart';
@@ -11,8 +12,10 @@ import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
 import 'package:polka_wallet/service/substrateApi/apiGov.dart';
 import 'package:polka_wallet/service/substrateApi/apiStaking.dart';
 import 'package:polka_wallet/service/substrateApi/laminar/apiLaminar.dart';
+import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/utils/UI.dart';
 
 // global api instance
 Api webApi;
@@ -22,6 +25,7 @@ class Api {
 
   final BuildContext context;
   final AppStore store;
+  final jsStorage = GetStorage();
 
   ApiAccount account;
 
@@ -39,6 +43,8 @@ class Api {
   FlutterWebviewPlugin _web;
   int _evalJavascriptUID = 0;
 
+  bool _jsCodeUpdated = false;
+
   Function _connectFunc;
 
   void init() {
@@ -54,6 +60,27 @@ class Api {
     launchWebview();
   }
 
+  Future<void> _checkJSCodeUpdate() async {
+    // check js code update
+    final network = store.settings.endpoint.info;
+    final jsVersion = await WalletApi.fetchPolkadotJSVersion(network);
+    final bool needUpdate =
+        await UI.checkJSCodeUpdate(context, jsVersion, network);
+    if (needUpdate) {
+      await UI.updateJSCode(context, jsStorage, network, jsVersion);
+    }
+  }
+
+  void _startJSCode(String js) {
+    // inject js file to webview
+    _web.evalJavascript(js);
+
+    // load keyPairs from local data
+    account.initAccounts();
+    // connect remote node
+    _connectFunc();
+  }
+
   Future<void> launchWebview({bool customNode = false}) async {
     _msgHandlers = {'txStatusChange': store.account.setTxStatus};
 
@@ -62,6 +89,7 @@ class Api {
 
     _connectFunc = customNode ? connectNode : connectNodeAll;
 
+    await _checkJSCodeUpdate();
     if (_web != null) {
       _web.reload();
       return;
@@ -78,18 +106,18 @@ class Api {
           network = 'laminar';
         }
         print('webview loaded for network $network');
-        DefaultAssetBundle.of(context)
-            .loadString('lib/js_service_$network/dist/main.js')
-            .then((String js) {
-          print('js file loaded');
-          // inject js file to webview
-          _web.evalJavascript(js);
-
-          // load keyPairs from local data
-          account.initAccounts();
-          // connect remote node
-          _connectFunc();
-        });
+        String jsCode = WalletApi.getPolkadotJSCode(jsStorage, network);
+        if (jsCode != null) {
+          print('js code loaded');
+          _startJSCode(jsCode);
+        } else {
+          DefaultAssetBundle.of(context)
+              .loadString('lib/js_service_$network/dist/main.js')
+              .then((String js) {
+            print('js file loaded');
+            _startJSCode(js);
+          });
+        }
       }
     });
 

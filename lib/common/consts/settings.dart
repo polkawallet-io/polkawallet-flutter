@@ -1,8 +1,13 @@
 import 'package:polka_wallet/store/settings.dart';
 
+const String network_name_kusama = 'kusama';
+const String network_name_polkadot = 'polkadot';
+const String network_name_acala_mandala = 'acala-mandala';
+const String network_name_laminar_turbulence = 'laminar-turbulence';
+
 EndpointData networkEndpointPolkadot = EndpointData.fromJson(const {
   'color': 'pink',
-  'info': 'polkadot',
+  'info': network_name_polkadot,
   'ss58': 0,
   'text': 'Polkadot (Live, hosted by Parity)',
   'value': 'wss://rpc.polkadot.io',
@@ -10,7 +15,7 @@ EndpointData networkEndpointPolkadot = EndpointData.fromJson(const {
 
 EndpointData networkEndpointKusama = EndpointData.fromJson(const {
   'color': 'black',
-  'info': 'kusama',
+  'info': network_name_kusama,
   'ss58': 2,
   'text': 'Kusama (Polkadot Canary, hosted by Polkawallet)',
   'value': 'ws://mandala-01.acala.network:9954/',
@@ -18,7 +23,7 @@ EndpointData networkEndpointKusama = EndpointData.fromJson(const {
 
 EndpointData networkEndpointAcala = EndpointData.fromJson(const {
   'color': 'indigo',
-  'info': 'acala-mandala',
+  'info': network_name_acala_mandala,
   'ss58': 42,
   'text': 'Acala Mandala (Hosted by Acala Network)',
   'value': 'wss://testnet-node-1.acala.laminar.one/ws',
@@ -26,7 +31,7 @@ EndpointData networkEndpointAcala = EndpointData.fromJson(const {
 
 EndpointData networkEndpointLaminar = EndpointData.fromJson(const {
   'color': 'purple',
-  'info': 'laminar',
+  'info': network_name_laminar_turbulence,
   'ss58': 42,
   'text': 'Laminar TC1',
   'value': 'wss://node-6685729082874970112.jm.onfinality.io/ws',
@@ -36,14 +41,14 @@ List<EndpointData> networkEndpoints = [
   networkEndpointPolkadot,
   EndpointData.fromJson(const {
     'color': 'pink',
-    'info': 'polkadot',
+    'info': network_name_polkadot,
     'ss58': 0,
     'text': 'Polkadot (Live, hosted by Web3 Foundation)',
     'value': 'wss://cc1-1.polkadot.network',
   }),
   EndpointData.fromJson(const {
     'color': 'pink',
-    'info': 'polkadot',
+    'info': network_name_polkadot,
     'ss58': 0,
     'text': 'Polkadot (Live, hosted by Polkawallet)',
     'value': 'ws://62.171.154.98:9944',
@@ -51,14 +56,14 @@ List<EndpointData> networkEndpoints = [
   networkEndpointKusama,
   EndpointData.fromJson(const {
     'color': 'black',
-    'info': 'kusama',
+    'info': network_name_kusama,
     'ss58': 2,
     'text': 'Kusama (Polkadot Canary, hosted by Parity)',
     'value': 'wss://kusama-rpc.polkadot.io/',
   }),
   EndpointData.fromJson(const {
     'color': 'black',
-    'info': 'kusama',
+    'info': network_name_kusama,
     'ss58': 2,
     'text': 'Kusama (Polkadot Canary, hosted by Web3 Foundation)',
     'value': 'wss://cc3-5.kusama.network/',
@@ -66,14 +71,14 @@ List<EndpointData> networkEndpoints = [
   networkEndpointAcala,
   EndpointData.fromJson(const {
     'color': 'indigo',
-    'info': 'acala-mandala',
+    'info': network_name_acala_mandala,
     'ss58': 42,
     'text': 'Mandala TC4 Node 1 (Hosted by OnFinality)',
     'value': 'wss://node-6684611762228215808.jm.onfinality.io/ws'
   }),
   EndpointData.fromJson(const {
     'color': 'indigo',
-    'info': 'acala-mandala',
+    'info': network_name_acala_mandala,
     'ss58': 42,
     'text': 'Mandala TC4 Node 2 (Hosted by OnFinality)',
     'value': 'wss://node-6684611760525328384.rz.onfinality.io/ws'
@@ -81,7 +86,7 @@ List<EndpointData> networkEndpoints = [
   networkEndpointLaminar,
   EndpointData.fromJson(const {
     'color': 'purple',
-    'info': 'laminar',
+    'info': network_name_laminar_turbulence,
     'ss58': 42,
     'text': 'Laminar TC1',
     'value': 'wss://testnet-node-1.laminar-chain.laminar.one/ws',
@@ -108,5 +113,12 @@ const String cross_chain_transfer_address_acala =
 const String cross_chain_transfer_address_laminar =
     '5CLaminarAUSDCrossChainTransferxxxxxxxxxxxxxwisu';
 
-/// test app versions
+/// app versions
 const String app_beta_version = '0.8.3-beta.3';
+
+/// js code versions
+const Map<String, int> js_code_version_map = {
+  network_name_kusama: 8330,
+  network_name_acala_mandala: 8330,
+  network_name_laminar_turbulence: 8330,
+};
