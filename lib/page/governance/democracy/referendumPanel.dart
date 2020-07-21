@@ -33,7 +33,7 @@ class ReferendumPanel extends StatelessWidget {
     List<Widget> list = <Widget>[
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
         Text(
-          data.image['proposal'] != null
+          data.image != null && data.image['proposal'] != null
               ? '${data.image['proposal']['section']}.${data.image['proposal']['method']}'
               : '-',
           style: Theme.of(context).textTheme.headline4,
@@ -75,10 +75,12 @@ class ReferendumPanel extends StatelessWidget {
           )
         ],
       ),
-      Container(
-        padding: EdgeInsets.only(top: 16),
-        child: Text(data.detail['content'].toString().trim()),
-      )
+      data.detail['content'] != null
+          ? Container(
+              padding: EdgeInsets.only(top: 16),
+              child: Text(data.detail['content'].toString().trim()),
+            )
+          : Container()
     ];
     if (data.detail['params'] != null && data.detail['params'].length > 0) {
       list.add(
@@ -90,7 +92,7 @@ class ReferendumPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            '${dic['proposal']} hash',
+            '${data.image != null ? dic['proposal'] : 'Preimage'} hash',
             style: TextStyle(color: Colors.black54),
           ),
           Text(Fmt.address(data.imageHash))

@@ -114,11 +114,12 @@ const String cross_chain_transfer_address_laminar =
     '5CLaminarAUSDCrossChainTransferxxxxxxxxxxxxxwisu';
 
 /// app versions
-const String app_beta_version = '0.8.4-beta.1';
+const String app_beta_version = '0.8.4-beta.2';
 
 /// js code versions
 const Map<String, int> js_code_version_map = {
-  network_name_kusama: 8410,
-  network_name_acala_mandala: 8410,
-  network_name_laminar_turbulence: 8410,
+  network_name_polkadot: 8420,
+  network_name_kusama: 8420,
+  network_name_acala_mandala: 8420,
+  network_name_laminar_turbulence: 8420,
 };

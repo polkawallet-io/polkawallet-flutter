@@ -1177,9 +1177,9 @@
   integrity sha1-K1o6s/kYzKSKjHVMCBaOPwPrphs=
 
 "@open-web3/api-mobx@^0.5.0-beta.0":
-  version "0.5.0-beta.2"
-  resolved "https://registry.npm.taobao.org/@open-web3/api-mobx/download/@open-web3/api-mobx-0.5.0-beta.2.tgz#cebaa9b82166797af98033658a84f8b86c3d8cb8"
-  integrity sha1-zrqpuCFmeXr5gDNlioT4uGw9jLg=
+  version "0.5.1"
+  resolved "https://registry.npm.taobao.org/@open-web3/api-mobx/download/@open-web3/api-mobx-0.5.1.tgz#2de39778c3a639abb516f41dadd2d6f90e8265e1"
+  integrity sha1-LeOXeMOmOau1FvQdrdLW+Q6CZeE=
   dependencies:
     "@polkadot/api" "^1.23.1"
     "@polkadot/types" "^1.23.1"
@@ -1188,9 +1188,9 @@
     mobx-utils "^5.5.7"
 
 "@open-web3/orml-api-derive@^0.5.0-beta.0":
-  version "0.5.0-beta.2"
-  resolved "https://registry.npm.taobao.org/@open-web3/orml-api-derive/download/@open-web3/orml-api-derive-0.5.0-beta.2.tgz#1926f463f2a526fee331c4cb31c78202de13c92d"
-  integrity sha1-GSb0Y/KlJv7jMcTLMceCAt4TyS0=
+  version "0.5.1"
+  resolved "https://registry.npm.taobao.org/@open-web3/orml-api-derive/download/@open-web3/orml-api-derive-0.5.1.tgz#839be6e71700e91c78770cd2b26d9a723a4f7b95"
+  integrity sha1-g5vm5xcA6Rx4dwzSsm2acjpPe5U=
   dependencies:
     memoizee "^0.4.14"
     rxjs "^6.5.5"
@@ -1200,10 +1200,17 @@
   resolved "https://registry.npm.taobao.org/@open-web3/orml-type-definitions/download/@open-web3/orml-type-definitions-0.5.0-beta.2.tgz#0067f823f39883f845990d2da0cc9b86b82895b8"
   integrity sha1-AGf4I/OYg/hFmQ0toMybhrgolbg=
 
+"@open-web3/orml-type-definitions@^0.5.1":
+  version "0.5.1"
+  resolved "https://registry.npm.taobao.org/@open-web3/orml-type-definitions/download/@open-web3/orml-type-definitions-0.5.1.tgz#4cc0746007bcebed2aac48dcb5579f5882655dfe"
+  integrity sha1-TMB0YAe86+0qrEjctVefWIJlXf4=
+
 "@open-web3/orml-types@^0.5.0-beta.0":
-  version "0.5.0-beta.2"
-  resolved "https://registry.npm.taobao.org/@open-web3/orml-types/download/@open-web3/orml-types-0.5.0-beta.2.tgz#c6a9f8455398c3361447d26c7d5e0bfc852bbf03"
-  integrity sha1-xqn4RVOYwzYUR9JsfV4L/IUrvwM=
+  version "0.5.1"
+  resolved "https://registry.npm.taobao.org/@open-web3/orml-types/download/@open-web3/orml-types-0.5.1.tgz#aecb82846f753d4f44308c15b8e356b716dcaa1a"
+  integrity sha1-rsuChG91PU9EMIwVuONWtxbcqho=
+  dependencies:
+    "@open-web3/orml-type-definitions" "^0.5.1"
 
 "@polkadot/api-derive@1.25.1":
   version "1.25.1"
@@ -1263,7 +1270,7 @@
 
 "@polkadot/rpc-core@1.25.1":
   version "1.25.1"
-  resolved "https://registry.npm.taobao.org/@polkadot/rpc-core/download/@polkadot/rpc-core-1.25.1.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40polkadot%2Frpc-core%2Fdownload%2F%40polkadot%2Frpc-core-1.25.1.tgz#41de747fd4b59b61009a14b583c4b2420670292f"
+  resolved "https://registry.npm.taobao.org/@polkadot/rpc-core/download/@polkadot/rpc-core-1.25.1.tgz#41de747fd4b59b61009a14b583c4b2420670292f"
   integrity sha1-Qd50f9S1m2EAmhS1g8SyQgZwKS8=
   dependencies:
     "@babel/runtime" "^7.10.5"
@@ -1452,7 +1459,7 @@
 
 "@types/istanbul-reports@^1.1.1":
   version "1.1.2"
-  resolved "https://registry.npm.taobao.org/@types/istanbul-reports/download/@types/istanbul-reports-1.1.2.tgz#e875cc689e47bce549ec81f3df5e6f6f11cfaeb2"
+  resolved "https://registry.npm.taobao.org/@types/istanbul-reports/download/@types/istanbul-reports-1.1.2.tgz?cache=0&sync_timestamp=1595282203240&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fistanbul-reports%2Fdownload%2F%40types%2Fistanbul-reports-1.1.2.tgz#e875cc689e47bce549ec81f3df5e6f6f11cfaeb2"
   integrity sha1-6HXMaJ5HvOVJ7IHz315vbxHPrrI=
   dependencies:
     "@types/istanbul-lib-coverage" "*"
@@ -1469,19 +1476,19 @@
   integrity sha1-PcoOPzOyAPx9ETnAzZbBJoyt/Z0=
 
 "@types/node@*":
-  version "14.0.23"
-  resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-14.0.23.tgz?cache=0&sync_timestamp=1594655926831&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-14.0.23.tgz#676fa0883450ed9da0bb24156213636290892806"
-  integrity sha1-Z2+giDRQ7Z2guyQVYhNjYpCJKAY=
+  version "14.0.24"
+  resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-14.0.24.tgz?cache=0&sync_timestamp=1595283031360&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-14.0.24.tgz#b0f86f58564fa02a28b68f8b55d4cdec42e3b9d6"
+  integrity sha1-sPhvWFZPoCooto+LVdTN7ELjudY=
 
 "@types/node@11.11.6":
   version "11.11.6"
-  resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-11.11.6.tgz?cache=0&sync_timestamp=1594655926831&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-11.11.6.tgz#df929d1bb2eee5afdda598a41930fe50b43eaa6a"
+  resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-11.11.6.tgz?cache=0&sync_timestamp=1595283031360&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-11.11.6.tgz#df929d1bb2eee5afdda598a41930fe50b43eaa6a"
   integrity sha1-35KdG7Lu5a/dpZikGTD+ULQ+qmo=
 
 "@types/node@^12.12.6":
-  version "12.12.50"
-  resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-12.12.50.tgz?cache=0&sync_timestamp=1594655926831&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-12.12.50.tgz#e9b2e85fafc15f2a8aa8fdd41091b983da5fd6ee"
-  integrity sha1-6bLoX6/BXyqKqP3UEJG5g9pf1u4=
+  version "12.12.51"
+  resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-12.12.51.tgz?cache=0&sync_timestamp=1595283031360&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-12.12.51.tgz#446a67af8c5ff98947d7cef296484c6ad47ddb16"
+  integrity sha1-RGpnr4xf+YlH187ylkhMatR92xY=
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -3422,9 +3429,9 @@ ejs@^3.0.1:
     jake "^10.6.1"
 
 electron-to-chromium@^1.3.488:
-  version "1.3.501"
-  resolved "https://registry.npm.taobao.org/electron-to-chromium/download/electron-to-chromium-1.3.501.tgz?cache=0&sync_timestamp=1595146857332&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Felectron-to-chromium%2Fdownload%2Felectron-to-chromium-1.3.501.tgz#faa17a2cb0105ee30d5e1ca87eae7d8e85dd3175"
-  integrity sha1-+qF6LLAQXuMNXhyofq59joXdMXU=
+  version "1.3.502"
+  resolved "https://registry.npm.taobao.org/electron-to-chromium/download/electron-to-chromium-1.3.502.tgz?cache=0&sync_timestamp=1595304209973&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Felectron-to-chromium%2Fdownload%2Felectron-to-chromium-1.3.502.tgz#6a55e993ef60a01fbdc2152ef5e47ee00c885c98"
+  integrity sha1-alXpk+9goB+9whUu9eR+4AyIXJg=
 
 elliptic@6.5.3, elliptic@^6.0.0, elliptic@^6.4.0, elliptic@^6.5.2, elliptic@^6.5.3:
   version "6.5.3"
@@ -5271,7 +5278,7 @@ is-plain-obj@^1.1.0:
 
 is-plain-object@^2.0.3, is-plain-object@^2.0.4:
   version "2.0.4"
-  resolved "https://registry.npm.taobao.org/is-plain-object/download/is-plain-object-2.0.4.tgz?cache=0&sync_timestamp=1593243670545&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fis-plain-object%2Fdownload%2Fis-plain-object-2.0.4.tgz#2c163b3fafb1b606d9d17928f05c2a1c38e07677"
+  resolved "https://registry.npm.taobao.org/is-plain-object/download/is-plain-object-2.0.4.tgz#2c163b3fafb1b606d9d17928f05c2a1c38e07677"
   integrity sha1-LBY7P6+xtgbZ0Xko8FwqHDjgdnc=
   dependencies:
     isobject "^3.0.1"
@@ -5974,9 +5981,9 @@ jsprim@^1.2.2:
     verror "1.10.0"
 
 keccak@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.npm.taobao.org/keccak/download/keccak-3.0.0.tgz#420d1de4a38a04f33ff8401f0535fb93756861d4"
-  integrity sha1-Qg0d5KOKBPM/+EAfBTX7k3VoYdQ=
+  version "3.0.1"
+  resolved "https://registry.npm.taobao.org/keccak/download/keccak-3.0.1.tgz#ae30a0e94dbe43414f741375cff6d64c8bea0bff"
+  integrity sha1-rjCg6U2+Q0FPdBN1z/bWTIvqC/8=
   dependencies:
     node-addon-api "^2.0.0"
     node-gyp-build "^4.2.0"
@@ -6683,7 +6690,7 @@ nice-try@^1.0.4:
 
 node-addon-api@^2.0.0:
   version "2.0.2"
-  resolved "https://registry.npm.taobao.org/node-addon-api/download/node-addon-api-2.0.2.tgz?cache=0&sync_timestamp=1594654998013&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fnode-addon-api%2Fdownload%2Fnode-addon-api-2.0.2.tgz#432cfa82962ce494b132e9d72a15b29f71ff5d32"
+  resolved "https://registry.npm.taobao.org/node-addon-api/download/node-addon-api-2.0.2.tgz?cache=0&sync_timestamp=1595260356673&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fnode-addon-api%2Fdownload%2Fnode-addon-api-2.0.2.tgz#432cfa82962ce494b132e9d72a15b29f71ff5d32"
   integrity sha1-Qyz6gpYs5JSxMunXKhWyn3H/XTI=
 
 node-dir@^0.1.17:
@@ -6707,9 +6714,9 @@ node-forge@0.9.0:
   integrity sha1-1iQFDtu0SHStyhK7mlLsY8t4JXk=
 
 node-gyp-build@^4.2.0:
-  version "4.2.2"
-  resolved "https://registry.npm.taobao.org/node-gyp-build/download/node-gyp-build-4.2.2.tgz#3f44b65adaafd42fb6c3d81afd630e45c847eb66"
-  integrity sha1-P0S2Wtqv1C+2w9ga/WMORchH62Y=
+  version "4.2.3"
+  resolved "https://registry.npm.taobao.org/node-gyp-build/download/node-gyp-build-4.2.3.tgz?cache=0&sync_timestamp=1595241585465&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fnode-gyp-build%2Fdownload%2Fnode-gyp-build-4.2.3.tgz#ce6277f853835f718829efb47db20f3e4d9c4739"
+  integrity sha1-zmJ3+FODX3GIKe+0fbIPPk2cRzk=
 
 node-int64@^0.4.0:
   version "0.4.0"
@@ -8003,9 +8010,9 @@ scrypt-js@^3.0.0, scrypt-js@^3.0.1:
   integrity sha1-0xSlfCrvadGtmKE4oh/p6vqe4xI=
 
 secp256k1@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.npm.taobao.org/secp256k1/download/secp256k1-4.0.1.tgz#b9570ca26ace9e74c3171512bba253da9c0b6d60"
-  integrity sha1-uVcMomrOnnTDFxUSu6JT2pwLbWA=
+  version "4.0.2"
+  resolved "https://registry.npm.taobao.org/secp256k1/download/secp256k1-4.0.2.tgz#15dd57d0f0b9fdb54ac1fa1694f40e5e9a54f4a1"
+  integrity sha1-Fd1X0PC5/bVKwfoWlPQOXppU9KE=
   dependencies:
     elliptic "^6.5.2"
     node-addon-api "^2.0.0"
