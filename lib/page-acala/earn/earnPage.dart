@@ -9,6 +9,7 @@ import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
 import 'package:polka_wallet/page-acala/earn/earnHistoryPage.dart';
 import 'package:polka_wallet/page-acala/earn/withdrawLiquidityPage.dart';
+import 'package:polka_wallet/page-acala/loan/loanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/acala/types/dexPoolInfoData.dart';
@@ -118,12 +119,16 @@ class _EarnPageState extends State<EarnPage> {
               onRefresh: _fetchData,
               child: Column(
                 children: <Widget>[
-                  _CurrencyTab(store.acala.swapTokens, _tab, (i) {
-                    setState(() {
-                      _tab = i;
-                    });
-                    globalDexLiquidityRefreshKey.currentState.show();
-                  }),
+                  CurrencySelector(
+                    token: _tab,
+                    tokenOptions: store.acala.swapTokens.toList(),
+                    onSelect: (res) {
+                      setState(() {
+                        _tab = res;
+                      });
+                      globalDexLiquidityRefreshKey.currentState.show();
+                    },
+                  ),
                   Expanded(
                     child: ListView(
                       children: <Widget>[
@@ -203,90 +208,6 @@ class _EarnPageState extends State<EarnPage> {
   }
 }
 
-class _CurrencyTab extends StatelessWidget {
-  _CurrencyTab(this.tabs, this.activeTab, this.onTabChange);
-  final String activeTab;
-  final List<String> tabs;
-  final Function(String) onTabChange;
-
-  @override
-  Widget build(BuildContext context) {
-    final double iconSize = 28;
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 16.0, // has the effect of softening the shadow
-            spreadRadius: 4.0, // has the effect of extending the shadow
-            offset: Offset(
-              2.0, // horizontal, move right 10
-              2.0, // vertical, move down 10
-            ),
-          )
-        ],
-      ),
-      child: Row(
-        children: tabs.map((i) {
-          return Expanded(
-            child: GestureDetector(
-              child: Container(
-                  padding: EdgeInsets.only(top: 8, bottom: 6),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        width: 2,
-                        color: activeTab == i
-                            ? Theme.of(context).primaryColor
-                            : Theme.of(context).cardColor,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: iconSize,
-                        margin: EdgeInsets.only(right: 8),
-                        child: activeTab == i
-                            ? Image.asset('assets/images/assets/$i.png')
-                            : Container(
-                                width: iconSize,
-                                height: iconSize,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).dividerColor,
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(iconSize),
-                                  ),
-                                ),
-                              ),
-                      ),
-                      Text(
-                        i,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: activeTab == i
-                              ? Theme.of(context).primaryColor
-                              : Theme.of(context).unselectedWidgetColor,
-                        ),
-                      ),
-                    ],
-                  )),
-              onTap: () {
-                if (activeTab != i) {
-                  onTabChange(i);
-                }
-              },
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
 class _SystemCard extends StatelessWidget {
   _SystemCard({
     this.reward,
@@ -311,6 +232,7 @@ class _SystemCard extends StatelessWidget {
       fontWeight: FontWeight.bold,
       color: primary,
     );
+    String tokenView = Fmt.tokenView(token);
     return RoundedCard(
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
@@ -325,7 +247,7 @@ class _SystemCard extends StatelessWidget {
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  Text(token),
+                  Text(tokenView),
                   Text(
                     amountToken,
                     style: primaryText,
@@ -346,7 +268,7 @@ class _SystemCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 8),
             child: Text(
-              '${dic['dex.rate']} 1 $token = $swapRatio $acala_stable_coin_view',
+              '${dic['dex.rate']} 1 $tokenView = $swapRatio $acala_stable_coin_view',
               style: TextStyle(fontSize: 12),
             ),
           ),
@@ -412,7 +334,7 @@ class _UserCard extends StatelessWidget {
                 children: <Widget>[
                   Column(
                     children: <Widget>[
-                      Text(token),
+                      Text(Fmt.tokenView(token)),
                       Text(
                         amountToken,
                         style: primaryText,

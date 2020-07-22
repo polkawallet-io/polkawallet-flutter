@@ -159,7 +159,9 @@ class ApiAcala {
 
   Future<void> fetchDexPoolInfo(String currencyId) async {
     Map info = await apiRoot.evalJavascript(
-        'acala.fetchDexPoolInfo("$currencyId", "${store.account.currentAddress}")');
+      'acala.fetchDexPoolInfo("$currencyId", "${store.account.currentAddress}")',
+      allowRepeat: true,
+    );
     store.acala.setDexPoolInfo(currencyId, info);
   }
 

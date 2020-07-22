@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/format.dart';
 
 class CurrencyWithIcon extends StatelessWidget {
   CurrencyWithIcon(
@@ -44,7 +45,7 @@ class CurrencyWithIcon extends StatelessWidget {
         Expanded(
           flex: 0,
           child: Text(
-            symbol,
+            Fmt.tokenView(symbol),
             style: textStyle,
           ),
         ),

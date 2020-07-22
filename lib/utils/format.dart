@@ -329,4 +329,15 @@ class Fmt {
     }
     return display;
   }
+
+  static String tokenView(String token) {
+    String tokenView = token;
+    if (token == acala_stable_coin) {
+      tokenView = acala_stable_coin_view;
+    }
+    if (token == acala_token_ren_btc) {
+      tokenView = acala_token_ren_btc_view;
+    }
+    return tokenView;
+  }
 }
