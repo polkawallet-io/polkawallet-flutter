@@ -1,3 +1,8 @@
+# 0.8.5
+- add cross chain aUSD transfer history bug
+- fix renBTC token display in Acala pages
+- fix Acala token selectors
+
 # 0.8.4
 - add laminar-turbulence
 - add cross chain aUSD transfer of Acala&Laminar
