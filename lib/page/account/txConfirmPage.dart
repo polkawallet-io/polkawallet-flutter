@@ -540,8 +540,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                             : (isObservation && _proxyAccount == null) ||
                                     isProxyObservation
                                 ? () => _onSubmit(context, viaQr: true)
-                                : _fee['partialFee'] == null ||
-                                        store.assets.submitting
+                                : store.assets.submitting
                                     ? null
                                     : () => _showPasswordDialog(context),
                       ),

@@ -31,6 +31,7 @@ import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
+import 'package:polka_wallet/page/assets/transfer/transferCrossChainPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateListPage.dart';
@@ -233,6 +234,7 @@ class _WalletAppState extends State<WalletApp> {
         // assets
         AssetPage.route: (_) => AssetPage(_appStore),
         TransferPage.route: (_) => TransferPage(_appStore),
+        TransferCrossChainPage.route: (_) => TransferCrossChainPage(_appStore),
         ReceivePage.route: (_) => ReceivePage(_appStore),
         TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
         CurrencySelectPage.route: (_) => CurrencySelectPage(),

@@ -241,7 +241,6 @@ abstract class _AcalaStore with Store {
     }
   }
 
-  @action
   Future<void> _cacheTxs(List list, String cacheKey) async {
     String pubKey = rootStore.account.currentAccount.pubKey;
     List cached =
@@ -288,7 +287,9 @@ abstract class _AcalaStore with Store {
       setHomaTxs(cached[3], needCache: false);
     }
     if (cached[4] != null) {
-      setTransferTxs(cached[4], needCache: false);
+      setTransferTxs(cached[4], reset: true, needCache: false);
+    } else {
+      setTransferTxs([], reset: true, needCache: false);
     }
   }
 

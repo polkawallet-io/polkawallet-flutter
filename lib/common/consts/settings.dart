@@ -108,6 +108,8 @@ const int SECONDS_OF_YEAR = 365 * 24 * 60 * 60; // seconds of one year
 
 const String acala_stable_coin = 'AUSD';
 const String acala_stable_coin_view = 'aUSD';
+const String acala_token_ren_btc = 'RENBTC';
+const String acala_token_ren_btc_view = 'renBTC';
 const String cross_chain_transfer_address_acala =
     '5CAca1aAUSDCrossChainTransferxxxxxxxxxxxxxxxxikw';
 const String cross_chain_transfer_address_laminar =

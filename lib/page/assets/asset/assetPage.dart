@@ -111,12 +111,32 @@ class _AssetPageState extends State<AssetPage>
   List<Widget> _buildTxList() {
     List<Widget> res = [];
     final String token = ModalRoute.of(context).settings.arguments;
-    if (store.settings.endpoint.info == networkEndpointAcala.info ||
-        store.settings.endpoint.info == networkEndpointLaminar.info) {
-      List<TransferData> ls = store.acala.txsTransfer.reversed.toList();
+    final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    final isLaminar =
+        store.settings.endpoint.info == networkEndpointLaminar.info;
+    List<TransferData> ls = isAcala
+        ? store.acala.txsTransfer.reversed.toList()
+        : store.laminar.txsTransfer.reversed.toList();
+    if (isAcala || isLaminar) {
       ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
       res.addAll(ls.map((i) {
-        return TransferListItem(i, token, true, false);
+        String crossChain;
+        Map<String, dynamic> tx = TransferData.toJson(i);
+        if (i.to == cross_chain_transfer_address_acala) {
+          tx['to'] = store.account.currentAddress;
+          crossChain = 'Acala';
+        }
+        if (i.to == cross_chain_transfer_address_laminar) {
+          tx['to'] = store.account.currentAddress;
+          crossChain = 'Laminar';
+        }
+        return TransferListItem(
+          data: crossChain != null ? TransferData.fromJson(tx) : i,
+          token: token,
+          isOut: true,
+          hasDetail: false,
+          crossChain: crossChain,
+        );
       }));
       res.add(ListTail(
         isEmpty: ls.length == 0,
@@ -125,7 +145,11 @@ class _AssetPageState extends State<AssetPage>
     } else {
       res.addAll(store.assets.txsView.map((i) {
         return TransferListItem(
-            i, token, i.from == store.account.currentAddress, true);
+          data: i,
+          token: token,
+          isOut: i.from == store.account.currentAddress,
+          hasDetail: true,
+        );
       }));
       res.add(ListTail(
         isEmpty: store.assets.txsView.length == 0,
@@ -142,6 +166,8 @@ class _AssetPageState extends State<AssetPage>
     final String token = ModalRoute.of(context).settings.arguments;
     final bool isBaseToken = token == symbol;
     final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    final isLaminar =
+        store.settings.endpoint.info == networkEndpointLaminar.info;
 
     final dic = I18n.of(context).assets;
 
@@ -250,7 +276,7 @@ class _AssetPageState extends State<AssetPage>
                     ],
                   ),
                 ),
-                !isAcala
+                !isAcala && !isLaminar
                     ? TabBar(
                         labelColor: Colors.black87,
                         labelStyle: TextStyle(fontSize: 18),
@@ -355,24 +381,31 @@ class _AssetPageState extends State<AssetPage>
 }
 
 class TransferListItem extends StatelessWidget {
-  TransferListItem(this.data, this.token, this.isOut, this.hasDetail);
+  TransferListItem({
+    this.data,
+    this.token,
+    this.isOut,
+    this.hasDetail,
+    this.crossChain,
+  });
 
   final TransferData data;
   final String token;
+  final String crossChain;
   final bool isOut;
   final bool hasDetail;
 
   @override
   Widget build(BuildContext context) {
     String address = isOut ? data.to : data.from;
+    String title =
+        Fmt.address(address) ?? data.extrinsicIndex ?? Fmt.address(data.hash);
     return Container(
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(width: 0.5, color: Colors.black12)),
       ),
       child: ListTile(
-        title: Text(Fmt.address(address) ??
-            data.extrinsicIndex ??
-            Fmt.address(data.hash)),
+        title: Text('$title${crossChain != null ? ' ($crossChain)' : ''}'),
         subtitle: Text(
             DateTime.fromMillisecondsSinceEpoch(data.blockTimestamp * 1000)
                 .toString()),

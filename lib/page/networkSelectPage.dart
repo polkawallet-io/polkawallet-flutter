@@ -48,9 +48,12 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
     final isLaminar =
         store.settings.endpoint.info == networkEndpointLaminar.info;
-    if (isAcala || isLaminar) {
+    if (isAcala) {
       store.acala.setTransferTxs([], reset: true);
       store.acala.loadCache();
+    } else if (isLaminar) {
+      store.laminar.setTransferTxs([], reset: true);
+      store.laminar.loadCache();
     } else {
       // refresh user's staking info if network is kusama or polkadot
       store.staking.clearState();
@@ -62,21 +65,41 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     setState(() {
       _networkChanging = true;
     });
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(I18n.of(context).home['loading']),
+          content: Container(height: 64, child: CupertinoActivityIndicator()),
+        );
+      },
+    );
+
+    store.settings.setNetworkLoading(true);
     await store.settings.setNetworkConst({});
     store.settings.setEndpoint(_selectedNetwork);
 
     await store.settings.loadNetworkStateCache();
-    store.settings.setNetworkLoading(true);
 
     store.gov.setReferendums([]);
     store.assets.clearTxs();
     store.assets.loadCache();
     store.staking.clearState();
     store.staking.loadCache();
+    final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    final isLaminar =
+        store.settings.endpoint.info == networkEndpointLaminar.info;
+    if (isAcala) {
+      store.acala.loadCache();
+    } else if (isLaminar) {
+//      store.laminar.setTransferTxs([], reset: true);
+      store.laminar.loadCache();
+    }
 
     webApi.launchWebview();
     changeTheme();
     if (mounted) {
+      Navigator.of(context).pop();
       setState(() {
         _networkChanging = false;
       });

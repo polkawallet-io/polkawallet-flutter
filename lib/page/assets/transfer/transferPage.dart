@@ -5,8 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
+import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
@@ -14,6 +14,7 @@ import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
+import 'package:polka_wallet/page/assets/transfer/transferCrossChainPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
@@ -55,8 +56,6 @@ class _TransferPageState extends State<TransferPage> {
 
   String _tokenSymbol;
 
-  bool _crossChain = false;
-
   Future<void> _selectCurrency() async {
     List<String> symbolOptions =
         List<String>.from(store.settings.networkConst['currencyIds']);
@@ -65,14 +64,6 @@ class _TransferPageState extends State<TransferPage> {
         .pushNamed(CurrencySelectPage.route, arguments: symbolOptions);
 
     if (currency != null) {
-      if (_crossChain &&
-          (_tokenSymbol == acala_stable_coin_view ||
-              _tokenSymbol == acala_stable_coin) &&
-          _tokenSymbol != currency) {
-        setState(() {
-          _addressCtrl.text = '';
-        });
-      }
       setState(() {
         _tokenSymbol = currency;
       });
@@ -124,6 +115,9 @@ class _TransferPageState extends State<TransferPage> {
         if (isAcala) {
           store.acala.setTransferTxs([res]);
         }
+        if (isLaminar) {
+          store.laminar.setTransferTxs([res]);
+        }
         Navigator.popUntil(
             txPageContext, ModalRoute.withName(routeArgs.redirect));
         // user may route to transfer page from asset page
@@ -139,22 +133,55 @@ class _TransferPageState extends State<TransferPage> {
     }
   }
 
-  void _onSwitch(res) {
+  void _onCrossChain() {
     final bool isAcala =
-        store.settings.endpoint.info == networkEndpointAcala.info;
-    if (res) {
-      setState(() {
-        _crossChain = res;
-        _addressCtrl.text = isAcala
-            ? cross_chain_transfer_address_laminar
-            : cross_chain_transfer_address_acala;
-      });
-    } else {
-      setState(() {
-        _crossChain = res;
-        _addressCtrl.text = '';
-      });
-    }
+        store.settings.endpoint.info == network_name_acala_mandala;
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => CupertinoActionSheet(
+        actions: [
+          CupertinoActionSheetAction(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: CircleAvatar(
+                    child: Image.asset(
+                      isAcala
+                          ? 'assets/images/public/laminar-turbulence.png'
+                          : 'assets/images/public/acala-mandala.png',
+                    ),
+                    radius: 16,
+                  ),
+                ),
+                Text(
+                  isAcala
+                      ? network_name_laminar_turbulence.toUpperCase()
+                      : network_name_acala_mandala.toUpperCase(),
+                )
+              ],
+            ),
+            onPressed: () {
+              final TransferPageParams args =
+                  ModalRoute.of(context).settings.arguments;
+              Navigator.of(context)
+                  .popAndPushNamed(TransferCrossChainPage.route,
+                      arguments: TransferPageParams(
+                        symbol: _tokenSymbol,
+                        redirect: args?.redirect,
+                      ));
+            },
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: Text(I18n.of(context).home['cancel']),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -209,9 +236,6 @@ class _TransferPageState extends State<TransferPage> {
         final bool canCrossChain = (_tokenSymbol == acala_stable_coin ||
                 _tokenSymbol == acala_stable_coin_view) &&
             (isAcala || isLaminar);
-        final bool isCrossChain = (_tokenSymbol == acala_stable_coin ||
-                _tokenSymbol == acala_stable_coin_view) &&
-            _crossChain;
 
         return Scaffold(
           appBar: AppBar(
@@ -220,17 +244,14 @@ class _TransferPageState extends State<TransferPage> {
             actions: <Widget>[
               IconButton(
                 icon: Image.asset('assets/images/assets/Menu_scan.png'),
-                onPressed: isCrossChain
-                    ? null
-                    : () async {
-                        final to = await Navigator.of(context)
-                            .pushNamed(ScanPage.route);
-                        if (to == null) return;
-                        setState(() {
-                          _addressCtrl.text =
-                              (to as QRCodeAddressResult).address;
-                        });
-                      },
+                onPressed: () async {
+                  final to =
+                      await Navigator.of(context).pushNamed(ScanPage.route);
+                  if (to == null) return;
+                  setState(() {
+                    _addressCtrl.text = (to as QRCodeAddressResult).address;
+                  });
+                },
               )
             ],
           ),
@@ -245,44 +266,49 @@ class _TransferPageState extends State<TransferPage> {
                         child: ListView(
                           padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                           children: <Widget>[
-                            isCrossChain
-                                ? Padding(
-                                    padding: EdgeInsets.only(top: 8),
-                                    child: AddressFormItem(
-                                      store.account.currentAccount,
-                                      label: dic['address'],
-                                    ),
+                            canCrossChain
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Container(
+                                        margin: EdgeInsets.only(top: 16),
+                                        child: OutlinedButtonSmall(
+                                          content: dic['cross.chain'],
+                                          active: true,
+                                          onPressed: _onCrossChain,
+                                        ),
+                                      )
+                                    ],
                                   )
-                                : TextFormField(
-                                    decoration: InputDecoration(
-                                      hintText: dic['address'],
-                                      labelText: dic['address'],
-                                      suffix: GestureDetector(
-                                        child: Image.asset(
-                                            'assets/images/profile/address.png'),
-                                        onTap: () async {
-                                          var to = await Navigator.of(context)
-                                              .pushNamed(ContactListPage.route);
-                                          if (to != null) {
-                                            AccountData acc = to as AccountData;
-                                            setState(() {
-                                              _addressCtrl.text =
-                                                  acc.encoded == null
-                                                      ? acc.address
-                                                      : pubKeyAddressMap[
-                                                          acc.pubKey];
-                                            });
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                    controller: _addressCtrl,
-                                    validator: (v) {
-                                      return Fmt.isAddress(v.trim())
-                                          ? null
-                                          : dic['address.error'];
-                                    },
-                                  ),
+                                : Container(),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                hintText: dic['address'],
+                                labelText: dic['address'],
+                                suffix: GestureDetector(
+                                  child: Image.asset(
+                                      'assets/images/profile/address.png'),
+                                  onTap: () async {
+                                    var to = await Navigator.of(context)
+                                        .pushNamed(ContactListPage.route);
+                                    if (to != null) {
+                                      AccountData acc = to as AccountData;
+                                      setState(() {
+                                        _addressCtrl.text = acc.encoded == null
+                                            ? acc.address
+                                            : pubKeyAddressMap[acc.pubKey];
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              controller: _addressCtrl,
+                              validator: (v) {
+                                return Fmt.isAddress(v.trim())
+                                    ? null
+                                    : dic['address.error'];
+                              },
+                            ),
                             TextFormField(
                               decoration: InputDecoration(
                                 hintText: dic['amount'],
@@ -341,28 +367,6 @@ class _TransferPageState extends State<TransferPage> {
                                   ? () => _selectCurrency()
                                   : null,
                             ),
-                            canCrossChain
-                                ? Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Text(
-                                          isAcala
-                                              ? dic['cross.laminar']
-                                              : dic['cross.acala'],
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black54),
-                                        ),
-                                      ),
-                                      CupertinoSwitch(
-                                        value: _crossChain,
-                                        onChanged: _onSwitch,
-                                      )
-                                    ],
-                                  )
-                                : Container(),
                             Divider(),
                             Padding(
                               padding: EdgeInsets.only(top: 16),

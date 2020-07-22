@@ -331,13 +331,6 @@ mixin _$AcalaStore on _AcalaStore, Store {
         .run(() => super.setHomaTxs(list, reset: reset, needCache: needCache));
   }
 
-  final _$_cacheTxsAsyncAction = AsyncAction('_AcalaStore._cacheTxs');
-
-  @override
-  Future<void> _cacheTxs(List<dynamic> list, String cacheKey) {
-    return _$_cacheTxsAsyncAction.run(() => super._cacheTxs(list, cacheKey));
-  }
-
   final _$loadCacheAsyncAction = AsyncAction('_AcalaStore.loadCache');
 
   @override

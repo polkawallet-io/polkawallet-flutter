@@ -2071,7 +2071,7 @@ binary-extensions@^2.0.0:
 
 binaryextensions@^2.1.2:
   version "2.3.0"
-  resolved "https://registry.npm.taobao.org/binaryextensions/download/binaryextensions-2.3.0.tgz?cache=0&sync_timestamp=1593751062230&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fbinaryextensions%2Fdownload%2Fbinaryextensions-2.3.0.tgz#1d269cbf7e6243ea886aa41453c3651ccbe13c22"
+  resolved "https://registry.npm.taobao.org/binaryextensions/download/binaryextensions-2.3.0.tgz?cache=0&sync_timestamp=1595350772115&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fbinaryextensions%2Fdownload%2Fbinaryextensions-2.3.0.tgz#1d269cbf7e6243ea886aa41453c3651ccbe13c22"
   integrity sha1-HSacv35iQ+qIaqQUU8NlHMvhPCI=
 
 bindings@^1.5.0:
@@ -2369,9 +2369,9 @@ camelcase@^5.0.0, camelcase@^5.3.1:
   integrity sha1-48mzFWnhBoEd8kL3FXJaH0xJQyA=
 
 caniuse-lite@^1.0.30001093:
-  version "1.0.30001104"
-  resolved "https://registry.npm.taobao.org/caniuse-lite/download/caniuse-lite-1.0.30001104.tgz?cache=0&sync_timestamp=1595226887970&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcaniuse-lite%2Fdownload%2Fcaniuse-lite-1.0.30001104.tgz#4e3d5b3b1dd3c3529f10cb7f519c62ba3e579f5d"
-  integrity sha1-Tj1bOx3Tw1KfEMt/UZxiuj5Xn10=
+  version "1.0.30001105"
+  resolved "https://registry.npm.taobao.org/caniuse-lite/download/caniuse-lite-1.0.30001105.tgz?cache=0&sync_timestamp=1595396068224&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcaniuse-lite%2Fdownload%2Fcaniuse-lite-1.0.30001105.tgz#d2cb0b31e5cf2f3ce845033b61c5c01566549abf"
+  integrity sha1-0ssLMeXPLzzoRQM7YcXAFWZUmr8=
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -3201,7 +3201,7 @@ ecc-jsbn@~0.1.1:
 
 editions@^2.2.0:
   version "2.3.1"
-  resolved "https://registry.npm.taobao.org/editions/download/editions-2.3.1.tgz?cache=0&sync_timestamp=1593753449971&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Feditions%2Fdownload%2Feditions-2.3.1.tgz#3bc9962f1978e801312fbd0aebfed63b49bfe698"
+  resolved "https://registry.npm.taobao.org/editions/download/editions-2.3.1.tgz#3bc9962f1978e801312fbd0aebfed63b49bfe698"
   integrity sha1-O8mWLxl46AExL70K6/7WO0m/5pg=
   dependencies:
     errlop "^2.0.0"
@@ -3225,9 +3225,9 @@ ejs@^3.0.1:
     jake "^10.6.1"
 
 electron-to-chromium@^1.3.488:
-  version "1.3.502"
-  resolved "https://registry.npm.taobao.org/electron-to-chromium/download/electron-to-chromium-1.3.502.tgz?cache=0&sync_timestamp=1595304209973&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Felectron-to-chromium%2Fdownload%2Felectron-to-chromium-1.3.502.tgz#6a55e993ef60a01fbdc2152ef5e47ee00c885c98"
-  integrity sha1-alXpk+9goB+9whUu9eR+4AyIXJg=
+  version "1.3.503"
+  resolved "https://registry.npm.taobao.org/electron-to-chromium/download/electron-to-chromium-1.3.503.tgz?cache=0&sync_timestamp=1595403320402&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Felectron-to-chromium%2Fdownload%2Felectron-to-chromium-1.3.503.tgz#3b2fc07b7e3ea0262c395984579ddabee1c9e0cd"
+  integrity sha1-Oy/Ae34+oCYsOVmEV53avuHJ4M0=
 
 elliptic@^6.0.0, elliptic@^6.5.2, elliptic@^6.5.3:
   version "6.5.3"
@@ -4892,7 +4892,7 @@ is-plain-obj@^1.1.0:
 
 is-plain-object@^2.0.3, is-plain-object@^2.0.4:
   version "2.0.4"
-  resolved "https://registry.npm.taobao.org/is-plain-object/download/is-plain-object-2.0.4.tgz#2c163b3fafb1b606d9d17928f05c2a1c38e07677"
+  resolved "https://registry.npm.taobao.org/is-plain-object/download/is-plain-object-2.0.4.tgz?cache=0&sync_timestamp=1595327585910&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fis-plain-object%2Fdownload%2Fis-plain-object-2.0.4.tgz#2c163b3fafb1b606d9d17928f05c2a1c38e07677"
   integrity sha1-LBY7P6+xtgbZ0Xko8FwqHDjgdnc=
   dependencies:
     isobject "^3.0.1"
@@ -5050,7 +5050,7 @@ istanbul-reports@^2.2.6:
 
 istextorbinary@^2.5.1:
   version "2.6.0"
-  resolved "https://registry.npm.taobao.org/istextorbinary/download/istextorbinary-2.6.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fistextorbinary%2Fdownload%2Fistextorbinary-2.6.0.tgz#60776315fb0fa3999add276c02c69557b9ca28ab"
+  resolved "https://registry.npm.taobao.org/istextorbinary/download/istextorbinary-2.6.0.tgz#60776315fb0fa3999add276c02c69557b9ca28ab"
   integrity sha1-YHdjFfsPo5ma3SdsAsaVV7nKKKs=
   dependencies:
     binaryextensions "^2.1.2"
@@ -6256,7 +6256,7 @@ node-modules-regexp@^1.0.0:
 
 node-notifier@^5.4.2:
   version "5.4.3"
-  resolved "https://registry.npm.taobao.org/node-notifier/download/node-notifier-5.4.3.tgz#cb72daf94c93904098e28b9c590fd866e464bd50"
+  resolved "https://registry.npm.taobao.org/node-notifier/download/node-notifier-5.4.3.tgz?cache=0&sync_timestamp=1595363528398&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fnode-notifier%2Fdownload%2Fnode-notifier-5.4.3.tgz#cb72daf94c93904098e28b9c590fd866e464bd50"
   integrity sha1-y3La+UyTkECY4oucWQ/YZuRkvVA=
   dependencies:
     growly "^1.3.0"
@@ -7112,9 +7112,9 @@ regenerate@^1.4.0:
   integrity sha1-ytkq2Oa1kXc0hfvgWkhcr09Ffm8=
 
 regenerator-runtime@^0.13.4:
-  version "0.13.5"
-  resolved "https://registry.npm.taobao.org/regenerator-runtime/download/regenerator-runtime-0.13.5.tgz#d878a1d094b4306d10b9096484b33ebd55e26697"
-  integrity sha1-2Hih0JS0MG0QuQlkhLM+vVXiZpc=
+  version "0.13.6"
+  resolved "https://registry.npm.taobao.org/regenerator-runtime/download/regenerator-runtime-0.13.6.tgz?cache=0&sync_timestamp=1595374365384&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fregenerator-runtime%2Fdownload%2Fregenerator-runtime-0.13.6.tgz#d236043c46ffab2968c1ef651803d8acdea8ed65"
+  integrity sha1-0jYEPEb/qylowe9lGAPYrN6o7WU=
 
 regenerator-transform@^0.14.2:
   version "0.14.5"
@@ -7188,19 +7188,19 @@ replace-ext@^1.0.0:
   resolved "https://registry.npm.taobao.org/replace-ext/download/replace-ext-1.0.1.tgz#2d6d996d04a15855d967443631dd5f77825b016a"
   integrity sha1-LW2ZbQShWFXZZ0Q2Md1fd4JbAWo=
 
-request-promise-core@1.1.3:
-  version "1.1.3"
-  resolved "https://registry.npm.taobao.org/request-promise-core/download/request-promise-core-1.1.3.tgz#e9a3c081b51380dfea677336061fea879a829ee9"
-  integrity sha1-6aPAgbUTgN/qZ3M2Bh/qh5qCnuk=
+request-promise-core@1.1.4:
+  version "1.1.4"
+  resolved "https://registry.npm.taobao.org/request-promise-core/download/request-promise-core-1.1.4.tgz?cache=0&sync_timestamp=1595378713145&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Frequest-promise-core%2Fdownload%2Frequest-promise-core-1.1.4.tgz#3eedd4223208d419867b78ce815167d10593a22f"
+  integrity sha1-Pu3UIjII1BmGe3jOgVFn0QWToi8=
   dependencies:
-    lodash "^4.17.15"
+    lodash "^4.17.19"
 
 request-promise-native@^1.0.5:
-  version "1.0.8"
-  resolved "https://registry.npm.taobao.org/request-promise-native/download/request-promise-native-1.0.8.tgz#a455b960b826e44e2bf8999af64dff2bfe58cb36"
-  integrity sha1-pFW5YLgm5E4r+Jma9k3/K/5YyzY=
+  version "1.0.9"
+  resolved "https://registry.npm.taobao.org/request-promise-native/download/request-promise-native-1.0.9.tgz#e407120526a5efdc9a39b28a5679bf47b9d9dc28"
+  integrity sha1-5AcSBSal79yaObKKVnm/R7nZ3Cg=
   dependencies:
-    request-promise-core "1.1.3"
+    request-promise-core "1.1.4"
     stealthy-require "^1.1.1"
     tough-cookie "^2.3.3"
 
