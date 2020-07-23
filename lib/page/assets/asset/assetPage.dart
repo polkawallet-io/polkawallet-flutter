@@ -195,7 +195,7 @@ class _AssetPageState extends State<AssetPage>
 
             BalancesInfo balancesInfo = store.assets.balances[symbol];
             String lockedInfo = '\n';
-            if (balancesInfo.lockedBreakdown != null) {
+            if (balancesInfo != null && balancesInfo.lockedBreakdown != null) {
               balancesInfo.lockedBreakdown.forEach((i) {
                 if (i.amount > BigInt.zero) {
                   lockedInfo +=

@@ -229,8 +229,10 @@ mixin _$SettingsStore on _SettingsStore, Store {
       AsyncAction('_SettingsStore.setNetworkState');
 
   @override
-  Future<void> setNetworkState(Map<String, dynamic> data) {
-    return _$setNetworkStateAsyncAction.run(() => super.setNetworkState(data));
+  Future<void> setNetworkState(Map<String, dynamic> data,
+      {bool needCache = true}) {
+    return _$setNetworkStateAsyncAction
+        .run(() => super.setNetworkState(data, needCache: needCache));
   }
 
   final _$loadNetworkStateCacheAsyncAction =
@@ -246,8 +248,10 @@ mixin _$SettingsStore on _SettingsStore, Store {
       AsyncAction('_SettingsStore.setNetworkConst');
 
   @override
-  Future<void> setNetworkConst(Map<String, dynamic> data) {
-    return _$setNetworkConstAsyncAction.run(() => super.setNetworkConst(data));
+  Future<void> setNetworkConst(Map<String, dynamic> data,
+      {bool needCache = true}) {
+    return _$setNetworkConstAsyncAction
+        .run(() => super.setNetworkConst(data, needCache: needCache));
   }
 
   final _$loadContactsAsyncAction = AsyncAction('_SettingsStore.loadContacts');

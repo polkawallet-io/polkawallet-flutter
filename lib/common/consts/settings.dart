@@ -101,6 +101,7 @@ const network_ss58_map = {
   'polkadot': 0,
 };
 
+const int kusama_token_decimals = 12;
 const int acala_token_decimals = 18;
 
 const int SECONDS_OF_DAY = 24 * 60 * 60; // seconds of one day
@@ -116,7 +117,7 @@ const String cross_chain_transfer_address_laminar =
     '5CLaminarAUSDCrossChainTransferxxxxxxxxxxxxxwisu';
 
 /// app versions
-const String app_beta_version = '0.8.5-beta.1';
+const String app_beta_version = '0.8.5-beta.2';
 
 /// js code versions
 const Map<String, int> js_code_version_map = {

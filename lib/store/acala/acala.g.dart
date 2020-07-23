@@ -384,11 +384,11 @@ mixin _$AcalaStore on _AcalaStore, Store {
   final _$_AcalaStoreActionController = ActionController(name: '_AcalaStore');
 
   @override
-  void setAirdrops(Map<String, BigInt> amt) {
+  void setAirdrops(Map<dynamic, dynamic> amount, {bool needCache = true}) {
     final _$actionInfo = _$_AcalaStoreActionController.startAction(
         name: '_AcalaStore.setAirdrops');
     try {
-      return super.setAirdrops(amt);
+      return super.setAirdrops(amount, needCache: needCache);
     } finally {
       _$_AcalaStoreActionController.endAction(_$actionInfo);
     }

@@ -24,36 +24,6 @@ mixin _$LaminarStore on _LaminarStore, Store {
     });
   }
 
-  final _$tokensAtom = Atom(name: '_LaminarStore.tokens');
-
-  @override
-  List<LaminarTokenData> get tokens {
-    _$tokensAtom.reportRead();
-    return super.tokens;
-  }
-
-  @override
-  set tokens(List<LaminarTokenData> value) {
-    _$tokensAtom.reportWrite(value, super.tokens, () {
-      super.tokens = value;
-    });
-  }
-
-  final _$accountBalanceAtom = Atom(name: '_LaminarStore.accountBalance');
-
-  @override
-  List<LaminarBalanceData> get accountBalance {
-    _$accountBalanceAtom.reportRead();
-    return super.accountBalance;
-  }
-
-  @override
-  set accountBalance(List<LaminarBalanceData> value) {
-    _$accountBalanceAtom.reportWrite(value, super.accountBalance, () {
-      super.accountBalance = value;
-    });
-  }
-
   final _$setTransferTxsAsyncAction =
       AsyncAction('_LaminarStore.setTransferTxs');
 
@@ -62,24 +32,6 @@ mixin _$LaminarStore on _LaminarStore, Store {
       {bool reset = false, dynamic needCache = true}) {
     return _$setTransferTxsAsyncAction.run(
         () => super.setTransferTxs(list, reset: reset, needCache: needCache));
-  }
-
-  final _$setTokenListAsyncAction = AsyncAction('_LaminarStore.setTokenList');
-
-  @override
-  Future<void> setTokenList(List<dynamic> data, {bool shouldCache = true}) {
-    return _$setTokenListAsyncAction
-        .run(() => super.setTokenList(data, shouldCache: shouldCache));
-  }
-
-  final _$setAccountBalanceAsyncAction =
-      AsyncAction('_LaminarStore.setAccountBalance');
-
-  @override
-  Future<void> setAccountBalance(List<dynamic> data,
-      {bool shouldCache = true}) {
-    return _$setAccountBalanceAsyncAction
-        .run(() => super.setAccountBalance(data, shouldCache: shouldCache));
   }
 
   final _$loadAccountCacheAsyncAction =
@@ -100,9 +52,7 @@ mixin _$LaminarStore on _LaminarStore, Store {
   @override
   String toString() {
     return '''
-txsTransfer: ${txsTransfer},
-tokens: ${tokens},
-accountBalance: ${accountBalance}
+txsTransfer: ${txsTransfer}
     ''';
   }
 }

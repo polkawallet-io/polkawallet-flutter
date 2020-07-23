@@ -23,6 +23,11 @@ abstract class _SettingsStore with Store {
   final String localStorageSS58Key = 'custom_ss58';
 
   final String cacheNetworkStateKey = 'network';
+  final String cacheNetworkConstKey = 'network_const';
+
+  String _getCacheKeyOfNetwork(String key) {
+    return '${rootStore.settings.endpoint.info}_$key';
+  }
 
   @observable
   bool loading = true;
@@ -124,27 +129,54 @@ abstract class _SettingsStore with Store {
   }
 
   @action
-  Future<void> setNetworkState(Map<String, dynamic> data) async {
-    rootStore.localStorage
-        .setObject('${cacheNetworkStateKey}_${endpoint.info}', data);
-
+  Future<void> setNetworkState(
+    Map<String, dynamic> data, {
+    bool needCache = true,
+  }) async {
     networkState = NetworkState.fromJson(data);
-  }
 
-  @action
-  Future<void> loadNetworkStateCache() async {
-    var data = await rootStore.localStorage
-        .getObject('${cacheNetworkStateKey}_${endpoint.info}');
-    if (data != null) {
-      networkState = NetworkState.fromJson(data);
-    } else {
-      networkState = NetworkState();
+    if (needCache) {
+      rootStore.localStorage.setObject(
+        _getCacheKeyOfNetwork(cacheNetworkStateKey),
+        data,
+      );
     }
   }
 
   @action
-  Future<void> setNetworkConst(Map<String, dynamic> data) async {
+  Future<void> loadNetworkStateCache() async {
+    final List data = await Future.wait([
+      rootStore.localStorage
+          .getObject(_getCacheKeyOfNetwork(cacheNetworkStateKey)),
+      rootStore.localStorage
+          .getObject(_getCacheKeyOfNetwork(cacheNetworkConstKey)),
+    ]);
+    if (data[0] != null) {
+      setNetworkState(Map<String, dynamic>.of(data[0]), needCache: false);
+    } else {
+      setNetworkState({}, needCache: false);
+    }
+
+    if (data[1] != null) {
+      setNetworkConst(Map<String, dynamic>.of(data[1]), needCache: false);
+    } else {
+      setNetworkConst({}, needCache: false);
+    }
+  }
+
+  @action
+  Future<void> setNetworkConst(
+    Map<String, dynamic> data, {
+    bool needCache = true,
+  }) async {
     networkConst = data;
+
+    if (needCache) {
+      rootStore.localStorage.setObject(
+        _getCacheKeyOfNetwork(cacheNetworkConstKey),
+        data,
+      );
+    }
   }
 
   @action

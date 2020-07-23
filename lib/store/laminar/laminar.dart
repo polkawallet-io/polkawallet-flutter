@@ -2,7 +2,6 @@ import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/transferData.dart';
-import 'package:polka_wallet/store/laminar/types/laminarCurrenciesData.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 part 'laminar.g.dart';
@@ -18,17 +17,8 @@ abstract class _LaminarStore with Store {
 
   final String cacheTxsTransferKey = 'laminar_transfer_txs';
 
-  final String localStorageTokensKey = 'laminar_tokens';
-  final String localStorageBalanceKey = 'laminar_balance';
-
   @observable
   ObservableList<TransferData> txsTransfer = ObservableList<TransferData>();
-
-  @observable
-  List<LaminarTokenData> tokens = [];
-
-  @observable
-  List<LaminarBalanceData> accountBalance = [];
 
   @action
   Future<void> setTransferTxs(
@@ -73,23 +63,6 @@ abstract class _LaminarStore with Store {
   }
 
   @action
-  Future<void> setTokenList(List data, {bool shouldCache = true}) async {
-    tokens = data.map((e) => LaminarTokenData.fromJson(e)).toList();
-    if (shouldCache) {
-      rootStore.localStorage.setObject(localStorageTokensKey, data);
-    }
-  }
-
-  @action
-  Future<void> setAccountBalance(List data, {bool shouldCache = true}) async {
-    accountBalance = data.map((e) => LaminarBalanceData.fromJson(e)).toList();
-    if (shouldCache) {
-      rootStore.localStorage.setAccountCache(
-          rootStore.account.currentAccountPubKey, localStorageBalanceKey, data);
-    }
-  }
-
-  @action
   Future<void> loadAccountCache() async {
     // return if currentAccount not exist
     String pubKey = rootStore.account.currentAccountPubKey;
@@ -98,13 +71,9 @@ abstract class _LaminarStore with Store {
     }
 
     List cache = await Future.wait([
-      rootStore.localStorage.getAccountCache(pubKey, localStorageBalanceKey),
       rootStore.localStorage.getAccountCache(pubKey, cacheTxsTransferKey),
     ]);
     if (cache[0] != null) {
-      setAccountBalance(List.of(cache[0]), shouldCache: false);
-    }
-    if (cache[1] != null) {
       setTransferTxs(List.of(cache[1]), reset: true, needCache: false);
     } else {
       setTransferTxs([], reset: true, needCache: false);
@@ -113,13 +82,6 @@ abstract class _LaminarStore with Store {
 
   @action
   Future<void> loadCache() async {
-    List cacheOverview = await Future.wait([
-      rootStore.localStorage.getObject(localStorageTokensKey),
-    ]);
-    if (cacheOverview[0] != null) {
-      setTokenList(List.of(cacheOverview[0]), shouldCache: false);
-    }
-
     loadAccountCache();
   }
 }

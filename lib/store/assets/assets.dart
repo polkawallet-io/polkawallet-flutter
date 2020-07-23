@@ -123,15 +123,21 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  Future<void> setAccountTokenBalances(String pubKey, Map amt,
-      {bool needCache = true}) async {
+  Future<void> setAccountTokenBalances(
+    String pubKey,
+    Map amt, {
+    bool needCache = true,
+  }) async {
     if (rootStore.account.currentAccount.pubKey != pubKey) return;
 
     tokenBalances = Map<String, String>.from(amt);
 
     if (!needCache) return;
-    rootStore.localStorage
-        .setAccountCache(pubKey, _getCacheKey(cacheTokenBalanceKey), amt);
+    rootStore.localStorage.setAccountCache(
+      pubKey,
+      _getCacheKey(cacheTokenBalanceKey),
+      amt,
+    );
   }
 
   @action
@@ -153,7 +159,6 @@ abstract class _AssetsStore with Store {
 
     List ls = res['transfers'];
     if (ls == null) return;
-    print(ls.length);
 
     ls.forEach((i) {
       TransferData tx = TransferData.fromJson(i);
@@ -221,6 +226,8 @@ abstract class _AssetsStore with Store {
     if (cache[1] != null) {
       txs = ObservableList.of(
           List.of(cache[1]).map((i) => TransferData.fromJson(i)).toList());
+    } else {
+      txs = ObservableList();
     }
     if (cache[2] != null) {
       cacheTxsTimestamp = cache[2];
@@ -228,7 +235,7 @@ abstract class _AssetsStore with Store {
     if (cache[3] != null) {
       setAccountTokenBalances(pubKey, cache[3], needCache: false);
     } else {
-      setAccountTokenBalances(pubKey, {});
+      setAccountTokenBalances(pubKey, {}, needCache: false);
     }
   }
 
