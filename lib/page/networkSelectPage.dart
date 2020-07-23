@@ -76,13 +76,12 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     );
 
     store.settings.setNetworkLoading(true);
-    await store.settings.setNetworkConst({});
+    await store.settings.setNetworkConst({}, needCache: false);
     store.settings.setEndpoint(_selectedNetwork);
 
     await store.settings.loadNetworkStateCache();
 
     store.gov.setReferendums([]);
-    store.assets.clearTxs();
     store.assets.loadCache();
     store.staking.clearState();
     store.staking.loadCache();
@@ -119,9 +118,6 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         /// reload account info
         webApi.assets.fetchBalance();
       } else {
-        await store.assets
-            .setAccountTokenBalances(store.account.currentAccountPubKey, {});
-
         /// set new network and reload web view
         await _reloadNetwork();
       }

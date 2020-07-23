@@ -62,17 +62,17 @@ class ApiAcala {
         await apiRoot.evalJavascript(getCurrencyIds, wrapPromise: false);
     if (res == null) return;
 
-    List tokens = jsonDecode(res);
+    final List tokens = jsonDecode(res);
     String address = store.account.currentAddress;
     String queries = tokens
         .map((i) => 'api.query.airDrop.airDrops("$address", "$i")')
         .join(",");
-    List amount = await apiRoot.evalJavascript('Promise.all([$queries])',
+    final List amount = await apiRoot.evalJavascript('Promise.all([$queries])',
         allowRepeat: true);
-    Map<String, BigInt> amt = Map<String, BigInt>();
-    tokens.asMap().forEach((i, v) {
-      amt[v] = BigInt.parse(amount[i].toString());
-    });
+    final Map amt = {
+      'tokens': tokens,
+      'amount': amount,
+    };
     store.acala.setAirdrops(amt);
   }
 

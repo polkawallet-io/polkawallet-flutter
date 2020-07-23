@@ -214,9 +214,9 @@ class Api {
       store.settings.setNetworkName(null);
       return;
     }
-    EndpointData connected =
-        store.settings.endpointList.firstWhere((i) => i.value == res);
-    store.settings.setEndpoint(connected);
+    int index = store.settings.endpointList.indexWhere((i) => i.value == res);
+    if (index < 0) return;
+    store.settings.setEndpoint(store.settings.endpointList[index]);
     fetchNetworkProps();
   }
 

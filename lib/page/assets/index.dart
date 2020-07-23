@@ -355,8 +355,9 @@ class _AssetsState extends State<Assets> {
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        String symbol = store.settings.networkState.tokenSymbol;
-        int decimals = store.settings.networkState.tokenDecimals;
+        String symbol = store.settings.networkState.tokenSymbol ?? '';
+        int decimals =
+            store.settings.networkState.tokenDecimals ?? kusama_token_decimals;
         String networkName = store.settings.networkName ?? '';
 
         bool isAcala =
