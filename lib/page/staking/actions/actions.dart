@@ -52,15 +52,17 @@ class _StakingActions extends State<StakingActions>
       _loading = true;
     });
     Map res = await webApi.staking.updateStaking(_txsPage);
-    setState(() {
-      _loading = false;
-    });
-    if (mounted &&
-        (res['extrinsics'] == null ||
-            res['extrinsics'].length < tx_list_page_size)) {
+    if (mounted) {
       setState(() {
-        _isLastPage = true;
+        _loading = false;
       });
+
+      if (res['extrinsics'] == null ||
+          res['extrinsics'].length < tx_list_page_size) {
+        setState(() {
+          _isLastPage = true;
+        });
+      }
     }
   }
 

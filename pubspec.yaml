@@ -37,7 +37,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  ota_update: ^2.2.1
+  ota_update: ^2.3.0
+  update_app: ^0.1.5
   flutter_downloader: ^1.4.4
   path_provider:
   device_info: ^0.4.2

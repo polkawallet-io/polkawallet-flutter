@@ -12,6 +12,7 @@ import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:update_app/update_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UI {
@@ -107,7 +108,7 @@ class UI {
             ),
             CupertinoButton(
               child: Text(dic['ok']),
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
                 if (!needUpdate) {
                   return;
@@ -120,13 +121,7 @@ class UI {
                   // START LISTENING FOR DOWNLOAD PROGRESS REPORTING EVENTS
                   try {
                     String url = versions['android']['url'];
-                    print(url);
-                    showCupertinoDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return DownloadDialog(url);
-                      },
-                    );
+                    UpdateApp.updateApp(url: url, appleId: "1520301768");
                   } catch (e) {
                     print('Failed to make OTA update. Details: $e');
                   }
