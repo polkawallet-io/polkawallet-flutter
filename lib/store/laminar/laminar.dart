@@ -3,6 +3,7 @@ import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/transferData.dart';
 import 'package:polka_wallet/store/laminar/types/laminarCurrenciesData.dart';
+import 'package:polka_wallet/store/laminar/types/laminarTxSwapData.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 part 'laminar.g.dart';
@@ -17,9 +18,14 @@ abstract class _LaminarStore with Store {
   final AppStore rootStore;
 
   final String cacheTxsTransferKey = 'laminar_transfer_txs';
+  final String cacheTxsSwapKey = 'laminar_swap_txs';
 
   @observable
   ObservableList<TransferData> txsTransfer = ObservableList<TransferData>();
+
+  @observable
+  ObservableList<LaminarTxSwapData> txsSwap =
+      ObservableList<LaminarTxSwapData>();
 
   @observable
   Map<String, LaminarPriceData> tokenPrices = {};
@@ -80,6 +86,22 @@ abstract class _LaminarStore with Store {
   Future<void> setSyntheticPoolInfo(Map info) async {
     syntheticPoolInfo
         .addAll({info['poolId']: LaminarSyntheticPoolInfoData.fromJson(info)});
+  }
+
+  @action
+  Future<void> setSwapTxs(List list,
+      {bool reset = false, needCache = true}) async {
+    if (reset) {
+      txsSwap = ObservableList.of(list.map(
+          (i) => LaminarTxSwapData.fromJson(Map<String, dynamic>.from(i))));
+    } else {
+      txsSwap.addAll(list.map(
+          (i) => LaminarTxSwapData.fromJson(Map<String, dynamic>.from(i))));
+    }
+
+    if (needCache && txsSwap.length > 0) {
+      _cacheTxs(list, cacheTxsSwapKey);
+    }
   }
 
   Future<void> _cacheTxs(List list, String cacheKey) async {

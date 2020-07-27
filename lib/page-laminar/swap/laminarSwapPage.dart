@@ -8,7 +8,7 @@ import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
-import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
+import 'package:polka_wallet/page-laminar/swap/laminarSwapHistoryPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -35,12 +35,17 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
   final TextEditingController _amountPayCtrl = new TextEditingController();
   final TextEditingController _amountReceiveCtrl = new TextEditingController();
 
+  final _maxPrice = '1000000000000000000000000';
+
   String _tokenPay = acala_stable_coin;
   String _tokenReceive;
   LaminarSyntheticPoolTokenData _tokenPool;
   bool _isRedeem = false;
 
-  Future<void> _fetchData() async {}
+  Future<void> _fetchData() async {
+    webApi.laminar.subscribeTokenPrices();
+    webApi.laminar.subscribeSyntheticPools();
+  }
 
   Future<void> _switchPair() async {
     final List<String> swapPair = [_tokenPay, _tokenReceive].toList();
@@ -106,9 +111,10 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
       if (target.isNotEmpty) {
         double price = Fmt.balanceDouble(
           widget.store.laminar
-              .tokenPrices[_isRedeem ? _tokenPay : _tokenReceive].value,
+              .tokenPrices[_isRedeem ? _tokenPay : _tokenReceive]?.value,
           decimals: decimals,
         );
+        if (price == 0.0) return;
         double output = _isRedeem
             ? double.parse(target) / price
             : double.parse(target) * price;
@@ -121,9 +127,10 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
       if (supply.isNotEmpty) {
         double price = Fmt.balanceDouble(
           widget.store.laminar
-              .tokenPrices[_isRedeem ? _tokenPay : _tokenReceive].value,
+              .tokenPrices[_isRedeem ? _tokenPay : _tokenReceive]?.value,
           decimals: decimals,
         );
+        if (price == 0.0) return;
         double output = _isRedeem
             ? double.parse(supply) * price
             : double.parse(supply) / price;
@@ -138,32 +145,33 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
   void _onSubmit() {
     if (_formKey.currentState.validate()) {
       int decimals = widget.store.settings.networkState.tokenDecimals;
-      List<String> swapPair = widget.store.acala.currentSwapPair;
       String pay = _amountPayCtrl.text.trim();
       String receive = _amountReceiveCtrl.text.trim();
       var args = {
         "title": I18n.of(context).acala['dex.title'],
         "txInfo": {
-          "module": 'dex',
-          "call": 'swapCurrency',
+          "module": 'syntheticProtocol',
+          "call": _isRedeem ? 'redeem' : 'mint',
         },
         "detail": jsonEncode({
-          "currencyPay": swapPair[0],
+          "poolId": _tokenPool.poolId,
           "amountPay": pay,
-          "currencyReceive": swapPair[1],
-          "amountReceive": receive,
+          "currencyReceive": _tokenReceive,
         }),
         "params": [
-          // params.supply
-          swapPair[0],
+          // params.poolId
+          _tokenPool.poolId,
+          // params.currencyId
+          _isRedeem ? _tokenPay : _tokenReceive,
+          // params.amount
           Fmt.tokenInt(pay, decimals: decimals).toString(),
-          // params.target
-          swapPair[1],
-          Fmt.tokenInt(receive, decimals: decimals).toString(),
+          // params.maxPrice
+          _isRedeem ? '0' : _maxPrice
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
 //          print(res);
-          widget.store.acala.setSwapTxs([res]);
+          res['call'] = _isRedeem ? 'redeem' : 'mint';
+          widget.store.laminar.setSwapTxs([res]);
           Navigator.popUntil(
               txPageContext, ModalRoute.withName(LaminarSwapPage.route));
           _refreshKey.currentState.show();
@@ -177,13 +185,18 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
   void initState() {
     super.initState();
 
-    webApi.laminar.subscribeTokenPrices();
-    webApi.laminar.subscribeSyntheticPools();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshKey.currentState.show();
+    });
+  }
 
-    List tokens = widget.store.settings.networkConst['currencyIds'];
-    if (tokens != null) {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_tokenPool == null && widget.store.laminar.syntheticTokens.length > 0) {
       setState(() {
-        _tokenReceive = tokens[2];
+        _tokenPool = widget.store.laminar.syntheticTokens[2];
+        _tokenReceive = widget.store.laminar.syntheticTokens[2].tokenId;
       });
     }
   }
@@ -214,11 +227,14 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
             widget.store.laminar
                 .tokenPrices[_isRedeem ? _tokenPay : _tokenReceive]?.value,
             decimals: decimals);
+        print(price);
         final double swapRatio = _isRedeem ? price : 1 / price;
 
         int rateDecimal = 2;
         if (!_isRedeem && _tokenPool?.poolId == '1') {
           rateDecimal = 8;
+        } else if (swapRatio < 0.01) {
+          rateDecimal = 6;
         }
 
         final Color primary = Theme.of(context).primaryColor;
@@ -235,194 +251,210 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
                 children: <Widget>[
                   RoundedCard(
                     padding: EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Form(
-                          key: _formKey,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: _tokenPool == null
+                        ? CupertinoActivityIndicator()
+                        : Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Expanded(
-                                child: Column(
+                              Form(
+                                key: _formKey,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    GestureDetector(
-                                      child: CurrencyWithIcon(
-                                        _tokenPay,
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headline4,
-                                        trailing:
-                                            Icon(Icons.keyboard_arrow_down),
-                                      ),
-                                      onTap: () => _selectCurrencyPay(),
-                                    ),
-                                    TextFormField(
-                                      decoration: InputDecoration(
-                                        hintText: dic['dex.pay'],
-                                        labelText: dic['dex.pay'],
-                                        suffix: GestureDetector(
-                                          child: Icon(
-                                            CupertinoIcons.clear_thick_circled,
-                                            color:
-                                                Theme.of(context).disabledColor,
-                                            size: 18,
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          GestureDetector(
+                                            child: CurrencyWithIcon(
+                                              _tokenPay,
+                                              textStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .headline4,
+                                              trailing: Icon(
+                                                  Icons.keyboard_arrow_down),
+                                            ),
+                                            onTap: () => _selectCurrencyPay(),
                                           ),
-                                          onTap: () {
-                                            WidgetsBinding.instance
-                                                .addPostFrameCallback((_) =>
-                                                    _amountPayCtrl.clear());
-                                          },
+                                          TextFormField(
+                                            decoration: InputDecoration(
+                                              hintText: dic['dex.pay'],
+                                              labelText: dic['dex.pay'],
+                                              suffix: GestureDetector(
+                                                child: Icon(
+                                                  CupertinoIcons
+                                                      .clear_thick_circled,
+                                                  color: Theme.of(context)
+                                                      .disabledColor,
+                                                  size: 18,
+                                                ),
+                                                onTap: () {
+                                                  WidgetsBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (_) => _amountPayCtrl
+                                                              .clear());
+                                                },
+                                              ),
+                                            ),
+                                            inputFormatters: [
+                                              RegExInputFormatter.withRegex(
+                                                  '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                            ],
+                                            controller: _amountPayCtrl,
+                                            keyboardType:
+                                                TextInputType.numberWithOptions(
+                                                    decimal: true),
+                                            validator: (v) {
+                                              if (v.isEmpty) {
+                                                return dicAssets[
+                                                    'amount.error'];
+                                              }
+                                              if (double.parse(v.trim()) >
+                                                  Fmt.bigIntToDouble(balance,
+                                                      decimals: decimals)) {
+                                                return dicAssets['amount.low'];
+                                              }
+                                              return null;
+                                            },
+                                            onChanged: _onSupplyAmountChange,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 8),
+                                            child: Text(
+                                              '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} ${Fmt.tokenView(_tokenPay)}',
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .unselectedWidgetColor),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(8, 2, 8, 0),
+                                        child: Icon(
+                                          Icons.repeat,
+                                          color: Theme.of(context).primaryColor,
                                         ),
                                       ),
-                                      inputFormatters: [
-                                        RegExInputFormatter.withRegex(
-                                            '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                                      ],
-                                      controller: _amountPayCtrl,
-                                      keyboardType:
-                                          TextInputType.numberWithOptions(
-                                              decimal: true),
-                                      validator: (v) {
-                                        if (v.isEmpty) {
-                                          return dicAssets['amount.error'];
-                                        }
-                                        if (double.parse(v.trim()) >
-                                            Fmt.bigIntToDouble(balance,
-                                                decimals: decimals)) {
-                                          return dicAssets['amount.low'];
-                                        }
-                                        return null;
-                                      },
-                                      onChanged: _onSupplyAmountChange,
+                                      onTap: () => _switchPair(),
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 8),
-                                      child: Text(
-                                        '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} ${Fmt.tokenView(_tokenPay)}',
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .unselectedWidgetColor),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              GestureDetector(
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
-                                  child: Icon(
-                                    Icons.repeat,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ),
-                                onTap: () => _switchPair(),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    GestureDetector(
-                                      child: CurrencyWithIcon(
-                                        _tokenReceive,
-                                        textStyle: Theme.of(context)
-                                            .textTheme
-                                            .headline4,
-                                        trailing:
-                                            Icon(Icons.keyboard_arrow_down),
-                                      ),
-                                      onTap: () => _selectCurrencyReceive(),
-                                    ),
-                                    TextFormField(
-                                      decoration: InputDecoration(
-                                        hintText: dic['dex.receive'],
-                                        labelText: dic['dex.receive'],
-                                        suffix: GestureDetector(
-                                          child: Icon(
-                                            CupertinoIcons.clear_thick_circled,
-                                            color:
-                                                Theme.of(context).disabledColor,
-                                            size: 18,
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          GestureDetector(
+                                            child: CurrencyWithIcon(
+                                              _tokenReceive,
+                                              textStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .headline4,
+                                              trailing: Icon(
+                                                  Icons.keyboard_arrow_down),
+                                            ),
+                                            onTap: () =>
+                                                _selectCurrencyReceive(),
                                           ),
-                                          onTap: () {
-                                            WidgetsBinding.instance
-                                                .addPostFrameCallback((_) =>
-                                                    _amountReceiveCtrl.clear());
-                                          },
-                                        ),
-                                      ),
-                                      inputFormatters: [
-                                        RegExInputFormatter.withRegex(
-                                            '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                                      ],
-                                      controller: _amountReceiveCtrl,
-                                      keyboardType:
-                                          TextInputType.numberWithOptions(
-                                              decimal: true),
-                                      validator: (v) {
-                                        if (v.isEmpty) {
-                                          return dicAssets['amount.error'];
-                                        }
-                                        // check if pool has sufficient assets
+                                          TextFormField(
+                                            decoration: InputDecoration(
+                                              hintText: dic['dex.receive'],
+                                              labelText: dic['dex.receive'],
+                                              suffix: GestureDetector(
+                                                child: Icon(
+                                                  CupertinoIcons
+                                                      .clear_thick_circled,
+                                                  color: Theme.of(context)
+                                                      .disabledColor,
+                                                  size: 18,
+                                                ),
+                                                onTap: () {
+                                                  WidgetsBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (_) =>
+                                                              _amountReceiveCtrl
+                                                                  .clear());
+                                                },
+                                              ),
+                                            ),
+                                            inputFormatters: [
+                                              RegExInputFormatter.withRegex(
+                                                  '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                            ],
+                                            controller: _amountReceiveCtrl,
+                                            keyboardType:
+                                                TextInputType.numberWithOptions(
+                                                    decimal: true),
+                                            validator: (v) {
+                                              if (v.isEmpty) {
+                                                return dicAssets[
+                                                    'amount.error'];
+                                              }
+                                              // check if pool has sufficient assets
 //                                    if (true) {
 //                                      return dicAssets['amount.low'];
 //                                    }
-                                        return null;
-                                      },
-                                      onChanged: _onTargetAmountChange,
-                                    ),
+                                              return null;
+                                            },
+                                            onChanged: _onTargetAmountChange,
+                                          ),
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
-                              )
+                              ),
+                              Divider(),
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          dic['dex.rate'],
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .unselectedWidgetColor),
+                                        ),
+                                        Text(
+                                            '1 ${Fmt.tokenView(_tokenPay)} = ${swapRatio.toStringAsFixed(rateDecimal)} ${Fmt.tokenView(_tokenReceive)}'),
+                                      ],
+                                    ),
+                                    GestureDetector(
+                                      child: Container(
+                                        child: Column(
+                                          children: <Widget>[
+                                            Icon(Icons.history, color: primary),
+                                            Text(
+                                              dic['loan.txs'],
+                                              style: TextStyle(
+                                                  color: primary, fontSize: 14),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.of(context).pushNamed(
+                                            LaminarSwapHistoryPage.route);
+                                      },
+                                    ),
+                                  ])
                             ],
                           ),
-                        ),
-                        Divider(),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    dic['dex.rate'],
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .unselectedWidgetColor),
-                                  ),
-                                  Text(
-                                      '1 ${Fmt.tokenView(_tokenPay)} = ${swapRatio.toStringAsFixed(rateDecimal)} ${Fmt.tokenView(_tokenReceive)}'),
-                                ],
-                              ),
-                              GestureDetector(
-                                child: Container(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Icon(Icons.history, color: primary),
-                                      Text(
-                                        dic['loan.txs'],
-                                        style: TextStyle(
-                                            color: primary, fontSize: 14),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                onTap: () => Navigator.of(context)
-                                    .pushNamed(SwapHistoryPage.route),
-                              ),
-                            ])
-                      ],
-                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 24),
                     child: RoundedButton(
                       text: dic['dex.title'],
-                      onPressed: widget.store.acala.swapRatio.isEmpty
-                          ? null
-                          : _onSubmit,
+                      onPressed: price == 0.0 ? null : _onSubmit,
                     ),
                   )
                 ],
