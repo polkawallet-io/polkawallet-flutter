@@ -8,6 +8,8 @@ class ApiLaminar {
   final store = globalAppStore;
 
   final String balanceSubscribeChannel = 'LaminarAccountBalances';
+  final String priceSubscribeChannel = 'LaminarPrices';
+  final String syntheticPoolsSubscribeChannel = 'LaminarSyntheticPools';
 
   Future<void> fetchTokens(String pubKey) async {
     if (pubKey != null && pubKey.isNotEmpty) {
@@ -27,5 +29,30 @@ class ApiLaminar {
       });
       store.assets.setAccountTokenBalances(pubKey, balances);
     }
+  }
+
+  Future<void> subscribeTokenPrices() async {
+    await apiRoot.subscribeMessage(
+      'laminar.subscribePrices()',
+      priceSubscribeChannel,
+      (Map res) {
+        store.laminar.setTokenPrices(res);
+      },
+    );
+  }
+
+  Future<void> unsubscribeTokenPrices() async {
+    await apiRoot.unsubscribeMessage(priceSubscribeChannel);
+  }
+
+  Future<void> subscribeSyntheticPools() async {
+    await apiRoot.subscribeMessage(
+      'laminar.subscribeSyntheticPools()',
+      syntheticPoolsSubscribeChannel,
+      (Map res) {
+        print(res);
+        store.laminar.setSyntheticPoolInfo(res);
+      },
+    );
   }
 }

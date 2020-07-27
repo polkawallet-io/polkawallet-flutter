@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show SynchronousFuture;
 import 'package:polka_wallet/utils/i18n/assets.dart';
 import 'package:polka_wallet/utils/i18n/acala.dart';
+import 'package:polka_wallet/utils/i18n/laminar.dart';
 import 'package:polka_wallet/utils/i18n/staking.dart';
 import 'package:polka_wallet/utils/i18n/gov.dart';
 
@@ -45,6 +46,7 @@ class I18n {
       'profile': enProfile,
       'gov': enGov,
       'acala': enDex,
+      'laminar': enLaminar,
     },
     'zh': {
       'home': zhHome,
@@ -54,6 +56,7 @@ class I18n {
       'profile': zhProfile,
       'gov': zhGov,
       'acala': zhDex,
+      'laminar': zhLaminar,
     },
   };
 
@@ -83,5 +86,9 @@ class I18n {
 
   Map<String, String> get acala {
     return _localizedValues[locale.languageCode]['acala'];
+  }
+
+  Map<String, String> get laminar {
+    return _localizedValues[locale.languageCode]['laminar'];
   }
 }

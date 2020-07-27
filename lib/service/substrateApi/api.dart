@@ -283,7 +283,7 @@ class Api {
     Function callback,
   ) async {
     _msgHandlers[channel] = callback;
-    evalJavascript(code);
+    evalJavascript(code, allowRepeat: true);
   }
 
   Future<void> unsubscribeMessage(String channel) async {

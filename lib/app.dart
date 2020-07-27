@@ -21,6 +21,7 @@ import 'package:polka_wallet/page-acala/loan/loanPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanTxDetailPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapPage.dart';
+import 'package:polka_wallet/page-laminar/swap/laminarSwapPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
@@ -295,6 +296,9 @@ class _WalletAppState extends State<WalletApp> {
         MintPage.route: (_) => MintPage(_appStore),
         HomaRedeemPage.route: (_) => HomaRedeemPage(_appStore),
         HomaHistoryPage.route: (_) => HomaHistoryPage(_appStore),
+
+        // laminar flow exchange
+        LaminarSwapPage.route: (_) => LaminarSwapPage(_appStore),
       },
     );
   }

@@ -2,6 +2,7 @@ import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/transferData.dart';
+import 'package:polka_wallet/store/laminar/types/laminarCurrenciesData.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 part 'laminar.g.dart';
@@ -19,6 +20,22 @@ abstract class _LaminarStore with Store {
 
   @observable
   ObservableList<TransferData> txsTransfer = ObservableList<TransferData>();
+
+  @observable
+  Map<String, LaminarPriceData> tokenPrices = {};
+
+  @observable
+  ObservableMap<String, LaminarSyntheticPoolInfoData> syntheticPoolInfo =
+      ObservableMap();
+
+  @computed
+  List<LaminarSyntheticPoolTokenData> get syntheticTokens {
+    List<LaminarSyntheticPoolTokenData> res = [];
+    syntheticPoolInfo.keys.forEach((key) {
+      res.addAll(syntheticPoolInfo[key].options);
+    });
+    return res;
+  }
 
   @action
   Future<void> setTransferTxs(
@@ -48,6 +65,21 @@ abstract class _LaminarStore with Store {
     if (needCache && txsTransfer.length > 0) {
       _cacheTxs(list, cacheTxsTransferKey);
     }
+  }
+
+  @action
+  Future<void> setTokenPrices(Map prices) async {
+    final Map<String, LaminarPriceData> res = {};
+    prices.forEach((k, v) {
+      res[k] = LaminarPriceData.fromJson(v);
+    });
+    tokenPrices = res;
+  }
+
+  @action
+  Future<void> setSyntheticPoolInfo(Map info) async {
+    syntheticPoolInfo
+        .addAll({info['poolId']: LaminarSyntheticPoolInfoData.fromJson(info)});
   }
 
   Future<void> _cacheTxs(List list, String cacheKey) async {

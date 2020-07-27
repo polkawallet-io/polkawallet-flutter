@@ -175,7 +175,7 @@ class _AssetsState extends State<Assets> {
     Timer(Duration(seconds: 3), () {
       String dialogContent = I18n.of(context).acala['faucet.ok'];
       bool isOK = false;
-      if (res == null) {
+      if (res == null || res == "ERROR") {
         dialogContent = I18n.of(context).acala['faucet.error'];
       } else if (res == "LIMIT") {
         dialogContent = I18n.of(context).acala['faucet.limit'];
@@ -493,8 +493,12 @@ class _AssetsState extends State<Assets> {
                                 child: ListTile(
                                   leading: Container(
                                     width: 36,
-                                    child: Image.asset(
-                                        'assets/images/assets/$i.png'),
+                                    child: i == 'ACA'
+                                        ? Image.asset(
+                                            'assets/images/assets/$i.png')
+                                        : CircleAvatar(
+                                            child: Text(i.substring(0, 2)),
+                                          ),
                                   ),
                                   title: Text(i),
                                   trailing: Text(

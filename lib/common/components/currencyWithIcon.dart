@@ -35,6 +35,7 @@ class CurrencyWithIcon extends StatelessWidget {
       children: <Widget>[
         Container(
           width: 32,
+          height: 32,
           padding: EdgeInsets.only(right: 4),
           child: hasIcon
               ? Image.asset('assets/images/assets/${symbol.toUpperCase()}.png')
