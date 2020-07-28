@@ -32,60 +32,40 @@ class LoanCard extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
       child: Column(
         children: <Widget>[
-          Stack(
-            alignment: AlignmentDirectional.topEnd,
+          Column(
             children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Text(dic['loan.borrowed'] + ' aUSD'),
-                  Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: 0),
-                    child: Text(
-                      Fmt.priceCeilBigInt(loan.debits,
-                          decimals: acala_token_decimals),
-                      style: TextStyle(
-                        fontSize: 36,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 16),
-                    child: Text(
-                      '${I18n.of(context).assets['balance']}: $balance',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      InfoItem(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        title: dic['collateral.interest'],
-                        content: Fmt.ratio(dailyInterest, needSymbol: false),
-                      ),
-                      InfoItem(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        title: dic['collateral.ratio.year'],
-                        content: ratio,
-                      )
-                    ],
-                  ),
-                ],
-              ),
-              GestureDetector(
-                child: Container(
-                  child: Column(
-                    children: <Widget>[
-                      Icon(Icons.history, color: primaryColor),
-                      Text(
-                        dic['loan.txs'],
-                        style: TextStyle(color: primaryColor, fontSize: 14),
-                      )
-                    ],
+              Text(dic['loan.borrowed'] + ' aUSD'),
+              Padding(
+                padding: EdgeInsets.only(top: 8, bottom: 0),
+                child: Text(
+                  Fmt.priceCeilBigInt(loan.debits,
+                      decimals: acala_token_decimals),
+                  style: TextStyle(
+                    fontSize: 36,
+                    color: Theme.of(context).primaryColor,
                   ),
                 ),
-                onTap: () => Navigator.of(context)
-                    .pushNamed(LoanHistoryPage.route, arguments: loan.type),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: Text(
+                  '${I18n.of(context).assets['balance']}: $balance',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+              Row(
+                children: <Widget>[
+                  InfoItem(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    title: dic['collateral.interest'],
+                    content: Fmt.ratio(dailyInterest, needSymbol: false),
+                  ),
+                  InfoItem(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    title: dic['collateral.ratio.year'],
+                    content: ratio,
+                  )
+                ],
               ),
             ],
           ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 
@@ -45,14 +47,18 @@ class ApiLaminar {
     await apiRoot.unsubscribeMessage(priceSubscribeChannel);
   }
 
-  Future<void> subscribeSyntheticPools() async {
-    await apiRoot.subscribeMessage(
+  Future<Map> subscribeSyntheticPools() async {
+    Completer<Map> c = new Completer<Map>();
+    apiRoot.subscribeMessage(
       'laminar.subscribeSyntheticPools()',
       syntheticPoolsSubscribeChannel,
       (Map res) {
-        print(res);
         store.laminar.setSyntheticPoolInfo(res);
+        if (!c.isCompleted) {
+          c.complete(res);
+        }
       },
     );
+    return c.future;
   }
 }

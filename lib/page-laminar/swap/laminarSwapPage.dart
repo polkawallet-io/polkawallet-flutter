@@ -43,8 +43,16 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
   bool _isRedeem = false;
 
   Future<void> _fetchData() async {
+    webApi.assets.fetchBalance();
     webApi.laminar.subscribeTokenPrices();
-    webApi.laminar.subscribeSyntheticPools();
+    await webApi.laminar.subscribeSyntheticPools();
+
+    if (_tokenPool == null) {
+      setState(() {
+        _tokenPool = widget.store.laminar.syntheticTokens[2];
+        _tokenReceive = widget.store.laminar.syntheticTokens[2].tokenId;
+      });
+    }
   }
 
   Future<void> _switchPair() async {
@@ -146,7 +154,6 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
     if (_formKey.currentState.validate()) {
       int decimals = widget.store.settings.networkState.tokenDecimals;
       String pay = _amountPayCtrl.text.trim();
-      String receive = _amountReceiveCtrl.text.trim();
       var args = {
         "title": I18n.of(context).acala['dex.title'],
         "txInfo": {
@@ -154,13 +161,14 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
           "call": _isRedeem ? 'redeem' : 'mint',
         },
         "detail": jsonEncode({
-          "poolId": _tokenPool.poolId,
           "amountPay": pay,
+          "currencyPay": _tokenPay,
           "currencyReceive": _tokenReceive,
         }),
         "params": [
           // params.poolId
           _tokenPool.poolId,
+
           // params.currencyId
           _isRedeem ? _tokenPay : _tokenReceive,
           // params.amount
@@ -191,17 +199,6 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_tokenPool == null && widget.store.laminar.syntheticTokens.length > 0) {
-      setState(() {
-        _tokenPool = widget.store.laminar.syntheticTokens[2];
-        _tokenReceive = widget.store.laminar.syntheticTokens[2].tokenId;
-      });
-    }
-  }
-
-  @override
   void dispose() {
     _amountPayCtrl.dispose();
     _amountReceiveCtrl.dispose();
@@ -227,7 +224,6 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
             widget.store.laminar
                 .tokenPrices[_isRedeem ? _tokenPay : _tokenReceive]?.value,
             decimals: decimals);
-        print(price);
         final double swapRatio = _isRedeem ? price : 1 / price;
 
         int rateDecimal = 2;
@@ -238,7 +234,6 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
         }
 
         final Color primary = Theme.of(context).primaryColor;
-        final Color grey = Theme.of(context).unselectedWidgetColor;
 
         return Scaffold(
           appBar: AppBar(title: Text(dic['dex.title']), centerTitle: true),
