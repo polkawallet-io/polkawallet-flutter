@@ -13,7 +13,7 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/laminar/types/laminarCurrenciesData.dart';
+import 'package:polka_wallet/store/laminar/types/laminarSyntheticData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 

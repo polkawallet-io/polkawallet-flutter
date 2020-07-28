@@ -63,8 +63,9 @@ class LaminarEntry extends StatelessWidget {
                         child: GestureDetector(
                           child: _LaminarCard(
                             dic['flow.margin'],
-                            dic['flow.margin.brief'],
+                            dic['flow.margin.soon'],
                             'assets/images/acala/loan.svg',
+                            color: Theme.of(context).primaryColor,
                           ),
                           onTap: () {
                             print('margin page');

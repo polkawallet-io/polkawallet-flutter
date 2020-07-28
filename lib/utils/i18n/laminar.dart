@@ -6,6 +6,7 @@ const Map<String, String> enLaminar = {
   'flow.margin': 'Margin Trading',
   'flow.margin.brief':
       'The collateralized margin trading protocol allows user to trade leveraged long or short Forex pairs such as EURUSD and cryptoassets such as BTCUSD.',
+  'flow.margin.soon': 'Coming soon.',
 };
 
 const Map<String, String> zhLaminar = {
@@ -14,4 +15,5 @@ const Map<String, String> zhLaminar = {
   'flow.swap.brief': '兑换合成资产 fToken (Flow Token), 如 fEUR, fJPY, fXAU (Gold) 等。',
   'flow.margin': '杠杆交易',
   'flow.margin.brief': '使用高达 20x 杠杆交易外汇交易对、数字资产交易对等。',
+  'flow.margin.soon': '即将开启',
 };

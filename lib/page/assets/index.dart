@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
+import 'package:polka_wallet/service/faucet.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
@@ -170,18 +172,18 @@ class _AssetsState extends State<Assets> {
     setState(() {
       _faucetSubmitting = true;
     });
-    String res = await webApi.acala.fetchFaucet();
+    final String res = await webApi.acala.fetchFaucet();
+    String dialogContent = I18n.of(context).acala['faucet.ok'];
+    bool isOK = false;
+    if (res == null || res == "ERROR") {
+      dialogContent = I18n.of(context).acala['faucet.error'];
+    } else if (res == "LIMIT") {
+      dialogContent = I18n.of(context).acala['faucet.limit'];
+    } else {
+      isOK = true;
+    }
 
     Timer(Duration(seconds: 3), () {
-      String dialogContent = I18n.of(context).acala['faucet.ok'];
-      bool isOK = false;
-      if (res == null || res == "ERROR") {
-        dialogContent = I18n.of(context).acala['faucet.error'];
-      } else if (res == "LIMIT") {
-        dialogContent = I18n.of(context).acala['faucet.limit'];
-      } else {
-        isOK = true;
-      }
       setState(() {
         _faucetSubmitting = false;
       });
@@ -214,6 +216,57 @@ class _AssetsState extends State<Assets> {
     });
   }
 
+  Future<void> _getLaminarTokensFromFaucet() async {
+    setState(() {
+      _faucetSubmitting = true;
+    });
+    final String res =
+        await FaucetApi.getLaminarTokens(store.account.currentAddress);
+    print(res);
+    String dialogContent = I18n.of(context).acala['faucet.ok'];
+    bool isOK = false;
+    if (res == null) {
+      dialogContent = I18n.of(context).acala['faucet.error'];
+    } else if (res == "LIMIT") {
+      dialogContent = I18n.of(context).acala['faucet.limit'];
+    } else {
+      isOK = true;
+    }
+
+    Timer(Duration(seconds: 3), () {
+      setState(() {
+        _faucetSubmitting = false;
+      });
+
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Container(),
+            content: Text(dialogContent),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  if (isOK) {
+                    Map data = jsonDecode(res);
+                    globalBalanceRefreshKey.currentState.show();
+                    NotificationPlugin.showNotification(
+                      int.parse(data['hash'].substring(0, 6)),
+                      I18n.of(context).assets['notify.receive'],
+                      jsonEncode(data['amount']),
+                    );
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
+  }
+
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).assets;
     String network = store.settings.loading
@@ -223,6 +276,8 @@ class _AssetsState extends State<Assets> {
     AccountData acc = store.account.currentAccount;
 
     bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    bool isLaminar =
+        store.settings.endpoint.info == networkEndpointLaminar.info;
     bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
     bool isPolkadot =
         store.settings.endpoint.info == networkEndpointPolkadot.info;
@@ -236,7 +291,7 @@ class _AssetsState extends State<Assets> {
             leading: AddressIcon('', pubKey: acc.pubKey),
             title: Text(Fmt.accountName(context, acc)),
             subtitle: Text(network),
-            trailing: isAcala
+            trailing: isAcala || isLaminar
                 ? GestureDetector(
                     child: Padding(
                       padding: EdgeInsets.all(4),
@@ -261,7 +316,11 @@ class _AssetsState extends State<Assets> {
                     ),
                     onTap: () {
                       if (acc.address != '') {
-                        _getTokensFromFaucet();
+                        if (isAcala) {
+                          _getTokensFromFaucet();
+                        } else if (isLaminar) {
+                          _getLaminarTokensFromFaucet();
+                        }
                       }
                     },
                   )

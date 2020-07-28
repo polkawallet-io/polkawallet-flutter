@@ -3,6 +3,8 @@ import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/transferData.dart';
 import 'package:polka_wallet/store/laminar/types/laminarCurrenciesData.dart';
+import 'package:polka_wallet/store/laminar/types/laminarMarginData.dart';
+import 'package:polka_wallet/store/laminar/types/laminarSyntheticData.dart';
 import 'package:polka_wallet/store/laminar/types/laminarTxSwapData.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -32,6 +34,10 @@ abstract class _LaminarStore with Store {
 
   @observable
   ObservableMap<String, LaminarSyntheticPoolInfoData> syntheticPoolInfo =
+      ObservableMap();
+
+  @observable
+  ObservableMap<String, LaminarMarginPoolInfoData> marginPoolInfo =
       ObservableMap();
 
   @computed

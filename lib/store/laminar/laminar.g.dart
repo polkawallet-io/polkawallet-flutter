@@ -34,6 +34,21 @@ mixin _$LaminarStore on _LaminarStore, Store {
     });
   }
 
+  final _$txsSwapAtom = Atom(name: '_LaminarStore.txsSwap');
+
+  @override
+  ObservableList<LaminarTxSwapData> get txsSwap {
+    _$txsSwapAtom.reportRead();
+    return super.txsSwap;
+  }
+
+  @override
+  set txsSwap(ObservableList<LaminarTxSwapData> value) {
+    _$txsSwapAtom.reportWrite(value, super.txsSwap, () {
+      super.txsSwap = value;
+    });
+  }
+
   final _$tokenPricesAtom = Atom(name: '_LaminarStore.tokenPrices');
 
   @override
@@ -92,6 +107,15 @@ mixin _$LaminarStore on _LaminarStore, Store {
         .run(() => super.setSyntheticPoolInfo(info));
   }
 
+  final _$setSwapTxsAsyncAction = AsyncAction('_LaminarStore.setSwapTxs');
+
+  @override
+  Future<void> setSwapTxs(List<dynamic> list,
+      {bool reset = false, dynamic needCache = true}) {
+    return _$setSwapTxsAsyncAction
+        .run(() => super.setSwapTxs(list, reset: reset, needCache: needCache));
+  }
+
   final _$loadAccountCacheAsyncAction =
       AsyncAction('_LaminarStore.loadAccountCache');
 
@@ -111,6 +135,7 @@ mixin _$LaminarStore on _LaminarStore, Store {
   String toString() {
     return '''
 txsTransfer: ${txsTransfer},
+txsSwap: ${txsSwap},
 tokenPrices: ${tokenPrices},
 syntheticPoolInfo: ${syntheticPoolInfo},
 syntheticTokens: ${syntheticTokens}
