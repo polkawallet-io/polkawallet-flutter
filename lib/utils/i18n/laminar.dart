@@ -26,10 +26,13 @@ const Map<String, String> enLaminar = {
   'margin.short': 'Short',
   'margin.close': 'Close',
   'margin.price.open': 'Open Price',
+  'margin.price.now': 'Current Price',
   'margin.pnl': 'Unrealized PnL',
+  'margin.pnl.close': 'Realized PnL',
   'margin.hold': 'Margin Held',
   'margin.position': 'Positions',
   'margin.position.closed': 'Closed',
+  'margin.time': 'Datetime',
 };
 
 const Map<String, String> zhLaminar = {
@@ -58,8 +61,11 @@ const Map<String, String> zhLaminar = {
   'margin.short': '做空',
   'margin.close': '平仓',
   'margin.price.open': '开仓价格',
+  'margin.price.now': '当前价格',
   'margin.pnl': '浮动盈亏',
+  'margin.pnl.close': '已实现盈亏',
   'margin.hold': '保证金',
   'margin.position': '当前仓位',
   'margin.position.closed': '平仓历史',
+  'margin.time': '时间',
 };

@@ -20,24 +20,28 @@ class LaminarMarginTradePrice extends StatelessWidget {
   final String direction;
   final bool highlight;
 
-  String getPrice({BigInt priceInt}) {
-    final BigInt spreadAsk = Fmt.balanceInt(pairData.askSpread.toString());
-    final BigInt spreadBid = Fmt.balanceInt(pairData.bidSpread.toString());
-    BigInt price = priceInt ?? getPriceInt();
+  String getTradePrice(
+      {BigInt priceInt, int lengthFixed = 3, int lengthMax = 5}) {
+    BigInt price = getTradePriceInt(priceInt: priceInt ?? _getPriceInt());
 
-    return direction == 'long'
-        ? Fmt.priceCeilBigInt(price + spreadAsk,
-            decimals: decimals, lengthFixed: 5)
-        : Fmt.priceCeilBigInt(price - spreadBid,
-            decimals: decimals, lengthFixed: 5);
+    return Fmt.priceCeilBigInt(price,
+        decimals: decimals, lengthFixed: lengthFixed, lengthMax: lengthMax);
   }
 
-  BigInt getPriceInt() {
+  BigInt getTradePriceInt({BigInt priceInt}) {
+    final BigInt spreadAsk = Fmt.balanceInt(pairData.askSpread.toString());
+    final BigInt spreadBid = Fmt.balanceInt(pairData.bidSpread.toString());
+    BigInt price = priceInt ?? _getPriceInt();
+
+    return direction == 'long' ? price + spreadAsk : price - spreadBid;
+  }
+
+  BigInt _getPriceInt() {
     final BigInt priceBase = _getTokenPrice(pairData.pair.base);
     final BigInt priceQuote = _getTokenPrice(pairData.pair.quote);
     BigInt priceInt = BigInt.zero;
     if (priceBase != BigInt.zero && priceQuote != BigInt.zero) {
-      priceInt = priceBase * BigInt.parse('1000000000000000000') ~/ priceQuote;
+      priceInt = priceBase * laminarIntDivisor ~/ priceQuote;
     }
 
     return priceInt;
@@ -45,7 +49,7 @@ class LaminarMarginTradePrice extends StatelessWidget {
 
   BigInt _getTokenPrice(String symbol) {
     if (symbol == acala_stable_coin) {
-      return BigInt.parse('1000000000000000000');
+      return laminarIntDivisor;
     }
     final LaminarPriceData priceData = priceMap[symbol];
     if (priceData == null) {
@@ -72,8 +76,8 @@ class LaminarMarginTradePrice extends StatelessWidget {
       decoration: TextDecoration.none,
     );
 
-    final BigInt priceInt = getPriceInt();
-    final String price = getPrice(priceInt: priceInt);
+    final BigInt priceInt = _getPriceInt();
+    final String price = getTradePrice(priceInt: priceInt, lengthFixed: 5);
 
     return priceInt == BigInt.zero
         ? Row(

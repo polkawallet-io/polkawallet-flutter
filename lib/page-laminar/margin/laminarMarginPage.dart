@@ -8,6 +8,7 @@ import 'package:polka_wallet/page-laminar/margin/laminarMarginTradePanel.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginTraderInfoPanel.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/laminar/types/laminarMarginData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -56,6 +57,8 @@ class _LaminarMarginPageState extends State<LaminarMarginPage> {
               widget.store.laminar.marginPoolInfo[_poolId]?.balance ?? '0',
               decimals: decimals,
             );
+            final LaminarMarginPoolInfoData poolInfo =
+                widget.store.laminar.marginPoolInfo[_poolId];
 
             return RefreshIndicator(
               key: _refreshKey,
@@ -92,16 +95,19 @@ class _LaminarMarginPageState extends State<LaminarMarginPage> {
                       info: widget.store.laminar.marginTraderInfo[_poolId],
                       decimals: decimals,
                     ),
-                    LaminarMarginTradePanel(
-                      info: widget.store.laminar.marginTraderInfo[_poolId],
-                      decimals: decimals,
-                      pairData: widget
-                          .store.laminar.marginPoolInfo[_poolId].options
-                          .firstWhere((e) {
-                        return e.pairId == _pairId;
-                      }),
-                      priceMap: widget.store.laminar.tokenPrices,
-                    ),
+                    poolInfo != null
+                        ? LaminarMarginTradePanel(
+                            info:
+                                widget.store.laminar.marginTraderInfo[_poolId],
+                            decimals: decimals,
+                            pairData: widget
+                                .store.laminar.marginPoolInfo[_poolId].options
+                                .firstWhere((e) {
+                              return e.pairId == _pairId;
+                            }),
+                            priceMap: widget.store.laminar.tokenPrices,
+                          )
+                        : Container(),
                     Divider(height: 2),
                     LaminarMarginPositions(widget.store),
                   ],

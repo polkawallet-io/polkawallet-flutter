@@ -142,3 +142,4 @@ const Map<String, String> synthetic_pool_name_map = {
   '1': 'Crypto',
   '2': 'FX',
 };
+final BigInt laminarIntDivisor = BigInt.parse('1000000000000000000');
