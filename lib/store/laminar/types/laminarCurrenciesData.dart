@@ -41,6 +41,7 @@ class LaminarPriceData extends _LaminarPriceData {
 }
 
 abstract class _LaminarPriceData {
+  String tokenId;
   String value;
   int timestamp;
 }

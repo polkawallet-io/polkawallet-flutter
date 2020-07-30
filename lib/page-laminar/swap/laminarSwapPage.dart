@@ -44,7 +44,6 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
 
   Future<void> _fetchData() async {
     webApi.assets.fetchBalance();
-    webApi.laminar.subscribeTokenPrices();
     await webApi.laminar.subscribeSyntheticPools();
 
     if (_tokenPool == null) {
@@ -202,7 +201,6 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
   void dispose() {
     _amountPayCtrl.dispose();
     _amountReceiveCtrl.dispose();
-    webApi.laminar.unsubscribeTokenPrices();
     super.dispose();
   }
 

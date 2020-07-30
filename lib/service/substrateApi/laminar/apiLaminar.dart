@@ -12,6 +12,8 @@ class ApiLaminar {
   final String balanceSubscribeChannel = 'LaminarAccountBalances';
   final String priceSubscribeChannel = 'LaminarPrices';
   final String syntheticPoolsSubscribeChannel = 'LaminarSyntheticPools';
+  final String marginPoolsSubscribeChannel = 'LaminarMarginPools';
+  final String marginTraderInfoSubscribeChannel = 'LaminarMarginTraderInfo';
 
   Future<void> fetchTokens(String pubKey) async {
     if (pubKey != null && pubKey.isNotEmpty) {
@@ -35,9 +37,9 @@ class ApiLaminar {
 
   Future<void> subscribeTokenPrices() async {
     await apiRoot.subscribeMessage(
-      'laminar.subscribePrices()',
+      'laminar.subscribeMessage("currencies", "oracleValues", [], "$priceSubscribeChannel")',
       priceSubscribeChannel,
-      (Map res) {
+      (List res) {
         store.laminar.setTokenPrices(res);
       },
     );
@@ -54,6 +56,37 @@ class ApiLaminar {
       syntheticPoolsSubscribeChannel,
       (Map res) {
         store.laminar.setSyntheticPoolInfo(res);
+        if (!c.isCompleted) {
+          c.complete(res);
+        }
+      },
+    );
+    return c.future;
+  }
+
+  Future<Map> subscribeMarginPools() async {
+    Completer<Map> c = new Completer<Map>();
+    apiRoot.subscribeMessage(
+      'laminar.subscribeMarginPools()',
+      marginPoolsSubscribeChannel,
+      (Map res) {
+        store.laminar.setMarginPoolInfo(res);
+        if (!c.isCompleted) {
+          c.complete(res);
+        }
+      },
+    );
+    return c.future;
+  }
+
+  Future<Map> subscribeMarginTraderInfo() async {
+    final String address = store.account.currentAddress;
+    Completer<Map> c = new Completer<Map>();
+    apiRoot.subscribeMessage(
+      'laminar.subscribeMarginTraderInfo("$address")',
+      marginTraderInfoSubscribeChannel,
+      (Map res) {
+        store.laminar.setMarginTraderInfo(res);
         if (!c.isCompleted) {
           c.complete(res);
         }

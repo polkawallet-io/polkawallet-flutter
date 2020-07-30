@@ -126,3 +126,19 @@ const Map<String, int> js_code_version_map = {
   network_name_acala_mandala: 8420,
   network_name_laminar_turbulence: 8420,
 };
+
+/// graphql for laminar
+const GraphQLConfig = {
+  'httpUri': 'https://indexer.laminar-chain.laminar.one/v1/graphql',
+  'wsUri': 'wss://indexer.laminar-chain.laminar.one/v1/graphql',
+};
+const Map<String, String> margin_pool_name_map = {
+  '0': 'Laminar',
+  '1': 'Crypto',
+  '2': 'FX',
+};
+const Map<String, String> synthetic_pool_name_map = {
+  '0': 'Laminar',
+  '1': 'Crypto',
+  '2': 'FX',
+};

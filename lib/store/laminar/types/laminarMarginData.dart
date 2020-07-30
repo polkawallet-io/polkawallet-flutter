@@ -12,6 +12,7 @@ class LaminarMarginPoolInfoData extends _LaminarMarginPoolInfoData {
 
 abstract class _LaminarMarginPoolInfoData {
   String poolId;
+  String balance;
   List<LaminarMarginPairData> options;
 }
 
@@ -44,4 +45,24 @@ class LaminarMarginPairItemData extends _LaminarMarginPairItemData {
 abstract class _LaminarMarginPairItemData {
   String base;
   String quote;
+}
+
+@JsonSerializable()
+class LaminarMarginTraderInfoData extends _LaminarMarginTraderInfoData {
+  static LaminarMarginTraderInfoData fromJson(Map<String, dynamic> json) =>
+      _$LaminarMarginTraderInfoDataFromJson(json);
+  static Map<String, dynamic> toJson(LaminarMarginTraderInfoData info) =>
+      _$LaminarMarginTraderInfoDataToJson(info);
+}
+
+abstract class _LaminarMarginTraderInfoData {
+  String poolId;
+  String accumulatedSwap;
+  String balance;
+  String equity;
+  String freeMargin;
+  String marginHeld;
+  String marginLevel;
+  String totalLeveragedPosition;
+  String unrealizedPl;
 }

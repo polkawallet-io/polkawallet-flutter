@@ -117,7 +117,6 @@ class Fmt {
   /// ceil number of last decimal
   static String priceCeil(
     double value, {
-    int decimals = acala_token_decimals,
     int lengthFixed = 2,
     int lengthMax,
   }) {

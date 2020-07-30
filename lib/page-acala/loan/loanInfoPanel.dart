@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/infoItemRow.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -25,7 +26,7 @@ class LoanInfoPanel extends StatelessWidget {
         Fmt.token(liquidationPrice, decimals: acala_token_decimals);
     return Column(
       children: <Widget>[
-        LoanInfoItem(
+        InfoItemRow(
           dic['collateral.price'],
           '\$$priceString',
         ),
@@ -37,7 +38,7 @@ class LoanInfoPanel extends StatelessWidget {
 //            ),
 //          ),
 //        ),
-        LoanInfoItem(
+        InfoItemRow(
           dic['liquid.ratio.require'],
           Fmt.ratio(
             double.parse(
@@ -45,43 +46,16 @@ class LoanInfoPanel extends StatelessWidget {
             ),
           ),
         ),
-        LoanInfoItem(
+        InfoItemRow(
           dic['liquid.ratio.current'],
           Fmt.ratio(currentRatio),
           colorPrimary: true,
         ),
-        LoanInfoItem(
+        InfoItemRow(
           dic['liquid.price'],
           '\$$liquidationPriceString',
           colorPrimary: true,
         ),
-      ],
-    );
-  }
-}
-
-class LoanInfoItem extends StatelessWidget {
-  LoanInfoItem(this.label, this.content, {this.colorPrimary = false});
-  final String label;
-  final String content;
-  final bool colorPrimary;
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Text(
-          label,
-          style: TextStyle(fontSize: 14),
-        ),
-        Text(content,
-            style: colorPrimary
-                ? TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor,
-                  )
-                : Theme.of(context).textTheme.headline4),
       ],
     );
   }

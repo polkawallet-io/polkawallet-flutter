@@ -40,11 +40,24 @@ abstract class _LaminarStore with Store {
   ObservableMap<String, LaminarMarginPoolInfoData> marginPoolInfo =
       ObservableMap();
 
+  @observable
+  ObservableMap<String, LaminarMarginTraderInfoData> marginTraderInfo =
+      ObservableMap();
+
   @computed
   List<LaminarSyntheticPoolTokenData> get syntheticTokens {
     List<LaminarSyntheticPoolTokenData> res = [];
     syntheticPoolInfo.keys.forEach((key) {
       res.addAll(syntheticPoolInfo[key].options);
+    });
+    return res;
+  }
+
+  @computed
+  List<LaminarMarginPairData> get marginTokens {
+    List<LaminarMarginPairData> res = [];
+    marginPoolInfo.keys.forEach((key) {
+      res.addAll(marginPoolInfo[key].options);
     });
     return res;
   }
@@ -80,10 +93,10 @@ abstract class _LaminarStore with Store {
   }
 
   @action
-  Future<void> setTokenPrices(Map prices) async {
+  Future<void> setTokenPrices(List prices) async {
     final Map<String, LaminarPriceData> res = {};
-    prices.forEach((k, v) {
-      res[k] = LaminarPriceData.fromJson(v);
+    prices.forEach((e) {
+      res[e['tokenId']] = LaminarPriceData.fromJson(e);
     });
     tokenPrices = res;
   }
@@ -92,6 +105,18 @@ abstract class _LaminarStore with Store {
   Future<void> setSyntheticPoolInfo(Map info) async {
     syntheticPoolInfo
         .addAll({info['poolId']: LaminarSyntheticPoolInfoData.fromJson(info)});
+  }
+
+  @action
+  Future<void> setMarginPoolInfo(Map info) async {
+    marginPoolInfo
+        .addAll({info['poolId']: LaminarMarginPoolInfoData.fromJson(info)});
+  }
+
+  @action
+  Future<void> setMarginTraderInfo(Map info) async {
+    marginTraderInfo
+        .addAll({info['poolId']: LaminarMarginTraderInfoData.fromJson(info)});
   }
 
   @action

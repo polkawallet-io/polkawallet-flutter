@@ -10,6 +10,7 @@ LaminarMarginPoolInfoData _$LaminarMarginPoolInfoDataFromJson(
     Map<String, dynamic> json) {
   return LaminarMarginPoolInfoData()
     ..poolId = json['poolId'] as String
+    ..balance = json['balance'] as String
     ..options = (json['options'] as List)
         ?.map((e) => e == null
             ? null
@@ -21,6 +22,7 @@ Map<String, dynamic> _$LaminarMarginPoolInfoDataToJson(
         LaminarMarginPoolInfoData instance) =>
     <String, dynamic>{
       'poolId': instance.poolId,
+      'balance': instance.balance,
       'options': instance.options,
     };
 
@@ -64,4 +66,32 @@ Map<String, dynamic> _$LaminarMarginPairItemDataToJson(
     <String, dynamic>{
       'base': instance.base,
       'quote': instance.quote,
+    };
+
+LaminarMarginTraderInfoData _$LaminarMarginTraderInfoDataFromJson(
+    Map<String, dynamic> json) {
+  return LaminarMarginTraderInfoData()
+    ..poolId = json['poolId'] as String
+    ..accumulatedSwap = json['accumulatedSwap'] as String
+    ..balance = json['balance'] as String
+    ..equity = json['equity'] as String
+    ..freeMargin = json['freeMargin'] as String
+    ..marginHeld = json['marginHeld'] as String
+    ..marginLevel = json['marginLevel'] as String
+    ..totalLeveragedPosition = json['totalLeveragedPosition'] as String
+    ..unrealizedPl = json['unrealizedPl'] as String;
+}
+
+Map<String, dynamic> _$LaminarMarginTraderInfoDataToJson(
+        LaminarMarginTraderInfoData instance) =>
+    <String, dynamic>{
+      'poolId': instance.poolId,
+      'accumulatedSwap': instance.accumulatedSwap,
+      'balance': instance.balance,
+      'equity': instance.equity,
+      'freeMargin': instance.freeMargin,
+      'marginHeld': instance.marginHeld,
+      'marginLevel': instance.marginLevel,
+      'totalLeveragedPosition': instance.totalLeveragedPosition,
+      'unrealizedPl': instance.unrealizedPl,
     };

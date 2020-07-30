@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/page-laminar/margin/laminarMarginPage.dart';
 import 'package:polka_wallet/page-laminar/swap/laminarSwapPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -63,13 +64,12 @@ class LaminarEntry extends StatelessWidget {
                         child: GestureDetector(
                           child: _LaminarCard(
                             dic['flow.margin'],
-                            dic['flow.margin.soon'],
+                            dic['flow.margin.brief'],
                             'assets/images/acala/loan.svg',
                             color: Theme.of(context).primaryColor,
                           ),
-                          onTap: () {
-                            print('margin page');
-                          },
+                          onTap: () => Navigator.of(context)
+                              .pushNamed(LaminarMarginPage.route),
                         ),
                       ),
                     ],
