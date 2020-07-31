@@ -142,4 +142,11 @@ const Map<String, String> synthetic_pool_name_map = {
   '1': 'Crypto',
   '2': 'FX',
 };
+const Map<String, String> laminar_leverage_map = {
+  'Two': 'x2',
+  'Three': 'x3',
+  'Five': 'x5',
+  'Ten': 'x10',
+  'Twenty': 'x20',
+};
 final BigInt laminarIntDivisor = BigInt.parse('1000000000000000000');

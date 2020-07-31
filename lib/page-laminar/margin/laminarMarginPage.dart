@@ -9,6 +9,7 @@ import 'package:polka_wallet/page-laminar/margin/laminarMarginTraderInfoPanel.da
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/laminar/types/laminarMarginData.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -23,14 +24,13 @@ class LaminarMarginPage extends StatefulWidget {
 }
 
 class _LaminarMarginPageState extends State<LaminarMarginPage> {
-  final GlobalKey<RefreshIndicatorState> _refreshKey =
-      new GlobalKey<RefreshIndicatorState>();
-
   String _poolId = '1';
   String _pairId = 'BTCUSD';
 
+  int _leverageIndex = 0;
+
   Future<void> _fetchData() async {
-//    webApi.assets.fetchBalance();
+    webApi.assets.fetchBalance();
     await webApi.laminar.subscribeMarginTraderInfo();
   }
 
@@ -40,7 +40,7 @@ class _LaminarMarginPageState extends State<LaminarMarginPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       webApi.laminar.subscribeMarginPools();
-      _refreshKey.currentState.show();
+      globalMarginRefreshKey.currentState.show();
     });
   }
 
@@ -61,7 +61,7 @@ class _LaminarMarginPageState extends State<LaminarMarginPage> {
                 widget.store.laminar.marginPoolInfo[_poolId];
 
             return RefreshIndicator(
-              key: _refreshKey,
+              key: globalMarginRefreshKey,
               onRefresh: _fetchData,
               child: Container(
                 color: Theme.of(context).cardColor,
@@ -84,6 +84,7 @@ class _LaminarMarginPageState extends State<LaminarMarginPage> {
                               setState(() {
                                 _poolId = pool;
                                 _pairId = pair;
+                                _leverageIndex = 0;
                               });
                             },
                           ),
@@ -92,6 +93,8 @@ class _LaminarMarginPageState extends State<LaminarMarginPage> {
                     ),
                     Divider(height: 2),
                     LaminarTraderInfoPanel(
+                      balanceInt: Fmt.balanceInt(
+                          widget.store.assets.tokenBalances[acala_stable_coin]),
                       info: widget.store.laminar.marginTraderInfo[_poolId],
                       decimals: decimals,
                     ),
@@ -106,7 +109,12 @@ class _LaminarMarginPageState extends State<LaminarMarginPage> {
                               return e.pairId == _pairId;
                             }),
                             priceMap: widget.store.laminar.tokenPrices,
-                          )
+                            leverageIndex: _leverageIndex,
+                            onLeverageChange: (int i) {
+                              setState(() {
+                                _leverageIndex = i;
+                              });
+                            })
                         : Container(),
                     Divider(height: 2),
                     LaminarMarginPositions(widget.store),

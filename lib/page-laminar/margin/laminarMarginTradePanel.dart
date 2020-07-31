@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/infoItemRow.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
+import 'package:polka_wallet/page-laminar/margin/laminarMarginPage.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginTradePrice.dart';
+import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/store/laminar/types/laminarCurrenciesData.dart';
 import 'package:polka_wallet/store/laminar/types/laminarMarginData.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -16,6 +22,8 @@ class LaminarMarginTradePanel extends StatefulWidget {
     this.info,
     this.priceMap,
     this.decimals = acala_token_decimals,
+    this.leverageIndex,
+    this.onLeverageChange,
   });
 
   final String poolId;
@@ -23,6 +31,8 @@ class LaminarMarginTradePanel extends StatefulWidget {
   final LaminarMarginTraderInfoData info;
   final Map<String, LaminarPriceData> priceMap;
   final int decimals;
+  final int leverageIndex;
+  final Function(int) onLeverageChange;
 
   @override
   _LaminarMarginTradePanelState createState() =>
@@ -30,29 +40,151 @@ class LaminarMarginTradePanel extends StatefulWidget {
 }
 
 class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
-  final GlobalKey<RefreshIndicatorState> _refreshKey =
-      new GlobalKey<RefreshIndicatorState>();
-
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _amountCtrl = new TextEditingController();
+
+  double _calcCost(double value, BigInt price, double leverage) {
+    return value *
+        Fmt.bigIntToDouble(price, decimals: widget.decimals) /
+        leverage;
+  }
+
+  Future<void> _onSelectLeverage(List<String> leverages) async {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) {
+        return Container(
+          height: MediaQuery.of(context).copyWith().size.height / 3,
+          child: CupertinoPicker(
+            backgroundColor: Colors.white,
+            itemExtent: 56,
+            scrollController:
+                FixedExtentScrollController(initialItem: widget.leverageIndex),
+            children: leverages
+                .map((i) => Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Text(
+                      laminar_leverage_map[i],
+                      style: TextStyle(fontSize: 16),
+                    )))
+                .toList(),
+            onSelectedItemChanged: widget.onLeverageChange,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _onTrade(String leverage, {bool isSell = false}) async {
+    if (_formKey.currentState.validate()) {
+      print('trade: $isSell');
+      final String amt = _amountCtrl.text.trim();
+      final String lev = '${isSell ? 'Short' : 'Long'}$leverage';
+      final Map pair = {
+        'base': widget.pairData.pair.base,
+        'quote': widget.pairData.pair.quote,
+      };
+      var args = {
+        "title":
+            I18n.of(context).laminar[isSell ? 'margin.sell' : 'margin.buy'],
+        "txInfo": {
+          "module": 'marginProtocol',
+          "call": 'openPosition',
+        },
+        "detail": jsonEncode({
+          "pool": margin_pool_name_map[widget.pairData.poolId],
+          "pair": pair,
+          "leverage": lev,
+          "amount": '$amt ${widget.pairData.pair.base}',
+        }),
+        "params": [
+          // params.poolId
+          widget.pairData.poolId,
+          // params.pair
+          pair,
+          // params.leverage
+          lev,
+          // params.amount
+          Fmt.tokenInt(amt, decimals: widget.decimals).toString(),
+          // params.price
+          isSell
+              ? '0'
+              : Fmt.tokenInt('100000000', decimals: widget.decimals).toString(),
+        ],
+        "onFinish": (BuildContext txPageContext, Map res) {
+//          print(res);
+          Navigator.popUntil(
+              txPageContext, ModalRoute.withName(LaminarMarginPage.route));
+          globalMarginRefreshKey.currentState.show();
+        }
+      };
+      Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).laminar;
     final Map dicAssets = I18n.of(context).assets;
-    final double free =
-        Fmt.balanceDouble(widget.info?.freeMargin, decimals: widget.decimals);
+    final String baseToken = Fmt.tokenView(widget.pairData.pair.base);
+    final String quoteToken = Fmt.tokenView(widget.pairData.pair.quote);
+    final List<String> leverages = laminar_leverage_map.keys.toList();
+    leverages.retainWhere((e) =>
+        widget.pairData.enabledTrades.indexWhere((i) => i.contains(e)) >= 0);
+    final BigInt freeInt = Fmt.balanceInt(widget.info?.freeMargin);
+    final double free = Fmt.bigIntToDouble(freeInt, decimals: widget.decimals);
+    final BigInt priceBuy = LaminarMarginTradePrice(
+      decimals: widget.decimals,
+      pairData: widget.pairData,
+      priceMap: widget.priceMap,
+      direction: 'long',
+    ).getTradePriceInt();
+    final BigInt priceSell = LaminarMarginTradePrice(
+      decimals: widget.decimals,
+      pairData: widget.pairData,
+      priceMap: widget.priceMap,
+      direction: 'short',
+    ).getTradePriceInt();
+    final double leverage = double.parse(
+        laminar_leverage_map[leverages[widget.leverageIndex]].substring(1));
+    final double amountBuyMax = freeInt / priceBuy * leverage;
+    final double amountSellMax = freeInt / priceSell * leverage;
+    double costBuy = 0;
+    double costSell = 0;
+    if (_amountCtrl.text.trim().isNotEmpty) {
+      try {
+        final double input = double.parse(_amountCtrl.text.trim());
+        costBuy = _calcCost(input, priceBuy, leverage);
+        costSell = _calcCost(input, priceSell, leverage);
+      } catch (err) {
+        print('calc cost error');
+      }
+    }
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+      padding: EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: InfoItemRow(
+              dic['margin.free'],
+              '${Fmt.token(freeInt, decimals: widget.decimals)} aUSD',
+            ),
+          ),
+          GestureDetector(
+            child: InfoItemRow(
+              dic['margin.leverage'],
+              laminar_leverage_map[leverages[widget.leverageIndex]],
+              colorPrimary: true,
+            ),
+            onTap: () => _onSelectLeverage(leverages),
+          ),
           Form(
             key: _formKey,
             child: TextFormField(
               decoration: InputDecoration(
                 hintText: dicAssets['amount'],
-                labelText:
-                    '${dicAssets['amount']} (${dic['margin.free']} ${free.toStringAsFixed(3)})',
+                labelText: '${dicAssets['amount']} ($baseToken)',
                 suffix: GestureDetector(
                   child: Icon(
                     CupertinoIcons.clear_thick_circled,
@@ -67,7 +199,7 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
               ),
               inputFormatters: [
                 RegExInputFormatter.withRegex(
-                    '^[0-9]{0,6}(\\.[0-9]{0,$widget.decimals})?\$')
+                    '^[0-9]{0,6}(\\.[0-9]{0,${widget.decimals}})?\$')
               ],
               controller: _amountCtrl,
               keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -75,7 +207,15 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
                 if (v.isEmpty) {
                   return dicAssets['amount.error'];
                 }
-                if (double.parse(v.trim()) > free) {
+                double input = 0;
+                try {
+                  input = double.parse(v.trim());
+                } catch (err) {
+                  return dicAssets['amount.error'];
+                }
+                costBuy = _calcCost(input, priceBuy, leverage);
+                costSell = _calcCost(input, priceSell, leverage);
+                if (costBuy > free || costSell > free) {
                   return dicAssets['amount.low'];
                 }
                 return null;
@@ -124,9 +264,7 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
                 child: RoundedButton(
                   text: dic['margin.buy'],
                   color: Colors.green,
-                  onPressed: () {
-                    print('depo');
-                  },
+                  onPressed: () => _onTrade(leverages[widget.leverageIndex]),
                 ),
               ),
               Container(width: 16),
@@ -134,10 +272,38 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
                 child: RoundedButton(
                   text: dic['margin.sell'],
                   color: Colors.red,
-                  onPressed: () {
-                    print('with');
-                  },
+                  onPressed: () =>
+                      _onTrade(leverages[widget.leverageIndex], isSell: true),
                 ),
+              )
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 8, bottom: 8),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                      '${dic['margin.cost']} ${costBuy.toStringAsFixed(2)} aUSD'),
+                ),
+                Container(width: 16),
+                Expanded(
+                  child: Text(
+                      '${dic['margin.cost']} ${costSell.toStringAsFixed(2)} aUSD'),
+                )
+              ],
+            ),
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                    '${dic['margin.max']} ${amountBuyMax.toStringAsFixed(5)} $baseToken'),
+              ),
+              Container(width: 16),
+              Expanded(
+                child: Text(
+                    '${dic['margin.max']} ${amountSellMax.toStringAsFixed(5)} $baseToken'),
               )
             ],
           ),

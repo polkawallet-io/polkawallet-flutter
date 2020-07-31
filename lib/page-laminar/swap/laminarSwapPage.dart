@@ -48,8 +48,8 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
 
     if (_tokenPool == null) {
       setState(() {
-        _tokenPool = widget.store.laminar.syntheticTokens[2];
-        _tokenReceive = widget.store.laminar.syntheticTokens[2].tokenId;
+        _tokenPool = widget.store.laminar.syntheticTokens[0];
+        _tokenReceive = widget.store.laminar.syntheticTokens[0].tokenId;
       });
     }
   }
