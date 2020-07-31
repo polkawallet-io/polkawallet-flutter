@@ -12,6 +12,7 @@ class LaminarMarginTradePrice extends StatelessWidget {
     this.priceMap,
     this.direction,
     this.highlight = false,
+    this.fontSize,
   });
 
   final int decimals;
@@ -19,6 +20,7 @@ class LaminarMarginTradePrice extends StatelessWidget {
   final Map<String, LaminarPriceData> priceMap;
   final String direction;
   final bool highlight;
+  final double fontSize;
 
   String getTradePrice(
       {BigInt priceInt, int lengthFixed = 3, int lengthMax = 5}) {
@@ -61,14 +63,14 @@ class LaminarMarginTradePrice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextStyle style = TextStyle(
-      fontSize: 14,
+      fontSize: fontSize ?? 14,
       color: highlight
           ? Theme.of(context).primaryColor
           : Theme.of(context).unselectedWidgetColor,
       decoration: TextDecoration.none,
     );
     final TextStyle styleBold = TextStyle(
-      fontSize: 16,
+      fontSize: (fontSize ?? 14) + 2,
       fontWeight: FontWeight.bold,
       color: highlight
           ? Theme.of(context).primaryColor

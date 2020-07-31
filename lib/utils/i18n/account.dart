@@ -1,7 +1,7 @@
 const Map<String, String> enAccount = {
   'mnemonic': 'Mnemonic',
   'rawSeed': 'Raw Seed',
-  'keystore': 'Keystore',
+  'keystore': 'Keystore (json)',
   'create.name': 'Name',
   'create.name.error': 'Name can not be empty',
   'create.password': 'Password',
@@ -57,7 +57,7 @@ const Map<String, String> enAccount = {
 const Map<String, String> zhAccount = {
   'mnemonic': '助记词',
   'rawSeed': '私钥种子',
-  'keystore': '加密 Keystore',
+  'keystore': '加密 Keystore (json)',
   'create.name': '账户名',
   'create.name.error': '账户名不能为空',
   'create.password': '密码',

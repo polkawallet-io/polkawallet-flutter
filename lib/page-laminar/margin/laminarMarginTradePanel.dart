@@ -236,6 +236,7 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
                         pairData: widget.pairData,
                         direction: 'long',
                         priceMap: widget.priceMap,
+                        fontSize: 18,
                       )
                     ],
                   ),
@@ -251,6 +252,7 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
                         pairData: widget.pairData,
                         direction: 'short',
                         priceMap: widget.priceMap,
+                        fontSize: 18,
                       )
                     ],
                   ),
