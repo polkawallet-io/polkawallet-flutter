@@ -107,6 +107,8 @@ const int acala_token_decimals = 18;
 const int SECONDS_OF_DAY = 24 * 60 * 60; // seconds of one day
 const int SECONDS_OF_YEAR = 365 * 24 * 60 * 60; // seconds of one year
 
+const String token_denomination_dot_old = 'DOT (old)';
+const String token_denomination_dot_new = 'New DOT';
 const String acala_stable_coin = 'AUSD';
 const String acala_stable_coin_view = 'aUSD';
 const String acala_token_ren_btc = 'RENBTC';

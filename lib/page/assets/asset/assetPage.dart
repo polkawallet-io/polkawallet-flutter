@@ -196,10 +196,12 @@ class _AssetPageState extends State<AssetPage>
             BalancesInfo balancesInfo = store.assets.balances[symbol];
             String lockedInfo = '\n';
             if (balancesInfo != null && balancesInfo.lockedBreakdown != null) {
+              final String tokenView =
+                  Fmt.tokenView(symbol, decimalsDot: decimals);
               balancesInfo.lockedBreakdown.forEach((i) {
                 if (i.amount > BigInt.zero) {
                   lockedInfo +=
-                      '${Fmt.token(i.amount, decimals: decimals)} $symbol ${dic['lock.${i.use}']}\n';
+                      '${Fmt.token(i.amount, decimals: decimals)} $tokenView ${dic['lock.${i.use}']}\n';
                 }
               });
             }

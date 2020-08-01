@@ -1,24 +1,28 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
+import 'package:polka_wallet/page-laminar/margin/laminarMarginPage.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginPositionItem.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/laminar/types/laminarMarginData.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-class LaminarMarginPositions extends StatefulWidget {
-  LaminarMarginPositions(this.store);
+class LaminarMarginPageWrapper extends StatefulWidget {
+  LaminarMarginPageWrapper(this.store);
 
+  static const String route = '/laminar/margin';
   final AppStore store;
 
   @override
-  _LaminarMarginPositionsState createState() => _LaminarMarginPositionsState();
+  _LaminarMarginPageWrapperState createState() =>
+      _LaminarMarginPageWrapperState();
 }
 
-class _LaminarMarginPositionsState extends State<LaminarMarginPositions> {
+class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
   int _positionTab = 0;
 
   final String openedPositionQuery = r'''
@@ -72,6 +76,17 @@ class _LaminarMarginPositionsState extends State<LaminarMarginPositions> {
     }
   }
 
+  LaminarMarginPairData _getPairData(Map position) {
+    final int pairIndex = widget.store.laminar.marginTokens.indexWhere((i) {
+      return i.pair.base == position['args'][3]['base'] &&
+          i.pair.quote == position['args'][3]['quote'];
+    });
+    if (pairIndex < 0) {
+      return null;
+    }
+    return widget.store.laminar.marginTokens[pairIndex];
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).laminar;
@@ -93,7 +108,7 @@ class _LaminarMarginPositionsState extends State<LaminarMarginPositions> {
           options: QueryOptions(
             documentNode: gql(closedPositionQuery),
             variables: <String, String>{
-              'signer': '5EtWBRw2W8TaxUAW8m47dgykfRJjKN7PgBbuMppXwqCWMtVG',
+              'signer': widget.store.account.currentAddress,
             },
           ),
           builder: (
@@ -101,104 +116,104 @@ class _LaminarMarginPositionsState extends State<LaminarMarginPositions> {
             Future<QueryResult> Function() refetch,
             FetchMore fetchMore,
           }) {
+            Widget render;
             if (result.hasException || resultClosed.hasException) {
-              return Text(result.exception.toString());
-            }
-
-            if (result.loading ||
+              render = Text(result.exception.toString());
+            } else if (result.loading ||
                 resultClosed.loading ||
                 widget.store.laminar.marginTokens.length == 0) {
-              return const Center(
+              render = const Center(
                 child: CupertinoActivityIndicator(),
               );
-            }
+            } else {
 //            print(JsonEncoder.withIndent('  ').convert(resultClosed.data));
-            final List listAll = List.of(result.data['Events']);
-            final List list = List.of(result.data['Events']);
-            list.retainWhere((e) {
-              final int positionId = e['args'][1];
-              return List.of(resultClosed.data['Events']).indexWhere((c) {
-                    return c['args'][1] == positionId;
-                  }) <
-                  0;
-            });
-            final List listClosed = List.of(resultClosed.data['Events']);
-            return Column(
-              children: <Widget>[
-                Container(
-                  color: Theme.of(context).cardColor,
-                  padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          OutlinedButtonSmall(
-                            content: dic['margin.position'],
-                            active: _positionTab == 0,
-                            margin: EdgeInsets.only(right: 16),
-                            onPressed: () =>
-                                _changeTab(0, refreshOpened, refetch),
-                          ),
-                          OutlinedButtonSmall(
-                            content: dic['margin.position.closed'],
-                            active: _positionTab == 1,
-                            onPressed: () =>
-                                _changeTab(1, refreshOpened, refetch),
-                          ),
-                        ],
-                      ),
-                    ],
+              final List listAll = List.of(result.data['Events']);
+              final List list = List.of(result.data['Events']);
+              list.retainWhere((e) {
+                final int positionId = e['args'][1];
+                return List.of(resultClosed.data['Events']).indexWhere((c) {
+                      return c['args'][1] == positionId;
+                    }) <
+                    0;
+              });
+              final List listClosed = List.of(resultClosed.data['Events']);
+              render = Column(
+                children: <Widget>[
+                  Container(
+                    color: Theme.of(context).cardColor,
+                    padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            OutlinedButtonSmall(
+                              content: dic['margin.position'],
+                              active: _positionTab == 0,
+                              margin: EdgeInsets.only(right: 16),
+                              onPressed: () =>
+                                  _changeTab(0, refreshOpened, refetch),
+                            ),
+                            OutlinedButtonSmall(
+                              content: dic['margin.position.closed'],
+                              active: _positionTab == 1,
+                              onPressed: () =>
+                                  _changeTab(1, refreshOpened, refetch),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    children: _positionTab == 1
-                        ? listAll.length == 0 || listClosed.length == 0
-                            ? Container()
-                            : listClosed.map((c) {
-                                final positionIndex = listAll.indexWhere((e) {
-                                  return e['args'][1] == c['args'][1];
-                                });
-                                if (positionIndex < 0) {
-                                  return Container();
-                                }
-                                final position = listAll[positionIndex];
-                                final LaminarMarginPairData pairData = widget
-                                    .store.laminar.marginTokens
-                                    .firstWhere((i) {
-                                  return i.pair.base ==
-                                          position['args'][3]['base'] &&
-                                      i.pair.quote ==
-                                          position['args'][3]['quote'];
-                                });
-                                return LaminarMarginPosition(
-                                  position,
-                                  pairData,
-                                  widget.store.laminar.tokenPrices,
-                                  closed: c,
-                                  decimals: widget.store.settings.networkState
-                                      .tokenDecimals,
-                                );
-                              }).toList()
-                        : list.map((e) {
-                            final LaminarMarginPairData pairData = widget
-                                .store.laminar.marginTokens
-                                .firstWhere((i) {
-                              return i.pair.base == e['args'][3]['base'] &&
-                                  i.pair.quote == e['args'][3]['quote'];
-                            });
-                            return LaminarMarginPosition(
-                              e,
-                              pairData,
-                              widget.store.laminar.tokenPrices,
-                              decimals: widget
-                                  .store.settings.networkState.tokenDecimals,
-                            );
-                          }).toList(),
-                  ),
-                )
-              ],
+                  Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      children: _positionTab == 1
+                          ? listAll.length == 0 || listClosed.length == 0
+                              ? Container()
+                              : listClosed.map((c) {
+                                  final positionIndex = listAll.indexWhere((e) {
+                                    return e['args'][1] == c['args'][1];
+                                  });
+                                  if (positionIndex < 0) {
+                                    return Container();
+                                  }
+                                  final position = listAll[positionIndex];
+                                  final LaminarMarginPairData pairData =
+                                      _getPairData(position);
+                                  return LaminarMarginPosition(
+                                    position,
+                                    pairData,
+                                    widget.store.laminar.tokenPrices,
+                                    closed: c,
+                                    decimals: widget.store.settings.networkState
+                                        .tokenDecimals,
+                                  );
+                                }).toList()
+                          : list.map((e) {
+                              final LaminarMarginPairData pairData =
+                                  _getPairData(e);
+                              return LaminarMarginPosition(
+                                e,
+                                pairData,
+                                widget.store.laminar.tokenPrices,
+                                decimals: widget
+                                    .store.settings.networkState.tokenDecimals,
+                              );
+                            }).toList(),
+                    ),
+                  )
+                ],
+              );
+            }
+            return LaminarMarginPage(
+              widget.store,
+              onRefresh: () {
+                Timer(Duration(seconds: 5), () {
+                  refreshOpened();
+                  refetch();
+                });
+              },
+              child: render,
             );
           },
         );

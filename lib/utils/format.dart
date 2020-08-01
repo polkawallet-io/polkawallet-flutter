@@ -329,13 +329,20 @@ class Fmt {
     return display;
   }
 
-  static String tokenView(String token) {
+  static String tokenView(String token, {int decimalsDot}) {
     String tokenView = token;
     if (token == acala_stable_coin) {
       tokenView = acala_stable_coin_view;
     }
     if (token == acala_token_ren_btc) {
       tokenView = acala_token_ren_btc_view;
+    }
+    if (token == 'DOT') {
+      if (decimalsDot == kusama_token_decimals) {
+        tokenView = token_denomination_dot_old;
+      } else {
+        tokenView = token_denomination_dot_new;
+      }
     }
     return tokenView;
   }

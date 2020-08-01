@@ -480,7 +480,8 @@ class _AssetsState extends State<Assets> {
                           child: Image.asset(
                               'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
                         ),
-                        title: Text(symbol ?? ''),
+                        title: Text(
+                            Fmt.tokenView(symbol, decimalsDot: decimals) ?? ''),
                         trailing: Text(
                           Fmt.token(
                               balancesInfo != null

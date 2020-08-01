@@ -21,8 +21,8 @@ import 'package:polka_wallet/page-acala/loan/loanPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanTxDetailPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapPage.dart';
-import 'package:polka_wallet/page-laminar/margin/laminarMarginPage.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginPoolDepositPage.dart';
+import 'package:polka_wallet/page-laminar/margin/laminarMarginPositions.dart';
 import 'package:polka_wallet/page-laminar/swap/laminarSwapHistoryPage.dart';
 import 'package:polka_wallet/page-laminar/swap/laminarSwapPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
@@ -313,7 +313,8 @@ class _WalletAppState extends State<WalletApp> {
           LaminarSwapPage.route: (_) => LaminarSwapPage(_appStore),
           LaminarSwapHistoryPage.route: (_) =>
               LaminarSwapHistoryPage(_appStore),
-          LaminarMarginPage.route: (_) => LaminarMarginPage(_appStore),
+          LaminarMarginPageWrapper.route: (_) =>
+              LaminarMarginPageWrapper(_appStore),
           LaminarMarginPoolDepositPage.route: (_) =>
               LaminarMarginPoolDepositPage(_appStore),
         },

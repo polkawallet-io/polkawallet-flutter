@@ -94,9 +94,8 @@ class _CouncilState extends State<Council> {
     });
   }
 
-  Widget _buildTopCard() {
+  Widget _buildTopCard(String tokenView) {
     final int decimals = store.settings.networkState.tokenDecimals;
-    final String symbol = store.settings.networkState.tokenSymbol;
     final Map dic = I18n.of(context).gov;
 
     Map userVotes = store.gov.userCouncilVotes;
@@ -155,7 +154,7 @@ class _CouncilState extends State<Council> {
                   ),
                   InfoItem(
                     content:
-                        '${Fmt.token(voteAmount, decimals: decimals)} $symbol',
+                        '${Fmt.token(voteAmount, decimals: decimals)} $tokenView',
                     title: dic['vote.my'],
                   ),
                   OutlinedButtonSmall(
@@ -185,8 +184,7 @@ class _CouncilState extends State<Council> {
                               iconSize: 32,
                               accInfo: accInfo,
                               balance: [i],
-                              tokenSymbol:
-                                  store.settings.networkState.tokenSymbol,
+                              tokenSymbol: tokenView,
                               noTap: true,
                             );
                           }).toList(),
@@ -217,6 +215,9 @@ class _CouncilState extends State<Council> {
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).gov;
     return Observer(builder: (_) {
+      final int decimals = store.settings.networkState.tokenDecimals;
+      final String symbol = store.settings.networkState.tokenSymbol;
+      final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
       return RefreshIndicator(
         key: globalCouncilRefreshKey,
         onRefresh: _fetchCouncilInfo,
@@ -224,7 +225,7 @@ class _CouncilState extends State<Council> {
             ? Container()
             : ListView(
                 children: <Widget>[
-                  _buildTopCard(),
+                  _buildTopCard(tokenView),
                   Container(
                     padding: EdgeInsets.only(top: 16, left: 16, bottom: 8),
                     color: Theme.of(context).cardColor,
@@ -240,7 +241,7 @@ class _CouncilState extends State<Council> {
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: i,
-                          tokenSymbol: store.settings.networkState.tokenSymbol,
+                          tokenSymbol: tokenView,
                         );
                       }).toList(),
                     ),
@@ -260,7 +261,7 @@ class _CouncilState extends State<Council> {
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: i,
-                          tokenSymbol: store.settings.networkState.tokenSymbol,
+                          tokenSymbol: tokenView,
                         );
                       }).toList(),
                     ),
@@ -281,8 +282,7 @@ class _CouncilState extends State<Council> {
                               return CandidateItem(
                                 accInfo: accInfo,
                                 balance: [i],
-                                tokenSymbol:
-                                    store.settings.networkState.tokenSymbol,
+                                tokenSymbol: tokenView,
                               );
                             }).toList(),
                           )

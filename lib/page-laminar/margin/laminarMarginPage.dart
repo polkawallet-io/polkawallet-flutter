@@ -14,10 +14,12 @@ import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class LaminarMarginPage extends StatefulWidget {
-  LaminarMarginPage(this.store);
+  LaminarMarginPage(this.store, {this.child, this.onRefresh});
 
   static const String route = '/laminar/margin';
   final AppStore store;
+  final Widget child;
+  final Function onRefresh;
 
   @override
   _LaminarMarginPageState createState() => _LaminarMarginPageState();
@@ -31,6 +33,7 @@ class _LaminarMarginPageState extends State<LaminarMarginPage> {
 
   Future<void> _fetchData() async {
     webApi.assets.fetchBalance();
+    widget.onRefresh();
     await webApi.laminar.subscribeMarginTraderInfo();
   }
 
@@ -117,7 +120,7 @@ class _LaminarMarginPageState extends State<LaminarMarginPage> {
                             })
                         : Container(),
                     Divider(height: 2),
-                    LaminarMarginPositions(widget.store),
+                    widget.child,
                   ],
                 ),
               ),
