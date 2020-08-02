@@ -107,6 +107,8 @@ const int acala_token_decimals = 18;
 const int SECONDS_OF_DAY = 24 * 60 * 60; // seconds of one day
 const int SECONDS_OF_YEAR = 365 * 24 * 60 * 60; // seconds of one year
 
+const String token_denomination_dot_old = 'DOT (old)';
+const String token_denomination_dot_new = 'New DOT';
 const String acala_stable_coin = 'AUSD';
 const String acala_stable_coin_view = 'aUSD';
 const String acala_token_ren_btc = 'RENBTC';
@@ -117,7 +119,7 @@ const String cross_chain_transfer_address_laminar =
     '5CLaminarAUSDCrossChainTransferxxxxxxxxxxxxxwisu';
 
 /// app versions
-const String app_beta_version = '0.8.5-beta.2';
+const String app_beta_version = '0.8.6-beta.1';
 
 /// js code versions
 const Map<String, int> js_code_version_map = {
@@ -126,3 +128,27 @@ const Map<String, int> js_code_version_map = {
   network_name_acala_mandala: 8420,
   network_name_laminar_turbulence: 8420,
 };
+
+/// graphql for laminar
+const GraphQLConfig = {
+  'httpUri': 'https://indexer.laminar-chain.laminar.one/v1/graphql',
+  'wsUri': 'wss://indexer.laminar-chain.laminar.one/v1/graphql',
+};
+const Map<String, String> margin_pool_name_map = {
+  '0': 'Laminar',
+  '1': 'Crypto',
+  '2': 'FX',
+};
+const Map<String, String> synthetic_pool_name_map = {
+  '0': 'Laminar',
+  '1': 'Crypto',
+  '2': 'FX',
+};
+const Map<String, String> laminar_leverage_map = {
+  'Two': 'x2',
+  'Three': 'x3',
+  'Five': 'x5',
+  'Ten': 'x10',
+  'Twenty': 'x20',
+};
+final BigInt laminarIntDivisor = BigInt.parse('1000000000000000000');

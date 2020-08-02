@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-laminar/laminarEntry.dart';
 import 'package:polka_wallet/page/assets/index.dart';
 import 'package:polka_wallet/page/staking/index.dart';
 import 'package:polka_wallet/page/governance/index.dart';
@@ -40,26 +41,28 @@ class _HomePageState extends State<HomePage> {
 
   final List<String> _tabListLaminar = [
     'Assets',
+    'Flow',
     'Profile',
   ];
 
   List<BottomNavigationBarItem> _navBarItems(int activeItem) {
     Map<String, String> tabs = I18n.of(context).home;
-    return _tabList
-        .map((i) => BottomNavigationBarItem(
-              icon: Image.asset(_tabList[activeItem] == i
-                  ? 'assets/images/public/${i}_${store.settings.endpoint.color ?? 'pink'}.png'
-                  : 'assets/images/public/${i}_dark.png'),
-              title: Text(
-                tabs[i.toLowerCase()],
-                style: TextStyle(
-                    fontSize: 14,
-                    color: _tabList[activeItem] == i
-                        ? Theme.of(context).primaryColor
-                        : Colors.grey),
-              ),
-            ))
-        .toList();
+    return _tabList.map((i) {
+      String icon = i == 'Flow' ? 'Acala' : i;
+      return BottomNavigationBarItem(
+        icon: Image.asset(_tabList[activeItem] == i
+            ? 'assets/images/public/${icon}_${store.settings.endpoint.color ?? 'pink'}.png'
+            : 'assets/images/public/${icon}_dark.png'),
+        title: Text(
+          tabs[i.toLowerCase()],
+          style: TextStyle(
+              fontSize: 14,
+              color: _tabList[activeItem] == i
+                  ? Theme.of(context).primaryColor
+                  : Colors.grey),
+        ),
+      );
+    }).toList();
   }
 
   Widget _getPage(i) {
@@ -69,6 +72,8 @@ class _HomePageState extends State<HomePage> {
       switch (i) {
         case 0:
           return Assets(store);
+        case 1:
+          return LaminarEntry(store);
         default:
           return Profile(store);
       }

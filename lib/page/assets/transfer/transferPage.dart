@@ -74,15 +74,16 @@ class _TransferPageState extends State<TransferPage> {
     if (_formKey.currentState.validate()) {
       String symbol = _tokenSymbol ?? store.settings.networkState.tokenSymbol;
       int decimals = store.settings.networkState.tokenDecimals;
+      final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
       var args = {
-        "title": I18n.of(context).assets['transfer'] + ' $symbol',
+        "title": I18n.of(context).assets['transfer'] + ' $tokenView',
         "txInfo": {
           "module": 'balances',
           "call": 'transfer',
         },
         "detail": jsonEncode({
           "destination": _addressCtrl.text.trim(),
-          "currency": symbol,
+          "currency": tokenView,
           "amount": _amountCtrl.text.trim(),
         }),
         "params": [
@@ -215,12 +216,13 @@ class _TransferPageState extends State<TransferPage> {
     return Observer(
       builder: (_) {
         final Map<String, String> dic = I18n.of(context).assets;
-        String baseTokenSymbol = store.settings.networkState.tokenSymbol;
+        final int decimals = store.settings.networkState.tokenDecimals;
+        final String baseTokenSymbol = store.settings.networkState.tokenSymbol;
+        final String baseTokenSymbolView =
+            Fmt.tokenView(baseTokenSymbol, decimalsDot: decimals);
         String symbol = _tokenSymbol ?? baseTokenSymbol;
         final bool isBaseToken = _tokenSymbol == baseTokenSymbol;
         List symbolOptions = store.settings.networkConst['currencyIds'];
-
-        int decimals = store.settings.networkState.tokenDecimals;
 
         BigInt available = isBaseToken
             ? store.assets.balances[symbol.toUpperCase()].transferable
@@ -371,7 +373,7 @@ class _TransferPageState extends State<TransferPage> {
                             Padding(
                               padding: EdgeInsets.only(top: 16),
                               child: Text(
-                                  'existentialDeposit: ${store.settings.existentialDeposit} $baseTokenSymbol',
+                                  'existentialDeposit: ${store.settings.existentialDeposit} $baseTokenSymbolView',
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.black54)),
                             ),
@@ -385,7 +387,7 @@ class _TransferPageState extends State<TransferPage> {
                             Padding(
                               padding: EdgeInsets.only(top: 16),
                               child: Text(
-                                  'transactionByteFee: ${store.settings.transactionByteFee} $baseTokenSymbol',
+                                  'transactionByteFee: ${store.settings.transactionByteFee} $baseTokenSymbolView',
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.black54)),
                             ),

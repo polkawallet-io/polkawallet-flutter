@@ -31,3 +31,17 @@ abstract class _LaminarBalanceData {
   String tokenId;
   String free;
 }
+
+@JsonSerializable()
+class LaminarPriceData extends _LaminarPriceData {
+  static LaminarPriceData fromJson(Map<String, dynamic> json) =>
+      _$LaminarPriceDataFromJson(json);
+  static Map<String, dynamic> toJson(LaminarPriceData info) =>
+      _$LaminarPriceDataToJson(info);
+}
+
+abstract class _LaminarPriceData {
+  String tokenId;
+  String value;
+  int timestamp;
+}

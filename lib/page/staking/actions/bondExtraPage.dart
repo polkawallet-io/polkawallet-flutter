@@ -34,6 +34,7 @@ class _BondExtraPageState extends State<BondExtraPage> {
     var assetDic = I18n.of(context).assets;
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
+    final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
 
     BigInt balance = store.assets.balances[symbol].freeBalance;
     BigInt bonded = BigInt.parse(
@@ -67,7 +68,7 @@ class _BondExtraPageState extends State<BondExtraPage> {
                         decoration: InputDecoration(
                           hintText: assetDic['amount'],
                           labelText:
-                              '${assetDic['amount']} (${dic['available']}: ${Fmt.token(available)} $symbol)',
+                              '${assetDic['amount']} (${dic['available']}: ${Fmt.token(available)} $tokenView)',
                         ),
                         inputFormatters: [
                           RegExInputFormatter.withRegex(

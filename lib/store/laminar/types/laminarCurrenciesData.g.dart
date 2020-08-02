@@ -37,3 +37,17 @@ Map<String, dynamic> _$LaminarBalanceDataToJson(LaminarBalanceData instance) =>
       'tokenId': instance.tokenId,
       'free': instance.free,
     };
+
+LaminarPriceData _$LaminarPriceDataFromJson(Map<String, dynamic> json) {
+  return LaminarPriceData()
+    ..tokenId = json['tokenId'] as String
+    ..value = json['value'] as String
+    ..timestamp = json['timestamp'] as int;
+}
+
+Map<String, dynamic> _$LaminarPriceDataToJson(LaminarPriceData instance) =>
+    <String, dynamic>{
+      'tokenId': instance.tokenId,
+      'value': instance.value,
+      'timestamp': instance.timestamp,
+    };

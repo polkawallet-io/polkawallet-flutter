@@ -17,6 +17,7 @@ class TransferDetailPage extends StatelessWidget {
     final Map<String, String> dic = I18n.of(context).assets;
     final String symbol = store.settings.networkState.tokenSymbol;
     final int decimals = store.settings.networkState.tokenDecimals;
+    final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
 
     final TransferData tx = ModalRoute.of(context).settings.arguments;
 
@@ -36,12 +37,12 @@ class TransferDetailPage extends StatelessWidget {
       info: <DetailInfoItem>[
         DetailInfoItem(
           label: dic['value'],
-          title: '${tx.amount} $symbol',
+          title: '${tx.amount} $tokenView',
         ),
         DetailInfoItem(
           label: dic['fee'],
           title:
-              '${Fmt.balance(tx.fee, decimals: decimals, length: decimals)} $symbol',
+              '${Fmt.balance(tx.fee, decimals: decimals, length: decimals)} $tokenView',
         ),
         DetailInfoItem(
           label: dic['from'],

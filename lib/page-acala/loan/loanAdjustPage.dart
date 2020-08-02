@@ -187,6 +187,11 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     if (v.isEmpty) {
       return assetDic['amount.error'];
     }
+    try {
+      final double amt = double.parse(v);
+    } catch (err) {
+      return assetDic['amount.error'];
+    }
     final LoanAdjustPageParams params =
         ModalRoute.of(context).settings.arguments;
     if (params.actionType == LoanAdjustPage.actionTypeBorrow &&

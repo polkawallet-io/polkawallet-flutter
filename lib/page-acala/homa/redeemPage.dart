@@ -136,7 +136,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
         era = pool.freeList[_eraSelected].era;
       }
       var args = {
-        "title": I18n.of(context).acala['homa.mint'],
+        "title": I18n.of(context).acala['homa.redeem'],
         "txInfo": {
           "module": 'homa',
           "call": 'redeem',

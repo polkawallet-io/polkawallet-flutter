@@ -14,7 +14,6 @@ import 'package:polka_wallet/service/substrateApi/apiStaking.dart';
 import 'package:polka_wallet/service/substrateApi/laminar/apiLaminar.dart';
 import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/UI.dart';
 
 // global api instance
@@ -235,6 +234,7 @@ class Api {
     if (store.account.accountListAll.length > 0) {
       if (store.settings.endpoint.info == networkEndpointAcala.info ||
           store.settings.endpoint.info == networkEndpointLaminar.info) {
+        laminar.subscribeTokenPrices();
         await assets.fetchBalance();
         return;
       }
@@ -283,7 +283,7 @@ class Api {
     Function callback,
   ) async {
     _msgHandlers[channel] = callback;
-    evalJavascript(code);
+    evalJavascript(code, allowRepeat: true);
   }
 
   Future<void> unsubscribeMessage(String channel) async {

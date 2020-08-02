@@ -9,6 +9,7 @@ import 'package:polka_wallet/page/governance/democracy/referendumPanel.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/UI.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Democracy extends StatefulWidget {
@@ -74,7 +75,9 @@ class _DemocracyState extends State<Democracy> {
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        String symbol = store.settings.networkState.tokenSymbol;
+        final int decimals = store.settings.networkState.tokenDecimals;
+        final String symbol = store.settings.networkState.tokenSymbol;
+        final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
         List<ReferendumInfo> list = store.gov.referendums;
         int bestNumber = store.gov.bestNumber;
         return RefreshIndicator(
@@ -94,7 +97,7 @@ class _DemocracyState extends State<Democracy> {
                         return ReferendumPanel(
                           data: list[i],
                           bestNumber: bestNumber,
-                          symbol: symbol,
+                          symbol: tokenView,
                           onCancelVote: _submitCancelVote,
                           blockDuration: store.settings.networkConst['babe']
                               ['expectedBlockTime'],

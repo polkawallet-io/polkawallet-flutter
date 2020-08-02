@@ -87,6 +87,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
             controller: _passCtrl,
             obscureText: true,
             validator: (v) {
+              // TODO: fix me: disable validator for polkawallet-RN exported keystore importing
+              return null;
               return v.trim().length > 0 ? null : dic['create.password.error'];
             },
           ),

@@ -2,6 +2,10 @@ import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/transferData.dart';
+import 'package:polka_wallet/store/laminar/types/laminarCurrenciesData.dart';
+import 'package:polka_wallet/store/laminar/types/laminarMarginData.dart';
+import 'package:polka_wallet/store/laminar/types/laminarSyntheticData.dart';
+import 'package:polka_wallet/store/laminar/types/laminarTxSwapData.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 part 'laminar.g.dart';
@@ -16,16 +20,54 @@ abstract class _LaminarStore with Store {
   final AppStore rootStore;
 
   final String cacheTxsTransferKey = 'laminar_transfer_txs';
+  final String cacheTxsSwapKey = 'laminar_swap_txs';
 
   @observable
   ObservableList<TransferData> txsTransfer = ObservableList<TransferData>();
 
+  @observable
+  ObservableList<LaminarTxSwapData> txsSwap =
+      ObservableList<LaminarTxSwapData>();
+
+  @observable
+  Map<String, LaminarPriceData> tokenPrices = {};
+
+  @observable
+  ObservableMap<String, LaminarSyntheticPoolInfoData> syntheticPoolInfo =
+      ObservableMap();
+
+  @observable
+  ObservableMap<String, LaminarMarginPoolInfoData> marginPoolInfo =
+      ObservableMap();
+
+  @observable
+  ObservableMap<String, LaminarMarginTraderInfoData> marginTraderInfo =
+      ObservableMap();
+
+  @computed
+  List<LaminarSyntheticPoolTokenData> get syntheticTokens {
+    List<LaminarSyntheticPoolTokenData> res = [];
+    syntheticPoolInfo.keys.forEach((key) {
+      res.addAll(syntheticPoolInfo[key].options);
+    });
+    return res;
+  }
+
+  @computed
+  List<LaminarMarginPairData> get marginTokens {
+    List<LaminarMarginPairData> res = [];
+    marginPoolInfo.keys.forEach((key) {
+      res.addAll(marginPoolInfo[key].options);
+    });
+    return res;
+  }
+
   @action
-  Future<void> setTransferTxs(
+  void setTransferTxs(
     List list, {
     bool reset = false,
     needCache = true,
-  }) async {
+  }) {
     List transfers = list.map((i) {
       return {
         "block_timestamp": int.parse(i['time'].toString().substring(0, 10)),
@@ -47,6 +89,49 @@ abstract class _LaminarStore with Store {
 
     if (needCache && txsTransfer.length > 0) {
       _cacheTxs(list, cacheTxsTransferKey);
+    }
+  }
+
+  @action
+  void setTokenPrices(List prices) {
+    final Map<String, LaminarPriceData> res = {};
+    prices.forEach((e) {
+      res[e['tokenId']] = LaminarPriceData.fromJson(e);
+    });
+    tokenPrices = res;
+  }
+
+  @action
+  void setSyntheticPoolInfo(Map info) {
+    syntheticPoolInfo
+        .addAll({info['poolId']: LaminarSyntheticPoolInfoData.fromJson(info)});
+  }
+
+  @action
+  void setMarginPoolInfo(Map info) {
+    marginPoolInfo
+        .addAll({info['poolId']: LaminarMarginPoolInfoData.fromJson(info)});
+  }
+
+  @action
+  void setMarginTraderInfo(Map info) {
+    marginTraderInfo
+        .addAll({info['poolId']: LaminarMarginTraderInfoData.fromJson(info)});
+  }
+
+  @action
+  Future<void> setSwapTxs(List list,
+      {bool reset = false, needCache = true}) async {
+    if (reset) {
+      txsSwap = ObservableList.of(list.map(
+          (i) => LaminarTxSwapData.fromJson(Map<String, dynamic>.from(i))));
+    } else {
+      txsSwap.addAll(list.map(
+          (i) => LaminarTxSwapData.fromJson(Map<String, dynamic>.from(i))));
+    }
+
+    if (needCache && txsSwap.length > 0) {
+      _cacheTxs(list, cacheTxsSwapKey);
     }
   }
 
@@ -74,7 +159,7 @@ abstract class _LaminarStore with Store {
       rootStore.localStorage.getAccountCache(pubKey, cacheTxsTransferKey),
     ]);
     if (cache[0] != null) {
-      setTransferTxs(List.of(cache[1]), reset: true, needCache: false);
+      setTransferTxs(List.of(cache[0]), reset: true, needCache: false);
     } else {
       setTransferTxs([], reset: true, needCache: false);
     }

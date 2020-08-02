@@ -26,7 +26,7 @@ abstract class _SettingsStore with Store {
   final String cacheNetworkConstKey = 'network_const';
 
   String _getCacheKeyOfNetwork(String key) {
-    return '${rootStore.settings.endpoint.info}_$key';
+    return '${endpoint.info}_$key';
   }
 
   @observable
@@ -94,8 +94,8 @@ abstract class _SettingsStore with Store {
   @action
   Future<void> init(String sysLocaleCode) async {
     await loadLocalCode();
+    await loadEndpoint(sysLocaleCode);
     await Future.wait([
-      loadEndpoint(sysLocaleCode),
       loadCustomSS58Format(),
       loadNetworkStateCache(),
       loadContacts(),

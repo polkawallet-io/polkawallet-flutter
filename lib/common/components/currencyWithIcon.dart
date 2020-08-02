@@ -21,6 +21,7 @@ class CurrencyWithIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final String networkToken =
         globalAppStore.settings.networkState.tokenSymbol;
+    final int decimals = globalAppStore.settings.networkState.tokenDecimals;
     final bool isLaminar =
         globalAppStore.settings.endpoint.info == networkEndpointLaminar.info;
     bool hasIcon = true;
@@ -35,6 +36,7 @@ class CurrencyWithIcon extends StatelessWidget {
       children: <Widget>[
         Container(
           width: 32,
+          height: 32,
           padding: EdgeInsets.only(right: 4),
           child: hasIcon
               ? Image.asset('assets/images/assets/${symbol.toUpperCase()}.png')
@@ -45,7 +47,7 @@ class CurrencyWithIcon extends StatelessWidget {
         Expanded(
           flex: 0,
           child: Text(
-            Fmt.tokenView(symbol),
+            Fmt.tokenView(symbol, decimalsDot: decimals),
             style: textStyle,
           ),
         ),

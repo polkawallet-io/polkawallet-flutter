@@ -32,8 +32,13 @@ class _ChangePassword extends State<ChangePasswordPage> {
   Future<void> _onSave() async {
     if (_formKey.currentState.validate()) {
       var dic = I18n.of(context).profile;
+      final String passOld = _passOldCtrl.text.trim();
+      final String passNew = _passCtrl.text.trim();
+//      print(passOld);
+//      print(passNew);
+      // todo: it seems the js-keyring can be changed by wrong password which causes password not work until js reload
       var acc = await api.evalJavascript(
-          'account.changePassword("${store.currentAccount.pubKey}", "${_passOldCtrl.text}", "${_passCtrl.text}")');
+          'account.changePassword("${store.currentAccount.pubKey}", "$passOld", "$passNew")');
       if (acc == null) {
         showCupertinoDialog(
           context: context,
@@ -44,7 +49,10 @@ class _ChangePassword extends State<ChangePasswordPage> {
               actions: <Widget>[
                 CupertinoButton(
                   child: Text(I18n.of(context).home['ok']),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    _passOldCtrl.clear();
+                    Navigator.of(context).pop();
+                  },
                 ),
               ],
             );
@@ -116,6 +124,8 @@ class _ChangePassword extends State<ChangePasswordPage> {
                       ),
                       controller: _passOldCtrl,
                       validator: (v) {
+                        // TODO: fix me: disable validator for polkawallet-RN exported keystore importing
+                        return null;
                         return Fmt.checkPassword(v.trim())
                             ? null
                             : accDic['create.password.error'];

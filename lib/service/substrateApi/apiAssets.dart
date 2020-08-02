@@ -32,7 +32,11 @@ class ApiAssets {
     store.assets.setTxsLoading(true);
 
     String address = store.account.currentAddress;
-    Map res = await apiRoot.subScanApi.fetchTransfersAsync(address, page);
+    Map res = await apiRoot.subScanApi.fetchTransfersAsync(
+      address,
+      page,
+      network: store.settings.endpoint.info,
+    );
 
     if (page == 0) {
       store.assets.clearTxs();

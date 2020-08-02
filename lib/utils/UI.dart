@@ -303,3 +303,7 @@ final GlobalKey<RefreshIndicatorState> globalDexLiquidityRefreshKey =
 // acala homa page:
 final GlobalKey<RefreshIndicatorState> globalHomaRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
+
+// laminar margin page:
+final GlobalKey<RefreshIndicatorState> globalMarginRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();

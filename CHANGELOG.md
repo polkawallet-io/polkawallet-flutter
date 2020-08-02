@@ -1,3 +1,8 @@
+# 0.8.6
+- add laminar flow exchange support
+- add new DOT tickers: DOT (old) & New DOT
+- fix acala UI issues
+
 # 0.8.5
 - add cross chain aUSD transfer history bug
 - fix renBTC token display in Acala pages

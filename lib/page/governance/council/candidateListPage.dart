@@ -62,6 +62,9 @@ class _CandidateList extends State<CandidateListPage> {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).gov;
+    final int decimals = store.settings.networkState.tokenDecimals;
+    final String symbol = store.settings.networkState.tokenSymbol;
+    final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
 
     List<List> list = [];
     list.addAll(_selected);
@@ -111,7 +114,7 @@ class _CandidateList extends State<CandidateListPage> {
                     return CandidateItem(
                       accInfo: accInfo,
                       balance: i,
-                      tokenSymbol: store.settings.networkState.tokenSymbol,
+                      tokenSymbol: tokenView,
                       switchValue: _selectedMap[i[0]],
                       onSwitch: (value) {
                         setState(() {
