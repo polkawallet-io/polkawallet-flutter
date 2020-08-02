@@ -329,7 +329,11 @@ class Fmt {
     return display;
   }
 
-  static String tokenView(String token, {int decimalsDot}) {
+  static String tokenView(
+    String token, {
+    int decimalsDot,
+    String network = network_name_kusama,
+  }) {
     String tokenView = token;
     if (token == acala_stable_coin) {
       tokenView = acala_stable_coin_view;
@@ -337,7 +341,7 @@ class Fmt {
     if (token == acala_token_ren_btc) {
       tokenView = acala_token_ren_btc_view;
     }
-    if (token == 'DOT') {
+    if (network == network_name_polkadot && token == 'DOT') {
       if (decimalsDot == kusama_token_decimals) {
         tokenView = token_denomination_dot_old;
       } else {

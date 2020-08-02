@@ -63,11 +63,11 @@ abstract class _LaminarStore with Store {
   }
 
   @action
-  Future<void> setTransferTxs(
+  void setTransferTxs(
     List list, {
     bool reset = false,
     needCache = true,
-  }) async {
+  }) {
     List transfers = list.map((i) {
       return {
         "block_timestamp": int.parse(i['time'].toString().substring(0, 10)),
@@ -93,7 +93,7 @@ abstract class _LaminarStore with Store {
   }
 
   @action
-  Future<void> setTokenPrices(List prices) async {
+  void setTokenPrices(List prices) {
     final Map<String, LaminarPriceData> res = {};
     prices.forEach((e) {
       res[e['tokenId']] = LaminarPriceData.fromJson(e);
@@ -102,19 +102,19 @@ abstract class _LaminarStore with Store {
   }
 
   @action
-  Future<void> setSyntheticPoolInfo(Map info) async {
+  void setSyntheticPoolInfo(Map info) {
     syntheticPoolInfo
         .addAll({info['poolId']: LaminarSyntheticPoolInfoData.fromJson(info)});
   }
 
   @action
-  Future<void> setMarginPoolInfo(Map info) async {
+  void setMarginPoolInfo(Map info) {
     marginPoolInfo
         .addAll({info['poolId']: LaminarMarginPoolInfoData.fromJson(info)});
   }
 
   @action
-  Future<void> setMarginTraderInfo(Map info) async {
+  void setMarginTraderInfo(Map info) {
     marginTraderInfo
         .addAll({info['poolId']: LaminarMarginTraderInfoData.fromJson(info)});
   }
@@ -159,7 +159,7 @@ abstract class _LaminarStore with Store {
       rootStore.localStorage.getAccountCache(pubKey, cacheTxsTransferKey),
     ]);
     if (cache[0] != null) {
-      setTransferTxs(List.of(cache[1]), reset: true, needCache: false);
+      setTransferTxs(List.of(cache[0]), reset: true, needCache: false);
     } else {
       setTransferTxs([], reset: true, needCache: false);
     }

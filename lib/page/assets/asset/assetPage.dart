@@ -51,8 +51,7 @@ class _AssetPageState extends State<AssetPage>
     webApi.assets.fetchBalance();
     Map res = {"transfers": []};
 
-    if (store.settings.endpoint.info != networkEndpointAcala.info &&
-        store.settings.endpoint.info != networkEndpointLaminar.info) {
+    if (store.settings.endpoint.info != networkEndpointLaminar.info) {
       webApi.staking.fetchAccountStaking();
       res = await webApi.assets.updateTxs(_txsPage);
     }
@@ -110,14 +109,14 @@ class _AssetPageState extends State<AssetPage>
 
   List<Widget> _buildTxList() {
     List<Widget> res = [];
+    final String symbol = store.settings.networkState.tokenSymbol;
     final String token = ModalRoute.of(context).settings.arguments;
-    final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    final bool isBaseToken = token == symbol;
+//    final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
     final isLaminar =
         store.settings.endpoint.info == networkEndpointLaminar.info;
-    List<TransferData> ls = isAcala
-        ? store.acala.txsTransfer.reversed.toList()
-        : store.laminar.txsTransfer.reversed.toList();
-    if (isAcala || isLaminar) {
+    if (!isBaseToken || isLaminar) {
+      List<TransferData> ls = store.laminar.txsTransfer.reversed.toList();
       ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
       res.addAll(ls.map((i) {
         String crossChain;
@@ -162,8 +161,14 @@ class _AssetPageState extends State<AssetPage>
 
   @override
   Widget build(BuildContext context) {
+    final int decimals = store.settings.networkState.tokenDecimals;
     final String symbol = store.settings.networkState.tokenSymbol;
     final String token = ModalRoute.of(context).settings.arguments;
+    final String tokenView = Fmt.tokenView(
+      token,
+      decimalsDot: decimals,
+      network: store.settings.endpoint.info,
+    );
     final bool isBaseToken = token == symbol;
     final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
     final isLaminar =
@@ -181,23 +186,19 @@ class _AssetPageState extends State<AssetPage>
     final titleColor = Theme.of(context).cardColor;
     return Scaffold(
       appBar: AppBar(
-        title: Text(token),
+        title: Text(tokenView),
         centerTitle: true,
         elevation: 0.0,
       ),
       body: SafeArea(
         child: Observer(
           builder: (_) {
-            int decimals = store.settings.networkState.tokenDecimals;
-
             BigInt balance =
                 Fmt.balanceInt(store.assets.tokenBalances[token.toUpperCase()]);
 
             BalancesInfo balancesInfo = store.assets.balances[symbol];
             String lockedInfo = '\n';
             if (balancesInfo != null && balancesInfo.lockedBreakdown != null) {
-              final String tokenView =
-                  Fmt.tokenView(symbol, decimalsDot: decimals);
               balancesInfo.lockedBreakdown.forEach((i) {
                 if (i.amount > BigInt.zero) {
                   lockedInfo +=
@@ -278,7 +279,7 @@ class _AssetPageState extends State<AssetPage>
                     ],
                   ),
                 ),
-                !isAcala && !isLaminar
+                isBaseToken && !isLaminar
                     ? TabBar(
                         labelColor: Colors.black87,
                         labelStyle: TextStyle(fontSize: 18),

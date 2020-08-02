@@ -47,7 +47,10 @@ class SubScanApi {
 
   static String getSnEndpoint(String network) {
     if (network.contains('polkadot')) {
-      network = 'polkadot-cc1';
+      network = 'polkadot';
+    }
+    if (network.contains('acala')) {
+      network = 'acala-testnet';
     }
     return 'https://$network.subscan.io/api/scan';
   }
@@ -110,6 +113,7 @@ class SubScanApi {
 
   static Future<Map> fetchTransfers(SubScanRequestParams params) async {
     String url = '${getSnEndpoint(params.network)}/transfers';
+    print(url);
     Map<String, String> headers = {
       "Content-type": "application/json",
       "Accept": "*/*"

@@ -44,12 +44,14 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
 
   Future<void> _fetchData() async {
     webApi.assets.fetchBalance();
-    await webApi.laminar.subscribeSyntheticPools();
+    final Map res = await webApi.laminar.subscribeSyntheticPools();
 
     if (_tokenPool == null) {
+      final LaminarSyntheticPoolTokenData token =
+          LaminarSyntheticPoolTokenData.fromJson(res['options'][0]);
       setState(() {
-        _tokenPool = widget.store.laminar.syntheticTokens[0];
-        _tokenReceive = widget.store.laminar.syntheticTokens[0].tokenId;
+        _tokenPool = token;
+        _tokenReceive = token.tokenId;
       });
     }
   }

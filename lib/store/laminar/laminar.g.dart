@@ -118,51 +118,6 @@ mixin _$LaminarStore on _LaminarStore, Store {
     });
   }
 
-  final _$setTransferTxsAsyncAction =
-      AsyncAction('_LaminarStore.setTransferTxs');
-
-  @override
-  Future<void> setTransferTxs(List<dynamic> list,
-      {bool reset = false, dynamic needCache = true}) {
-    return _$setTransferTxsAsyncAction.run(
-        () => super.setTransferTxs(list, reset: reset, needCache: needCache));
-  }
-
-  final _$setTokenPricesAsyncAction =
-      AsyncAction('_LaminarStore.setTokenPrices');
-
-  @override
-  Future<void> setTokenPrices(List<dynamic> prices) {
-    return _$setTokenPricesAsyncAction.run(() => super.setTokenPrices(prices));
-  }
-
-  final _$setSyntheticPoolInfoAsyncAction =
-      AsyncAction('_LaminarStore.setSyntheticPoolInfo');
-
-  @override
-  Future<void> setSyntheticPoolInfo(Map<dynamic, dynamic> info) {
-    return _$setSyntheticPoolInfoAsyncAction
-        .run(() => super.setSyntheticPoolInfo(info));
-  }
-
-  final _$setMarginPoolInfoAsyncAction =
-      AsyncAction('_LaminarStore.setMarginPoolInfo');
-
-  @override
-  Future<void> setMarginPoolInfo(Map<dynamic, dynamic> info) {
-    return _$setMarginPoolInfoAsyncAction
-        .run(() => super.setMarginPoolInfo(info));
-  }
-
-  final _$setMarginTraderInfoAsyncAction =
-      AsyncAction('_LaminarStore.setMarginTraderInfo');
-
-  @override
-  Future<void> setMarginTraderInfo(Map<dynamic, dynamic> info) {
-    return _$setMarginTraderInfoAsyncAction
-        .run(() => super.setMarginTraderInfo(info));
-  }
-
   final _$setSwapTxsAsyncAction = AsyncAction('_LaminarStore.setSwapTxs');
 
   @override
@@ -185,6 +140,65 @@ mixin _$LaminarStore on _LaminarStore, Store {
   @override
   Future<void> loadCache() {
     return _$loadCacheAsyncAction.run(() => super.loadCache());
+  }
+
+  final _$_LaminarStoreActionController =
+      ActionController(name: '_LaminarStore');
+
+  @override
+  void setTransferTxs(List<dynamic> list,
+      {bool reset = false, dynamic needCache = true}) {
+    final _$actionInfo = _$_LaminarStoreActionController.startAction(
+        name: '_LaminarStore.setTransferTxs');
+    try {
+      return super.setTransferTxs(list, reset: reset, needCache: needCache);
+    } finally {
+      _$_LaminarStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setTokenPrices(List<dynamic> prices) {
+    final _$actionInfo = _$_LaminarStoreActionController.startAction(
+        name: '_LaminarStore.setTokenPrices');
+    try {
+      return super.setTokenPrices(prices);
+    } finally {
+      _$_LaminarStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setSyntheticPoolInfo(Map<dynamic, dynamic> info) {
+    final _$actionInfo = _$_LaminarStoreActionController.startAction(
+        name: '_LaminarStore.setSyntheticPoolInfo');
+    try {
+      return super.setSyntheticPoolInfo(info);
+    } finally {
+      _$_LaminarStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setMarginPoolInfo(Map<dynamic, dynamic> info) {
+    final _$actionInfo = _$_LaminarStoreActionController.startAction(
+        name: '_LaminarStore.setMarginPoolInfo');
+    try {
+      return super.setMarginPoolInfo(info);
+    } finally {
+      _$_LaminarStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setMarginTraderInfo(Map<dynamic, dynamic> info) {
+    final _$actionInfo = _$_LaminarStoreActionController.startAction(
+        name: '_LaminarStore.setMarginTraderInfo');
+    try {
+      return super.setMarginTraderInfo(info);
+    } finally {
+      _$_LaminarStoreActionController.endAction(_$actionInfo);
+    }
   }
 
   @override

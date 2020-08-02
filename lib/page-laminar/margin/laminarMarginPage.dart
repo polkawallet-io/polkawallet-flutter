@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/page-laminar/margin/laminarMarginPositions.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginTradePairSelector.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginTradePanel.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginTraderInfoPanel.dart';

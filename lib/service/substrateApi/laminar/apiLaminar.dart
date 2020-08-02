@@ -56,7 +56,7 @@ class ApiLaminar {
       syntheticPoolsSubscribeChannel,
       (Map res) {
         store.laminar.setSyntheticPoolInfo(res);
-        if (!c.isCompleted) {
+        if (List.of(res['options']).length > 0 && !c.isCompleted) {
           c.complete(res);
         }
       },
@@ -71,7 +71,7 @@ class ApiLaminar {
       marginPoolsSubscribeChannel,
       (Map res) {
         store.laminar.setMarginPoolInfo(res);
-        if (!c.isCompleted) {
+        if (List.of(res['options']).length > 0 && !c.isCompleted) {
           c.complete(res);
         }
       },
