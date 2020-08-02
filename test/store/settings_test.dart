@@ -36,16 +36,6 @@ void main() {
       expect(store.networkName, 'Kusama');
       expect(store.loading, false);
     });
-    test('set network state properly', () async {
-      store.setNetworkState(Map<String, dynamic>.of({
-        'ss58Format': 2,
-        'tokenDecimals': 12,
-        'tokenSymbol': 'KSM',
-      }));
-      expect(store.networkState.ss58Format, 2);
-      expect(store.networkState.tokenDecimals, 12);
-      expect(store.networkState.tokenSymbol, 'KSM');
-    });
 
     test('network endpoint test', () async {
       await store.init('_en');
@@ -57,6 +47,17 @@ void main() {
       store.setEndpoint(networkEndpointAcala);
       expect(store.endpoint.info, networkEndpointAcala.info);
       expect(store.endpointList.length, 3);
+    });
+
+    test('set network state properly', () async {
+      store.setNetworkState(Map<String, dynamic>.of({
+        'ss58Format': 2,
+        'tokenDecimals': 12,
+        'tokenSymbol': 'KSM',
+      }));
+      expect(store.networkState.ss58Format, 2);
+      expect(store.networkState.tokenDecimals, 12);
+      expect(store.networkState.tokenSymbol, 'KSM');
     });
   });
 }
