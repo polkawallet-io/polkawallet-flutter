@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:polka_wallet/common/components/listTail.dart';
 import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginPage.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginPositionItem.dart';
@@ -171,7 +172,12 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
                         child: Column(
                           children: _positionTab == 1
                               ? listAll.length == 0 || listClosed.length == 0
-                                  ? Container()
+                                  ? <Widget>[
+                                      ListTail(
+                                        isEmpty: true,
+                                        isLoading: false,
+                                      )
+                                    ]
                                   : listClosed.map((c) {
                                       final positionIndex =
                                           listAll.indexWhere((e) {
@@ -192,17 +198,24 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
                                             .networkState.tokenDecimals,
                                       );
                                     }).toList()
-                              : list.map((e) {
-                                  final LaminarMarginPairData pairData =
-                                      _getPairData(e);
-                                  return LaminarMarginPosition(
-                                    e,
-                                    pairData,
-                                    widget.store.laminar.tokenPrices,
-                                    decimals: widget.store.settings.networkState
-                                        .tokenDecimals,
-                                  );
-                                }).toList(),
+                              : list.length == 0
+                                  ? <Widget>[
+                                      ListTail(
+                                        isEmpty: true,
+                                        isLoading: false,
+                                      )
+                                    ]
+                                  : list.map((e) {
+                                      final LaminarMarginPairData pairData =
+                                          _getPairData(e);
+                                      return LaminarMarginPosition(
+                                        e,
+                                        pairData,
+                                        widget.store.laminar.tokenPrices,
+                                        decimals: widget.store.settings
+                                            .networkState.tokenDecimals,
+                                      );
+                                    }).toList(),
                         ),
                       )
                     ],
