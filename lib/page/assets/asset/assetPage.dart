@@ -51,7 +51,11 @@ class _AssetPageState extends State<AssetPage>
     webApi.assets.fetchBalance();
     Map res = {"transfers": []};
 
-    if (store.settings.endpoint.info != networkEndpointLaminar.info) {
+    final String symbol = store.settings.networkState.tokenSymbol;
+    final String token = ModalRoute.of(context).settings.arguments;
+    final bool isBaseToken = token == symbol;
+    if (isBaseToken &&
+        store.settings.endpoint.info != networkEndpointLaminar.info) {
       webApi.staking.fetchAccountStaking();
       res = await webApi.assets.updateTxs(_txsPage);
     }
@@ -116,7 +120,9 @@ class _AssetPageState extends State<AssetPage>
     final isLaminar =
         store.settings.endpoint.info == networkEndpointLaminar.info;
     if (!isBaseToken || isLaminar) {
-      List<TransferData> ls = store.laminar.txsTransfer.reversed.toList();
+      List<TransferData> ls = isLaminar
+          ? store.laminar.txsTransfer.reversed.toList()
+          : store.acala.txsTransfer.reversed.toList();
       ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
       res.addAll(ls.map((i) {
         String crossChain;

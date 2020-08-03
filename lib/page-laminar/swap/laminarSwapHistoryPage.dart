@@ -48,7 +48,8 @@ class _LaminarSwapHistoryPageState extends State<LaminarSwapHistoryPage> {
                         bottom: BorderSide(width: 0.5, color: Colors.black12)),
                   ),
                   child: ListTile(
-                    title: Text('${detail.call} ${detail.tokenId}'),
+                    title: Text(
+                        '${detail.call} ${isRedeem ? acala_stable_coin_view : detail.tokenId}'),
                     subtitle: Text(list[i].time.toString()),
                     trailing: Container(
                       width: 140,
