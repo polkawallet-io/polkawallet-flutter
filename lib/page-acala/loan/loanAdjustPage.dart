@@ -266,13 +266,19 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
           ]
         };
       case LoanAdjustPage.actionTypeWithdraw:
+
+        /// withdraw all if user input near max
+        BigInt amt =
+            loan.collaterals - _amountCollateral > BigInt.parse('1000000000000')
+                ? _amountCollateral
+                : loan.collaterals;
         return {
           'detail': jsonEncode({
             "amount": _amountCtrl.text.trim(),
           }),
           'params': [
             params.token,
-            (BigInt.zero - _amountCollateral).toString(),
+            (BigInt.zero - amt).toString(),
             0,
           ]
         };
