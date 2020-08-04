@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/backgroundWrapper.dart';
 import 'package:polka_wallet/common/components/topTaps.dart';
@@ -70,9 +71,11 @@ class _TreasuryPageState extends State<TreasuryPage> {
                   ],
                 ),
                 Expanded(
-                  child: _tab == 0
-                      ? SpendProposals(widget.store)
-                      : MoneyTips(widget.store),
+                  child: widget.store.gov.council.members == null
+                      ? CupertinoActivityIndicator()
+                      : _tab == 0
+                          ? SpendProposals(widget.store)
+                          : MoneyTips(widget.store),
                 ),
               ],
             ),

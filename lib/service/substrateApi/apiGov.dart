@@ -56,6 +56,13 @@ class ApiGovernance {
     List data = await apiRoot.evalJavascript('gov.fetchProposals()');
     if (data != null) {
       store.gov.setProposals(data);
+      List<String> addresses = [];
+      store.gov.proposals.forEach((e) {
+        addresses.add(e.proposer);
+        addresses.addAll(e.seconds);
+      });
+      await apiRoot.account.getAddressIcons(addresses);
+      await apiRoot.account.fetchAccountsIndex(addresses);
       return data;
     }
     return [];

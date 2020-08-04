@@ -172,7 +172,7 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
         widget.store.account.accountIndexMap[proposer.address];
     final Map accInfoBeneficiary =
         widget.store.account.accountIndexMap[beneficiary.address];
-    bool isCouncil = !false;
+    bool isCouncil = false;
     widget.store.gov.council.members.forEach((e) {
       if (widget.store.account.currentAddress == e[0]) {
         isCouncil = true;

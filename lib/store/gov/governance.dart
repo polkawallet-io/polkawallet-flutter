@@ -42,7 +42,7 @@ abstract class _GovernanceStore with Store {
   Map<String, dynamic> userCouncilVotes;
 
   @observable
-  ObservableList<ReferendumInfo> referendums;
+  List<ReferendumInfo> referendums;
 
   @observable
   List<ProposalInfoData> proposals = [];
@@ -81,7 +81,7 @@ abstract class _GovernanceStore with Store {
 
   @action
   void setReferendums(List ls) {
-    referendums = ObservableList.of(ls.map((i) => ReferendumInfo.fromJson(
+    referendums = List.of(ls.map((i) => ReferendumInfo.fromJson(
         i as Map<String, dynamic>, rootStore.account.currentAddress)));
   }
 
@@ -119,5 +119,15 @@ abstract class _GovernanceStore with Store {
     councilMotions = data
         .map((e) => CouncilMotionData.fromJson(Map<String, dynamic>.of(e)))
         .toList();
+  }
+
+  @action
+  void clearState() {
+    referendums = [];
+    proposals = [];
+    council = CouncilInfoData();
+    councilMotions = [];
+    treasuryOverview = TreasuryOverviewData();
+    treasuryTips = [];
   }
 }

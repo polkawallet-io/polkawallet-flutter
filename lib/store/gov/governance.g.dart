@@ -105,13 +105,13 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
   final _$referendumsAtom = Atom(name: '_GovernanceStore.referendums');
 
   @override
-  ObservableList<ReferendumInfo> get referendums {
+  List<ReferendumInfo> get referendums {
     _$referendumsAtom.reportRead();
     return super.referendums;
   }
 
   @override
-  set referendums(ObservableList<ReferendumInfo> value) {
+  set referendums(List<ReferendumInfo> value) {
     _$referendumsAtom.reportWrite(value, super.referendums, () {
       super.referendums = value;
     });
@@ -267,6 +267,17 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
         name: '_GovernanceStore.setCouncilMotions');
     try {
       return super.setCouncilMotions(data);
+    } finally {
+      _$_GovernanceStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void clearState() {
+    final _$actionInfo = _$_GovernanceStoreActionController.startAction(
+        name: '_GovernanceStore.clearState');
+    try {
+      return super.clearState();
     } finally {
       _$_GovernanceStoreActionController.endAction(_$actionInfo);
     }

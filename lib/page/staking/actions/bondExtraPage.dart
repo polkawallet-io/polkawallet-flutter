@@ -34,7 +34,11 @@ class _BondExtraPageState extends State<BondExtraPage> {
     var assetDic = I18n.of(context).assets;
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
-    final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
+    final String tokenView = Fmt.tokenView(
+      symbol,
+      decimalsDot: decimals,
+      network: store.settings.endpoint.info,
+    );
 
     BigInt balance = store.assets.balances[symbol].freeBalance;
     BigInt bonded = BigInt.parse(

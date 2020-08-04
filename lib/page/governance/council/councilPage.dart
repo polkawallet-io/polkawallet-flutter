@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/backgroundWrapper.dart';
 import 'package:polka_wallet/common/components/topTaps.dart';
@@ -74,8 +75,11 @@ class _GovernanceState extends State<CouncilPage> {
                   ],
                 ),
                 Expanded(
-                  child:
-                      _tab == 0 ? Council(widget.store) : Motions(widget.store),
+                  child: widget.store.gov.council.members == null
+                      ? CupertinoActivityIndicator()
+                      : _tab == 0
+                          ? Council(widget.store)
+                          : Motions(widget.store),
                 ),
               ],
             ),

@@ -81,7 +81,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
 
     await store.settings.loadNetworkStateCache();
 
-    store.gov.setReferendums([]);
+    store.gov.clearState();
     store.assets.loadCache();
     store.staking.clearState();
     store.staking.loadCache();

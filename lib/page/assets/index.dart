@@ -480,8 +480,10 @@ class _AssetsState extends State<Assets> {
                           child: Image.asset(
                               'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
                         ),
-                        title: Text(
-                            Fmt.tokenView(symbol, decimalsDot: decimals) ?? ''),
+                        title: Text(Fmt.tokenView(symbol,
+                                decimalsDot: decimals,
+                                network: store.settings.endpoint.info) ??
+                            ''),
                         trailing: Text(
                           Fmt.token(
                               balancesInfo != null

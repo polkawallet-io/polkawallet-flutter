@@ -57,7 +57,7 @@ class GovEntry extends StatelessWidget {
                               color: Colors.white,
                               size: 56,
                             ),
-                            color: Colors.black87,
+                            color: Theme.of(context).primaryColor,
                           ),
                           onTap: () => Navigator.of(context)
                               .pushNamed(DemocracyPage.route),
@@ -74,7 +74,7 @@ class GovEntry extends StatelessWidget {
                               color: Colors.white,
                               size: 56,
                             ),
-                            color: Colors.black87,
+                            color: Theme.of(context).primaryColor,
                           ),
                           onTap: () => Navigator.of(context)
                               .pushNamed(CouncilPage.route),
@@ -91,7 +91,7 @@ class GovEntry extends StatelessWidget {
                               color: Colors.white,
                               size: 56,
                             ),
-                            color: Colors.black87,
+                            color: Theme.of(context).primaryColor,
                           ),
                           onTap: () => Navigator.of(context)
                               .pushNamed(TreasuryPage.route),

@@ -85,7 +85,11 @@ class _TransferPageState extends State<TransferPage> {
     if (_formKey.currentState.validate()) {
       String symbol = _tokenSymbol ?? store.settings.networkState.tokenSymbol;
       int decimals = store.settings.networkState.tokenDecimals;
-      final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
+      final String tokenView = Fmt.tokenView(
+        symbol,
+        decimalsDot: decimals,
+        network: store.settings.endpoint.info,
+      );
       var args = {
         "title": I18n.of(context).assets['transfer'] + ' $tokenView',
         "txInfo": {
@@ -229,8 +233,11 @@ class _TransferPageState extends State<TransferPage> {
         final Map<String, String> dic = I18n.of(context).assets;
         final int decimals = store.settings.networkState.tokenDecimals;
         final String baseTokenSymbol = store.settings.networkState.tokenSymbol;
-        final String baseTokenSymbolView =
-            Fmt.tokenView(baseTokenSymbol, decimalsDot: decimals);
+        final String baseTokenSymbolView = Fmt.tokenView(
+          baseTokenSymbol,
+          decimalsDot: decimals,
+          network: store.settings.endpoint.info,
+        );
         String symbol = _tokenSymbol ?? baseTokenSymbol;
         final bool isBaseToken = _tokenSymbol == baseTokenSymbol;
         List symbolOptions = store.settings.networkConst['currencyIds'];

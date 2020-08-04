@@ -43,15 +43,6 @@ class Validator extends StatelessWidget {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      accInfo != null &&
-                              accInfo['identity']['judgements'].length > 0
-                          ? Container(
-                              width: 14,
-                              margin: EdgeInsets.only(right: 4),
-                              child: Image.asset(
-                                  'assets/images/assets/success.png'),
-                            )
-                          : Container(),
                       hasPhalaAirdrop ? TextTag(dic['phala']) : Container(),
                       Expanded(
                         child: Fmt.accountDisplayName(

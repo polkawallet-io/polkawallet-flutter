@@ -205,6 +205,12 @@ class _TipDetailPageState extends State<TipDetailPage> {
         isCouncil = true;
       }
     });
+    bool isEndorsed = false;
+    tipData.tips.forEach((e) {
+      if (widget.store.account.currentAddress == e.address) {
+        isEndorsed = true;
+      }
+    });
     int blockTime = 6000;
     if (widget.store.settings.networkConst['treasury'] != null) {
       blockTime =
@@ -334,8 +340,9 @@ class _TipDetailPageState extends State<TipDetailPage> {
                                         )
                                       : RoundedButton(
                                           text: dic['treasury.endorse'],
-                                          onPressed:
-                                              isCouncil ? _onEndorse : null,
+                                          onPressed: isCouncil && !isEndorsed
+                                              ? _onEndorse
+                                              : null,
                                         ),
                                 ),
                               ],
@@ -355,7 +362,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                        child: BorderedTitle(title: dic['treasury.tip']),
+                        child: BorderedTitle(title: dic['treasury.tipper']),
                       ),
                       Column(
                         children: tipData.tips.map((e) {

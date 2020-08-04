@@ -77,7 +77,11 @@ class _DemocracyState extends State<Democracy> {
       builder: (_) {
         final int decimals = store.settings.networkState.tokenDecimals;
         final String symbol = store.settings.networkState.tokenSymbol;
-        final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
+        final String tokenView = Fmt.tokenView(
+          symbol,
+          decimalsDot: decimals,
+          network: store.settings.endpoint.info,
+        );
         List<ReferendumInfo> list = store.gov.referendums;
         int bestNumber = store.gov.bestNumber;
         return RefreshIndicator(

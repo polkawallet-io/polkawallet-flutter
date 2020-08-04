@@ -48,8 +48,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     final Map args = ModalRoute.of(context).settings.arguments;
     Map txInfo = args['txInfo'];
     txInfo['pubKey'] = store.account.currentAccount.pubKey;
+    txInfo['address'] = store.account.currentAddress;
     if (_proxyAccount != null) {
-      txInfo['address'] = store.account.currentAddress;
       txInfo['proxy'] = _proxyAccount.pubKey;
     }
     Map fee = await webApi.account
@@ -203,10 +203,10 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
     Map txInfo = args['txInfo'];
     txInfo['pubKey'] = store.account.currentAccount.pubKey;
+    txInfo['address'] = store.account.currentAddress;
     txInfo['password'] = password;
     txInfo['tip'] = _tipValue.toString();
     if (_proxyAccount != null) {
-      txInfo['address'] = store.account.currentAddress;
       txInfo['proxy'] = _proxyAccount.pubKey;
       txInfo['ss58'] = store.settings.endpoint.ss58.toString();
     }

@@ -43,6 +43,7 @@ import 'package:polka_wallet/page/governance/council/councilPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
 import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
 import 'package:polka_wallet/page/governance/democracy/democracyPage.dart';
+import 'package:polka_wallet/page/governance/democracy/proposalDetailPage.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
 import 'package:polka_wallet/page/governance/treasury/spendProposalPage.dart';
 import 'package:polka_wallet/page/governance/treasury/submitProposalPage.dart';
@@ -85,7 +86,6 @@ import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/laminar/types/laminarTxSwapData.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/UI.dart';
 
@@ -283,6 +283,7 @@ class _WalletAppState extends State<WalletApp> {
           CouncilVotePage.route: (_) => CouncilVotePage(_appStore),
           CandidateListPage.route: (_) => CandidateListPage(_appStore),
           ReferendumVotePage.route: (_) => ReferendumVotePage(_appStore),
+          ProposalDetailPage.route: (_) => ProposalDetailPage(_appStore),
           // profile
           AccountManagePage.route: (_) => AccountManagePage(_appStore),
           ContactsPage.route: (_) => ContactsPage(_appStore),

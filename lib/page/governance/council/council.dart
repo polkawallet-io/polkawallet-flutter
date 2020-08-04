@@ -218,7 +218,11 @@ class _CouncilState extends State<Council> {
     return Observer(builder: (_) {
       final int decimals = store.settings.networkState.tokenDecimals;
       final String symbol = store.settings.networkState.tokenSymbol;
-      final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
+      final String tokenView = Fmt.tokenView(
+        symbol,
+        decimalsDot: decimals,
+        network: store.settings.endpoint.info,
+      );
       return RefreshIndicator(
         key: globalCouncilRefreshKey,
         onRefresh: _fetchCouncilInfo,

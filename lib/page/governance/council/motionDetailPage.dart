@@ -121,7 +121,7 @@ class _MotionDetailPageState extends State<MotionDetailPage> {
           params.add(
               ['${v.name}: ${v.type}', motion.proposal.args[k].toString()]);
         });
-        bool isCouncil = !false;
+        bool isCouncil = false;
         widget.store.gov.council.members.forEach((e) {
           if (widget.store.account.currentAddress == e[0]) {
             isCouncil = true;
@@ -282,15 +282,16 @@ class _ProposalArgsListState extends State<ProposalArgsList> {
 }
 
 class ProposalArgsItem extends StatelessWidget {
-  ProposalArgsItem({this.label, this.content});
+  ProposalArgsItem({this.label, this.content, this.margin});
 
   final Widget label;
   final Widget content;
+  final EdgeInsets margin;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(8, 4, 4, 4),
+      margin: margin ?? EdgeInsets.fromLTRB(8, 4, 4, 4),
       padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
       decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).dividerColor),

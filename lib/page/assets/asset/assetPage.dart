@@ -59,6 +59,7 @@ class _AssetPageState extends State<AssetPage>
       webApi.staking.fetchAccountStaking();
       res = await webApi.assets.updateTxs(_txsPage);
     }
+    if (!mounted) return;
     setState(() {
       _loading = false;
     });
