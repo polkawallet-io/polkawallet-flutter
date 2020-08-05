@@ -243,10 +243,7 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
                           labelText:
                               '${assetDic['amount']} (${assetDic['available']}: $balanceView $symbol)',
                         ),
-                        inputFormatters: [
-                          RegExInputFormatter.withRegex(
-                              '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                        ],
+                        inputFormatters: [UI.decimalInputFormatter(decimals)],
                         controller: _amountCtrl,
                         keyboardType:
                             TextInputType.numberWithOptions(decimal: true),
@@ -264,10 +261,7 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
                           labelText:
                               '${assetDic['amount']}(${dic['loan.max']}: $maxToBorrow)',
                         ),
-                        inputFormatters: [
-                          RegExInputFormatter.withRegex(
-                              '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                        ],
+                        inputFormatters: [UI.decimalInputFormatter(decimals)],
                         controller: _amountCtrl2,
                         keyboardType:
                             TextInputType.numberWithOptions(decimal: true),

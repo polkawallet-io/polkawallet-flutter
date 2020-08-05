@@ -451,8 +451,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                   ),
                                 ),
                                 inputFormatters: [
-                                  RegExInputFormatter.withRegex(
-                                      '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                  UI.decimalInputFormatter(decimals)
                                 ],
                                 controller: _amountCtrl,
                                 keyboardType: TextInputType.numberWithOptions(
@@ -497,8 +496,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                   ),
                                 ),
                                 inputFormatters: [
-                                  RegExInputFormatter.withRegex(
-                                      '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                  UI.decimalInputFormatter(decimals)
                                 ],
                                 controller: _amountCtrl2,
                                 keyboardType: TextInputType.numberWithOptions(

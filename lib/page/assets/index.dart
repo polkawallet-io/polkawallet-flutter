@@ -496,7 +496,7 @@ class _AssetsState extends State<Assets> {
                         );
                       },
                     )
-                  : Container(),
+                  : Container(height: 24),
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.only(left: 16, right: 16),

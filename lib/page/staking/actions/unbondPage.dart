@@ -72,10 +72,7 @@ class _UnBondPageState extends State<UnBondPage> {
                           labelText:
                               '${assetDic['amount']} (${dic['bonded']}: $bonded $tokenView)',
                         ),
-                        inputFormatters: [
-                          RegExInputFormatter.withRegex(
-                              '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                        ],
+                        inputFormatters: [UI.decimalInputFormatter(decimals)],
                         controller: _amountCtrl,
                         keyboardType:
                             TextInputType.numberWithOptions(decimal: true),
