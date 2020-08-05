@@ -269,6 +269,15 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      webApi.gov.updateBestNumber();
+    });
+  }
+
+  @override
   void dispose() {
     store.assets.setSubmitting(false);
     super.dispose();
@@ -307,6 +316,14 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
               : false;
           final AccountRecoveryInfo recoverable = store.account.recoveryInfo;
 
+          final bool isPolkadot =
+              store.settings.endpoint.info == network_name_polkadot;
+          bool isTxPaused = isPolkadot;
+          if (store.gov.bestNumber > 0 &&
+              (store.gov.bestNumber < dot_re_denominate_block - 1200 ||
+                  store.gov.bestNumber > dot_re_denominate_block + 1200)) {
+            isTxPaused = false;
+          }
           return Column(
             children: <Widget>[
               Expanded(
@@ -527,8 +544,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                   ),
                   Expanded(
                     child: Container(
-                      color: store.assets.submitting
-                          ? Colors.black12
+                      color: store.assets.submitting || isTxPaused
+                          ? Theme.of(context).disabledColor
                           : Theme.of(context).primaryColor,
                       child: FlatButton(
                         padding: EdgeInsets.all(16),
@@ -542,14 +559,16 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                                   : dic['submit'],
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: isUnsigned
-                            ? () => _onSubmit(context)
-                            : (isObservation && _proxyAccount == null) ||
-                                    isProxyObservation
-                                ? () => _onSubmit(context, viaQr: true)
-                                : store.assets.submitting
-                                    ? null
-                                    : () => _showPasswordDialog(context),
+                        onPressed: isTxPaused
+                            ? null
+                            : isUnsigned
+                                ? () => _onSubmit(context)
+                                : (isObservation && _proxyAccount == null) ||
+                                        isProxyObservation
+                                    ? () => _onSubmit(context, viaQr: true)
+                                    : store.assets.submitting
+                                        ? null
+                                        : () => _showPasswordDialog(context),
                       ),
                     ),
                   ),

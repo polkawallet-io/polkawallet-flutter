@@ -29,6 +29,7 @@ import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
+import 'package:polka_wallet/page/assets/announcementPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
@@ -258,6 +259,7 @@ class _WalletAppState extends State<WalletApp> {
           CurrencySelectPage.route: (_) => CurrencySelectPage(),
           ClaimPage.route: (_) => ClaimPage(_appStore),
           AttestPage.route: (_) => AttestPage(_appStore),
+          AnnouncementPage.route: (_) => AnnouncementPage(),
           // staking
           StakingDetailPage.route: (_) => StakingDetailPage(_appStore),
           ValidatorDetailPage.route: (_) => ValidatorDetailPage(_appStore),
