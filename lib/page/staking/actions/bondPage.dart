@@ -140,10 +140,7 @@ class _BondPageState extends State<BondPage> {
                             labelText:
                                 '${assetDic['amount']} (${dic['balance']}: ${Fmt.doubleFormat(balance)} $tokenView)',
                           ),
-                          inputFormatters: [
-                            RegExInputFormatter.withRegex(
-                                '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                          ],
+                          inputFormatters: [UI.decimalInputFormatter(decimals)],
                           controller: _amountCtrl,
                           keyboardType:
                               TextInputType.numberWithOptions(decimal: true),

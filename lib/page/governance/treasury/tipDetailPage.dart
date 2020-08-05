@@ -12,6 +12,7 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/treasuryTipData.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -55,10 +56,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
               padding: EdgeInsets.only(right: 8),
               child: Text(tokenView),
             ),
-            inputFormatters: [
-              RegExInputFormatter.withRegex(
-                  '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-            ],
+            inputFormatters: [UI.decimalInputFormatter(decimals)],
             keyboardType: TextInputType.numberWithOptions(decimal: true),
           ),
           actions: <Widget>[

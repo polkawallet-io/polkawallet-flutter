@@ -14,6 +14,7 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -294,8 +295,7 @@ class _SwapPageState extends State<SwapPage> {
                                               ),
                                             ),
                                             inputFormatters: [
-                                              RegExInputFormatter.withRegex(
-                                                  '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                              UI.decimalInputFormatter(decimals)
                                             ],
                                             controller: _amountPayCtrl,
                                             keyboardType:
@@ -377,8 +377,7 @@ class _SwapPageState extends State<SwapPage> {
                                               ),
                                             ),
                                             inputFormatters: [
-                                              RegExInputFormatter.withRegex(
-                                                  '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                              UI.decimalInputFormatter(decimals)
                                             ],
                                             controller: _amountReceiveCtrl,
                                             keyboardType:
@@ -482,8 +481,7 @@ class _SwapPageState extends State<SwapPage> {
                                     padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
                                     placeholder: 'customized',
                                     inputFormatters: [
-                                      RegExInputFormatter.withRegex(
-                                          '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                      UI.decimalInputFormatter(decimals)
                                     ],
                                     decoration: BoxDecoration(
                                       borderRadius:

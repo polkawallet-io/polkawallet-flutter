@@ -14,6 +14,7 @@ import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/laminar/types/laminarSyntheticData.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -295,8 +296,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
                                               ),
                                             ),
                                             inputFormatters: [
-                                              RegExInputFormatter.withRegex(
-                                                  '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                              UI.decimalInputFormatter(decimals)
                                             ],
                                             controller: _amountPayCtrl,
                                             keyboardType:
@@ -378,8 +378,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
                                               ),
                                             ),
                                             inputFormatters: [
-                                              RegExInputFormatter.withRegex(
-                                                  '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                              UI.decimalInputFormatter(decimals)
                                             ],
                                             controller: _amountReceiveCtrl,
                                             keyboardType:

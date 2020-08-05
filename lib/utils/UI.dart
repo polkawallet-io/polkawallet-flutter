@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:package_info/package_info.dart';
-import 'package:polka_wallet/common/components/downloadDialog.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -262,6 +262,11 @@ class UI {
     } else {
       return true;
     }
+  }
+
+  static TextInputFormatter decimalInputFormatter(int decimals) {
+    return RegExInputFormatter.withRegex(
+        '^[0-9]{1,$decimals}(\\.[0-9]{0,$decimals})?\$');
   }
 }
 

@@ -9,6 +9,7 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -164,8 +165,7 @@ class _SubmitTipPageState extends State<SubmitTipPage> {
                                             '${dicAsset['amount']} ($tokenView)',
                                       ),
                                       inputFormatters: [
-                                        RegExInputFormatter.withRegex(
-                                            '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                        UI.decimalInputFormatter(decimals)
                                       ],
                                       controller: _amountCtrl,
                                       keyboardType:

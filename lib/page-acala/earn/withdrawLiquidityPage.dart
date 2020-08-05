@@ -187,13 +187,10 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                               },
                             ),
                           ),
-                          inputFormatters: [
-                            RegExInputFormatter.withRegex(
-                                '^[0-9]{0,$decimals}\$')
-                          ],
+                          inputFormatters: [UI.decimalInputFormatter(decimals)],
                           controller: _amountCtrl,
                           keyboardType:
-                              TextInputType.numberWithOptions(decimal: false),
+                              TextInputType.numberWithOptions(decimal: true),
                           validator: (v) {
                             if (v.isEmpty) {
                               return dicAssets['amount.error'];

@@ -107,8 +107,7 @@ class _CouncilVote extends State<CouncilVotePage> {
                                   '${dic['amount']} (${dic['balance']}: ${Fmt.token(balance)})',
                             ),
                             inputFormatters: [
-                              RegExInputFormatter.withRegex(
-                                  '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                              UI.decimalInputFormatter(decimals)
                             ],
                             controller: _amountCtrl,
                             keyboardType:

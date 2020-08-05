@@ -222,8 +222,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                   ),
                                 ),
                                 inputFormatters: [
-                                  RegExInputFormatter.withRegex(
-                                      '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                  UI.decimalInputFormatter(decimals)
                                 ],
                                 controller: _amountTokenCtrl,
                                 keyboardType: TextInputType.numberWithOptions(
@@ -263,8 +262,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                   ),
                                 ),
                                 inputFormatters: [
-                                  RegExInputFormatter.withRegex(
-                                      '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                                  UI.decimalInputFormatter(decimals)
                                 ],
                                 controller: _amountBaseCoinCtrl,
                                 keyboardType: TextInputType.numberWithOptions(

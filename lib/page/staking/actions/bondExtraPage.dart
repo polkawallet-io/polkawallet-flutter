@@ -74,10 +74,7 @@ class _BondExtraPageState extends State<BondExtraPage> {
                           labelText:
                               '${assetDic['amount']} (${dic['available']}: ${Fmt.token(available)} $tokenView)',
                         ),
-                        inputFormatters: [
-                          RegExInputFormatter.withRegex(
-                              '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                        ],
+                        inputFormatters: [UI.decimalInputFormatter(decimals)],
                         controller: _amountCtrl,
                         keyboardType:
                             TextInputType.numberWithOptions(decimal: true),

@@ -197,10 +197,7 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
                   },
                 ),
               ),
-              inputFormatters: [
-                RegExInputFormatter.withRegex(
-                    '^[0-9]{0,6}(\\.[0-9]{0,${widget.decimals}})?\$')
-              ],
+              inputFormatters: [UI.decimalInputFormatter(widget.decimals)],
               controller: _amountCtrl,
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               validator: (v) {
