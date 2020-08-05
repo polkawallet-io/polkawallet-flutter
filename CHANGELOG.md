@@ -1,3 +1,8 @@
+# 0.9.0
+- add Governance proposals
+- add Council motions
+- add Treasury & Tips
+
 # 0.8.6
 - add laminar flow exchange support
 - add new DOT tickers: DOT (old) & New DOT

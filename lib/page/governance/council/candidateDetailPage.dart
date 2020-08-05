@@ -20,7 +20,11 @@ class CandidateDetailPage extends StatelessWidget {
     final List info = ModalRoute.of(context).settings.arguments;
     final int decimals = store.settings.networkState.tokenDecimals;
     final String symbol = store.settings.networkState.tokenSymbol;
-    final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
+    final String tokenView = Fmt.tokenView(
+      symbol,
+      decimalsDot: decimals,
+      network: store.settings.endpoint.info,
+    );
 
     Map accInfo = store.account.accountIndexMap[info[0]];
     TextStyle style = Theme.of(context).textTheme.headline4;

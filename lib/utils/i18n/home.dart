@@ -50,6 +50,7 @@ const Map<String, String> enHome = {
   'input.invalid': 'Invalid input',
   'loading': 'Loading...',
   'success': 'Success',
+  'announce': 'Announcement',
 };
 
 const Map<String, String> zhHome = {
@@ -101,4 +102,5 @@ const Map<String, String> zhHome = {
   'input.invalid': '输入格式错误',
   'loading': '载入中。。。',
   'success': '操作成功',
+  'announce': '通知',
 };

@@ -47,7 +47,11 @@ class CurrencyWithIcon extends StatelessWidget {
         Expanded(
           flex: 0,
           child: Text(
-            Fmt.tokenView(symbol, decimalsDot: decimals),
+            Fmt.tokenView(
+              symbol,
+              decimalsDot: decimals,
+              network: globalAppStore.settings.endpoint.info,
+            ),
             style: textStyle,
           ),
         ),

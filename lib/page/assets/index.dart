@@ -5,9 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/passwordInputDialog.dart';
+import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
+import 'package:polka_wallet/page/assets/announcementPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
@@ -18,6 +20,7 @@ import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
@@ -42,6 +45,7 @@ class _AssetsState extends State<Assets> {
 
   bool _faucetSubmitting = false;
   bool _preclaimChecking = false;
+  List _announcements;
 
   Future<void> _fetchBalance() async {
     if (store.settings.endpoint.info == networkEndpointAcala.info ||
@@ -53,6 +57,15 @@ class _AssetsState extends State<Assets> {
         webApi.staking.fetchAccountStaking(),
       ]);
     }
+  }
+
+  Future<List> _fetchAnnouncements() async {
+    if (_announcements != null) return _announcements;
+    final List res = await WalletApi.getAnnouncements();
+    setState(() {
+      _announcements = res;
+    });
+    return res;
   }
 
   Future<String> _checkPreclaim() async {
@@ -412,6 +425,7 @@ class _AssetsState extends State<Assets> {
 
   @override
   Widget build(BuildContext context) {
+    final Map dic = I18n.of(context).home;
     return Observer(
       builder: (_) {
         String symbol = store.settings.networkState.tokenSymbol ?? '';
@@ -423,6 +437,7 @@ class _AssetsState extends State<Assets> {
             store.settings.endpoint.info == networkEndpointAcala.info;
         bool isLaminar =
             store.settings.endpoint.info == networkEndpointLaminar.info;
+        bool isPolkadot = store.settings.endpoint.info == network_name_polkadot;
 
         List<String> currencyIds = [];
         if ((isAcala || isLaminar) && networkName != null) {
@@ -441,12 +456,53 @@ class _AssetsState extends State<Assets> {
           child: Column(
             children: <Widget>[
               _buildTopCard(context),
+              isPolkadot
+                  ? FutureBuilder(
+                      future: _fetchAnnouncements(),
+                      builder: (_, AsyncSnapshot<List> snapshot) {
+                        final String lang =
+                            I18n.of(context).locale.toString().contains('zh')
+                                ? 'zh'
+                                : 'en';
+                        if (!snapshot.hasData || snapshot.data.length == 0) {
+                          return Container(height: 24);
+                        }
+                        final Map announce = snapshot.data[0][lang];
+                        return GestureDetector(
+                          child: Container(
+                            margin: EdgeInsets.all(16),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextTag(
+                                    announce['title'],
+                                    padding:
+                                        EdgeInsets.fromLTRB(16, 12, 16, 12),
+                                    color: Colors.lightGreen,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pushNamed(
+                              AnnouncementPage.route,
+                              arguments: AnnouncePageParams(
+                                title: announce['title'],
+                                content: announce['content'],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    )
+                  : Container(),
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.only(left: 16, right: 16),
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(top: 24),
+                      padding: EdgeInsets.only(top: 4),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
@@ -480,8 +536,10 @@ class _AssetsState extends State<Assets> {
                           child: Image.asset(
                               'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
                         ),
-                        title: Text(
-                            Fmt.tokenView(symbol, decimalsDot: decimals) ?? ''),
+                        title: Text(Fmt.tokenView(symbol,
+                                decimalsDot: decimals,
+                                network: store.settings.endpoint.info) ??
+                            ''),
                         trailing: Text(
                           Fmt.token(
                               balancesInfo != null

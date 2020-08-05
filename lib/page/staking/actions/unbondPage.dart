@@ -34,7 +34,11 @@ class _UnBondPageState extends State<UnBondPage> {
     var assetDic = I18n.of(context).assets;
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
-    final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
+    final String tokenView = Fmt.tokenView(
+      symbol,
+      decimalsDot: decimals,
+      network: store.settings.endpoint.info,
+    );
 
     String bonded = '0.000';
     bool hasData = store.staking.ledger['stakingLedger'] != null;

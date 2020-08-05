@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info/package_info.dart';
 import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -62,18 +60,9 @@ class _AboutPage extends State<AboutPage> {
                 child: JumpToBrowserLink('https://polkawallet.io'),
               ),
             ),
-            FutureBuilder<PackageInfo>(
-              future: PackageInfo.fromPlatform(),
-              builder:
-                  (BuildContext context, AsyncSnapshot<PackageInfo> snapshot) {
-                return snapshot.hasData
-                    ? Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Text(
-                            '${dic['about.version']}: v${snapshot.data.version}'),
-                      )
-                    : Container();
-              },
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: Text('${dic['about.version']}: v$app_beta_version'),
             ),
             Padding(
               padding: EdgeInsets.all(16),

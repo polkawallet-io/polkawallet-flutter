@@ -40,7 +40,7 @@ void main() {
     test('network endpoint test', () async {
       await store.init('_en');
       expect(store.endpoint.info, networkEndpointKusama.info);
-      expect(store.endpointList.length, 3);
+      expect(store.endpointList.length, 4);
       store.setEndpoint(networkEndpointPolkadot);
       expect(store.endpoint.info, networkEndpointPolkadot.info);
       expect(store.endpointList.length, 3);

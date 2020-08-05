@@ -19,6 +19,7 @@ EndpointData networkEndpointKusama = EndpointData.fromJson(const {
   'ss58': 2,
   'text': 'Kusama (Polkadot Canary, hosted by Polkawallet)',
   'value': 'ws://mandala-01.acala.network:9954/',
+//  'value': 'ws://10.230.198.88:9944/',
 });
 
 EndpointData networkEndpointAcala = EndpointData.fromJson(const {
@@ -68,6 +69,13 @@ List<EndpointData> networkEndpoints = [
     'text': 'Kusama (Polkadot Canary, hosted by Web3 Foundation)',
     'value': 'wss://cc3-5.kusama.network/',
   }),
+  EndpointData.fromJson(const {
+    'color': 'black',
+    'info': network_name_kusama,
+    'ss58': 2,
+    'text': 'Kusama (Polkadot Canary, user-run public nodes)',
+    'value': 'wss://kusama.polkadot.cloud.ava.do/',
+  }),
   networkEndpointAcala,
   EndpointData.fromJson(const {
     'color': 'indigo',
@@ -104,6 +112,8 @@ const network_ss58_map = {
 const int kusama_token_decimals = 12;
 const int acala_token_decimals = 18;
 
+const int dot_re_denominate_block = 1248328;
+
 const int SECONDS_OF_DAY = 24 * 60 * 60; // seconds of one day
 const int SECONDS_OF_YEAR = 365 * 24 * 60 * 60; // seconds of one year
 
@@ -119,7 +129,7 @@ const String cross_chain_transfer_address_laminar =
     '5CLaminarAUSDCrossChainTransferxxxxxxxxxxxxxwisu';
 
 /// app versions
-const String app_beta_version = '0.8.6-beta.3';
+const String app_beta_version = '0.9.0-beta.1';
 
 /// js code versions
 const Map<String, int> js_code_version_map = {

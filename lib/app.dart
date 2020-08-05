@@ -29,6 +29,7 @@ import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
+import 'package:polka_wallet/page/assets/announcementPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
@@ -39,8 +40,17 @@ import 'package:polka_wallet/page/assets/transfer/transferCrossChainPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateListPage.dart';
+import 'package:polka_wallet/page/governance/council/councilPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
+import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
+import 'package:polka_wallet/page/governance/democracy/democracyPage.dart';
+import 'package:polka_wallet/page/governance/democracy/proposalDetailPage.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
+import 'package:polka_wallet/page/governance/treasury/spendProposalPage.dart';
+import 'package:polka_wallet/page/governance/treasury/submitProposalPage.dart';
+import 'package:polka_wallet/page/governance/treasury/submitTipPage.dart';
+import 'package:polka_wallet/page/governance/treasury/tipDetailPage.dart';
+import 'package:polka_wallet/page/governance/treasury/treasuryPage.dart';
 import 'package:polka_wallet/page/networkSelectPage.dart';
 import 'package:polka_wallet/page/profile/aboutPage.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
@@ -77,7 +87,6 @@ import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/laminar/types/laminarTxSwapData.dart';
 import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/UI.dart';
 
@@ -250,6 +259,7 @@ class _WalletAppState extends State<WalletApp> {
           CurrencySelectPage.route: (_) => CurrencySelectPage(),
           ClaimPage.route: (_) => ClaimPage(_appStore),
           AttestPage.route: (_) => AttestPage(_appStore),
+          AnnouncementPage.route: (_) => AnnouncementPage(),
           // staking
           StakingDetailPage.route: (_) => StakingDetailPage(_appStore),
           ValidatorDetailPage.route: (_) => ValidatorDetailPage(_appStore),
@@ -263,10 +273,19 @@ class _WalletAppState extends State<WalletApp> {
           SetControllerPage.route: (_) => SetControllerPage(_appStore),
           AccountSelectPage.route: (_) => AccountSelectPage(_appStore),
           // governance
+          DemocracyPage.route: (_) => DemocracyPage(_appStore),
+          CouncilPage.route: (_) => CouncilPage(_appStore),
+          MotionDetailPage.route: (_) => MotionDetailPage(_appStore),
+          TreasuryPage.route: (_) => TreasuryPage(_appStore),
+          SpendProposalPage.route: (_) => SpendProposalPage(_appStore),
+          TipDetailPage.route: (_) => TipDetailPage(_appStore),
+          SubmitProposalPage.route: (_) => SubmitProposalPage(_appStore),
+          SubmitTipPage.route: (_) => SubmitTipPage(_appStore),
           CandidateDetailPage.route: (_) => CandidateDetailPage(_appStore),
           CouncilVotePage.route: (_) => CouncilVotePage(_appStore),
           CandidateListPage.route: (_) => CandidateListPage(_appStore),
           ReferendumVotePage.route: (_) => ReferendumVotePage(_appStore),
+          ProposalDetailPage.route: (_) => ProposalDetailPage(_appStore),
           // profile
           AccountManagePage.route: (_) => AccountManagePage(_appStore),
           ContactsPage.route: (_) => ContactsPage(_appStore),

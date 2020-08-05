@@ -17,7 +17,11 @@ class TransferDetailPage extends StatelessWidget {
     final Map<String, String> dic = I18n.of(context).assets;
     final String symbol = store.settings.networkState.tokenSymbol;
     final int decimals = store.settings.networkState.tokenDecimals;
-    final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
+    final String tokenView = Fmt.tokenView(
+      symbol,
+      decimalsDot: decimals,
+      network: store.settings.endpoint.info,
+    );
 
     final TransferData tx = ModalRoute.of(context).settings.arguments;
 

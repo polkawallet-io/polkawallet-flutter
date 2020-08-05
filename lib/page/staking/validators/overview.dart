@@ -186,7 +186,11 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     }
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
-    final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
+    final String tokenView = Fmt.tokenView(
+      symbol,
+      decimalsDot: decimals,
+      network: store.settings.endpoint.info,
+    );
     String stashAddress = store.staking.ledger['stakingLedger']['stash'];
     List nominators = store.staking.ledger['nominators'];
 
@@ -229,7 +233,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
               leading: AddressIcon(id),
               title: Text(
                   '${meStaked != null ? Fmt.token(meStaked) : '~'} $tokenView'),
-              subtitle: Text(Fmt.validatorDisplayName(validator, accInfo)),
+              subtitle: Fmt.accountDisplayName(validator.accountId, accInfo),
               trailing: Container(
                 width: 120,
                 height: 48,

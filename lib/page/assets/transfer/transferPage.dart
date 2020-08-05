@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
@@ -56,6 +57,8 @@ class _TransferPageState extends State<TransferPage> {
 
   String _tokenSymbol;
 
+  bool _crossChain = false;
+
   Future<void> _selectCurrency() async {
     List<String> symbolOptions =
         List<String>.from(store.settings.networkConst['currencyIds']);
@@ -64,6 +67,14 @@ class _TransferPageState extends State<TransferPage> {
         .pushNamed(CurrencySelectPage.route, arguments: symbolOptions);
 
     if (currency != null) {
+      if (_crossChain &&
+          (_tokenSymbol == acala_stable_coin_view ||
+              _tokenSymbol == acala_stable_coin) &&
+          _tokenSymbol != currency) {
+        setState(() {
+          _addressCtrl.text = '';
+        });
+      }
       setState(() {
         _tokenSymbol = currency;
       });
@@ -74,7 +85,11 @@ class _TransferPageState extends State<TransferPage> {
     if (_formKey.currentState.validate()) {
       String symbol = _tokenSymbol ?? store.settings.networkState.tokenSymbol;
       int decimals = store.settings.networkState.tokenDecimals;
-      final String tokenView = Fmt.tokenView(symbol, decimalsDot: decimals);
+      final String tokenView = Fmt.tokenView(
+        symbol,
+        decimalsDot: decimals,
+        network: store.settings.endpoint.info,
+      );
       var args = {
         "title": I18n.of(context).assets['transfer'] + ' $tokenView',
         "txInfo": {
@@ -218,8 +233,11 @@ class _TransferPageState extends State<TransferPage> {
         final Map<String, String> dic = I18n.of(context).assets;
         final int decimals = store.settings.networkState.tokenDecimals;
         final String baseTokenSymbol = store.settings.networkState.tokenSymbol;
-        final String baseTokenSymbolView =
-            Fmt.tokenView(baseTokenSymbol, decimalsDot: decimals);
+        final String baseTokenSymbolView = Fmt.tokenView(
+          baseTokenSymbol,
+          decimalsDot: decimals,
+          network: store.settings.endpoint.info,
+        );
         String symbol = _tokenSymbol ?? baseTokenSymbol;
         final bool isBaseToken = _tokenSymbol == baseTokenSymbol;
         List symbolOptions = store.settings.networkConst['currencyIds'];
@@ -238,6 +256,9 @@ class _TransferPageState extends State<TransferPage> {
         final bool canCrossChain = (_tokenSymbol == acala_stable_coin ||
                 _tokenSymbol == acala_stable_coin_view) &&
             (isAcala || isLaminar);
+        final bool isCrossChain = (_tokenSymbol == acala_stable_coin ||
+                _tokenSymbol == acala_stable_coin_view) &&
+            _crossChain;
 
         return Scaffold(
           appBar: AppBar(
@@ -246,14 +267,17 @@ class _TransferPageState extends State<TransferPage> {
             actions: <Widget>[
               IconButton(
                 icon: Image.asset('assets/images/assets/Menu_scan.png'),
-                onPressed: () async {
-                  final to =
-                      await Navigator.of(context).pushNamed(ScanPage.route);
-                  if (to == null) return;
-                  setState(() {
-                    _addressCtrl.text = (to as QRCodeAddressResult).address;
-                  });
-                },
+                onPressed: isCrossChain
+                    ? null
+                    : () async {
+                        final to = await Navigator.of(context)
+                            .pushNamed(ScanPage.route);
+                        if (to == null) return;
+                        setState(() {
+                          _addressCtrl.text =
+                              (to as QRCodeAddressResult).address;
+                        });
+                      },
               )
             ],
           ),
@@ -296,9 +320,8 @@ class _TransferPageState extends State<TransferPage> {
                                     if (to != null) {
                                       AccountData acc = to as AccountData;
                                       setState(() {
-                                        _addressCtrl.text = acc.encoded == null
-                                            ? acc.address
-                                            : pubKeyAddressMap[acc.pubKey];
+                                        _addressCtrl.text =
+                                            Fmt.addressOfAccount(acc, store);
                                       });
                                     }
                                   },

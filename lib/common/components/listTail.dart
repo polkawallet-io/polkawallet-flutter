@@ -20,7 +20,7 @@ class ListTail extends StatelessWidget {
                       ? I18n.of(context).home['data.empty']
                       : I18n.of(context).assets['end'],
                   style: TextStyle(
-                      fontSize: 18, color: Theme.of(context).disabledColor),
+                      fontSize: 16, color: Theme.of(context).disabledColor),
                 ),
         )
       ],

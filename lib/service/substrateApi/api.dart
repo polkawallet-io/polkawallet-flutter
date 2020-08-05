@@ -13,6 +13,7 @@ import 'package:polka_wallet/service/substrateApi/apiGov.dart';
 import 'package:polka_wallet/service/substrateApi/apiStaking.dart';
 import 'package:polka_wallet/service/substrateApi/laminar/apiLaminar.dart';
 import 'package:polka_wallet/service/walletApi.dart';
+import 'package:polka_wallet/service/substrateApi/types/genExternalLinksParams.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 
@@ -288,5 +289,13 @@ class Api {
 
   Future<void> unsubscribeMessage(String channel) async {
     _web.evalJavascript('unsub$channel()');
+  }
+
+  Future<List> getExternalLinks(GenExternalLinksParams params) async {
+    final List res = await evalJavascript(
+      'settings.genLinks(${jsonEncode(GenExternalLinksParams.toJson(params))})',
+      allowRepeat: true,
+    );
+    return res;
   }
 }

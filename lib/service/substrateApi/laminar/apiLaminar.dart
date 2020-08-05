@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 

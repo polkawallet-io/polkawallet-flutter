@@ -13,16 +13,12 @@ class AccountSelectList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, String> pubKeyAddressMap =
-        store.account.pubKeyAddressMap[store.settings.endpoint.ss58];
     return ListView(
       children: list.map((i) {
         return ListTile(
           leading: AddressIcon(i.address, pubKey: i.pubKey),
           title: Text(Fmt.accountName(context, i)),
-          subtitle: Text(Fmt.address(
-                  i.encoded != null ? pubKeyAddressMap[i.pubKey] : i.address) ??
-              ''),
+          subtitle: Text(Fmt.address(Fmt.addressOfAccount(i, store))),
           trailing: Icon(Icons.arrow_forward_ios, size: 16),
           onTap: () => Navigator.of(context).pop(i),
         );

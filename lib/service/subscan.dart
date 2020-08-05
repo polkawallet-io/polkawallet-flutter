@@ -113,7 +113,6 @@ class SubScanApi {
 
   static Future<Map> fetchTransfers(SubScanRequestParams params) async {
     String url = '${getSnEndpoint(params.network)}/transfers';
-    print(url);
     Map<String, String> headers = {
       "Content-type": "application/json",
       "Accept": "*/*"

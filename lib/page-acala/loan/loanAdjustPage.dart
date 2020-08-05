@@ -214,6 +214,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
   }
 
   Map _getTxParams(LoanData loan) {
+    final int decimals = store.settings.networkState.tokenDecimals;
     final LoanAdjustPageParams params =
         ModalRoute.of(context).settings.arguments;
     switch (params.actionType) {
@@ -236,11 +237,13 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
             ? loan.debitShares
             : loan.type.debitToDebitShare(_amountDebit);
 
-        /// pay less if less than 1 share will be left,
-        /// make sure tx success by leaving more than 1 share.
-        if (loan.debits - _amountDebit <
-            loan.type.debitShareToDebit(BigInt.one)) {
-          debitSubtract = loan.debitShares - BigInt.one;
+        /// pay less if less than 1 debit(aUSD) will be left,
+        /// make sure tx success by leaving more than 1 debit(aUSD).
+        final debitValueOne = Fmt.tokenInt('1', decimals: decimals);
+        if (loan.debits - _amountDebit > BigInt.zero &&
+            loan.debits - _amountDebit < debitValueOne) {
+          debitSubtract =
+              loan.debitShares - loan.type.debitToDebitShare(debitValueOne);
         }
         return {
           'detail': jsonEncode({
