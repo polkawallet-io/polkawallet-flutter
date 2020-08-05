@@ -33,6 +33,11 @@ class _TipDetailPageState extends State<TipDetailPage> {
     print('click');
     final String symbol = widget.store.settings.networkState.tokenSymbol;
     final int decimals = widget.store.settings.networkState.tokenDecimals;
+    final String tokenView = Fmt.tokenView(
+      symbol,
+      decimalsDot: decimals,
+      network: widget.store.settings.endpoint.info,
+    );
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
@@ -48,7 +53,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
             controller: _tipInputCtrl,
             suffix: Padding(
               padding: EdgeInsets.only(right: 8),
-              child: Text(symbol),
+              child: Text(tokenView),
             ),
             inputFormatters: [
               RegExInputFormatter.withRegex(
@@ -185,6 +190,11 @@ class _TipDetailPageState extends State<TipDetailPage> {
     final Map dic = I18n.of(context).gov;
     final String symbol = widget.store.settings.networkState.tokenSymbol;
     final int decimals = widget.store.settings.networkState.tokenDecimals;
+    final String tokenView = Fmt.tokenView(
+      symbol,
+      decimalsDot: decimals,
+      network: widget.store.settings.endpoint.info,
+    );
     final TreasuryTipData tipData = ModalRoute.of(context).settings.arguments;
     final AccountData who = AccountData();
     final AccountData finder = AccountData();
@@ -247,7 +257,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
                                     '${Fmt.balance(
                                       tipData.deposit.toString(),
                                       decimals: decimals,
-                                    )} $symbol',
+                                    )} $tokenView',
                                     style:
                                         Theme.of(context).textTheme.headline4,
                                   ),
@@ -375,7 +385,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
                               '${Fmt.balance(
                                 e.value.toString(),
                                 decimals: decimals,
-                              )} $symbol',
+                              )} $tokenView',
                               style: Theme.of(context).textTheme.headline4,
                             ),
                           );

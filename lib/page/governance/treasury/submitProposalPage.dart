@@ -81,6 +81,11 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
     final Map dicAsset = I18n.of(context).assets;
     final int decimals = widget.store.settings.networkState.tokenDecimals;
     final String symbol = widget.store.settings.networkState.tokenSymbol;
+    final String tokenView = Fmt.tokenView(
+      symbol,
+      decimalsDot: decimals,
+      network: widget.store.settings.endpoint.info,
+    );
     return Scaffold(
       appBar: AppBar(title: Text(dic['treasury.submit']), centerTitle: true),
       body: SafeArea(
@@ -110,7 +115,7 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
                           child: TextFormField(
                             decoration: InputDecoration(
                               hintText: dicAsset['amount'],
-                              labelText: '${dicAsset['amount']} ($symbol)',
+                              labelText: '${dicAsset['amount']} ($tokenView)',
                             ),
                             inputFormatters: [
                               RegExInputFormatter.withRegex(

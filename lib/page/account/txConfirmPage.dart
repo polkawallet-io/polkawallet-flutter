@@ -282,6 +282,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     final String symbol = store.settings.networkState.tokenSymbol ?? '';
     final int decimals =
         store.settings.networkState.tokenDecimals ?? kusama_token_decimals;
+    final String tokenView = Fmt.tokenView(symbol,
+        decimalsDot: decimals, network: store.settings.endpoint.info);
 
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
 
@@ -434,7 +436,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                              '$fee $symbol',
+                                              '$fee $tokenView',
                                             ),
                                             isAcala
                                                 ? Text(
@@ -473,7 +475,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                             child: Text(dicAsset['tip']),
                           ),
                           Text(
-                              '${Fmt.token(_tipValue, decimals: decimals)} $symbol'),
+                              '${Fmt.token(_tipValue, decimals: decimals)} $tokenView'),
                           TapTooltip(
                             message: dicAsset['tip.tip'],
                             child: Icon(

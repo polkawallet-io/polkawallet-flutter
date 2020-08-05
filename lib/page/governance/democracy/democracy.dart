@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/listTail.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumPanel.dart';
@@ -90,11 +91,7 @@ class _DemocracyState extends State<Democracy> {
           child: list == null
               ? Container()
               : list.length == 0
-                  ? Container(
-                      height: 80,
-                      padding: EdgeInsets.all(24),
-                      child: Text(I18n.of(context).home['data.empty']),
-                    )
+                  ? ListTail(isEmpty: true, isLoading: false)
                   : ListView.builder(
                       itemCount: list.length,
                       itemBuilder: (BuildContext context, int i) {

@@ -101,6 +101,11 @@ class _SubmitTipPageState extends State<SubmitTipPage> {
     final Map dicAsset = I18n.of(context).assets;
     final int decimals = widget.store.settings.networkState.tokenDecimals;
     final String symbol = widget.store.settings.networkState.tokenSymbol;
+    final String tokenView = Fmt.tokenView(
+      symbol,
+      decimalsDot: decimals,
+      network: widget.store.settings.endpoint.info,
+    );
     final bool isCouncil = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
@@ -156,7 +161,7 @@ class _SubmitTipPageState extends State<SubmitTipPage> {
                                       decoration: InputDecoration(
                                         hintText: dicAsset['amount'],
                                         labelText:
-                                            '${dicAsset['amount']} ($symbol)',
+                                            '${dicAsset['amount']} ($tokenView)',
                                       ),
                                       inputFormatters: [
                                         RegExInputFormatter.withRegex(
