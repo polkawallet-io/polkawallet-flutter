@@ -464,35 +464,36 @@ class _AssetsState extends State<Assets> {
                             I18n.of(context).locale.toString().contains('zh')
                                 ? 'zh'
                                 : 'en';
+                        if (!snapshot.hasData || snapshot.data.length == 0) {
+                          return Container(height: 24);
+                        }
                         final Map announce = snapshot.data[0][lang];
-                        return snapshot.hasData && snapshot.data.length > 0
-                            ? GestureDetector(
-                                child: Container(
-                                  margin: EdgeInsets.all(16),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: TextTag(
-                                          announce['title'],
-                                          padding: EdgeInsets.fromLTRB(
-                                              16, 12, 16, 12),
-                                          color: Colors.lightGreen,
-                                        ),
-                                      )
-                                    ],
+                        return GestureDetector(
+                          child: Container(
+                            margin: EdgeInsets.all(16),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextTag(
+                                    announce['title'],
+                                    padding:
+                                        EdgeInsets.fromLTRB(16, 12, 16, 12),
+                                    color: Colors.lightGreen,
                                   ),
-                                ),
-                                onTap: () {
-                                  Navigator.of(context).pushNamed(
-                                    AnnouncementPage.route,
-                                    arguments: AnnouncePageParams(
-                                      title: announce['title'],
-                                      content: announce['content'],
-                                    ),
-                                  );
-                                },
-                              )
-                            : Container(height: 32);
+                                )
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pushNamed(
+                              AnnouncementPage.route,
+                              arguments: AnnouncePageParams(
+                                title: announce['title'],
+                                content: announce['content'],
+                              ),
+                            );
+                          },
+                        );
                       },
                     )
                   : Container(),
