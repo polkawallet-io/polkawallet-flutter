@@ -7,7 +7,8 @@ const Map<String, String> enGov = {
   'council': 'Council',
   'council.brief':
       'This application lets you vote for council members or submit a candidate.',
-  'council.motion': 'Motions',
+  'council.motions': 'Motions',
+  'council.motion': 'Motion',
   'treasury': 'Treasury',
   'treasury.brief':
       'This application lets you view and vote to approve or deny treasury spend proposals.',
@@ -84,6 +85,7 @@ const Map<String, String> zhGov = {
   'democracy.proposal': '提案',
   'council': '议会',
   'council.brief': '在这里为议会成员或候选人投票，还可以提交自己作为候选人。',
+  'council.motions': '议案',
   'council.motion': '议案',
   'treasury': '财政',
   'treasury.brief': '查看网络的财政支出项目，或为其投票。',

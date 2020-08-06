@@ -391,17 +391,15 @@ class _TipDetailPageState extends State<TipDetailPage> {
                                 canClose ? Container() : Container(width: 8),
                                 canClose
                                     ? Container()
-                                    : Expanded(
-                                        child: RoundedButton(
-                                          icon: Icon(
-                                            Icons.airplanemode_active,
-                                            color: Theme.of(context).cardColor,
-                                          ),
-                                          text: '',
-                                          onPressed: isCouncil && isTipped
-                                              ? _onTip
-                                              : null,
+                                    : RoundedButton(
+                                        icon: Icon(
+                                          Icons.airplanemode_active,
+                                          color: Theme.of(context).cardColor,
                                         ),
+                                        text: '',
+                                        onPressed: isCouncil && isTipped
+                                            ? _onTip
+                                            : null,
                                       )
                               ],
                             )

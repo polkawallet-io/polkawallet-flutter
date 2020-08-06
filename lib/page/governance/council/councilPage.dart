@@ -39,7 +39,7 @@ class _GovernanceState extends State<CouncilPage> {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).gov;
-    var tabs = [dic['council'], dic['council.motion']];
+    var tabs = [dic['council'], dic['council.motions']];
     bool isKusama =
         widget.store.settings.endpoint.info == networkEndpointKusama.info;
     String imageColor = isKusama ? 'black' : 'pink';
