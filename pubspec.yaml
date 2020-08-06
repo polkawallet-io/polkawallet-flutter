@@ -54,7 +54,7 @@ dependencies:
   # charts
   charts_flutter: ^0.8.1
   # svg renderer
-  flutter_svg: ^0.17.2
+  flutter_svg: ^0.18.0
   # open link in browser
   url_launcher: ^5.4.2
 
