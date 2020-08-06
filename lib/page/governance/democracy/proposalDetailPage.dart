@@ -124,12 +124,20 @@ class _ProposalDetailPageState extends State<ProposalDetailPage> {
                           child: ProposalArgsItem(
                             label: Text('Hash'),
                             content: Text(
-                              Fmt.address(proposal.imageHash),
+                              Fmt.address(proposal.imageHash, pad: 10),
                               style: Theme.of(context).textTheme.headline4,
                             ),
                             margin: EdgeInsets.all(0),
                           ),
                         ),
+                        params.length > 0
+                            ? Text(
+                                dic['proposal.params'],
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .unselectedWidgetColor),
+                              )
+                            : Container(),
                         params.length > 0
                             ? ProposalArgsList(params)
                             : Container(),

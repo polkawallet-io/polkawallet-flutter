@@ -56,6 +56,9 @@ abstract class _AssetsStore with Store {
   @observable
   ObservableMap<int, BlockData> blockMap = ObservableMap<int, BlockData>();
 
+  @observable
+  List announcements;
+
   @computed
   ObservableList<TransferData> get txsView {
     return ObservableList.of(txs.where((i) {
@@ -202,6 +205,11 @@ abstract class _AssetsStore with Store {
   @action
   void setSubmitting(bool isSubmitting) {
     submitting = isSubmitting;
+  }
+
+  @action
+  void setAnnouncements(List data) {
+    announcements = data;
   }
 
   @action

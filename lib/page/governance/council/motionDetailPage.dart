@@ -3,10 +3,11 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
-import 'package:polka_wallet/page/governance/treasury/spendProposalPage.dart';
+import 'package:polka_wallet/page/governance/council/council.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/treasuryOverviewData.dart';
@@ -47,39 +48,7 @@ class _MotionDetailPageState extends State<MotionDetailPage> {
     return _treasuryProposal;
   }
 
-  void _onVote() async {
-    final dic = I18n.of(context).gov;
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        title: Text(dic['treasury.vote']),
-        actions: <Widget>[
-          CupertinoActionSheetAction(
-            child: Text(dic['yes.text']),
-            onPressed: () {
-              Navigator.of(context).pop();
-              _doVote(true);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text(dic['no.text']),
-            onPressed: () {
-              Navigator.of(context).pop();
-              _doVote(false);
-            },
-          )
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          child: Text(I18n.of(context).home['cancel']),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-    );
-  }
-
-  void _doVote(bool approve) async {
+  void _onVote(bool approve) async {
     var dic = I18n.of(context).gov;
     final CouncilMotionData motion = ModalRoute.of(context).settings.arguments;
     var args = {
@@ -127,12 +96,16 @@ class _MotionDetailPageState extends State<MotionDetailPage> {
             isCouncil = true;
           }
         });
-        bool isVoted = false;
-        final List votesAll = motion.votes.ayes.toList();
-        votesAll.addAll(motion.votes.nays);
-        votesAll.forEach((e) {
+        bool isVotedYes = false;
+        bool isVotedNo = false;
+        motion.votes.ayes.forEach((e) {
           if (e == widget.store.account.currentAddress) {
-            isVoted = true;
+            isVotedYes = true;
+          }
+        });
+        motion.votes.nays.forEach((e) {
+          if (e == widget.store.account.currentAddress) {
+            isVotedNo = true;
           }
         });
         bool isTreasury = motion.proposal.section == 'treasury' &&
@@ -159,8 +132,28 @@ class _MotionDetailPageState extends State<MotionDetailPage> {
                       ),
                       Text(motion.proposal.meta.documentation.trim()),
                       Divider(),
-                      Text('params'),
-                      ProposalArgsList(params),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 8),
+                        child: ProposalArgsItem(
+                          label: Text('Hash'),
+                          content: Text(
+                            Fmt.address(motion.hash, pad: 10),
+                            style: Theme.of(context).textTheme.headline4,
+                          ),
+                          margin: EdgeInsets.all(0),
+                        ),
+                      ),
+                      params.length > 0
+                          ? Text(
+                              dic['proposal.params'],
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).unselectedWidgetColor),
+                            )
+                          : Container(),
+                      params.length > 0
+                          ? ProposalArgsList(params)
+                          : Container(),
                       isTreasury
                           ? FutureBuilder(
                               future: _fetchTreasuryProposal(
@@ -193,7 +186,7 @@ class _MotionDetailPageState extends State<MotionDetailPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text('end'),
+                          Text(dic['vote.end']),
                           Text(
                             Fmt.blockToTime(
                               motion.votes.end - widget.store.gov.bestNumber,
@@ -203,17 +196,19 @@ class _MotionDetailPageState extends State<MotionDetailPage> {
                           ),
                         ],
                       ),
-                      Divider(),
-                      RoundedButton(
-                        icon: Icon(
-                          Icons.check,
-                          color: Theme.of(context).cardColor,
-                        ),
-                        text: isVoted ? dic['voted'] : dic['vote'],
-                        onPressed: isCouncil && !isVoted ? _onVote : null,
+                      Divider(height: 24),
+                      ProposalVoteButtonsRow(
+                        isCouncil: isCouncil,
+                        isVotedNo: isVotedNo,
+                        isVotedYes: isVotedYes,
+                        onVote: _onVote,
                       ),
                     ],
                   ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: BorderedTitle(title: dic['vote.voter']),
                 ),
                 ProposalVotingList(store: widget.store, council: motion),
               ],
@@ -303,6 +298,150 @@ class ProposalArgsItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[label, content],
             ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class ProposalVoteButtonsRow extends StatelessWidget {
+  ProposalVoteButtonsRow({
+    this.isCouncil,
+    this.isVotedYes,
+    this.isVotedNo,
+    this.onVote,
+  });
+
+  final bool isCouncil;
+  final bool isVotedYes;
+  final bool isVotedNo;
+  final Function(bool) onVote;
+
+  @override
+  Widget build(BuildContext context) {
+    final Map dic = I18n.of(context).gov;
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: RoundedButton(
+            icon: Icon(
+              Icons.clear,
+              color: Theme.of(context).cardColor,
+            ),
+            color: Colors.orange,
+            text: isVotedNo ? '${dic['no']}(${dic['voted']})' : dic['no'],
+            onPressed: isCouncil && !isVotedNo ? () => onVote(false) : null,
+          ),
+        ),
+        Container(width: 16),
+        Expanded(
+          child: RoundedButton(
+            icon: Icon(
+              Icons.check,
+              color: Theme.of(context).cardColor,
+            ),
+            text: isVotedYes ? '${dic['yes']}(${dic['voted']})' : dic['yes'],
+            onPressed: isCouncil && !isVotedYes ? () => onVote(true) : null,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ProposalVotingList extends StatefulWidget {
+  ProposalVotingList({this.store, this.council});
+
+  final AppStore store;
+  final CouncilMotionData council;
+
+  @override
+  _ProposalVotingListState createState() => _ProposalVotingListState();
+}
+
+class _ProposalVotingListState extends State<ProposalVotingList> {
+  int _tab = 0;
+
+  void _changeTab(int i) {
+    if (_tab != i) {
+      setState(() {
+        _tab = i;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Map dic = I18n.of(context).gov;
+    final String symbol = widget.store.settings.networkState.tokenSymbol;
+    final String voteCountAye =
+        '${widget.council.votes.ayes.length}/${widget.council.votes.threshold}';
+    final int thresholdNay = widget.store.gov.council.members.length -
+        widget.council.votes.threshold +
+        1;
+    final String voteCountNay =
+        '${widget.council.votes.nays.length}/$thresholdNay';
+    return Container(
+      padding: EdgeInsets.only(bottom: 24),
+      margin: EdgeInsets.only(top: 8),
+      color: Theme.of(context).cardColor,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [0, 1].map((e) {
+                final Color tabColor = e == _tab
+                    ? Theme.of(context).primaryColor
+                    : Theme.of(context).disabledColor;
+                return GestureDetector(
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Text(
+                      e == 0
+                          ? '${dic['yes']}($voteCountAye)'
+                          : '${dic['no']}($voteCountNay)',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: tabColor,
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border(
+                          bottom: BorderSide(
+                        width: 2,
+                        color: tabColor,
+                      )),
+                    ),
+                  ),
+                  onTap: () => _changeTab(e),
+                );
+              }).toList(),
+            ),
+          ),
+          Column(
+            children: _tab == 0
+                ? widget.council.votes.ayes.map((e) {
+                    final Map accInfo = widget.store.account.accountIndexMap[e];
+                    return CandidateItem(
+                      accInfo: accInfo,
+                      balance: [e],
+                      tokenSymbol: symbol,
+                    );
+                  }).toList()
+                : widget.council.votes.nays.map((e) {
+                    final Map accInfo = widget.store.account.accountIndexMap[e];
+                    return CandidateItem(
+                      accInfo: accInfo,
+                      balance: [e],
+                      tokenSymbol: symbol,
+                    );
+                  }).toList(),
           )
         ],
       ),

@@ -10,6 +10,7 @@ import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/substrateApi/types/genExternalLinksParams.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
@@ -31,7 +32,6 @@ class SpendProposalPage extends StatefulWidget {
 
 class _SpendProposalPageState extends State<SpendProposalPage> {
   List _links;
-  String _proposalName;
 
   Future<List> _getExternalLinks(int id) async {
     if (_links != null) return _links;
@@ -43,19 +43,6 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
     if (res != null) {
       setState(() {
         _links = res;
-      });
-    }
-    return res;
-  }
-
-  Future<String> _getProposalName(String callIndex) async {
-    if (_proposalName != null) return _proposalName;
-
-    final String res =
-        await webApi.evalJavascript('gov.getCouncilProposalName("$callIndex")');
-    if (res != null) {
-      setState(() {
-        _proposalName = res;
       });
     }
     return res;
@@ -185,13 +172,17 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
     });
     final bool isApproval = proposal.isApproval ?? false;
     final bool hasProposals = proposal.council.length > 0;
-    bool isVoted = false;
+    bool isVotedYes = false;
+    bool isVotedNo = false;
     if (hasProposals) {
-      final List votesAll = proposal.council[0].votes.ayes.toList();
-      votesAll.addAll(proposal.council[0].votes.nays);
-      votesAll.forEach((e) {
+      proposal.council[0].votes.ayes.forEach((e) {
         if (e == widget.store.account.currentAddress) {
-          isVoted = true;
+          isVotedYes = true;
+        }
+      });
+      proposal.council[0].votes.nays.forEach((e) {
+        if (e == widget.store.account.currentAddress) {
+          isVotedNo = true;
         }
       });
     }
@@ -268,18 +259,22 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
                                   onPressed:
                                       isCouncil ? () => _showActions() : null,
                                 )
-                              : RoundedButton(
-                                  text: !isVoted
-                                      ? dic['treasury.vote']
-                                      : dic['voted'],
-                                  onPressed: isCouncil && !isVoted
-                                      ? () => _showActions(isVote: true)
-                                      : null,
+                              : ProposalVoteButtonsRow(
+                                  isCouncil: isCouncil,
+                                  isVotedNo: isVotedNo,
+                                  isVotedYes: isVotedYes,
+                                  onVote: _onVote,
                                 ),
                         ),
                 ],
               ),
             ),
+            !hasProposals
+                ? Container()
+                : Padding(
+                    padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: BorderedTitle(title: dic['vote.voter']),
+                  ),
             !hasProposals
                 ? Container()
                 : ProposalVotingList(
@@ -302,94 +297,47 @@ class ExternalLinks extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              JumpToBrowserLink(
-                links[0]['link'],
-                text: links[0]['name'],
-              ),
-              JumpToBrowserLink(
-                links[1]['link'],
-                text: links[1]['name'],
+        links.length > 0
+            ? Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    JumpToBrowserLink(
+                      links[0]['link'],
+                      text: links[0]['name'],
+                    ),
+                    links.length > 1
+                        ? JumpToBrowserLink(
+                            links[1]['link'],
+                            text: links[1]['name'],
+                          )
+                        : Container(width: 80)
+                  ],
+                ),
               )
-            ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.all(8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              JumpToBrowserLink(
-                links[2]['link'],
-                text: links[2]['name'],
-              ),
-              JumpToBrowserLink(
-                links[3]['link'],
-                text: links[3]['name'],
+            : Container(),
+        links.length > 2
+            ? Padding(
+                padding: EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    JumpToBrowserLink(
+                      links[2]['link'],
+                      text: links[2]['name'],
+                    ),
+                    links.length > 3
+                        ? JumpToBrowserLink(
+                            links[3]['link'],
+                            text: links[3]['name'],
+                          )
+                        : Container(width: 80)
+                  ],
+                ),
               )
-            ],
-          ),
-        )
+            : Container()
       ],
-    );
-  }
-}
-
-class ProposalVotingList extends StatelessWidget {
-  ProposalVotingList({this.store, this.council});
-
-  final AppStore store;
-  final CouncilMotionData council;
-
-  @override
-  Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).gov;
-    final int voteCount = council.votes.ayes.length + council.votes.nays.length;
-    return Container(
-      padding: EdgeInsets.only(bottom: 24),
-      margin: EdgeInsets.only(top: 8),
-      color: Theme.of(context).cardColor,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: BorderedTitle(
-                title: '${dic['vote.voter']}'
-                    '($voteCount/${council.votes.threshold})'),
-          ),
-          Column(
-            children: council.votes.ayes.map((e) {
-              final Map accInfo = store.account.accountIndexMap[e];
-              return ListTile(
-                leading: AddressIcon(e),
-                title: Fmt.accountDisplayName(e, accInfo),
-                trailing: Text(
-                  dic['yes'],
-                  style: Theme.of(context).textTheme.headline4,
-                ),
-              );
-            }).toList(),
-          ),
-          Column(
-            children: council.votes.nays.map((e) {
-              final Map accInfo = store.account.accountIndexMap[e];
-              return ListTile(
-                leading: AddressIcon(e),
-                title: Fmt.accountDisplayName(e, accInfo),
-                trailing: Text(
-                  dic['no'],
-                  style: Theme.of(context).textTheme.headline4,
-                ),
-              );
-            }).toList(),
-          )
-        ],
-      ),
     );
   }
 }
