@@ -7,8 +7,8 @@ import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/governance/treasury/treasuryPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/treasuryTipData.dart';
@@ -137,7 +137,10 @@ class _TipDetailPageState extends State<TipDetailPage> {
         Fmt.tokenInt(amt, decimals: decimals).toString(),
       ],
       'onFinish': (BuildContext txPageContext, Map res) {
-        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        Navigator.popUntil(
+            txPageContext, ModalRoute.withName(TreasuryPage.route));
+
+        globalTipsRefreshKey.currentState.show();
       }
     };
     setState(() {
@@ -158,7 +161,10 @@ class _TipDetailPageState extends State<TipDetailPage> {
       "detail": jsonEncode({"hash": Fmt.address(tipData.hash, pad: 16)}),
       "params": [tipData.hash],
       'onFinish': (BuildContext txPageContext, Map res) {
-        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        Navigator.popUntil(
+            txPageContext, ModalRoute.withName(TreasuryPage.route));
+
+        globalTipsRefreshKey.currentState.show();
       }
     };
     Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
@@ -176,7 +182,43 @@ class _TipDetailPageState extends State<TipDetailPage> {
       "detail": jsonEncode({"hash": Fmt.address(tipData.hash, pad: 16)}),
       "params": [tipData.hash],
       'onFinish': (BuildContext txPageContext, Map res) {
-        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        Navigator.popUntil(
+            txPageContext, ModalRoute.withName(TreasuryPage.route));
+
+        globalTipsRefreshKey.currentState.show();
+      }
+    };
+    Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
+  }
+
+  Future<void> _onTip() async {
+    var dic = I18n.of(context).gov;
+    final int decimals = widget.store.settings.networkState.tokenDecimals;
+    final TreasuryTipData tipData = ModalRoute.of(context).settings.arguments;
+    final List<BigInt> values =
+        tipData.tips.map((e) => BigInt.parse(e.value.toString())).toList();
+    values.sort();
+    final int midIndex = (values.length / 2).floor();
+    final BigInt median = values.length % 2 > 0
+        ? values[midIndex]
+        : (values[midIndex - 1] + values[midIndex]) ~/ BigInt.two;
+    print(median);
+    var args = {
+      "title": '${dic['treasury.tip']} - ${dic['treasury.jet']}',
+      "txInfo": {
+        "module": 'treasury',
+        "call": 'tip',
+      },
+      "detail": jsonEncode({
+        "hash": Fmt.address(tipData.hash, pad: 16),
+        "median": Fmt.token(median, decimals: decimals),
+      }),
+      "params": [tipData.hash, median.toString()],
+      'onFinish': (BuildContext txPageContext, Map res) {
+        Navigator.popUntil(
+            txPageContext, ModalRoute.withName(TreasuryPage.route));
+
+        globalTipsRefreshKey.currentState.show();
       }
     };
     Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
@@ -184,7 +226,6 @@ class _TipDetailPageState extends State<TipDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     final Map dic = I18n.of(context).gov;
     final String symbol = widget.store.settings.networkState.tokenSymbol;
     final int decimals = widget.store.settings.networkState.tokenDecimals;
@@ -213,12 +254,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
         isCouncil = true;
       }
     });
-    bool isEndorsed = false;
-    tipData.tips.forEach((e) {
-      if (widget.store.account.currentAddress == e.address) {
-        isEndorsed = true;
-      }
-    });
+    bool isTipped = tipData.tips.length > 0;
     int blockTime = 6000;
     if (widget.store.settings.networkConst['treasury'] != null) {
       blockTime =
@@ -229,6 +265,8 @@ class _TipDetailPageState extends State<TipDetailPage> {
       body: SafeArea(
         child: Observer(
           builder: (BuildContext context) {
+            final bool canClose = tipData.closes != null &&
+                tipData.closes <= widget.store.gov.bestNumber;
             return ListView(
               children: <Widget>[
                 RoundedCard(
@@ -290,7 +328,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
                               child: Padding(
                                 padding: EdgeInsets.only(left: 16),
                                 child: Text(
-                                  Fmt.address(tipData.hash, pad: 16),
+                                  Fmt.address(tipData.hash, pad: 10),
                                   textAlign: TextAlign.right,
                                 ),
                               ),
@@ -336,11 +374,9 @@ class _TipDetailPageState extends State<TipDetailPage> {
                                     onPressed: isFinder ? _onCancel : null,
                                   ),
                                 ),
-                                Container(width: 16),
+                                Container(width: 8),
                                 Expanded(
-                                  child: tipData.closes != null &&
-                                          tipData.closes <=
-                                              widget.store.gov.bestNumber
+                                  child: canClose
                                       ? RoundedButton(
                                           text: dic['treasury.closeTip'],
                                           onPressed:
@@ -348,11 +384,25 @@ class _TipDetailPageState extends State<TipDetailPage> {
                                         )
                                       : RoundedButton(
                                           text: dic['treasury.endorse'],
-                                          onPressed: isCouncil && !isEndorsed
-                                              ? _onEndorse
-                                              : null,
+                                          onPressed:
+                                              isCouncil ? _onEndorse : null,
                                         ),
                                 ),
+                                canClose ? Container() : Container(width: 8),
+                                canClose
+                                    ? Container()
+                                    : Expanded(
+                                        child: RoundedButton(
+                                          icon: Icon(
+                                            Icons.airplanemode_active,
+                                            color: Theme.of(context).cardColor,
+                                          ),
+                                          text: '',
+                                          onPressed: isCouncil && isTipped
+                                              ? _onTip
+                                              : null,
+                                        ),
+                                      )
                               ],
                             )
                           ],
@@ -361,37 +411,42 @@ class _TipDetailPageState extends State<TipDetailPage> {
                     ],
                   ),
                 ),
-                Container(
-                  color: Theme.of(context).cardColor,
-                  margin: EdgeInsets.only(top: 8),
-                  padding: EdgeInsets.only(top: 8, bottom: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                        child: BorderedTitle(title: dic['treasury.tipper']),
-                      ),
-                      Column(
-                        children: tipData.tips.map((e) {
-                          final Map accInfo =
-                              widget.store.account.accountIndexMap[e.address];
-                          return ListTile(
-                            leading: AddressIcon(e.address),
-                            title: Fmt.accountDisplayName(e.address, accInfo),
-                            trailing: Text(
-                              '${Fmt.balance(
-                                e.value.toString(),
-                                decimals: decimals,
-                              )} $tokenView',
-                              style: Theme.of(context).textTheme.headline4,
+                tipData.tips.length > 0
+                    ? Container(
+                        color: Theme.of(context).cardColor,
+                        margin: EdgeInsets.only(top: 8),
+                        padding: EdgeInsets.only(top: 8, bottom: 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+                              child:
+                                  BorderedTitle(title: dic['treasury.tipper']),
                             ),
-                          );
-                        }).toList(),
+                            Column(
+                              children: tipData.tips.map((e) {
+                                final Map accInfo = widget
+                                    .store.account.accountIndexMap[e.address];
+                                return ListTile(
+                                  leading: AddressIcon(e.address),
+                                  title: Fmt.accountDisplayName(
+                                      e.address, accInfo),
+                                  trailing: Text(
+                                    '${Fmt.balance(
+                                      e.value.toString(),
+                                      decimals: decimals,
+                                    )} $tokenView',
+                                    style:
+                                        Theme.of(context).textTheme.headline4,
+                                  ),
+                                );
+                              }).toList(),
+                            )
+                          ],
+                        ),
                       )
-                    ],
-                  ),
-                )
+                    : Container()
               ],
             );
           },

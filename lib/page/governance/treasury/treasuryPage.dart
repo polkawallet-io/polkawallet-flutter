@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/backgroundWrapper.dart';
 import 'package:polka_wallet/common/components/topTaps.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
@@ -70,12 +71,16 @@ class _TreasuryPageState extends State<TreasuryPage> {
                     ),
                   ],
                 ),
-                Expanded(
-                  child: widget.store.gov.council.members == null
-                      ? CupertinoActivityIndicator()
-                      : _tab == 0
-                          ? SpendProposals(widget.store)
-                          : MoneyTips(widget.store),
+                Observer(
+                  builder: (_) {
+                    return Expanded(
+                      child: widget.store.gov.council.members == null
+                          ? CupertinoActivityIndicator()
+                          : _tab == 0
+                              ? SpendProposals(widget.store)
+                              : MoneyTips(widget.store),
+                    );
+                  },
                 ),
               ],
             ),

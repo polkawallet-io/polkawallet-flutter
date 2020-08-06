@@ -283,11 +283,18 @@ final GlobalKey<RefreshIndicatorState> globalBondingRefreshKey =
 // staking nominate page:
 final GlobalKey<RefreshIndicatorState> globalNominatingRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
-// council page:
+// council & motions page:
 final GlobalKey<RefreshIndicatorState> globalCouncilRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalMotionsRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
 // democracy page:
 final GlobalKey<RefreshIndicatorState> globalDemocracyRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+// treasury proposals&tips page:
+final GlobalKey<RefreshIndicatorState> globalProposalsRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalTipsRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
 // recovery settings page:
 final GlobalKey<RefreshIndicatorState> globalRecoverySettingsRefreshKey =

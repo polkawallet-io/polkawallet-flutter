@@ -11,11 +11,13 @@ import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
+import 'package:polka_wallet/page/governance/treasury/treasuryPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/substrateApi/types/genExternalLinksParams.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/treasuryOverviewData.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -109,7 +111,10 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
       "detail": jsonEncode({"proposal": txName, "proposal_id": proposal.id}),
       "params": [proposal.id],
       'onFinish': (BuildContext txPageContext, Map res) {
-        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        Navigator.popUntil(
+            txPageContext, ModalRoute.withName(TreasuryPage.route));
+
+        globalProposalsRefreshKey.currentState.show();
       }
     };
     Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
@@ -137,7 +142,10 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
         approve,
       ],
       'onFinish': (BuildContext txPageContext, Map res) {
-        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        Navigator.popUntil(
+            txPageContext, ModalRoute.withName(TreasuryPage.route));
+
+        globalProposalsRefreshKey.currentState.show();
       }
     };
     Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
@@ -200,7 +208,7 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
               child: Column(
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(bottom: 16),
+                    padding: EdgeInsets.only(bottom: 8),
                     child: Row(
                       children: <Widget>[
                         InfoItem(
@@ -234,6 +242,19 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
                         proposal.proposal.beneficiary, accInfoBeneficiary),
                     subtitle: Text(dic['treasury.beneficiary']),
                   ),
+                  hasProposals
+                      ? Padding(
+                          padding: EdgeInsets.only(bottom: 8),
+                          child: ProposalArgsItem(
+                            label: Text(dic['proposal']),
+                            content: Text(
+                              '${proposal.council[0].proposal.section}.${proposal.council[0].proposal.method}',
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
+                            margin: EdgeInsets.only(left: 16, right: 16),
+                          ),
+                        )
+                      : Container(),
                   FutureBuilder(
                     future: _getExternalLinks(proposal.id),
                     builder: (_, AsyncSnapshot<List> snapshot) {

@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/governance/treasury/treasuryPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -33,7 +33,7 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
   Future<void> _onSubmit() async {
     if (_formKey.currentState.validate()) {
       var dic = I18n.of(context).gov;
-      int decimals = widget.store.settings.networkState.tokenDecimals ?? 12;
+      int decimals = widget.store.settings.networkState.tokenDecimals;
       String amt = _amountCtrl.text.trim();
       String address = Fmt.addressOfAccount(_beneficiary, widget.store);
       var args = {
@@ -53,7 +53,10 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
           address,
         ],
         'onFinish': (BuildContext txPageContext, Map res) {
-          Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+          Navigator.popUntil(
+              txPageContext, ModalRoute.withName(TreasuryPage.route));
+
+          globalProposalsRefreshKey.currentState.show();
         }
       };
       Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);

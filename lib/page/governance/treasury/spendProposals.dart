@@ -14,6 +14,7 @@ import 'package:polka_wallet/page/governance/treasury/submitTipPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/treasuryOverviewData.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -27,9 +28,6 @@ class SpendProposals extends StatefulWidget {
 }
 
 class _ProposalsState extends State<SpendProposals> {
-  final GlobalKey<RefreshIndicatorState> _refreshKey =
-      new GlobalKey<RefreshIndicatorState>();
-
   Future<void> _fetchData() async {
     await webApi.gov.fetchTreasuryOverview();
   }
@@ -50,13 +48,12 @@ class _ProposalsState extends State<SpendProposals> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _refreshKey.currentState?.show();
+      globalProposalsRefreshKey.currentState?.show();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     final Map dic = I18n.of(context).gov;
     return Observer(
       builder: (BuildContext context) {
@@ -81,7 +78,7 @@ class _ProposalsState extends State<SpendProposals> {
         });
         return RefreshIndicator(
           onRefresh: _fetchData,
-          key: _refreshKey,
+          key: globalProposalsRefreshKey,
           child: ListView(
             children: <Widget>[
               _OverviewCard(

@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/governance/treasury/treasuryPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -72,7 +72,8 @@ class _SubmitTipPageState extends State<SubmitTipPage> {
                 address,
               ],
         'onFinish': (BuildContext txPageContext, Map res) {
-          Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+          Navigator.popUntil(
+              txPageContext, ModalRoute.withName(TreasuryPage.route));
         }
       };
       Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);

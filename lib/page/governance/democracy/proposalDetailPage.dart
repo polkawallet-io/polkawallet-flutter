@@ -76,7 +76,7 @@ class _ProposalDetailPageState extends State<ProposalDetailPage> {
           child: Observer(
             builder: (_) {
               final int decimals =
-                  widget.store.settings.networkState.tokenDecimals ?? 12;
+                  widget.store.settings.networkState.tokenDecimals;
               final String symbol =
                   widget.store.settings.networkState.tokenSymbol ?? '';
               final String tokenView = Fmt.tokenView(

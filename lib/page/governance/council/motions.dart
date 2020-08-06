@@ -6,6 +6,7 @@ import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class Motions extends StatefulWidget {
@@ -18,9 +19,6 @@ class Motions extends StatefulWidget {
 }
 
 class _MotionsState extends State<Motions> {
-  final GlobalKey<RefreshIndicatorState> _refreshKey =
-      new GlobalKey<RefreshIndicatorState>();
-
   Future<void> _fetchData() async {
     webApi.gov.updateBestNumber();
     await webApi.gov.fetchCouncilMotions();
@@ -30,7 +28,7 @@ class _MotionsState extends State<Motions> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _refreshKey.currentState?.show();
+      globalMotionsRefreshKey.currentState?.show();
     });
   }
 
@@ -41,7 +39,7 @@ class _MotionsState extends State<Motions> {
       builder: (BuildContext context) {
         return RefreshIndicator(
           onRefresh: _fetchData,
-          key: _refreshKey,
+          key: globalMotionsRefreshKey,
           child: ListView(
             padding: EdgeInsets.only(top: 16),
             children: widget.store.gov.councilMotions.length > 0

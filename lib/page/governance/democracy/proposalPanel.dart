@@ -23,7 +23,7 @@ class _ProposalPanelState extends State<ProposalPanel> {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).gov;
-    final int decimals = widget.store.settings.networkState.tokenDecimals ?? 12;
+    final int decimals = widget.store.settings.networkState.tokenDecimals;
     final String symbol = widget.store.settings.networkState.tokenSymbol ?? '';
     final String tokenView = Fmt.tokenView(
       symbol,
