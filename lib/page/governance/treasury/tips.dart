@@ -7,6 +7,7 @@ import 'package:polka_wallet/page/governance/treasury/tipDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/treasuryTipData.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -20,9 +21,6 @@ class MoneyTips extends StatefulWidget {
 }
 
 class _ProposalsState extends State<MoneyTips> {
-  final GlobalKey<RefreshIndicatorState> _refreshKey =
-      new GlobalKey<RefreshIndicatorState>();
-
   Future<void> _fetchData() async {
     webApi.gov.updateBestNumber();
     await webApi.gov.fetchTreasuryTips();
@@ -32,17 +30,16 @@ class _ProposalsState extends State<MoneyTips> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _refreshKey.currentState?.show();
+      globalTipsRefreshKey.currentState?.show();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Observer(
       builder: (BuildContext context) {
         return RefreshIndicator(
-          key: _refreshKey,
+          key: globalTipsRefreshKey,
           onRefresh: _fetchData,
           child: widget.store.gov.treasuryTips == null
               ? CupertinoActivityIndicator()

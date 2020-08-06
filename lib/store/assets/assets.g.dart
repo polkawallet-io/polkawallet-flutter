@@ -152,6 +152,21 @@ mixin _$AssetsStore on _AssetsStore, Store {
     });
   }
 
+  final _$announcementsAtom = Atom(name: '_AssetsStore.announcements');
+
+  @override
+  List<dynamic> get announcements {
+    _$announcementsAtom.reportRead();
+    return super.announcements;
+  }
+
+  @override
+  set announcements(List<dynamic> value) {
+    _$announcementsAtom.reportWrite(value, super.announcements, () {
+      super.announcements = value;
+    });
+  }
+
   final _$setAccountBalancesAsyncAction =
       AsyncAction('_AssetsStore.setAccountBalances');
 
@@ -246,6 +261,17 @@ mixin _$AssetsStore on _AssetsStore, Store {
   }
 
   @override
+  void setAnnouncements(List<dynamic> data) {
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(
+        name: '_AssetsStore.setAnnouncements');
+    try {
+      return super.setAnnouncements(data);
+    } finally {
+      _$_AssetsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 cacheTxsTimestamp: ${cacheTxsTimestamp},
@@ -257,6 +283,7 @@ txsCount: ${txsCount},
 txs: ${txs},
 txsFilter: ${txsFilter},
 blockMap: ${blockMap},
+announcements: ${announcements},
 txsView: ${txsView}
     ''';
   }

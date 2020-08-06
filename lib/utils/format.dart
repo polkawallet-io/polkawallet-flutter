@@ -339,7 +339,7 @@ class Fmt {
     int decimalsDot,
     String network = network_name_kusama,
   }) {
-    String tokenView = token;
+    String tokenView = token ?? '';
     if (token == acala_stable_coin) {
       tokenView = acala_stable_coin_view;
     }

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/TapTooltip.dart';
 import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
 import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -86,17 +86,15 @@ class ReferendumPanel extends StatelessWidget {
       list.add(
           ReferendumArgsList(data.detail['params'], data.image['proposal']));
     }
-    list.add(Container(
-      padding: EdgeInsets.only(top: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            '${data.image != null ? dic['proposal'] : 'Preimage'} hash',
-            style: TextStyle(color: Colors.black54),
-          ),
-          Text(Fmt.address(data.imageHash))
-        ],
+    list.add(Padding(
+      padding: EdgeInsets.only(top: 16, bottom: 8),
+      child: ProposalArgsItem(
+        label: Text('Hash'),
+        content: Text(
+          Fmt.address(data.imageHash, pad: 10),
+          style: Theme.of(context).textTheme.headline4,
+        ),
+        margin: EdgeInsets.all(0),
       ),
     ));
     list.add(Divider(height: 24));
@@ -263,27 +261,14 @@ class ReferendumPanel extends StatelessWidget {
     }
     list.add(Container(
       margin: EdgeInsets.only(top: 16),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: RoundedButton(
-              color: Colors.orange,
-              text: dic['no'],
-              onPressed: () => Navigator.of(context).pushNamed(
-                  ReferendumVotePage.route,
-                  arguments: {'referenda': data, 'voteYes': false}),
-            ),
-          ),
-          Container(width: 8),
-          Expanded(
-            child: RoundedButton(
-              text: dic['yes'],
-              onPressed: () => Navigator.of(context).pushNamed(
-                  ReferendumVotePage.route,
-                  arguments: {'referenda': data, 'voteYes': true}),
-            ),
-          )
-        ],
+      child: ProposalVoteButtonsRow(
+        isCouncil: true,
+        isVotedNo: false,
+        isVotedYes: false,
+        onVote: (res) {
+          Navigator.of(context).pushNamed(ReferendumVotePage.route,
+              arguments: {'referenda': data, 'voteYes': res});
+        },
       ),
     ));
 

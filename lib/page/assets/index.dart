@@ -45,7 +45,6 @@ class _AssetsState extends State<Assets> {
 
   bool _faucetSubmitting = false;
   bool _preclaimChecking = false;
-  List _announcements;
 
   Future<void> _fetchBalance() async {
     if (store.settings.endpoint.info == networkEndpointAcala.info ||
@@ -60,11 +59,9 @@ class _AssetsState extends State<Assets> {
   }
 
   Future<List> _fetchAnnouncements() async {
-    if (_announcements != null) return _announcements;
+    if (store.assets.announcements != null) return store.assets.announcements;
     final List res = await WalletApi.getAnnouncements();
-    setState(() {
-      _announcements = res;
-    });
+    store.assets.setAnnouncements(res);
     return res;
   }
 

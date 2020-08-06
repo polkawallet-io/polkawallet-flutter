@@ -19,7 +19,7 @@ EndpointData networkEndpointKusama = EndpointData.fromJson(const {
   'ss58': 2,
   'text': 'Kusama (Polkadot Canary, hosted by Polkawallet)',
   'value': 'ws://mandala-01.acala.network:9954/',
-//  'value': 'ws://10.230.198.88:9944/',
+//  'value': 'ws://192.168.1.103:9944/',
 });
 
 EndpointData networkEndpointAcala = EndpointData.fromJson(const {
@@ -129,7 +129,7 @@ const String cross_chain_transfer_address_laminar =
     '5CLaminarAUSDCrossChainTransferxxxxxxxxxxxxxwisu';
 
 /// app versions
-const String app_beta_version = '0.9.0-beta.1';
+const String app_beta_version = '0.9.0-beta.2';
 
 /// js code versions
 const Map<String, int> js_code_version_map = {
