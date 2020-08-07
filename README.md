@@ -1,9 +1,19 @@
 # polkawallet-flutter
+
+### Download
+[![Apple Store](https://img.shields.io/badge/Apple%20Store-iOS-Silver?logo=apple)](https://apps.apple.com/us/app/polkawallet/id1520301768)
+[![Google Play](https://img.shields.io/badge/Google%20Play-Android-green?logo=google%20play)](https://play.google.com/store/apps/details?id=io.polkawallet.www.polka_wallet)
+
+----
+
 [![Build Status](https://travis-ci.com/polkawallet-io/polkawallet-flutter.svg?branch=master)](https://travis-ci.com/polkawallet-io/polkawallet-flutter)
+[![Release](https://img.shields.io/github/v/release/polkawallet-io/polkawallet-flutter)](https://github.com/polkawallet-io/polkawallet-flutter/releases)
+[![tag](https://img.shields.io/github/v/tag/polkawallet-io/polkawallet-flutter)](https://github.com/polkawallet-io/polkawallet-flutter/tags)
 
 Polkawallet built with Flutter, https://polkawallet.io
 
 ![](https://github.com/jiangfuyao/polkawallet-flutter-images/raw/master/cover-eb14f464e002642772ffad6d4c9debd5.png)
+
 
 ### Introduction
 
