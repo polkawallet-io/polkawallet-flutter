@@ -177,7 +177,7 @@ class _AssetPageState extends State<AssetPage>
       network: store.settings.endpoint.info,
     );
     final bool isBaseToken = token == symbol;
-    final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
+    final isPolkadot = store.settings.endpoint.info == network_name_polkadot;
     final isLaminar =
         store.settings.endpoint.info == networkEndpointLaminar.info;
 
@@ -191,9 +191,17 @@ class _AssetPageState extends State<AssetPage>
 
     final primaryColor = Theme.of(context).primaryColor;
     final titleColor = Theme.of(context).cardColor;
+
+    Widget tokenViewTitle = Text(tokenView);
+    if (isPolkadot && tokenView == token_denomination_dot_new) {
+      tokenViewTitle = Text(
+        tokenView,
+        style: TextStyle(fontStyle: FontStyle.italic),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text(tokenView),
+        title: tokenViewTitle,
         centerTitle: true,
         elevation: 0.0,
       ),

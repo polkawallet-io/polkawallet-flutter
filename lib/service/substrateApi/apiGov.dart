@@ -52,6 +52,15 @@ class ApiGovernance {
     return data;
   }
 
+  Future<List> getReferendumVoteConvictions() async {
+    List res =
+        await apiRoot.evalJavascript('gov.getReferendumVoteConvictions()');
+    if (res != null) {
+      store.gov.setReferendumVoteConvictions(res);
+    }
+    return res;
+  }
+
   Future<List> fetchProposals() async {
     List data = await apiRoot.evalJavascript('gov.fetchProposals()');
     if (data != null) {

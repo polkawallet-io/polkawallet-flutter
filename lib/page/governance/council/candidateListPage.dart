@@ -119,24 +119,27 @@ class _CandidateList extends State<CandidateListPage> {
                       accInfo: accInfo,
                       balance: i,
                       tokenSymbol: tokenView,
-                      switchValue: _selectedMap[i[0]],
-                      onSwitch: (value) {
-                        setState(() {
-                          _selectedMap[i[0]] = value;
-                        });
-                        Timer(Duration(milliseconds: 300), () {
+                      trailing: CupertinoSwitch(
+                        value: _selectedMap[i[0]],
+                        onChanged: (value) {
                           setState(() {
-                            if (value) {
-                              _selected.add(i);
-                              _notSelected
-                                  .removeWhere((item) => item[0] == i[0]);
-                            } else {
-                              _selected.removeWhere((item) => item[0] == i[0]);
-                              _notSelected.add(i);
-                            }
+                            _selectedMap[i[0]] = value;
                           });
-                        });
-                      },
+                          Timer(Duration(milliseconds: 300), () {
+                            setState(() {
+                              if (value) {
+                                _selected.add(i);
+                                _notSelected
+                                    .removeWhere((item) => item[0] == i[0]);
+                              } else {
+                                _selected
+                                    .removeWhere((item) => item[0] == i[0]);
+                                _notSelected.add(i);
+                              }
+                            });
+                          });
+                        },
+                      ),
                     );
                   },
                 ).toList(),

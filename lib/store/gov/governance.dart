@@ -45,6 +45,9 @@ abstract class _GovernanceStore with Store {
   List<ReferendumInfo> referendums;
 
   @observable
+  List voteConvictions;
+
+  @observable
   List<ProposalInfoData> proposals = [];
 
   @observable
@@ -83,6 +86,11 @@ abstract class _GovernanceStore with Store {
   void setReferendums(List ls) {
     referendums = List.of(ls.map((i) => ReferendumInfo.fromJson(
         i as Map<String, dynamic>, rootStore.account.currentAddress)));
+  }
+
+  @action
+  void setReferendumVoteConvictions(List ls) {
+    voteConvictions = ls;
   }
 
   @action

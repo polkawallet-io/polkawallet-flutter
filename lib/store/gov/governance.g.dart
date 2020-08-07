@@ -117,6 +117,21 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
     });
   }
 
+  final _$voteConvictionsAtom = Atom(name: '_GovernanceStore.voteConvictions');
+
+  @override
+  List<dynamic> get voteConvictions {
+    _$voteConvictionsAtom.reportRead();
+    return super.voteConvictions;
+  }
+
+  @override
+  set voteConvictions(List<dynamic> value) {
+    _$voteConvictionsAtom.reportWrite(value, super.voteConvictions, () {
+      super.voteConvictions = value;
+    });
+  }
+
   final _$proposalsAtom = Atom(name: '_GovernanceStore.proposals');
 
   @override
@@ -229,6 +244,17 @@ mixin _$GovernanceStore on _GovernanceStore, Store {
   }
 
   @override
+  void setReferendumVoteConvictions(List<dynamic> ls) {
+    final _$actionInfo = _$_GovernanceStoreActionController.startAction(
+        name: '_GovernanceStore.setReferendumVoteConvictions');
+    try {
+      return super.setReferendumVoteConvictions(ls);
+    } finally {
+      _$_GovernanceStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setProposals(List<dynamic> ls) {
     final _$actionInfo = _$_GovernanceStoreActionController.startAction(
         name: '_GovernanceStore.setProposals');
@@ -293,6 +319,7 @@ councilMotions: ${councilMotions},
 councilVotes: ${councilVotes},
 userCouncilVotes: ${userCouncilVotes},
 referendums: ${referendums},
+voteConvictions: ${voteConvictions},
 proposals: ${proposals},
 treasuryOverview: ${treasuryOverview},
 treasuryTips: ${treasuryTips}

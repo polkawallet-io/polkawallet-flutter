@@ -447,6 +447,20 @@ class _AssetsState extends State<Assets> {
 
         BalancesInfo balancesInfo = store.assets.balances[symbol];
 
+        String tokenView = Fmt.tokenView(
+              symbol,
+              decimalsDot: decimals,
+              network: store.settings.endpoint.info,
+            ) ??
+            '';
+        Widget tokenViewTitle = Text(tokenView);
+        if (isPolkadot && tokenView == token_denomination_dot_new) {
+          tokenViewTitle = Text(
+            tokenView,
+            style: TextStyle(fontStyle: FontStyle.italic),
+          );
+        }
+
         return RefreshIndicator(
           key: globalBalanceRefreshKey,
           onRefresh: _fetchBalance,
@@ -533,10 +547,7 @@ class _AssetsState extends State<Assets> {
                           child: Image.asset(
                               'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
                         ),
-                        title: Text(Fmt.tokenView(symbol,
-                                decimalsDot: decimals,
-                                network: store.settings.endpoint.info) ??
-                            ''),
+                        title: tokenViewTitle,
                         trailing: Text(
                           Fmt.token(
                               balancesInfo != null

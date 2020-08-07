@@ -308,19 +308,17 @@ class CandidateItem extends StatelessWidget {
     this.accInfo,
     this.balance,
     this.tokenSymbol,
-    this.switchValue,
-    this.onSwitch,
     this.iconSize,
     this.noTap = false,
+    this.trailing,
   });
   final Map accInfo;
   // balance == [<candidate_address>, <0x_candidate_backing_amount>]
   final List balance;
   final String tokenSymbol;
-  final bool switchValue;
-  final Function(bool) onSwitch;
   final double iconSize;
   final bool noTap;
+  final Widget trailing;
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -334,12 +332,7 @@ class CandidateItem extends StatelessWidget {
           ? null
           : () => Navigator.of(context).pushNamed(CandidateDetailPage.route,
               arguments: balance.length == 1 ? [balance[0], '0x0'] : balance),
-      trailing: onSwitch == null
-          ? Container(width: 8)
-          : CupertinoSwitch(
-              value: switchValue,
-              onChanged: onSwitch,
-            ),
+      trailing: trailing ?? Container(width: 8),
     );
   }
 }

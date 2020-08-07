@@ -17,7 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class UI {
   static void copyAndNotify(BuildContext context, String text) {
-    Clipboard.setData(ClipboardData(text: text));
+    Clipboard.setData(ClipboardData(text: text ?? ''));
 
     showCupertinoDialog(
       context: context,

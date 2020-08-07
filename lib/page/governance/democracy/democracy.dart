@@ -30,6 +30,7 @@ class _DemocracyState extends State<Democracy> {
     if (store.settings.loading) {
       return;
     }
+    webApi.gov.getReferendumVoteConvictions();
     await webApi.gov.fetchReferendums();
   }
 
@@ -88,23 +89,27 @@ class _DemocracyState extends State<Democracy> {
         return RefreshIndicator(
           key: globalDemocracyRefreshKey,
           onRefresh: _fetchReferendums,
-          child: list == null
-              ? Container()
-              : list.length == 0
-                  ? ListTail(isEmpty: true, isLoading: false)
-                  : ListView.builder(
-                      itemCount: list.length,
-                      itemBuilder: (BuildContext context, int i) {
-                        return ReferendumPanel(
-                          data: list[i],
-                          bestNumber: bestNumber,
-                          symbol: tokenView,
-                          onCancelVote: _submitCancelVote,
-                          blockDuration: store.settings.networkConst['babe']
-                              ['expectedBlockTime'],
-                        );
-                      },
-                    ),
+          child: list == null || list.length == 0
+              ? Center(child: ListTail(isEmpty: true, isLoading: false))
+              : ListView.builder(
+                  itemCount: list.length + 1,
+                  itemBuilder: (BuildContext context, int i) {
+                    return i == list.length
+                        ? Center(
+                            child: ListTail(
+                            isEmpty: false,
+                            isLoading: false,
+                          ))
+                        : ReferendumPanel(
+                            data: list[i],
+                            bestNumber: bestNumber,
+                            symbol: tokenView,
+                            onCancelVote: _submitCancelVote,
+                            blockDuration: store.settings.networkConst['babe']
+                                ['expectedBlockTime'],
+                          );
+                  },
+                ),
         );
       },
     );

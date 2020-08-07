@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/common/components/listTail.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/governance/treasury/tipDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -41,12 +42,23 @@ class _ProposalsState extends State<MoneyTips> {
         return RefreshIndicator(
           key: globalTipsRefreshKey,
           onRefresh: _fetchData,
-          child: widget.store.gov.treasuryTips == null
-              ? CupertinoActivityIndicator()
+          child: widget.store.gov.treasuryTips == null ||
+                  widget.store.gov.treasuryTips.length == 0
+              ? Center(
+                  child: ListTail(
+                  isEmpty: true,
+                  isLoading: false,
+                ))
               : ListView.builder(
                   padding: EdgeInsets.only(bottom: 32),
-                  itemCount: widget.store.gov.treasuryTips.length,
+                  itemCount: widget.store.gov.treasuryTips.length + 1,
                   itemBuilder: (_, int i) {
+                    if (widget.store.gov.treasuryTips.length == i) {
+                      return ListTail(
+                        isEmpty: false,
+                        isLoading: false,
+                      );
+                    }
                     final TreasuryTipData tip =
                         widget.store.gov.treasuryTips[i];
                     final Map accInfo =
