@@ -73,7 +73,7 @@ const Map<String, String> enGov = {
   'voted': 'Voted',
   'balance': 'balance',
   'locked': 'locked for',
-  'locked.no': 'no lockup period',
+  'locked.no': 'no lockup period(0.1x)',
   'day': 'days',
   'detail': 'Details',
 };
@@ -147,7 +147,7 @@ const Map<String, String> zhGov = {
   'voted': '已投',
   'balance': '余额投票',
   'locked': '锁定时间',
-  'locked.no': '无锁定期',
+  'locked.no': '无锁定期(0.1x)',
   'day': '天',
   'detail': '详情',
 };

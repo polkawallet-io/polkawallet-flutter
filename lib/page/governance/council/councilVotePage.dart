@@ -142,7 +142,11 @@ class _CouncilVote extends State<CouncilVotePage> {
                                   Container(
                                     width: 32,
                                     margin: EdgeInsets.only(right: 8),
-                                    child: AddressIcon(i[0], size: 32),
+                                    child: AddressIcon(
+                                      i[0],
+                                      size: 32,
+                                      tapToCopy: false,
+                                    ),
                                   ),
                                   Expanded(
                                     child: Column(

@@ -41,7 +41,12 @@ class AddressFormItem extends StatelessWidget {
             children: <Widget>[
               Container(
                 margin: EdgeInsets.only(right: 8),
-                child: AddressIcon(address, pubKey: account.pubKey, size: 32),
+                child: AddressIcon(
+                  address,
+                  pubKey: account.pubKey,
+                  size: 32,
+                  tapToCopy: false,
+                ),
               ),
               Expanded(
                 child: Column(

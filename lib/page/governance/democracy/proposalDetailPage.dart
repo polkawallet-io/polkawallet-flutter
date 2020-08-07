@@ -4,13 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
-import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/proposalInfoData.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -64,10 +62,11 @@ class _ProposalDetailPageState extends State<ProposalDetailPage> {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).gov;
-    final ProposalInfoData proposal = ModalRoute.of(context).settings.arguments;
+    final ProposalInfoData proposalPara =
+        ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-          title: Text('${dic['proposal']} #${proposal.index}'),
+          title: Text('${dic['proposal']} #${proposalPara.index}'),
           centerTitle: true),
       body: SafeArea(
         child: RefreshIndicator(
@@ -75,6 +74,8 @@ class _ProposalDetailPageState extends State<ProposalDetailPage> {
           onRefresh: _fetchData,
           child: Observer(
             builder: (_) {
+              final ProposalInfoData proposal = widget.store.gov.proposals
+                  .firstWhere((e) => e.index == proposalPara.index);
               final int decimals =
                   widget.store.settings.networkState.tokenDecimals;
               final String symbol =
@@ -84,8 +85,6 @@ class _ProposalDetailPageState extends State<ProposalDetailPage> {
                 decimalsDot: decimals,
                 network: widget.store.settings.endpoint.info,
               );
-              final AccountData acc = AccountData();
-              acc.address = proposal.proposer;
               final List<List<String>> params = [];
               bool hasProposal = false;
               if (proposal.image?.proposal != null) {
@@ -141,8 +140,16 @@ class _ProposalDetailPageState extends State<ProposalDetailPage> {
                         params.length > 0
                             ? ProposalArgsList(params)
                             : Container(),
-//                    Divider(),
-                        AddressFormItem(acc, label: dic['treasury.proposer']),
+                        Text(
+                          dic['treasury.proposer'],
+                          style: TextStyle(
+                              color: Theme.of(context).unselectedWidgetColor),
+                        ),
+                        ListTile(
+                          contentPadding: EdgeInsets.all(0),
+                          leading: AddressIcon(proposal.proposer),
+                          title: Text(Fmt.address(proposal.proposer)),
+                        ),
                         Padding(
                           padding: EdgeInsets.only(top: 8, bottom: 8),
                           child: Row(

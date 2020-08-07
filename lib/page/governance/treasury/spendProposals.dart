@@ -92,7 +92,7 @@ class _ProposalsState extends State<SpendProposals> {
                 color: Theme.of(context).cardColor,
                 margin: EdgeInsets.only(top: 8),
                 child: widget.store.gov.treasuryOverview.proposals == null
-                    ? CupertinoActivityIndicator()
+                    ? Center(child: CupertinoActivityIndicator())
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[

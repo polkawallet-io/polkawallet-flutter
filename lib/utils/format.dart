@@ -45,7 +45,7 @@ class Fmt {
     if (value == null) {
       return 0;
     }
-    return value / BigInt.from(pow(10, decimals));
+    return value / BigInt.from(pow(10, decimals ?? 12));
   }
 
   /// number transform 3:

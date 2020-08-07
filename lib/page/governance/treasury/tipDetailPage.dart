@@ -8,6 +8,7 @@ import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/treasury/treasuryPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -191,18 +192,10 @@ class _TipDetailPageState extends State<TipDetailPage> {
     Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
   }
 
-  Future<void> _onTip() async {
+  Future<void> _onTip(BigInt median) async {
     var dic = I18n.of(context).gov;
     final int decimals = widget.store.settings.networkState.tokenDecimals;
     final TreasuryTipData tipData = ModalRoute.of(context).settings.arguments;
-    final List<BigInt> values =
-        tipData.tips.map((e) => BigInt.parse(e.value.toString())).toList();
-    values.sort();
-    final int midIndex = (values.length / 2).floor();
-    final BigInt median = values.length % 2 > 0
-        ? values[midIndex]
-        : (values[midIndex - 1] + values[midIndex]) ~/ BigInt.two;
-    print(median);
     var args = {
       "title": '${dic['treasury.tip']} - ${dic['treasury.jet']}',
       "txInfo": {
@@ -260,6 +253,14 @@ class _TipDetailPageState extends State<TipDetailPage> {
       blockTime =
           widget.store.settings.networkConst['babe']['expectedBlockTime'];
     }
+
+    final List<BigInt> values =
+        tipData.tips.map((e) => BigInt.parse(e.value.toString())).toList();
+    values.sort();
+    final int midIndex = (values.length / 2).floor();
+    final BigInt median = values.length % 2 > 0
+        ? values[midIndex]
+        : (values[midIndex - 1] + values[midIndex]) ~/ BigInt.two;
     return Scaffold(
       appBar: AppBar(title: Text(dic['treasury.tip']), centerTitle: true),
       body: SafeArea(
@@ -310,8 +311,15 @@ class _TipDetailPageState extends State<TipDetailPage> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.only(left: 16),
-                                child: Text(
-                                  tipData.reason,
+                                child: TextFormField(
+                                  decoration: InputDecoration.collapsed(
+                                      hintText: '',
+                                      focusColor: Theme.of(context).cardColor),
+                                  style: TextStyle(fontSize: 14),
+                                  initialValue: tipData.reason,
+                                  readOnly: true,
+                                  maxLines: 6,
+                                  minLines: 1,
                                   textAlign: TextAlign.right,
                                 ),
                               ),
@@ -398,7 +406,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
                                         ),
                                         text: '',
                                         onPressed: isCouncil && isTipped
-                                            ? _onTip
+                                            ? () => _onTip(median)
                                             : null,
                                       )
                               ],
@@ -419,8 +427,9 @@ class _TipDetailPageState extends State<TipDetailPage> {
                           children: <Widget>[
                             Padding(
                               padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                              child:
-                                  BorderedTitle(title: dic['treasury.tipper']),
+                              child: BorderedTitle(
+                                  title:
+                                      '${tipData.tips.length} ${dic['treasury.tipper']} (${Fmt.token(median, decimals: decimals)} $tokenView)'),
                             ),
                             Column(
                               children: tipData.tips.map((e) {
@@ -438,6 +447,16 @@ class _TipDetailPageState extends State<TipDetailPage> {
                                     style:
                                         Theme.of(context).textTheme.headline4,
                                   ),
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                      CandidateDetailPage.route,
+                                      arguments: widget
+                                          .store.gov.council.members
+                                          .firstWhere((i) {
+                                        return i[0] == e.address;
+                                      }),
+                                    );
+                                  },
                                 );
                               }).toList(),
                             )

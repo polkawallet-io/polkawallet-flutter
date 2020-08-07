@@ -53,7 +53,7 @@ class GovEntry extends StatelessWidget {
                             dic['democracy'],
                             dic['democracy.brief'],
                             Icon(
-                              Icons.account_balance,
+                              Icons.event_note,
                               color: Colors.white,
                               size: 56,
                             ),
@@ -87,7 +87,7 @@ class GovEntry extends StatelessWidget {
                             dic['treasury'],
                             dic['treasury.brief'],
                             Icon(
-                              Icons.attach_money,
+                              Icons.account_balance,
                               color: Colors.white,
                               size: 56,
                             ),

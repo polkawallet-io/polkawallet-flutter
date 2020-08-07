@@ -68,22 +68,13 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
     }
   }
 
-  List<num> _calcTimes(int value) {
-    double amountX = 0.1;
-    int timeX = 0;
-    if (value > 0) {
-      amountX = value * 1.0;
-      timeX = pow(2, value - 1);
-    }
-    return [amountX, timeX];
-  }
-
   String _getConvictionLabel(int value) {
     var dicGov = I18n.of(context).gov;
-    List times = _calcTimes(value);
+    final Map conviction =
+        value > 0 ? store.gov.voteConvictions[value - 1] : {};
     return value == 0
         ? dicGov['locked.no']
-        : '${dicGov['locked']} ${times[1] * 8} ${dicGov['day']} (${times[1]}x)';
+        : '${dicGov['locked']} ${conviction['period']} ${dicGov['day']} (${conviction['lock']}x)';
   }
 
   void _showConvictionSelect() {
@@ -99,7 +90,10 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
           children: _voteConvictionOptions.map((i) {
             return Padding(
                 padding: EdgeInsets.all(16),
-                child: Text(_getConvictionLabel(i)));
+                child: Text(
+                  _getConvictionLabel(i),
+                  style: TextStyle(fontSize: 16),
+                ));
           }).toList(),
           onSelectedItemChanged: (v) {
             setState(() {

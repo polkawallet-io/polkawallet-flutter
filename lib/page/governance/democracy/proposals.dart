@@ -42,20 +42,19 @@ class _ProposalsState extends State<Proposals> {
         return RefreshIndicator(
           key: _refreshKey,
           onRefresh: _fetchData,
-          child: ListView(
-            children: widget.store.gov.proposals != null &&
-                    widget.store.gov.proposals.length > 0
-                ? widget.store.gov.proposals.map((e) {
-                    return ProposalPanel(widget.store, e);
-                  }).toList()
-                : [
-                    ListTail(
-                      isEmpty: widget.store.gov.proposals == null ||
-                          widget.store.gov.proposals.length == 0,
-                      isLoading: false,
-                    )
-                  ],
-          ),
+          child: widget.store.gov.proposals == null ||
+                  widget.store.gov.proposals.length == 0
+              ? Center(child: ListTail(isEmpty: true, isLoading: false))
+              : ListView.builder(
+                  itemCount: widget.store.gov.proposals.length + 1,
+                  itemBuilder: (_, int i) {
+                    if (widget.store.gov.proposals.length == i) {
+                      return Center(
+                          child: ListTail(isEmpty: false, isLoading: false));
+                    }
+                    return ProposalPanel(
+                        widget.store, widget.store.gov.proposals[i]);
+                  }),
         );
       },
     );

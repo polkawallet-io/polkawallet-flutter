@@ -40,10 +40,19 @@ class _MotionsState extends State<Motions> {
         return RefreshIndicator(
           onRefresh: _fetchData,
           key: globalMotionsRefreshKey,
-          child: ListView(
-            padding: EdgeInsets.only(top: 16),
-            children: widget.store.gov.councilMotions.length > 0
-                ? widget.store.gov.councilMotions.map((e) {
+          child: widget.store.gov.councilMotions.length == 0
+              ? Center(
+                  child: ListTail(isEmpty: true, isLoading: false),
+                )
+              : ListView.builder(
+                  itemCount: widget.store.gov.councilMotions.length + 1,
+                  itemBuilder: (_, int i) {
+                    if (i == widget.store.gov.councilMotions.length) {
+                      return Center(
+                        child: ListTail(isEmpty: false, isLoading: false),
+                      );
+                    }
+                    final e = widget.store.gov.councilMotions[i];
                     return RoundedCard(
                       margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
                       padding: EdgeInsets.only(top: 16, bottom: 16),
@@ -67,9 +76,7 @@ class _MotionsState extends State<Motions> {
                         },
                       ),
                     );
-                  }).toList()
-                : [ListTail(isEmpty: true, isLoading: false)],
-          ),
+                  }),
         );
       },
     );
