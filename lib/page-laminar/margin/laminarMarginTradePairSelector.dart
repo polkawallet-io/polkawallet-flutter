@@ -42,14 +42,14 @@ class _LaminarMarginTradePairSelectorState
 
   Widget _formatPrice(String price, {bool highlight = false}) {
     final TextStyle style = TextStyle(
-      fontSize: 14,
+      fontSize: 12,
       color: highlight
           ? Theme.of(context).primaryColor
           : Theme.of(context).unselectedWidgetColor,
       decoration: TextDecoration.none,
     );
     final TextStyle styleBold = TextStyle(
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: FontWeight.bold,
       color: highlight
           ? Theme.of(context).primaryColor
@@ -71,8 +71,7 @@ class _LaminarMarginTradePairSelectorState
   @override
   Widget build(BuildContext context) {
     final TextStyle styleHeader = TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.bold,
+      fontSize: 12,
       color: Theme.of(context).unselectedWidgetColor,
       decoration: TextDecoration.none,
     );
@@ -80,9 +79,9 @@ class _LaminarMarginTradePairSelectorState
       builder: (_) {
         final poolId = _poolId ?? widget.initialPoolId;
         final List<LaminarMarginPairData> pairs =
-            widget.store.laminar.marginPoolInfo[poolId].options;
-        final Map<String, LaminarPriceData> prices =
-            widget.store.laminar.tokenPrices;
+            widget.store.laminar.marginPoolInfo[poolId].options.toList();
+        pairs.retainWhere(
+            (e) => e.enabled && e.askSpread != null && e.bidSpread != null);
         return Container(
           height: MediaQuery.of(context).copyWith().size.height / 2,
           color: Theme.of(context).cardColor,
@@ -119,7 +118,7 @@ class _LaminarMarginTradePairSelectorState
                         child: Text(
                           margin_pool_name_map[e],
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: e == poolId
                                 ? Theme.of(context).primaryColor
@@ -163,7 +162,7 @@ class _LaminarMarginTradePairSelectorState
                           final Color primaryColor =
                               Theme.of(context).primaryColor;
                           final TextStyle styleHighlight = TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: primaryColor,
                             decoration: TextDecoration.none,
@@ -187,7 +186,7 @@ class _LaminarMarginTradePairSelectorState
                           }
                           return GestureDetector(
                             child: Container(
-                              padding: EdgeInsets.only(bottom: 24),
+                              padding: EdgeInsets.only(bottom: 20),
                               color: Theme.of(context).cardColor,
                               child: Row(
                                 mainAxisAlignment:

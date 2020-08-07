@@ -48,7 +48,11 @@ abstract class _LaminarStore with Store {
   List<LaminarSyntheticPoolTokenData> get syntheticTokens {
     List<LaminarSyntheticPoolTokenData> res = [];
     syntheticPoolInfo.keys.forEach((key) {
-      res.addAll(syntheticPoolInfo[key].options);
+      final List<LaminarSyntheticPoolTokenData> ls =
+          syntheticPoolInfo[key].options.toList();
+      ls.retainWhere((e) =>
+          e.syntheticEnabled && e.askSpread != null && e.bidSpread != null);
+      res.addAll(ls);
     });
     return res;
   }
