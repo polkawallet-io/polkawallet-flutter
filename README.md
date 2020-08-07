@@ -7,6 +7,8 @@
 ----
 
 [![Build Status](https://travis-ci.com/polkawallet-io/polkawallet-flutter.svg?branch=master)](https://travis-ci.com/polkawallet-io/polkawallet-flutter)
+[![Release](https://img.shields.io/github/v/release/polkawallet-io/polkawallet-flutter)](https://github.com/polkawallet-io/polkawallet-flutter/releases)
+[![tag](https://img.shields.io/github/v/tag/polkawallet-io/polkawallet-flutter)](https://github.com/polkawallet-io/polkawallet-flutter/tags)
 
 Polkawallet built with Flutter, https://polkawallet.io
 
