@@ -8,8 +8,8 @@ import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginPage.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginTradePnl.dart';
-import 'package:polka_wallet/page-laminar/margin/laminarMarginTradePrice.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/laminar/types/laminarCurrenciesData.dart';
 import 'package:polka_wallet/store/laminar/types/laminarMarginData.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -79,18 +79,19 @@ class LaminarMarginPosition extends StatelessWidget {
       amtInt,
       decimals: acala_token_decimals,
     );
+    final BigInt rawPriceQuote =
+        Fmt.balanceInt(prices[pairData.pair.quote]?.value);
     final BigInt openPriceInt = BigInt.parse(position['args'][6]);
     final String openPrice = Fmt.token(
       openPriceInt,
       decimals: acala_token_decimals,
       length: 5,
     );
-    final BigInt currentPriceInt = LaminarMarginTradePrice(
-      decimals: decimals,
+    final BigInt currentPriceInt = webApi.laminar.getTradePriceInt(
+      prices: prices,
       pairData: pairData,
-      priceMap: prices,
       direction: direction == 'long' ? 'short' : 'long',
-    ).getTradePriceInt();
+    );
     final bool isClosed = closed != null;
     final BigInt closePriceInt =
         isClosed ? BigInt.parse(closed['args'][3]) : BigInt.zero;
@@ -138,8 +139,10 @@ class LaminarMarginPosition extends StatelessWidget {
                       style: TextStyle(fontSize: 12),
                     ),
                     LaminarMarginTradePnl(
+                      pairData: pairData,
                       decimals: decimals,
                       amount: amtInt,
+                      rawPriceQuote: rawPriceQuote,
                       openPrice: openPriceInt,
                       closePrice: isClosed ? closePriceInt : currentPriceInt,
                       isShort: direction != 'long',
@@ -154,6 +157,7 @@ class LaminarMarginPosition extends StatelessWidget {
                 content: Fmt.token(
                   isClosed ? closePriceInt : currentPriceInt,
                   decimals: decimals,
+                  length: 5,
                 ),
               ),
             ],

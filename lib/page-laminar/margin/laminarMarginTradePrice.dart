@@ -1,63 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/store/laminar/types/laminarCurrenciesData.dart';
-import 'package:polka_wallet/store/laminar/types/laminarMarginData.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 class LaminarMarginTradePrice extends StatelessWidget {
   LaminarMarginTradePrice({
     this.decimals,
-    this.pairData,
-    this.priceMap,
+    this.priceInt,
     this.direction,
     this.highlight = false,
     this.fontSize,
   });
 
   final int decimals;
-  final LaminarMarginPairData pairData;
-  final Map<String, LaminarPriceData> priceMap;
+  final BigInt priceInt;
   final String direction;
   final bool highlight;
   final double fontSize;
 
-  String getTradePrice(
-      {BigInt priceInt, int lengthFixed = 3, int lengthMax = 5}) {
-    BigInt price = getTradePriceInt(priceInt: priceInt ?? _getPriceInt());
-
-    return Fmt.priceCeilBigInt(price,
+  String _getTradePrice({int lengthFixed = 3, int lengthMax = 5}) {
+    return Fmt.priceCeilBigInt(priceInt,
         decimals: decimals, lengthFixed: lengthFixed, lengthMax: lengthMax);
-  }
-
-  BigInt getTradePriceInt({BigInt priceInt}) {
-    final BigInt spreadAsk = Fmt.balanceInt(pairData.askSpread.toString());
-    final BigInt spreadBid = Fmt.balanceInt(pairData.bidSpread.toString());
-    BigInt price = priceInt ?? _getPriceInt();
-
-    return direction == 'long' ? price + spreadAsk : price - spreadBid;
-  }
-
-  BigInt _getPriceInt() {
-    final BigInt priceBase = _getTokenPrice(pairData.pair.base);
-    final BigInt priceQuote = _getTokenPrice(pairData.pair.quote);
-    BigInt priceInt = BigInt.zero;
-    if (priceBase != BigInt.zero && priceQuote != BigInt.zero) {
-      priceInt = priceBase * laminarIntDivisor ~/ priceQuote;
-    }
-
-    return priceInt;
-  }
-
-  BigInt _getTokenPrice(String symbol) {
-    if (symbol == acala_stable_coin) {
-      return laminarIntDivisor;
-    }
-    final LaminarPriceData priceData = priceMap[symbol];
-    if (priceData == null) {
-      return BigInt.zero;
-    }
-    return Fmt.balanceInt(priceData.value ?? '0');
   }
 
   @override
@@ -78,8 +40,7 @@ class LaminarMarginTradePrice extends StatelessWidget {
       decoration: TextDecoration.none,
     );
 
-    final BigInt priceInt = _getPriceInt();
-    final String price = getTradePrice(priceInt: priceInt, lengthFixed: 5);
+    final String price = _getTradePrice(lengthFixed: 5);
 
     return priceInt == BigInt.zero
         ? Row(
