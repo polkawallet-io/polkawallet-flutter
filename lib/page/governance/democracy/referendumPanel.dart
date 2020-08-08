@@ -17,6 +17,7 @@ class ReferendumPanel extends StatelessWidget {
     this.bestNumber,
     this.onCancelVote,
     this.blockDuration,
+    this.links,
   });
 
   final String symbol;
@@ -24,6 +25,7 @@ class ReferendumPanel extends StatelessWidget {
   final int bestNumber;
   final Function(int) onCancelVote;
   final int blockDuration;
+  final Widget links;
 
   @override
   Widget build(BuildContext context) {
@@ -86,17 +88,20 @@ class ReferendumPanel extends StatelessWidget {
       list.add(
           ReferendumArgsList(data.detail['params'], data.image['proposal']));
     }
-    list.add(Padding(
-      padding: EdgeInsets.only(top: 16, bottom: 8),
-      child: ProposalArgsItem(
-        label: Text('Hash'),
-        content: Text(
-          Fmt.address(data.imageHash, pad: 10),
-          style: Theme.of(context).textTheme.headline4,
+    list.addAll([
+      Padding(
+        padding: EdgeInsets.only(top: 16, bottom: 8),
+        child: ProposalArgsItem(
+          label: Text('Hash'),
+          content: Text(
+            Fmt.address(data.imageHash, pad: 10),
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          margin: EdgeInsets.all(0),
         ),
-        margin: EdgeInsets.all(0),
       ),
-    ));
+      links,
+    ]);
     list.add(Divider(height: 24));
 
     double widthFull = MediaQuery.of(context).size.width - 72;

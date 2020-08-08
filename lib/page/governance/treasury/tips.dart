@@ -39,11 +39,12 @@ class _ProposalsState extends State<MoneyTips> {
   Widget build(BuildContext context) {
     return Observer(
       builder: (BuildContext context) {
+        final List<TreasuryTipData> tips =
+            widget.store.gov.treasuryTips.reversed.toList();
         return RefreshIndicator(
           key: globalTipsRefreshKey,
           onRefresh: _fetchData,
-          child: widget.store.gov.treasuryTips == null ||
-                  widget.store.gov.treasuryTips.length == 0
+          child: tips == null || tips.length == 0
               ? Center(
                   child: ListTail(
                   isEmpty: true,
@@ -51,16 +52,15 @@ class _ProposalsState extends State<MoneyTips> {
                 ))
               : ListView.builder(
                   padding: EdgeInsets.only(bottom: 32),
-                  itemCount: widget.store.gov.treasuryTips.length + 1,
+                  itemCount: tips.length + 1,
                   itemBuilder: (_, int i) {
-                    if (widget.store.gov.treasuryTips.length == i) {
+                    if (tips.length == i) {
                       return ListTail(
                         isEmpty: false,
                         isLoading: false,
                       );
                     }
-                    final TreasuryTipData tip =
-                        widget.store.gov.treasuryTips[i];
+                    final TreasuryTipData tip = tips[i];
                     final Map accInfo =
                         widget.store.account.accountIndexMap[tip.who];
                     return RoundedCard(

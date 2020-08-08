@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/listTail.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumPanel.dart';
+import 'package:polka_wallet/service/substrateApi/types/genExternalLinksParams.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -25,6 +27,23 @@ class _DemocracyState extends State<Democracy> {
   _DemocracyState(this.store);
 
   final AppStore store;
+
+  final Map<int, List> _links = {};
+
+  Future<List> _getExternalLinks(int id) async {
+    if (_links[id] != null) return _links[id];
+
+    final List res = await webApi.getExternalLinks(
+      GenExternalLinksParams.fromJson(
+          {'data': id.toString(), 'type': 'referendum'}),
+    );
+    if (res != null) {
+      setState(() {
+        _links[id] = res;
+      });
+    }
+    return res;
+  }
 
   Future<void> _fetchReferendums() async {
     if (store.settings.loading) {
@@ -107,7 +126,15 @@ class _DemocracyState extends State<Democracy> {
                             onCancelVote: _submitCancelVote,
                             blockDuration: store.settings.networkConst['babe']
                                 ['expectedBlockTime'],
-                          );
+                            links: FutureBuilder(
+                              future: _getExternalLinks(list[i].index),
+                              builder: (_, AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  return ExternalLinks(snapshot.data);
+                                }
+                                return Container();
+                              },
+                            ));
                   },
                 ),
         );
