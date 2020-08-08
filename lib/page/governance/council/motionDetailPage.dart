@@ -4,12 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
+import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/governance/council/council.dart';
 import 'package:polka_wallet/page/governance/council/councilPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/service/substrateApi/types/genExternalLinksParams.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/treasuryOverviewData.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -36,6 +38,23 @@ class _MotionDetailPageState extends State<MotionDetailPage> {
   final List<String> methodTreasury = ['approveProposal', 'rejectProposal'];
 
   Map _treasuryProposal;
+
+  List _links;
+
+  Future<List> _getExternalLinks(int id) async {
+    if (_links != null) return _links;
+
+    final List res = await webApi.getExternalLinks(
+      GenExternalLinksParams.fromJson(
+          {'data': id.toString(), 'type': 'council'}),
+    );
+    if (res != null) {
+      setState(() {
+        _links = res;
+      });
+    }
+    return res;
+  }
 
   Future<Map> _fetchTreasuryProposal(String id) async {
     if (_treasuryProposal != null) return _treasuryProposal;
@@ -192,14 +211,35 @@ class _MotionDetailPageState extends State<MotionDetailPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(dic['vote.end']),
-                          Text(
-                            Fmt.blockToTime(
-                              motion.votes.end - widget.store.gov.bestNumber,
-                              blockTime,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Text(
+                                  Fmt.blockToTime(
+                                    motion.votes.end -
+                                        widget.store.gov.bestNumber,
+                                    blockTime,
+                                  ),
+                                  style: Theme.of(context).textTheme.headline4,
+                                ),
+                                Text(
+                                  '#${motion.votes.end}',
+                                  style: Theme.of(context).textTheme.headline4,
+                                )
+                              ],
                             ),
-                            style: Theme.of(context).textTheme.headline4,
                           ),
                         ],
+                      ),
+                      FutureBuilder(
+                        future: _getExternalLinks(motion.votes.index),
+                        builder: (_, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            return ExternalLinks(snapshot.data);
+                          }
+                          return Container();
+                        },
                       ),
                       Divider(height: 24),
                       ProposalVoteButtonsRow(
@@ -435,7 +475,8 @@ class _ProposalVotingListState extends State<ProposalVotingList> {
                     final Map accInfo = widget.store.account.accountIndexMap[e];
                     return CandidateItem(
                       accInfo: accInfo,
-                      balance: [e],
+                      balance: widget.store.gov.council.members
+                          .firstWhere((i) => i[0] == e),
                       tokenSymbol: symbol,
                     );
                   }).toList()
@@ -443,13 +484,68 @@ class _ProposalVotingListState extends State<ProposalVotingList> {
                     final Map accInfo = widget.store.account.accountIndexMap[e];
                     return CandidateItem(
                       accInfo: accInfo,
-                      balance: [e],
+                      balance: widget.store.gov.council.members
+                          .firstWhere((i) => i[0] == e),
                       tokenSymbol: symbol,
                     );
                   }).toList(),
           )
         ],
       ),
+    );
+  }
+}
+
+class ExternalLinks extends StatelessWidget {
+  ExternalLinks(this.links);
+
+  final List links;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        links.length > 0
+            ? Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    JumpToBrowserLink(
+                      links[0]['link'],
+                      text: links[0]['name'],
+                    ),
+                    links.length > 1
+                        ? JumpToBrowserLink(
+                            links[1]['link'],
+                            text: links[1]['name'],
+                          )
+                        : Container(width: 80)
+                  ],
+                ),
+              )
+            : Container(),
+        links.length > 2
+            ? Padding(
+                padding: EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    JumpToBrowserLink(
+                      links[2]['link'],
+                      text: links[2]['name'],
+                    ),
+                    links.length > 3
+                        ? JumpToBrowserLink(
+                            links[3]['link'],
+                            text: links[3]['name'],
+                          )
+                        : Container(width: 80)
+                  ],
+                ),
+              )
+            : Container()
+      ],
     );
   }
 }

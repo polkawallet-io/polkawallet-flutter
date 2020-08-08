@@ -9,6 +9,7 @@ import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/service/substrateApi/types/genExternalLinksParams.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/proposalInfoData.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -28,6 +29,23 @@ class ProposalDetailPage extends StatefulWidget {
 class _ProposalDetailPageState extends State<ProposalDetailPage> {
   final GlobalKey<RefreshIndicatorState> _refreshKey =
       new GlobalKey<RefreshIndicatorState>();
+
+  List _links;
+
+  Future<List> _getExternalLinks(int id) async {
+    if (_links != null) return _links;
+
+    final List res = await webApi.getExternalLinks(
+      GenExternalLinksParams.fromJson(
+          {'data': id.toString(), 'type': 'proposal'}),
+    );
+    if (res != null) {
+      setState(() {
+        _links = res;
+      });
+    }
+    return res;
+  }
 
   Future<void> _fetchData() async {
     await webApi.gov.fetchProposals();
@@ -169,6 +187,16 @@ class _ProposalDetailPageState extends State<ProposalDetailPage> {
                             ],
                           ),
                         ),
+                        FutureBuilder(
+                          future: _getExternalLinks(proposal.index),
+                          builder: (_, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              return ExternalLinks(snapshot.data);
+                            }
+                            return Container();
+                          },
+                        ),
+                        Divider(height: 24),
                         Row(
                           children: <Widget>[
                             Expanded(

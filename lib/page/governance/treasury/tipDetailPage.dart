@@ -354,13 +354,19 @@ class _TipDetailPageState extends State<TipDetailPage> {
                                   Expanded(
                                     child: Padding(
                                       padding: EdgeInsets.only(left: 16),
-                                      child: Text(
-                                        Fmt.blockToTime(
-                                          tipData.closes -
-                                              widget.store.gov.bestNumber,
-                                          blockTime,
-                                        ),
-                                        textAlign: TextAlign.right,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: <Widget>[
+                                          Text(
+                                            Fmt.blockToTime(
+                                              tipData.closes -
+                                                  widget.store.gov.bestNumber,
+                                              blockTime,
+                                            ),
+                                          ),
+                                          Text('#${tipData.closes}')
+                                        ],
                                       ),
                                     ),
                                   ),
