@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/laminar/types/laminarCurrenciesData.dart';
+import 'package:polka_wallet/store/laminar/types/laminarMarginData.dart';
+import 'package:polka_wallet/utils/format.dart';
 
 class ApiLaminar {
   ApiLaminar(this.apiRoot);
@@ -92,5 +96,41 @@ class ApiLaminar {
       },
     );
     return c.future;
+  }
+
+  BigInt _getTokenPrice(Map<String, LaminarPriceData> prices, String symbol) {
+    if (symbol == acala_stable_coin) {
+      return laminarIntDivisor;
+    }
+    final LaminarPriceData priceData = prices[symbol];
+    if (priceData == null) {
+      return BigInt.zero;
+    }
+    return Fmt.balanceInt(priceData.value ?? '0');
+  }
+
+  BigInt getPairPriceInt(
+      Map<String, LaminarPriceData> prices, LaminarMarginPairData pairData) {
+    final BigInt priceBase = _getTokenPrice(prices, pairData.pair.base);
+    final BigInt priceQuote = _getTokenPrice(prices, pairData.pair.quote);
+    BigInt priceInt = BigInt.zero;
+    if (priceBase != BigInt.zero && priceQuote != BigInt.zero) {
+      priceInt = priceBase * laminarIntDivisor ~/ priceQuote;
+    }
+
+    return priceInt;
+  }
+
+  BigInt getTradePriceInt({
+    Map<String, LaminarPriceData> prices,
+    LaminarMarginPairData pairData,
+    String direction,
+    BigInt priceInt,
+  }) {
+    final BigInt spreadAsk = Fmt.balanceInt(pairData.askSpread.toString());
+    final BigInt spreadBid = Fmt.balanceInt(pairData.bidSpread.toString());
+    BigInt price = priceInt ?? getPairPriceInt(prices, pairData);
+
+    return direction == 'long' ? price + spreadAsk : price - spreadBid;
   }
 }

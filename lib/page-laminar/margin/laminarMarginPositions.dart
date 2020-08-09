@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginPage.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginPositionItem.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/laminar/types/laminarCurrenciesData.dart';
 import 'package:polka_wallet/store/laminar/types/laminarMarginData.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -29,7 +31,7 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
   final String openedPositionQuery = r'''
           subscription positionsSubscription($signer: String!) {
             Events(
-              order_by: { phaseIndex: asc }
+              order_by: { phaseIndex: desc }
               where: {
                 method: { _eq: "PositionOpened" }
                 extrinsic: { result: { _eq: "ExtrinsicSuccess" }, signer: { _eq: $signer } }
@@ -47,12 +49,13 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
         ''';
 
   final String closedPositionQuery = r'''
-          subscription positionsSubscription($signer: String!) {
+          subscription positionsSubscription($signer: jsonb!) {
             Events(
-              order_by: { phaseIndex: asc }
+              order_by: { phaseIndex: desc }
               where: {
                 method: { _eq: "PositionClosed" }
-                extrinsic: { result: { _eq: "ExtrinsicSuccess" }, signer: { _eq: $signer } }
+                args: { _contains: $signer }
+                extrinsic: { result: { _eq: "ExtrinsicSuccess" } }
               }
             ) {
               args
@@ -79,7 +82,8 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
 
   LaminarMarginPairData _getPairData(Map position) {
     final int pairIndex = widget.store.laminar.marginTokens.indexWhere((i) {
-      return i.pair.base == position['args'][3]['base'] &&
+      return i.poolId == position['args'][2].toString() &&
+          i.pair.base == position['args'][3]['base'] &&
           i.pair.quote == position['args'][3]['quote'];
     });
     if (pairIndex < 0) {
@@ -119,6 +123,8 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
           }) {
             return Observer(
               builder: (_) {
+                final Map<String, LaminarPriceData> priceMap =
+                    widget.store.laminar.tokenPrices;
                 Widget render;
                 if (result.hasException || resultClosed.hasException) {
                   render = Text(result.exception.toString());
@@ -178,7 +184,7 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
                                         isLoading: false,
                                       )
                                     ]
-                                  : listClosed.map((c) {
+                                  : listClosed.reversed.map((c) {
                                       final positionIndex =
                                           listAll.indexWhere((e) {
                                         return e['args'][1] == c['args'][1];
@@ -192,7 +198,7 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
                                       return LaminarMarginPosition(
                                         position,
                                         pairData,
-                                        widget.store.laminar.tokenPrices,
+                                        priceMap,
                                         closed: c,
                                         decimals: widget.store.settings
                                             .networkState.tokenDecimals,
@@ -205,13 +211,13 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
                                         isLoading: false,
                                       )
                                     ]
-                                  : list.map((e) {
+                                  : list.reversed.map((e) {
                                       final LaminarMarginPairData pairData =
                                           _getPairData(e);
                                       return LaminarMarginPosition(
                                         e,
                                         pairData,
-                                        widget.store.laminar.tokenPrices,
+                                        priceMap,
                                         decimals: widget.store.settings
                                             .networkState.tokenDecimals,
                                       );

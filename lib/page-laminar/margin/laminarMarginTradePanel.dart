@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/infoItemRow.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginPage.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginTradePrice.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/laminar/types/laminarCurrenciesData.dart';
 import 'package:polka_wallet/store/laminar/types/laminarMarginData.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -126,29 +126,34 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).laminar;
     final Map dicAssets = I18n.of(context).assets;
+    final bool isUSDBasedPair = widget.pairData.pair.base == acala_stable_coin;
     final String baseToken = Fmt.tokenView(widget.pairData.pair.base);
-    final String quoteToken = Fmt.tokenView(widget.pairData.pair.quote);
     final List<String> leverages = laminar_leverage_map.keys.toList();
     leverages.retainWhere((e) =>
         widget.pairData.enabledTrades.indexWhere((i) => i.contains(e)) >= 0);
     final BigInt freeInt = Fmt.balanceInt(widget.info?.freeMargin);
     final double free = Fmt.bigIntToDouble(freeInt, decimals: widget.decimals);
-    final BigInt priceBuy = LaminarMarginTradePrice(
-      decimals: widget.decimals,
+    final BigInt priceBuy = webApi.laminar.getTradePriceInt(
+      prices: widget.priceMap,
       pairData: widget.pairData,
-      priceMap: widget.priceMap,
       direction: 'long',
-    ).getTradePriceInt();
-    final BigInt priceSell = LaminarMarginTradePrice(
-      decimals: widget.decimals,
+    );
+    final BigInt priceSell = webApi.laminar.getTradePriceInt(
+      prices: widget.priceMap,
       pairData: widget.pairData,
-      priceMap: widget.priceMap,
       direction: 'short',
-    ).getTradePriceInt();
+    );
+    final double rawPriceQuote = Fmt.balanceDouble(
+        widget.priceMap[widget.pairData.pair.quote]?.value,
+        decimals: widget.decimals);
     final double leverage = double.parse(
         laminar_leverage_map[leverages[widget.leverageIndex]].substring(1));
-    final double amountBuyMax = freeInt / priceBuy * leverage;
-    final double amountSellMax = freeInt / priceSell * leverage;
+    double amountBuyMax = freeInt / priceBuy * leverage;
+    double amountSellMax = freeInt / priceSell * leverage;
+    if (isUSDBasedPair) {
+      amountBuyMax = amountBuyMax / rawPriceQuote;
+      amountSellMax = amountSellMax / rawPriceQuote;
+    }
     double costBuy = 0;
     double costSell = 0;
     if (_amountCtrl.text.trim().isNotEmpty) {
@@ -156,6 +161,10 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
         final double input = double.parse(_amountCtrl.text.trim());
         costBuy = _calcCost(input, priceBuy, leverage);
         costSell = _calcCost(input, priceSell, leverage);
+        if (isUSDBasedPair) {
+          costBuy = costBuy * rawPriceQuote;
+          costSell = costSell * rawPriceQuote;
+        }
       } catch (err) {
         print('calc cost error');
       }
@@ -204,14 +213,12 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
                 if (v.isEmpty) {
                   return dicAssets['amount.error'];
                 }
-                double input = 0;
-                try {
-                  input = double.parse(v.trim());
-                } catch (err) {
-                  return dicAssets['amount.error'];
-                }
-                costBuy = _calcCost(input, priceBuy, leverage);
-                costSell = _calcCost(input, priceSell, leverage);
+//                double input = 0;
+//                try {
+//                  input = double.parse(v.trim());
+//                } catch (err) {
+//                  return dicAssets['amount.error'];
+//                }
                 if (costBuy > free || costSell > free) {
                   return dicAssets['amount.low'];
                 }
@@ -230,9 +237,8 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
                       Text(dic['margin.ask']),
                       LaminarMarginTradePrice(
                         decimals: widget.decimals,
-                        pairData: widget.pairData,
                         direction: 'long',
-                        priceMap: widget.priceMap,
+                        priceInt: priceBuy,
                         fontSize: 18,
                       )
                     ],
@@ -246,9 +252,8 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
                       Text(dic['margin.bid']),
                       LaminarMarginTradePrice(
                         decimals: widget.decimals,
-                        pairData: widget.pairData,
                         direction: 'short',
-                        priceMap: widget.priceMap,
+                        priceInt: priceSell,
                         fontSize: 18,
                       )
                     ],
@@ -297,12 +302,12 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
             children: <Widget>[
               Expanded(
                 child: Text(
-                    '${dic['margin.max']} ${amountBuyMax.toStringAsFixed(5)} $baseToken'),
+                    '${dic['margin.max']} ${amountBuyMax.toStringAsFixed(isUSDBasedPair ? 2 : 5)} $baseToken'),
               ),
               Container(width: 16),
               Expanded(
                 child: Text(
-                    '${dic['margin.max']} ${amountSellMax.toStringAsFixed(5)} $baseToken'),
+                    '${dic['margin.max']} ${amountSellMax.toStringAsFixed(isUSDBasedPair ? 2 : 5)} $baseToken'),
               )
             ],
           ),

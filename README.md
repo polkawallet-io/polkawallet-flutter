@@ -37,16 +37,21 @@ Polkawallet is aiming to provide a more convenient entrance of the polkadot netw
 - [x] Token transfer/staking/governance supported in Kusama/Polkadot.
 - [x] DOT claim in Polkadot.
 - [x] Token transfer/loan/swap/liquid-DOT supported in Acala Network testnet.
+- [x] Token-transfer/synthetic-swap/margin-trade supported in Laminar testnet.
 - [x] Basic account settings: changing name/password/address prefix/language/remote node.
 
 ### Todos
 
-- [ ] Support all available operations of Council/Democracy module.
-- [ ] Treasury module of Kusama/Polkadot.
 - [ ] Login polkassembly with a wallet account.
 - [ ] Refactor the App to support any Substrate-based-blockchain to integrate as plugins.
 
 ### Building
+
+#### Dependencies
+
+- `Flutter 1.20.x statble` 
+- `Dart 2.7.x` 
+- `Node 12.x` 
 
 #### Install Flutter 
 `polkawallet_flutter` is built with [Flutter](https://flutter.dev/), you need to have `Flutter` dev tools

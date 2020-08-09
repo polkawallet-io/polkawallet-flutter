@@ -266,7 +266,7 @@ class UI {
 
   static TextInputFormatter decimalInputFormatter(int decimals) {
     return RegExInputFormatter.withRegex(
-        '^[0-9]{1,$decimals}(\\.[0-9]{0,$decimals})?\$');
+        '^[0-9]{0,$decimals}(\\.[0-9]{0,$decimals})?\$');
   }
 }
 
