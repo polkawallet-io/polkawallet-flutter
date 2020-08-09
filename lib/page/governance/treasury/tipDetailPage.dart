@@ -32,7 +32,6 @@ class _TipDetailPageState extends State<TipDetailPage> {
   final TextEditingController _tipInputCtrl = TextEditingController();
 
   Future<void> _onEndorse() async {
-    print('click');
     final String symbol = widget.store.settings.networkState.tokenSymbol;
     final int decimals = widget.store.settings.networkState.tokenDecimals;
     final String tokenView = Fmt.tokenView(
@@ -75,7 +74,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
               onPressed: () {
                 try {
                   final value = double.parse(_tipInputCtrl.text);
-                  if (value > 0) {
+                  if (value >= 0) {
                     Navigator.of(context).pop();
                     _onEndorseSubmit();
                   } else {
