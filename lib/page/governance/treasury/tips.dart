@@ -39,12 +39,14 @@ class _ProposalsState extends State<MoneyTips> {
   Widget build(BuildContext context) {
     return Observer(
       builder: (BuildContext context) {
-        final List<TreasuryTipData> tips =
-            widget.store.gov.treasuryTips.reversed.toList();
+        List<TreasuryTipData> tips = [];
+        if (widget.store.gov.treasuryTips != null) {
+          tips.addAll(widget.store.gov.treasuryTips.reversed);
+        }
         return RefreshIndicator(
           key: globalTipsRefreshKey,
           onRefresh: _fetchData,
-          child: tips == null || tips.length == 0
+          child: tips.length == 0
               ? Center(
                   child: ListTail(
                   isEmpty: true,

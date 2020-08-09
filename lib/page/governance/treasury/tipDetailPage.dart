@@ -258,9 +258,12 @@ class _TipDetailPageState extends State<TipDetailPage> {
         tipData.tips.map((e) => BigInt.parse(e.value.toString())).toList();
     values.sort();
     final int midIndex = (values.length / 2).floor();
-    final BigInt median = values.length % 2 > 0
-        ? values[midIndex]
-        : (values[midIndex - 1] + values[midIndex]) ~/ BigInt.two;
+    BigInt median = BigInt.zero;
+    if (values.length > 0) {
+      median = values.length % 2 > 0
+          ? values[midIndex]
+          : (values[midIndex - 1] + values[midIndex]) ~/ BigInt.two;
+    }
     return Scaffold(
       appBar: AppBar(title: Text(dic['treasury.tip']), centerTitle: true),
       body: SafeArea(
