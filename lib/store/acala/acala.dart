@@ -292,15 +292,23 @@ abstract class _AcalaStore with Store {
 
     if (cached[0] != null) {
       setLoanTxs(cached[0], needCache: false);
+    } else {
+      setLoanTxs([], needCache: false, reset: true);
     }
     if (cached[1] != null) {
       setDexLiquidityTxs(cached[1], needCache: false);
+    } else {
+      setDexLiquidityTxs([], needCache: false, reset: true);
     }
     if (cached[2] != null) {
-      setSwapTxs(cached[2], needCache: false);
+      setSwapTxs(cached[2], needCache: false, reset: true);
+    } else {
+      setSwapTxs([], needCache: false, reset: true);
     }
     if (cached[3] != null) {
       setHomaTxs(cached[3], needCache: false);
+    } else {
+      setHomaTxs([], needCache: false, reset: true);
     }
     if (cached[4] != null) {
       setTransferTxs(cached[4], reset: true, needCache: false);

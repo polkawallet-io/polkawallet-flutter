@@ -549,11 +549,12 @@ class _AssetsState extends State<Assets> {
                         ),
                         title: tokenViewTitle,
                         trailing: Text(
-                          Fmt.token(
+                          Fmt.priceFloorBigInt(
                               balancesInfo != null
                                   ? balancesInfo.total
                                   : BigInt.zero,
-                              decimals: decimals),
+                              decimals: decimals,
+                              lengthFixed: 3),
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
@@ -588,8 +589,10 @@ class _AssetsState extends State<Assets> {
                             ),
                             title: Text(token),
                             trailing: Text(
-                              Fmt.balance(store.assets.tokenBalances[i],
-                                  decimals: decimals),
+                              Fmt.priceFloorBigInt(
+                                  Fmt.balanceInt(store.assets.tokenBalances[i]),
+                                  decimals: decimals,
+                                  lengthFixed: 3),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,

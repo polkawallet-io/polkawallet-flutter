@@ -31,7 +31,7 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
   final String openedPositionQuery = r'''
           subscription positionsSubscription($signer: String!) {
             Events(
-              order_by: { phaseIndex: asc }
+              order_by: { phaseIndex: desc }
               where: {
                 method: { _eq: "PositionOpened" }
                 extrinsic: { result: { _eq: "ExtrinsicSuccess" }, signer: { _eq: $signer } }
@@ -51,7 +51,7 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
   final String closedPositionQuery = r'''
           subscription positionsSubscription($signer: jsonb!) {
             Events(
-              order_by: { phaseIndex: asc }
+              order_by: { phaseIndex: desc }
               where: {
                 method: { _eq: "PositionClosed" }
                 args: { _contains: $signer }

@@ -9,7 +9,6 @@ import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
@@ -190,7 +189,11 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                               decoration: InputDecoration(
                                 hintText: dic['amount'],
                                 labelText:
-                                    '${dic['amount']} (${dic['balance']}: ${Fmt.token(available, decimals: decimals)})',
+                                    '${dic['amount']} (${dic['balance']}: ${Fmt.priceFloorBigInt(
+                                  available,
+                                  decimals: decimals,
+                                  lengthMax: 6,
+                                )})',
                               ),
                               inputFormatters: [
                                 UI.decimalInputFormatter(decimals)
