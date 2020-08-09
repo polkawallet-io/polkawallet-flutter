@@ -90,6 +90,11 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
       decimalsDot: decimals,
       network: widget.store.settings.endpoint.info,
     );
+    final BigInt bondPercentage = Fmt.balanceInt(widget
+            .store.settings.networkConst['treasury']['proposalBond']
+            .toString()) *
+        BigInt.from(100) ~/
+        BigInt.from(1000000);
     final BigInt minBond = Fmt.balanceInt(widget
         .store.settings.networkConst['treasury']['proposalBondMinimum']
         .toString());
@@ -123,27 +128,6 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
                             children: [
                               TextFormField(
                                 decoration: InputDecoration(
-                                  hintText: dic['treasury.bond'],
-                                  labelText:
-                                      '${dic['treasury.bond']} ($tokenView)',
-                                ),
-                                initialValue: Fmt.priceCeilBigInt(
-                                  minBond,
-                                  decimals: decimals,
-                                  lengthFixed: 3,
-                                ),
-                                readOnly: true,
-                                validator: (v) {
-                                  if (widget.store.assets.balances[symbol]
-                                          .transferable <=
-                                      minBond) {
-                                    return dicAsset['amount.low'];
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                decoration: InputDecoration(
                                   hintText: dicAsset['amount'],
                                   labelText:
                                       '${dicAsset['amount']} ($tokenView)',
@@ -160,7 +144,52 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
                                   }
                                   return null;
                                 },
-                              )
+                              ),
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText:
+                                      '${dic['treasury.bond']} ($tokenView)',
+                                ),
+                                initialValue: '$bondPercentage%',
+                                readOnly: true,
+                                style: TextStyle(
+                                    color: Theme.of(context).disabledColor),
+                                validator: (v) {
+                                  final BigInt bond = Fmt.tokenInt(
+                                          _amountCtrl.text.trim(),
+                                          decimals: decimals) *
+                                      bondPercentage ~/
+                                      BigInt.from(100);
+                                  if (widget.store.assets.balances[symbol]
+                                          .transferable <=
+                                      bond) {
+                                    return dicAsset['amount.low'];
+                                  }
+                                  return null;
+                                },
+                              ),
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText:
+                                      '${dic['treasury.bond.min']} ($tokenView)',
+                                ),
+                                initialValue: Fmt.priceCeilBigInt(
+                                  minBond,
+                                  decimals: decimals,
+                                  lengthFixed: 3,
+                                ),
+                                readOnly: true,
+                                style: TextStyle(
+                                    color: Theme.of(context).disabledColor),
+                                validator: (v) {
+                                  if (widget.store.assets.balances[symbol]
+                                          .transferable <=
+                                      minBond) {
+                                    return dicAsset['amount.low'];
+                                  }
+                                  return null;
+                                },
+                              ),
                             ],
                           ),
                         )
