@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -72,9 +74,17 @@ class ReceivePage extends StatelessWidget {
                       ),
                       Container(
                         width: 160,
-                        padding: EdgeInsets.only(bottom: 32),
                         child: Text(store.account.currentAddress),
                       ),
+                      Container(
+                        width: MediaQuery.of(context).size.width / 2,
+                        padding: EdgeInsets.only(top: 16, bottom: 32),
+                        child: RoundedButton(
+                          text: I18n.of(context).assets['copy'],
+                          onPressed: () => UI.copyAndNotify(
+                              context, store.account.currentAddress),
+                        ),
+                      )
                     ],
                   ),
                 )

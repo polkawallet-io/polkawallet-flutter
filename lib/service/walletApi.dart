@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 
 class WalletApi {
-  static const String _endpoint = 'https://apps.acala.network/polkawallet';
+  static const String _endpoint = 'https://api.polkawallet.io';
 
   static const String _jsCodeStorageKey = 'js_service_';
   static const String _jsCodeStorageVersionKey = 'js_service_version_';
