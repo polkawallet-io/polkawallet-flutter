@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page/asExtension/walletExtensionSignPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/notification.dart';
@@ -332,6 +333,17 @@ class ApiAccount {
         '$pageTile - ${txInfo['module']}.${txInfo['call']}',
       );
     }
+    return res;
+  }
+
+  Future<Map> signAsExtension(String password, Map args) async {
+    final String call = args['msgType'] == WalletExtensionSignPage.signTypeBytes
+        ? 'signBytesAsExtension'
+        : 'signTxAsExtension';
+    final res = await apiRoot.evalJavascript(
+      'account.$call("$password", ${jsonEncode(args['request'])})',
+      allowRepeat: true,
+    );
     return res;
   }
 }

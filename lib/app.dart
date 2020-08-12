@@ -29,6 +29,7 @@ import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
+import 'package:polka_wallet/page/asExtension/walletExtensionSignPage.dart';
 import 'package:polka_wallet/page/assets/announcementPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
@@ -46,6 +47,7 @@ import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
 import 'package:polka_wallet/page/governance/democracy/democracyPage.dart';
 import 'package:polka_wallet/page/governance/democracy/proposalDetailPage.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
+import 'package:polka_wallet/page/asExtension/dAppWrapperPage.dart';
 import 'package:polka_wallet/page/governance/treasury/spendProposalPage.dart';
 import 'package:polka_wallet/page/governance/treasury/submitProposalPage.dart';
 import 'package:polka_wallet/page/governance/treasury/submitTipPage.dart';
@@ -249,6 +251,9 @@ class _WalletAppState extends State<WalletApp> {
           TxConfirmPage.route: (_) => TxConfirmPage(_appStore),
           QrSignerPage.route: (_) => QrSignerPage(_appStore),
           QrSenderPage.route: (_) => QrSenderPage(),
+          DAppWrapperPage.route: (_) => DAppWrapperPage(_appStore),
+          WalletExtensionSignPage.route: (_) =>
+              WalletExtensionSignPage(_appStore),
           // assets
           AssetPage.route: (_) => AssetPage(_appStore),
           TransferPage.route: (_) => TransferPage(_appStore),

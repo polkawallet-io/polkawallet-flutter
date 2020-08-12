@@ -17,10 +17,19 @@ class PasswordInputDialog extends StatefulWidget {
 
 class _PasswordInputDialog extends State<PasswordInputDialog> {
   final TextEditingController _passCtrl = new TextEditingController();
+  bool _submitting = false;
 
   Future<void> _onOk(String password) async {
+    setState(() {
+      _submitting = true;
+    });
     var res =
         await webApi.account.checkAccountPassword(widget.account, password);
+    if (mounted) {
+      setState(() {
+        _submitting = false;
+      });
+    }
     if (res == null) {
       final Map<String, String> dic = I18n.of(context).profile;
       showCupertinoDialog(
@@ -78,8 +87,14 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
           },
         ),
         CupertinoButton(
-          child: Text(dic['ok']),
-          onPressed: () => _onOk(_passCtrl.text.trim()),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _submitting ? CupertinoActivityIndicator() : Container(),
+              Text(dic['ok'])
+            ],
+          ),
+          onPressed: _submitting ? null : () => _onOk(_passCtrl.text.trim()),
         ),
       ],
     );
