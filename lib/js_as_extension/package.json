@@ -1,0 +1,33 @@
+{
+  "name": "@polkawallet/extension",
+  "description": "A Polkawallet signer for the @polkadot/api",
+  "version": "0.1.0-beta.1",
+  "author": "Shawn Yang <dhryxy@gmail.com>",
+  "license": "Apache-2",
+  "scripts": {
+    "clean": "rm -rf dist/*",
+    "build": "webpack -p --mode production",
+    "build-dev": "webpack -d --mode development"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.8.3",
+    "@babel/runtime": "^7.11.2",
+    "@polkadot/extension-base": "0.33.0-beta.2",
+    "@polkadot/extension-dapp": "0.33.0-beta.2",
+    "@polkadot/extension-inject": "0.33.0-beta.2"
+  },
+  "devDependencies": {
+    "@polkadot/dev": "^0.55.34",
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@webpack-cli/info": "^0.2.0",
+    "@webpack-cli/init": "^0.3.0",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  }
+}

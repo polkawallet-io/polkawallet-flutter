@@ -15,20 +15,24 @@ class InfoItemRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Text(
           label,
           style: TextStyle(fontSize: 14),
         ),
-        Text(content,
+        Expanded(
+          child: Text(
+            content,
+            textAlign: TextAlign.right,
             style: color != null || colorPrimary
                 ? TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: color ?? Theme.of(context).primaryColor,
                   )
-                : Theme.of(context).textTheme.headline4),
+                : Theme.of(context).textTheme.headline4,
+          ),
+        ),
       ],
     );
   }

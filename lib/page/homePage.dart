@@ -5,6 +5,7 @@ import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-laminar/laminarEntry.dart';
 import 'package:polka_wallet/page/assets/index.dart';
 import 'package:polka_wallet/page/governance/govEntry.dart';
+import 'package:polka_wallet/page/networkSelectPage.dart';
 import 'package:polka_wallet/page/profile/index.dart';
 import 'package:polka_wallet/page/staking/index.dart';
 import 'package:polka_wallet/service/notification.dart';
@@ -108,7 +109,8 @@ class _HomePageState extends State<HomePage> {
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.menu),
-                  onPressed: () => Navigator.of(context).pushNamed('/network'),
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed(NetworkSelectPage.route),
                 ),
               ],
             ),
