@@ -77,6 +77,7 @@ const Map<String, String> enGov = {
   'locked.no': 'no lockup period(0.1x)',
   'day': 'days',
   'detail': 'Details',
+  'polkassembly': 'Discussion platform for polkadot governance',
 };
 
 const Map<String, String> zhGov = {
@@ -152,4 +153,5 @@ const Map<String, String> zhGov = {
   'locked.no': '无锁定期(0.1x)',
   'day': '天',
   'detail': '详情',
+  'polkassembly': 'Polkadot 网络治理讨论平台',
 };

@@ -47,6 +47,9 @@ class Api {
 
   Function _connectFunc;
 
+  /// preload js code for opening dApps
+  String asExtensionJSCode;
+
   void init() {
     account = ApiAccount(this);
 
@@ -58,6 +61,13 @@ class Api {
     gov = ApiGovernance(this);
 
     launchWebview();
+
+    DefaultAssetBundle.of(context)
+        .loadString('lib/js_as_extension/dist/main.js')
+        .then((String js) {
+      print('asExtensionJSCode loaded');
+      asExtensionJSCode = js;
+    });
   }
 
   Future<void> _checkJSCodeUpdate() async {

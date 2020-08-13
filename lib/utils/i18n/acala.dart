@@ -40,6 +40,9 @@ const Map<String, String> enDex = {
   'loan.amount.collateral': 'How much would you deposit as collateral?',
   'loan.max': 'Max',
   'loan.txs': 'History',
+  'loan.warn':
+      'Debt should be greater than 1aUSD or payback all, this action will have 1aUSD debt left. Are you sure to continue?',
+  'loan.warn.back': 'Back to modify',
   'txs.action': 'Action',
   'payback.small': 'The remaining debt is too small.',
   'earn.title': 'Deposit & Earn',
@@ -129,6 +132,8 @@ const Map<String, String> zhDex = {
   'loan.amount.collateral': '您要存入多少质押物？',
   'loan.max': '最大值',
   'loan.txs': '交易记录',
+  'loan.warn': '借款未还清时，余额不能小于 1aUSD，本次操作还款后将剩余 1aUSD 的债务。确认继续吗？',
+  'loan.warn.back': '返回修改',
   'txs.action': '操作类型',
   'payback.small': '剩余债务过小',
   'earn.title': '存款盈利',
