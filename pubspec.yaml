@@ -204,6 +204,7 @@ flutter:
     - assets/images/staking/stake.png
     - assets/images/staking/nominate.png
     - assets/images/gov/time.png
+    - assets/images/gov/polkassembly.png
     - assets/images/profile/about.png
     - assets/images/profile/address.png
     - assets/images/profile/setting.png

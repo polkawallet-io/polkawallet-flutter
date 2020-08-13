@@ -17,15 +17,15 @@ class EntryPageCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.all(28),
             width: 110,
+            height: 110,
             decoration: BoxDecoration(
-              color: color ?? Colors.blue,
+              color: color ?? Theme.of(context).primaryColor,
               borderRadius: const BorderRadius.only(
                   topLeft: const Radius.circular(8),
                   bottomLeft: const Radius.circular(8)),
             ),
-            child: icon,
+            child: Center(child: icon),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

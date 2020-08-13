@@ -213,7 +213,29 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     return null;
   }
 
-  Map _getTxParams(LoanData loan) {
+  Future<bool> _confirmPaybackParams() async {
+    var dic = I18n.of(context).acala;
+    final bool res = await showCupertinoDialog(
+        context: context,
+        builder: (_) {
+          return CupertinoAlertDialog(
+            content: Text(dic['loan.warn']),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text(dic['loan.warn.back']),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+              CupertinoDialogAction(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () => Navigator.of(context).pop(true),
+              )
+            ],
+          );
+        });
+    return res;
+  }
+
+  Future<Map> _getTxParams(LoanData loan) async {
     final int decimals = store.settings.networkState.tokenDecimals;
     final LoanAdjustPageParams params =
         ModalRoute.of(context).settings.arguments;
@@ -242,6 +264,8 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
         final debitValueOne = Fmt.tokenInt('1', decimals: decimals);
         if (loan.debits - _amountDebit > BigInt.zero &&
             loan.debits - _amountDebit < debitValueOne) {
+          final bool canContinue = await _confirmPaybackParams();
+          if (!canContinue) return null;
           debitSubtract =
               loan.debitShares - loan.type.debitToDebitShare(debitValueOne);
         }
@@ -290,8 +314,10 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     }
   }
 
-  void _onSubmit(String pageTitle, LoanData loan) {
-    Map params = _getTxParams(loan);
+  Future<void> _onSubmit(String pageTitle, LoanData loan) async {
+    Map params = await _getTxParams(loan);
+    if (params == null) return;
+
     var args = {
       "title": pageTitle,
       "txInfo": {
