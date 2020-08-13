@@ -73,7 +73,6 @@ class AcalaEntry extends StatelessWidget {
                               'assets/images/acala/exchange.svg',
                               height: 56,
                             ),
-                            color: Theme.of(context).primaryColor,
                           ),
                           onTap: () =>
                               Navigator.of(context).pushNamed(SwapPage.route),
@@ -89,7 +88,6 @@ class AcalaEntry extends StatelessWidget {
                               'assets/images/acala/deposit.svg',
                               height: 56,
                             ),
-                            color: Colors.blueAccent,
                           ),
                           onTap: () =>
                               Navigator.of(context).pushNamed(EarnPage.route),
@@ -105,7 +103,6 @@ class AcalaEntry extends StatelessWidget {
                               'assets/images/acala/swap.svg',
                               height: 56,
                             ),
-                            color: Theme.of(context).primaryColor,
                           ),
                           onTap: () =>
                               Navigator.of(context).pushNamed(HomaPage.route),

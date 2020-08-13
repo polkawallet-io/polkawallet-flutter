@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/entryPageCard.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page/asExtension/dAppWrapperPage.dart';
 import 'package:polka_wallet/page/governance/council/councilPage.dart';
 import 'package:polka_wallet/page/governance/democracy/democracyPage.dart';
 import 'package:polka_wallet/page/governance/treasury/treasuryPage.dart';
@@ -40,6 +42,10 @@ class GovEntry extends StatelessWidget {
             Expanded(
               child: Observer(
                 builder: (_) {
+                  final String network =
+                      store.settings.endpoint.info == network_name_polkadot
+                          ? 'polkadot'
+                          : 'kusama';
                   if (store.settings.loading) {
                     return CupertinoActivityIndicator();
                   }
@@ -95,6 +101,23 @@ class GovEntry extends StatelessWidget {
                           ),
                           onTap: () => Navigator.of(context)
                               .pushNamed(TreasuryPage.route),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: GestureDetector(
+                          child: EntryPageCard(
+                            'Polkassembly',
+                            dic['polkassembly'],
+                            Image.asset(
+                              'assets/images/gov/polkassembly.png',
+                              width: 56,
+                            ),
+                            color: Colors.black87,
+                          ),
+                          onTap: () => Navigator.of(context).pushNamed(
+                              DAppWrapperPage.route,
+                              arguments: 'https://$network.polkassembly.io/'),
                         ),
                       ),
                     ],

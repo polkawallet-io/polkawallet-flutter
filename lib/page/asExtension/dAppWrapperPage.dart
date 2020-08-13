@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/page/asExtension/walletExtensionSignPage.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -21,12 +23,15 @@ class DAppWrapperPage extends StatefulWidget {
 
 class _DAppWrapperPageState extends State<DAppWrapperPage> {
   WebViewController _controller;
+  bool _loading = true;
 
   Future<void> _msgHandler(Map msg) async {
     print('api called: $msg');
     switch (msg['msgType']) {
       case 'pub(accounts.list)':
-        final List res = widget.store.account.accountList.map((e) {
+        final List<AccountData> ls = widget.store.account.accountList.toList();
+        ls.retainWhere((e) => e.encoding['content'][1] == 'sr25519');
+        final List res = ls.map((e) {
           return {
             'address': widget.store.account
                         .pubKeyAddressMap[widget.store.settings.endpoint.ss58]
@@ -58,51 +63,52 @@ class _DAppWrapperPageState extends State<DAppWrapperPage> {
   Widget build(BuildContext context) {
     final String url = ModalRoute.of(context).settings.arguments;
     return Scaffold(
-      appBar: AppBar(title: Text(url), centerTitle: true),
+      appBar: AppBar(
+          title: Text(
+            url,
+            style: TextStyle(fontSize: 16),
+          ),
+          centerTitle: true),
       body: SafeArea(
-        child: WebView(
-          initialUrl: url,
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (WebViewController webViewController) {
-            setState(() {
-              _controller = webViewController;
-            });
-          },
-          // TODO(iskakaushik): Remove this when collection literals makes it to stable.
-          // ignore: prefer_collection_literals
-          javascriptChannels: <JavascriptChannel>[
-            JavascriptChannel(
-              name: 'Extension',
-              onMessageReceived: (JavascriptMessage message) {
-                print('msg from dapp: ${message.message}');
-                compute(jsonDecode, message.message).then((msg) {
-                  if (msg['path'] != 'extensionRequest') return;
-                  _msgHandler(msg['data']);
+        child: Stack(
+          children: [
+            WebView(
+              initialUrl: url,
+              javascriptMode: JavascriptMode.unrestricted,
+              onWebViewCreated: (WebViewController webViewController) {
+                setState(() {
+                  _controller = webViewController;
                 });
               },
+              // TODO(iskakaushik): Remove this when collection literals makes it to stable.
+              // ignore: prefer_collection_literals
+              javascriptChannels: <JavascriptChannel>[
+                JavascriptChannel(
+                  name: 'Extension',
+                  onMessageReceived: (JavascriptMessage message) {
+                    print('msg from dapp: ${message.message}');
+                    compute(jsonDecode, message.message).then((msg) {
+                      if (msg['path'] != 'extensionRequest') return;
+                      _msgHandler(msg['data']);
+                    });
+                  },
+                ),
+              ].toSet(),
+              onPageStarted: (String url) {
+                print('Page started loading: $url');
+                print('Inject extension js code...');
+                _controller.evaluateJavascript(webApi.asExtensionJSCode);
+              },
+              onPageFinished: (String url) {
+                print('Page finished loading: $url');
+                setState(() {
+                  _loading = false;
+                });
+              },
+              gestureNavigationEnabled: true,
             ),
-          ].toSet(),
-          navigationDelegate: (NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
-              print('blocking navigation to $request}');
-              return NavigationDecision.prevent;
-            }
-            print('allowing navigation to $request');
-            return NavigationDecision.navigate;
-          },
-          onPageStarted: (String url) {
-            print('Page started loading: $url');
-            DefaultAssetBundle.of(context)
-                .loadString('lib/js_as_extension/dist/main.js')
-                .then((String js) {
-              print('js file loaded');
-              _controller.evaluateJavascript(js);
-            });
-          },
-          onPageFinished: (String url) {
-            print('Page finished loading: $url');
-          },
-          gestureNavigationEnabled: true,
+            _loading ? Center(child: CupertinoActivityIndicator()) : Container()
+          ],
         ),
       ),
     );
