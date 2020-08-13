@@ -31,9 +31,7 @@ LaminarSyntheticPoolTokenData _$LaminarSyntheticPoolTokenDataFromJson(
     ..tokenId = json['tokenId'] as String
     ..bidSpread = json['bidSpread']
     ..askSpread = json['askSpread']
-    ..additionalCollateralRatio =
-        (json['additionalCollateralRatio'] as num)?.toDouble()
-    ..syntheticEnabled = json['syntheticEnabled'] as bool;
+    ..additionalCollateralRatio = json['additionalCollateralRatio'] as String;
 }
 
 Map<String, dynamic> _$LaminarSyntheticPoolTokenDataToJson(
@@ -44,5 +42,4 @@ Map<String, dynamic> _$LaminarSyntheticPoolTokenDataToJson(
       'bidSpread': instance.bidSpread,
       'askSpread': instance.askSpread,
       'additionalCollateralRatio': instance.additionalCollateralRatio,
-      'syntheticEnabled': instance.syntheticEnabled,
     };

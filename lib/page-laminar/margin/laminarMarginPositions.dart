@@ -211,7 +211,7 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
                                         isLoading: false,
                                       )
                                     ]
-                                  : list.reversed.map((e) {
+                                  : list.map((e) {
                                       final LaminarMarginPairData pairData =
                                           _getPairData(e);
                                       return LaminarMarginPosition(

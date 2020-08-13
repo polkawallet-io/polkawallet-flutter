@@ -33,7 +33,6 @@ LaminarMarginPairData _$LaminarMarginPairDataFromJson(
     ..pairId = json['pairId'] as String
     ..bidSpread = json['bidSpread']
     ..askSpread = json['askSpread']
-    ..enabled = json['enabled'] as bool
     ..enabledTrades =
         (json['enabledTrades'] as List)?.map((e) => e as String)?.toList()
     ..pair = json['pair'] == null
@@ -49,7 +48,6 @@ Map<String, dynamic> _$LaminarMarginPairDataToJson(
       'pairId': instance.pairId,
       'bidSpread': instance.bidSpread,
       'askSpread': instance.askSpread,
-      'enabled': instance.enabled,
       'enabledTrades': instance.enabledTrades,
       'pair': instance.pair,
     };

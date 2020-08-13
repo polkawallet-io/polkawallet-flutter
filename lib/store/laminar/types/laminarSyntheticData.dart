@@ -28,6 +28,5 @@ abstract class _LaminarSyntheticPoolTokenData {
   String tokenId;
   dynamic bidSpread;
   dynamic askSpread;
-  double additionalCollateralRatio;
-  bool syntheticEnabled;
+  String additionalCollateralRatio;
 }

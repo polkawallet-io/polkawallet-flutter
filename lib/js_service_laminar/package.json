@@ -10,17 +10,19 @@
   },
   "resolutions": {
     "@open-web3/orml-types": "0.3.0-beta.9",
-    "@polkadot/api": "1.23.1",
-    "@laminar/api": "0.2.0-beta.127",
-    "@laminar/types": "0.2.0-beta.127"
+    "@polkadot/api": "1.27.1",
+    "@laminar/api": "0.2.0-beta.137",
+    "@laminar/types": "0.2.0-beta.137",
+    "@laminar/type-definitions": "0.2.0-beta.137"
   },
   "dependencies": {
     "@babel/polyfill": "^7.8.3",
     "@open-web3/orml-types": "^0.3.0-beta.9",
-    "@polkadot/api": "^1.23.1",
+    "@polkadot/api": "^1.27.1",
     "@polkadot/keyring": "^3.1.0-beta.0",
-    "@laminar/api": "^0.2.0-beta.127",
-    "@laminar/types": "^0.2.0-beta.127",
+    "@laminar/api": "^0.2.0-beta.137",
+    "@laminar/types": "^0.2.0-beta.137",
+    "@laminar/type-definitions": "0.2.0-beta.137",
     "@polkadot/ui-shared": "^0.51.1",
     "bn.js": "^5.1.1"
   },

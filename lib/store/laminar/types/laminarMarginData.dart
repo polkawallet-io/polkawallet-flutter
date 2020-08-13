@@ -29,7 +29,6 @@ abstract class _LaminarMarginPoolPairData {
   String pairId;
   dynamic bidSpread;
   dynamic askSpread;
-  bool enabled;
   List<String> enabledTrades;
   LaminarMarginPairItemData pair;
 }

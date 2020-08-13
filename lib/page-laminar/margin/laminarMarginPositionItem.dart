@@ -68,6 +68,8 @@ class LaminarMarginPosition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (pairData == null) return Container();
+
     final Map dic = I18n.of(context).laminar;
     final String direction =
         RegExp(r'^Long(.*)$').hasMatch(position['args'][4]) ? 'long' : 'short';

@@ -80,8 +80,7 @@ class _LaminarMarginTradePairSelectorState
         final poolId = _poolId ?? widget.initialPoolId;
         final List<LaminarMarginPairData> pairs =
             widget.store.laminar.marginPoolInfo[poolId].options.toList();
-        pairs.retainWhere(
-            (e) => e.enabled && e.askSpread != null && e.bidSpread != null);
+        pairs.retainWhere((e) => e.askSpread != null && e.bidSpread != null);
         return Container(
           height: MediaQuery.of(context).copyWith().size.height / 2,
           color: Theme.of(context).cardColor,
