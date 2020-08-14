@@ -26,6 +26,7 @@ class ApiAssets {
     if (store.settings.endpoint.info == networkEndpointLaminar.info) {
       apiRoot.laminar.fetchTokens(store.account.currentAccount.pubKey);
     }
+    _fetchMarketPrice();
   }
 
   Future<Map> updateTxs(int page) async {
@@ -46,5 +47,19 @@ class ApiAssets {
 
     store.assets.setTxsLoading(false);
     return res;
+  }
+
+  Future<void> _fetchMarketPrice() async {
+    if (store.settings.endpoint.info == network_name_kusama ||
+        store.settings.endpoint.info == network_name_polkadot) {
+      final Map res = await webApi.subScanApi
+          .fetchTokenPriceAsync(store.settings.endpoint.info);
+      if (res['token'] == null) {
+        print('fetch market price failed');
+        return;
+      }
+      final String token = res['token'][0];
+      store.assets.setMarketPrices(token, res['detail'][token]['price']);
+    }
   }
 }

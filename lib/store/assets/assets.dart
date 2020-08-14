@@ -59,6 +59,9 @@ abstract class _AssetsStore with Store {
   @observable
   List announcements;
 
+  @observable
+  ObservableMap<String, double> marketPrices = ObservableMap<String, double>();
+
   @computed
   ObservableList<TransferData> get txsView {
     return ObservableList.of(txs.where((i) {
@@ -210,6 +213,11 @@ abstract class _AssetsStore with Store {
   @action
   void setAnnouncements(List data) {
     announcements = data;
+  }
+
+  @action
+  void setMarketPrices(String token, String price) {
+    marketPrices[token] = double.parse(price);
   }
 
   @action
