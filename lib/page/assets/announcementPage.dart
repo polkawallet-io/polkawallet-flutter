@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class AnnouncePageParams {
-  AnnouncePageParams({this.title, this.content});
+  AnnouncePageParams({this.title, this.link});
   final String title;
-  final String content;
+  final String link;
 }
 
 class AnnouncementPage extends StatelessWidget {
@@ -19,15 +19,10 @@ class AnnouncementPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(dic['announce']), centerTitle: true),
       body: SafeArea(
-        child: ListView(
-          padding: EdgeInsets.all(16),
-          children: <Widget>[
-            BorderedTitle(title: params.title ?? ''),
-            Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text(params.content ?? ''),
-            ),
-          ],
+        child: WebView(
+          initialUrl: params.link,
+          javascriptMode: JavascriptMode.unrestricted,
+          gestureNavigationEnabled: true,
         ),
       ),
     );

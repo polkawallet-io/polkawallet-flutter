@@ -500,7 +500,7 @@ class _AssetsState extends State<Assets> {
                               AnnouncementPage.route,
                               arguments: AnnouncePageParams(
                                 title: announce['title'],
-                                content: announce['content'],
+                                link: announce['link'],
                               ),
                             );
                           },
