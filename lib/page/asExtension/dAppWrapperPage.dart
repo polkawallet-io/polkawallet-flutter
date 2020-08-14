@@ -26,7 +26,6 @@ class _DAppWrapperPageState extends State<DAppWrapperPage> {
   bool _loading = true;
 
   Future<void> _msgHandler(Map msg) async {
-    print('api called: $msg');
     switch (msg['msgType']) {
       case 'pub(accounts.list)':
         final List<AccountData> ls = widget.store.account.accountList.toList();
@@ -94,13 +93,10 @@ class _DAppWrapperPageState extends State<DAppWrapperPage> {
                   },
                 ),
               ].toSet(),
-              onPageStarted: (String url) {
-                print('Page started loading: $url');
-                print('Inject extension js code...');
-                _controller.evaluateJavascript(webApi.asExtensionJSCode);
-              },
               onPageFinished: (String url) {
                 print('Page finished loading: $url');
+                print('Inject extension js code...');
+                _controller.evaluateJavascript(webApi.asExtensionJSCode);
                 setState(() {
                   _loading = false;
                 });
