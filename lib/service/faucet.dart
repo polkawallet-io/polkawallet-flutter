@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 class FaucetApi {
-  static const String _endpoint = 'https://apps.acala.network/faucet';
+  static const String _endpoint = 'https://api.polkawallet.io/faucet';
 
   static Future<String> getAcalaTokens(String address, String deviceId) async {
     Map<String, String> headers = {"Content-type": "application/json"};

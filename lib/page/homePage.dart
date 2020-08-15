@@ -97,9 +97,6 @@ class _HomePageState extends State<HomePage> {
     return _tabList.asMap().keys.map((i) {
       if (i == 0) {
         // return assets page
-        final bool accountsReady =
-            store.account.pubKeyAddressMap[store.settings.endpoint.ss58] !=
-                null;
         return BackgroundWrapper(
           AssetImage("assets/images/assets/top_bg_$imageColor.png"),
           Scaffold(
@@ -112,10 +109,8 @@ class _HomePageState extends State<HomePage> {
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.menu),
-                  onPressed: accountsReady
-                      ? () => Navigator.of(context)
-                          .pushNamed(NetworkSelectPage.route)
-                      : null,
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed(NetworkSelectPage.route),
                 ),
               ],
             ),
