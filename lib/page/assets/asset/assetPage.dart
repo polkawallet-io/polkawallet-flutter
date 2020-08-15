@@ -222,6 +222,17 @@ class _AssetPageState extends State<AssetPage>
               });
             }
 
+            String tokenPrice;
+            if ((store.settings.endpoint.info == network_name_polkadot ||
+                    store.settings.endpoint.info == network_name_kusama) &&
+                store.assets.marketPrices[symbol] != null &&
+                balancesInfo != null) {
+              tokenPrice = (store.assets.marketPrices[symbol] *
+                      Fmt.bigIntToDouble(balancesInfo.total,
+                          decimals: decimals))
+                  .toStringAsFixed(4);
+            }
+
             return Column(
               children: <Widget>[
                 Container(
@@ -231,7 +242,8 @@ class _AssetPageState extends State<AssetPage>
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(bottom: 16),
+                        padding: EdgeInsets.only(
+                            bottom: tokenPrice != null ? 4 : 16),
                         child: Text(
                           Fmt.token(isBaseToken ? balancesInfo.total : balance,
                               decimals: decimals, length: 8),
@@ -242,53 +254,60 @@ class _AssetPageState extends State<AssetPage>
                           ),
                         ),
                       ),
+                      tokenPrice != null
+                          ? Padding(
+                              padding: EdgeInsets.only(bottom: 16),
+                              child: Text(
+                                '≈ \$ ${tokenPrice ?? '--.--'}',
+                                style: TextStyle(
+                                  color: Theme.of(context).cardColor,
+                                ),
+                              ),
+                            )
+                          : Container(),
                       isBaseToken
-                          ? Builder(
-                              builder: (_) {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(right: 12),
-                                      child: Row(
-                                        children: <Widget>[
-                                          lockedInfo.length > 2
-                                              ? TapTooltip(
-                                                  message: lockedInfo,
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 6),
-                                                    child: Icon(
-                                                      Icons.info,
-                                                      size: 16,
-                                                      color: titleColor,
-                                                    ),
-                                                  ),
-                                                  waitDuration:
-                                                      Duration(seconds: 0),
-                                                )
-                                              : Container(),
-                                          Text(
-                                            '${dic['locked']}: ${Fmt.token(balancesInfo.lockedBalance, decimals: decimals)}',
-                                            style: TextStyle(color: titleColor),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(right: 12),
-                                      child: Text(
-                                        '${dic['available']}: ${Fmt.token(balancesInfo.transferable, decimals: decimals)}',
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(right: 12),
+                                  child: Row(
+                                    children: <Widget>[
+                                      lockedInfo.length > 2
+                                          ? TapTooltip(
+                                              message: lockedInfo,
+                                              child: Padding(
+                                                padding:
+                                                    EdgeInsets.only(right: 6),
+                                                child: Icon(
+                                                  Icons.info,
+                                                  size: 16,
+                                                  color: titleColor,
+                                                ),
+                                              ),
+                                              waitDuration:
+                                                  Duration(seconds: 0),
+                                            )
+                                          : Container(),
+                                      Text(
+                                        '${dic['locked']}: ${Fmt.token(balancesInfo.lockedBalance, decimals: decimals)}',
                                         style: TextStyle(color: titleColor),
                                       ),
-                                    ),
-                                    Text(
-                                      '${dic['reserved']}: ${Fmt.token(balancesInfo.reserved, decimals: decimals)}',
-                                      style: TextStyle(color: titleColor),
-                                    ),
-                                  ],
-                                );
-                              },
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(right: 12),
+                                  child: Text(
+                                    '${dic['available']}: ${Fmt.token(balancesInfo.transferable, decimals: decimals)}',
+                                    style: TextStyle(color: titleColor),
+                                  ),
+                                ),
+                                Text(
+                                  '${dic['reserved']}: ${Fmt.token(balancesInfo.reserved, decimals: decimals)}',
+                                  style: TextStyle(color: titleColor),
+                                ),
+                              ],
                             )
                           : Container(),
                     ],

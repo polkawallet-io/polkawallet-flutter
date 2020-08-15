@@ -1,3 +1,12 @@
+# 0.9.4
+- add KSM/DOT prices
+
+# 0.9.3
+- bug fix
+
+# 0.9.1
+- add support for opening dApps in webview
+
 # 0.9.0
 - add Governance proposals
 - add Council motions

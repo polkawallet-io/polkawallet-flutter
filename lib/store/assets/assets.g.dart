@@ -167,6 +167,21 @@ mixin _$AssetsStore on _AssetsStore, Store {
     });
   }
 
+  final _$marketPricesAtom = Atom(name: '_AssetsStore.marketPrices');
+
+  @override
+  ObservableMap<String, double> get marketPrices {
+    _$marketPricesAtom.reportRead();
+    return super.marketPrices;
+  }
+
+  @override
+  set marketPrices(ObservableMap<String, double> value) {
+    _$marketPricesAtom.reportWrite(value, super.marketPrices, () {
+      super.marketPrices = value;
+    });
+  }
+
   final _$setAccountBalancesAsyncAction =
       AsyncAction('_AssetsStore.setAccountBalances');
 
@@ -272,6 +287,17 @@ mixin _$AssetsStore on _AssetsStore, Store {
   }
 
   @override
+  void setMarketPrices(String token, String price) {
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(
+        name: '_AssetsStore.setMarketPrices');
+    try {
+      return super.setMarketPrices(token, price);
+    } finally {
+      _$_AssetsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 cacheTxsTimestamp: ${cacheTxsTimestamp},
@@ -284,6 +310,7 @@ txs: ${txs},
 txsFilter: ${txsFilter},
 blockMap: ${blockMap},
 announcements: ${announcements},
+marketPrices: ${marketPrices},
 txsView: ${txsView}
     ''';
   }

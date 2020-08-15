@@ -161,8 +161,11 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     accounts.addAll(store.account.optionalAccounts);
 
     res.addAll(accounts.map((i) {
-      String address =
-          store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
+      String address = i.address;
+      if (store.account.pubKeyAddressMap[_selectedNetwork.ss58] != null) {
+        address =
+            store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
+      }
       return RoundedCard(
         border: address == store.account.currentAddress
             ? Border.all(color: Theme.of(context).primaryColorLight)

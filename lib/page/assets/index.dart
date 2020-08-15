@@ -435,6 +435,7 @@ class _AssetsState extends State<Assets> {
         bool isLaminar =
             store.settings.endpoint.info == networkEndpointLaminar.info;
         bool isPolkadot = store.settings.endpoint.info == network_name_polkadot;
+        bool isKusama = store.settings.endpoint.info == network_name_kusama;
 
         List<String> currencyIds = [];
         if ((isAcala || isLaminar) && networkName != null) {
@@ -459,6 +460,12 @@ class _AssetsState extends State<Assets> {
             tokenView,
             style: TextStyle(fontStyle: FontStyle.italic),
           );
+        }
+        String tokenPrice;
+        if (store.assets.marketPrices[symbol] != null && balancesInfo != null) {
+          tokenPrice = (store.assets.marketPrices[symbol] *
+                  Fmt.bigIntToDouble(balancesInfo.total, decimals: decimals))
+              .toStringAsFixed(2);
         }
 
         return RefreshIndicator(
@@ -548,17 +555,31 @@ class _AssetsState extends State<Assets> {
                               'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
                         ),
                         title: tokenViewTitle,
-                        trailing: Text(
-                          Fmt.priceFloorBigInt(
-                              balancesInfo != null
-                                  ? balancesInfo.total
-                                  : BigInt.zero,
-                              decimals: decimals,
-                              lengthFixed: 3),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.black54),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              Fmt.priceFloorBigInt(
+                                  balancesInfo != null
+                                      ? balancesInfo.total
+                                      : BigInt.zero,
+                                  decimals: decimals,
+                                  lengthFixed: 3),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black54),
+                            ),
+                            isPolkadot || isKusama
+                                ? Text(
+                                    '≈ \$ ${tokenPrice ?? '--.--'}',
+                                    style: TextStyle(
+                                      color: Theme.of(context).disabledColor,
+                                    ),
+                                  )
+                                : Container(width: 16),
+                          ],
                         ),
                         onTap: () {
                           Navigator.pushNamed(context, AssetPage.route,
