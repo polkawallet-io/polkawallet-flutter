@@ -118,7 +118,11 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
     final Map assetDic = I18n.of(context).assets;
 
     String v = value.trim();
-    if (v.isEmpty || double.parse(v) == 0) {
+    try {
+      if (v.isEmpty || double.parse(v) == 0) {
+        return assetDic['amount.error'];
+      }
+    } catch (err) {
       return assetDic['amount.error'];
     }
     BigInt collateral = Fmt.tokenInt(v, decimals: acala_token_decimals);

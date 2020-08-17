@@ -130,8 +130,8 @@ abstract class _AcalaStore with Store {
       data[token] = LoanData.fromJson(
         Map<String, dynamic>.from(i),
         loanTypes.firstWhere((t) => t.token == token),
-        prices[token],
-        prices[acala_stable_coin],
+        prices[token] ?? BigInt.zero,
+        prices[acala_stable_coin] ?? BigInt.zero,
       );
     });
     loans = data;
