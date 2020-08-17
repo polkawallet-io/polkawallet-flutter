@@ -100,12 +100,14 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     String value,
     LoanType loanType,
     BigInt price,
-    BigInt stableCoinPrice,
-  ) {
+    BigInt stableCoinPrice, {
+    BigInt max,
+  }) {
     String v = value.trim();
     if (v.isEmpty) return;
 
-    BigInt collateral = Fmt.tokenInt(v, decimals: acala_token_decimals);
+    BigInt collateral =
+        max != null ? max : Fmt.tokenInt(v, decimals: acala_token_decimals);
     setState(() {
       _amountCollateral = collateral;
     });
@@ -460,20 +462,16 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                               Theme.of(context).primaryColor),
                                     ),
                                     onTap: () async {
-                                      BigInt max = Fmt.tokenInt(availableView,
-                                          decimals: maxCollateralDecimal);
                                       setState(() {
-                                        _amountCollateral = max;
-                                        _amountCtrl.text = Fmt.bigIntToDouble(
-                                          max,
-                                          decimals: maxCollateralDecimal,
-                                        ).toString();
+                                        _amountCollateral = available;
+                                        _amountCtrl.text = availableView;
                                       });
                                       _onAmount1Change(
                                         availableView,
                                         loan.type,
                                         price,
                                         stableCoinPrice,
+                                        max: available,
                                       );
                                     },
                                   ),
