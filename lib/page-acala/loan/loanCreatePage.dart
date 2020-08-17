@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanInfoPanel.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';

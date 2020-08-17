@@ -6,8 +6,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/homa/homaHistoryPage.dart';
+import 'package:polka_wallet/page-acala/homa/homaPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/acala/types/stakingPoolInfoData.dart';
@@ -89,8 +89,8 @@ class _MintPageState extends State<MintPage> {
           res['amountReceive'] = receive;
           store.acala.setHomaTxs([res]);
           Navigator.popUntil(
-              txPageContext, ModalRoute.withName(MintPage.route));
-          _refreshKey.currentState.show();
+              txPageContext, ModalRoute.withName(HomaPage.route));
+          globalHomaRefreshKey.currentState.show();
         }
       };
       Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
