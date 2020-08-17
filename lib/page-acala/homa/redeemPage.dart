@@ -271,10 +271,16 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                           TextInputType.numberWithOptions(
                                               decimal: true),
                                       validator: (v) {
-                                        if (v.isEmpty) {
+                                        double amt;
+                                        try {
+                                          amt = double.parse(v.trim());
+                                          if (v.trim().isEmpty || amt == 0) {
+                                            return dicAssets['amount.error'];
+                                          }
+                                        } catch (err) {
                                           return dicAssets['amount.error'];
                                         }
-                                        if (double.parse(v.trim()) >=
+                                        if (amt >=
                                             Fmt.bigIntToDouble(balance,
                                                 decimals: decimals)) {
                                           return dicAssets['amount.low'];

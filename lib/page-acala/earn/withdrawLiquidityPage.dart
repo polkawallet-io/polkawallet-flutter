@@ -192,7 +192,12 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                           keyboardType:
                               TextInputType.numberWithOptions(decimal: true),
                           validator: (v) {
-                            if (v.isEmpty) {
+                            try {
+                              if (v.trim().isEmpty ||
+                                  double.parse(v.trim()) == 0) {
+                                return dicAssets['amount.error'];
+                              }
+                            } catch (err) {
                               return dicAssets['amount.error'];
                             }
                             if (_shareInput > shareInt) {

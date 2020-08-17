@@ -137,7 +137,11 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
     final Map dic = I18n.of(context).acala;
 
     String v = value.trim();
-    if (v.isEmpty) {
+    try {
+      if (v.isEmpty || double.parse(v) < 1) {
+        return assetDic['amount.error'];
+      }
+    } catch (err) {
       return assetDic['amount.error'];
     }
     BigInt debits = Fmt.tokenInt(v, decimals: acala_token_decimals);

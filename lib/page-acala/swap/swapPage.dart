@@ -302,7 +302,13 @@ class _SwapPageState extends State<SwapPage> {
                                                 TextInputType.numberWithOptions(
                                                     decimal: true),
                                             validator: (v) {
-                                              if (v.isEmpty) {
+                                              try {
+                                                if (v.isEmpty ||
+                                                    double.parse(v) == 0) {
+                                                  return dicAssets[
+                                                      'amount.error'];
+                                                }
+                                              } catch (err) {
                                                 return dicAssets[
                                                     'amount.error'];
                                               }
@@ -384,7 +390,13 @@ class _SwapPageState extends State<SwapPage> {
                                                 TextInputType.numberWithOptions(
                                                     decimal: true),
                                             validator: (v) {
-                                              if (v.isEmpty) {
+                                              try {
+                                                if (v.isEmpty ||
+                                                    double.parse(v) == 0) {
+                                                  return dicAssets[
+                                                      'amount.error'];
+                                                }
+                                              } catch (err) {
                                                 return dicAssets[
                                                     'amount.error'];
                                               }
