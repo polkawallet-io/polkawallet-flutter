@@ -29,17 +29,20 @@ class _ChangePassword extends State<ChangePasswordPage> {
   final TextEditingController _passCtrl = new TextEditingController();
   final TextEditingController _pass2Ctrl = new TextEditingController();
 
+  bool _submitting = false;
+
   Future<void> _onSave() async {
     if (_formKey.currentState.validate()) {
+      setState(() {
+        _submitting = true;
+      });
       var dic = I18n.of(context).profile;
       final String passOld = _passOldCtrl.text.trim();
       final String passNew = _passCtrl.text.trim();
-//      print(passOld);
-//      print(passNew);
-      // todo: it seems the js-keyring can be changed by wrong password which causes password not work until js reload
-      var acc = await api.evalJavascript(
-          'account.changePassword("${store.currentAccount.pubKey}", "$passOld", "$passNew")');
-      if (acc == null) {
+      // check password
+      final passChecked = await webApi.account
+          .checkAccountPassword(store.currentAccount, passOld);
+      if (passChecked == null) {
         showCupertinoDialog(
           context: context,
           builder: (BuildContext context) {
@@ -51,6 +54,9 @@ class _ChangePassword extends State<ChangePasswordPage> {
                   child: Text(I18n.of(context).home['ok']),
                   onPressed: () {
                     _passOldCtrl.clear();
+                    setState(() {
+                      _submitting = false;
+                    });
                     Navigator.of(context).pop();
                   },
                 ),
@@ -59,6 +65,8 @@ class _ChangePassword extends State<ChangePasswordPage> {
           },
         );
       } else {
+        final Map acc = await api.evalJavascript(
+            'account.changePassword("${store.currentAccount.pubKey}", "$passOld", "$passNew")');
         // use local name, not webApi returned name
         Map<String, dynamic> localAcc =
             AccountData.toJson(store.currentAccount);
@@ -166,8 +174,11 @@ class _ChangePassword extends State<ChangePasswordPage> {
             ),
             Container(
               margin: EdgeInsets.all(16),
-              child:
-                  RoundedButton(text: dic['contact.save'], onPressed: _onSave),
+              child: RoundedButton(
+                text: dic['contact.save'],
+                icon: _submitting ? CupertinoActivityIndicator() : null,
+                onPressed: _submitting ? null : _onSave,
+              ),
             ),
           ],
         ),
