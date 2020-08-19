@@ -12,8 +12,9 @@ class TxHomaData extends _TxHomaData {
     TxHomaData data = TxHomaData();
     data.hash = json['hash'];
     data.action = json['action'];
-    data.amountPay =
-        Fmt.priceCeilBigInt(Fmt.balanceInt(json['params'][0].toString()));
+    data.amountPay = List.of(json['params']).length > 0
+        ? Fmt.priceCeilBigInt(Fmt.balanceInt(json['params'][0].toString()))
+        : '0';
     data.amountReceive = json['amountReceive'];
     data.time = DateTime.fromMillisecondsSinceEpoch(json['time']);
     return data;
