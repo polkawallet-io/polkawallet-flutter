@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/loan/loanInfoPanel.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/store/acala/types/loanType.dart';
@@ -101,12 +100,14 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     String value,
     LoanType loanType,
     BigInt price,
-    BigInt stableCoinPrice,
-  ) {
+    BigInt stableCoinPrice, {
+    BigInt max,
+  }) {
     String v = value.trim();
     if (v.isEmpty) return;
 
-    BigInt collateral = Fmt.tokenInt(v, decimals: acala_token_decimals);
+    BigInt collateral =
+        max != null ? max : Fmt.tokenInt(v, decimals: acala_token_decimals);
     setState(() {
       _amountCollateral = collateral;
     });
@@ -164,7 +165,11 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     final Map assetDic = I18n.of(context).assets;
 
     String v = value.trim();
-    if (v.isEmpty || double.parse(v) == 0) {
+    try {
+      if (v.isEmpty || double.parse(v) == 0) {
+        return assetDic['amount.error'];
+      }
+    } catch (err) {
       return assetDic['amount.error'];
     }
     if (_amountCollateral > available) {
@@ -184,11 +189,10 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     final Map dic = I18n.of(context).acala;
 
     String v = value.trim();
-    if (v.isEmpty) {
-      return assetDic['amount.error'];
-    }
     try {
-      final double amt = double.parse(v);
+      if (v.isEmpty || double.parse(v) == 0) {
+        return assetDic['amount.error'];
+      }
     } catch (err) {
       return assetDic['amount.error'];
     }
@@ -458,20 +462,16 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
                                               Theme.of(context).primaryColor),
                                     ),
                                     onTap: () async {
-                                      BigInt max = Fmt.tokenInt(availableView,
-                                          decimals: maxCollateralDecimal);
                                       setState(() {
-                                        _amountCollateral = max;
-                                        _amountCtrl.text = Fmt.bigIntToDouble(
-                                          max,
-                                          decimals: maxCollateralDecimal,
-                                        ).toString();
+                                        _amountCollateral = available;
+                                        _amountCtrl.text = availableView;
                                       });
                                       _onAmount1Change(
                                         availableView,
                                         loan.type,
                                         price,
                                         stableCoinPrice,
+                                        max: available,
                                       );
                                     },
                                   ),

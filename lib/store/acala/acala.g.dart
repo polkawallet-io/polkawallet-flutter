@@ -180,36 +180,6 @@ mixin _$AcalaStore on _AcalaStore, Store {
     });
   }
 
-  final _$currentSwapPairAtom = Atom(name: '_AcalaStore.currentSwapPair');
-
-  @override
-  List<String> get currentSwapPair {
-    _$currentSwapPairAtom.reportRead();
-    return super.currentSwapPair;
-  }
-
-  @override
-  set currentSwapPair(List<String> value) {
-    _$currentSwapPairAtom.reportWrite(value, super.currentSwapPair, () {
-      super.currentSwapPair = value;
-    });
-  }
-
-  final _$swapRatioAtom = Atom(name: '_AcalaStore.swapRatio');
-
-  @override
-  String get swapRatio {
-    _$swapRatioAtom.reportRead();
-    return super.swapRatio;
-  }
-
-  @override
-  set swapRatio(String value) {
-    _$swapRatioAtom.reportWrite(value, super.swapRatio, () {
-      super.swapRatio = value;
-    });
-  }
-
   final _$swapPoolRatiosAtom = Atom(name: '_AcalaStore.swapPoolRatios');
 
   @override
@@ -428,28 +398,6 @@ mixin _$AcalaStore on _AcalaStore, Store {
   }
 
   @override
-  void setSwapPair(List<dynamic> pair) {
-    final _$actionInfo = _$_AcalaStoreActionController.startAction(
-        name: '_AcalaStore.setSwapPair');
-    try {
-      return super.setSwapPair(pair);
-    } finally {
-      _$_AcalaStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setSwapRatio(String ratio) {
-    final _$actionInfo = _$_AcalaStoreActionController.startAction(
-        name: '_AcalaStore.setSwapRatio');
-    try {
-      return super.setSwapRatio(ratio);
-    } finally {
-      _$_AcalaStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   void setTxsLoading(bool loading) {
     final _$actionInfo = _$_AcalaStoreActionController.startAction(
         name: '_AcalaStore.setTxsLoading');
@@ -473,8 +421,6 @@ txsSwap: ${txsSwap},
 txsDexLiquidity: ${txsDexLiquidity},
 txsHoma: ${txsHoma},
 txsLoading: ${txsLoading},
-currentSwapPair: ${currentSwapPair},
-swapRatio: ${swapRatio},
 swapPoolRatios: ${swapPoolRatios},
 swapPoolRewards: ${swapPoolRewards},
 dexPoolInfoMap: ${dexPoolInfoMap},

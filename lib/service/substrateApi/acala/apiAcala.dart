@@ -117,13 +117,6 @@ class ApiAcala {
     await apiRoot.unsubscribeMessage(tokenPricesSubscribeChannel);
   }
 
-  Future<String> fetchTokenSwapRatio() async {
-    List<String> swapPair = store.acala.currentSwapPair;
-    String ratio = await fetchTokenSwapAmount('1', null, swapPair, '0');
-    store.acala.setSwapRatio(ratio);
-    return ratio;
-  }
-
   Future<String> fetchTokenSwapAmount(String supplyAmount, String targetAmount,
       List<String> swapPair, String slippage) async {
     /// baseCoin = 0, supplyToken == AUSD

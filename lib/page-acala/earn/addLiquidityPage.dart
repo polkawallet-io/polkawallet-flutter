@@ -7,7 +7,6 @@ import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -48,7 +47,11 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
 
   Future<void> _onSupplyAmountChange(String v, double swapRatio) async {
     String supply = v.trim();
-    if (supply.isEmpty) {
+    try {
+      if (supply.isEmpty || double.parse(supply) == 0) {
+        return;
+      }
+    } catch (err) {
       return;
     }
     setState(() {
@@ -60,7 +63,11 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
 
   Future<void> _onTargetAmountChange(String v, double swapRatio) async {
     String target = v.trim();
-    if (target.isEmpty) {
+    try {
+      if (target.isEmpty || double.parse(target) == 0) {
+        return;
+      }
+    } catch (err) {
       return;
     }
     setState(() {
@@ -153,9 +160,14 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
           amountTokenUser = amountToken * userShare;
 
           String input = _amountTokenCtrl.text.trim();
-          double amountInput = double.parse(input.isEmpty ? '0' : input);
-          userShareNew =
-              (amountInput + amountTokenUser) / (amountInput + amountToken);
+          try {
+            final double amountInput =
+                double.parse(input.isEmpty ? '0' : input);
+            userShareNew =
+                (amountInput + amountTokenUser) / (amountInput + amountToken);
+          } catch (_) {
+            // parse double failed
+          }
         }
 
         double swapRatio =
@@ -228,7 +240,12 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                 keyboardType: TextInputType.numberWithOptions(
                                     decimal: true),
                                 validator: (v) {
-                                  if (v.isEmpty) {
+                                  try {
+                                    if (v.trim().isEmpty ||
+                                        double.parse(v.trim()) == 0) {
+                                      return dicAssets['amount.error'];
+                                    }
+                                  } catch (err) {
                                     return dicAssets['amount.error'];
                                   }
                                   if (Fmt.tokenInt(v.trim(),
@@ -268,7 +285,12 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                 keyboardType: TextInputType.numberWithOptions(
                                     decimal: true),
                                 validator: (v) {
-                                  if (v.isEmpty) {
+                                  try {
+                                    if (v.trim().isEmpty ||
+                                        double.parse(v.trim()) == 0) {
+                                      return dicAssets['amount.error'];
+                                    }
+                                  } catch (err) {
                                     return dicAssets['amount.error'];
                                   }
                                   if (Fmt.tokenInt(v.trim(),

@@ -8,7 +8,6 @@ import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
@@ -45,44 +44,46 @@ class _SwapPageState extends State<SwapPage> {
 
   double _slippage = 0.005;
   String _slippageError;
+  List<String> _swapPair = [];
+  double _swapRatio = 0;
 
   Future<void> _refreshData() async {
     webApi.assets.fetchBalance();
-    webApi.acala.fetchTokenSwapRatio();
-
-    // then fetch txs history
   }
 
   Future<void> _switchPair() async {
-    List<String> swapPair = store.acala.currentSwapPair.toList();
-    store.acala.setSwapPair([swapPair[1], swapPair[0]]);
+    setState(() {
+      _swapPair = [_swapPair[1], _swapPair[0]];
+    });
     await _calcSwapAmount(_amountPayCtrl.text.trim(), null);
     _refreshData();
   }
 
   Future<void> _selectCurrencyPay() async {
-    List<String> swapPair = store.acala.currentSwapPair;
     List<String> currencyOptions = List<String>.of(store.acala.swapTokens);
     currencyOptions.add(acala_stable_coin_view);
-    currencyOptions.retainWhere((i) => i != swapPair[0] && i != swapPair[1]);
+    currencyOptions.retainWhere((i) => i != _swapPair[0] && i != _swapPair[1]);
     var selected = await Navigator.of(context)
         .pushNamed(CurrencySelectPage.route, arguments: currencyOptions);
     if (selected != null) {
-      store.acala.setSwapPair([selected, swapPair[1]]);
+      setState(() {
+        _swapPair = [selected, _swapPair[1]];
+      });
       await _calcSwapAmount(_amountPayCtrl.text, null);
       _refreshData();
     }
   }
 
   Future<void> _selectCurrencyReceive() async {
-    List<String> swapPair = store.acala.currentSwapPair;
     List<String> currencyOptions = List<String>.of(store.acala.swapTokens);
     currencyOptions.add(acala_stable_coin_view);
-    currencyOptions.retainWhere((i) => i != swapPair[0] && i != swapPair[1]);
+    currencyOptions.retainWhere((i) => i != _swapPair[0] && i != _swapPair[1]);
     var selected = await Navigator.of(context)
         .pushNamed(CurrencySelectPage.route, arguments: currencyOptions);
     if (selected != null) {
-      store.acala.setSwapPair([swapPair[0], selected]);
+      setState(() {
+        _swapPair = [_swapPair[0], selected];
+      });
       await _calcSwapAmount(_amountPayCtrl.text, null);
       _refreshData();
     }
@@ -104,25 +105,38 @@ class _SwapPageState extends State<SwapPage> {
     _calcSwapAmount(null, target);
   }
 
-  Future<void> _calcSwapAmount(String supply, String target) async {
-    List<String> swapPair = store.acala.currentSwapPair;
+  Future<void> _calcSwapAmount(
+    String supply,
+    String target, {
+    bool init = false,
+  }) async {
     if (supply == null) {
       if (target.isNotEmpty) {
         String output = await webApi.acala.fetchTokenSwapAmount(
-            supply, target, swapPair, _slippage.toString());
+            supply, target, _swapPair, _slippage.toString());
         setState(() {
-          _amountPayCtrl.text = output;
+          if (!init) {
+            _amountPayCtrl.text = output;
+          }
+          _swapRatio = double.parse(target) / double.parse(output);
         });
-        _formKey.currentState.validate();
+        if (!init) {
+          _formKey.currentState.validate();
+        }
       }
     } else if (target == null) {
       if (supply.isNotEmpty) {
         String output = await webApi.acala.fetchTokenSwapAmount(
-            supply, target, swapPair, _slippage.toString());
+            supply, target, _swapPair, _slippage.toString());
         setState(() {
-          _amountReceiveCtrl.text = output;
+          if (!init) {
+            _amountReceiveCtrl.text = output;
+          }
+          _swapRatio = double.parse(output) / double.parse(supply);
         });
-        _formKey.currentState.validate();
+        if (!init) {
+          _formKey.currentState.validate();
+        }
       }
     }
   }
@@ -165,7 +179,6 @@ class _SwapPageState extends State<SwapPage> {
   void _onSubmit() {
     if (_formKey.currentState.validate()) {
       int decimals = store.settings.networkState.tokenDecimals;
-      List<String> swapPair = store.acala.currentSwapPair;
       String pay = _amountPayCtrl.text.trim();
       String receive = _amountReceiveCtrl.text.trim();
       var args = {
@@ -175,17 +188,17 @@ class _SwapPageState extends State<SwapPage> {
           "call": 'swapCurrency',
         },
         "detail": jsonEncode({
-          "currencyPay": swapPair[0],
+          "currencyPay": _swapPair[0],
           "amountPay": pay,
-          "currencyReceive": swapPair[1],
+          "currencyReceive": _swapPair[1],
           "amountReceive": receive,
         }),
         "params": [
           // params.supply
-          swapPair[0],
+          _swapPair[0],
           Fmt.tokenInt(pay, decimals: decimals).toString(),
           // params.target
-          swapPair[1],
+          _swapPair[1],
           Fmt.tokenInt(receive, decimals: decimals).toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
@@ -203,12 +216,17 @@ class _SwapPageState extends State<SwapPage> {
   @override
   void initState() {
     super.initState();
-    List currencyIds = store.acala.swapTokens;
-    if (currencyIds != null) {
-      store.acala
-          .setSwapPair([store.acala.swapTokens[0], acala_stable_coin_view]);
-      _refreshData();
-    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      List currencyIds = store.acala.swapTokens;
+      if (currencyIds != null) {
+        setState(() {
+          _swapPair = [store.acala.swapTokens[0], acala_stable_coin_view];
+        });
+        _refreshData();
+        _calcSwapAmount('1', null, init: true);
+      }
+    });
   }
 
   @override
@@ -225,12 +243,11 @@ class _SwapPageState extends State<SwapPage> {
         final Map dic = I18n.of(context).acala;
         final Map dicAssets = I18n.of(context).assets;
         int decimals = store.settings.networkState.tokenDecimals;
-        List<String> swapPair = store.acala.currentSwapPair;
 
         BigInt balance = BigInt.zero;
-        if (store.acala.swapTokens != null && swapPair.length > 0) {
+        if (store.acala.swapTokens != null && _swapPair.length > 0) {
           balance = Fmt.balanceInt(
-              store.assets.tokenBalances[swapPair[0].toUpperCase()]);
+              store.assets.tokenBalances[_swapPair[0].toUpperCase()]);
         }
 
         Color primary = Theme.of(context).primaryColor;
@@ -247,7 +264,7 @@ class _SwapPageState extends State<SwapPage> {
                 children: <Widget>[
                   RoundedCard(
                     padding: EdgeInsets.all(16),
-                    child: swapPair.length == 2
+                    child: _swapPair.length == 2
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
@@ -265,7 +282,7 @@ class _SwapPageState extends State<SwapPage> {
                                         children: <Widget>[
                                           GestureDetector(
                                             child: CurrencyWithIcon(
-                                              swapPair[0],
+                                              _swapPair[0],
                                               textStyle: Theme.of(context)
                                                   .textTheme
                                                   .headline4,
@@ -302,7 +319,13 @@ class _SwapPageState extends State<SwapPage> {
                                                 TextInputType.numberWithOptions(
                                                     decimal: true),
                                             validator: (v) {
-                                              if (v.isEmpty) {
+                                              try {
+                                                if (v.isEmpty ||
+                                                    double.parse(v) == 0) {
+                                                  return dicAssets[
+                                                      'amount.error'];
+                                                }
+                                              } catch (err) {
                                                 return dicAssets[
                                                     'amount.error'];
                                               }
@@ -318,7 +341,7 @@ class _SwapPageState extends State<SwapPage> {
                                           Padding(
                                             padding: EdgeInsets.only(top: 8),
                                             child: Text(
-                                              '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} ${swapPair[0]}',
+                                              '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} ${_swapPair[0]}',
                                               style: TextStyle(
                                                   color: Theme.of(context)
                                                       .unselectedWidgetColor),
@@ -345,7 +368,7 @@ class _SwapPageState extends State<SwapPage> {
                                         children: <Widget>[
                                           GestureDetector(
                                             child: CurrencyWithIcon(
-                                              swapPair[1],
+                                              _swapPair[1],
                                               textStyle: Theme.of(context)
                                                   .textTheme
                                                   .headline4,
@@ -384,7 +407,13 @@ class _SwapPageState extends State<SwapPage> {
                                                 TextInputType.numberWithOptions(
                                                     decimal: true),
                                             validator: (v) {
-                                              if (v.isEmpty) {
+                                              try {
+                                                if (v.isEmpty ||
+                                                    double.parse(v) == 0) {
+                                                  return dicAssets[
+                                                      'amount.error'];
+                                                }
+                                              } catch (err) {
                                                 return dicAssets[
                                                     'amount.error'];
                                               }
@@ -418,7 +447,7 @@ class _SwapPageState extends State<SwapPage> {
                                                   .unselectedWidgetColor),
                                         ),
                                         Text(
-                                            '1 ${swapPair[0]} = ${store.acala.swapRatio} ${swapPair[1]}'),
+                                            '1 ${_swapPair[0]} = ${_swapRatio.toStringAsFixed(6)} ${_swapPair[1]}'),
                                       ],
                                     ),
                                     GestureDetector(
@@ -525,8 +554,7 @@ class _SwapPageState extends State<SwapPage> {
                     padding: EdgeInsets.only(top: 24),
                     child: RoundedButton(
                       text: dic['dex.title'],
-                      onPressed:
-                          store.acala.swapRatio.isEmpty ? null : _onSubmit,
+                      onPressed: _swapRatio == 0 ? null : _onSubmit,
                     ),
                   )
                 ],

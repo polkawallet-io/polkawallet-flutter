@@ -8,6 +8,7 @@ import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/homa/homaHistoryPage.dart';
+import 'package:polka_wallet/page-acala/homa/homaPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/acala/types/stakingPoolInfoData.dart';
@@ -158,8 +159,8 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
           res['amountReceive'] = receive;
           store.acala.setHomaTxs([res]);
           Navigator.popUntil(
-              txPageContext, ModalRoute.withName(HomaRedeemPage.route));
-          _refreshKey.currentState.show();
+              txPageContext, ModalRoute.withName(HomaPage.route));
+          globalHomaRefreshKey.currentState.show();
         }
       };
       Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
@@ -271,10 +272,16 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                           TextInputType.numberWithOptions(
                                               decimal: true),
                                       validator: (v) {
-                                        if (v.isEmpty) {
+                                        double amt;
+                                        try {
+                                          amt = double.parse(v.trim());
+                                          if (v.trim().isEmpty || amt == 0) {
+                                            return dicAssets['amount.error'];
+                                          }
+                                        } catch (err) {
                                           return dicAssets['amount.error'];
                                         }
-                                        if (double.parse(v.trim()) >=
+                                        if (amt >=
                                             Fmt.bigIntToDouble(balance,
                                                 decimals: decimals)) {
                                           return dicAssets['amount.low'];

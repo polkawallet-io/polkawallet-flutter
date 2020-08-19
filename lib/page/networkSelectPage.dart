@@ -172,7 +172,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
             : Border.all(color: Theme.of(context).cardColor),
         margin: EdgeInsets.only(bottom: 16),
         child: ListTile(
-          leading: AddressIcon('', pubKey: i.pubKey),
+          leading: AddressIcon('', pubKey: i.pubKey, addressToCopy: address),
           title: Text(Fmt.accountName(context, i)),
           subtitle: Text(Fmt.address(address ?? 'address xxxx')),
           onTap: _networkChanging ? null : () => _onSelect(i, address),

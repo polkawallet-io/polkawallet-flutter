@@ -206,23 +206,28 @@ class _HomaPageState extends State<HomaPage> {
                                                       (pool.currentEra ?? 0))
                                                   .toInt()
                                                   .toString();
-                                              return Row(
-                                                children: <Widget>[
-                                                  InfoItem(
-                                                    title: I18n.of(context)
-                                                        .assets['amount'],
-                                                    content:
-                                                        Fmt.priceFloorBigInt(
-                                                            i.claimed,
-                                                            decimals: decimals),
-                                                  ),
-                                                  InfoItem(
-                                                    title:
-                                                        dic['homa.user.time'],
-                                                    content:
-                                                        '$unlockTime Era ≈ $unlockTime ${dic['homa.redeem.day']}',
-                                                  ),
-                                                ],
+                                              return Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 8),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    InfoItem(
+                                                      title: I18n.of(context)
+                                                          .assets['amount'],
+                                                      content:
+                                                          Fmt.priceFloorBigInt(
+                                                              i.claimed,
+                                                              decimals:
+                                                                  decimals),
+                                                    ),
+                                                    InfoItem(
+                                                      title:
+                                                          dic['homa.user.time'],
+                                                      content:
+                                                          '$unlockTime Era ≈ $unlockTime ${dic['homa.redeem.day']}',
+                                                    ),
+                                                  ],
+                                                ),
                                               );
                                             }).toList(),
                                           )

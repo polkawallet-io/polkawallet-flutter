@@ -5,11 +5,18 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 
 class AddressIcon extends StatelessWidget {
-  AddressIcon(this.address, {this.size, this.pubKey, this.tapToCopy = true});
+  AddressIcon(
+    this.address, {
+    this.size,
+    this.pubKey,
+    this.tapToCopy = true,
+    this.addressToCopy,
+  });
   final String address;
   final String pubKey;
   final double size;
   final bool tapToCopy;
+  final String addressToCopy;
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +43,9 @@ class AddressIcon extends StatelessWidget {
                 ? Image.asset('assets/images/assets/Assets_nav_0.png')
                 : SvgPicture.string(rawSvg),
           ),
-          onTap:
-              tapToCopy ? () => UI.copyAndNotify(context, addressView) : null,
+          onTap: tapToCopy
+              ? () => UI.copyAndNotify(context, addressToCopy ?? addressView)
+              : null,
         );
       },
     );

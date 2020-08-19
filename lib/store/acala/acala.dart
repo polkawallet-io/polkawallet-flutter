@@ -60,12 +60,6 @@ abstract class _AcalaStore with Store {
   bool txsLoading = false;
 
   @observable
-  List<String> currentSwapPair = List<String>();
-
-  @observable
-  String swapRatio = '';
-
-  @observable
   ObservableMap<String, String> swapPoolRatios =
       ObservableMap<String, String>();
 
@@ -152,16 +146,6 @@ abstract class _AcalaStore with Store {
           : BigInt.parse(i['price']['value'].toString());
     });
     prices = data;
-  }
-
-  @action
-  void setSwapPair(List pair) {
-    currentSwapPair = ObservableList<String>.of(List<String>.from(pair));
-  }
-
-  @action
-  void setSwapRatio(String ratio) {
-    swapRatio = ratio;
   }
 
   @action
