@@ -43,8 +43,6 @@ class Api {
   FlutterWebviewPlugin _web;
   int _evalJavascriptUID = 0;
 
-  bool _jsCodeUpdated = false;
-
   Function _connectFunc;
 
   /// preload js code for opening dApps
@@ -234,7 +232,7 @@ class Api {
     // fetch network info
     List<dynamic> info = await Future.wait([
       evalJavascript('settings.getNetworkConst()'),
-      evalJavascript('api.rpc.system.properties()'),
+      evalJavascript('settings.getNetworkPropoerties()'),
       evalJavascript('api.rpc.system.chain()'),
     ]);
     store.settings.setNetworkConst(info[0]);
@@ -243,8 +241,11 @@ class Api {
 
     // fetch account balance
     if (store.account.accountListAll.length > 0) {
-      if (store.settings.endpoint.info == networkEndpointAcala.info ||
-          store.settings.endpoint.info == networkEndpointLaminar.info) {
+      if (store.settings.endpoint.info == networkEndpointAcala.info) {
+        await assets.fetchBalance();
+        return;
+      }
+      if (store.settings.endpoint.info == networkEndpointLaminar.info) {
         laminar.subscribeTokenPrices();
         await assets.fetchBalance();
         return;

@@ -319,7 +319,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
           final bool isPolkadot =
               store.settings.endpoint.info == network_name_polkadot;
           bool isTxPaused = isPolkadot;
-          if (store.gov.bestNumber > 0 &&
+          if (isTxPaused && store.gov.bestNumber > 0 &&
               (store.gov.bestNumber < dot_re_denominate_block - 1200 ||
                   store.gov.bestNumber > dot_re_denominate_block + 1200)) {
             isTxPaused = false;

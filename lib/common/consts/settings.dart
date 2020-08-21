@@ -129,14 +129,14 @@ const String cross_chain_transfer_address_laminar =
     '5CLaminarAUSDCrossChainTransferxxxxxxxxxxxxxwisu';
 
 /// app versions
-const String app_beta_version = '0.9.5-beta.1';
+const String app_beta_version = '0.9.6-beta.1';
 
 /// js code versions
 const Map<String, int> js_code_version_map = {
-  network_name_polkadot: 9210,
-  network_name_kusama: 9210,
-  network_name_acala_mandala: 9210,
-  network_name_laminar_turbulence: 9210,
+  network_name_polkadot: 9610,
+  network_name_kusama: 9610,
+  network_name_acala_mandala: 9610,
+  network_name_laminar_turbulence: 9610,
 };
 
 /// graphql for laminar
