@@ -463,9 +463,8 @@ class _AssetsState extends State<Assets> {
         }
         String tokenPrice;
         if (store.assets.marketPrices[symbol] != null && balancesInfo != null) {
-          tokenPrice = (store.assets.marketPrices[symbol] *
-                  Fmt.bigIntToDouble(balancesInfo.total, decimals))
-              .toStringAsFixed(2);
+          tokenPrice = Fmt.priceCeil(store.assets.marketPrices[symbol] *
+              Fmt.bigIntToDouble(balancesInfo.total, decimals));
         }
 
         return RefreshIndicator(

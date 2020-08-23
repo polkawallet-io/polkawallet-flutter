@@ -62,11 +62,11 @@ class _ProposalDetailPageState extends State<ProposalDetailPage> {
       },
       "detail": jsonEncode({
         "proposal": proposal.index,
-        "seconds": proposal.seconds.length + 1,
+        "seconds": proposal.seconds.length,
       }),
       "params": [
         proposal.index,
-        proposal.seconds.length + 1,
+        proposal.seconds.length,
       ],
       'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(
@@ -240,6 +240,8 @@ class ProposalSecondsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).gov;
+    final List seconding = proposal.seconds.toList();
+    seconding.removeAt(0);
     return Container(
       padding: EdgeInsets.only(bottom: 24),
       margin: EdgeInsets.only(top: 8),
@@ -250,11 +252,10 @@ class ProposalSecondsList extends StatelessWidget {
           Padding(
             padding: EdgeInsets.all(16),
             child: BorderedTitle(
-                title:
-                    '${dic['proposal.seconds']}(${proposal.seconds.length})'),
+                title: '${dic['proposal.seconds']}(${seconding.length})'),
           ),
           Column(
-            children: proposal.seconds.map((e) {
+            children: seconding.map((e) {
               final Map accInfo = store.account.accountIndexMap[e];
               return ListTile(
                 leading: AddressIcon(e),
