@@ -43,6 +43,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
       },
     );
 
+    /// import account
     var acc = await webApi.account.importAccount(
       keyType: _keyType,
       cryptoType: _cryptoType,
@@ -56,11 +57,36 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     /// check if account duplicate
     if (acc != null) {
       if (acc['error'] != null) {
-        UI.alertWASM(context, () {
-          setState(() {
-            _step = 0;
+        if (acc['error'] == 'unreachable') {
+          showCupertinoDialog(
+            context: context,
+            builder: (BuildContext context) {
+              final Map<String, String> accDic = I18n.of(context).account;
+              return CupertinoAlertDialog(
+                title: Container(),
+                content:
+                    Text('${accDic['import.invalid']} ${accDic[_keyType]}'),
+                actions: <Widget>[
+                  CupertinoButton(
+                    child: Text(I18n.of(context).home['ok']),
+                    onPressed: () {
+                      setState(() {
+                        _step = 0;
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          UI.alertWASM(context, () {
+            setState(() {
+              _step = 0;
+            });
           });
-        });
+        }
         return;
       }
       _checkAccountDuplicate(acc);
