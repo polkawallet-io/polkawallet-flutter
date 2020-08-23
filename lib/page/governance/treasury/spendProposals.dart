@@ -68,7 +68,7 @@ class _ProposalsState extends State<SpendProposals> {
         );
         String balance = Fmt.balance(
           widget.store.gov.treasuryOverview.balance,
-          decimals: decimals,
+          decimals,
         );
         bool isCouncil = false;
         widget.store.gov.council.members.forEach((e) {
@@ -114,6 +114,7 @@ class _ProposalsState extends State<SpendProposals> {
                                         .accountIndexMap[e.proposal.proposer];
                                     return _ProposalItem(
                                       symbol: tokenView,
+                                      decimals: decimals,
                                       accInfo: accInfo,
                                       proposal: e,
                                     );
@@ -148,6 +149,7 @@ class _ProposalsState extends State<SpendProposals> {
                                       e.isApproval = true;
                                       return _ProposalItem(
                                         symbol: tokenView,
+                                        decimals: decimals,
                                         accInfo: accInfo,
                                         proposal: e,
                                       );
@@ -262,9 +264,10 @@ class _OverviewCard extends StatelessWidget {
 }
 
 class _ProposalItem extends StatelessWidget {
-  _ProposalItem({this.symbol, this.proposal, this.accInfo});
+  _ProposalItem({this.symbol, this.decimals, this.proposal, this.accInfo});
 
   final String symbol;
+  final int decimals;
   final Map accInfo;
   final SpendProposalData proposal;
 
@@ -273,8 +276,8 @@ class _ProposalItem extends StatelessWidget {
     return ListTile(
       leading: AddressIcon(proposal.proposal.proposer),
       title: Fmt.accountDisplayName(proposal.proposal.proposer, accInfo),
-      subtitle:
-          Text('${Fmt.balance(proposal.proposal.value.toString())} $symbol'),
+      subtitle: Text(
+          '${Fmt.balance(proposal.proposal.value.toString(), decimals)} $symbol'),
       trailing: Text(
         '# ${proposal.id}',
         style: Theme.of(context).textTheme.headline4,

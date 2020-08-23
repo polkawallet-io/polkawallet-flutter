@@ -41,11 +41,11 @@ class Fmt {
 
   /// number transform 2:
   /// from <BigInt> to <double>
-  static double bigIntToDouble(BigInt value, {int decimals = 12}) {
+  static double bigIntToDouble(BigInt value, int decimals) {
     if (value == null) {
       return 0;
     }
-    return value / BigInt.from(pow(10, decimals ?? 12));
+    return value / BigInt.from(pow(10, decimals));
   }
 
   /// number transform 3:
@@ -67,40 +67,39 @@ class Fmt {
   /// combined number transform 1-3:
   /// from raw <String> to <String> in token format of ",##0.000"
   static String balance(
-    String raw, {
-    int decimals = 12,
+    String raw,
+    int decimals, {
     int length = 3,
   }) {
     if (raw == null || raw.length == 0) {
       return '~';
     }
-    return doubleFormat(bigIntToDouble(balanceInt(raw), decimals: decimals),
+    return doubleFormat(bigIntToDouble(balanceInt(raw), decimals),
         length: length);
   }
 
   /// combined number transform 1-2:
   /// from raw <String> to <double>
-  static double balanceDouble(String raw, {int decimals = 12}) {
-    return bigIntToDouble(balanceInt(raw), decimals: decimals);
+  static double balanceDouble(String raw, int decimals) {
+    return bigIntToDouble(balanceInt(raw), decimals);
   }
 
   /// combined number transform 2-3:
   /// from <BigInt> to <String> in token format of ",##0.000"
   static String token(
-    BigInt value, {
-    int decimals = 12,
+    BigInt value,
+    int decimals, {
     int length = 3,
   }) {
     if (value == null) {
       return '~';
     }
-    return doubleFormat(bigIntToDouble(value, decimals: decimals),
-        length: length);
+    return doubleFormat(bigIntToDouble(value, decimals), length: length);
   }
 
   /// number transform 4:
   /// from <String of double> to <BigInt>
-  static BigInt tokenInt(String value, {int decimals = 12}) {
+  static BigInt tokenInt(String value, int decimals) {
     if (value == null) {
       return BigInt.zero;
     }
@@ -163,8 +162,8 @@ class Fmt {
   }
 
   static String priceCeilBigInt(
-    BigInt value, {
-    int decimals = acala_token_decimals,
+    BigInt value,
+    int decimals, {
     int lengthFixed = 2,
     int lengthMax,
   }) {
@@ -179,8 +178,8 @@ class Fmt {
   }
 
   static String priceFloorBigInt(
-    BigInt value, {
-    int decimals = acala_token_decimals,
+    BigInt value,
+    int decimals, {
     int lengthFixed = 2,
     int lengthMax,
   }) {

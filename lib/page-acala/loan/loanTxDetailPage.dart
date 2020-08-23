@@ -17,14 +17,14 @@ class LoanTxDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).acala;
-    final int decimals = acala_token_decimals;
+    final int decimals = store.settings.networkState.tokenDecimals;
 
     final TxLoanData tx = ModalRoute.of(context).settings.arguments;
     LoanType loanType =
         store.acala.loanTypes.firstWhere((i) => i.token == tx.currencyId);
     BigInt amountView = tx.amountCollateral;
     if (tx.currencyIdView.toUpperCase() == acala_stable_coin) {
-      amountView = loanType.debitShareToDebit(tx.amountDebitShare);
+      amountView = loanType.debitShareToDebit(tx.amountDebitShare, decimals);
     }
 
     List<DetailInfoItem> list = <DetailInfoItem>[
@@ -34,14 +34,16 @@ class LoanTxDetailPage extends StatelessWidget {
       ),
       DetailInfoItem(
         label: dic['loan.amount'],
-        title: '${Fmt.priceFloorBigInt(amountView)} ${tx.currencyIdView}',
+        title:
+            '${Fmt.priceFloorBigInt(amountView, decimals)} ${tx.currencyIdView}',
       ),
     ];
     if (tx.actionType == 'create') {
       print(tx.amountCollateral);
       list.add(DetailInfoItem(
         label: '',
-        title: '${Fmt.priceFloorBigInt(tx.amountCollateral)} ${tx.currencyId}',
+        title:
+            '${Fmt.priceFloorBigInt(tx.amountCollateral, decimals)} ${tx.currencyId}',
       ));
     }
     return TxDetail(

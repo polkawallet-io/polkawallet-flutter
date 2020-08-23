@@ -23,25 +23,22 @@ class LoanType extends _LoanType {
     return data;
   }
 
-  BigInt debitShareToDebit(BigInt debitShares) {
+  BigInt debitShareToDebit(BigInt debitShares, int decimals) {
     return Fmt.balanceInt(Fmt.token(
       debitShares * debitExchangeRate,
-      decimals: acala_token_decimals,
+      decimals,
     ));
   }
 
-  BigInt debitToDebitShare(BigInt debits) {
+  BigInt debitToDebitShare(BigInt debits, int decimals) {
     return Fmt.tokenInt(
       (debits / debitExchangeRate).toString(),
-      decimals: acala_token_decimals,
+      decimals,
     );
   }
 
-  BigInt tokenToUSD(BigInt amount, BigInt price) {
-    return Fmt.balanceInt(Fmt.token(
-      amount * price,
-      decimals: acala_token_decimals,
-    ));
+  BigInt tokenToUSD(BigInt amount, price, int decimals) {
+    return Fmt.balanceInt(Fmt.token(amount * price, decimals));
   }
 
   double calcCollateralRatio(BigInt debitInUSD, BigInt collateralInUSD) {
@@ -65,11 +62,11 @@ class LoanType extends _LoanType {
   }
 
   BigInt calcMaxToBorrow(
-      BigInt collaterals, BigInt tokenPrice, BigInt stableCoinPrice) {
+      BigInt collaterals, tokenPrice, stableCoinPrice, int decimals) {
     return Fmt.tokenInt(
         (collaterals * tokenPrice / (requiredCollateralRatio * stableCoinPrice))
             .toString(),
-        decimals: acala_token_decimals);
+        decimals);
   }
 }
 
@@ -88,24 +85,25 @@ abstract class _LoanType {
 
 class LoanData extends _LoanData {
   static LoanData fromJson(Map<String, dynamic> json, LoanType type,
-      BigInt tokenPrice, BigInt stableCoinPrice) {
+      BigInt tokenPrice, stableCoinPrice, int decimals) {
     LoanData data = LoanData();
     data.token = json['token'];
     data.type = type;
     data.price = tokenPrice;
     data.stableCoinPrice = stableCoinPrice;
     data.debitShares = BigInt.parse(json['debits'].toString());
-    data.debits = type.debitShareToDebit(data.debitShares);
+    data.debits = type.debitShareToDebit(data.debitShares, decimals);
     data.collaterals = BigInt.parse(json['collaterals'].toString());
 
-    data.debitInUSD = type.tokenToUSD(data.debits, stableCoinPrice);
-    data.collateralInUSD = type.tokenToUSD(data.collaterals, tokenPrice);
+    data.debitInUSD = type.tokenToUSD(data.debits, stableCoinPrice, decimals);
+    data.collateralInUSD =
+        type.tokenToUSD(data.collaterals, tokenPrice, decimals);
     data.collateralRatio =
         type.calcCollateralRatio(data.debitInUSD, data.collateralInUSD);
     data.requiredCollateral =
         type.calcRequiredCollateral(data.debitInUSD, tokenPrice);
-    data.maxToBorrow =
-        type.calcMaxToBorrow(data.collaterals, tokenPrice, stableCoinPrice);
+    data.maxToBorrow = type.calcMaxToBorrow(
+        data.collaterals, tokenPrice, stableCoinPrice, decimals);
     data.stableFeeDay = data.calcStableFee(SECONDS_OF_DAY);
     data.stableFeeYear = data.calcStableFee(SECONDS_OF_YEAR);
     data.liquidationPrice =

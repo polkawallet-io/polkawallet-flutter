@@ -3,27 +3,24 @@ import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
-import 'package:polka_wallet/page-acala/loan/loanHistoryPage.dart';
 import 'package:polka_wallet/store/acala/types/loanType.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 // TODO: account balance display with address
 class LoanCard extends StatelessWidget {
-  LoanCard(this.loan, this.balance);
+  LoanCard(this.loan, this.balance, this.decimals);
   final LoanData loan;
   final String balance;
+  final int decimals;
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
 
-    String collateral =
-        Fmt.token(loan.collaterals, decimals: acala_token_decimals);
-    String collateralRequired =
-        Fmt.token(loan.requiredCollateral, decimals: acala_token_decimals);
+    String collateral = Fmt.token(loan.collaterals, decimals);
+    String collateralRequired = Fmt.token(loan.requiredCollateral, decimals);
     double dailyInterest =
-        Fmt.bigIntToDouble(loan.debits, decimals: acala_token_decimals) *
-            loan.stableFeeDay;
+        Fmt.bigIntToDouble(loan.debits, decimals) * loan.stableFeeDay;
     String ratio = Fmt.ratio(loan.stableFeeYear);
 
     Color primaryColor = Theme.of(context).primaryColor;
@@ -38,8 +35,7 @@ class LoanCard extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(top: 8, bottom: 0),
                 child: Text(
-                  Fmt.priceCeilBigInt(loan.debits,
-                      decimals: acala_token_decimals),
+                  Fmt.priceCeilBigInt(loan.debits, decimals),
                   style: TextStyle(
                     fontSize: 36,
                     color: Theme.of(context).primaryColor,

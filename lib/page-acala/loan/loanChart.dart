@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/acala/types/loanType.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class LoanChart extends StatelessWidget {
-  LoanChart(this.loan);
+  LoanChart(this.loan, this.decimals);
   final LoanData loan;
+  final int decimals;
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
-    double requiredCollateralRatio = double.parse(Fmt.token(
-        loan.type.requiredCollateralRatio,
-        decimals: acala_token_decimals));
-    double liquidationRatio = double.parse(
-        Fmt.token(loan.type.liquidationRatio, decimals: acala_token_decimals));
+    double requiredCollateralRatio =
+        double.parse(Fmt.token(loan.type.requiredCollateralRatio, decimals));
+    double liquidationRatio =
+        double.parse(Fmt.token(loan.type.liquidationRatio, decimals));
 
     const double heightTotal = 160;
     final double widthChart = MediaQuery.of(context).size.width / 4;

@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
@@ -147,7 +146,7 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
                             decoration: InputDecoration(
                               hintText: dic['amount'],
                               labelText:
-                                  '${dic['amount']} (${dic['balance']}: ${Fmt.token(balance)})',
+                                  '${dic['amount']} (${dic['balance']}: ${Fmt.token(balance, decimals)})',
                             ),
                             inputFormatters: [
                               UI.decimalInputFormatter(decimals)

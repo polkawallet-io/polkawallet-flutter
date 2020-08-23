@@ -96,8 +96,8 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
         }),
         "params": [
           token,
-          Fmt.tokenInt(amountToken, decimals: decimals).toString(),
-          Fmt.tokenInt(amountBaseCoin, decimals: decimals).toString(),
+          Fmt.tokenInt(amountToken, decimals).toString(),
+          Fmt.tokenInt(amountBaseCoin, decimals).toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
           res['action'] = TxDexLiquidityData.actionDeposit;
@@ -153,10 +153,9 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
         if (poolInfo != null) {
           userShare = poolInfo.proportion;
 
-          amountToken =
-              Fmt.bigIntToDouble(poolInfo.amountToken, decimals: decimals);
+          amountToken = Fmt.bigIntToDouble(poolInfo.amountToken, decimals);
           amountStableCoin =
-              Fmt.bigIntToDouble(poolInfo.amountStableCoin, decimals: decimals);
+              Fmt.bigIntToDouble(poolInfo.amountStableCoin, decimals);
           amountTokenUser = amountToken * userShare;
 
           String input = _amountTokenCtrl.text.trim();
@@ -248,8 +247,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                   } catch (err) {
                                     return dicAssets['amount.error'];
                                   }
-                                  if (Fmt.tokenInt(v.trim(),
-                                          decimals: decimals) >
+                                  if (Fmt.tokenInt(v.trim(), decimals) >
                                       balanceTokenUser) {
                                     return dicAssets['amount.low'];
                                   }
@@ -293,8 +291,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                                   } catch (err) {
                                     return dicAssets['amount.error'];
                                   }
-                                  if (Fmt.tokenInt(v.trim(),
-                                          decimals: decimals) >
+                                  if (Fmt.tokenInt(v.trim(), decimals) >
                                       balanceStableCoinUser) {
                                     return dicAssets['amount.low'];
                                   }
@@ -315,7 +312,11 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                             Container(
                               width: inputWidth,
                               child: Text(
-                                '${dicAssets['balance']}: ${Fmt.priceFloorBigInt(balanceTokenUser, lengthMax: 3)}',
+                                '${dicAssets['balance']}: ${Fmt.priceFloorBigInt(
+                                  balanceTokenUser,
+                                  decimals,
+                                  lengthMax: 3,
+                                )}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color:
@@ -326,7 +327,11 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
                             Container(
                               width: inputWidth,
                               child: Text(
-                                '${dicAssets['balance']}: ${Fmt.priceFloorBigInt(balanceStableCoinUser, lengthMax: 2)}',
+                                '${dicAssets['balance']}: ${Fmt.priceFloorBigInt(
+                                  balanceStableCoinUser,
+                                  decimals,
+                                  lengthMax: 2,
+                                )}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color:

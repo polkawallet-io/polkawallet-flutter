@@ -18,8 +18,8 @@ class LaminarMarginTradePrice extends StatelessWidget {
   final double fontSize;
 
   String _getTradePrice({int lengthFixed = 3, int lengthMax = 5}) {
-    return Fmt.priceCeilBigInt(priceInt,
-        decimals: decimals, lengthFixed: lengthFixed, lengthMax: lengthMax);
+    return Fmt.priceCeilBigInt(priceInt, decimals,
+        lengthFixed: lengthFixed, lengthMax: lengthMax);
   }
 
   @override

@@ -353,7 +353,7 @@ class _RecoveryInfo extends StatelessWidget {
           children: [
             Text(dic['recovery.deposit'], style: titleStyle),
             Text(
-              '${Fmt.token(recoveryInfo.deposit, decimals: decimals)} $symbol',
+              '${Fmt.token(recoveryInfo.deposit, decimals)} $symbol',
               style: valueStyle,
             )
           ],
@@ -515,7 +515,7 @@ class ActiveRecovery extends StatelessWidget {
               InfoItem(
                 title: dic['recovery.deposit'],
                 content:
-                    '${Fmt.balance(status['deposit'].toString(), decimals: networkState.tokenDecimals)} ${networkState.tokenSymbol}',
+                    '${Fmt.balance(status['deposit'].toString(), networkState.tokenDecimals)} ${networkState.tokenSymbol}',
               ),
               Expanded(
                 child: Column(

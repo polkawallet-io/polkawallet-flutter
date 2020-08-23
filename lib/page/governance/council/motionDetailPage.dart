@@ -420,6 +420,7 @@ class _ProposalVotingListState extends State<ProposalVotingList> {
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).gov;
     final String symbol = widget.store.settings.networkState.tokenSymbol;
+    final int decimals = widget.store.settings.networkState.tokenDecimals;
     final String voteCountAye =
         '${widget.council.votes.ayes.length}/${widget.council.votes.threshold}';
     final int thresholdNay = widget.store.gov.council.members.length -
@@ -478,6 +479,7 @@ class _ProposalVotingListState extends State<ProposalVotingList> {
                       balance: widget.store.gov.council.members
                           .firstWhere((i) => i[0] == e),
                       tokenSymbol: symbol,
+                      decimals: decimals,
                     );
                   }).toList()
                 : widget.council.votes.nays.map((e) {
@@ -487,6 +489,7 @@ class _ProposalVotingListState extends State<ProposalVotingList> {
                       balance: widget.store.gov.council.members
                           .firstWhere((i) => i[0] == e),
                       tokenSymbol: symbol,
+                      decimals: decimals,
                     );
                   }).toList(),
           )

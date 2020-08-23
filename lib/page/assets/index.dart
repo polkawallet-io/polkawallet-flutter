@@ -464,7 +464,7 @@ class _AssetsState extends State<Assets> {
         String tokenPrice;
         if (store.assets.marketPrices[symbol] != null && balancesInfo != null) {
           tokenPrice = (store.assets.marketPrices[symbol] *
-                  Fmt.bigIntToDouble(balancesInfo.total, decimals: decimals))
+                  Fmt.bigIntToDouble(balancesInfo.total, decimals))
               .toStringAsFixed(2);
         }
 
@@ -564,7 +564,7 @@ class _AssetsState extends State<Assets> {
                                   balancesInfo != null
                                       ? balancesInfo.total
                                       : BigInt.zero,
-                                  decimals: decimals,
+                                  decimals,
                                   lengthFixed: 3),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -612,7 +612,7 @@ class _AssetsState extends State<Assets> {
                             trailing: Text(
                               Fmt.priceFloorBigInt(
                                   Fmt.balanceInt(store.assets.tokenBalances[i]),
-                                  decimals: decimals,
+                                  decimals,
                                   lengthFixed: 3),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -652,8 +652,8 @@ class _AssetsState extends State<Assets> {
                                   ),
                                   title: Text(i),
                                   trailing: Text(
-                                    Fmt.token(store.acala.airdrops[i],
-                                        decimals: decimals),
+                                    Fmt.token(
+                                        store.acala.airdrops[i], decimals),
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20,

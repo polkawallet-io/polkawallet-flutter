@@ -79,7 +79,8 @@ abstract class _LaminarStore with Store {
         "from": rootStore.account.currentAddress,
         "to": i['params'][0],
         "token": i['params'][1],
-        "amount": Fmt.balance(i['params'][2], decimals: acala_token_decimals),
+        "amount": Fmt.balance(
+            i['params'][2], rootStore.settings.networkState.tokenDecimals),
       };
     }).toList();
     if (reset) {
@@ -125,12 +126,13 @@ abstract class _LaminarStore with Store {
   @action
   Future<void> setSwapTxs(List list,
       {bool reset = false, needCache = true}) async {
+    final int decimals = rootStore.settings.networkState.tokenDecimals;
     if (reset) {
-      txsSwap = ObservableList.of(list.map(
-          (i) => LaminarTxSwapData.fromJson(Map<String, dynamic>.from(i))));
+      txsSwap = ObservableList.of(list.map((i) =>
+          LaminarTxSwapData.fromJson(Map<String, dynamic>.from(i), decimals)));
     } else {
-      txsSwap.addAll(list.map(
-          (i) => LaminarTxSwapData.fromJson(Map<String, dynamic>.from(i))));
+      txsSwap.addAll(list.map((i) =>
+          LaminarTxSwapData.fromJson(Map<String, dynamic>.from(i), decimals)));
     }
 
     if (needCache && txsSwap.length > 0) {

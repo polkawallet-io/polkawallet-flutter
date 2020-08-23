@@ -48,7 +48,7 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
         }),
         "params": [
           // "value"
-          Fmt.tokenInt(amt, decimals: decimals).toString(),
+          Fmt.tokenInt(amt, decimals).toString(),
           // "beneficiary"
           address,
         ],
@@ -156,8 +156,7 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
                                     color: Theme.of(context).disabledColor),
                                 validator: (v) {
                                   final BigInt bond = Fmt.tokenInt(
-                                          _amountCtrl.text.trim(),
-                                          decimals: decimals) *
+                                          _amountCtrl.text.trim(), decimals) *
                                       bondPercentage ~/
                                       BigInt.from(100);
                                   if (widget.store.assets.balances[symbol]
@@ -175,7 +174,7 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
                                 ),
                                 initialValue: Fmt.priceCeilBigInt(
                                   minBond,
-                                  decimals: decimals,
+                                  decimals,
                                   lengthFixed: 3,
                                 ),
                                 readOnly: true,

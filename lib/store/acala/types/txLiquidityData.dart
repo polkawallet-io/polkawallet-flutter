@@ -5,7 +5,7 @@ class TxDexLiquidityData extends _TxDexLiquidityData {
   static const String actionDeposit = 'deposit';
   static const String actionWithdraw = 'withdraw';
   static const String actionReward = 'reward';
-  static TxDexLiquidityData fromJson(Map<String, dynamic> json) {
+  static TxDexLiquidityData fromJson(Map<String, dynamic> json, int decimals) {
     TxDexLiquidityData data = TxDexLiquidityData();
     data.hash = json['hash'];
     data.action = json['action'];
@@ -19,8 +19,7 @@ class TxDexLiquidityData extends _TxDexLiquidityData {
         data.amountShare = Fmt.balanceInt(json['params'][1]);
         break;
       case actionReward:
-        data.amountStableCoin =
-            Fmt.tokenInt(json['reward'], decimals: acala_token_decimals);
+        data.amountStableCoin = Fmt.tokenInt(json['reward'], decimals);
         break;
     }
     data.time = DateTime.fromMillisecondsSinceEpoch(json['time']);

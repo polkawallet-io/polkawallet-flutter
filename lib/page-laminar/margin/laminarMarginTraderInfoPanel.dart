@@ -53,7 +53,7 @@ class _LaminarTraderInfoPanelState extends State<LaminarTraderInfoPanel> {
                     child: Text(dic['margin.balance']),
                   ),
                   Text(
-                    '${Fmt.priceFloorBigInt(poolBalanceInt, decimals: widget.decimals)} aUSD',
+                    '${Fmt.priceFloorBigInt(poolBalanceInt, widget.decimals)} aUSD',
                     style: Theme.of(context).textTheme.headline4,
                   ),
                 ],
@@ -93,8 +93,7 @@ class LaminarTraderInfoPanelExtra extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).laminar;
-    final double pnl =
-        Fmt.balanceDouble(info?.unrealizedPl, decimals: decimals);
+    final double pnl = Fmt.balanceDouble(info?.unrealizedPl, decimals);
     return Container(
       padding: EdgeInsets.all(16),
       color: Colors.black12,
@@ -106,16 +105,16 @@ class LaminarTraderInfoPanelExtra extends StatelessWidget {
               children: <Widget>[
                 InfoItemRow(
                   dic['margin.hold.all'],
-                  '${Fmt.balance(info?.marginHeld, decimals: decimals)} aUSD',
+                  '${Fmt.balance(info?.marginHeld, decimals)} aUSD',
                   colorPrimary: true,
                 ),
                 InfoItemRow(
                   dic['margin.free'],
-                  '${Fmt.balance(info?.freeMargin, decimals: decimals)} aUSD',
+                  '${Fmt.balance(info?.freeMargin, decimals)} aUSD',
                 ),
                 InfoItemRow(
                   dic['margin.equity'],
-                  '${Fmt.balance(info?.equity, decimals: decimals)} aUSD',
+                  '${Fmt.balance(info?.equity, decimals)} aUSD',
                 ),
                 InfoItemRow(
                   dic['margin.pnl'],
@@ -124,7 +123,7 @@ class LaminarTraderInfoPanelExtra extends StatelessWidget {
                 ),
                 InfoItemRow(
                   dic['margin.amount.total'],
-                  '${Fmt.balance(info?.totalLeveragedPosition, decimals: decimals)} aUSD',
+                  '${Fmt.balance(info?.totalLeveragedPosition, decimals)} aUSD',
                 ),
               ],
             ),

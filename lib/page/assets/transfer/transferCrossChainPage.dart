@@ -64,7 +64,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
           // params.currencyId
           symbol.toUpperCase(),
           // params.amount
-          Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
+          Fmt.tokenInt(_amountCtrl.text.trim(), decimals).toString(),
         ],
       };
 
@@ -191,7 +191,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                                 labelText:
                                     '${dic['amount']} (${dic['balance']}: ${Fmt.priceFloorBigInt(
                                   available,
-                                  decimals: decimals,
+                                  decimals,
                                   lengthMax: 6,
                                 )})',
                               ),

@@ -54,7 +54,7 @@ class CandidateDetailPage extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(top: 8, bottom: 8),
                         child: Text(
-                            '${Fmt.token(BigInt.parse(info[1]))} $tokenView',
+                            '${Fmt.token(BigInt.parse(info[1]), decimals)} $tokenView',
                             style: style),
                       ),
                       Text(dic['backing'])
@@ -79,6 +79,7 @@ class CandidateDetailPage extends StatelessWidget {
                         accInfo: accInfo,
                         balance: [i, voters[i]],
                         tokenSymbol: tokenView,
+                        decimals: decimals,
                         noTap: true,
                       );
                     }).toList(),

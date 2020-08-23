@@ -17,7 +17,7 @@ class StakingDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
-    String symbol = store.settings.networkState.tokenSymbol;
+    final int decimals = store.settings.networkState.tokenDecimals;
     final TxData detail = ModalRoute.of(context).settings.arguments;
     List<DetailInfoItem> info = <DetailInfoItem>[
       DetailInfoItem(label: dic['action'], title: detail.call),
@@ -30,7 +30,12 @@ class StakingDetailPage extends StatelessWidget {
           value = Fmt.address(value);
           break;
         case "Compact<BalanceOf>":
-          value = Fmt.balance(value);
+          final tokenView = Fmt.tokenView(
+            store.settings.networkState.tokenSymbol,
+            decimalsDot: decimals,
+            network: store.settings.endpoint.info,
+          );
+          value = '${Fmt.balance(value, decimals)} $tokenView';
           break;
         case "AccountId":
           value = value.contains('0x') ? value : '0x$value';

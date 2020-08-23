@@ -43,8 +43,11 @@ class _UnBondPageState extends State<UnBondPage> {
     String bonded = '0.000';
     bool hasData = store.staking.ledger['stakingLedger'] != null;
     if (hasData) {
-      bonded = Fmt.token(BigInt.parse(
-          store.staking.ledger['stakingLedger']['active'].toString()));
+      bonded = Fmt.token(
+        BigInt.parse(
+            store.staking.ledger['stakingLedger']['active'].toString()),
+        decimals,
+      );
     }
 
     return Scaffold(

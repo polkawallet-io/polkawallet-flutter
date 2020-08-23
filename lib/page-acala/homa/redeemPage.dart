@@ -150,7 +150,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
           "strategy": _radioSelect == 1 ? 'Era $era' : strategy,
         }),
         "params": [
-          Fmt.tokenInt(pay, decimals: decimals).toString(),
+          Fmt.tokenInt(pay, decimals).toString(),
           _radioSelect == 1 ? {"Target": era} : strategy
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
@@ -211,8 +211,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
         String claimFee = '0';
         if (_amountReceiveCtrl.text.isNotEmpty) {
           claimFee = Fmt.priceCeil(
-            Fmt.balanceDouble(_amountReceiveCtrl.text, decimals: 0) *
-                claimFeeRatio,
+            Fmt.balanceDouble(_amountReceiveCtrl.text, 0) * claimFeeRatio,
             lengthMax: 4,
           );
         }
@@ -282,8 +281,8 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                           return dicAssets['amount.error'];
                                         }
                                         if (amt >=
-                                            Fmt.bigIntToDouble(balance,
-                                                decimals: decimals)) {
+                                            Fmt.bigIntToDouble(
+                                                balance, decimals)) {
                                           return dicAssets['amount.low'];
                                         }
                                         if (_radioSelect < 2 &&
@@ -298,7 +297,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                     Padding(
                                       padding: EdgeInsets.only(top: 8),
                                       child: Text(
-                                        '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} LDOT',
+                                        '${dicAssets['balance']}: ${Fmt.token(balance, decimals)} LDOT',
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .unselectedWidgetColor),

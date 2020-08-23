@@ -50,8 +50,11 @@ class _PayoutPageState extends State<PayoutPage> {
         "detail": jsonEncode({
           'era': rewards[0]['eras'][0]['era'],
           'validator': rewards[0]['validatorId'],
-          'amount': Fmt.token(BigInt.parse(rewards[0]['available'].toString()),
-              length: decimals),
+          'amount': Fmt.token(
+            BigInt.parse(rewards[0]['available'].toString()),
+            decimals,
+            length: decimals,
+          ),
         }),
         "params": [
           // validatorId
@@ -83,7 +86,11 @@ class _PayoutPageState extends State<PayoutPage> {
         "call": 'batch',
       },
       "detail": jsonEncode({
-        'amount': Fmt.token(store.staking.accountRewardTotal, length: decimals),
+        'amount': Fmt.token(
+          store.staking.accountRewardTotal,
+          decimals,
+          length: decimals,
+        ),
         'txs': params,
       }),
       "params": [],
@@ -139,7 +146,7 @@ class _PayoutPageState extends State<PayoutPage> {
                             ),
                             initialValue: Fmt.token(
                               store.staking.accountRewardTotal,
-                              decimals: decimals,
+                              decimals,
                               length: 8,
                             ),
                             readOnly: true,

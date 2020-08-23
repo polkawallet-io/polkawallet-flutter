@@ -6,7 +6,6 @@ import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/infoItemRow.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -57,8 +56,7 @@ class _LaminarMarginPoolDepositPageState
           // params.poolId
           params.poolId,
           // params.amount
-          Fmt.tokenInt(amt,
-                  decimals: widget.store.settings.networkState.tokenDecimals)
+          Fmt.tokenInt(amt, widget.store.settings.networkState.tokenDecimals)
               .toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
@@ -97,10 +95,9 @@ class _LaminarMarginPoolDepositPageState
     final double balance = params.isWithdraw
         ? Fmt.balanceDouble(
             widget.store.laminar.marginTraderInfo[params.poolId].freeMargin,
-            decimals: decimals)
+            decimals)
         : Fmt.balanceDouble(
-            widget.store.assets.tokenBalances[acala_stable_coin],
-            decimals: decimals);
+            widget.store.assets.tokenBalances[acala_stable_coin], decimals);
     return Scaffold(
       appBar: AppBar(
         title: Text(

@@ -77,6 +77,7 @@ class _LaminarMarginTradePairSelectorState
     );
     return Observer(
       builder: (_) {
+        final int decimals = widget.store.settings.networkState.tokenDecimals;
         final poolId = _poolId ?? widget.initialPoolId;
         final List<LaminarMarginPairData> pairs =
             widget.store.laminar.marginPoolInfo[poolId].options.toList();
@@ -205,6 +206,7 @@ class _LaminarMarginTradePairSelectorState
                                       : _formatPrice(
                                           Fmt.priceFloorBigInt(
                                             price - spreadBid,
+                                            decimals,
                                             lengthFixed: 5,
                                           ),
                                           highlight: isCurrentPair),
@@ -216,6 +218,7 @@ class _LaminarMarginTradePairSelectorState
                                       : _formatPrice(
                                           Fmt.priceCeilBigInt(
                                             price + spreadAsk,
+                                            decimals,
                                             lengthFixed: 5,
                                           ),
                                           highlight: isCurrentPair),

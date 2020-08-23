@@ -67,7 +67,10 @@ class _ProposalPanelState extends State<ProposalPanel> {
                         Fmt.accountDisplayName(
                             widget.proposal.proposer, accInfo),
                         Text(
-                          '${dic['treasury.bond']}: ${Fmt.balance(widget.proposal.balance.toString(), decimals: decimals)} $tokenView',
+                          '${dic['treasury.bond']}: ${Fmt.balance(
+                            widget.proposal.balance.toString(),
+                            decimals,
+                          )} $tokenView',
                           style: TextStyle(
                             color: Theme.of(context).unselectedWidgetColor,
                           ),

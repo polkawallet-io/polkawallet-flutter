@@ -89,16 +89,14 @@ class ApiAcala {
   }
 
   Future<Map> _fetchPriceOfLDOT() async {
-    var res = await apiRoot.evalJavascript(
+    final decimals = store.settings.networkState.tokenDecimals;
+    final res = await apiRoot.evalJavascript(
       'acala.fetchLDOTPrice(api)',
       allowRepeat: true,
     );
     return {
       "token": 'LDOT',
-      "price": {
-        "value": Fmt.tokenInt(res.toString(), decimals: acala_token_decimals)
-            .toString()
-      }
+      "price": {"value": Fmt.tokenInt(res.toString(), decimals).toString()}
     };
   }
 

@@ -12,12 +12,14 @@ class Validator extends StatelessWidget {
   Validator(
     this.validator,
     this.accInfo,
+    this.decimals,
     this.nominations, {
     this.hasPhalaAirdrop = false,
   }) : isWaiting = validator.total == BigInt.zero;
 
   final ValidatorData validator;
   final Map accInfo;
+  final int decimals;
   final bool isWaiting;
   final List nominations;
   final bool hasPhalaAirdrop;
@@ -54,7 +56,7 @@ class Validator extends StatelessWidget {
                   ),
                   Text(
                     !isWaiting
-                        ? '${dic['total']}: ${hasDetail ? Fmt.token(validator.total) : '~'}'
+                        ? '${dic['total']}: ${hasDetail ? Fmt.token(validator.total, decimals) : '~'}'
                         : '${dic['nominators']}: ${nominations.length}',
                     style: TextStyle(
                       color: Theme.of(context).unselectedWidgetColor,

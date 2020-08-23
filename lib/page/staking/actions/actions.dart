@@ -154,6 +154,7 @@ class _StakingActions extends State<StakingActions>
     }
 
     String symbol = store.settings.networkState.tokenSymbol;
+    int decimals = store.settings.networkState.tokenDecimals;
 
     BigInt balance = store.assets.balances[symbol].total;
     BigInt bonded = BigInt.zero;
@@ -201,7 +202,7 @@ class _StakingActions extends State<StakingActions>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '${Fmt.balance(balance.toString())}',
+                      '${Fmt.balance(balance.toString(), decimals)}',
                       style: Theme.of(context).textTheme.headline4,
                     ),
                     Text(
@@ -225,6 +226,7 @@ class _StakingActions extends State<StakingActions>
             hasData: hasData,
             isStash: isStash,
             isController: isController,
+            decimals: decimals,
             bonded: bonded,
             unlocking: unlocking,
             redeemable: redeemable,
@@ -438,6 +440,7 @@ class StakingInfoPanel extends StatelessWidget {
     this.hasData,
     this.isStash,
     this.isController,
+    this.decimals,
     this.bonded,
     this.unlocking,
     this.redeemable,
@@ -449,6 +452,7 @@ class StakingInfoPanel extends StatelessWidget {
   final bool hasData;
   final bool isStash;
   final bool isController;
+  final int decimals;
   final BigInt bonded;
   final BigInt unlocking;
   final BigInt redeemable;
@@ -469,12 +473,12 @@ class StakingInfoPanel extends StatelessWidget {
             children: <Widget>[
               InfoItem(
                 title: dic['bonded'],
-                content: Fmt.token(bonded),
+                content: Fmt.token(bonded, decimals),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               InfoItem(
                 title: dic['bond.unlocking'],
-                content: Fmt.token(unlocking),
+                content: Fmt.token(unlocking, decimals),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               Expanded(
@@ -487,7 +491,7 @@ class StakingInfoPanel extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          Fmt.token(redeemable),
+                          Fmt.token(redeemable, decimals),
                           style: Theme.of(context).textTheme.headline4,
                         ),
                         isController && redeemable > BigInt.zero
@@ -520,7 +524,7 @@ class StakingInfoPanel extends StatelessWidget {
             children: <Widget>[
               InfoItem(
                 title: dic['available'],
-                content: Fmt.token(available),
+                content: Fmt.token(available, decimals),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               InfoItem(

@@ -196,10 +196,10 @@ class _SwapPageState extends State<SwapPage> {
         "params": [
           // params.supply
           _swapPair[0],
-          Fmt.tokenInt(pay, decimals: decimals).toString(),
+          Fmt.tokenInt(pay, decimals).toString(),
           // params.target
           _swapPair[1],
-          Fmt.tokenInt(receive, decimals: decimals).toString(),
+          Fmt.tokenInt(receive, decimals).toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
 //          print(res);
@@ -330,8 +330,8 @@ class _SwapPageState extends State<SwapPage> {
                                                     'amount.error'];
                                               }
                                               if (double.parse(v.trim()) >
-                                                  Fmt.bigIntToDouble(balance,
-                                                      decimals: decimals)) {
+                                                  Fmt.bigIntToDouble(
+                                                      balance, decimals)) {
                                                 return dicAssets['amount.low'];
                                               }
                                               return null;
@@ -341,7 +341,7 @@ class _SwapPageState extends State<SwapPage> {
                                           Padding(
                                             padding: EdgeInsets.only(top: 8),
                                             child: Text(
-                                              '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} ${_swapPair[0]}',
+                                              '${dicAssets['balance']}: ${Fmt.token(balance, decimals)} ${_swapPair[0]}',
                                               style: TextStyle(
                                                   color: Theme.of(context)
                                                       .unselectedWidgetColor),

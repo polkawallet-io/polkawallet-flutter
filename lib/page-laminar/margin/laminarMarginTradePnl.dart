@@ -31,10 +31,7 @@ class LaminarMarginTradePnl extends StatelessWidget {
     if (pairData.pair.quote != acala_stable_coin) {
       pnlInt = pnlInt * rawPriceQuote ~/ laminarIntDivisor;
     }
-    final String pnl = Fmt.token(
-      pnlInt,
-      decimals: decimals,
-    );
+    final String pnl = Fmt.token(pnlInt, decimals);
 
     return Text(delta > BigInt.zero ? '+$pnl' : pnl,
         style: TextStyle(

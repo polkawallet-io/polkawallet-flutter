@@ -181,7 +181,7 @@ class _ProposalDetailPageState extends State<ProposalDetailPage> {
                                 ),
                               ),
                               Text(
-                                '${Fmt.balance(proposal.balance.toString(), decimals: decimals)} $tokenView',
+                                '${Fmt.balance(proposal.balance.toString(), decimals)} $tokenView',
                                 style: Theme.of(context).textTheme.headline4,
                               )
                             ],

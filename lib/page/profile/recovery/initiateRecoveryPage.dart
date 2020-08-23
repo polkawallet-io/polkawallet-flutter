@@ -43,7 +43,7 @@ class _InitiateRecoveryPage extends State<InitiateRecoveryPage> {
     if (!UI.checkBalanceAndAlert(
       context,
       widget.store,
-      Fmt.tokenInt(_recoveryDeposit.toString(), decimals: decimals),
+      Fmt.tokenInt(_recoveryDeposit.toString(), decimals),
     )) {
       return;
     }

@@ -47,18 +47,19 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
   }
 
   void _onAmountChange(String v) {
+    final int decimals = store.settings.networkState.tokenDecimals;
     String amountInput = v.trim();
     setState(() {
-      _shareInput = Fmt.tokenInt(amountInput, decimals: acala_token_decimals);
+      _shareInput = Fmt.tokenInt(amountInput, decimals);
     });
     _formKey.currentState.validate();
   }
 
   void _onAmountSelect(BigInt v) {
+    final int decimals = store.settings.networkState.tokenDecimals;
     setState(() {
       _shareInput = v;
-      _amountCtrl.text = Fmt.bigIntToDouble(v, decimals: acala_token_decimals)
-          .toStringAsFixed(2);
+      _amountCtrl.text = Fmt.bigIntToDouble(v, decimals).toStringAsFixed(2);
     });
     _formKey.currentState.validate();
   }
@@ -114,7 +115,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
       builder: (BuildContext context) {
         final Map dic = I18n.of(context).acala;
         final Map dicAssets = I18n.of(context).assets;
-        int decimals = store.settings.networkState.tokenDecimals;
+        final int decimals = store.settings.networkState.tokenDecimals;
         String token = ModalRoute.of(context).settings.arguments;
 
         double shareTotal = 0;
@@ -124,7 +125,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
         BigInt shareInt50 = BigInt.zero;
         double share = 0;
         double shareRatioNew = 0;
-        double shareInput = Fmt.bigIntToDouble(_shareInput, decimals: decimals);
+        double shareInput = Fmt.bigIntToDouble(_shareInput, decimals);
 
         double poolToken = 0;
         double poolStableCoin = 0;
@@ -133,19 +134,17 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
 
         DexPoolInfoData poolInfo = store.acala.dexPoolInfoMap[token];
         if (poolInfo != null) {
-          shareTotal =
-              Fmt.bigIntToDouble(poolInfo.sharesTotal, decimals: decimals);
+          shareTotal = Fmt.bigIntToDouble(poolInfo.sharesTotal, decimals);
           shareInt = poolInfo.shares;
           shareInt10 = BigInt.from(shareInt / BigInt.from(10));
           shareInt25 = BigInt.from(shareInt / BigInt.from(4));
           shareInt50 = BigInt.from(shareInt / BigInt.from(2));
 
-          share = Fmt.bigIntToDouble(poolInfo.shares, decimals: decimals);
+          share = Fmt.bigIntToDouble(poolInfo.shares, decimals);
 
-          poolToken =
-              Fmt.bigIntToDouble(poolInfo.amountToken, decimals: decimals);
+          poolToken = Fmt.bigIntToDouble(poolInfo.amountToken, decimals);
           poolStableCoin =
-              Fmt.bigIntToDouble(poolInfo.amountStableCoin, decimals: decimals);
+              Fmt.bigIntToDouble(poolInfo.amountStableCoin, decimals);
 
           amountToken = poolToken * shareInput / shareTotal;
           amountStableCoin = poolStableCoin * shareInput / shareTotal;
@@ -173,7 +172,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                           decoration: InputDecoration(
                             hintText: dicAssets['amount'],
                             labelText:
-                                '${dicAssets['amount']} (${dic['earn.available']}: ${Fmt.priceFloorBigInt(shareInt)} Shares)',
+                                '${dicAssets['amount']} (${dic['earn.available']}: ${Fmt.priceFloorBigInt(shareInt, decimals)} Shares)',
                             suffix: GestureDetector(
                               child: Icon(
                                 CupertinoIcons.clear_thick_circled,

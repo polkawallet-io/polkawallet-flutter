@@ -44,9 +44,7 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
   final TextEditingController _amountCtrl = new TextEditingController();
 
   double _calcCost(double value, BigInt price, double leverage) {
-    return value *
-        Fmt.bigIntToDouble(price, decimals: widget.decimals) /
-        leverage;
+    return value * Fmt.bigIntToDouble(price, widget.decimals) / leverage;
   }
 
   Future<void> _onSelectLeverage(List<String> leverages) async {
@@ -105,11 +103,9 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
           // params.leverage
           lev,
           // params.amount
-          Fmt.tokenInt(amt, decimals: widget.decimals).toString(),
+          Fmt.tokenInt(amt, widget.decimals).toString(),
           // params.price
-          isSell
-              ? '0'
-              : Fmt.tokenInt('100000000', decimals: widget.decimals).toString(),
+          isSell ? '0' : Fmt.tokenInt('100000000', widget.decimals).toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
 //          print(res);
@@ -132,7 +128,7 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
     leverages.retainWhere((e) =>
         widget.pairData.enabledTrades.indexWhere((i) => i.contains(e)) >= 0);
     final BigInt freeInt = Fmt.balanceInt(widget.info?.freeMargin);
-    final double free = Fmt.bigIntToDouble(freeInt, decimals: widget.decimals);
+    final double free = Fmt.bigIntToDouble(freeInt, widget.decimals);
     final BigInt priceBuy = webApi.laminar.getTradePriceInt(
       prices: widget.priceMap,
       pairData: widget.pairData,
@@ -144,8 +140,7 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
       direction: 'short',
     );
     final double rawPriceQuote = Fmt.balanceDouble(
-        widget.priceMap[widget.pairData.pair.quote]?.value,
-        decimals: widget.decimals);
+        widget.priceMap[widget.pairData.pair.quote]?.value, widget.decimals);
     final double leverage = double.parse(
         laminar_leverage_map[leverages[widget.leverageIndex]].substring(1));
     double amountBuyMax = freeInt / priceBuy * leverage;
@@ -177,7 +172,7 @@ class _LaminarMarginTradePanelState extends State<LaminarMarginTradePanel> {
             padding: EdgeInsets.only(bottom: 16),
             child: InfoItemRow(
               dic['margin.free'],
-              '${Fmt.token(freeInt, decimals: widget.decimals)} aUSD',
+              '${Fmt.token(freeInt, widget.decimals)} aUSD',
             ),
           ),
           GestureDetector(

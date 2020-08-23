@@ -256,11 +256,9 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     /// tip division from 0 to 19:
     /// 0-10 for 0-0.1
     /// 10-19 for 0.1-1
-    BigInt value =
-        Fmt.tokenInt('0.01', decimals: decimals) * BigInt.from(tip.toInt());
+    BigInt value = Fmt.tokenInt('0.01', decimals) * BigInt.from(tip.toInt());
     if (tip > 10) {
-      value = Fmt.tokenInt('0.1', decimals: decimals) *
-          BigInt.from((tip - 9).toInt());
+      value = Fmt.tokenInt('0.1', decimals) * BigInt.from((tip - 9).toInt());
     }
     setState(() {
       _tip = tip;
@@ -319,7 +317,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
           final bool isPolkadot =
               store.settings.endpoint.info == network_name_polkadot;
           bool isTxPaused = isPolkadot;
-          if (isTxPaused && store.gov.bestNumber > 0 &&
+          if (isTxPaused &&
+              store.gov.bestNumber > 0 &&
               (store.gov.bestNumber < dot_re_denominate_block - 1200 ||
                   store.gov.bestNumber > dot_re_denominate_block + 1200)) {
             isTxPaused = false;
@@ -438,7 +437,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                                     if (snapshot.hasData) {
                                       String fee = Fmt.balance(
                                         _fee['partialFee'].toString(),
-                                        decimals: decimals,
+                                        decimals,
                                         length: 6,
                                       );
                                       return Container(
@@ -491,8 +490,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                             width: 64,
                             child: Text(dicAsset['tip']),
                           ),
-                          Text(
-                              '${Fmt.token(_tipValue, decimals: decimals)} $tokenView'),
+                          Text('${Fmt.token(_tipValue, decimals)} $tokenView'),
                           TapTooltip(
                             message: dicAsset['tip.tip'],
                             child: Icon(

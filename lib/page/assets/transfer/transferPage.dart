@@ -103,7 +103,7 @@ class _TransferPageState extends State<TransferPage> {
           // params.to
           _addressCtrl.text.trim(),
           // params.amount
-          Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
+          Fmt.tokenInt(_amountCtrl.text.trim(), decimals).toString(),
         ],
       };
       bool isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
@@ -120,7 +120,7 @@ class _TransferPageState extends State<TransferPage> {
           // params.currencyId
           symbol.toUpperCase(),
           // params.amount
-          Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
+          Fmt.tokenInt(_amountCtrl.text.trim(), decimals).toString(),
         ];
       }
       args['onFinish'] = (BuildContext txPageContext, Map res) {
@@ -338,7 +338,7 @@ class _TransferPageState extends State<TransferPage> {
                                 labelText:
                                     '${dic['amount']} (${dic['balance']}: ${Fmt.priceFloorBigInt(
                                   available,
-                                  decimals: decimals,
+                                  decimals,
                                   lengthMax: 6,
                                 )})',
                               ),

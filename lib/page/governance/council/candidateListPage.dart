@@ -119,6 +119,7 @@ class _CandidateList extends State<CandidateListPage> {
                       accInfo: accInfo,
                       balance: i,
                       tokenSymbol: tokenView,
+                      decimals: decimals,
                       trailing: CupertinoSwitch(
                         value: _selectedMap[i[0]],
                         onChanged: (value) {

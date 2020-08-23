@@ -59,6 +59,7 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
       body: SafeArea(
         child: Observer(
           builder: (_) {
+            final int decimals = store.settings.networkState.tokenDecimals;
             List<TxLoanData> list = store.acala.txsLoan.reversed.toList();
 //            Map<int, BlockData> blockMap = store.assets.blockMap;
 
@@ -102,8 +103,8 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                     BigInt amountView = detail.amountCollateral;
                     if (detail.currencyIdView.toUpperCase() ==
                         acala_stable_coin) {
-                      amountView =
-                          loanType.debitShareToDebit(detail.amountDebitShare);
+                      amountView = loanType.debitShareToDebit(
+                          detail.amountDebitShare, decimals);
                     }
                     String icon = 'assets_down.png';
                     if (detail.actionType == TxLoanData.actionTypePayback ||
@@ -127,7 +128,7 @@ class _LoanHistoryPage extends State<LoanHistoryPage> {
                                 child: Padding(
                                   padding: EdgeInsets.only(right: 12),
                                   child: Text(
-                                    '${Fmt.priceFloorBigInt(amountView)} ${detail.currencyIdView}',
+                                    '${Fmt.priceFloorBigInt(amountView, decimals)} ${detail.currencyIdView}',
                                     style:
                                         Theme.of(context).textTheme.headline4,
                                     textAlign: TextAlign.end,

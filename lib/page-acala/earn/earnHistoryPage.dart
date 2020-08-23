@@ -59,6 +59,7 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
         child: Observer(
           builder: (_) {
             final Map dic = I18n.of(context).acala;
+            final int decimals = store.settings.networkState.tokenDecimals;
             final String token = ModalRoute.of(context).settings.arguments;
             List<TxDexLiquidityData> list =
                 store.acala.txsDexLiquidity.reversed.toList();
@@ -99,16 +100,16 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                     switch (detail.action) {
                       case TxDexLiquidityData.actionDeposit:
                         amount =
-                            '${Fmt.priceCeilBigInt(detail.amountToken)} ${detail.currencyId}\n+ ${Fmt.priceCeilBigInt(detail.amountStableCoin)} $acala_stable_coin_view';
+                            '${Fmt.priceCeilBigInt(detail.amountToken, decimals)} ${detail.currencyId}\n+ ${Fmt.priceCeilBigInt(detail.amountStableCoin, decimals)} $acala_stable_coin_view';
                         image = 'assets/images/assets/assets_up.png';
                         break;
                       case TxDexLiquidityData.actionWithdraw:
                         amount =
-                            '${Fmt.priceFloorBigInt(detail.amountShare, lengthFixed: 0)} Share';
+                            '${Fmt.priceFloorBigInt(detail.amountShare, decimals, lengthFixed: 0)} Share';
                         break;
                       case TxDexLiquidityData.actionReward:
                         amount =
-                            '${Fmt.priceCeilBigInt(detail.amountStableCoin)} $acala_stable_coin_view';
+                            '${Fmt.priceCeilBigInt(detail.amountStableCoin, decimals)} $acala_stable_coin_view';
                         break;
                     }
                     return Container(

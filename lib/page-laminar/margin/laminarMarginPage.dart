@@ -57,7 +57,7 @@ class _LaminarMarginPageState extends State<LaminarMarginPage> {
           builder: (_) {
             final String balance = Fmt.balance(
               widget.store.laminar.marginPoolInfo[_poolId]?.balance ?? '0',
-              decimals: decimals,
+              decimals,
             );
             final LaminarMarginPoolInfoData poolInfo =
                 widget.store.laminar.marginPoolInfo[_poolId];

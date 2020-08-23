@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/acala/types/loanType.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class LoanDonutChart extends StatelessWidget {
-  LoanDonutChart(this.loan);
+  LoanDonutChart(this.loan, this.decimals);
   final LoanData loan;
+  final int decimals;
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
-    double requiredCollateralRatio = double.parse(Fmt.token(
-        loan.type.requiredCollateralRatio,
-        decimals: acala_token_decimals));
-    double liquidationRatio = double.parse(
-        Fmt.token(loan.type.liquidationRatio, decimals: acala_token_decimals));
+    double requiredCollateralRatio =
+        double.parse(Fmt.token(loan.type.requiredCollateralRatio, decimals));
+    double liquidationRatio =
+        double.parse(Fmt.token(loan.type.liquidationRatio, decimals));
 
     const double heightTotal = 160;
     double heightBorrowed = 0;
@@ -30,15 +29,14 @@ class LoanDonutChart extends StatelessWidget {
       }
     }
 
-    String collatoralInUSD =
-        Fmt.token(loan.collateralInUSD, decimals: acala_token_decimals);
+    String collatoralInUSD = Fmt.token(loan.collateralInUSD, decimals);
 
     const TextStyle textStyle = TextStyle(fontSize: 12);
 
     final dataCollateral = [1, 0];
     final dataDebit = [
-      Fmt.bigIntToDouble(loan.debitInUSD),
-      Fmt.bigIntToDouble(loan.collateralInUSD - loan.debitInUSD),
+      Fmt.bigIntToDouble(loan.debitInUSD, decimals),
+      Fmt.bigIntToDouble(loan.collateralInUSD - loan.debitInUSD, decimals),
     ];
 
     List<charts.Series> seriesListCollateral = [

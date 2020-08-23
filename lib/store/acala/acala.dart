@@ -86,7 +86,7 @@ abstract class _AcalaStore with Store {
   double get swapFee {
     return Fmt.balanceDouble(
         rootStore.settings.networkConst['dex']['getExchangeFee'].toString(),
-        decimals: acala_token_decimals);
+        rootStore.settings.networkState.tokenDecimals);
   }
 
   @computed
@@ -94,7 +94,7 @@ abstract class _AcalaStore with Store {
     return Fmt.bigIntToDouble(
         Fmt.balanceInt(rootStore.settings.networkConst['dex']['getExchangeFee']
             .toString()),
-        decimals: acala_token_decimals);
+        rootStore.settings.networkState.tokenDecimals);
   }
 
   @action
@@ -126,6 +126,7 @@ abstract class _AcalaStore with Store {
         loanTypes.firstWhere((t) => t.token == token),
         prices[token] ?? BigInt.zero,
         prices[acala_stable_coin] ?? BigInt.zero,
+        rootStore.settings.networkState.tokenDecimals,
       );
     });
     loans = data;
@@ -159,7 +160,10 @@ abstract class _AcalaStore with Store {
         "from": rootStore.account.currentAddress,
         "to": i['params'][0],
         "token": i['params'][1],
-        "amount": Fmt.balance(i['params'][2], decimals: acala_token_decimals),
+        "amount": Fmt.balance(
+          i['params'][2],
+          rootStore.settings.networkState.tokenDecimals,
+        ),
       };
     }).toList();
     if (reset) {
@@ -194,12 +198,13 @@ abstract class _AcalaStore with Store {
   @action
   Future<void> setSwapTxs(List list,
       {bool reset = false, needCache = true}) async {
+    final int decimals = rootStore.settings.networkState.tokenDecimals;
     if (reset) {
-      txsSwap = ObservableList.of(
-          list.map((i) => TxSwapData.fromJson(Map<String, dynamic>.from(i))));
+      txsSwap = ObservableList.of(list.map(
+          (i) => TxSwapData.fromJson(Map<String, dynamic>.from(i), decimals)));
     } else {
-      txsSwap.addAll(
-          list.map((i) => TxSwapData.fromJson(Map<String, dynamic>.from(i))));
+      txsSwap.addAll(list.map(
+          (i) => TxSwapData.fromJson(Map<String, dynamic>.from(i), decimals)));
     }
 
     if (needCache && txsSwap.length > 0) {
@@ -211,12 +216,13 @@ abstract class _AcalaStore with Store {
   Future<void> setDexLiquidityTxs(List list,
       {bool reset = false, needCache = true}) async {
     list.retainWhere((i) => i['params'] != null);
+    final int decimals = rootStore.settings.networkState.tokenDecimals;
     if (reset) {
-      txsDexLiquidity = ObservableList.of(list.map(
-          (i) => TxDexLiquidityData.fromJson(Map<String, dynamic>.from(i))));
+      txsDexLiquidity = ObservableList.of(list.map((i) =>
+          TxDexLiquidityData.fromJson(Map<String, dynamic>.from(i), decimals)));
     } else {
-      txsDexLiquidity.addAll(list.map(
-          (i) => TxDexLiquidityData.fromJson(Map<String, dynamic>.from(i))));
+      txsDexLiquidity.addAll(list.map((i) =>
+          TxDexLiquidityData.fromJson(Map<String, dynamic>.from(i), decimals)));
     }
 
     if (needCache && txsDexLiquidity.length > 0) {
@@ -227,12 +233,13 @@ abstract class _AcalaStore with Store {
   @action
   Future<void> setHomaTxs(List list,
       {bool reset = false, needCache = true}) async {
+    final int decimals = rootStore.settings.networkState.tokenDecimals;
     if (reset) {
-      txsHoma = ObservableList.of(
-          list.map((i) => TxHomaData.fromJson(Map<String, dynamic>.from(i))));
+      txsHoma = ObservableList.of(list.map(
+          (i) => TxHomaData.fromJson(Map<String, dynamic>.from(i), decimals)));
     } else {
-      txsHoma.addAll(
-          list.map((i) => TxHomaData.fromJson(Map<String, dynamic>.from(i))));
+      txsHoma.addAll(list.map(
+          (i) => TxHomaData.fromJson(Map<String, dynamic>.from(i), decimals)));
     }
 
     if (needCache && txsHoma.length > 0) {
@@ -317,11 +324,11 @@ abstract class _AcalaStore with Store {
         rootStore.settings.networkConst['babe']['expectedBlockTime'];
     Map<String, double> rewards = {};
     map.forEach((k, v) {
-      rewards[k] =
-          Fmt.balanceDouble(v.toString(), decimals: acala_token_decimals) *
-              SECONDS_OF_YEAR *
-              1000 /
-              blockTime;
+      rewards[k] = Fmt.balanceDouble(
+              v.toString(), rootStore.settings.networkState.tokenDecimals) *
+          SECONDS_OF_YEAR *
+          1000 /
+          blockTime;
     });
     swapPoolRewards = rewards;
   }

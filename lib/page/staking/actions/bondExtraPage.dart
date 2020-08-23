@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -72,7 +71,7 @@ class _BondExtraPageState extends State<BondExtraPage> {
                         decoration: InputDecoration(
                           hintText: assetDic['amount'],
                           labelText:
-                              '${assetDic['amount']} (${dic['available']}: ${Fmt.token(available)} $tokenView)',
+                              '${assetDic['amount']} (${dic['available']}: ${Fmt.token(available, decimals)} $tokenView)',
                         ),
                         inputFormatters: [UI.decimalInputFormatter(decimals)],
                         controller: _amountCtrl,

@@ -134,7 +134,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
         // "hash"
         tipData.hash,
         // "tipValue"
-        Fmt.tokenInt(amt, decimals: decimals).toString(),
+        Fmt.tokenInt(amt, decimals).toString(),
       ],
       'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(
@@ -203,7 +203,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
       },
       "detail": jsonEncode({
         "hash": Fmt.address(tipData.hash, pad: 16),
-        "median": Fmt.token(median, decimals: decimals),
+        "median": Fmt.token(median, decimals),
       }),
       "params": [tipData.hash, median.toString()],
       'onFinish': (BuildContext txPageContext, Map res) {
@@ -295,7 +295,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
                                   Text(
                                     '${Fmt.balance(
                                       tipData.deposit.toString(),
-                                      decimals: decimals,
+                                      decimals,
                                     )} $tokenView',
                                     style:
                                         Theme.of(context).textTheme.headline4,
@@ -437,7 +437,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
                               padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
                               child: BorderedTitle(
                                   title:
-                                      '${tipData.tips.length} ${dic['treasury.tipper']} (${Fmt.token(median, decimals: decimals)} $tokenView)'),
+                                      '${tipData.tips.length} ${dic['treasury.tipper']} (${Fmt.token(median, decimals)} $tokenView)'),
                             ),
                             Column(
                               children: tipData.tips.map((e) {
@@ -450,7 +450,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
                                   trailing: Text(
                                     '${Fmt.balance(
                                       e.value.toString(),
-                                      decimals: decimals,
+                                      decimals,
                                     )} $tokenView',
                                     style:
                                         Theme.of(context).textTheme.headline4,

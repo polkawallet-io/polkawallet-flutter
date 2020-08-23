@@ -81,7 +81,7 @@ class _MintPageState extends State<MintPage> {
           "amountReceive": receive,
         }),
         "params": [
-          Fmt.tokenInt(pay, decimals: decimals).toString(),
+          Fmt.tokenInt(pay, decimals).toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
 //          print(res);
@@ -190,8 +190,8 @@ class _MintPageState extends State<MintPage> {
                                           return dicAssets['amount.error'];
                                         }
                                         if (double.parse(v.trim()) >=
-                                            Fmt.bigIntToDouble(balance,
-                                                decimals: decimals)) {
+                                            Fmt.bigIntToDouble(
+                                                balance, decimals)) {
                                           return dicAssets['amount.low'];
                                         }
                                         return null;
@@ -201,7 +201,7 @@ class _MintPageState extends State<MintPage> {
                                     Padding(
                                       padding: EdgeInsets.only(top: 8),
                                       child: Text(
-                                        '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} DOT',
+                                        '${dicAssets['balance']}: ${Fmt.token(balance, decimals)} DOT',
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .unselectedWidgetColor),

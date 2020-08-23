@@ -99,10 +99,9 @@ class _EarnPageState extends State<EarnPage> {
             share = poolInfo.shares;
             userShare = share / shareTotal;
 
-            amountToken =
-                Fmt.bigIntToDouble(poolInfo.amountToken, decimals: decimals);
-            amountStableCoin = Fmt.bigIntToDouble(poolInfo.amountStableCoin,
-                decimals: decimals);
+            amountToken = Fmt.bigIntToDouble(poolInfo.amountToken, decimals);
+            amountStableCoin =
+                Fmt.bigIntToDouble(poolInfo.amountStableCoin, decimals);
             amountTokenUser = amountToken * userShare;
             amountStableCoinUser = amountStableCoin * userShare;
           }
@@ -121,6 +120,7 @@ class _EarnPageState extends State<EarnPage> {
                 children: <Widget>[
                   CurrencySelector(
                     token: _tab,
+                    decimals: decimals,
                     tokenOptions: store.acala.swapTokens.toList(),
                     onSelect: (res) {
                       setState(() {

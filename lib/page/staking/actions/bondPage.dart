@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/staking/actions/accountSelectPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
@@ -97,7 +96,8 @@ class _BondPageState extends State<BondPage> {
 
     double balance = 0;
     if (store.assets.balances[symbol] != null) {
-      balance = Fmt.bigIntToDouble(store.assets.balances[symbol].freeBalance);
+      balance = Fmt.bigIntToDouble(
+          store.assets.balances[symbol].freeBalance, decimals);
     }
 
     var rewardToOptions =

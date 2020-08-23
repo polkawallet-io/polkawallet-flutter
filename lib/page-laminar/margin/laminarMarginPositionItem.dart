@@ -54,7 +54,7 @@ class LaminarMarginPosition extends StatelessWidget {
         // params.price
         direction == 'long'
             ? '0'
-            : Fmt.tokenInt('100000000', decimals: decimals).toString(),
+            : Fmt.tokenInt('100000000', decimals).toString(),
       ],
       "onFinish": (BuildContext txPageContext, Map res) {
 //          print(res);
@@ -79,14 +79,14 @@ class LaminarMarginPosition extends StatelessWidget {
     final BigInt amtInt = BigInt.parse(position['args'][5]);
     final String amt = Fmt.token(
       amtInt,
-      decimals: acala_token_decimals,
+      decimals,
     );
     final BigInt rawPriceQuote =
         Fmt.balanceInt(prices[pairData.pair.quote]?.value);
     final BigInt openPriceInt = BigInt.parse(position['args'][6]);
     final String openPrice = Fmt.token(
       openPriceInt,
-      decimals: acala_token_decimals,
+      decimals,
       length: 5,
     );
     final BigInt currentPriceInt = webApi.laminar.getTradePriceInt(
@@ -158,7 +158,7 @@ class LaminarMarginPosition extends StatelessWidget {
                     : dic['margin.price.now'],
                 content: Fmt.token(
                   isClosed ? closePriceInt : currentPriceInt,
-                  decimals: decimals,
+                  decimals,
                   length: 5,
                 ),
               ),

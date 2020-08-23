@@ -232,7 +232,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
             child: ListTile(
               leading: AddressIcon(id),
               title: Text(
-                  '${meStaked != null ? Fmt.token(meStaked) : '~'} $tokenView'),
+                  '${meStaked != null ? Fmt.token(meStaked, decimals) : '~'} $tokenView'),
               subtitle: Fmt.accountDisplayName(validator.accountId, accInfo),
               trailing: Container(
                 width: 120,
@@ -305,6 +305,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     final Map dic = I18n.of(context).staking;
     return Observer(
       builder: (_) {
+        final int decimals = store.settings.networkState.tokenDecimals;
         final List<Tab> _listTabs = <Tab>[
           Tab(
             text: '${dic['elected']} (${store.staking.validatorsInfo.length})',
@@ -383,6 +384,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
                           return Validator(
                             acc,
                             accInfo,
+                            decimals,
                             store.staking.nominationsAll[acc.accountId] ?? [],
                             hasPhalaAirdrop: hasPhalaAirdrop,
                           );
@@ -427,6 +429,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
               return Validator(
                 acc,
                 accInfo,
+                decimals,
                 store.staking.nominationsAll[acc.accountId] ?? [],
                 hasPhalaAirdrop: hasPhalaAirdrop,
               );

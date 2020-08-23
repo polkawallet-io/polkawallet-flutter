@@ -79,6 +79,7 @@ class _NominatePageState extends State<NominatePage> {
 
   Widget _buildListItem(BuildContext context, ValidatorData validator) {
     final dic = I18n.of(context).staking;
+    final int decimals = store.settings.networkState.tokenDecimals;
     final Map accInfo = store.account.accountIndexMap[validator.accountId];
     final bool hasPhalaAirdrop =
         store.staking.phalaAirdropWhiteList[validator.accountId] ?? false;
@@ -119,7 +120,7 @@ class _NominatePageState extends State<NominatePage> {
                   ),
                   !isWaiting
                       ? Text(
-                          '${dic['total']}: ${Fmt.token(validator.total)}',
+                          '${dic['total']}: ${Fmt.token(validator.total, decimals)}',
                           style: TextStyle(
                             color: Theme.of(context).unselectedWidgetColor,
                             fontSize: 12,

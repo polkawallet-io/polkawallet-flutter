@@ -214,7 +214,7 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
                           title: dic['treasury.value'],
                           content: '${Fmt.balance(
                             proposal.proposal.value.toString(),
-                            decimals: decimals,
+                            decimals,
                           )} $tokenView',
                           crossAxisAlignment: CrossAxisAlignment.center,
                         ),
@@ -222,7 +222,7 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
                           title: dic['treasury.bond'],
                           content: '${Fmt.balance(
                             proposal.proposal.bond.toString(),
-                            decimals: decimals,
+                            decimals,
                           )} $tokenView',
                           crossAxisAlignment: CrossAxisAlignment.center,
                         ),

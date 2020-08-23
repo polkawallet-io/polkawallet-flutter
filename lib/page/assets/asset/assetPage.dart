@@ -217,7 +217,7 @@ class _AssetPageState extends State<AssetPage>
               balancesInfo.lockedBreakdown.forEach((i) {
                 if (i.amount > BigInt.zero) {
                   lockedInfo +=
-                      '${Fmt.token(i.amount, decimals: decimals)} $tokenView ${dic['lock.${i.use}']}\n';
+                      '${Fmt.token(i.amount, decimals)} $tokenView ${dic['lock.${i.use}']}\n';
                 }
               });
             }
@@ -228,8 +228,7 @@ class _AssetPageState extends State<AssetPage>
                 store.assets.marketPrices[symbol] != null &&
                 balancesInfo != null) {
               tokenPrice = (store.assets.marketPrices[symbol] *
-                      Fmt.bigIntToDouble(balancesInfo.total,
-                          decimals: decimals))
+                      Fmt.bigIntToDouble(balancesInfo.total, decimals))
                   .toStringAsFixed(4);
             }
 
@@ -246,7 +245,8 @@ class _AssetPageState extends State<AssetPage>
                             bottom: tokenPrice != null ? 4 : 16),
                         child: Text(
                           Fmt.token(isBaseToken ? balancesInfo.total : balance,
-                              decimals: decimals, length: 8),
+                              decimals,
+                              length: 8),
                           style: TextStyle(
                             color: titleColor,
                             fontSize: 28,
@@ -290,7 +290,7 @@ class _AssetPageState extends State<AssetPage>
                                             )
                                           : Container(),
                                       Text(
-                                        '${dic['locked']}: ${Fmt.token(balancesInfo.lockedBalance, decimals: decimals)}',
+                                        '${dic['locked']}: ${Fmt.token(balancesInfo.lockedBalance, decimals)}',
                                         style: TextStyle(color: titleColor),
                                       ),
                                     ],
@@ -299,12 +299,12 @@ class _AssetPageState extends State<AssetPage>
                                 Container(
                                   margin: EdgeInsets.only(right: 12),
                                   child: Text(
-                                    '${dic['available']}: ${Fmt.token(balancesInfo.transferable, decimals: decimals)}',
+                                    '${dic['available']}: ${Fmt.token(balancesInfo.transferable, decimals)}',
                                     style: TextStyle(color: titleColor),
                                   ),
                                 ),
                                 Text(
-                                  '${dic['reserved']}: ${Fmt.token(balancesInfo.reserved, decimals: decimals)}',
+                                  '${dic['reserved']}: ${Fmt.token(balancesInfo.reserved, decimals)}',
                                   style: TextStyle(color: titleColor),
                                 ),
                               ],

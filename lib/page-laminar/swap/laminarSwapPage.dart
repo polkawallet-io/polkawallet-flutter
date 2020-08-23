@@ -7,7 +7,6 @@ import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page-laminar/swap/laminarSwapHistoryPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
@@ -122,7 +121,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
         double price = Fmt.balanceDouble(
           widget.store.laminar
               .tokenPrices[_isRedeem ? _tokenPay : _tokenReceive]?.value,
-          decimals: decimals,
+          decimals,
         );
         if (price == 0.0) return;
         double output = _isRedeem
@@ -138,7 +137,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
         double price = Fmt.balanceDouble(
           widget.store.laminar
               .tokenPrices[_isRedeem ? _tokenPay : _tokenReceive]?.value,
-          decimals: decimals,
+          decimals,
         );
         if (price == 0.0) return;
         double output = _isRedeem
@@ -174,7 +173,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
           // params.currencyId
           _isRedeem ? _tokenPay : _tokenReceive,
           // params.amount
-          Fmt.tokenInt(pay, decimals: decimals).toString(),
+          Fmt.tokenInt(pay, decimals).toString(),
           // params.maxPrice
           _isRedeem ? '0' : _maxPrice
         ],
@@ -224,7 +223,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
         final double price = Fmt.balanceDouble(
             widget.store.laminar
                 .tokenPrices[_isRedeem ? _tokenPay : _tokenReceive]?.value,
-            decimals: decimals);
+            decimals);
         final double swapRatio = _isRedeem ? price : 1 / price;
 
         int rateDecimal = 2;
@@ -308,8 +307,8 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
                                                     'amount.error'];
                                               }
                                               if (double.parse(v.trim()) >
-                                                  Fmt.bigIntToDouble(balance,
-                                                      decimals: decimals)) {
+                                                  Fmt.bigIntToDouble(
+                                                      balance, decimals)) {
                                                 return dicAssets['amount.low'];
                                               }
                                               return null;
@@ -319,7 +318,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
                                           Padding(
                                             padding: EdgeInsets.only(top: 8),
                                             child: Text(
-                                              '${dicAssets['balance']}: ${Fmt.token(balance, decimals: decimals)} ${Fmt.tokenView(_tokenPay)}',
+                                              '${dicAssets['balance']}: ${Fmt.token(balance, decimals)} ${Fmt.tokenView(_tokenPay)}',
                                               style: TextStyle(
                                                   color: Theme.of(context)
                                                       .unselectedWidgetColor),

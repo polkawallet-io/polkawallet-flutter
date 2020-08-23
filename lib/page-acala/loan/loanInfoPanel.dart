@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/infoItemRow.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -12,18 +11,19 @@ class LoanInfoPanel extends StatelessWidget {
     this.requiredRatio,
     this.currentRatio,
     this.liquidationPrice,
+    this.decimals,
   });
   final BigInt price;
   final BigInt liquidationRatio;
   final BigInt requiredRatio;
   final double currentRatio;
   final BigInt liquidationPrice;
+  final int decimals;
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
-    String priceString = Fmt.token(price, decimals: acala_token_decimals);
-    String liquidationPriceString =
-        Fmt.token(liquidationPrice, decimals: acala_token_decimals);
+    String priceString = Fmt.token(price, decimals);
+    String liquidationPriceString = Fmt.token(liquidationPrice, decimals);
     return Column(
       children: <Widget>[
         InfoItemRow(
@@ -34,7 +34,7 @@ class LoanInfoPanel extends StatelessWidget {
 //          dic['liquid.ratio'],
 //          Fmt.ratio(
 //            double.parse(
-//              Fmt.token(liquidationRatio, decimals: acala_token_decimals),
+//              Fmt.token(liquidationRatio, decimals),
 //            ),
 //          ),
 //        ),
@@ -42,7 +42,7 @@ class LoanInfoPanel extends StatelessWidget {
           dic['liquid.ratio.require'],
           Fmt.ratio(
             double.parse(
-              Fmt.token(requiredRatio, decimals: acala_token_decimals),
+              Fmt.token(requiredRatio, decimals),
             ),
           ),
         ),

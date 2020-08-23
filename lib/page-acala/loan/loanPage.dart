@@ -63,13 +63,16 @@ class _LoanPageState extends State<LoanPage> {
     final Map dic = I18n.of(context).acala;
     return Observer(
       builder: (_) {
-        LoanData loan = store.acala.loans[_tab];
+        final LoanData loan = store.acala.loans[_tab];
 
-        String balance = Fmt.priceFloorBigInt(
-            Fmt.balanceInt(store.assets.tokenBalances[acala_stable_coin]));
+        final int decimals = store.settings.networkState.tokenDecimals;
+        final String balance = Fmt.priceFloorBigInt(
+          Fmt.balanceInt(store.assets.tokenBalances[acala_stable_coin]),
+          decimals,
+        );
 
-        Color cardColor = Theme.of(context).cardColor;
-        Color primaryColor = Theme.of(context).primaryColor;
+        final Color cardColor = Theme.of(context).cardColor;
+        final Color primaryColor = Theme.of(context).primaryColor;
         return Scaffold(
           backgroundColor: Theme.of(context).cardColor,
           appBar: AppBar(
@@ -93,6 +96,7 @@ class _LoanPageState extends State<LoanPage> {
                     tokenOptions:
                         store.acala.loanTypes.map((e) => e.token).toList(),
                     token: _tab,
+                    decimals: decimals,
                     price: store.acala.prices[_tab],
                     onSelect: (res) {
                       if (res != null) {
@@ -107,7 +111,7 @@ class _LoanPageState extends State<LoanPage> {
                         ? ListView(
                             children: <Widget>[
                               loan.collaterals > BigInt.zero
-                                  ? LoanCard(loan, balance)
+                                  ? LoanCard(loan, balance, decimals)
                                   : RoundedCard(
                                       margin: EdgeInsets.all(16),
                                       padding:
@@ -116,7 +120,7 @@ class _LoanPageState extends State<LoanPage> {
                                           'assets/images/acala/loan-start.svg'),
                                     ),
                               loan.debitInUSD > BigInt.zero
-                                  ? LoanChart(loan)
+                                  ? LoanChart(loan, decimals)
 //                                    ? LoanDonutChart(loan)
                                   : Container()
                             ],
@@ -191,9 +195,16 @@ class _LoanPageState extends State<LoanPage> {
 }
 
 class CurrencySelector extends StatelessWidget {
-  CurrencySelector({this.tokenOptions, this.token, this.price, this.onSelect});
+  CurrencySelector({
+    this.tokenOptions,
+    this.token,
+    this.decimals,
+    this.price,
+    this.onSelect,
+  });
   final List<String> tokenOptions;
   final String token;
+  final int decimals;
   final BigInt price;
   final Function(String) onSelect;
   @override
@@ -228,7 +239,7 @@ class CurrencySelector extends StatelessWidget {
         ),
         subtitle: price != null
             ? Text(
-                '\$${Fmt.token(price, decimals: acala_token_decimals)}',
+                '\$${Fmt.token(price, decimals)}',
                 style: TextStyle(
                   fontSize: 12,
                   color: Theme.of(context).unselectedWidgetColor,

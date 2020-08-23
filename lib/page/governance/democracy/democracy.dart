@@ -123,6 +123,7 @@ class _DemocracyState extends State<Democracy> {
                             data: list[i],
                             bestNumber: bestNumber,
                             symbol: tokenView,
+                            decimals: decimals,
                             onCancelVote: _submitCancelVote,
                             blockDuration: store.settings.networkConst['babe']
                                 ['expectedBlockTime'],

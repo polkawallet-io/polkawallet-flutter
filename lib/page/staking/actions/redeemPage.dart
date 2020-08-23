@@ -48,6 +48,7 @@ class _RedeemPageState extends State<RedeemPage> {
         'spanCount': _slashingSpans,
         'amount': Fmt.token(
           Fmt.balanceInt(widget.store.staking.ledger['redeemable'].toString()),
+          decimals,
           length: decimals,
         )
       }),
@@ -92,6 +93,7 @@ class _RedeemPageState extends State<RedeemPage> {
                           Fmt.balanceInt(widget
                               .store.staking.ledger['redeemable']
                               .toString()),
+                          decimals,
                           length: decimals),
                       readOnly: true,
                     ),

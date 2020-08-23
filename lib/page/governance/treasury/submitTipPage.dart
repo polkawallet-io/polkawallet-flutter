@@ -63,7 +63,7 @@ class _SubmitTipPageState extends State<SubmitTipPage> {
                 // "beneficiary"
                 address,
                 // "value"
-                Fmt.tokenInt(amt, decimals: decimals).toString(),
+                Fmt.tokenInt(amt, decimals).toString(),
               ]
             : [
                 // "reason"
