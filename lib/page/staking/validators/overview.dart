@@ -209,6 +209,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
           if (validatorIndex < 0) {
             return Expanded(
               child: ListTile(
+                  dense: true,
                   leading: AddressIcon(id),
                   title: Text(I18n.of(context).staking['notElected']),
                   subtitle: Text(Fmt.address(id, pad: 6))),
@@ -230,6 +231,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
               store.staking.phalaAirdropWhiteList[validator.accountId] ?? false;
           return Expanded(
             child: ListTile(
+              dense: true,
               leading: AddressIcon(id),
               title: Text(
                   '${meStaked != null ? Fmt.token(meStaked, decimals) : '~'} $tokenView'),
