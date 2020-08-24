@@ -251,8 +251,7 @@ class _StakingActions extends State<StakingActions>
                   ],
                 ),
               ),
-              Container(
-                width: 80,
+              Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
