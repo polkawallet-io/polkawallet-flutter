@@ -203,6 +203,21 @@ mixin _$StakingStore on _StakingStore, Store {
     });
   }
 
+  final _$txsRewardsAtom = Atom(name: '_StakingStore.txsRewards');
+
+  @override
+  ObservableList<TxRewardData> get txsRewards {
+    _$txsRewardsAtom.reportRead();
+    return super.txsRewards;
+  }
+
+  @override
+  set txsRewards(ObservableList<TxRewardData> value) {
+    _$txsRewardsAtom.reportWrite(value, super.txsRewards, () {
+      super.txsRewards = value;
+    });
+  }
+
   final _$rewardsChartDataCacheAtom =
       Atom(name: '_StakingStore.rewardsChartDataCache');
 
@@ -291,6 +306,15 @@ mixin _$StakingStore on _StakingStore, Store {
   Future<void> addTxs(Map<dynamic, dynamic> res, {bool shouldCache = false}) {
     return _$addTxsAsyncAction
         .run(() => super.addTxs(res, shouldCache: shouldCache));
+  }
+
+  final _$addTxsRewardsAsyncAction = AsyncAction('_StakingStore.addTxsRewards');
+
+  @override
+  Future<void> addTxsRewards(Map<dynamic, dynamic> res,
+      {bool shouldCache = false}) {
+    return _$addTxsRewardsAsyncAction
+        .run(() => super.addTxsRewards(res, shouldCache: shouldCache));
   }
 
   final _$loadAccountCacheAsyncAction =
@@ -409,6 +433,7 @@ ledger: ${ledger},
 txsLoading: ${txsLoading},
 txsCount: ${txsCount},
 txs: ${txs},
+txsRewards: ${txsRewards},
 rewardsChartDataCache: ${rewardsChartDataCache},
 stakesChartDataCache: ${stakesChartDataCache},
 phalaAirdropWhiteList: ${phalaAirdropWhiteList},

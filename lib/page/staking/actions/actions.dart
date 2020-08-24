@@ -6,6 +6,7 @@ import 'package:polka_wallet/common/components/listTail.dart';
 import 'package:polka_wallet/page/account/import/importAccountPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondExtraPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondPage.dart';
+import 'package:polka_wallet/page/staking/actions/rewardDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/setControllerPage.dart';
 import 'package:polka_wallet/page/staking/actions/payoutPage.dart';
 import 'package:polka_wallet/page/staking/actions/redeemPage.dart';
@@ -14,7 +15,6 @@ import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
 import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/outlinedCircle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
@@ -38,6 +38,10 @@ class _StakingActions extends State<StakingActions>
   final AppStore store;
 
   bool _loading = false;
+  bool _rewardLoading = false;
+
+  TabController _tabController;
+  int _tab = 0;
 
   int _txsPage = 0;
   bool _isLastPage = false;
@@ -62,6 +66,21 @@ class _StakingActions extends State<StakingActions>
           _isLastPage = true;
         });
       }
+    }
+  }
+
+  Future<void> _updateStakingRewardTxs() async {
+    if (store.settings.loading) {
+      return;
+    }
+    setState(() {
+      _rewardLoading = true;
+    });
+    Map res = await webApi.staking.updateStakingRewards();
+    if (mounted) {
+      setState(() {
+        _rewardLoading = false;
+      });
     }
   }
 
@@ -116,6 +135,42 @@ class _StakingActions extends State<StakingActions>
     res.add(ListTail(
       isLoading: store.staking.txsLoading,
       isEmpty: store.staking.txs.length == 0,
+    ));
+
+    return res;
+  }
+
+  List<Widget> _buildRewardsList() {
+    final int decimals = store.settings.networkState.tokenDecimals;
+    final String symbol = store.settings.networkState.tokenSymbol;
+    final tokenView = Fmt.tokenView(symbol,
+        decimalsDot: decimals, network: store.settings.endpoint.info);
+
+    List<Widget> res = [];
+    res.addAll(store.staking.txsRewards.map((i) {
+      return Container(
+        color: Theme.of(context).cardColor,
+        child: ListTile(
+          leading: Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Image.asset('assets/images/staking/ok.png'),
+          ),
+          title: Text(i.eventId),
+          subtitle: Text(
+              DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp * 1000)
+                  .toIso8601String()),
+          trailing: Text('${Fmt.balance(i.amount, decimals)} $tokenView'),
+          onTap: () {
+            Navigator.of(context)
+                .pushNamed(RewardDetailPage.route, arguments: i);
+          },
+        ),
+      );
+    }));
+
+    res.add(ListTail(
+      isLoading: _rewardLoading,
+      isEmpty: store.staking.txsRewards.length == 0,
     ));
 
     return res;
@@ -250,6 +305,8 @@ class _StakingActions extends State<StakingActions>
   void initState() {
     super.initState();
 
+    _tabController = TabController(vsync: this, length: 2);
+
     _scrollController = ScrollController();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
@@ -283,15 +340,33 @@ class _StakingActions extends State<StakingActions>
           _buildActionCard(),
           Container(
             color: Theme.of(context).cardColor,
-            padding: EdgeInsets.all(16),
-            child: BorderedTitle(title: dic['txs']),
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: TabBar(
+              labelColor: Colors.black87,
+              labelStyle: TextStyle(fontSize: 18),
+              controller: _tabController,
+              tabs: <Tab>[
+                Tab(
+                  text: dic['txs'],
+                ),
+                Tab(
+                  text: dic['txs.reward'],
+                ),
+              ],
+              onTap: (i) {
+                i == 0 ? _updateStakingTxs() : _updateStakingRewardTxs();
+                setState(() {
+                  _tab = i;
+                });
+              },
+            ),
           ),
         ];
-        list.addAll(_buildTxList());
+        list.addAll(_tab == 0 ? _buildTxList() : _buildRewardsList());
         return RefreshIndicator(
           key: globalBondingRefreshKey,
           onRefresh: () async {
-            _updateStakingTxs();
+            _tab == 0 ? _updateStakingTxs() : _updateStakingRewardTxs();
             await _updateStakingInfo();
           },
           child: ListView(

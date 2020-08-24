@@ -111,6 +111,32 @@ class SubScanApi {
     return completer.future;
   }
 
+  Future<Map> fetchRewardTxsAsync({
+    int page = 0,
+    int size = tx_list_page_size,
+    String sender,
+    String network = 'kusama',
+  }) async {
+    Completer completer = new Completer<Map>();
+
+    ReceivePort receivePort = ReceivePort();
+    Isolate isolateIns = await Isolate.spawn(
+        SubScanApi.fetchRewardTxs,
+        SubScanRequestParams(
+          sendPort: receivePort.sendPort,
+          network: network,
+          address: sender,
+          page: page,
+          row: tx_list_page_size,
+        ));
+    receivePort.listen((msg) {
+      receivePort.close();
+      isolateIns.kill(priority: Isolate.immediate);
+      completer.complete(msg);
+    });
+    return completer.future;
+  }
+
   static Future<Map> fetchTransfers(SubScanRequestParams params) async {
     String url = '${getSnEndpoint(params.network)}/transfers';
     Map<String, String> headers = {
@@ -150,6 +176,29 @@ class SubScanApi {
     if (para.call != null) {
       params['call'] = para.call;
     }
+    String body = jsonEncode(params);
+    Response res = await post(url, headers: headers, body: body);
+    if (res.body != null) {
+      final obj = await compute(jsonDecode, res.body);
+      if (para.sendPort != null) {
+        para.sendPort.send(obj['data']);
+      }
+      return obj['data'];
+    }
+    if (para.sendPort != null) {
+      para.sendPort.send({});
+    }
+    return {};
+  }
+
+  static Future<Map> fetchRewardTxs(SubScanRequestParams para) async {
+    String url = '${getSnEndpoint(para.network)}/account/reward_slash';
+    Map<String, String> headers = {"Content-type": "application/json"};
+    Map params = {
+      "address": para.address,
+      "page": para.page,
+      "row": para.row,
+    };
     String body = jsonEncode(params);
     Response res = await post(url, headers: headers, body: body);
     if (res.body != null) {

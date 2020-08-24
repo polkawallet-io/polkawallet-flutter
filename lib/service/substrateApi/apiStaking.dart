@@ -123,6 +123,20 @@ class ApiStaking {
     return res;
   }
 
+  Future<Map> updateStakingRewards() async {
+    print('updateStakingRewards');
+    print(store.settings.networkName.toLowerCase());
+    Map res = await apiRoot.subScanApi.fetchRewardTxsAsync(
+      page: 0,
+      sender: store.account.currentAddress,
+      network: store.settings.networkName.toLowerCase(),
+    );
+
+    await store.staking.addTxsRewards(res, shouldCache: true);
+    print(res);
+    return res;
+  }
+
   // this query takes a long time
   Future<void> fetchElectedInfo() async {
     // fetch all validators details

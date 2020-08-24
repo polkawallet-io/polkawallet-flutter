@@ -20,6 +20,7 @@ abstract class _StakingStore with Store {
 
   final String cacheAccountStakingKey = 'account_staking';
   final String cacheStakingTxsKey = 'staking_txs';
+  final String cacheStakingRewardTxsKey = 'staking_reward_txs';
   final String cacheTimeKey = 'staking_cache_time';
 
   String _getCacheKey(String key) {
@@ -52,6 +53,9 @@ abstract class _StakingStore with Store {
 
   @observable
   ObservableList<TxData> txs = ObservableList<TxData>();
+
+  @observable
+  ObservableList<TxRewardData> txsRewards = ObservableList<TxRewardData>();
 
   @observable
   ObservableMap<String, dynamic> rewardsChartDataCache =
@@ -255,6 +259,21 @@ abstract class _StakingStore with Store {
   }
 
   @action
+  Future<void> addTxsRewards(Map res, {bool shouldCache = false}) async {
+    if (res['list'] == null) return;
+    List<TxRewardData> ls =
+        List.of(res['list']).map((i) => TxRewardData.fromJson(i)).toList();
+
+    txsRewards = ObservableList.of(ls);
+
+    if (shouldCache) {
+      String pubKey = rootStore.account.currentAccount.pubKey;
+      rootStore.localStorage
+          .setAccountCache(pubKey, _getCacheKey(cacheStakingRewardTxsKey), res);
+    }
+  }
+
+  @action
   void clearState() {
     txs.clear();
     ledger = ObservableMap<String, dynamic>();
@@ -285,6 +304,8 @@ abstract class _StakingStore with Store {
       rootStore.localStorage
           .getAccountCache(pubKey, _getCacheKey(cacheStakingTxsKey)),
       rootStore.localStorage
+          .getAccountCache(pubKey, _getCacheKey(cacheStakingRewardTxsKey)),
+      rootStore.localStorage
           .getAccountCache(pubKey, _getCacheKey(cacheTimeKey)),
     ]);
     if (cache[0] != null) {
@@ -298,7 +319,12 @@ abstract class _StakingStore with Store {
       txs.clear();
     }
     if (cache[2] != null) {
-      cacheTxsTimestamp = cache[2];
+      addTxsRewards(cache[2]);
+    } else {
+      txsRewards.clear();
+    }
+    if (cache[3] != null) {
+      cacheTxsTimestamp = cache[3];
     }
   }
 

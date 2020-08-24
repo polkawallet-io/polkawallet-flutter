@@ -76,6 +76,7 @@ import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/page/staking/actions/accountSelectPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondExtraPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondPage.dart';
+import 'package:polka_wallet/page/staking/actions/rewardDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/setControllerPage.dart';
 import 'package:polka_wallet/page/staking/validators/nominatePage.dart';
 import 'package:polka_wallet/page/staking/actions/payoutPage.dart';
@@ -275,6 +276,7 @@ class _WalletAppState extends State<WalletApp> {
           SetPayeePage.route: (_) => SetPayeePage(_appStore),
           RedeemPage.route: (_) => RedeemPage(_appStore),
           PayoutPage.route: (_) => PayoutPage(_appStore),
+          RewardDetailPage.route: (_) => RewardDetailPage(_appStore),
           SetControllerPage.route: (_) => SetControllerPage(_appStore),
           AccountSelectPage.route: (_) => AccountSelectPage(_appStore),
           // governance
