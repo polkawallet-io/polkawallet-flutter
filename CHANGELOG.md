@@ -1,3 +1,10 @@
+# 0.9.7
+- fix DOT denomination on staking/gov pages
+- add staking reward/slash history
+
+# 0.9.6
+- update DOT denomination
+
 # 0.9.4
 - add KSM/DOT prices
 
