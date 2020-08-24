@@ -443,9 +443,8 @@ class TransferListItem extends StatelessWidget {
       ),
       child: ListTile(
         title: Text('$title${crossChain != null ? ' ($crossChain)' : ''}'),
-        subtitle: Text(
-            DateTime.fromMillisecondsSinceEpoch(data.blockTimestamp * 1000)
-                .toString()),
+        subtitle: Text(Fmt.dateTime(
+            DateTime.fromMillisecondsSinceEpoch(data.blockTimestamp * 1000))),
         trailing: Container(
           width: 110,
           child: Row(

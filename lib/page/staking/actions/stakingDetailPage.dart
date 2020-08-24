@@ -56,9 +56,8 @@ class StakingDetailPage extends StatelessWidget {
       hash: detail.hash,
       eventId: detail.txNumber,
       info: info,
-      blockTime:
-          DateTime.fromMillisecondsSinceEpoch(detail.blockTimestamp * 1000)
-              .toIso8601String(),
+      blockTime: Fmt.dateTime(
+          DateTime.fromMillisecondsSinceEpoch(detail.blockTimestamp * 1000)),
       blockNum: detail.blockNum,
     );
   }

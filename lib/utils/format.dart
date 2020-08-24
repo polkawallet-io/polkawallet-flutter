@@ -26,6 +26,13 @@ class Fmt {
     return addr.substring(0, pad) + '...' + addr.substring(addr.length - pad);
   }
 
+  static String dateTime(DateTime time) {
+    if (time == null) {
+      return 'date-time';
+    }
+    return DateFormat('yyyy-MM-dd hh:mm').format(time);
+  }
+
   /// number transform 1:
   /// from raw <String> of Api data to <BigInt>
   static BigInt balanceInt(String raw) {

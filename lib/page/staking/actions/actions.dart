@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/common/components/listTail.dart';
 import 'package:polka_wallet/page/account/import/importAccountPage.dart';
@@ -112,9 +113,8 @@ class _StakingActions extends State<StakingActions>
                 : Image.asset('assets/images/staking/error.png'),
           ),
           title: Text(i.call),
-          subtitle: Text(
-              DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp * 1000)
-                  .toIso8601String()),
+          subtitle: Text(Fmt.dateTime(
+              DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp * 1000))),
           trailing: i.success
               ? Text(
                   'Success',
@@ -153,12 +153,15 @@ class _StakingActions extends State<StakingActions>
         child: ListTile(
           leading: Padding(
             padding: EdgeInsets.only(top: 4),
-            child: Image.asset('assets/images/staking/ok.png'),
+            child: i.eventId == 'Reward'
+                ? SvgPicture.asset('assets/images/staking/reward.svg',
+                    width: 32)
+                : SvgPicture.asset('assets/images/staking/slash.svg',
+                    width: 32),
           ),
           title: Text(i.eventId),
-          subtitle: Text(
-              DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp * 1000)
-                  .toIso8601String()),
+          subtitle: Text(Fmt.dateTime(
+              DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp * 1000))),
           trailing: Text('${Fmt.balance(i.amount, decimals)} $tokenView'),
           onTap: () {
             Navigator.of(context)
@@ -566,7 +569,11 @@ class StakingInfoPanel extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           Fmt.token(redeemable, decimals),
-                          style: Theme.of(context).textTheme.headline4,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).unselectedWidgetColor,
+                          ),
                         ),
                         isController && redeemable > BigInt.zero
                             ? GestureDetector(

@@ -35,9 +35,8 @@ class RewardDetailPage extends StatelessWidget {
           title: '${Fmt.balance(detail.amount, decimals)} $tokenView',
         ),
       ],
-      blockTime:
-          DateTime.fromMillisecondsSinceEpoch(detail.blockTimestamp * 1000)
-              .toIso8601String(),
+      blockTime: Fmt.dateTime(
+          DateTime.fromMillisecondsSinceEpoch(detail.blockTimestamp * 1000)),
       blockNum: detail.blockNum,
     );
   }
