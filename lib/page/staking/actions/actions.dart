@@ -21,6 +21,7 @@ import 'package:polka_wallet/common/components/outlinedCircle.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -214,7 +215,7 @@ class _StakingActions extends State<StakingActions>
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    BigInt balance = store.assets.balances[symbol].total;
+    BalancesInfo info = store.assets.balances[symbol];
     BigInt bonded = BigInt.zero;
     BigInt redeemable = BigInt.zero;
     if (hasData) {
@@ -224,8 +225,6 @@ class _StakingActions extends State<StakingActions>
     }
     BigInt unlocking = store.staking.accountUnlockingTotal;
     unlocking -= redeemable;
-
-    BigInt available = isStash ? balance - bonded - unlocking : balance;
 
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -259,7 +258,7 @@ class _StakingActions extends State<StakingActions>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '${Fmt.balance(balance.toString(), decimals)}',
+                      '${Fmt.priceFloorBigInt(info.total, decimals, lengthMax: 3)}',
                       style: Theme.of(context).textTheme.headline4,
                     ),
                     Text(
@@ -287,7 +286,7 @@ class _StakingActions extends State<StakingActions>
             bonded: bonded,
             unlocking: unlocking,
             redeemable: redeemable,
-            available: available,
+            available: info.transferable,
             payee: payee,
             networkLoading: store.settings.loading,
           ),
@@ -550,12 +549,13 @@ class StakingInfoPanel extends StatelessWidget {
             children: <Widget>[
               InfoItem(
                 title: dic['bonded'],
-                content: Fmt.token(bonded, decimals),
+                content: Fmt.priceFloorBigInt(bonded, decimals, lengthMax: 3),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               InfoItem(
                 title: dic['bond.unlocking'],
-                content: Fmt.token(unlocking, decimals),
+                content:
+                    Fmt.priceFloorBigInt(unlocking, decimals, lengthMax: 3),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               Expanded(
@@ -568,7 +568,11 @@ class StakingInfoPanel extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          Fmt.token(redeemable, decimals),
+                          Fmt.priceFloorBigInt(
+                            redeemable,
+                            decimals,
+                            lengthMax: 3,
+                          ),
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -605,7 +609,8 @@ class StakingInfoPanel extends StatelessWidget {
             children: <Widget>[
               InfoItem(
                 title: dic['available'],
-                content: Fmt.token(available, decimals),
+                content:
+                    Fmt.priceFloorBigInt(available, decimals, lengthMax: 3),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               InfoItem(

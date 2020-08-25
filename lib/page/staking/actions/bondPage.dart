@@ -94,10 +94,11 @@ class _BondPageState extends State<BondPage> {
       network: store.settings.endpoint.info,
     );
 
-    double balance = 0;
+    double available = 0;
     if (store.assets.balances[symbol] != null) {
-      balance = Fmt.bigIntToDouble(
-          store.assets.balances[symbol].freeBalance, decimals);
+      available = Fmt.bigIntToDouble(
+              store.assets.balances[symbol].transferable, decimals) -
+          1;
     }
 
     var rewardToOptions =
@@ -138,7 +139,10 @@ class _BondPageState extends State<BondPage> {
                           decoration: InputDecoration(
                             hintText: assetDic['amount'],
                             labelText:
-                                '${assetDic['amount']} (${dic['balance']}: ${Fmt.doubleFormat(balance)} $tokenView)',
+                                '${assetDic['amount']} (${dic['balance']}: ${Fmt.priceFloor(
+                              available,
+                              lengthMax: 3,
+                            )} $tokenView)',
                           ),
                           inputFormatters: [UI.decimalInputFormatter(decimals)],
                           controller: _amountCtrl,
@@ -148,7 +152,7 @@ class _BondPageState extends State<BondPage> {
                             if (v.isEmpty) {
                               return assetDic['amount.error'];
                             }
-                            if (double.parse(v.trim()) >= balance) {
+                            if (double.parse(v.trim()) >= available) {
                               return assetDic['amount.low'];
                             }
                             return null;

@@ -134,12 +134,14 @@ class Fmt {
     if (value == null) {
       return '~';
     }
-    String tailDecimals =
+    final int x = pow(10, lengthMax ?? lengthFixed);
+    final double price = (value * x).ceilToDouble() / x;
+    final String tailDecimals =
         lengthMax == null ? '' : "#" * (lengthMax - lengthFixed);
-    NumberFormat f = NumberFormat(
-        ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
-        "en_US");
-    return f.format(value);
+    return NumberFormat(
+            ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
+            "en_US")
+        .format(price);
   }
 
   /// number transform 6:
@@ -153,12 +155,14 @@ class Fmt {
     if (value == null) {
       return '~';
     }
-    String tailDecimals =
+    final int x = pow(10, lengthMax ?? lengthFixed);
+    final double price = (value * x).floorToDouble() / x;
+    final String tailDecimals =
         lengthMax == null ? '' : "#" * (lengthMax - lengthFixed);
-    NumberFormat f = NumberFormat(
-        ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
-        "en_US");
-    return f.format(value);
+    return NumberFormat(
+            ",##0${lengthFixed > 0 ? '.' : ''}${"0" * lengthFixed}$tailDecimals",
+            "en_US")
+        .format(price);
   }
 
   /// number transform 7:
@@ -177,11 +181,8 @@ class Fmt {
     if (value == null) {
       return '~';
     }
-    double price =
-        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
-                .ceil() /
-            pow(10, lengthMax ?? lengthFixed);
-    return priceCeil(price, lengthFixed: lengthFixed, lengthMax: lengthMax);
+    return priceCeil(Fmt.bigIntToDouble(value, decimals),
+        lengthFixed: lengthFixed, lengthMax: lengthMax);
   }
 
   static String priceFloorBigInt(
@@ -193,11 +194,8 @@ class Fmt {
     if (value == null) {
       return '~';
     }
-    double price =
-        (value / BigInt.from(pow(10, decimals - (lengthMax ?? lengthFixed))))
-                .floor() /
-            pow(10, lengthMax ?? lengthFixed);
-    return priceFloor(price, lengthFixed: lengthFixed, lengthMax: lengthMax);
+    return priceFloor(Fmt.bigIntToDouble(value, decimals),
+        lengthFixed: lengthFixed, lengthMax: lengthMax);
   }
 
   static bool isAddress(String txt) {

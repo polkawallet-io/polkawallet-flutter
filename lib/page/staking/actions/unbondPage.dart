@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -40,14 +39,13 @@ class _UnBondPageState extends State<UnBondPage> {
       network: store.settings.endpoint.info,
     );
 
-    String bonded = '0.000';
+    double bonded = 0;
     bool hasData = store.staking.ledger['stakingLedger'] != null;
     if (hasData) {
-      bonded = Fmt.token(
-        BigInt.parse(
-            store.staking.ledger['stakingLedger']['active'].toString()),
-        decimals,
-      );
+      bonded = Fmt.bigIntToDouble(
+          BigInt.parse(
+              store.staking.ledger['stakingLedger']['active'].toString()),
+          decimals);
     }
 
     return Scaffold(
@@ -73,7 +71,10 @@ class _UnBondPageState extends State<UnBondPage> {
                         decoration: InputDecoration(
                           hintText: assetDic['amount'],
                           labelText:
-                              '${assetDic['amount']} (${dic['bonded']}: $bonded $tokenView)',
+                              '${assetDic['amount']} (${dic['bonded']}: ${Fmt.priceFloor(
+                            bonded,
+                            lengthMax: 3,
+                          )} $tokenView)',
                         ),
                         inputFormatters: [UI.decimalInputFormatter(decimals)],
                         controller: _amountCtrl,
@@ -83,7 +84,7 @@ class _UnBondPageState extends State<UnBondPage> {
                           if (v.isEmpty) {
                             return assetDic['amount.error'];
                           }
-                          if (double.parse(v.trim()) > double.parse(bonded)) {
+                          if (double.parse(v.trim()) > bonded) {
                             return assetDic['amount.low'];
                           }
                           return null;
