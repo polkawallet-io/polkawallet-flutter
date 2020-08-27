@@ -328,10 +328,14 @@ class Fmt {
 
   static String accountDisplayNameString(String address, Map accInfo) {
     String display = Fmt.address(address, pad: 6);
-    if (accInfo != null && accInfo['identity']['display'] != null) {
-      display = accInfo['identity']['display'];
-      if (accInfo['identity']['displayParent'] != null) {
-        display = '${accInfo['identity']['displayParent']}/$display';
+    if (accInfo != null) {
+      if (accInfo['identity']['display'] != null) {
+        display = accInfo['identity']['display'];
+        if (accInfo['identity']['displayParent'] != null) {
+          display = '${accInfo['identity']['displayParent']}/$display';
+        }
+      } else if (accInfo['accountIndex'] != null) {
+        display = accInfo['accountIndex'];
       }
       display = display.toUpperCase();
     }

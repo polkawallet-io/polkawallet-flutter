@@ -334,6 +334,7 @@ class CandidateItem extends StatelessWidget {
           : Text('${I18n.of(context).gov['backing']}: ${Fmt.token(
               BigInt.parse(balance[1].toString()),
               decimals,
+              length: 0,
             )} $tokenSymbol'),
       onTap: noTap
           ? null

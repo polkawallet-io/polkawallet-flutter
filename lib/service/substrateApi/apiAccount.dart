@@ -56,12 +56,24 @@ class ApiAccount {
 
   /// decode addresses to publicKeys
   Future<Map> decodeAddress(List<String> addresses) async {
-    Map res = await apiRoot
-        .evalJavascript('account.decodeAddress(${jsonEncode(addresses)})');
+    Map res = await apiRoot.evalJavascript(
+      'account.decodeAddress(${jsonEncode(addresses)})',
+      allowRepeat: true,
+    );
     if (res != null) {
       store.account.setPubKeyAddressMap(Map<String, Map>.from(
           {store.settings.endpoint.ss58.toString(): res}));
     }
+    return res;
+  }
+
+  /// query address with account index
+  Future<List> queryAddressWithAccountIndex(String index) async {
+    print(int.parse(index));
+    final res = await apiRoot.evalJavascript(
+      'api.query.indices.accounts(${int.parse(index)})',
+      allowRepeat: true,
+    );
     return res;
   }
 
