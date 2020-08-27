@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/AddressInputField.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
@@ -50,12 +51,23 @@ class _TransferPageState extends State<TransferPage> {
 
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _addressCtrl = new TextEditingController();
   final TextEditingController _amountCtrl = new TextEditingController();
 
+  AccountData _accountTo;
   String _tokenSymbol;
 
   bool _crossChain = false;
+
+  Future<void> _onScan() async {
+    final to = await Navigator.of(context).pushNamed(ScanPage.route);
+    if (to == null) return;
+    AccountData acc = AccountData();
+    acc.address = (to as QRCodeAddressResult).address;
+    acc.name = (to as QRCodeAddressResult).name;
+    setState(() {
+      _accountTo = acc;
+    });
+  }
 
   Future<void> _selectCurrency() async {
     List<String> symbolOptions =
@@ -70,7 +82,7 @@ class _TransferPageState extends State<TransferPage> {
               _tokenSymbol == acala_stable_coin) &&
           _tokenSymbol != currency) {
         setState(() {
-          _addressCtrl.text = '';
+          _accountTo = null;
         });
       }
       setState(() {
@@ -88,6 +100,7 @@ class _TransferPageState extends State<TransferPage> {
         decimalsDot: decimals,
         network: store.settings.endpoint.info,
       );
+      final address = Fmt.addressOfAccount(_accountTo, store);
       var args = {
         "title": I18n.of(context).assets['transfer'] + ' $tokenView',
         "txInfo": {
@@ -95,13 +108,13 @@ class _TransferPageState extends State<TransferPage> {
           "call": 'transfer',
         },
         "detail": jsonEncode({
-          "destination": _addressCtrl.text.trim(),
+          "destination": address,
           "currency": tokenView,
           "amount": _amountCtrl.text.trim(),
         }),
         "params": [
           // params.to
-          _addressCtrl.text.trim(),
+          address,
           // params.amount
           Fmt.tokenInt(_amountCtrl.text.trim(), decimals).toString(),
         ],
@@ -116,7 +129,7 @@ class _TransferPageState extends State<TransferPage> {
         };
         args['params'] = [
           // params.to
-          _addressCtrl.text.trim(),
+          address,
           // params.currencyId
           symbol.toUpperCase(),
           // params.amount
@@ -205,8 +218,14 @@ class _TransferPageState extends State<TransferPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final TransferPageParams args = ModalRoute.of(context).settings.arguments;
       if (args.address != null) {
+        final AccountData acc = AccountData();
+        acc.address = args.address;
         setState(() {
-          _addressCtrl.text = args.address;
+          _accountTo = acc;
+        });
+      } else {
+        setState(() {
+          _accountTo = widget.store.account.optionalAccounts[0];
         });
       }
       setState(() {
@@ -219,7 +238,6 @@ class _TransferPageState extends State<TransferPage> {
 
   @override
   void dispose() {
-    _addressCtrl.dispose();
     _amountCtrl.dispose();
     super.dispose();
   }
@@ -265,17 +283,7 @@ class _TransferPageState extends State<TransferPage> {
             actions: <Widget>[
               IconButton(
                 icon: Image.asset('assets/images/assets/Menu_scan.png'),
-                onPressed: isCrossChain
-                    ? null
-                    : () async {
-                        final to = await Navigator.of(context)
-                            .pushNamed(ScanPage.route);
-                        if (to == null) return;
-                        setState(() {
-                          _addressCtrl.text =
-                              (to as QRCodeAddressResult).address;
-                        });
-                      },
+                onPressed: isCrossChain ? null : _onScan,
               )
             ],
           ),
@@ -288,14 +296,14 @@ class _TransferPageState extends State<TransferPage> {
                       child: Form(
                         key: _formKey,
                         child: ListView(
-                          padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                          padding: EdgeInsets.all(16),
                           children: <Widget>[
                             canCrossChain
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: <Widget>[
                                       Container(
-                                        margin: EdgeInsets.only(top: 16),
+                                        margin: EdgeInsets.only(bottom: 16),
                                         child: OutlinedButtonSmall(
                                           content: dic['cross.chain'],
                                           active: true,
@@ -305,31 +313,14 @@ class _TransferPageState extends State<TransferPage> {
                                     ],
                                   )
                                 : Container(),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                hintText: dic['address'],
-                                labelText: dic['address'],
-                                suffix: GestureDetector(
-                                  child: Image.asset(
-                                      'assets/images/profile/address.png'),
-                                  onTap: () async {
-                                    var to = await Navigator.of(context)
-                                        .pushNamed(ContactListPage.route);
-                                    if (to != null) {
-                                      AccountData acc = to as AccountData;
-                                      setState(() {
-                                        _addressCtrl.text =
-                                            Fmt.addressOfAccount(acc, store);
-                                      });
-                                    }
-                                  },
-                                ),
-                              ),
-                              controller: _addressCtrl,
-                              validator: (v) {
-                                return Fmt.isAddress(v.trim())
-                                    ? null
-                                    : dic['address.error'];
+                            AddressInputField(
+                              widget.store,
+                              label: dic['address'],
+                              initialValue: _accountTo,
+                              onChanged: (AccountData acc) {
+                                setState(() {
+                                  _accountTo = acc;
+                                });
                               },
                             ),
                             TextFormField(
