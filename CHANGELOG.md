@@ -1,3 +1,7 @@
+# 0.9.8
+- rebuild transfer page address input
+- support accountIndex as address
+
 # 0.9.7
 - fix DOT denomination on staking/gov pages
 - add staking reward/slash history
