@@ -64,11 +64,6 @@ class _CandidateList extends State<CandidateListPage> {
     var dic = I18n.of(context).gov;
     final int decimals = store.settings.networkState.tokenDecimals;
     final String symbol = store.settings.networkState.tokenSymbol;
-    final String tokenView = Fmt.tokenView(
-      symbol,
-      decimalsDot: decimals,
-      network: store.settings.endpoint.info,
-    );
 
     List<List> list = [];
     list.addAll(_selected);
@@ -118,7 +113,7 @@ class _CandidateList extends State<CandidateListPage> {
                     return CandidateItem(
                       accInfo: accInfo,
                       balance: i,
-                      tokenSymbol: tokenView,
+                      tokenSymbol: symbol,
                       decimals: decimals,
                       trailing: CupertinoSwitch(
                         value: _selectedMap[i[0]],

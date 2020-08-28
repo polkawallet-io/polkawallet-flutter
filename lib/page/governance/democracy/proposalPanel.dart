@@ -25,11 +25,6 @@ class _ProposalPanelState extends State<ProposalPanel> {
     var dic = I18n.of(context).gov;
     final int decimals = widget.store.settings.networkState.tokenDecimals;
     final String symbol = widget.store.settings.networkState.tokenSymbol ?? '';
-    final String tokenView = Fmt.tokenView(
-      symbol,
-      decimalsDot: decimals,
-      network: widget.store.settings.endpoint.info,
-    );
     final CouncilProposalData proposalMeta = widget.proposal.image?.proposal;
     final Map accInfo =
         widget.store.account.accountIndexMap[widget.proposal.proposer];
@@ -72,7 +67,7 @@ class _ProposalPanelState extends State<ProposalPanel> {
                           '${dic['treasury.bond']}: ${Fmt.balance(
                             widget.proposal.balance.toString(),
                             decimals,
-                          )} $tokenView',
+                          )} $symbol',
                           style: TextStyle(
                             color: Theme.of(context).unselectedWidgetColor,
                           ),

@@ -289,8 +289,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     final String symbol = store.settings.networkState.tokenSymbol ?? '';
     final int decimals =
         store.settings.networkState.tokenDecimals ?? kusama_token_decimals;
-    final String tokenView = Fmt.tokenView(symbol,
-        decimalsDot: decimals, network: store.settings.endpoint.info);
+    final String tokenView = Fmt.tokenView(symbol);
 
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
 

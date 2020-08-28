@@ -19,9 +19,6 @@ class RewardDetailPage extends StatelessWidget {
     final String symbol = store.settings.networkState.tokenSymbol;
     final TxRewardData detail = ModalRoute.of(context).settings.arguments;
 
-    final tokenView = Fmt.tokenView(symbol,
-        decimalsDot: decimals, network: store.settings.endpoint.info);
-
     return TxDetail(
       networkName: store.settings.networkName,
       success: true,
@@ -32,7 +29,7 @@ class RewardDetailPage extends StatelessWidget {
         DetailInfoItem(label: dic['txs.event'], title: detail.eventId),
         DetailInfoItem(
           label: I18n.of(context).assets['amount'],
-          title: '${Fmt.balance(detail.amount, decimals)} $tokenView',
+          title: '${Fmt.balance(detail.amount, decimals)} $symbol',
         ),
       ],
       blockTime: Fmt.dateTime(

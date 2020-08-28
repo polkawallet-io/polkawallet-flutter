@@ -144,8 +144,6 @@ class _StakingActions extends State<StakingActions>
   List<Widget> _buildRewardsList() {
     final int decimals = store.settings.networkState.tokenDecimals;
     final String symbol = store.settings.networkState.tokenSymbol;
-    final tokenView = Fmt.tokenView(symbol,
-        decimalsDot: decimals, network: store.settings.endpoint.info);
 
     List<Widget> res = [];
     res.addAll(store.staking.txsRewards.map((i) {
@@ -163,7 +161,7 @@ class _StakingActions extends State<StakingActions>
           title: Text(i.eventId),
           subtitle: Text(Fmt.dateTime(
               DateTime.fromMillisecondsSinceEpoch(i.blockTimestamp * 1000))),
-          trailing: Text('${Fmt.balance(i.amount, decimals)} $tokenView'),
+          trailing: Text('${Fmt.balance(i.amount, decimals)} $symbol'),
           onTap: () {
             Navigator.of(context)
                 .pushNamed(RewardDetailPage.route, arguments: i);

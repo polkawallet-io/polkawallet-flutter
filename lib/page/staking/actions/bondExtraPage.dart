@@ -33,11 +33,6 @@ class _BondExtraPageState extends State<BondExtraPage> {
     var assetDic = I18n.of(context).assets;
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
-    final String tokenView = Fmt.tokenView(
-      symbol,
-      decimalsDot: decimals,
-      network: store.settings.endpoint.info,
-    );
 
     double available = 0;
     if (store.assets.balances[symbol] != null) {
@@ -72,7 +67,7 @@ class _BondExtraPageState extends State<BondExtraPage> {
                               '${assetDic['amount']} (${dic['available']}: ${Fmt.priceFloor(
                             available,
                             lengthMax: 3,
-                          )} $tokenView)',
+                          )} $symbol)',
                         ),
                         inputFormatters: [UI.decimalInputFormatter(decimals)],
                         controller: _amountCtrl,

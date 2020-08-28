@@ -30,12 +30,8 @@ class StakingDetailPage extends StatelessWidget {
           value = Fmt.address(value);
           break;
         case "Compact<BalanceOf>":
-          final tokenView = Fmt.tokenView(
-            store.settings.networkState.tokenSymbol,
-            decimalsDot: decimals,
-            network: store.settings.endpoint.info,
-          );
-          value = '${Fmt.balance(value, decimals)} $tokenView';
+          final symbol = store.settings.networkState.tokenSymbol;
+          value = '${Fmt.balance(value, decimals)} $symbol';
           break;
         case "AccountId":
           value = value.contains('0x') ? value : '0x$value';

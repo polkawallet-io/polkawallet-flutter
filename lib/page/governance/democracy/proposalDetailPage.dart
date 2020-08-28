@@ -98,11 +98,6 @@ class _ProposalDetailPageState extends State<ProposalDetailPage> {
                   widget.store.settings.networkState.tokenDecimals;
               final String symbol =
                   widget.store.settings.networkState.tokenSymbol ?? '';
-              final String tokenView = Fmt.tokenView(
-                symbol,
-                decimalsDot: decimals,
-                network: widget.store.settings.endpoint.info,
-              );
               final List<List<String>> params = [];
               bool hasProposal = false;
               if (proposal.image?.proposal != null) {
@@ -181,7 +176,7 @@ class _ProposalDetailPageState extends State<ProposalDetailPage> {
                                 ),
                               ),
                               Text(
-                                '${Fmt.balance(proposal.balance.toString(), decimals)} $tokenView',
+                                '${Fmt.balance(proposal.balance.toString(), decimals)} $symbol',
                                 style: Theme.of(context).textTheme.headline4,
                               )
                             ],

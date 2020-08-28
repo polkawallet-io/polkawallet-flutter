@@ -156,11 +156,6 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
     final String symbol = widget.store.settings.networkState.tokenSymbol ?? '';
     final int decimals = widget.store.settings.networkState.tokenDecimals ??
         kusama_token_decimals;
-    final String tokenView = Fmt.tokenView(
-      symbol,
-      decimalsDot: decimals,
-      network: widget.store.settings.endpoint.info,
-    );
     final SpendProposalData proposal =
         ModalRoute.of(context).settings.arguments;
     final AccountData proposer = AccountData();
@@ -215,7 +210,7 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
                           content: '${Fmt.balance(
                             proposal.proposal.value.toString(),
                             decimals,
-                          )} $tokenView',
+                          )} $symbol',
                           crossAxisAlignment: CrossAxisAlignment.center,
                         ),
                         InfoItem(
@@ -223,7 +218,7 @@ class _SpendProposalPageState extends State<SpendProposalPage> {
                           content: '${Fmt.balance(
                             proposal.proposal.bond.toString(),
                             decimals,
-                          )} $tokenView',
+                          )} $symbol',
                           crossAxisAlignment: CrossAxisAlignment.center,
                         ),
                       ],

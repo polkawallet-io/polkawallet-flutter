@@ -33,11 +33,6 @@ class _UnBondPageState extends State<UnBondPage> {
     var assetDic = I18n.of(context).assets;
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
-    final String tokenView = Fmt.tokenView(
-      symbol,
-      decimalsDot: decimals,
-      network: store.settings.endpoint.info,
-    );
 
     double bonded = 0;
     bool hasData = store.staking.ledger['stakingLedger'] != null;
@@ -74,7 +69,7 @@ class _UnBondPageState extends State<UnBondPage> {
                               '${assetDic['amount']} (${dic['bonded']}: ${Fmt.priceFloor(
                             bonded,
                             lengthMax: 3,
-                          )} $tokenView)',
+                          )} $symbol)',
                         ),
                         inputFormatters: [UI.decimalInputFormatter(decimals)],
                         controller: _amountCtrl,

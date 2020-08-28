@@ -21,11 +21,6 @@ class CandidateDetailPage extends StatelessWidget {
     final List info = ModalRoute.of(context).settings.arguments;
     final int decimals = store.settings.networkState.tokenDecimals;
     final String symbol = store.settings.networkState.tokenSymbol;
-    final String tokenView = Fmt.tokenView(
-      symbol,
-      decimalsDot: decimals,
-      network: store.settings.endpoint.info,
-    );
     return Scaffold(
       appBar: AppBar(
           title: Text(I18n.of(context).home['detail']), centerTitle: true),
@@ -54,7 +49,7 @@ class CandidateDetailPage extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(top: 8, bottom: 8),
                         child: Text(
-                            '${Fmt.token(BigInt.parse(info[1]), decimals)} $tokenView',
+                            '${Fmt.token(BigInt.parse(info[1]), decimals)} $symbol',
                             style: style),
                       ),
                       Text(dic['backing'])
@@ -78,7 +73,7 @@ class CandidateDetailPage extends StatelessWidget {
                       return CandidateItem(
                         accInfo: accInfo,
                         balance: [i, voters[i]],
-                        tokenSymbol: tokenView,
+                        tokenSymbol: symbol,
                         decimals: decimals,
                         noTap: true,
                       );

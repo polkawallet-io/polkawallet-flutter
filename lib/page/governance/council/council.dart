@@ -218,11 +218,6 @@ class _CouncilState extends State<Council> {
     return Observer(builder: (_) {
       final int decimals = store.settings.networkState.tokenDecimals;
       final String symbol = store.settings.networkState.tokenSymbol;
-      final String tokenView = Fmt.tokenView(
-        symbol,
-        decimalsDot: decimals,
-        network: store.settings.endpoint.info,
-      );
       return RefreshIndicator(
         key: globalCouncilRefreshKey,
         onRefresh: _fetchCouncilInfo,
@@ -230,7 +225,7 @@ class _CouncilState extends State<Council> {
             ? Container()
             : ListView(
                 children: <Widget>[
-                  _buildTopCard(tokenView),
+                  _buildTopCard(symbol),
                   Container(
                     padding: EdgeInsets.only(top: 16, left: 16, bottom: 8),
                     color: Theme.of(context).cardColor,
@@ -246,7 +241,7 @@ class _CouncilState extends State<Council> {
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: i,
-                          tokenSymbol: tokenView,
+                          tokenSymbol: symbol,
                           decimals: decimals,
                         );
                       }).toList(),
@@ -267,7 +262,7 @@ class _CouncilState extends State<Council> {
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: i,
-                          tokenSymbol: tokenView,
+                          tokenSymbol: symbol,
                           decimals: decimals,
                         );
                       }).toList(),
@@ -289,7 +284,7 @@ class _CouncilState extends State<Council> {
                               return CandidateItem(
                                 accInfo: accInfo,
                                 balance: [i],
-                                tokenSymbol: tokenView,
+                                tokenSymbol: symbol,
                                 decimals: decimals,
                               );
                             }).toList(),

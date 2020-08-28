@@ -168,40 +168,28 @@ class _AssetPageState extends State<AssetPage>
 
   @override
   Widget build(BuildContext context) {
-    final int decimals = store.settings.networkState.tokenDecimals;
-    final String symbol = store.settings.networkState.tokenSymbol;
-    final String token = ModalRoute.of(context).settings.arguments;
-    final String tokenView = Fmt.tokenView(
-      token,
-      decimalsDot: decimals,
-      network: store.settings.endpoint.info,
-    );
-    final bool isBaseToken = token == symbol;
-    final isPolkadot = store.settings.endpoint.info == network_name_polkadot;
-    final isLaminar =
-        store.settings.endpoint.info == networkEndpointLaminar.info;
-
     final dic = I18n.of(context).assets;
-
     final List<Tab> _myTabs = <Tab>[
       Tab(text: dic['all']),
       Tab(text: dic['in']),
       Tab(text: dic['out']),
     ];
 
+    final int decimals = store.settings.networkState.tokenDecimals;
+    final String symbol = store.settings.networkState.tokenSymbol;
+    final String token = ModalRoute.of(context).settings.arguments;
+    final String tokenView = Fmt.tokenView(token);
+    final bool isBaseToken = token == symbol;
+
+    final isLaminar =
+        store.settings.endpoint.info == networkEndpointLaminar.info;
+
     final primaryColor = Theme.of(context).primaryColor;
     final titleColor = Theme.of(context).cardColor;
 
-    Widget tokenViewTitle = Text(tokenView);
-    if (isPolkadot && tokenView == token_denomination_dot_new) {
-      tokenViewTitle = Text(
-        tokenView,
-        style: TextStyle(fontStyle: FontStyle.italic),
-      );
-    }
     return Scaffold(
       appBar: AppBar(
-        title: tokenViewTitle,
+        title: Text(tokenView),
         centerTitle: true,
         elevation: 0.0,
       ),

@@ -448,19 +448,8 @@ class _AssetsState extends State<Assets> {
 
         BalancesInfo balancesInfo = store.assets.balances[symbol];
 
-        String tokenView = Fmt.tokenView(
-              symbol,
-              decimalsDot: decimals,
-              network: store.settings.endpoint.info,
-            ) ??
-            '';
-        Widget tokenViewTitle = Text(tokenView);
-        if (isPolkadot && tokenView == token_denomination_dot_new) {
-          tokenViewTitle = Text(
-            tokenView,
-            style: TextStyle(fontStyle: FontStyle.italic),
-          );
-        }
+        String tokenView = Fmt.tokenView(symbol) ?? '';
+
         String tokenPrice;
         if (store.assets.marketPrices[symbol] != null && balancesInfo != null) {
           tokenPrice = Fmt.priceCeil(store.assets.marketPrices[symbol] *
@@ -546,7 +535,7 @@ class _AssetsState extends State<Assets> {
                           child: Image.asset(
                               'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
                         ),
-                        title: tokenViewTitle,
+                        title: Text(tokenView),
                         trailing: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.end,

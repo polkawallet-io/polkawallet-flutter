@@ -34,11 +34,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
   Future<void> _onEndorse() async {
     final String symbol = widget.store.settings.networkState.tokenSymbol;
     final int decimals = widget.store.settings.networkState.tokenDecimals;
-    final String tokenView = Fmt.tokenView(
-      symbol,
-      decimalsDot: decimals,
-      network: widget.store.settings.endpoint.info,
-    );
+    final String tokenView = Fmt.tokenView(symbol);
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
@@ -221,11 +217,6 @@ class _TipDetailPageState extends State<TipDetailPage> {
     final Map dic = I18n.of(context).gov;
     final String symbol = widget.store.settings.networkState.tokenSymbol;
     final int decimals = widget.store.settings.networkState.tokenDecimals;
-    final String tokenView = Fmt.tokenView(
-      symbol,
-      decimalsDot: decimals,
-      network: widget.store.settings.endpoint.info,
-    );
     final TreasuryTipData tipData = ModalRoute.of(context).settings.arguments;
     final AccountData who = AccountData();
     final AccountData finder = AccountData();
@@ -296,7 +287,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
                                     '${Fmt.balance(
                                       tipData.deposit.toString(),
                                       decimals,
-                                    )} $tokenView',
+                                    )} $symbol',
                                     style:
                                         Theme.of(context).textTheme.headline4,
                                   ),
@@ -437,7 +428,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
                               padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
                               child: BorderedTitle(
                                   title:
-                                      '${tipData.tips.length} ${dic['treasury.tipper']} (${Fmt.token(median, decimals)} $tokenView)'),
+                                      '${tipData.tips.length} ${dic['treasury.tipper']} (${Fmt.token(median, decimals)} $symbol)'),
                             ),
                             Column(
                               children: tipData.tips.map((e) {
@@ -451,7 +442,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
                                     '${Fmt.balance(
                                       e.value.toString(),
                                       decimals,
-                                    )} $tokenView',
+                                    )} $symbol',
                                     style:
                                         Theme.of(context).textTheme.headline4,
                                   ),

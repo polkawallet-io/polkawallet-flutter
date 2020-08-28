@@ -88,11 +88,6 @@ class _BondPageState extends State<BondPage> {
     var assetDic = I18n.of(context).assets;
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
-    final String tokenView = Fmt.tokenView(
-      symbol,
-      decimalsDot: decimals,
-      network: store.settings.endpoint.info,
-    );
 
     double available = 0;
     if (store.assets.balances[symbol] != null) {
@@ -142,7 +137,7 @@ class _BondPageState extends State<BondPage> {
                                 '${assetDic['amount']} (${dic['balance']}: ${Fmt.priceFloor(
                               available,
                               lengthMax: 3,
-                            )} $tokenView)',
+                            )} $symbol)',
                           ),
                           inputFormatters: [UI.decimalInputFormatter(decimals)],
                           controller: _amountCtrl,

@@ -61,11 +61,6 @@ class _ProposalsState extends State<SpendProposals> {
             kusama_token_decimals;
         final String symbol =
             widget.store.settings.networkState.tokenSymbol ?? '';
-        final String tokenView = Fmt.tokenView(
-          symbol,
-          decimalsDot: decimals,
-          network: widget.store.settings.endpoint.info,
-        );
         String balance = Fmt.balance(
           widget.store.gov.treasuryOverview.balance,
           decimals,
@@ -82,7 +77,7 @@ class _ProposalsState extends State<SpendProposals> {
           child: ListView(
             children: <Widget>[
               _OverviewCard(
-                symbol: tokenView,
+                symbol: symbol,
                 balance: balance,
                 spendPeriod: _getSpendPeriod(),
                 overview: widget.store.gov.treasuryOverview,
@@ -113,7 +108,7 @@ class _ProposalsState extends State<SpendProposals> {
                                     Map accInfo = widget.store.account
                                         .accountIndexMap[e.proposal.proposer];
                                     return _ProposalItem(
-                                      symbol: tokenView,
+                                      symbol: symbol,
                                       decimals: decimals,
                                       accInfo: accInfo,
                                       proposal: e,
@@ -148,7 +143,7 @@ class _ProposalsState extends State<SpendProposals> {
                                           .accountIndexMap[e.proposal.proposer];
                                       e.isApproval = true;
                                       return _ProposalItem(
-                                        symbol: tokenView,
+                                        symbol: symbol,
                                         decimals: decimals,
                                         accInfo: accInfo,
                                         proposal: e,

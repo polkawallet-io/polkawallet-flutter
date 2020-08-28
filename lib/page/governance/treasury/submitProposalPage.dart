@@ -85,11 +85,6 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
     final Map dicAsset = I18n.of(context).assets;
     final int decimals = widget.store.settings.networkState.tokenDecimals;
     final String symbol = widget.store.settings.networkState.tokenSymbol;
-    final String tokenView = Fmt.tokenView(
-      symbol,
-      decimalsDot: decimals,
-      network: widget.store.settings.endpoint.info,
-    );
     final BigInt bondPercentage = Fmt.balanceInt(widget
             .store.settings.networkConst['treasury']['proposalBond']
             .toString()) *
@@ -129,8 +124,7 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
                               TextFormField(
                                 decoration: InputDecoration(
                                   hintText: dicAsset['amount'],
-                                  labelText:
-                                      '${dicAsset['amount']} ($tokenView)',
+                                  labelText: '${dicAsset['amount']} ($symbol)',
                                 ),
                                 inputFormatters: [
                                   UI.decimalInputFormatter(decimals)
@@ -148,7 +142,7 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
                               TextFormField(
                                 decoration: InputDecoration(
                                   labelText:
-                                      '${dic['treasury.bond']} ($tokenView)',
+                                      '${dic['treasury.bond']} ($symbol)',
                                 ),
                                 initialValue: '$bondPercentage%',
                                 readOnly: true,
@@ -170,7 +164,7 @@ class _SubmitProposalPageState extends State<SubmitProposalPage> {
                               TextFormField(
                                 decoration: InputDecoration(
                                   labelText:
-                                      '${dic['treasury.bond.min']} ($tokenView)',
+                                      '${dic['treasury.bond.min']} ($symbol)',
                                 ),
                                 initialValue: Fmt.priceCeilBigInt(
                                   minBond,
