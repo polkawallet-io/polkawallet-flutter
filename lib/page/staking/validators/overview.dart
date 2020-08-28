@@ -180,6 +180,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
   }
 
   Widget _buildNominatingList() {
+    final dic = I18n.of(context).staking;
     bool hasData = store.staking.ledger['stakingLedger'] != null;
     if (!hasData) {
       return Container();
@@ -222,10 +223,10 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
         child: ListTile(
           dense: true,
           leading: AddressIcon(validator.accountId, size: 32),
-          title: Text(meStaked != null
-              ? '${Fmt.token(meStaked, decimals)} $symbol'
-              : I18n.of(context).staking['nominate.inactive']),
-          subtitle: Fmt.accountDisplayName(validator.accountId, accInfo),
+          title: Fmt.accountDisplayName(validator.accountId, accInfo),
+          subtitle: Text(meStaked != null
+              ? '${dic['nominate.active']} ${Fmt.token(meStaked, decimals)} $symbol'
+              : dic['nominate.inactive']),
           trailing: Container(
             width: 100,
             child: Column(
@@ -258,10 +259,11 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     list.addAll(waiting.map((id) {
       return Expanded(
         child: ListTile(
-            dense: true,
-            leading: AddressIcon(id, size: 32),
-            title: Text(I18n.of(context).staking['nominate.waiting']),
-            subtitle: Text(Fmt.address(id, pad: 6))),
+          dense: true,
+          leading: AddressIcon(id, size: 32),
+          title: Text(Fmt.address(id, pad: 6)),
+          subtitle: Text(dic['nominate.waiting']),
+        ),
       );
     }).toList());
     return Container(
