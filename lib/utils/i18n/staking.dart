@@ -60,7 +60,9 @@ const Map<String, String> enStaking = {
   'controller.warn': 'Controller account is not changed',
   'filter': 'Filter with Address/Name',
   'sort': 'Sort by',
-  'notElected': 'Not Elected',
+  'nominate.active': 'Active',
+  'nominate.inactive': 'Inactive',
+  'nominate.waiting': 'Waiting',
   'phala': 'Phala Airdrop',
   'recommend': 'Recommended',
 };
@@ -125,7 +127,9 @@ const Map<String, String> zhStaking = {
   'controller.controllerOf': '不可用，已关联储值账户：',
   'filter': '地址/名称筛选',
   'sort': '排序',
-  'notElected': '未选中',
+  'nominate.active': '活跃',
+  'nominate.inactive': '不活跃',
+  'nominate.waiting': '候选',
   'phala': 'Phala 空投',
   'recommend': '推荐节点',
 };

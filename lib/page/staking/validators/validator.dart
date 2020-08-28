@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
-import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
@@ -13,16 +12,14 @@ class Validator extends StatelessWidget {
     this.validator,
     this.accInfo,
     this.decimals,
-    this.nominations, {
-    this.hasPhalaAirdrop = false,
-  }) : isWaiting = validator.total == BigInt.zero;
+    this.nominations,
+  ) : isWaiting = validator.total == BigInt.zero;
 
   final ValidatorData validator;
   final Map accInfo;
   final int decimals;
   final bool isWaiting;
   final List nominations;
-  final bool hasPhalaAirdrop;
 
   @override
   Widget build(BuildContext context) {
@@ -43,16 +40,9 @@ class Validator extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      hasPhalaAirdrop ? TextTag(dic['phala']) : Container(),
-                      Expanded(
-                        child: Fmt.accountDisplayName(
-                          validator.accountId,
-                          accInfo,
-                        ),
-                      ),
-                    ],
+                  Fmt.accountDisplayName(
+                    validator.accountId,
+                    accInfo,
                   ),
                   Text(
                     !isWaiting

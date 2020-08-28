@@ -362,7 +362,7 @@ class Fmt {
                 margin: EdgeInsets.only(right: 4),
                 child: Image.asset('assets/images/assets/success.png'),
               )
-            : Container(),
+            : Container(height: 16),
         Expanded(
           child: Text(accountDisplayNameString(address, accInfo)),
         )

@@ -92,9 +92,9 @@ class ApiStaking {
 
     fetchElectedInfo();
     // phala airdrop for kusama
-    if (store.settings.endpoint.info == networkEndpointKusama.info) {
-      fetchPhalaAirdropList();
-    }
+//    if (store.settings.endpoint.info == networkEndpointKusama.info) {
+//      fetchPhalaAirdropList();
+//    }
 
     List validatorAddressList = List.of(overview['validators']);
     validatorAddressList.addAll(overview['waiting']);
