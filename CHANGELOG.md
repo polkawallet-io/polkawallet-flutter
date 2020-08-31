@@ -30,7 +30,7 @@
 - fix acala UI issues
 
 # 0.8.5
-- add cross chain aUSD transfer history bug
+- add cross chain aUSD transfer history
 - fix renBTC token display in Acala pages
 - fix Acala token selectors
 

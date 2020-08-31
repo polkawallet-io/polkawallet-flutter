@@ -220,9 +220,15 @@ class _TransferPageState extends State<TransferPage> {
           _accountTo = acc;
         });
       } else {
-        setState(() {
-          _accountTo = widget.store.account.optionalAccounts[0];
-        });
+        if (widget.store.account.optionalAccounts.length > 0) {
+          setState(() {
+            _accountTo = widget.store.account.optionalAccounts[0];
+          });
+        } else if (widget.store.settings.contactList.length > 0) {
+          setState(() {
+            _accountTo = widget.store.settings.contactList[0];
+          });
+        }
       }
       setState(() {
         _tokenSymbol = args.symbol ?? store.settings.networkState.tokenSymbol;
