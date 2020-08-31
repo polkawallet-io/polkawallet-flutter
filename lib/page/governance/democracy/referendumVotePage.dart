@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/governance/democracy/democracyPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -59,7 +60,8 @@ class _ReferendumVoteState extends State<ReferendumVotePage> {
           {"Standard": vote},
         ],
         'onFinish': (BuildContext txPageContext, Map res) {
-          Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+          Navigator.popUntil(
+              txPageContext, ModalRoute.withName(DemocracyPage.route));
           globalDemocracyRefreshKey.currentState.show();
         }
       };

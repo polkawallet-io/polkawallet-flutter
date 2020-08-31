@@ -8,6 +8,7 @@ import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateListPage.dart';
+import 'package:polka_wallet/page/governance/council/councilPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -64,7 +65,8 @@ class _CouncilVote extends State<CouncilVotePage> {
           Fmt.tokenInt(amt, decimals).toString(),
         ],
         'onFinish': (BuildContext txPageContext, Map res) {
-          Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+          Navigator.popUntil(
+              txPageContext, ModalRoute.withName(CouncilPage.route));
           globalCouncilRefreshKey.currentState.show();
         }
       };
