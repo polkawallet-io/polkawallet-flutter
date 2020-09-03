@@ -24,7 +24,7 @@ class _AddressInputFieldState extends State<AddressInputField> {
     final listLocal = widget.store.account.accountList.toList();
     listLocal.addAll(widget.store.settings.contactList);
     // return local account list if input empty
-    if (input.isEmpty) {
+    if (input.isEmpty || input.trim().length < 3) {
       return listLocal;
     }
 
@@ -34,7 +34,8 @@ class _AddressInputFieldState extends State<AddressInputField> {
       return listLocal;
     }
 
-    String address = input;
+    final acc = AccountData();
+    acc.address = input;
     if (input.length < 47) {
       // check if input indices in local account list
       final int indicesIndex = listLocal.indexWhere((e) {
@@ -45,10 +46,10 @@ class _AddressInputFieldState extends State<AddressInputField> {
         return [listLocal[indicesIndex]];
       }
       // query account address with account indices
-      final queryRes = await webApi.account
-          .queryAddressWithAccountIndex(checkAddress.keys.toList()[0]);
+      final queryRes = await webApi.account.queryAddressWithAccountIndex(input);
       if (queryRes != null) {
-        address = queryRes[0];
+        acc.address = queryRes[0];
+        acc.name = input;
       }
     } else {
       // check if input address in local account list
@@ -60,12 +61,10 @@ class _AddressInputFieldState extends State<AddressInputField> {
     }
 
     // fetch address info if it's a new address
-    final res = await webApi.account.getAddressIcons([address]);
+    final res = await webApi.account.getAddressIcons([acc.address]);
     if (res != null) {
-      await webApi.account.fetchAccountsIndex([address]);
+      await webApi.account.fetchAccountsIndex([acc.address]);
     }
-    final acc = AccountData();
-    acc.address = address;
     return [acc];
   }
 

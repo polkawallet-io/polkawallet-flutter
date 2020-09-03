@@ -16,6 +16,7 @@
     "@polkadot/util": "^2.18.0-beta.2",
     "@polkadot/util-crypto": "^2.18.0-beta.2",
     "bn.js": "^5.1.1",
+    "oo7-substrate": "^0.8.0",
     "secp256k1": "^3.8.0"
   },
   "devDependencies": {

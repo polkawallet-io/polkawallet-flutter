@@ -22,7 +22,7 @@ class ApiAcala {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       AndroidDeviceInfo info = await deviceInfo.androidInfo;
-      deviceId = info.id;
+      deviceId = info.androidId;
     } else {
       IosDeviceInfo info = await deviceInfo.iosInfo;
       deviceId = info.identifierForVendor;

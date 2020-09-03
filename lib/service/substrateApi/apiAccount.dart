@@ -69,9 +69,8 @@ class ApiAccount {
 
   /// query address with account index
   Future<List> queryAddressWithAccountIndex(String index) async {
-    print(int.parse(index));
     final res = await apiRoot.evalJavascript(
-      'api.query.indices.accounts(${int.parse(index)})',
+      'account.queryAddressWithAccountIndex("$index", ${store.settings.endpoint.ss58})',
       allowRepeat: true,
     );
     return res;

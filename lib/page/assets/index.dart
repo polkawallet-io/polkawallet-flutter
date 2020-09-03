@@ -420,6 +420,7 @@ class _AssetsState extends State<Assets> {
     super.initState();
   }
 
+  // todo: add account index display
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).home;
