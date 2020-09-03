@@ -164,7 +164,7 @@ abstract class _AccountStore with Store {
       String seed = acc[seedType];
       if (seed != null && seed.isNotEmpty) {
         encryptSeed(pubKey, acc[seedType], seedType, password);
-        acc.remove(acc[seedType]);
+        acc.remove(seedType);
       }
     }
 

@@ -6,6 +6,7 @@ import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
+import 'package:polka_wallet/page/governance/council/councilPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
@@ -51,7 +52,8 @@ class _CouncilState extends State<Council> {
       "detail": '{}',
       "params": [],
       'onFinish': (BuildContext txPageContext, Map res) {
-        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        Navigator.popUntil(
+            txPageContext, ModalRoute.withName(CouncilPage.route));
         globalCouncilRefreshKey.currentState.show();
       }
     };
