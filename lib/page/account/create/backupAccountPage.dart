@@ -29,7 +29,12 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
   List<String> _wordsSelected;
   List<String> _wordsLeft;
 
+  bool _submitting = false;
+
   Future<void> _importAccount() async {
+    setState(() {
+      _submitting = true;
+    });
     var acc = await webApi.account.importAccount(
       cryptoType:
           _advanceOptions.type ?? AccountAdvanceOptionParams.encryptTypeSR,
@@ -39,6 +44,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
     if (acc['error'] != null) {
       UI.alertWASM(context, () {
         setState(() {
+          _submitting = false;
           _step = 0;
         });
       });
@@ -58,6 +64,9 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
     webApi.account.fetchAccountsBonded([pubKey]);
     webApi.account.getPubKeyIcons([pubKey]);
 
+    setState(() {
+      _submitting = false;
+    });
     // go to home page
     Navigator.popUntil(context, ModalRoute.withName('/'));
   }
@@ -220,6 +229,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
             Container(
               padding: EdgeInsets.all(16),
               child: RoundedButton(
+                submitting: _submitting,
                 text: I18n.of(context).home['next'],
                 onPressed:
                     _wordsSelected.join(' ') == store.account.newAccount.key
