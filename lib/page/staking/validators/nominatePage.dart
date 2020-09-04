@@ -80,7 +80,7 @@ class _NominatePageState extends State<NominatePage> {
   Widget _buildListItem(BuildContext context, ValidatorData validator) {
     final dic = I18n.of(context).staking;
     final int decimals = store.settings.networkState.tokenDecimals;
-    final Map accInfo = store.account.accountIndexMap[validator.accountId];
+    final Map accInfo = store.account.addressIndexMap[validator.accountId];
     final bool hasPhalaAirdrop =
         store.staking.phalaAirdropWhiteList[validator.accountId] ?? false;
     final bool isWaiting = validator.total == BigInt.zero;
@@ -225,7 +225,7 @@ class _NominatePageState extends State<NominatePage> {
     // filter the _notSelected list
     List<ValidatorData> retained = List.of(_notSelected);
     retained = Fmt.filterValidatorList(
-        retained, _filter, store.account.accountIndexMap);
+        retained, _filter, store.account.addressIndexMap);
     // and sort it
     retained.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
     list.addAll(retained);

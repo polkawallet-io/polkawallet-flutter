@@ -14,8 +14,10 @@ class ApiStaking {
     String pubKey = store.account.currentAccountPubKey;
     if (pubKey != null && pubKey.isNotEmpty) {
       String address = store.account.currentAddress;
-      Map ledger = await apiRoot
-          .evalJavascript('api.derive.staking.account("$address")');
+      Map ledger = await apiRoot.evalJavascript(
+        'api.derive.staking.account("$address")',
+        allowRepeat: true,
+      );
 
       List addressesNeedIcons =
           ledger['nominators'] != null ? List.of(ledger['nominators']) : List();
@@ -98,7 +100,7 @@ class ApiStaking {
 
     List validatorAddressList = List.of(overview['validators']);
     validatorAddressList.addAll(overview['waiting']);
-    await apiRoot.account.fetchAccountsIndex(validatorAddressList);
+    await apiRoot.account.fetchAddressIndex(validatorAddressList);
     apiRoot.account.getAddressIcons(validatorAddressList);
     return overview;
   }

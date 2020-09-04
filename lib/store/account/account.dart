@@ -48,7 +48,10 @@ abstract class _AccountStore with Store {
   ObservableList<AccountData> accountList = ObservableList<AccountData>();
 
   @observable
-  ObservableMap<String, Map> accountIndexMap = ObservableMap<String, Map>();
+  ObservableMap<String, Map> addressIndexMap = ObservableMap<String, Map>();
+
+  @observable
+  Map<String, Map> accountIndexMap = Map<String, Map>();
 
   @observable
   ObservableMap<String, AccountBondedInfo> pubKeyBondedMap =
@@ -320,8 +323,17 @@ abstract class _AccountStore with Store {
 
   @action
   void setAccountsIndex(List list) {
+    final Map<String, Map> data = {};
     list.forEach((i) {
-      accountIndexMap[i['accountId']] = i;
+      data[i['accountId']] = i;
+    });
+    accountIndexMap = data;
+  }
+
+  @action
+  void setAddressIndex(List list) {
+    list.forEach((i) {
+      addressIndexMap[i['accountId']] = i;
     });
   }
 

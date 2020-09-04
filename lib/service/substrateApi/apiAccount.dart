@@ -184,13 +184,28 @@ class ApiAccount {
     );
   }
 
-  Future<List> fetchAccountsIndex(List addresses) async {
+  Future<List> fetchAddressIndex(List addresses) async {
     if (addresses == null || addresses.length == 0) {
       return [];
     }
     addresses
-        .retainWhere((i) => !store.account.accountIndexMap.keys.contains(i));
+        .retainWhere((i) => !store.account.addressIndexMap.keys.contains(i));
     if (addresses.length == 0) {
+      return [];
+    }
+
+    var res = await apiRoot.evalJavascript(
+      'account.getAccountIndex(${jsonEncode(addresses)})',
+      allowRepeat: true,
+    );
+    store.account.setAddressIndex(res);
+    return res;
+  }
+
+  Future<List> fetchAccountsIndex() async {
+    final addresses =
+        store.account.accountListAll.map((e) => e.address).toList();
+    if (addresses == null || addresses.length == 0) {
       return [];
     }
 

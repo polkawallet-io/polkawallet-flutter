@@ -27,7 +27,7 @@ class _ProposalPanelState extends State<ProposalPanel> {
     final String symbol = widget.store.settings.networkState.tokenSymbol ?? '';
     final CouncilProposalData proposalMeta = widget.proposal.image?.proposal;
     final Map accInfo =
-        widget.store.account.accountIndexMap[widget.proposal.proposer];
+        widget.store.account.addressIndexMap[widget.proposal.proposer];
     final List seconding = widget.proposal.seconds.toList();
     seconding.removeAt(0);
     return GestureDetector(

@@ -25,7 +25,7 @@ class ValidatorDetailPage extends StatelessWidget {
           final ValidatorData detail =
               ModalRoute.of(context).settings.arguments;
 
-          Map accInfo = store.account.accountIndexMap[detail.accountId];
+          Map accInfo = store.account.addressIndexMap[detail.accountId];
 
           Map rewardsChartData =
               store.staking.rewardsChartDataCache[detail.accountId];

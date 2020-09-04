@@ -27,7 +27,7 @@ class CandidateDetailPage extends StatelessWidget {
       body: SafeArea(
         child: Observer(
           builder: (_) {
-            final Map accInfo = store.account.accountIndexMap[info[0]];
+            final Map accInfo = store.account.addressIndexMap[info[0]];
             TextStyle style = Theme.of(context).textTheme.headline4;
 
             Map voters;
@@ -69,7 +69,7 @@ class CandidateDetailPage extends StatelessWidget {
                   color: Theme.of(context).cardColor,
                   child: Column(
                     children: voterList.map((i) {
-                      Map accInfo = store.account.accountIndexMap[i];
+                      Map accInfo = store.account.addressIndexMap[i];
                       return CandidateItem(
                         accInfo: accInfo,
                         balance: [i, voters[i]],

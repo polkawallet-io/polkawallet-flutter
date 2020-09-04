@@ -217,7 +217,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
             BigInt.parse(validator.nominators[meIndex]['value'].toString());
       }
 
-      Map accInfo = store.account.accountIndexMap[validator.accountId];
+      Map accInfo = store.account.addressIndexMap[validator.accountId];
 
       return Expanded(
         child: ListTile(
@@ -373,7 +373,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
                       Column(
                         children: recommended.map((acc) {
                           Map accInfo =
-                              store.account.accountIndexMap[acc.accountId];
+                              store.account.addressIndexMap[acc.accountId];
                           return Validator(
                             acc,
                             accInfo,
@@ -393,7 +393,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
               : store.staking.nextUpsInfo.toList();
           // filter list
           ls = Fmt.filterValidatorList(
-              ls, _filter, store.account.accountIndexMap);
+              ls, _filter, store.account.addressIndexMap);
           // sort list
           // todo: add sort option <known good>
           ls.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
@@ -415,7 +415,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
                 return list[i];
               }
               ValidatorData acc = list[i];
-              Map accInfo = store.account.accountIndexMap[acc.accountId];
+              Map accInfo = store.account.addressIndexMap[acc.accountId];
 
               return Validator(
                 acc,

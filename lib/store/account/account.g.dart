@@ -115,16 +115,31 @@ mixin _$AccountStore on _AccountStore, Store {
     });
   }
 
+  final _$addressIndexMapAtom = Atom(name: '_AccountStore.addressIndexMap');
+
+  @override
+  ObservableMap<String, Map<dynamic, dynamic>> get addressIndexMap {
+    _$addressIndexMapAtom.reportRead();
+    return super.addressIndexMap;
+  }
+
+  @override
+  set addressIndexMap(ObservableMap<String, Map<dynamic, dynamic>> value) {
+    _$addressIndexMapAtom.reportWrite(value, super.addressIndexMap, () {
+      super.addressIndexMap = value;
+    });
+  }
+
   final _$accountIndexMapAtom = Atom(name: '_AccountStore.accountIndexMap');
 
   @override
-  ObservableMap<String, Map<dynamic, dynamic>> get accountIndexMap {
+  Map<String, Map<dynamic, dynamic>> get accountIndexMap {
     _$accountIndexMapAtom.reportRead();
     return super.accountIndexMap;
   }
 
   @override
-  set accountIndexMap(ObservableMap<String, Map<dynamic, dynamic>> value) {
+  set accountIndexMap(Map<String, Map<dynamic, dynamic>> value) {
     _$accountIndexMapAtom.reportWrite(value, super.accountIndexMap, () {
       super.accountIndexMap = value;
     });
@@ -397,6 +412,17 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
+  void setAddressIndex(List<dynamic> list) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setAddressIndex');
+    try {
+      return super.setAddressIndex(list);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setAccountRecoveryInfo(Map<dynamic, dynamic> json) {
     final _$actionInfo = _$_AccountStoreActionController.startAction(
         name: '_AccountStore.setAccountRecoveryInfo');
@@ -415,6 +441,7 @@ txStatus: ${txStatus},
 newAccount: ${newAccount},
 currentAccountPubKey: ${currentAccountPubKey},
 accountList: ${accountList},
+addressIndexMap: ${addressIndexMap},
 accountIndexMap: ${accountIndexMap},
 pubKeyBondedMap: ${pubKeyBondedMap},
 pubKeyAddressMap: ${pubKeyAddressMap},

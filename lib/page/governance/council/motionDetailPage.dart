@@ -473,7 +473,7 @@ class _ProposalVotingListState extends State<ProposalVotingList> {
           Column(
             children: _tab == 0
                 ? widget.council.votes.ayes.map((e) {
-                    final Map accInfo = widget.store.account.accountIndexMap[e];
+                    final Map accInfo = widget.store.account.addressIndexMap[e];
                     return CandidateItem(
                       accInfo: accInfo,
                       balance: widget.store.gov.council.members
@@ -483,7 +483,7 @@ class _ProposalVotingListState extends State<ProposalVotingList> {
                     );
                   }).toList()
                 : widget.council.votes.nays.map((e) {
-                    final Map accInfo = widget.store.account.accountIndexMap[e];
+                    final Map accInfo = widget.store.account.addressIndexMap[e];
                     return CandidateItem(
                       accInfo: accInfo,
                       balance: widget.store.gov.council.members

@@ -252,6 +252,7 @@ class Api {
       }
 
       await Future.wait([
+        account.fetchAccountsIndex(),
         assets.fetchBalance(),
         staking.fetchAccountStaking(),
         account.fetchAccountsBonded(

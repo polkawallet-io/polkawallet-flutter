@@ -166,15 +166,24 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         address =
             store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
       }
+      final bool isCurrentNetwork =
+          _selectedNetwork.info == store.settings.endpoint.info;
+      final accInfo = store.account.accountIndexMap[i.address];
+      final String accIndex =
+          isCurrentNetwork && accInfo != null && accInfo['accountIndex'] != null
+              ? '${accInfo['accountIndex']}\n'
+              : '';
+      final double padding = accIndex.isEmpty ? 0 : 7;
       return RoundedCard(
         border: address == store.account.currentAddress
             ? Border.all(color: Theme.of(context).primaryColorLight)
             : Border.all(color: Theme.of(context).cardColor),
         margin: EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.only(top: padding, bottom: padding),
         child: ListTile(
           leading: AddressIcon('', pubKey: i.pubKey, addressToCopy: address),
           title: Text(Fmt.accountName(context, i)),
-          subtitle: Text(Fmt.address(address ?? 'address xxxx')),
+          subtitle: Text('$accIndex${Fmt.address(address)}', maxLines: 2),
           onTap: _networkChanging ? null : () => _onSelect(i, address),
         ),
       );

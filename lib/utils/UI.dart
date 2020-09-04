@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:package_info/package_info.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -52,21 +51,21 @@ class UI {
     if (versions == null || !Platform.isAndroid && !Platform.isIOS) return;
     String platform = Platform.isAndroid ? 'android' : 'ios';
     final Map dic = I18n.of(context).home;
-    String latest = versions[platform]['version'];
-    String latestBeta = versions[platform]['version-beta'];
 
-    PackageInfo info = await PackageInfo.fromPlatform();
+    int latestCode = versions[platform]['version-code'];
+    String latestBeta = versions[platform]['version-beta'];
+    int latestCodeBeta = versions[platform]['version-code-beta'];
 
     bool needUpdate = false;
     if (autoCheck) {
-      if (latest.compareTo(info.version) > 0) {
+      if (latestCode > app_beta_version_code) {
         // new version found
         needUpdate = true;
       } else {
         return;
       }
     } else {
-      if (latestBeta.compareTo(app_beta_version) > 0) {
+      if (latestCodeBeta > app_beta_version_code) {
         // new version found
         needUpdate = true;
       }

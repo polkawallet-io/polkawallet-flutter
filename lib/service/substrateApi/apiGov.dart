@@ -16,7 +16,7 @@ class ApiGovernance {
       all.addAll(info['runnersUp'].map((i) => i[0]));
       all.addAll(info['candidates']);
       store.gov.setCouncilInfo(info);
-      apiRoot.account.fetchAccountsIndex(all);
+      apiRoot.account.fetchAddressIndex(all);
       apiRoot.account.getAddressIcons(all);
     }
     return info;
@@ -71,7 +71,7 @@ class ApiGovernance {
         addresses.addAll(e.seconds);
       });
       await apiRoot.account.getAddressIcons(addresses);
-      await apiRoot.account.fetchAccountsIndex(addresses);
+      await apiRoot.account.fetchAddressIndex(addresses);
       return data;
     }
     return [];
@@ -92,7 +92,7 @@ class ApiGovernance {
       addresses.add(e.proposal.beneficiary);
     });
     await apiRoot.account.getAddressIcons(addresses);
-    await apiRoot.account.fetchAccountsIndex(addresses);
+    await apiRoot.account.fetchAddressIndex(addresses);
     return data;
   }
 
@@ -107,7 +107,7 @@ class ApiGovernance {
       }
     });
     await apiRoot.account.getAddressIcons(addresses);
-    await apiRoot.account.fetchAccountsIndex(addresses);
+    await apiRoot.account.fetchAddressIndex(addresses);
     return data;
   }
 

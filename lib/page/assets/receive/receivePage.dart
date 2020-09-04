@@ -18,6 +18,10 @@ class ReceivePage extends StatelessWidget {
     String codeAddress =
         'substrate:${store.account.currentAddress}:${store.account.currentAccount.pubKey}:${store.account.currentAccount.name}';
     Color themeColor = Theme.of(context).primaryColor;
+
+    final accInfo =
+        store.account.accountIndexMap[store.account.currentAccount.address];
+
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
@@ -56,13 +60,19 @@ class ReceivePage extends StatelessWidget {
                         store.account.currentAccount.name,
                         style: Theme.of(context).textTheme.headline4,
                       ),
+                      accInfo != null && accInfo['accountIndex'] != null
+                          ? Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Text(accInfo['accountIndex']),
+                            )
+                          : Container(width: 8, height: 8),
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(width: 4, color: themeColor),
                           borderRadius:
                               BorderRadius.all(const Radius.circular(8)),
                         ),
-                        margin: EdgeInsets.fromLTRB(48, 24, 48, 24),
+                        margin: EdgeInsets.fromLTRB(48, 16, 48, 24),
                         child: QrImage(
                           data: codeAddress,
                           size: 200,

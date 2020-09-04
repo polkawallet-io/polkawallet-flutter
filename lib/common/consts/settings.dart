@@ -18,7 +18,7 @@ EndpointData networkEndpointKusama = EndpointData.fromJson(const {
   'info': network_name_kusama,
   'ss58': 2,
   'text': 'Kusama (Polkadot Canary, hosted by Polkawallet)',
-  'value': 'ws://mandala-01.acala.network:9954/',
+  'value': 'wss://kusama-1.polkawallet.io:9944/',
 //  'value': 'ws://10.230.199.44:9944/',
 });
 
@@ -51,7 +51,14 @@ List<EndpointData> networkEndpoints = [
     'color': 'pink',
     'info': network_name_polkadot,
     'ss58': 0,
-    'text': 'Polkadot (Live, hosted by Polkawallet)',
+    'text': 'Polkadot (Live, hosted by Polkawallet CN)',
+    'value': 'wss://polkadot-1.polkawallet.io:9944',
+  }),
+  EndpointData.fromJson(const {
+    'color': 'pink',
+    'info': network_name_polkadot,
+    'ss58': 0,
+    'text': 'Polkadot (Live, hosted by Polkawallet EU)',
     'value': 'ws://62.171.154.98:9944',
   }),
   networkEndpointKusama,
@@ -127,14 +134,15 @@ const String cross_chain_transfer_address_laminar =
     '5CLaminarAUSDCrossChainTransferxxxxxxxxxxxxxwisu';
 
 /// app versions
-const String app_beta_version = '0.9.10-beta.1';
+const String app_beta_version = 'v1.0.0-beta.1';
+const int app_beta_version_code = 1001;
 
 /// js code versions
 const Map<String, int> js_code_version_map = {
-  network_name_polkadot: 91010,
-  network_name_kusama: 91010,
-  network_name_acala_mandala: 91010,
-  network_name_laminar_turbulence: 91010,
+  network_name_polkadot: 10010,
+  network_name_kusama: 10010,
+  network_name_acala_mandala: 10010,
+  network_name_laminar_turbulence: 10010,
 };
 
 /// graphql for laminar

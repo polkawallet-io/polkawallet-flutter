@@ -251,7 +251,7 @@ class ProposalSecondsList extends StatelessWidget {
           ),
           Column(
             children: seconding.map((e) {
-              final Map accInfo = store.account.accountIndexMap[e];
+              final Map accInfo = store.account.addressIndexMap[e];
               return ListTile(
                 leading: AddressIcon(e),
                 title: Fmt.accountDisplayName(e, accInfo),

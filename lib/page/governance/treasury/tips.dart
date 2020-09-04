@@ -64,7 +64,7 @@ class _ProposalsState extends State<MoneyTips> {
                     }
                     final TreasuryTipData tip = tips[i];
                     final Map accInfo =
-                        widget.store.account.accountIndexMap[tip.who];
+                        widget.store.account.addressIndexMap[tip.who];
                     return RoundedCard(
                       margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
                       padding: EdgeInsets.only(top: 16, bottom: 16),

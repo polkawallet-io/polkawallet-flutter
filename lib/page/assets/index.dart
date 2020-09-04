@@ -56,6 +56,7 @@ class _AssetsState extends State<Assets> {
         webApi.staking.fetchAccountStaking(),
       ]);
     }
+    webApi.account.fetchAccountsIndex();
   }
 
   Future<List> _fetchAnnouncements() async {
@@ -292,6 +293,10 @@ class _AssetsState extends State<Assets> {
     bool isPolkadot =
         store.settings.endpoint.info == networkEndpointPolkadot.info;
 
+    final accInfo = store.account.accountIndexMap[acc.address];
+    final String accIndex = accInfo != null && accInfo['accountIndex'] != null
+        ? '${accInfo['accountIndex']}\n'
+        : '';
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
       padding: EdgeInsets.all(8),
@@ -372,10 +377,10 @@ class _AssetsState extends State<Assets> {
               children: [
                 GestureDetector(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 4),
+                    padding: EdgeInsets.only(left: 2),
                     child: Image.asset(
                       'assets/images/assets/qrcode_${store.settings.endpoint.color ?? 'pink'}.png',
-                      width: 18,
+                      width: 24,
                     ),
                   ),
                   onTap: () {
@@ -386,7 +391,10 @@ class _AssetsState extends State<Assets> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 8),
-                  child: Text(Fmt.address(store.account.currentAddress)),
+                  child: Text(
+                    '$accIndex${Fmt.address(store.account.currentAddress)}',
+                    style: TextStyle(fontSize: 14),
+                  ),
                 )
               ],
             ),

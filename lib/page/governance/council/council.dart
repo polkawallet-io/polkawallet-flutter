@@ -181,7 +181,7 @@ class _CouncilState extends State<Council> {
                   child: listHeight > 48
                       ? ListView(
                           children: List.of(userVotes['votes']).map((i) {
-                            Map accInfo = store.account.accountIndexMap[i];
+                            Map accInfo = store.account.addressIndexMap[i];
                             return CandidateItem(
                               iconSize: 32,
                               accInfo: accInfo,
@@ -239,7 +239,7 @@ class _CouncilState extends State<Council> {
                     color: Theme.of(context).cardColor,
                     child: Column(
                       children: store.gov.council.members.map((i) {
-                        Map accInfo = store.account.accountIndexMap[i[0]];
+                        Map accInfo = store.account.addressIndexMap[i[0]];
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: i,
@@ -260,7 +260,7 @@ class _CouncilState extends State<Council> {
                     color: Theme.of(context).cardColor,
                     child: Column(
                       children: store.gov.council.runnersUp.map((i) {
-                        Map accInfo = store.account.accountIndexMap[i[0]];
+                        Map accInfo = store.account.addressIndexMap[i[0]];
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: i,
@@ -282,7 +282,7 @@ class _CouncilState extends State<Council> {
                     child: store.gov.council.candidates.length > 0
                         ? Column(
                             children: store.gov.council.candidates.map((i) {
-                              Map accInfo = store.account.accountIndexMap[i];
+                              Map accInfo = store.account.addressIndexMap[i];
                               return CandidateItem(
                                 accInfo: accInfo,
                                 balance: [i],

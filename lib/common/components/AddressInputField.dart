@@ -39,7 +39,7 @@ class _AddressInputFieldState extends State<AddressInputField> {
     if (input.length < 47) {
       // check if input indices in local account list
       final int indicesIndex = listLocal.indexWhere((e) {
-        final Map accInfo = widget.store.account.accountIndexMap[e.address];
+        final Map accInfo = widget.store.account.addressIndexMap[e.address];
         return accInfo != null && accInfo['accountIndex'] == input;
       });
       if (indicesIndex >= 0) {
@@ -63,14 +63,14 @@ class _AddressInputFieldState extends State<AddressInputField> {
     // fetch address info if it's a new address
     final res = await webApi.account.getAddressIcons([acc.address]);
     if (res != null) {
-      await webApi.account.fetchAccountsIndex([acc.address]);
+      await webApi.account.fetchAddressIndex([acc.address]);
     }
     return [acc];
   }
 
   String _itemAsString(AccountData item) {
     final String address = Fmt.addressOfAccount(item, widget.store);
-    final Map accInfo = widget.store.account.accountIndexMap[item.address];
+    final Map accInfo = widget.store.account.addressIndexMap[item.address];
     String idx = '';
     if (accInfo != null && accInfo['accountIndex'] != null) {
       idx = accInfo['accountIndex'];
@@ -88,7 +88,7 @@ class _AddressInputFieldState extends State<AddressInputField> {
     }
     return Observer(
       builder: (_) {
-        final Map accInfo = widget.store.account.accountIndexMap[item.pubKey];
+        final Map accInfo = widget.store.account.addressIndexMap[item.pubKey];
         final String address = Fmt.addressOfAccount(item, widget.store);
         return Container(
           padding: EdgeInsets.only(top: 8),
@@ -124,7 +124,7 @@ class _AddressInputFieldState extends State<AddressInputField> {
       BuildContext context, AccountData item, bool isSelected) {
     return Observer(
       builder: (_) {
-        final Map accInfo = widget.store.account.accountIndexMap[item.pubKey];
+        final Map accInfo = widget.store.account.addressIndexMap[item.pubKey];
         final String address = Fmt.addressOfAccount(item, widget.store);
         return Container(
           margin: EdgeInsets.symmetric(horizontal: 8),

@@ -135,7 +135,7 @@ class _CouncilVote extends State<CouncilVotePage> {
                         ),
                         Column(
                           children: _selected.map((i) {
-                            var accInfo = store.account.accountIndexMap[i[0]];
+                            var accInfo = store.account.addressIndexMap[i[0]];
                             return Container(
                               margin: EdgeInsets.fromLTRB(16, 0, 16, 8),
                               child: Row(

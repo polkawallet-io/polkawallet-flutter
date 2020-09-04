@@ -106,7 +106,7 @@ class _ProposalsState extends State<SpendProposals> {
                                       .store.gov.treasuryOverview.proposals
                                       .map((e) {
                                     Map accInfo = widget.store.account
-                                        .accountIndexMap[e.proposal.proposer];
+                                        .addressIndexMap[e.proposal.proposer];
                                     return _ProposalItem(
                                       symbol: symbol,
                                       decimals: decimals,
@@ -140,7 +140,7 @@ class _ProposalsState extends State<SpendProposals> {
                                         .store.gov.treasuryOverview.approvals
                                         .map((e) {
                                       Map accInfo = widget.store.account
-                                          .accountIndexMap[e.proposal.proposer];
+                                          .addressIndexMap[e.proposal.proposer];
                                       e.isApproval = true;
                                       return _ProposalItem(
                                         symbol: symbol,

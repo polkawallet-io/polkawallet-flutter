@@ -221,11 +221,11 @@ class _TipDetailPageState extends State<TipDetailPage> {
     final AccountData who = AccountData();
     final AccountData finder = AccountData();
     who.address = tipData.who;
-    final Map accInfo = widget.store.account.accountIndexMap[who.address];
+    final Map accInfo = widget.store.account.addressIndexMap[who.address];
     Map accInfoFinder;
     if (tipData.finder != null) {
       finder.address = tipData.finder;
-      accInfoFinder = widget.store.account.accountIndexMap[finder.address];
+      accInfoFinder = widget.store.account.addressIndexMap[finder.address];
     }
     bool isFinder = false;
     if (widget.store.account.currentAddress == finder.address) {
@@ -433,7 +433,7 @@ class _TipDetailPageState extends State<TipDetailPage> {
                             Column(
                               children: tipData.tips.map((e) {
                                 final Map accInfo = widget
-                                    .store.account.accountIndexMap[e.address];
+                                    .store.account.addressIndexMap[e.address];
                                 return ListTile(
                                   leading: AddressIcon(e.address),
                                   title: Fmt.accountDisplayName(
