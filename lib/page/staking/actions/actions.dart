@@ -265,7 +265,8 @@ class _StakingActions extends State<StakingActions>
                 ),
                 RowAccount02(
                   acc02: acc02,
-                  accountId: store.staking.ledger['accountId'],
+                  accountId: store.staking.ledger['accountId'] ??
+                      store.account.currentAddress,
                   stashInfo: store.staking.ownStashInfo,
                   onChangeAccount: _changeCurrentAccount,
                 ),
@@ -454,11 +455,13 @@ class RowAccount02 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).staking;
-    final isStash = stashInfo.stashId == accountId;
+    final stashId = stashInfo.stashId ?? accountId;
     final controllerId = stashInfo.controllerId ?? accountId;
-    final String address = isStash
-        ? stashInfo.controllerId ?? accountId
-        : stashInfo.stashId ?? accountId;
+    bool isAcc02Controller = false;
+    if (accountId != null && stashId != accountId) {
+      isAcc02Controller = true;
+    }
+    final String address = isAcc02Controller ? stashId : controllerId;
     return Container(
       padding: EdgeInsets.only(top: 8, bottom: 8),
       child: stashInfo != null
@@ -476,13 +479,13 @@ class RowAccount02 extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        isStash ? dic['controller'] : dic['stash'],
+                        isAcc02Controller ? dic['stash'] : dic['controller'],
                         style: TextStyle(
                             fontSize: 14,
                             color: Theme.of(context).unselectedWidgetColor),
                       ),
                       Text(
-                        Fmt.address(address),
+                        Fmt.address(address ?? ''),
                         style: TextStyle(
                             fontSize: 13,
                             color: Theme.of(context).unselectedWidgetColor),
@@ -490,7 +493,7 @@ class RowAccount02 extends StatelessWidget {
                     ],
                   ),
                 ),
-                controllerId == stashInfo.stashId
+                controllerId == stashId
                     ? Container()
                     : GestureDetector(
                         child: Container(

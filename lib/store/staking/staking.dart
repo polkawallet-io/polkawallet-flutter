@@ -296,6 +296,7 @@ abstract class _StakingStore with Store {
     txs.clear();
     ledger = ObservableMap<String, dynamic>();
     overview = ObservableMap<String, dynamic>();
+    ownStashInfo = null;
   }
 
   @action
@@ -348,6 +349,8 @@ abstract class _StakingStore with Store {
     }
     if (cache[4] != null) {
       ownStashInfo = OwnStashInfoData.fromJson(cache[4]);
+    } else {
+      ownStashInfo = null;
     }
   }
 

@@ -1,3 +1,9 @@
+# 1.0.0
+- rebuild staking module & update nominees list
+
+# 0.9.9
+- fix accountIndex parsing bug
+
 # 0.9.8
 - rebuild transfer page address input
 - support accountIndex as address
