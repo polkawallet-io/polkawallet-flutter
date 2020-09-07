@@ -30,6 +30,8 @@ class _DemocracyState extends State<Democracy> {
 
   final Map<int, List> _links = {};
 
+  String _subscribeBestNumberChannel;
+
   Future<List> _getExternalLinks(int id) async {
     if (_links[id] != null) return _links[id];
 
@@ -77,6 +79,10 @@ class _DemocracyState extends State<Democracy> {
     if (!store.settings.loading) {
       webApi.subscribeBestNumber((data) {
         store.gov.setBestNumber(data as int);
+      }).then((channel) {
+        setState(() {
+          _subscribeBestNumberChannel = channel;
+        });
       });
     }
 
@@ -87,7 +93,9 @@ class _DemocracyState extends State<Democracy> {
 
   @override
   void dispose() {
-    webApi.unsubscribeBestNumber();
+    if (_subscribeBestNumberChannel != null) {
+      webApi.unsubscribeMessage(_subscribeBestNumberChannel);
+    }
 
     super.dispose();
   }

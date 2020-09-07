@@ -37,8 +37,7 @@ class _BondExtraPageState extends State<BondExtraPage> {
     double available = 0;
     if (store.assets.balances[symbol] != null) {
       available = Fmt.bigIntToDouble(
-              store.assets.balances[symbol].transferable, decimals) -
-          1;
+          store.assets.balances[symbol].transferable, decimals);
     }
 
     return Scaffold(

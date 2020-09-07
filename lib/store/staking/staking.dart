@@ -1,5 +1,6 @@
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/staking/types/ownStashInfo.dart';
 import 'package:polka_wallet/store/staking/types/txData.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -19,6 +20,7 @@ abstract class _StakingStore with Store {
   final String localStorageValidatorsKey = 'validators';
 
   final String cacheAccountStakingKey = 'account_staking';
+  final String cacheOwnStashKey = 'staking_own_stash';
   final String cacheStakingTxsKey = 'staking_txs';
   final String cacheStakingRewardTxsKey = 'staking_reward_txs';
   final String cacheTimeKey = 'staking_cache_time';
@@ -44,6 +46,9 @@ abstract class _StakingStore with Store {
 
   @observable
   ObservableMap<String, dynamic> ledger = ObservableMap<String, dynamic>();
+
+  @observable
+  OwnStashInfoData ownStashInfo;
 
   @observable
   bool txsLoading = false;
@@ -122,11 +127,11 @@ abstract class _StakingStore with Store {
   @computed
   BigInt get accountUnlockingTotal {
     BigInt res = BigInt.zero;
-    if (ledger['stakingLedger'] == null) {
+    if (ownStashInfo == null || ownStashInfo.stakingLedger == null) {
       return res;
     }
 
-    List.of(ledger['stakingLedger']['unlocking']).forEach((i) {
+    List.of(ownStashInfo.stakingLedger['unlocking']).forEach((i) {
       res += BigInt.parse(i['value'].toString());
     });
     return res;
@@ -228,6 +233,19 @@ abstract class _StakingStore with Store {
   }
 
   @action
+  void setOwnStashInfo(Map<String, dynamic> data, {bool shouldCache = true}) {
+    ownStashInfo = OwnStashInfoData.fromJson(data);
+
+    if (shouldCache) {
+      rootStore.localStorage.setAccountCache(
+        rootStore.account.currentAccount.pubKey,
+        _getCacheKey(cacheOwnStashKey),
+        data,
+      );
+    }
+  }
+
+  @action
   Future<void> clearTxs() async {
     txs.clear();
   }
@@ -307,6 +325,8 @@ abstract class _StakingStore with Store {
           .getAccountCache(pubKey, _getCacheKey(cacheStakingRewardTxsKey)),
       rootStore.localStorage
           .getAccountCache(pubKey, _getCacheKey(cacheTimeKey)),
+      rootStore.localStorage
+          .getAccountCache(pubKey, _getCacheKey(cacheOwnStashKey)),
     ]);
     if (cache[0] != null) {
       setLedger(rootStore.account.currentAddress, cache[0], shouldCache: false);
@@ -325,6 +345,9 @@ abstract class _StakingStore with Store {
     }
     if (cache[3] != null) {
       cacheTxsTimestamp = cache[3];
+    }
+    if (cache[4] != null) {
+      ownStashInfo = OwnStashInfoData.fromJson(cache[4]);
     }
   }
 

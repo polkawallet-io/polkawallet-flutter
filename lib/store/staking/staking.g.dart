@@ -158,6 +158,21 @@ mixin _$StakingStore on _StakingStore, Store {
     });
   }
 
+  final _$ownStashInfoAtom = Atom(name: '_StakingStore.ownStashInfo');
+
+  @override
+  OwnStashInfoData get ownStashInfo {
+    _$ownStashInfoAtom.reportRead();
+    return super.ownStashInfo;
+  }
+
+  @override
+  set ownStashInfo(OwnStashInfoData value) {
+    _$ownStashInfoAtom.reportWrite(value, super.ownStashInfo, () {
+      super.ownStashInfo = value;
+    });
+  }
+
   final _$txsLoadingAtom = Atom(name: '_StakingStore.txsLoading');
 
   @override
@@ -389,6 +404,17 @@ mixin _$StakingStore on _StakingStore, Store {
   }
 
   @override
+  void setOwnStashInfo(Map<String, dynamic> data, {bool shouldCache = true}) {
+    final _$actionInfo = _$_StakingStoreActionController.startAction(
+        name: '_StakingStore.setOwnStashInfo');
+    try {
+      return super.setOwnStashInfo(data, shouldCache: shouldCache);
+    } finally {
+      _$_StakingStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void clearState() {
     final _$actionInfo = _$_StakingStoreActionController.startAction(
         name: '_StakingStore.clearState');
@@ -430,6 +456,7 @@ staked: ${staked},
 nominatorCount: ${nominatorCount},
 validatorsInfo: ${validatorsInfo},
 ledger: ${ledger},
+ownStashInfo: ${ownStashInfo},
 txsLoading: ${txsLoading},
 txsCount: ${txsCount},
 txs: ${txs},

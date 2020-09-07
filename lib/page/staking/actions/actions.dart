@@ -22,6 +22,7 @@ import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
+import 'package:polka_wallet/store/staking/types/ownStashInfo.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -90,6 +91,7 @@ class _StakingActions extends State<StakingActions>
     if (store.settings.loading) {
       return;
     }
+    _tab == 0 ? _updateStakingTxs() : _updateStakingRewardTxs();
     await Future.wait([
       webApi.assets.fetchBalance(),
       webApi.staking.fetchAccountStaking(),
@@ -180,29 +182,17 @@ class _StakingActions extends State<StakingActions>
 
   Widget _buildActionCard() {
     var dic = I18n.of(context).staking;
-    bool hasData = store.staking.ledger['stakingLedger'] != null;
+    final bool hasData = store.staking.ownStashInfo != null;
 
-    String controllerId = store.staking.ledger['controllerId'] ??
-        store.staking.ledger['accountId'];
-    bool isController = controllerId == store.staking.ledger['accountId'];
-    String payee = store.staking.ledger['rewardDestination'];
-    String stashId = store.staking.ledger['stashId'] ?? controllerId;
+    String account02PubKey = store.account.currentAccountPubKey;
     if (hasData) {
-      stashId = store.staking.ledger['stakingLedger']['stash'];
-      if (payee == null) {
-        payee = store.staking.ledger['stakingLedger']['payee'];
-      }
+      store.account.pubKeyAddressMap[store.settings.endpoint.ss58]
+          .forEach((k, v) {
+        if (v == store.staking.ownStashInfo.controllerId) {
+          account02PubKey = k;
+        }
+      });
     }
-    bool isStash = store.staking.ledger['accountId'] == stashId;
-    bool controllerEqualStash = controllerId == stashId;
-    String account02 = isStash ? controllerId : stashId;
-    String account02PubKey;
-    store.account.pubKeyAddressMap[store.settings.endpoint.ss58]
-        .forEach((k, v) {
-      if (v == account02) {
-        account02PubKey = k;
-      }
-    });
     AccountData acc02;
     int acc02Index = store.account.accountList
         .indexWhere((i) => i.pubKey == account02PubKey);
@@ -210,15 +200,17 @@ class _StakingActions extends State<StakingActions>
       acc02 = store.account.accountList[acc02Index];
     }
 
-    String symbol = store.settings.networkState.tokenSymbol;
-    int decimals = store.settings.networkState.tokenDecimals;
+    final symbol = store.settings.networkState.tokenSymbol;
+    final decimals = store.settings.networkState.tokenDecimals;
 
-    BalancesInfo info = store.assets.balances[symbol];
+    final BalancesInfo info = store.assets.balances[symbol];
     BigInt bonded = BigInt.zero;
     BigInt redeemable = BigInt.zero;
-    if (hasData) {
+    if (hasData && store.staking.ownStashInfo.stakingLedger != null) {
       bonded = BigInt.parse(
-          store.staking.ledger['stakingLedger']['active'].toString());
+          store.staking.ownStashInfo.stakingLedger['active'].toString());
+    }
+    if (store.staking.ledger['redeemable'] != null) {
       redeemable = BigInt.parse(store.staking.ledger['redeemable'].toString());
     }
     BigInt unlocking = store.staking.accountUnlockingTotal;
@@ -227,76 +219,80 @@ class _StakingActions extends State<StakingActions>
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
       padding: EdgeInsets.all(16),
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(right: 16),
-                child: AddressIcon(
-                  '',
-                  pubKey: store.account.currentAccount.pubKey,
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      child: !hasData
+          ? CupertinoActivityIndicator()
+          : Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(
-                      Fmt.accountName(context, store.account.currentAccount),
-                      style: Theme.of(context).textTheme.headline4,
+                    Container(
+                      margin: EdgeInsets.only(right: 16),
+                      child: AddressIcon(
+                        '',
+                        pubKey: store.account.currentAccount.pubKey,
+                      ),
                     ),
-                    Text(Fmt.address(store.account.currentAddress))
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            Fmt.accountName(
+                                context, store.account.currentAccount),
+                            style: Theme.of(context).textTheme.headline4,
+                          ),
+                          Text(Fmt.address(store.account.currentAddress))
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            '${Fmt.priceFloorBigInt(info.total, decimals, lengthMax: 3)}',
+                            style: Theme.of(context).textTheme.headline4,
+                          ),
+                          Text(
+                            dic['balance'],
+                            style: TextStyle(fontSize: 13),
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      '${Fmt.priceFloorBigInt(info.total, decimals, lengthMax: 3)}',
-                      style: Theme.of(context).textTheme.headline4,
-                    ),
-                    Text(
-                      dic['balance'],
-                      style: TextStyle(fontSize: 13),
-                    ),
-                  ],
+                RowAccount02(
+                  acc02: acc02,
+                  accountId: store.staking.ledger['accountId'],
+                  stashInfo: store.staking.ownStashInfo,
+                  onChangeAccount: _changeCurrentAccount,
                 ),
-              )
-            ],
-          ),
-          RowAccount02(
-            acc02: acc02,
-            isStash: isStash,
-            controllerId: controllerId,
-            stashId: stashId,
-            onChangeAccount: _changeCurrentAccount,
-          ),
-          Divider(),
-          StakingInfoPanel(
-            hasData: hasData,
-            isStash: isStash,
-            isController: isController,
-            decimals: decimals,
-            bonded: bonded,
-            unlocking: unlocking,
-            redeemable: redeemable,
-            available: info.transferable,
-            payee: payee,
-            networkLoading: store.settings.loading,
-          ),
-          Divider(),
-          StakingActionsPanel(
-            isStash: isStash,
-            bonded: bonded,
-            controller: acc02,
-            controllerEqualStash: controllerEqualStash,
-          ),
-        ],
-      ),
+                Divider(),
+                StakingInfoPanel(
+                  hasData: hasData,
+                  isController: store.staking.ownStashInfo.controllerId ==
+                      store.staking.ledger['accountId'],
+                  accountId: store.account.currentAddress,
+                  stashInfo: store.staking.ownStashInfo,
+                  decimals: decimals,
+                  bonded: bonded,
+                  unlocking: unlocking,
+                  redeemable: redeemable,
+                  available: info.transferable,
+                  networkLoading: store.settings.loading,
+                ),
+                Divider(),
+                StakingActionsPanel(
+                  isStash: store.staking.ownStashInfo.stashId ==
+                      store.staking.ledger['accountId'],
+                  stashInfo: store.staking.ownStashInfo,
+                  bonded: bonded,
+                  controller: acc02,
+                ),
+              ],
+            ),
     );
   }
 
@@ -320,8 +316,12 @@ class _StakingActions extends State<StakingActions>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (globalBondingRefreshKey.currentState != null) {
-        globalBondingRefreshKey.currentState.show();
+      if (store.staking.ownStashInfo == null) {
+        if (globalBondingRefreshKey.currentState != null) {
+          globalBondingRefreshKey.currentState.show();
+        }
+      } else {
+        _updateStakingInfo();
       }
     });
   }
@@ -364,10 +364,7 @@ class _StakingActions extends State<StakingActions>
         list.addAll(_tab == 0 ? _buildTxList() : _buildRewardsList());
         return RefreshIndicator(
           key: globalBondingRefreshKey,
-          onRefresh: () async {
-            _tab == 0 ? _updateStakingTxs() : _updateStakingRewardTxs();
-            await _updateStakingInfo();
-          },
+          onRefresh: _updateStakingInfo,
           child: ListView(
             controller: _scrollController,
             children: list,
@@ -379,17 +376,16 @@ class _StakingActions extends State<StakingActions>
 }
 
 class RowAccount02 extends StatelessWidget {
-  RowAccount02(
-      {this.acc02,
-      this.isStash,
-      this.controllerId,
-      this.stashId,
-      this.onChangeAccount});
+  RowAccount02({
+    this.acc02,
+    this.accountId,
+    this.stashInfo,
+    this.onChangeAccount,
+  });
 
   final AccountData acc02;
-  final bool isStash;
-  final String controllerId;
-  final String stashId;
+  final String accountId;
+  final OwnStashInfoData stashInfo;
   final Function onChangeAccount;
 
   Future<void> _importController(BuildContext context) async {
@@ -399,7 +395,7 @@ class RowAccount02 extends StatelessWidget {
 
   void _showActions(BuildContext context) {
     var dic = I18n.of(context).staking;
-
+    final isStash = stashInfo.stashId == accountId;
     String actionAccountTitle = isStash ? dic['controller'] : dic['stash'];
     String importAccountText = '${dic['action.import']}$actionAccountTitle';
     String changeAccountText =
@@ -458,12 +454,14 @@ class RowAccount02 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).staking;
-
-    bool controllerEqualStash = controllerId == stashId;
-
+    final isStash = stashInfo.stashId == accountId;
+    final controllerId = stashInfo.controllerId ?? accountId;
+    final String address = isStash
+        ? stashInfo.controllerId ?? accountId
+        : stashInfo.stashId ?? accountId;
     return Container(
       padding: EdgeInsets.only(top: 8, bottom: 8),
-      child: controllerId != null && stashId != null
+      child: stashInfo != null
           ? Row(
               children: <Widget>[
                 Container(
@@ -471,7 +469,7 @@ class RowAccount02 extends StatelessWidget {
                   child: acc02 != null
                       ? AddressIcon(acc02.address,
                           pubKey: acc02.pubKey, size: 32)
-                      : AddressIcon(isStash ? controllerId : stashId, size: 32),
+                      : AddressIcon(address, size: 32),
                 ),
                 Expanded(
                   child: Column(
@@ -484,7 +482,7 @@ class RowAccount02 extends StatelessWidget {
                             color: Theme.of(context).unselectedWidgetColor),
                       ),
                       Text(
-                        Fmt.address(isStash ? controllerId : stashId),
+                        Fmt.address(address),
                         style: TextStyle(
                             fontSize: 13,
                             color: Theme.of(context).unselectedWidgetColor),
@@ -492,7 +490,7 @@ class RowAccount02 extends StatelessWidget {
                     ],
                   ),
                 ),
-                controllerEqualStash
+                controllerId == stashInfo.stashId
                     ? Container()
                     : GestureDetector(
                         child: Container(
@@ -504,7 +502,7 @@ class RowAccount02 extends StatelessWidget {
                       )
               ],
             )
-          : null,
+          : Container(),
     );
   }
 }
@@ -512,33 +510,32 @@ class RowAccount02 extends StatelessWidget {
 class StakingInfoPanel extends StatelessWidget {
   StakingInfoPanel({
     this.hasData,
-    this.isStash,
     this.isController,
+    this.accountId,
+    this.stashInfo,
     this.decimals,
     this.bonded,
     this.unlocking,
     this.redeemable,
     this.available,
-    this.payee,
     this.networkLoading,
   });
 
   final bool hasData;
-  final bool isStash;
   final bool isController;
+  final String accountId;
+  final OwnStashInfoData stashInfo;
   final int decimals;
   final BigInt bonded;
   final BigInt unlocking;
   final BigInt redeemable;
   final BigInt available;
-  final String payee;
   final bool networkLoading;
 
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).staking;
     Color actionButtonColor = Theme.of(context).primaryColor;
-
     return Padding(
       padding: EdgeInsets.only(top: 4, bottom: 4),
       child: Column(
@@ -613,7 +610,7 @@ class StakingInfoPanel extends StatelessWidget {
               ),
               InfoItem(
                 title: dic['bond.reward'],
-                content: payee,
+                content: stashInfo.destination,
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
               Expanded(
@@ -650,13 +647,13 @@ class StakingInfoPanel extends StatelessWidget {
 class StakingActionsPanel extends StatelessWidget {
   StakingActionsPanel({
     this.isStash,
-    this.controllerEqualStash,
+    this.stashInfo,
     this.bonded,
     this.controller,
   });
 
   final bool isStash;
-  final bool controllerEqualStash;
+  final OwnStashInfoData stashInfo;
   final BigInt bonded;
   final AccountData controller;
 
@@ -679,7 +676,7 @@ class StakingActionsPanel extends StatelessWidget {
         onSetControllerTap = () => Navigator.of(context)
             .pushNamed(SetControllerPage.route, arguments: controller);
 
-        if (controllerEqualStash) {
+        if (stashInfo.isOwnStash) {
           setPayeeDisabled = false;
           onSetPayeeTap =
               () => Navigator.of(context).pushNamed(SetPayeePage.route);

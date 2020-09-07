@@ -12,6 +12,7 @@ import 'package:polka_wallet/common/components/validatorListFilter.dart';
 import 'package:polka_wallet/page/staking/validators/validator.dart';
 import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/staking/types/ownStashInfo.dart';
 import 'package:polka_wallet/store/staking/types/validatorData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -46,8 +47,10 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     if (store.settings.loading) {
       return;
     }
-    await webApi.staking.fetchAccountStaking();
-    await webApi.staking.fetchStakingOverview();
+    await Future.wait([
+      webApi.staking.fetchAccountStaking(),
+      webApi.staking.fetchStakingOverview(),
+    ]);
     _fetchRecommendedValidators();
   }
 
@@ -60,19 +63,21 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
 
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).staking;
-    bool hashData = store.staking.ledger['stakingLedger'] != null;
+    bool hashData = store.staking.ownStashInfo != null &&
+        store.staking.ownStashInfo.stakingLedger != null;
+
+    String controllerId = store.account.currentAddress;
     int bonded = 0;
     List nominators = [];
     double nominatorListHeight = 48;
     if (hashData) {
-      bonded = store.staking.ledger['stakingLedger']['active'];
-      nominators = store.staking.ledger['nominators'];
+      controllerId = store.staking.ownStashInfo.controllerId;
+      bonded = store.staking.ownStashInfo.stakingLedger['active'];
+      nominators = store.staking.ownStashInfo.nominating.toList();
       if (nominators.length > 0) {
         nominatorListHeight = double.parse((nominators.length * 56).toString());
       }
     }
-    String controllerId = store.staking.ledger['controllerId'] ??
-        store.staking.ledger['accountId'];
     bool isController = store.staking.ledger['accountId'] == controllerId;
 
     Color actionButtonColor = Theme.of(context).primaryColor;
@@ -101,8 +106,8 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
               ),
             ),
             title: Text(
-              store.staking.ledger['nominators'] != null
-                  ? store.staking.ledger['nominators'].length.toString()
+              hashData
+                  ? store.staking.ownStashInfo.nominating.length.toString()
                   : '0',
               style: Theme.of(context).textTheme.headline4,
             ),
@@ -181,82 +186,41 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
 
   Widget _buildNominatingList() {
     final dic = I18n.of(context).staking;
-    bool hasData = store.staking.ledger['stakingLedger'] != null;
-    if (!hasData) {
+    if (store.staking.ownStashInfo == null ||
+        store.staking.validatorsInfo.length == 0) {
       return Container();
     }
-    String symbol = store.settings.networkState.tokenSymbol;
-    int decimals = store.settings.networkState.tokenDecimals;
 
-    String stashAddress = store.staking.ledger['stakingLedger']['stash'];
-    List nominators = store.staking.ledger['nominators'];
-
-    final List<String> waiting = [];
-    final List<ValidatorData> active = [];
-    nominators.forEach((e) {
+    final NomineesInfoData nomineesInfo = store.staking.ownStashInfo.inactives;
+    final List<Widget> list = nomineesInfo.nomsActive.map((e) {
       int validatorIndex =
           store.staking.validatorsInfo.indexWhere((i) => i.accountId == e);
-      if (validatorIndex < 0) {
-        waiting.add(e);
-      } else {
-        active.add(store.staking.validatorsInfo[validatorIndex]);
-      }
-    });
-
-    active.sort((a, b) {
-      return a.nominators.indexWhere((i) => i['who'] == stashAddress) > -1
-          ? -1
-          : 1;
-    });
-    final List<Widget> list = active.map((validator) {
-      BigInt meStaked;
-      int meIndex =
-          validator.nominators.indexWhere((i) => i['who'] == stashAddress);
-      if (meIndex >= 0) {
-        meStaked =
-            BigInt.parse(validator.nominators[meIndex]['value'].toString());
-      }
-
-      Map accInfo = store.account.addressIndexMap[validator.accountId];
-
       return Expanded(
-        child: ListTile(
-          dense: true,
-          leading: AddressIcon(validator.accountId, size: 32),
-          title: Fmt.accountDisplayName(validator.accountId, accInfo),
-          subtitle: Text(meStaked != null
-              ? '${dic['nominate.active']} ${Fmt.token(meStaked, decimals)} $symbol'
-              : dic['nominate.inactive']),
-          trailing: Container(
-            width: 100,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Expanded(
-                  child: Container(height: 4),
-                ),
-                Expanded(
-                  child: Text(validator.commission.isNotEmpty
-                      ? validator.commission
-                      : '~'),
-                ),
-                Expanded(
-                  child: Text('commission', style: TextStyle(fontSize: 12)),
-                ),
-              ],
-            ),
-          ),
-          onTap: () {
-            webApi.staking.queryValidatorRewards(validator.accountId);
-            Navigator.of(context)
-                .pushNamed(ValidatorDetailPage.route, arguments: validator);
-          },
-        ),
+        child: validatorIndex < 0
+            ? Container()
+            : _NomineeItem(
+                store.staking.validatorsInfo[validatorIndex],
+                true,
+                store.account.addressIndexMap,
+              ),
       );
     }).toList();
 
-    list.addAll(waiting.map((id) {
+    list.addAll(nomineesInfo.nomsInactive.map((e) {
+      int validatorIndex =
+          store.staking.validatorsInfo.indexWhere((i) => i.accountId == e);
+      return Expanded(
+        child: validatorIndex < 0
+            ? Container()
+            : _NomineeItem(
+                store.staking.validatorsInfo[validatorIndex],
+                false,
+                store.account.addressIndexMap,
+              ),
+      );
+    }).toList());
+
+    list.addAll(nomineesInfo.nomsWaiting.map((id) {
       return Expanded(
         child: ListTile(
           dense: true,
@@ -285,9 +249,9 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
 
     _tabController = TabController(vsync: this, length: 2);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      globalNominatingRefreshKey.currentState.show();
-    });
+//    WidgetsBinding.instance.addPostFrameCallback((_) {
+//      globalNominatingRefreshKey.currentState.show();
+//    });
   }
 
   @override
@@ -426,6 +390,51 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
             },
           ),
         );
+      },
+    );
+  }
+}
+
+class _NomineeItem extends StatelessWidget {
+  _NomineeItem(this.validator, this.active, this.accInfoMap);
+
+  final ValidatorData validator;
+  final bool active;
+  final Map<String, Map> accInfoMap;
+
+  @override
+  Widget build(BuildContext context) {
+    final dic = I18n.of(context).staking;
+    final accInfo = accInfoMap[validator.accountId];
+    return ListTile(
+      dense: true,
+      leading: AddressIcon(validator.accountId, size: 32),
+      title: Fmt.accountDisplayName(validator.accountId, accInfo),
+      subtitle:
+          Text(active ? dic['nominate.active'] : dic['nominate.inactive']),
+      trailing: Container(
+        width: 100,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Expanded(
+              child: Container(height: 4),
+            ),
+            Expanded(
+              child: Text(
+                  validator.commission.isNotEmpty ? validator.commission : '~'),
+            ),
+            Expanded(
+              child: Text('commission', style: TextStyle(fontSize: 12)),
+            ),
+          ],
+        ),
+      ),
+      onTap: () {
+        webApi.staking.queryValidatorRewards(validator.accountId);
+        Navigator.of(context)
+            .pushNamed(ValidatorDetailPage.route, arguments: validator);
       },
     );
   }

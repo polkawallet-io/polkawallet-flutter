@@ -237,11 +237,15 @@ class SubScanApi {
 
     Response res = await post(url, headers: headers);
     if (res.body != null) {
-      final obj = await compute(jsonDecode, res.body);
-      if (para.sendPort != null) {
-        para.sendPort.send(obj['data']);
+      try {
+        final obj = await compute(jsonDecode, res.body);
+        if (para.sendPort != null) {
+          para.sendPort.send(obj['data']);
+        }
+        return obj['data'];
+      } catch (err) {
+        // ignore error
       }
-      return obj['data'];
     }
     if (para.sendPort != null) {
       para.sendPort.send({});

@@ -99,24 +99,9 @@ class _NominatePageState extends State<NominatePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      accInfo != null &&
-                              accInfo['identity']['judgements'].length > 0
-                          ? Container(
-                              width: 14,
-                              margin: EdgeInsets.only(right: 4),
-                              child: Image.asset(
-                                  'assets/images/assets/success.png'),
-                            )
-                          : Container(),
-                      Expanded(
-                        child: Fmt.accountDisplayName(
-                          validator.accountId,
-                          accInfo,
-                        ),
-                      ),
-                    ],
+                  Fmt.accountDisplayName(
+                    validator.accountId,
+                    accInfo,
                   ),
                   !isWaiting
                       ? Text(

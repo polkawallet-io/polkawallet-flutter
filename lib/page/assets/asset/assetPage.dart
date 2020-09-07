@@ -99,9 +99,7 @@ class _AssetPageState extends State<AssetPage>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (LocalStorage.checkCacheTimeout(store.assets.cacheTxsTimestamp)) {
-        globalAssetRefreshKey.currentState.show();
-      }
+      _refreshData();
     });
   }
 

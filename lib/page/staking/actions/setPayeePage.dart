@@ -29,8 +29,8 @@ class _SetPayeePageState extends State<SetPayeePage> {
     var dic = I18n.of(context).staking;
     var rewardToOptions =
         _rewardToOptions.map((i) => dic['reward.$i']).toList();
-    int currentPayee = _rewardToOptions
-        .indexOf(store.staking.ledger['stakingLedger']['payee']);
+    int currentPayee =
+        _rewardToOptions.indexOf(store.staking.ownStashInfo.destination);
 
     if (currentPayee == _rewardTo) {
       showCupertinoDialog(

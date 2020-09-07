@@ -278,16 +278,13 @@ class Api {
     store.assets.setBlockMap(data);
   }
 
-  Future<void> subscribeBestNumber(Function callback) async {
-    final String channel = "BestNumber";
+  Future<String> subscribeBestNumber(Function callback) async {
+    final String channel = _getEvalJavascriptUID().toString();
     subscribeMessage(
         'settings.subscribeMessage("chain", "bestNumber", [], "$channel")',
         channel,
         callback);
-  }
-
-  Future<void> unsubscribeBestNumber() async {
-    unsubscribeMessage('BestNumber');
+    return channel;
   }
 
   Future<void> subscribeMessage(

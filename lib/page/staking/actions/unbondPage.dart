@@ -35,11 +35,10 @@ class _UnBondPageState extends State<UnBondPage> {
     int decimals = store.settings.networkState.tokenDecimals;
 
     double bonded = 0;
-    bool hasData = store.staking.ledger['stakingLedger'] != null;
-    if (hasData) {
+    if (store.staking.ownStashInfo != null) {
       bonded = Fmt.bigIntToDouble(
           BigInt.parse(
-              store.staking.ledger['stakingLedger']['active'].toString()),
+              store.staking.ownStashInfo.stakingLedger['active'].toString()),
           decimals);
     }
 
