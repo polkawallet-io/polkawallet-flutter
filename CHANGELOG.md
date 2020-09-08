@@ -1,5 +1,6 @@
 # 1.0.0
 - rebuild staking module & update nominees list
+- add validator sort type: judgements
 
 # 0.9.9
 - fix accountIndex parsing bug

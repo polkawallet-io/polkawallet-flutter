@@ -212,7 +212,8 @@ class _NominatePageState extends State<NominatePage> {
     retained = Fmt.filterValidatorList(
         retained, _filter, store.account.addressIndexMap);
     // and sort it
-    retained.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
+    retained.sort((a, b) =>
+        Fmt.sortValidatorList(store.account.addressIndexMap, a, b, _sort));
     list.addAll(retained);
 
     return Scaffold(

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-enum ValidatorSortOptions { staked, points, commission }
+enum ValidatorSortOptions { staked, points, commission, judgements }
 
 class ValidatorListFilter extends StatefulWidget {
   ValidatorListFilter({this.onFilterChange, this.onSortChange});

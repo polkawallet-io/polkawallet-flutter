@@ -213,7 +213,8 @@ class Fmt {
     return reg.hasMatch(pass);
   }
 
-  static int sortValidatorList(ValidatorData a, ValidatorData b, int sortType) {
+  static int sortValidatorList(
+      Map addressIndexMap, ValidatorData a, ValidatorData b, int sortType) {
     if (a.commission == null || a.commission.isEmpty) {
       return 1;
     }
@@ -230,6 +231,15 @@ class Fmt {
         return a.points == b.points ? cmpStake : a.points < b.points ? 1 : -1;
       case 2:
         return comA == comB ? cmpStake : comA > comB ? 1 : -1;
+      case 3:
+        final infoA = addressIndexMap[a.accountId];
+        if (infoA != null && infoA['identity'] != null) {
+          final List judgements = infoA['identity']['judgements'];
+          if (judgements != null && judgements.length > 0) {
+            return -1;
+          }
+        }
+        return 1;
       default:
         return -1;
     }

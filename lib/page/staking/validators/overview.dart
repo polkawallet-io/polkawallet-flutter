@@ -359,8 +359,8 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
           ls = Fmt.filterValidatorList(
               ls, _filter, store.account.addressIndexMap);
           // sort list
-          // todo: add sort option <known good>
-          ls.sort((a, b) => Fmt.sortValidatorList(a, b, _sort));
+          ls.sort((a, b) => Fmt.sortValidatorList(
+              store.account.addressIndexMap, a, b, _sort));
           list.addAll(ls);
         } else {
           list.add(Container(
