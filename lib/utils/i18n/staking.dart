@@ -131,7 +131,7 @@ const Map<String, String> zhStaking = {
   'sort': '排序',
   'nominate.active': '活跃',
   'nominate.inactive': '不活跃',
-  'nominate.waiting': '候选',
+  'nominate.waiting': '等待',
   'phala': 'Phala 空投',
   'recommend': '推荐节点',
 };

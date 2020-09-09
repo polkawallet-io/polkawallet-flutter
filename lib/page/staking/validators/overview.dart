@@ -207,26 +207,32 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     }).toList();
 
     list.addAll(nomineesInfo.nomsInactive.map((e) {
-      int validatorIndex =
+      final validatorIndex =
           store.staking.validatorsInfo.indexWhere((i) => i.accountId == e);
+      final validator = validatorIndex < 0
+          ? ValidatorData.fromJson({'accountId': e})
+          : store.staking.validatorsInfo[validatorIndex];
       return Expanded(
-        child: validatorIndex < 0
-            ? Container()
-            : _NomineeItem(
-                store.staking.validatorsInfo[validatorIndex],
-                false,
-                store.account.addressIndexMap,
-              ),
+        child: _NomineeItem(
+          validator,
+          false,
+          store.account.addressIndexMap,
+        ),
       );
     }).toList());
 
     list.addAll(nomineesInfo.nomsWaiting.map((id) {
+      final validatorIndex =
+          store.staking.validatorsInfo.indexWhere((i) => i.accountId == id);
+      final validator = validatorIndex < 0
+          ? ValidatorData.fromJson({'accountId': id})
+          : store.staking.validatorsInfo[validatorIndex];
       return Expanded(
-        child: ListTile(
-          dense: true,
-          leading: AddressIcon(id, size: 32),
-          title: Text(Fmt.address(id, pad: 6)),
-          subtitle: Text(dic['nominate.waiting']),
+        child: _NomineeItem(
+          validator,
+          false,
+          store.account.addressIndexMap,
+          waiting: true,
         ),
       );
     }).toList());
@@ -299,6 +305,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
             color: Colors.white,
             padding: EdgeInsets.only(top: 8),
             child: ValidatorListFilter(
+              needSort: _tab == 0,
               onSortChange: (value) {
                 if (value != _sort) {
                   setState(() {
@@ -361,6 +368,15 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
           // sort list
           ls.sort((a, b) => Fmt.sortValidatorList(
               store.account.addressIndexMap, a, b, _sort));
+          if (_tab == 1) {
+            ls.sort((a, b) {
+              final aLength =
+                  store.staking.nominationsAll[a.accountId]?.length ?? 0;
+              final bLength =
+                  store.staking.nominationsAll[b.accountId]?.length ?? 0;
+              return 0 - aLength.compareTo(bLength);
+            });
+          }
           list.addAll(ls);
         } else {
           list.add(Container(
@@ -396,10 +412,11 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
 }
 
 class _NomineeItem extends StatelessWidget {
-  _NomineeItem(this.validator, this.active, this.accInfoMap);
+  _NomineeItem(this.validator, this.active, this.accInfoMap, {this.waiting});
 
   final ValidatorData validator;
   final bool active;
+  final bool waiting;
   final Map<String, Map> accInfoMap;
 
   @override
@@ -410,8 +427,9 @@ class _NomineeItem extends StatelessWidget {
       dense: true,
       leading: AddressIcon(validator.accountId, size: 32),
       title: Fmt.accountDisplayName(validator.accountId, accInfo),
-      subtitle:
-          Text(active ? dic['nominate.active'] : dic['nominate.inactive']),
+      subtitle: Text(waiting
+          ? dic['nominate.waiting']
+          : active ? dic['nominate.active'] : dic['nominate.inactive']),
       trailing: Container(
         width: 100,
         child: Column(

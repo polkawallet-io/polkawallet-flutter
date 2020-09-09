@@ -59,9 +59,23 @@ List<EndpointData> networkEndpoints = [
     'info': network_name_polkadot,
     'ss58': 0,
     'text': 'Polkadot (Live, hosted by Polkawallet EU)',
+    'value': 'wss://polkadot-2.polkawallet.io',
+  }),
+  EndpointData.fromJson(const {
+    'color': 'pink',
+    'info': network_name_polkadot,
+    'ss58': 0,
+    'text': 'Polkadot (Live, hosted by Polkawallet EU2)',
     'value': 'ws://62.171.154.98:9944',
   }),
   networkEndpointKusama,
+  EndpointData.fromJson(const {
+    'color': 'black',
+    'info': network_name_kusama,
+    'ss58': 2,
+    'text': 'Kusama (Polkadot Canary, hosted by Polkawallet Asia)',
+    'value': 'wss://kusama-2.polkawallet.io/',
+  }),
   EndpointData.fromJson(const {
     'color': 'black',
     'info': network_name_kusama,

@@ -56,6 +56,9 @@ class ApiAccount {
 
   /// decode addresses to publicKeys
   Future<Map> decodeAddress(List<String> addresses) async {
+    if (addresses.length == 0) {
+      return {};
+    }
     Map res = await apiRoot.evalJavascript(
       'account.decodeAddress(${jsonEncode(addresses)})',
       allowRepeat: true,

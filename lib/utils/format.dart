@@ -248,10 +248,12 @@ class Fmt {
   static List<ValidatorData> filterValidatorList(
       List<ValidatorData> ls, String filter, Map accIndexMap) {
     ls.retainWhere((i) {
-      Map accInfo = accIndexMap[i.accountId];
+      final Map accInfo = accIndexMap[i.accountId];
+      final value = filter.trim().toLowerCase();
       return Fmt.accountDisplayNameString(i.accountId, accInfo)
-          .toLowerCase()
-          .contains(filter.trim().toLowerCase());
+              .toLowerCase()
+              .contains(value) ||
+          i.accountId.toLowerCase().contains(value);
     });
     return ls;
   }
