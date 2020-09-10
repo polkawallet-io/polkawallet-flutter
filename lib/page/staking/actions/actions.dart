@@ -79,7 +79,7 @@ class _StakingActions extends State<StakingActions>
     setState(() {
       _rewardLoading = true;
     });
-    Map res = await webApi.staking.updateStakingRewards();
+    await webApi.staking.updateStakingRewards();
     if (mounted) {
       setState(() {
         _rewardLoading = false;
@@ -188,16 +188,23 @@ class _StakingActions extends State<StakingActions>
     if (hasData) {
       store.account.pubKeyAddressMap[store.settings.endpoint.ss58]
           .forEach((k, v) {
-        if (v == store.staking.ownStashInfo.controllerId) {
+        if (store.staking.ownStashInfo.isOwnStash &&
+            v == store.staking.ownStashInfo.controllerId) {
           account02PubKey = k;
+          return;
+        }
+        if (store.staking.ownStashInfo.isOwnController &&
+            v == store.staking.ownStashInfo.stashId) {
+          account02PubKey = k;
+          return;
         }
       });
     }
     AccountData acc02;
-    int acc02Index = store.account.accountList
+    int acc02Index = store.account.accountListAll
         .indexWhere((i) => i.pubKey == account02PubKey);
     if (acc02Index >= 0) {
-      acc02 = store.account.accountList[acc02Index];
+      acc02 = store.account.accountListAll[acc02Index];
     }
 
     final symbol = store.settings.networkState.tokenSymbol;
@@ -220,7 +227,15 @@ class _StakingActions extends State<StakingActions>
       margin: EdgeInsets.fromLTRB(16, 12, 16, 24),
       padding: EdgeInsets.all(16),
       child: !hasData
-          ? CupertinoActivityIndicator()
+          ? Container(
+              padding: EdgeInsets.only(top: 80, bottom: 80),
+              child: Column(
+                children: [
+                  CupertinoActivityIndicator(),
+                  Text(I18n.of(context).assets['node.connecting']),
+                ],
+              ),
+            )
           : Column(
               children: <Widget>[
                 Row(
@@ -333,9 +348,6 @@ class _StakingActions extends State<StakingActions>
 
     return Observer(
       builder: (_) {
-        if (store.settings.loading) {
-          return CupertinoActivityIndicator();
-        }
         List<Widget> list = <Widget>[
           _buildActionCard(),
           Container(
@@ -396,8 +408,8 @@ class RowAccount02 extends StatelessWidget {
 
   void _showActions(BuildContext context) {
     var dic = I18n.of(context).staking;
-    final isStash = stashInfo.stashId == accountId;
-    String actionAccountTitle = isStash ? dic['controller'] : dic['stash'];
+    String actionAccountTitle =
+        stashInfo.isOwnStash ? dic['controller'] : dic['stash'];
     String importAccountText = '${dic['action.import']}$actionAccountTitle';
     String changeAccountText =
         dic['action.use'] + actionAccountTitle + dic['action.operate'];
@@ -493,16 +505,18 @@ class RowAccount02 extends StatelessWidget {
                     ],
                   ),
                 ),
-                controllerId == stashId
-                    ? Container()
-                    : GestureDetector(
-                        child: Container(
-                          width: 80,
-                          height: 18,
-                          child: Image.asset('assets/images/staking/set.png'),
+                Expanded(
+                  child: controllerId == stashId
+                      ? Container()
+                      : GestureDetector(
+                          child: Container(
+                            width: 80,
+                            height: 18,
+                            child: Image.asset('assets/images/staking/set.png'),
+                          ),
+                          onTap: () => _showActions(context),
                         ),
-                        onTap: () => _showActions(context),
-                      )
+                )
               ],
             )
           : Container(),
@@ -674,15 +688,17 @@ class StakingActionsPanel extends StatelessWidget {
     bool setControllerDisabled = true;
     Function onSetControllerTap = () => null;
     if (isStash) {
-      if (bonded > BigInt.zero) {
+      if (stashInfo.controllerId != null) {
         setControllerDisabled = false;
         onSetControllerTap = () => Navigator.of(context)
             .pushNamed(SetControllerPage.route, arguments: controller);
 
-        if (stashInfo.isOwnStash) {
+        if (stashInfo.isOwnController) {
           setPayeeDisabled = false;
-          onSetPayeeTap =
-              () => Navigator.of(context).pushNamed(SetPayeePage.route);
+          onSetPayeeTap = () => Navigator.of(context).pushNamed(
+                SetPayeePage.route,
+                arguments: stashInfo.destinationId,
+              );
         }
       } else {
         bondButtonString = dic['action.bond'];
@@ -690,8 +706,10 @@ class StakingActionsPanel extends StatelessWidget {
     } else {
       if (bonded > BigInt.zero) {
         setPayeeDisabled = false;
-        onSetPayeeTap =
-            () => Navigator.of(context).pushNamed(SetPayeePage.route);
+        onSetPayeeTap = () => Navigator.of(context).pushNamed(
+              SetPayeePage.route,
+              arguments: stashInfo.destinationId,
+            );
       }
     }
 
@@ -718,7 +736,10 @@ class StakingActionsPanel extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                if (isStash && bonded == BigInt.zero) {
+                /// if not bonded, we can go to bond page.
+                /// 1. it has no controller
+                /// 2. it's stash is itself(it's not controller of another acc)
+                if (stashInfo.controllerId == null && isStash) {
                   Navigator.of(context).pushNamed(BondPage.route);
                   return;
                 }
@@ -726,19 +747,40 @@ class StakingActionsPanel extends StatelessWidget {
                   context: context,
                   builder: (BuildContext context) => CupertinoActionSheet(
                     actions: <Widget>[
+                      /// disable bondExtra button if account is not stash
                       CupertinoActionSheetAction(
-                        child: Text(dic['action.bondExtra']),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pushNamed(BondExtraPage.route);
-                        },
+                        child: Text(
+                          dic['action.bondExtra'],
+                          style: TextStyle(
+                            color: !isStash ? disabledColor : actionButtonColor,
+                          ),
+                        ),
+                        onPressed: !isStash
+                            ? () => {}
+                            : () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context)
+                                    .pushNamed(BondExtraPage.route);
+                              },
                       ),
+
+                      /// disable unbond button if account is not controller
                       CupertinoActionSheetAction(
-                        child: Text(dic['action.unbond']),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pushNamed(UnBondPage.route);
-                        },
+                        child: Text(
+                          dic['action.unbond'],
+                          style: TextStyle(
+                            color: isStash && !stashInfo.isOwnController
+                                ? disabledColor
+                                : actionButtonColor,
+                          ),
+                        ),
+                        onPressed: isStash && !stashInfo.isOwnController
+                            ? () => {}
+                            : () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context)
+                                    .pushNamed(UnBondPage.route);
+                              },
                       ),
                     ],
                     cancelButton: CupertinoActionSheetAction(

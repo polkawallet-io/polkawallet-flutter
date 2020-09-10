@@ -23,7 +23,7 @@ class _SetPayeePageState extends State<SetPayeePage> {
 
   final _rewardToOptions = ['Staked', 'Stash', 'Controller'];
 
-  int _rewardTo = 0;
+  int _rewardTo;
 
   void _onSubmit() {
     var dic = I18n.of(context).staking;
@@ -73,10 +73,10 @@ class _SetPayeePageState extends State<SetPayeePage> {
 
   @override
   Widget build(BuildContext context) {
-    var dic = I18n.of(context).staking;
-    String address = store.account.currentAddress;
+    final dic = I18n.of(context).staking;
+    final defaultValue = ModalRoute.of(context).settings.arguments ?? 0;
 
-    var rewardToOptions =
+    final rewardToOptions =
         _rewardToOptions.map((i) => dic['reward.$i']).toList();
 
     return Scaffold(
@@ -100,7 +100,8 @@ class _SetPayeePageState extends State<SetPayeePage> {
                     ),
                     ListTile(
                       title: Text(dic['bond.reward']),
-                      subtitle: Text(rewardToOptions[_rewardTo]),
+                      subtitle:
+                          Text(rewardToOptions[_rewardTo ?? defaultValue]),
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
                       onTap: () {
                         showCupertinoModalPopup(
@@ -113,7 +114,7 @@ class _SetPayeePageState extends State<SetPayeePage> {
                               backgroundColor: Colors.white,
                               itemExtent: 56,
                               scrollController: FixedExtentScrollController(
-                                  initialItem: _rewardTo),
+                                  initialItem: defaultValue),
                               children: rewardToOptions
                                   .map((i) => Padding(
                                         padding: EdgeInsets.all(12),

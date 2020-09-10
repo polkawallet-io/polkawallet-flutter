@@ -47,7 +47,16 @@ class GovEntry extends StatelessWidget {
                           ? 'polkadot'
                           : 'kusama';
                   if (store.settings.loading) {
-                    return CupertinoActivityIndicator();
+                    return Container(
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.width / 2),
+                      child: Column(
+                        children: [
+                          CupertinoActivityIndicator(),
+                          Text(I18n.of(context).assets['node.connecting']),
+                        ],
+                      ),
+                    );
                   }
                   return ListView(
                     padding: EdgeInsets.all(16),

@@ -108,12 +108,13 @@ abstract class _StakingStore with Store {
 
   @computed
   List<ValidatorData> get nominatingList {
-    List nominators = ledger['nominators'];
-    if (nominators == null) {
+    if (ownStashInfo == null ||
+        ownStashInfo.nominating == null ||
+        ownStashInfo.nominating.length == 0) {
       return [];
     }
-    return List.of(
-        validatorsInfo.where((i) => nominators.indexOf(i.accountId) >= 0));
+    return List.of(validatorsInfo
+        .where((i) => ownStashInfo.nominating.indexOf(i.accountId) >= 0));
   }
 
   @computed

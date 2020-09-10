@@ -171,25 +171,28 @@ class _NominatePageState extends State<NominatePage> {
   void initState() {
     super.initState();
 
-    setState(() {
-      store.staking.validatorsAll.forEach((i) {
-        _notSelected.add(i);
-        _selectedMap[i.accountId] = false;
-      });
-      store.staking.nominatingList.forEach((i) {
-        _selected.add(i);
-        _notSelected.removeWhere((item) => item.accountId == i.accountId);
-        _selectedMap[i.accountId] = true;
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        store.staking.validatorsAll.forEach((i) {
+          _notSelected.add(i);
+          _selectedMap[i.accountId] = false;
+        });
+        print(store.staking.nominatingList.length);
+        store.staking.nominatingList.forEach((i) {
+          _selected.add(i);
+          _notSelected.removeWhere((item) => item.accountId == i.accountId);
+          _selectedMap[i.accountId] = true;
+        });
 
-      // set recommended selected
-      List<ValidatorData> recommended = _notSelected.toList();
-      recommended.retainWhere((i) =>
-          store.staking.recommendedValidatorList.indexOf(i.accountId) > -1);
-      recommended.forEach((i) {
-        _selected.add(i);
-        _notSelected.removeWhere((item) => item.accountId == i.accountId);
-        _selectedMap[i.accountId] = true;
+        // set recommended selected
+        List<ValidatorData> recommended = _notSelected.toList();
+        recommended.retainWhere((i) =>
+            store.staking.recommendedValidatorList.indexOf(i.accountId) > -1);
+        recommended.forEach((i) {
+          _selected.add(i);
+          _notSelected.removeWhere((item) => item.accountId == i.accountId);
+          _selectedMap[i.accountId] = true;
+        });
       });
     });
   }

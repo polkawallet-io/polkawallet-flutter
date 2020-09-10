@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/textTag.dart';
+import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/staking/validators/nominatePage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -61,6 +62,58 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     }
   }
 
+  void _onSetPayee() {
+    var dic = I18n.of(context).staking;
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            child: Text(
+              dic['action.nominee'],
+            ),
+            onPressed: () {
+              Navigator.of(context).popAndPushNamed(NominatePage.route);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text(
+              dic['action.chill'],
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              _chill();
+            },
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: Text(I18n.of(context).home['cancel']),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
+
+  void _chill() {
+    var dic = I18n.of(context).staking;
+    var args = {
+      "title": dic['action.chill'],
+      "txInfo": {
+        "module": 'staking',
+        "call": 'chill',
+      },
+      "detail": 'chill',
+      "params": [],
+      'onFinish': (BuildContext txPageContext, Map res) {
+        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        globalNominatingRefreshKey.currentState.show();
+      }
+    };
+    Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
+  }
+
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).staking;
     bool hashData = store.staking.ownStashInfo != null &&
@@ -116,35 +169,21 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
               width: 100,
               child: isController && bonded > 0
                   ? GestureDetector(
-                      child: nominators.length > 0
-                          ? Column(
-                              children: <Widget>[
-                                OutlinedCircle(
-                                  icon: Icons.add,
-                                  color: actionButtonColor,
-                                ),
-                                Text(
-                                  dic[nominators.length > 0
-                                      ? 'action.nominee'
-                                      : 'action.nominate'],
-                                  style: TextStyle(color: actionButtonColor),
-                                )
-                              ],
-                            )
-                          : Column(
-                              children: <Widget>[
-                                OutlinedCircle(
-                                  icon: Icons.add,
-                                  color: actionButtonColor,
-                                ),
-                                Text(
-                                  dic['action.nominate'],
-                                  style: TextStyle(color: actionButtonColor),
-                                )
-                              ],
-                            ),
-                      onTap: () =>
-                          Navigator.pushNamed(context, NominatePage.route),
+                      child: Column(
+                        children: <Widget>[
+                          OutlinedCircle(
+                            icon: Icons.add,
+                            color: actionButtonColor,
+                          ),
+                          Text(
+                            dic[nominators.length > 0
+                                ? 'action.nominee'
+                                : 'action.nominate'],
+                            style: TextStyle(color: actionButtonColor),
+                          )
+                        ],
+                      ),
+                      onTap: _onSetPayee,
                     )
                   : Column(
                       children: <Widget>[
@@ -412,7 +451,8 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
 }
 
 class _NomineeItem extends StatelessWidget {
-  _NomineeItem(this.validator, this.active, this.accInfoMap, {this.waiting});
+  _NomineeItem(this.validator, this.active, this.accInfoMap,
+      {this.waiting = false});
 
   final ValidatorData validator;
   final bool active;

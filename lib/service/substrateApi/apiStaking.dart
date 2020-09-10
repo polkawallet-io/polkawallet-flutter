@@ -84,9 +84,11 @@ class ApiStaking {
   }
 
   Future<Map> updateStakingRewards() async {
-    Map res = await apiRoot.subScanApi.fetchRewardTxsAsync(
+    final address =
+        store.staking.ownStashInfo?.stashId ?? store.account.currentAddress;
+    final res = await apiRoot.subScanApi.fetchRewardTxsAsync(
       page: 0,
-      sender: store.account.currentAddress,
+      sender: address,
       network: store.settings.networkName.toLowerCase(),
     );
 
