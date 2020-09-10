@@ -32,6 +32,7 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
 //    'Governance',
     'Profile',
   ];
+  int _tabIndex = 0;
 
   List<BottomNavigationBarItem> _navBarItems(int activeItem) {
     Map<String, String> tabs = I18n.of(context).home;
@@ -102,14 +103,6 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
                   ),
                 ],
               ),
-              bottomNavigationBar: BottomNavigationBar(
-                  currentIndex: i,
-                  iconSize: 22.0,
-                  onTap: (index) {
-                    _pageController.jumpToPage(index);
-                  },
-                  type: BottomNavigationBarType.fixed,
-                  items: _navBarItems(i)),
               body: _getPage(i),
             )
           ],
@@ -137,14 +130,6 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
           ),
           Scaffold(
             backgroundColor: Colors.transparent,
-            bottomNavigationBar: BottomNavigationBar(
-                currentIndex: i,
-                iconSize: 22.0,
-                onTap: (index) {
-                  _pageController.jumpToPage(index);
-                },
-                type: BottomNavigationBarType.fixed,
-                items: _navBarItems(i)),
             body: _getPage(i),
           )
         ],
@@ -164,9 +149,34 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return PageView(
-      controller: _pageController,
-      children: _buildPages(),
+    return SafeArea(
+      child: Scaffold(
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _tabIndex = index;
+            });
+          },
+          children: _buildPages(),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _tabIndex,
+          iconSize: 22.0,
+          onTap: (index) {
+            setState(() {
+              _tabIndex = index;
+            });
+            _pageController.animateToPage(
+              index,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.ease,
+            );
+          },
+          type: BottomNavigationBarType.fixed,
+          items: _navBarItems(_tabIndex),
+        ),
+      ),
     );
   }
 }
