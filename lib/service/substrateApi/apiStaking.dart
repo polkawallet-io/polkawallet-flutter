@@ -123,7 +123,7 @@ class ApiStaking {
     store.staking.setOwnStashInfo(pubKey, data);
 
     final List<String> addressesNeedIcons =
-        store.staking.ownStashInfo.nominating != null
+        store.staking.ownStashInfo?.nominating != null
             ? store.staking.ownStashInfo.nominating.toList()
             : [];
     final List<String> addressesNeedDecode = [];

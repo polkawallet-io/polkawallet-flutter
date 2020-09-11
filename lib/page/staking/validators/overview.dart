@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/staking/actions/bondExtraPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondPage.dart';
 import 'package:polka_wallet/page/staking/validators/nominatePage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
@@ -63,7 +64,9 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     }
   }
 
-  void _goToBond() {
+  void _goToBond({bondExtra = false}) {
+    if (store.staking.ownStashInfo == null) return;
+
     var dic = I18n.of(context).staking;
     showCupertinoDialog(
       context: context,
@@ -80,7 +83,8 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
               child: Text(I18n.of(context).home['ok']),
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.pushNamed(context, BondPage.route);
+                Navigator.pushNamed(
+                    context, bondExtra ? BondExtraPage.route : BondPage.route);
               },
             ),
           ],
@@ -90,6 +94,8 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
   }
 
   void _onSetPayee() {
+    if (store.staking.ownStashInfo == null) return;
+
     var dic = I18n.of(context).staking;
     showCupertinoModalPopup(
       context: context,
@@ -146,20 +152,20 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     bool hashData = store.staking.ownStashInfo != null &&
         store.staking.ownStashInfo.stakingLedger != null;
 
-    String controllerId = store.account.currentAddress;
     int bonded = 0;
     List nominators = [];
     double nominatorListHeight = 48;
+    bool isController = false;
     if (hashData) {
-      controllerId = store.staking.ownStashInfo.controllerId;
       bonded = store.staking.ownStashInfo.stakingLedger['active'];
       nominators = store.staking.ownStashInfo.nominating.toList();
       if (nominators.length > 0) {
         nominatorListHeight = double.parse((nominators.length * 56).toString());
       }
+      isController = store.staking.ownStashInfo.isOwnController;
     }
-    bool isController =
-        store.staking.ownStashInfo?.account?.accountId == controllerId;
+    final isStash = store.staking.ownStashInfo?.stashId ==
+        store.staking.ownStashInfo?.account?.accountId;
 
     Color actionButtonColor = Theme.of(context).primaryColor;
     Color disabledColor = Theme.of(context).disabledColor;
@@ -195,7 +201,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
             subtitle: Text(dic['nominating']),
             trailing: Container(
               width: 100,
-              child: isController
+              child: store.staking.ownStashInfo?.controllerId == null && isStash
                   ? GestureDetector(
                       child: Column(
                         children: <Widget>[
@@ -204,27 +210,45 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
                             color: actionButtonColor,
                           ),
                           Text(
-                            dic[nominators.length > 0
-                                ? 'action.nominee'
-                                : 'action.nominate'],
+                            dic['action.nominate'],
                             style: TextStyle(color: actionButtonColor),
                           )
                         ],
                       ),
-                      onTap: bonded > 0 ? _onSetPayee : _goToBond,
+                      onTap: _goToBond,
                     )
-                  : Column(
-                      children: <Widget>[
-                        OutlinedCircle(
-                          icon: Icons.add,
-                          color: disabledColor,
-                        ),
-                        Text(
-                          dic['action.nominate'],
-                          style: TextStyle(color: disabledColor),
+                  : isStash && !isController
+                      ? Column(
+                          children: <Widget>[
+                            OutlinedCircle(
+                              icon: Icons.add,
+                              color: disabledColor,
+                            ),
+                            Text(
+                              dic['action.nominate'],
+                              style: TextStyle(color: disabledColor),
+                            )
+                          ],
                         )
-                      ],
-                    ),
+                      : GestureDetector(
+                          child: Column(
+                            children: <Widget>[
+                              OutlinedCircle(
+                                icon: Icons.add,
+                                color: actionButtonColor,
+                              ),
+                              Text(
+                                dic[nominators.length > 0
+                                    ? 'action.nominee'
+                                    : 'action.nominate'],
+                                style: TextStyle(color: actionButtonColor),
+                              )
+                            ],
+                          ),
+                          onTap: bonded > 0
+                              ? _onSetPayee
+                              : () => _goToBond(bondExtra: true),
+                        ),
             ),
           ),
           AnimatedContainer(

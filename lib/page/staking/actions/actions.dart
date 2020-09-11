@@ -229,12 +229,7 @@ class _StakingActions extends State<StakingActions>
       child: !hasData
           ? Container(
               padding: EdgeInsets.only(top: 80, bottom: 80),
-              child: Column(
-                children: [
-                  CupertinoActivityIndicator(),
-                  Text(I18n.of(context).assets['node.connecting']),
-                ],
-              ),
+              child: CupertinoActivityIndicator(),
             )
           : Column(
               children: <Widget>[

@@ -164,7 +164,9 @@ abstract class _StakingStore with Store {
     List<ValidatorData> ls = List<ValidatorData>();
 
     data['info'].forEach((i) {
-      i['points'] = overview['eraPoints']['individual'][i['accountId']];
+      i['points'] = overview['eraPoints'] != null
+          ? overview['eraPoints']['individual'][i['accountId']]
+          : 0;
       ValidatorData data = ValidatorData.fromJson(i);
       totalStaked += data.total;
       data.nominators.forEach((n) {
