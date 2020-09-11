@@ -148,8 +148,8 @@ const String cross_chain_transfer_address_laminar =
     '5CLaminarAUSDCrossChainTransferxxxxxxxxxxxxxwisu';
 
 /// app versions
-const String app_beta_version = 'v1.0.1-beta.3';
-const int app_beta_version_code = 1013;
+const String app_beta_version = 'v1.0.1-beta.4';
+const int app_beta_version_code = 1014;
 
 /// js code versions
 const Map<String, int> js_code_version_map = {

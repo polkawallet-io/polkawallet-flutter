@@ -488,7 +488,7 @@ class RowAccount02 extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        isAcc02Controller ? dic['stash'] : dic['controller'],
+                        isAcc02Controller ? dic['controller'] : dic['stash'],
                         style: TextStyle(
                             fontSize: 14,
                             color: Theme.of(context).unselectedWidgetColor),
