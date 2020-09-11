@@ -8,9 +8,20 @@
     "build": "webpack -p --mode production",
     "build-dev": "webpack -d --mode development"
   },
+  "resolutions": {
+    "@acala-network/api": "v0.4.0-beta.0",
+    "@acala-network/app-util": "v0.4.0-beta.0",
+    "@acala-network/api-derive": "v0.4.0-beta.0",
+    "@acala-network/types": "v0.4.0-beta.0",
+    "@acala-network/type-definitions": "^0.4.0-beta.0",
+    "@polkadot/api": "1.29.1"
+  },
   "dependencies": {
-    "@acala-network/api": "beta",
-    "@acala-network/app-util": "beta",
+    "@acala-network/api": "v0.4.0-beta.0",
+    "@acala-network/app-util": "v0.4.0-beta.0",
+    "@acala-network/api-derive": "v0.4.0-beta.0",
+    "@acala-network/types": "v0.4.0-beta.0",
+    "@acala-network/type-definitions": "^0.4.0-beta.0",
     "@babel/polyfill": "^7.8.3",
     "@polkadot/api": "^1.18.1",
     "@polkadot/keyring": "^3.1.0-beta.0",

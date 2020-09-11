@@ -131,7 +131,8 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
         nominatorListHeight = double.parse((nominators.length * 56).toString());
       }
     }
-    bool isController = store.staking.ledger['accountId'] == controllerId;
+    bool isController =
+        store.staking.ownStashInfo?.account?.accountId == controllerId;
 
     Color actionButtonColor = Theme.of(context).primaryColor;
     Color disabledColor = Theme.of(context).disabledColor;

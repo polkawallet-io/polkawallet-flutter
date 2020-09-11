@@ -39,7 +39,7 @@ class _PayoutPageState extends State<PayoutPage> {
     var dic = I18n.of(context).staking;
     final int decimals = store.settings.networkState.tokenDecimals;
 
-    List rewards = store.staking.ledger['rewards']['validators'];
+    List rewards = store.staking.rewards['validators'];
     if (rewards.length == 1 && List.of(rewards[0]['eras']).length == 1) {
       var args = {
         "title": dic['action.payout'],

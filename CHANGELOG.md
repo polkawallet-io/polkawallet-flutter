@@ -1,3 +1,7 @@
+# 1.0.1
+- add unbonding time left display
+- fix acala data bug
+
 # 1.0.0
 - rebuild staking module & update nominees list
 - add validator sort type: judgements

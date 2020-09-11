@@ -8,6 +8,9 @@ part of 'ownStashInfo.dart';
 
 OwnStashInfoData _$OwnStashInfoDataFromJson(Map<String, dynamic> json) {
   return OwnStashInfoData()
+    ..account = json['account'] == null
+        ? null
+        : LedgerInfoData.fromJson(json['account'] as Map<String, dynamic>)
     ..controllerId = json['controllerId'] as String
     ..destination = json['destination'] as String
     ..destinationId = json['destinationId'] as int
@@ -27,11 +30,13 @@ OwnStashInfoData _$OwnStashInfoDataFromJson(Map<String, dynamic> json) {
     ..validatorPrefs = json['validatorPrefs'] as Map<String, dynamic>
     ..inactives = json['inactives'] == null
         ? null
-        : NomineesInfoData.fromJson(json['inactives'] as Map<String, dynamic>);
+        : NomineesInfoData.fromJson(json['inactives'] as Map<String, dynamic>)
+    ..unbondings = json['unbondings'] as Map<String, dynamic>;
 }
 
 Map<String, dynamic> _$OwnStashInfoDataToJson(OwnStashInfoData instance) =>
     <String, dynamic>{
+      'account': instance.account,
       'controllerId': instance.controllerId,
       'destination': instance.destination,
       'destinationId': instance.destinationId,
@@ -48,6 +53,7 @@ Map<String, dynamic> _$OwnStashInfoDataToJson(OwnStashInfoData instance) =>
       'stashId': instance.stashId,
       'validatorPrefs': instance.validatorPrefs,
       'inactives': instance.inactives,
+      'unbondings': instance.unbondings,
     };
 
 NomineesInfoData _$NomineesInfoDataFromJson(Map<String, dynamic> json) {
@@ -70,4 +76,40 @@ Map<String, dynamic> _$NomineesInfoDataToJson(NomineesInfoData instance) =>
       'nomsInactive': instance.nomsInactive,
       'nomsOver': instance.nomsOver,
       'nomsWaiting': instance.nomsWaiting,
+    };
+
+LedgerInfoData _$LedgerInfoDataFromJson(Map<String, dynamic> json) {
+  return LedgerInfoData()
+    ..accountId = json['accountId'] as String
+    ..controllerId = json['controllerId'] as String
+    ..stashId = json['stashId'] as String
+    ..exposure = json['exposure'] as Map<String, dynamic>
+    ..rewardDestination = json['rewardDestination'] as String
+    ..stakingLedger = json['stakingLedger'] as Map<String, dynamic>
+    ..validatorPrefs = json['validatorPrefs'] as Map<String, dynamic>
+    ..redeemable = json['redeemable'];
+}
+
+Map<String, dynamic> _$LedgerInfoDataToJson(LedgerInfoData instance) =>
+    <String, dynamic>{
+      'accountId': instance.accountId,
+      'controllerId': instance.controllerId,
+      'stashId': instance.stashId,
+      'exposure': instance.exposure,
+      'rewardDestination': instance.rewardDestination,
+      'stakingLedger': instance.stakingLedger,
+      'validatorPrefs': instance.validatorPrefs,
+      'redeemable': instance.redeemable,
+    };
+
+UnbondingInfoData _$UnbondingInfoDataFromJson(Map<String, dynamic> json) {
+  return UnbondingInfoData()
+    ..mapped = json['mapped'] as List
+    ..total = json['total'];
+}
+
+Map<String, dynamic> _$UnbondingInfoDataToJson(UnbondingInfoData instance) =>
+    <String, dynamic>{
+      'mapped': instance.mapped,
+      'total': instance.total,
     };

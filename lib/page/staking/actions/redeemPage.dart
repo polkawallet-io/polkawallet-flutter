@@ -25,8 +25,8 @@ class _RedeemPageState extends State<RedeemPage> {
   Future<int> _getSlashingSpans() async {
     if (_slashingSpans != null) return _slashingSpans;
 
-    final String stashId = widget.store.staking.ledger['stashId'] ??
-        widget.store.staking.ledger['accountId'];
+    final String stashId = widget.store.staking.ownStashInfo.stashId ??
+        widget.store.staking.ownStashInfo.account.accountId;
     final int spans =
         await webApi.evalJavascript('staking.getSlashingSpans("$stashId")');
     setState(() {
@@ -47,7 +47,8 @@ class _RedeemPageState extends State<RedeemPage> {
       "detail": jsonEncode({
         'spanCount': _slashingSpans,
         'amount': Fmt.token(
-          Fmt.balanceInt(widget.store.staking.ledger['redeemable'].toString()),
+          Fmt.balanceInt(
+              widget.store.staking.ownStashInfo.account.redeemable.toString()),
           decimals,
           length: decimals,
         )
@@ -91,7 +92,7 @@ class _RedeemPageState extends State<RedeemPage> {
                       ),
                       initialValue: Fmt.token(
                           Fmt.balanceInt(widget
-                              .store.staking.ledger['redeemable']
+                              .store.staking.ownStashInfo.account.redeemable
                               .toString()),
                           decimals,
                           length: decimals),

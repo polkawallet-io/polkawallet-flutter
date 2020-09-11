@@ -143,18 +143,18 @@ mixin _$StakingStore on _StakingStore, Store {
     });
   }
 
-  final _$ledgerAtom = Atom(name: '_StakingStore.ledger');
+  final _$rewardsAtom = Atom(name: '_StakingStore.rewards');
 
   @override
-  ObservableMap<String, dynamic> get ledger {
-    _$ledgerAtom.reportRead();
-    return super.ledger;
+  Map<String, dynamic> get rewards {
+    _$rewardsAtom.reportRead();
+    return super.rewards;
   }
 
   @override
-  set ledger(ObservableMap<String, dynamic> value) {
-    _$ledgerAtom.reportWrite(value, super.ledger, () {
-      super.ledger = value;
+  set rewards(Map<String, dynamic> value) {
+    _$rewardsAtom.reportWrite(value, super.rewards, () {
+      super.rewards = value;
     });
   }
 
@@ -391,13 +391,11 @@ mixin _$StakingStore on _StakingStore, Store {
   }
 
   @override
-  void setLedger(String pubKey, Map<String, dynamic> data,
-      {bool shouldCache = true, bool reset = false}) {
+  void setRewards(String pubKey, Map<String, dynamic> data) {
     final _$actionInfo = _$_StakingStoreActionController.startAction(
-        name: '_StakingStore.setLedger');
+        name: '_StakingStore.setRewards');
     try {
-      return super
-          .setLedger(pubKey, data, shouldCache: shouldCache, reset: reset);
+      return super.setRewards(pubKey, data);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }
@@ -455,7 +453,7 @@ overview: ${overview},
 staked: ${staked},
 nominatorCount: ${nominatorCount},
 validatorsInfo: ${validatorsInfo},
-ledger: ${ledger},
+rewards: ${rewards},
 ownStashInfo: ${ownStashInfo},
 txsLoading: ${txsLoading},
 txsCount: ${txsCount},

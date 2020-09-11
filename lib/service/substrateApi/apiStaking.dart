@@ -13,11 +13,6 @@ class ApiStaking {
   Future<void> fetchAccountStaking() async {
     final String pubKey = store.account.currentAccountPubKey;
     if (pubKey != null && pubKey.isNotEmpty) {
-      final Map ledger = await apiRoot.evalJavascript(
-          'api.derive.staking.account("${store.account.currentAddress}")');
-      store.staking
-          .setLedger(pubKey, Map<String, dynamic>.of(ledger), reset: true);
-
       queryOwnStashInfo();
     }
   }
@@ -33,11 +28,11 @@ class ApiStaking {
         print('fetching staking rewards...');
         Map res = await apiRoot
             .evalJavascript('staking.loadAccountRewardsData("$address")');
-        store.staking.setLedger(pubKey, {'rewards': res});
+        store.staking.setRewards(pubKey, res);
         return;
       }
     }
-    store.staking.setLedger(pubKey, {'rewards': {}});
+    store.staking.setRewards(pubKey, {});
   }
 
   Future<Map> fetchStakingOverview() async {

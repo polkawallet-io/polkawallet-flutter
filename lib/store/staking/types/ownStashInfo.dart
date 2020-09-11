@@ -9,6 +9,7 @@ class OwnStashInfoData extends _OwnStashInfoData {
 }
 
 abstract class _OwnStashInfoData {
+  LedgerInfoData account;
   String controllerId;
   String destination;
   int destinationId;
@@ -25,6 +26,8 @@ abstract class _OwnStashInfoData {
   String stashId;
   Map<String, dynamic> validatorPrefs;
   NomineesInfoData inactives;
+  Map<String, dynamic> unbondings;
+
 }
 
 @JsonSerializable()
@@ -39,4 +42,32 @@ abstract class _NomineesInfoData {
   List<String> nomsInactive;
   List<String> nomsOver;
   List<String> nomsWaiting;
+}
+
+@JsonSerializable()
+class LedgerInfoData extends _LedgerInfoData {
+  static LedgerInfoData fromJson(Map<String, dynamic> json) =>
+      _$LedgerInfoDataFromJson(json);
+}
+
+abstract class _LedgerInfoData {
+  String accountId;
+  String controllerId;
+  String stashId;
+  Map<String, dynamic> exposure;
+  String rewardDestination;
+  Map<String, dynamic> stakingLedger;
+  Map<String, dynamic> validatorPrefs;
+  dynamic redeemable;
+}
+
+@JsonSerializable()
+class UnbondingInfoData extends _UnbondingInfoData {
+  static UnbondingInfoData fromJson(Map<String, dynamic> json) =>
+      _$UnbondingInfoDataFromJson(json);
+}
+
+abstract class _UnbondingInfoData {
+  List mapped;
+  dynamic total;
 }

@@ -19,7 +19,6 @@ abstract class _StakingStore with Store {
   final String localStorageOverviewKey = 'staking_overview';
   final String localStorageValidatorsKey = 'validators';
 
-  final String cacheAccountStakingKey = 'account_staking';
   final String cacheOwnStashKey = 'staking_own_stash';
   final String cacheStakingTxsKey = 'staking_txs';
   final String cacheStakingRewardTxsKey = 'staking_reward_txs';
@@ -45,7 +44,7 @@ abstract class _StakingStore with Store {
   List<ValidatorData> validatorsInfo = List<ValidatorData>();
 
   @observable
-  ObservableMap<String, dynamic> ledger = ObservableMap<String, dynamic>();
+  Map<String, dynamic> rewards;
 
   @observable
   OwnStashInfoData ownStashInfo;
@@ -140,13 +139,13 @@ abstract class _StakingStore with Store {
 
   @computed
   BigInt get accountRewardTotal {
-    if (ledger['rewards'] == null) {
+    if (rewards == null) {
       return null;
     }
-    if (ledger['rewards']['available'] == null) {
+    if (rewards['available'] == null) {
       return BigInt.zero;
     }
-    return Fmt.balanceInt(ledger['rewards']['available'].toString());
+    return Fmt.balanceInt(rewards['available'].toString());
   }
 
   @computed
@@ -206,31 +205,10 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void setLedger(
-    String pubKey,
-    Map<String, dynamic> data, {
-    bool shouldCache = true,
-    bool reset = false,
-  }) {
+  void setRewards(String pubKey, Map<String, dynamic> data) {
     if (rootStore.account.currentAccount.pubKey != pubKey) return;
 
-    if (reset) {
-      ledger = ObservableMap.of(data);
-    } else {
-      data.keys.forEach((key) => ledger[key] = data[key]);
-    }
-
-    if (shouldCache) {
-      Map cache = {};
-      ledger.keys.forEach((key) {
-        cache[key] = ledger[key];
-      });
-      rootStore.localStorage.setAccountCache(
-        rootStore.account.currentAccount.pubKey,
-        _getCacheKey(cacheAccountStakingKey),
-        cache,
-      );
-    }
+    rewards = data;
   }
 
   @action
@@ -295,9 +273,9 @@ abstract class _StakingStore with Store {
   @action
   void clearState() {
     txs.clear();
-    ledger = ObservableMap<String, dynamic>();
     overview = ObservableMap<String, dynamic>();
     ownStashInfo = null;
+    rewards = null;
   }
 
   @action
@@ -320,20 +298,18 @@ abstract class _StakingStore with Store {
 
     List cache = await Future.wait([
       rootStore.localStorage
-          .getAccountCache(pubKey, _getCacheKey(cacheAccountStakingKey)),
+          .getAccountCache(pubKey, _getCacheKey(cacheOwnStashKey)),
       rootStore.localStorage
           .getAccountCache(pubKey, _getCacheKey(cacheStakingTxsKey)),
       rootStore.localStorage
           .getAccountCache(pubKey, _getCacheKey(cacheStakingRewardTxsKey)),
       rootStore.localStorage
           .getAccountCache(pubKey, _getCacheKey(cacheTimeKey)),
-      rootStore.localStorage
-          .getAccountCache(pubKey, _getCacheKey(cacheOwnStashKey)),
     ]);
     if (cache[0] != null) {
-      setLedger(rootStore.account.currentAddress, cache[0], shouldCache: false);
+      ownStashInfo = OwnStashInfoData.fromJson(cache[0]);
     } else {
-      ledger = ObservableMap<String, dynamic>();
+      ownStashInfo = null;
     }
     if (cache[1] != null) {
       addTxs(cache[1]);
@@ -347,11 +323,6 @@ abstract class _StakingStore with Store {
     }
     if (cache[3] != null) {
       cacheTxsTimestamp = cache[3];
-    }
-    if (cache[4] != null) {
-      ownStashInfo = OwnStashInfoData.fromJson(cache[4]);
-    } else {
-      ownStashInfo = null;
     }
   }
 

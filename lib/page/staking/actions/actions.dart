@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:polka_wallet/common/components/TapTooltip.dart';
 import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/common/components/listTail.dart';
 import 'package:polka_wallet/page/account/import/importAccountPage.dart';
@@ -216,9 +217,8 @@ class _StakingActions extends State<StakingActions>
     if (hasData && store.staking.ownStashInfo.stakingLedger != null) {
       bonded = BigInt.parse(
           store.staking.ownStashInfo.stakingLedger['active'].toString());
-    }
-    if (store.staking.ledger['redeemable'] != null) {
-      redeemable = BigInt.parse(store.staking.ledger['redeemable'].toString());
+      redeemable = BigInt.parse(
+          store.staking.ownStashInfo.account.redeemable.toString());
     }
     BigInt unlocking = store.staking.accountUnlockingTotal;
     unlocking -= redeemable;
@@ -280,7 +280,7 @@ class _StakingActions extends State<StakingActions>
                 ),
                 RowAccount02(
                   acc02: acc02,
-                  accountId: store.staking.ledger['accountId'] ??
+                  accountId: store.staking.ownStashInfo.account.accountId ??
                       store.account.currentAddress,
                   stashInfo: store.staking.ownStashInfo,
                   onChangeAccount: _changeCurrentAccount,
@@ -289,10 +289,12 @@ class _StakingActions extends State<StakingActions>
                 StakingInfoPanel(
                   hasData: hasData,
                   isController: store.staking.ownStashInfo.controllerId ==
-                      store.staking.ledger['accountId'],
+                      store.staking.ownStashInfo.account.accountId,
                   accountId: store.account.currentAddress,
                   stashInfo: store.staking.ownStashInfo,
                   decimals: decimals,
+                  blockDuration: store.settings.networkConst['babe']
+                      ['expectedBlockTime'],
                   bonded: bonded,
                   unlocking: unlocking,
                   redeemable: redeemable,
@@ -302,7 +304,7 @@ class _StakingActions extends State<StakingActions>
                 Divider(),
                 StakingActionsPanel(
                   isStash: store.staking.ownStashInfo.stashId ==
-                      store.staking.ledger['accountId'],
+                      store.staking.ownStashInfo.account.accountId,
                   stashInfo: store.staking.ownStashInfo,
                   bonded: bonded,
                   controller: acc02,
@@ -531,6 +533,7 @@ class StakingInfoPanel extends StatelessWidget {
     this.accountId,
     this.stashInfo,
     this.decimals,
+    this.blockDuration,
     this.bonded,
     this.unlocking,
     this.redeemable,
@@ -543,6 +546,7 @@ class StakingInfoPanel extends StatelessWidget {
   final String accountId;
   final OwnStashInfoData stashInfo;
   final int decimals;
+  final int blockDuration;
   final BigInt bonded;
   final BigInt unlocking;
   final BigInt redeemable;
@@ -552,7 +556,15 @@ class StakingInfoPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).staking;
+    final Map<String, String> dicGov = I18n.of(context).gov;
     Color actionButtonColor = Theme.of(context).primaryColor;
+    final unlockDetail = List.of(stashInfo.unbondings['mapped'])
+        .map((e) {
+          return '${dic['bond.unlocking']}:  ${Fmt.balance(e[0], decimals)}\n'
+              '${dicGov['remain']}:  ${Fmt.blockToTime(e[1], blockDuration)}';
+        })
+        .toList()
+        .join('\n\n');
     return Padding(
       padding: EdgeInsets.only(top: 4, bottom: 4),
       child: Column(
@@ -564,11 +576,40 @@ class StakingInfoPanel extends StatelessWidget {
                 content: Fmt.priceFloorBigInt(bonded, decimals, lengthMax: 3),
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),
-              InfoItem(
-                title: dic['bond.unlocking'],
-                content:
-                    Fmt.priceFloorBigInt(unlocking, decimals, lengthMax: 3),
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(dic['bond.unlocking'], style: TextStyle(fontSize: 12)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        unlocking > BigInt.zero
+                            ? TapTooltip(
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: 2),
+                                  child: Icon(
+                                    Icons.access_time,
+                                    size: 16,
+                                    color: actionButtonColor,
+                                  ),
+                                ),
+                                message: '\n$unlockDetail\n',
+                              )
+                            : Container(),
+                        Text(
+                          Fmt.priceFloorBigInt(unlocking, decimals,
+                              lengthMax: 3),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).unselectedWidgetColor,
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
               Expanded(
                 child: Column(
@@ -640,7 +681,7 @@ class StakingInfoPanel extends StatelessWidget {
                         padding: EdgeInsets.all(1),
                         child: Icon(
                           Icons.card_giftcard,
-                          size: 18,
+                          size: 16,
                           color: actionButtonColor,
                         ),
                       ),
