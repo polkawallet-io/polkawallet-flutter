@@ -13,7 +13,7 @@ class ApiStaking {
   Future<void> fetchAccountStaking() async {
     final String pubKey = store.account.currentAccountPubKey;
     if (pubKey != null && pubKey.isNotEmpty) {
-      queryOwnStashInfo();
+      queryOwnStashInfo(pubKey);
     }
   }
 
@@ -116,11 +116,11 @@ class ApiStaking {
     return data;
   }
 
-  Future<Map> queryOwnStashInfo() async {
+  Future<Map> queryOwnStashInfo(String pubKey) async {
     final accountId = store.account.currentAddress;
     Map data =
         await apiRoot.evalJavascript('staking.getOwnStashInfo("$accountId")');
-    store.staking.setOwnStashInfo(data);
+    store.staking.setOwnStashInfo(pubKey, data);
 
     final List<String> addressesNeedIcons =
         store.staking.ownStashInfo.nominating != null

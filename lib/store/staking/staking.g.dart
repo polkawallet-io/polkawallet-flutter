@@ -402,11 +402,12 @@ mixin _$StakingStore on _StakingStore, Store {
   }
 
   @override
-  void setOwnStashInfo(Map<String, dynamic> data, {bool shouldCache = true}) {
+  void setOwnStashInfo(String pubKey, Map<String, dynamic> data,
+      {bool shouldCache = true}) {
     final _$actionInfo = _$_StakingStoreActionController.startAction(
         name: '_StakingStore.setOwnStashInfo');
     try {
-      return super.setOwnStashInfo(data, shouldCache: shouldCache);
+      return super.setOwnStashInfo(pubKey, data, shouldCache: shouldCache);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }

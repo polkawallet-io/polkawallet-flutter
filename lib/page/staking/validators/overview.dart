@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/staking/actions/bondPage.dart';
 import 'package:polka_wallet/page/staking/validators/nominatePage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -60,6 +61,32 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     if (res != null && res['validators'] != null) {
       store.staking.setRecommendedValidatorList(res['validators']);
     }
+  }
+
+  void _goToBond() {
+    var dic = I18n.of(context).staking;
+    showCupertinoDialog(
+      context: context,
+      builder: (_) {
+        return CupertinoAlertDialog(
+          title: Text(dic['action.nominate']),
+          content: Text(dic['action.nominate.bond']),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(I18n.of(context).home['cancel']),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            CupertinoButton(
+              child: Text(I18n.of(context).home['ok']),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushNamed(context, BondPage.route);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _onSetPayee() {
@@ -168,7 +195,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
             subtitle: Text(dic['nominating']),
             trailing: Container(
               width: 100,
-              child: isController && bonded > 0
+              child: isController
                   ? GestureDetector(
                       child: Column(
                         children: <Widget>[
@@ -184,7 +211,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
                           )
                         ],
                       ),
-                      onTap: _onSetPayee,
+                      onTap: bonded > 0 ? _onSetPayee : _goToBond,
                     )
                   : Column(
                       children: <Widget>[

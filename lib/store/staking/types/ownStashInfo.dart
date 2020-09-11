@@ -27,7 +27,6 @@ abstract class _OwnStashInfoData {
   Map<String, dynamic> validatorPrefs;
   NomineesInfoData inactives;
   Map<String, dynamic> unbondings;
-
 }
 
 @JsonSerializable()
@@ -55,7 +54,6 @@ abstract class _LedgerInfoData {
   String controllerId;
   String stashId;
   Map<String, dynamic> exposure;
-  String rewardDestination;
   Map<String, dynamic> stakingLedger;
   Map<String, dynamic> validatorPrefs;
   dynamic redeemable;

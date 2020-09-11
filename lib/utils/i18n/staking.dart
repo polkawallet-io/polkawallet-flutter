@@ -37,6 +37,8 @@ const Map<String, String> enStaking = {
   'action.redeem': 'Redeem Unbonded',
   'action.payout': 'Payout',
   'action.nominate': 'Nominate',
+  'action.nominate.bond':
+      'You need to bond Tokens before nominating. Go to bonding now?',
   'action.nominee': 'Set Nominees',
   'action.chill': 'Stop Nominating',
   'action.reward': 'Reward Type',
@@ -107,6 +109,7 @@ const Map<String, String> zhStaking = {
   'action.redeem': '解绑取回',
   'action.payout': '领取收益',
   'action.nominate': '提名',
+  'action.nominate.bond': '您需要在提名前进行 Token 质押绑定，现在去绑定吗？',
   'action.nominee': '设置提名人',
   'action.chill': '停止提名',
   'action.reward': '分红方式',

@@ -84,7 +84,6 @@ LedgerInfoData _$LedgerInfoDataFromJson(Map<String, dynamic> json) {
     ..controllerId = json['controllerId'] as String
     ..stashId = json['stashId'] as String
     ..exposure = json['exposure'] as Map<String, dynamic>
-    ..rewardDestination = json['rewardDestination'] as String
     ..stakingLedger = json['stakingLedger'] as Map<String, dynamic>
     ..validatorPrefs = json['validatorPrefs'] as Map<String, dynamic>
     ..redeemable = json['redeemable'];
@@ -96,7 +95,6 @@ Map<String, dynamic> _$LedgerInfoDataToJson(LedgerInfoData instance) =>
       'controllerId': instance.controllerId,
       'stashId': instance.stashId,
       'exposure': instance.exposure,
-      'rewardDestination': instance.rewardDestination,
       'stakingLedger': instance.stakingLedger,
       'validatorPrefs': instance.validatorPrefs,
       'redeemable': instance.redeemable,

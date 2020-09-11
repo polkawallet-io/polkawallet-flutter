@@ -149,33 +149,27 @@ class _AcalaHomePageState extends State<AcalaHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() {
-              _tabIndex = index;
-            });
-          },
-          children: _buildPages(),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _tabIndex,
-          iconSize: 22.0,
-          onTap: (index) {
-            setState(() {
-              _tabIndex = index;
-            });
-            _pageController.animateToPage(
-              index,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.ease,
-            );
-          },
-          type: BottomNavigationBarType.fixed,
-          items: _navBarItems(_tabIndex),
-        ),
+    return Scaffold(
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _tabIndex = index;
+          });
+        },
+        children: _buildPages(),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _tabIndex,
+        iconSize: 22.0,
+        onTap: (index) {
+          setState(() {
+            _tabIndex = index;
+          });
+          _pageController.jumpToPage(index);
+        },
+        type: BottomNavigationBarType.fixed,
+        items: _navBarItems(_tabIndex),
       ),
     );
   }

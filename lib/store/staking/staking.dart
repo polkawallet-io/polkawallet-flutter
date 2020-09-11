@@ -212,7 +212,10 @@ abstract class _StakingStore with Store {
   }
 
   @action
-  void setOwnStashInfo(Map<String, dynamic> data, {bool shouldCache = true}) {
+  void setOwnStashInfo(String pubKey, Map<String, dynamic> data,
+      {bool shouldCache = true}) {
+    if (rootStore.account.currentAccount.pubKey != pubKey) return;
+
     ownStashInfo = OwnStashInfoData.fromJson(data);
 
     if (shouldCache) {
@@ -236,9 +239,9 @@ abstract class _StakingStore with Store {
 
   @action
   Future<void> addTxs(Map res, {bool shouldCache = false}) async {
+    if (res == null || res['extrinsics'] == null) return;
     txsCount = res['count'];
 
-    if (res['extrinsics'] == null) return;
     List<TxData> ls =
         List.of(res['extrinsics']).map((i) => TxData.fromJson(i)).toList();
 
