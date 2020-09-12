@@ -536,7 +536,7 @@ class _NomineeItem extends StatelessWidget {
                   validator.commission.isNotEmpty ? validator.commission : '~'),
             ),
             Expanded(
-              child: Text('commission', style: TextStyle(fontSize: 12)),
+              child: Text(dic['commission'], style: TextStyle(fontSize: 12)),
             ),
           ],
         ),
