@@ -185,8 +185,15 @@ class _StakingActions extends State<StakingActions>
     var dic = I18n.of(context).staking;
     final bool hasData = store.staking.ownStashInfo != null;
 
+    bool isStash = true;
+    bool isController = true;
+    bool isSelfControl = true;
     String account02PubKey = store.account.currentAccountPubKey;
     if (hasData) {
+      isStash = store.staking.ownStashInfo.isOwnStash;
+      isController = store.staking.ownStashInfo.isOwnController;
+      isSelfControl = isStash && isController;
+
       store.account.pubKeyAddressMap[store.settings.endpoint.ss58]
           .forEach((k, v) {
         if (store.staking.ownStashInfo.isOwnStash &&
@@ -277,14 +284,16 @@ class _StakingActions extends State<StakingActions>
                   acc02: acc02,
                   accountId: store.staking.ownStashInfo.account.accountId ??
                       store.account.currentAddress,
+                  isController: isController,
+                  isSelfControl: isSelfControl,
                   stashInfo: store.staking.ownStashInfo,
                   onChangeAccount: _changeCurrentAccount,
+                  store: store,
                 ),
                 Divider(),
                 StakingInfoPanel(
                   hasData: hasData,
-                  isController: store.staking.ownStashInfo.controllerId ==
-                      store.staking.ownStashInfo.account.accountId,
+                  isController: isController,
                   accountId: store.account.currentAddress,
                   stashInfo: store.staking.ownStashInfo,
                   decimals: decimals,
@@ -298,8 +307,8 @@ class _StakingActions extends State<StakingActions>
                 ),
                 Divider(),
                 StakingActionsPanel(
-                  isStash: store.staking.ownStashInfo.stashId ==
-                      store.staking.ownStashInfo.account.accountId,
+                  isStash: isStash,
+                  isController: isController,
                   stashInfo: store.staking.ownStashInfo,
                   bonded: bonded,
                   controller: acc02,
@@ -389,14 +398,24 @@ class RowAccount02 extends StatelessWidget {
   RowAccount02({
     this.acc02,
     this.accountId,
+    this.isController,
+    this.isSelfControl,
     this.stashInfo,
     this.onChangeAccount,
+    this.store,
   });
 
+  /// 1. if acc02 != null, then we have acc02 in accountListAll.
+  ///    if acc02 == null, we can remind user to import it.
+  /// 2. if current account is controller, and it's not self-controlled,
+  ///    we display a stashId as address02, or we display a controllerId.
   final AccountData acc02;
   final String accountId;
+  final bool isController;
+  final bool isSelfControl;
   final OwnStashInfoData stashInfo;
   final Function onChangeAccount;
+  final AppStore store;
 
   Future<void> _importController(BuildContext context) async {
     await Navigator.of(context).pushNamed(ImportAccountPage.route);
@@ -406,7 +425,7 @@ class RowAccount02 extends StatelessWidget {
   void _showActions(BuildContext context) {
     var dic = I18n.of(context).staking;
     String actionAccountTitle =
-        stashInfo.isOwnStash ? dic['controller'] : dic['stash'];
+        isController && !isSelfControl ? dic['stash'] : dic['controller'];
     String importAccountText = '${dic['action.import']}$actionAccountTitle';
     String changeAccountText =
         dic['action.use'] + actionAccountTitle + dic['action.operate'];
@@ -466,11 +485,9 @@ class RowAccount02 extends StatelessWidget {
     final Map<String, String> dic = I18n.of(context).staking;
     final stashId = stashInfo.stashId ?? accountId;
     final controllerId = stashInfo.controllerId ?? accountId;
-    bool isAcc02Controller = false;
-    if (accountId != null && stashId != accountId) {
-      isAcc02Controller = true;
-    }
-    final String address = isAcc02Controller ? stashId : controllerId;
+    final String address02 =
+        isController && !isSelfControl ? stashId : controllerId;
+    print(isController);
     return Container(
       padding: EdgeInsets.only(top: 8, bottom: 8),
       child: stashInfo != null
@@ -481,20 +498,24 @@ class RowAccount02 extends StatelessWidget {
                   child: acc02 != null
                       ? AddressIcon(acc02.address,
                           pubKey: acc02.pubKey, size: 32)
-                      : AddressIcon(address, size: 32),
+                      : AddressIcon(address02, size: 32),
                 ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        isAcc02Controller ? dic['controller'] : dic['stash'],
+                        isController && !isSelfControl
+                            ? dic['stash']
+                            : dic['controller'],
                         style: TextStyle(
                             fontSize: 14,
                             color: Theme.of(context).unselectedWidgetColor),
                       ),
                       Text(
-                        Fmt.address(address ?? ''),
+                        Fmt.address(acc02 != null
+                            ? Fmt.addressOfAccount(acc02, store)
+                            : address02),
                         style: TextStyle(
                             fontSize: 13,
                             color: Theme.of(context).unselectedWidgetColor),
@@ -700,12 +721,14 @@ class StakingInfoPanel extends StatelessWidget {
 class StakingActionsPanel extends StatelessWidget {
   StakingActionsPanel({
     this.isStash,
+    this.isController,
     this.stashInfo,
     this.bonded,
     this.controller,
   });
 
   final bool isStash;
+  final bool isController;
   final OwnStashInfoData stashInfo;
   final BigInt bonded;
   final AccountData controller;
@@ -772,7 +795,7 @@ class StakingActionsPanel extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                /// if not bonded, we can go to bond page.
+                /// if stake clear, we can go to bond page.
                 /// 1. it has no controller
                 /// 2. it's stash is itself(it's not controller of another acc)
                 if (stashInfo.controllerId == null && isStash) {
@@ -805,12 +828,12 @@ class StakingActionsPanel extends StatelessWidget {
                         child: Text(
                           dic['action.unbond'],
                           style: TextStyle(
-                            color: isStash && !stashInfo.isOwnController
+                            color: !isController
                                 ? disabledColor
                                 : actionButtonColor,
                           ),
                         ),
-                        onPressed: isStash && !stashInfo.isOwnController
+                        onPressed: !isController
                             ? () => {}
                             : () {
                                 Navigator.of(context).pop();

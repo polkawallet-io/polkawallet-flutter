@@ -127,11 +127,11 @@ class ApiStaking {
             ? store.staking.ownStashInfo.nominating.toList()
             : [];
     final List<String> addressesNeedDecode = [];
-    if (store.staking.ownStashInfo.stashId != null) {
+    if (store.staking.ownStashInfo?.stashId != null) {
       addressesNeedIcons.add(store.staking.ownStashInfo.stashId);
       addressesNeedDecode.add(store.staking.ownStashInfo.stashId);
     }
-    if (store.staking.ownStashInfo.controllerId != null) {
+    if (store.staking.ownStashInfo?.controllerId != null) {
       addressesNeedIcons.add(store.staking.ownStashInfo.controllerId);
       addressesNeedDecode.add(store.staking.ownStashInfo.controllerId);
     }
