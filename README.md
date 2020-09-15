@@ -36,6 +36,9 @@ For now (will not be necessary later), do the same for `lib/js_service_kusama`
 
 You may build the App with Flutter's [Deployment Documentation](https://flutter.dev/docs).
 
+#### Android Studio
+To run the in Android Studio a build flavor must be specified. Go to Run/Debug configurations and add the build flavor in the appropriate field. The available values are in the in the android/app/src/build.gradle file.
+
 >Note that this project can be compiled both in Android and IOS,
 >But there is an Issue running it on an IOS simulator, that the
 >substrate `sr25519` keyPair is generated within an `WASM` virtual

@@ -76,22 +76,17 @@ android {
     // add a product flavor for fdroid release
     flavorDimensions "deploy"
     productFlavors {
-        prod {
-            getIsDefault().set(true)
+        dev {
+            dimension "deploy"
+            signingConfig signingConfigs.debug
+            versionNameSuffix "-dev"
         }
         fdroid {
             dimension "deploy"
             signingConfig null
+            versionNameSuffix "-fdroid-release"
         }
     }
-    android.applicationVariants.all { variant ->
-        if (variant.flavorName == "fdroid") {
-            variant.outputs.all { output ->
-                output.outputFileName = "app-fdroid-release.apk"
-            }
-        }
-    }
-   
 }
 
 flutter {
