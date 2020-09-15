@@ -1,6 +1,5 @@
-import 'package:mobx/mobx.dart';
-
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
@@ -178,7 +177,7 @@ abstract class _SettingsStore with Store {
     Map<String, dynamic> value =
         await rootStore.localStorage.getObject(localStorageEndpointKey);
     if (value == null) {
-      endpoint = networkEndpointKusama;
+      endpoint = networkEndpointEncointerGesell;
     } else {
       endpoint = EndpointData.fromJson(value);
     }

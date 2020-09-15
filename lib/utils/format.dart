@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:base58check/base58.dart';
+import 'package:base58check/base58check.dart';
 import 'package:convert/convert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -26,7 +29,10 @@ class Fmt {
   }
 
   static String currencyIdentifier(String cid, {int pad = 8}) {
-    return address(cid, pad: pad);
+    List<int> cidBytes = hexToBytes(cid);
+    Base58Codec codec = Base58Codec(Base58CheckCodec.BITCOIN_ALPHABET);
+    var cidBase58 = codec.encode(cidBytes);
+    return address(cidBase58, pad: pad);
   }
 
   /// number transform 1:
@@ -314,5 +320,22 @@ class Fmt {
 
   static String accountName(BuildContext context, AccountData acc) {
     return '${acc.name ?? ''}${(acc.observation ?? false) ? ' (${I18n.of(context).account['observe']})' : ''}';
+  }
+
+  static List<int> hexToBytes(String hex) {
+    const String _BYTE_ALPHABET = "0123456789abcdef";
+
+    hex = hex.replaceAll(" ", "");
+    hex = hex.replaceAll("0x", "");
+    hex = hex.toLowerCase();
+    if (hex.length % 2 != 0) hex = "0" + hex;
+    Uint8List result = new Uint8List(hex.length ~/ 2);
+    for (int i = 0; i < result.length; i++) {
+      int value = (_BYTE_ALPHABET.indexOf(hex[i * 2]) << 4) //= byte[0] * 16
+          +
+          _BYTE_ALPHABET.indexOf(hex[i * 2 + 1]);
+      result[i] = value;
+    }
+    return result;
   }
 }
