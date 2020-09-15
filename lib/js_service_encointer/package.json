@@ -11,7 +11,7 @@
     "test": "jest -i --watch"
   },
   "exports": {
-    ".": ".src/index.js",
+    ".": "./src/index.js",
     "./service/": "./src/service/",
     "./types": "./src/config/types.js"
   },
@@ -21,9 +21,11 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.8.3",
-    "@polkadot/api": "~1.10.1",
+    "@polkadot/api": "^1.18.1",
     "@polkadot/rpc-provider": "^1.18.1",
     "@polkadot/types": "^1.18.1",
+    "@polkadot/util": "^1.8.1",
+    "@polkadot/util-crypto": "^1.8.1",
     "@polkadot/ui-shared": "^0.54.1",
     "bn.js": "^5.1.1"
   },
@@ -32,6 +34,7 @@
     "@babel/preset-env": "^7.8.3",
     "@webpack-cli/info": "^0.2.0",
     "@webpack-cli/init": "^0.3.0",
+    "inquirer": "^6",
     "babel-loader": "^8.0.6",
     "chai": "^4.2.0",
     "eslint": "^7.3.0",
@@ -42,6 +45,7 @@
     "eslint-plugin-only-warn": "^1.0.1",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "typescript": "^3.2",
     "jest": "^26.0.1",
     "prettier": "^1.19.1",
     "webpack": "^4.41.5",
