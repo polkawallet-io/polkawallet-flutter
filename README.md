@@ -32,12 +32,32 @@ yarn run build
 
 For now (will not be necessary later), do the same for `lib/js_service_kusama`
 
-### Build Flutter App
+### Run App
+
+If you have an AVD or real device attached, you can do
+
+```
+flutter run --flavor dev
+```
+
+### Build APK
 
 You may build the App with Flutter's [Deployment Documentation](https://flutter.dev/docs).
 
+In order to build a fat APK, you can do 
+```
+flutter build apk --flavor fdroid
+```
+and find the output in `build/app/outputs/apk/fdroid/release/app-fdroid-release.apk`
+
+For the play store, an appbundle is preferred:
+```
+flutter build appbundle
+```
+and find the output in `build/app/outputs/bundle/release/app-release.aab`
+
 #### Android Studio
-To run the in Android Studio a build flavor must be specified. Go to Run/Debug configurations and add the build flavor in the appropriate field. The available values are in the in the android/app/src/build.gradle file.
+To run the in Android Studio a build flavor must be specified. Go to Run/Debug configurations and add the build flavor `dev` in the appropriate field. Other available values are in the in the android/app/src/build.gradle file.
 
 >Note that this project can be compiled both in Android and IOS,
 >But there is an Issue running it on an IOS simulator, that the
