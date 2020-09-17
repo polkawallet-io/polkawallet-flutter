@@ -44,7 +44,7 @@ class _HomaPageState extends State<HomaPage> {
     final String receive =
         Fmt.priceFloorBigInt(userInfo.unbonded, decimals, lengthMax: 3);
     var args = {
-      "title": I18n.of(context).acala['homa.mint'],
+      "title": I18n.of(context).acala['homa.redeem'],
       "txInfo": {
         "module": 'homa',
         "call": 'withdrawRedemption',
@@ -58,6 +58,7 @@ class _HomaPageState extends State<HomaPage> {
         res['action'] = TxHomaData.actionWithdrawRedemption;
         res['amountReceive'] = receive;
         store.acala.setHomaTxs([res]);
+        Navigator.popUntil(txPageContext, ModalRoute.withName(HomaPage.route));
         globalHomaRefreshKey.currentState.show();
       }
     };

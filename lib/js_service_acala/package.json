@@ -13,7 +13,15 @@
     "@acala-network/app-util": "0.4.0-beta.0",
     "@acala-network/api-derive": "0.4.0-beta.0",
     "@acala-network/types": "0.4.0-beta.0",
-    "@acala-network/type-definitions": "0.4.0-beta.0"
+    "@acala-network/type-definitions": "0.4.0-beta.0",
+    "@polkadot/api": "1.29.1",
+    "@polkadot/api-derive": "1.29.1",
+    "@polkadot/rpc-core": "1.29.1",
+    "@polkadot/rpc-provider": "1.29.1",
+    "@polkadot/types": "1.29.1",
+    "@polkadot/types-known": "1.29.1",
+    "@polkadot/typegen": "1.29.1",
+    "@polkadot/metadata": "1.29.1"
   },
   "dependencies": {
     "@acala-network/api": "^0.4.0-beta.0",
