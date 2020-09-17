@@ -62,7 +62,7 @@ class _AboutPage extends State<AboutPage> {
             ),
             Padding(
               padding: EdgeInsets.all(8),
-              child: Text('${dic['about.version']}: v$app_beta_version'),
+              child: Text('${dic['about.version']}: $app_beta_version'),
             ),
             Padding(
               padding: EdgeInsets.all(16),

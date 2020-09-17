@@ -52,6 +52,8 @@ const Map<String, String> enAccount = {
   'uos.canceled': 'Tx canceled',
   'uos.scan': 'Scan signed and send',
   'uos.qr.invalid': 'Invalid QR code',
+  'uos.warn':
+      'Safety Warning!!! DO NOT send this QR to anyone or you may LOSE your assets!!!',
 };
 
 const Map<String, String> zhAccount = {
@@ -101,4 +103,5 @@ const Map<String, String> zhAccount = {
   'uos.canceled': '交易取消',
   'uos.scan': '扫描签名结果并发送',
   'uos.qr.invalid': '无效二维码',
+  'uos.warn': '安全警告!!! 不要将该二维码发送给任何人!!! 泄露该二维码会导致账户资产丢失!!!',
 };

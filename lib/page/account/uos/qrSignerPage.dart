@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
+import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -29,6 +30,15 @@ class QrSignerPage extends StatelessWidget {
                 AddressFormItem(
                   store.account.currentAccount,
                   label: dic['uos.signer'],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: TextTag(
+                    dic['uos.warn'],
+                    padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    color: Colors.red,
+                    fontSize: 16,
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 16, bottom: 8),

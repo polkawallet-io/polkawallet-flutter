@@ -9,18 +9,17 @@
     "build-dev": "webpack -d --mode development"
   },
   "resolutions": {
-    "@acala-network/api": "v0.4.0-beta.0",
-    "@acala-network/app-util": "v0.4.0-beta.0",
-    "@acala-network/api-derive": "v0.4.0-beta.0",
-    "@acala-network/types": "v0.4.0-beta.0",
-    "@acala-network/type-definitions": "^0.4.0-beta.0",
-    "@polkadot/api": "1.29.1"
+    "@acala-network/api": "0.4.0-beta.0",
+    "@acala-network/app-util": "0.4.0-beta.0",
+    "@acala-network/api-derive": "0.4.0-beta.0",
+    "@acala-network/types": "0.4.0-beta.0",
+    "@acala-network/type-definitions": "0.4.0-beta.0"
   },
   "dependencies": {
-    "@acala-network/api": "v0.4.0-beta.0",
-    "@acala-network/app-util": "v0.4.0-beta.0",
-    "@acala-network/api-derive": "v0.4.0-beta.0",
-    "@acala-network/types": "v0.4.0-beta.0",
+    "@acala-network/api": "^0.4.0-beta.0",
+    "@acala-network/app-util": "^0.4.0-beta.0",
+    "@acala-network/api-derive": "^0.4.0-beta.0",
+    "@acala-network/types": "^0.4.0-beta.0",
     "@acala-network/type-definitions": "^0.4.0-beta.0",
     "@babel/polyfill": "^7.8.3",
     "@polkadot/api": "^1.18.1",

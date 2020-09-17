@@ -194,7 +194,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
       content: ListTile(
         leading: CupertinoActivityIndicator(),
         title: Text(
-          dic['tx.${store.account.txStatus}'] ?? dic['tx.queued'],
+          dic['tx.${store.account.txStatus}'] ?? dic['tx.wait'],
           style: TextStyle(color: Colors.black54),
         ),
       ),
