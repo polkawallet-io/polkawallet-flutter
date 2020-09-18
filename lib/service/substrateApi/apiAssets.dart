@@ -1,7 +1,6 @@
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/subscan.dart';
-import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/app.dart';
 
 class ApiAssets {
   ApiAssets(this.apiRoot);
@@ -16,9 +15,7 @@ class ApiAssets {
       store.assets.setAccountBalances(
           pubKey, Map.of({store.settings.networkState.tokenSymbol: res}));
     }
-    if (store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
-        store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
-        store.settings.endpoint.info == networkEndpointEncointerCantillon.info) {
+    if (store.settings.endpointIsEncointer) {
       apiRoot.encointer.getBalances();
     }
   }

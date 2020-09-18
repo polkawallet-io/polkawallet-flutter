@@ -21,9 +21,7 @@ class ReceivePage extends StatelessWidget {
     Color themeColor = Theme.of(context).primaryColor;
 
     bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
-    bool isEncointer = store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
-        store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
-        store.settings.endpoint.info == networkEndpointEncointerCantillon.info;
+    bool isEncointer = store.settings.endpointIsEncointer;
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(

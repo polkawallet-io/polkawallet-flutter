@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 
-// Run: `flutter pub run build_runner build` in order to create/update the *.g.dart
 part 'encointerBalanceData.g.dart';
 
 @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
@@ -22,8 +21,7 @@ class EncointerBalanceData {
 
   factory EncointerBalanceData.fromJson(Map<String, dynamic> json) =>
       _$EncointerBalanceDataFromJson(json);
-  Map<String, dynamic> toJson() =>
-      _$EncointerBalanceDataToJson(this);
+  Map<String, dynamic> toJson() => _$EncointerBalanceDataToJson(this);
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
@@ -31,7 +29,7 @@ class BalanceEntry {
   BalanceEntry(this.principal, this.lastUpdate);
 
   @observable
-  final num principal;
+  final double principal;
   @observable
   final int lastUpdate;
 
@@ -42,6 +40,5 @@ class BalanceEntry {
 
   factory BalanceEntry.fromJson(Map<String, dynamic> json) =>
       _$BalanceEntryFromJson(json);
-  Map<String, dynamic> toJson() =>
-      _$BalanceEntryToJson(this);
+  Map<String, dynamic> toJson() => _$BalanceEntryToJson(this);
 }

@@ -1,21 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/UI.dart';
-import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
-import 'package:polka_wallet/page-encointer/attesting/meetupPage.dart';
-
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong/latlong.dart';
 
 class AssignmentPanel extends StatefulWidget {
   AssignmentPanel(this.store);
@@ -45,7 +36,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).encointer;
-    final int decimals = encointer_token_decimals;
+    final int decimals = encointerTokenDecimals;
     return Container(
         width: double.infinity,
         child: RoundedCard(
@@ -54,8 +45,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
           child: Column(children: <Widget>[
             FutureBuilder<DateTime>(
                 future: webApi.encointer.getNextMeetupTime(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<DateTime> snapshot) {
+                builder:
+                    (BuildContext context, AsyncSnapshot<DateTime> snapshot) {
                   if (snapshot.hasData) {
                     if (store.encointer.currencyIdentifiers.isEmpty) {
                       store.encointer.setChosenCid("");
@@ -68,8 +59,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
                         builder: (_) => Column(children: <Widget>[
                               store.encointer.meetupIndex != 0
                                   ? Column(children: <Widget>[
-                                      Text(
-                                          "You are registered! ",
+                                      Text("You are registered! ",
                                           style:
                                               TextStyle(color: Colors.green)),
                                       /* TODO this causes an endless loop of reloads

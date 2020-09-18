@@ -46,9 +46,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     store.assets.clearTxs();
     store.assets.loadAccountCache();
 
-    if (store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
-        store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
-        store.settings.endpoint.info == networkEndpointEncointerCantillon.info) {
+    if (store.settings.endpointIsEncointer) {
       store.encointer.loadCache();
     } else {
       // refresh user's staking info if network is kusama or polkadot
@@ -111,10 +109,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   List<Widget> _buildAccountList() {
     Color primaryColor = Theme.of(context).primaryColor;
     bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
-    bool isEncointer = (store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
-        store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
-        store.settings.endpoint.info == networkEndpointEncointerCantillon.info
-    );
+    bool isEncointer = (store.settings.endpointIsEncointer);
     List<Widget> res = [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

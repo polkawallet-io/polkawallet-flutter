@@ -1,20 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
-import 'package:polka_wallet/page-encointer/attesting/meetupPage.dart';
-
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong/latlong.dart';
 
 class CurrencyChooserPanel extends StatefulWidget {
   CurrencyChooserPanel(this.store);
@@ -46,7 +38,7 @@ class _CurrencyChooserPanelState extends State<CurrencyChooserPanel> {
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).encointer;
-    final int decimals = encointer_token_decimals;
+    final int decimals = encointerTokenDecimals;
     return Container(
         width: double.infinity,
         child: RoundedCard(
@@ -56,7 +48,8 @@ class _CurrencyChooserPanelState extends State<CurrencyChooserPanel> {
             Text("Choose currency:"),
             FutureBuilder<List<dynamic>>(
                 future: webApi.encointer.getCurrencyIdentifiers(),
-                builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<dynamic>> snapshot) {
                   if (snapshot.hasData) {
                     if (store.encointer.currencyIdentifiers.isEmpty) {
                       store.encointer.setChosenCid("");

@@ -4,7 +4,6 @@ import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -23,9 +22,7 @@ class QrCode extends StatelessWidget {
     String qrCodeData = args['qrCodeData'];
 
     bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
-    bool isEncointer = store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
-            store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
-            store.settings.endpoint.info == networkEndpointEncointerCantillon.info;
+    bool isEncointer = store.settings.endpointIsEncointer;
 
     return Scaffold(
       backgroundColor: Colors.grey,

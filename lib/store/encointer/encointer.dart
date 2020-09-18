@@ -1,14 +1,12 @@
 import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/store/encointer/types/attestation.dart';
+import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/transferData.dart';
 import 'package:polka_wallet/store/encointer/types/attestationState.dart';
 import 'package:polka_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:polka_wallet/store/encointer/types/encointerTypes.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/assets/types/transferData.dart';
 import 'package:polka_wallet/store/encointer/types/location.dart';
 import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'encointer.g.dart';
 
@@ -23,7 +21,6 @@ abstract class _EncointerStore with Store {
   final String cacheTxsTransferKey = 'transfer_txs';
   final String encointerCurrencyKey = 'wallet_encointer_currency';
   final String encointerAttestationsKey = 'wallet_encointer_attestations';
-
 
   String _getCacheKey(String key) {
     return '${rootStore.settings.endpoint.info}_$key';
@@ -49,7 +46,7 @@ abstract class _EncointerStore with Store {
   var myMeetupRegistryIndex = 0;
 
   @observable
-  var nextMeetupLocation = Location(BigInt.from(0x0),BigInt.from(0x0));
+  var nextMeetupLocation = Location(BigInt.from(0x0), BigInt.from(0x0));
 
   @observable
   var participantIndex = 0;
@@ -113,8 +110,7 @@ abstract class _EncointerStore with Store {
   @action
   void setChosenCid(cid) {
     chosenCid = cid;
-    rootStore.localStorage
-        .setObject(_getCacheKey(encointerCurrencyKey), cid);
+    rootStore.localStorage.setObject(_getCacheKey(encointerCurrencyKey), cid);
   }
 
   @action
@@ -135,7 +131,6 @@ abstract class _EncointerStore with Store {
   void addBalanceEntry(cid, balanceEntry) {
     balanceEntries[cid] = balanceEntry;
   }
-
 
   @action
   void setParticipantIndex(int pIndex) {
@@ -163,7 +158,7 @@ abstract class _EncointerStore with Store {
         "from": rootStore.account.currentAddress,
         "to": i['params'][0],
         "token": i['params'][1],
-        "amount": Fmt.balance(i['params'][2], decimals: encointer_token_decimals),
+        "amount": Fmt.balance(i['params'][2], decimals: encointerTokenDecimals),
       };
     }).toList();
     if (reset) {
@@ -182,7 +177,8 @@ abstract class _EncointerStore with Store {
   @action
   Future<void> _cacheTxs(List list, String cacheKey) async {
     String pubKey = rootStore.account.currentAccount.pubKey;
-    List cached = await rootStore.localStorage.getAccountCache(pubKey, cacheKey);
+    List cached =
+        await rootStore.localStorage.getAccountCache(pubKey, cacheKey);
     if (cached != null) {
       cached.addAll(list);
     } else {
@@ -193,18 +189,18 @@ abstract class _EncointerStore with Store {
 
   @action
   Future<void> loadCache() async {
-    var data = await rootStore.localStorage.getObject(_getCacheKey(encointerCurrencyKey));
+    var data = await rootStore.localStorage
+        .getObject(_getCacheKey(encointerCurrencyKey));
     if (data != null) {
       print("found cached choice of cid. will recover it: " + data.toString());
       setChosenCid(data);
     }
 
-    data = await rootStore.localStorage.getObject(_getCacheKey(encointerAttestationsKey));
+    data = await rootStore.localStorage
+        .getObject(_getCacheKey(encointerAttestationsKey));
     if (data != null) {
       print("found cached attestations. will recover them");
       attestations = Map.castFrom<String, dynamic, int, AttestationState>(data);
     }
-
   }
-
 }

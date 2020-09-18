@@ -78,7 +78,7 @@ const network_ss58_map = {
   'polkadot': 0,
 };
 
-const int encointer_token_decimals = 18;
+const int encointerTokenDecimals = 18;
 
 const int SECONDS_OF_DAY = 24 * 60 * 60; // seconds of one day
 const int SECONDS_OF_YEAR = 365 * 24 * 60 * 60; // seconds of one year

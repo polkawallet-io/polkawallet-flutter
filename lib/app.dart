@@ -1,18 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/willPopScopWrapper.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/page-encointer/homePage.dart';
-import 'package:polka_wallet/page-encointer/registering/registeringPage.dart';
-import 'package:polka_wallet/page-encointer/registering/registerParticipantPanel.dart';
+import 'package:polka_wallet/page-encointer/assigning/assigningPage.dart';
 import 'package:polka_wallet/page-encointer/attesting/attestingPage.dart';
 import 'package:polka_wallet/page-encointer/attesting/meetupPage.dart';
 import 'package:polka_wallet/page-encointer/attesting/qrCode.dart';
 import 'package:polka_wallet/page-encointer/attesting/scanQrCode.dart';
-import 'package:polka_wallet/page-encointer/assigning/assigningPage.dart';
+import 'package:polka_wallet/page-encointer/homePage.dart';
+import 'package:polka_wallet/page-encointer/registering/registerParticipantPanel.dart';
+import 'package:polka_wallet/page-encointer/registering/registeringPage.dart';
+import 'package:polka_wallet/page/account/create/backupAccountPage.dart';
+import 'package:polka_wallet/page/account/create/createAccountPage.dart';
+import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
+import 'package:polka_wallet/page/account/import/importAccountPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
@@ -26,6 +29,7 @@ import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateListPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
+import 'package:polka_wallet/page/homePage.dart';
 import 'package:polka_wallet/page/networkSelectPage.dart';
 import 'package:polka_wallet/page/profile/aboutPage.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
@@ -33,14 +37,14 @@ import 'package:polka_wallet/page/profile/account/changeNamePage.dart';
 import 'package:polka_wallet/page/profile/account/changePasswordPage.dart';
 import 'package:polka_wallet/page/profile/account/exportAccountPage.dart';
 import 'package:polka_wallet/page/profile/account/exportResultPage.dart';
+import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
+import 'package:polka_wallet/page/profile/contacts/contactPage.dart';
+import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
 import 'package:polka_wallet/page/profile/recovery/createRecoveryPage.dart';
 import 'package:polka_wallet/page/profile/recovery/friendListPage.dart';
 import 'package:polka_wallet/page/profile/recovery/initiateRecoveryPage.dart';
 import 'package:polka_wallet/page/profile/recovery/recoveryProofPage.dart';
 import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
-import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
-import 'package:polka_wallet/page/profile/contacts/contactPage.dart';
-import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
 import 'package:polka_wallet/page/profile/recovery/recoveryStatePage.dart';
 import 'package:polka_wallet/page/profile/recovery/vouchRecoveryPage.dart';
 import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
@@ -49,29 +53,22 @@ import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/page/staking/actions/accountSelectPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondExtraPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondPage.dart';
-import 'package:polka_wallet/page/staking/actions/setControllerPage.dart';
-import 'package:polka_wallet/page/staking/validators/nominatePage.dart';
 import 'package:polka_wallet/page/staking/actions/payoutPage.dart';
 import 'package:polka_wallet/page/staking/actions/redeemPage.dart';
+import 'package:polka_wallet/page/staking/actions/setControllerPage.dart';
 import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
 import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
+import 'package:polka_wallet/page/staking/validators/nominatePage.dart';
 import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/version.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/UI.dart';
 
-import 'utils/i18n/index.dart';
 import 'common/theme.dart';
-
-import 'package:polka_wallet/page/homePage.dart';
-import 'package:polka_wallet/page/account/create/createAccountPage.dart';
-import 'package:polka_wallet/page/account/create/backupAccountPage.dart';
-import 'package:polka_wallet/page/account/import/importAccountPage.dart';
-import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
+import 'utils/i18n/index.dart';
 
 class WalletApp extends StatefulWidget {
   const WalletApp();
@@ -87,9 +84,7 @@ class _WalletAppState extends State<WalletApp> {
   ThemeData _theme = appTheme;
 
   void _changeTheme() {
-    if (_appStore.settings.endpoint.info == networkEndpointEncointerGesell.info ||
-        _appStore.settings.endpoint.info == networkEndpointEncointerGesellDev.info||
-        _appStore.settings.endpoint.info == networkEndpointEncointerCantillon.info) {
+    if (_appStore.settings.endpointIsEncointer) {
       setState(() {
         _theme = appThemeEncointer;
       });
@@ -183,19 +178,17 @@ class _WalletAppState extends State<WalletApp> {
       routes: {
         HomePage.route: (context) => Observer(
               builder: (_) {
-                EndpointData network = _appStore != null
-                    ? _appStore.settings.endpoint
-                    : EndpointData();
+                bool isEncointer = _appStore != null &&
+                    _appStore.settings.endpoint != null &&
+                    _appStore.settings.endpointIsEncointer;
                 return WillPopScopWrapper(
                   child: FutureBuilder<int>(
                     future: _initStore(context),
                     builder: (_, AsyncSnapshot<int> snapshot) {
                       if (snapshot.hasData) {
                         return snapshot.data > 0
-                            ? (network.info == networkEndpointEncointerGesell.info ||
-                            network.info == networkEndpointEncointerGesellDev.info ||
-                            network.info == networkEndpointEncointerCantillon.info)
-                            ? EncointerHomePage(_appStore)
+                            ? isEncointer
+                                ? EncointerHomePage(_appStore)
                                 : HomePage(_appStore)
                             : CreateAccountEntryPage();
                       } else {
@@ -265,7 +258,8 @@ class _WalletAppState extends State<WalletApp> {
 
         // encointer
         RegisteringPage.route: (_) => RegisteringPage(_appStore),
-        RegisterParticipantPanel.route: (_) => RegisterParticipantPanel(_appStore),
+        RegisterParticipantPanel.route: (_) =>
+            RegisterParticipantPanel(_appStore),
         AssigningPage.route: (_) => AssigningPage(_appStore),
         AttestingPage.route: (_) => AttestingPage(_appStore),
         MeetupPage.route: (_) => MeetupPage(_appStore),

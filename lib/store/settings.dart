@@ -48,6 +48,13 @@ abstract class _SettingsStore with Store {
   ObservableList<AccountData> contactList = ObservableList<AccountData>();
 
   @computed
+  bool get endpointIsEncointer {
+    return endpoint.info == networkEndpointEncointerGesell.info ||
+        endpoint.info == networkEndpointEncointerGesellDev.info ||
+        endpoint.info == networkEndpointEncointerCantillon.info;
+  }
+
+  @computed
   List<EndpointData> get endpointList {
     List<EndpointData> ls = List<EndpointData>.of(networkEndpoints);
     ls.retainWhere((i) => i.info == endpoint.info);

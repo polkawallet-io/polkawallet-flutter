@@ -21,14 +21,15 @@ import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class TransferPageParams {
-  TransferPageParams({
-    this.symbol,
-    this.address,
-    this.redirect,
-  });
+  TransferPageParams(
+      {this.symbol,
+      this.address,
+      this.redirect,
+      this.isEncointerCommunityCurrency = false});
   final String address;
   final String redirect;
   final String symbol;
+  final bool isEncointerCommunityCurrency;
 }
 
 class TransferPage extends StatefulWidget {
@@ -52,6 +53,7 @@ class _TransferPageState extends State<TransferPage> {
   final TextEditingController _amountCtrl = new TextEditingController();
 
   String _tokenSymbol;
+  bool _isEncointerCommunityCurrency;
 
   Future<void> _selectCurrency() async {
     List<String> symbolOptions =
@@ -88,27 +90,25 @@ class _TransferPageState extends State<TransferPage> {
           Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
         ],
       };
-      bool isEncointer = (store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
-          store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
-          store.settings.endpoint.info == networkEndpointEncointerCantillon.info);
-      if (isEncointer) {
+      // Todo: why was it here depending on the endpoint? Do we not want to facilitate ERT transfers?
+      if (_isEncointerCommunityCurrency) {
         args['txInfo'] = {
-          "module": 'encointer_balances',
+          "module": 'encointerBalances',
           "call": 'transfer',
         };
         args['params'] = [
           // params.to
           _addressCtrl.text.trim(),
           // params.currencyId
-          symbol.toUpperCase(),
+          symbol,
           // params.amount
-          Fmt.tokenInt(_amountCtrl.text.trim(), decimals: decimals).toString(),
+          _amountCtrl.text.trim(),
         ];
       }
       args['onFinish'] = (BuildContext txPageContext, Map res) {
         final TransferPageParams routeArgs =
             ModalRoute.of(context).settings.arguments;
-        if (isEncointer) {
+        if (store.settings.endpointIsEncointer) {
           store.encointer.setTransferTxs([res]);
         }
         Navigator.popUntil(
@@ -162,11 +162,17 @@ class _TransferPageState extends State<TransferPage> {
         final bool isBaseToken = _tokenSymbol == baseTokenSymbol;
         List symbolOptions = store.settings.networkConst['currencyIds'];
 
-        int decimals = store.settings.networkState.tokenDecimals;
+        TransferPageParams params = ModalRoute.of(context).settings.arguments;
+        _isEncointerCommunityCurrency = params.isEncointerCommunityCurrency;
+        _tokenSymbol = params.symbol;
 
-        BigInt available = isBaseToken
-            ? store.assets.balances[symbol.toUpperCase()].transferable
-            : Fmt.balanceInt(store.assets.tokenBalances[symbol.toUpperCase()]);
+        int decimals = _isEncointerCommunityCurrency
+            ? encointerTokenDecimals
+            : store.settings.networkState.tokenDecimals;
+
+        BigInt available; // BigInt
+        available = _getAvailableEncointerOrBaseToken(isBaseToken, symbol);
+        print(available);
 
         return Scaffold(
           appBar: AppBar(
@@ -239,9 +245,7 @@ class _TransferPageState extends State<TransferPage> {
                                 if (v.isEmpty) {
                                   return dic['amount.error'];
                                 }
-                                if (double.parse(v.trim()) >=
-                                    available / BigInt.from(pow(10, decimals)) -
-                                        0.001) {
+                                if (balanceToLow(v, available, decimals)) {
                                   return dic['amount.low'];
                                 }
                                 return null;
@@ -265,8 +269,12 @@ class _TransferPageState extends State<TransferPage> {
                                               color: Theme.of(context)
                                                   .unselectedWidgetColor),
                                         ),
-                                        CurrencyWithIcon(
-                                            _tokenSymbol ?? baseTokenSymbol),
+                                        !_isEncointerCommunityCurrency
+                                            ? CurrencyWithIcon(
+                                                _tokenSymbol ?? baseTokenSymbol)
+                                            : Text(Fmt.currencyIdentifier(
+                                                _tokenSymbol,
+                                                pad: 8)),
                                       ],
                                     ),
                                     Icon(
@@ -320,5 +328,26 @@ class _TransferPageState extends State<TransferPage> {
         );
       },
     );
+  }
+
+  bool balanceToLow(String v, BigInt available, int decimals) {
+    if (_isEncointerCommunityCurrency) {
+      return double.parse(v.trim()) >= available.toDouble() - 0.001;
+    } else {
+      return double.parse(v.trim()) >=
+          available / BigInt.from(pow(10, decimals)) - 0.001;
+    }
+  }
+
+  BigInt _getAvailableEncointerOrBaseToken(bool isBaseToken, String symbol) {
+    if (_isEncointerCommunityCurrency) {
+      return Fmt.tokenInt(
+          store.encointer.balanceEntries[_tokenSymbol].principal.toString(),
+          decimals: encointerTokenDecimals);
+    } else {
+      return isBaseToken
+          ? store.assets.balances[symbol.toUpperCase()].transferable
+          : Fmt.balanceInt(store.assets.tokenBalances[symbol.toUpperCase()]);
+    }
   }
 }

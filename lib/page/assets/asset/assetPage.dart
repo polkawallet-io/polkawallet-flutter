@@ -18,6 +18,12 @@ import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
+class AssetPageParams {
+  AssetPageParams({this.token, this.isEncointerCommunityCurrency = false});
+  final String token;
+  final bool isEncointerCommunityCurrency;
+}
+
 class AssetPage extends StatefulWidget {
   AssetPage(this.store);
 
@@ -103,10 +109,9 @@ class _AssetPageState extends State<AssetPage>
 
   List<Widget> _buildTxList() {
     List<Widget> res = [];
-    final String token = ModalRoute.of(context).settings.arguments;
-    if (store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
-        store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
-        store.settings.endpoint.info == networkEndpointEncointerCantillon.info) {
+    final AssetPageParams params = ModalRoute.of(context).settings.arguments;
+    final String token = params.token;
+    if (store.settings.endpointIsEncointer) {
       List<TransferData> ls = store.encointer.txsTransfer.reversed.toList();
       ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
       res.addAll(ls.map((i) {
@@ -134,11 +139,11 @@ class _AssetPageState extends State<AssetPage>
   @override
   Widget build(BuildContext context) {
     final String symbol = store.settings.networkState.tokenSymbol;
-    final String token = ModalRoute.of(context).settings.arguments;
+    final AssetPageParams params = ModalRoute.of(context).settings.arguments;
+    final String token = params.token;
+    final bool isEncointerCommunityCurrency =
+        params.isEncointerCommunityCurrency;
     final bool isBaseToken = token == symbol;
-    final isEncointer = store.settings.endpoint.info == networkEndpointEncointerGesell.info ||
-        store.settings.endpoint.info == networkEndpointEncointerGesellDev.info ||
-        store.settings.endpoint.info == networkEndpointEncointerCantillon.info;
 
     final dic = I18n.of(context).assets;
 
@@ -152,17 +157,25 @@ class _AssetPageState extends State<AssetPage>
     final titleColor = Theme.of(context).cardColor;
     return Scaffold(
       appBar: AppBar(
-        title: Text(token),
+        title: isEncointerCommunityCurrency
+            ? Text(Fmt.currencyIdentifier(token))
+            : Text(token),
         centerTitle: true,
         elevation: 0.0,
       ),
       body: SafeArea(
         child: Observer(
           builder: (_) {
-            int decimals = store.settings.networkState.tokenDecimals;
+            int decimals = isEncointerCommunityCurrency
+                ? encointerTokenDecimals
+                : store.settings.networkState.tokenDecimals;
 
-            BigInt balance =
-                Fmt.balanceInt(store.assets.tokenBalances[token.toUpperCase()]);
+            BigInt balance = isEncointerCommunityCurrency
+                ? Fmt.tokenInt(
+                    store.encointer.balanceEntries[token].principal.toString(),
+                    decimals: decimals)
+                : Fmt.balanceInt(
+                    store.assets.tokenBalances[token.toUpperCase()]);
 
             BalancesInfo balancesInfo = store.assets.balances[symbol];
             String lockedInfo = '\n';
@@ -247,7 +260,7 @@ class _AssetPageState extends State<AssetPage>
                     ],
                   ),
                 ),
-                !isEncointer
+                !store.settings.endpointIsEncointer
                     ? TabBar(
                         labelColor: Colors.black87,
                         labelStyle: TextStyle(fontSize: 18),
@@ -307,9 +320,10 @@ class _AssetPageState extends State<AssetPage>
                               context,
                               TransferPage.route,
                               arguments: TransferPageParams(
-                                redirect: AssetPage.route,
-                                symbol: token,
-                              ),
+                                  redirect: AssetPage.route,
+                                  symbol: token,
+                                  isEncointerCommunityCurrency:
+                                      isEncointerCommunityCurrency),
                             );
                           },
                         ),
