@@ -179,12 +179,12 @@ class _AttestingPageState extends State<AttestingPage> {
         .length;
     return Column(children: <Widget>[
       Text("you have been attested by " + count.toString() + " others"),
-//      count > 0 ?
+      count > 0 ?
       RoundedButton(
           text: "submit attestations",
           onPressed: () => _submit(context) // for testing always allow sending
           )
-//          : Container()
+      : Container()
     ]);
   }
 

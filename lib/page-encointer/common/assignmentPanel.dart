@@ -83,12 +83,12 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
                                               store.encointer.nextMeetupTime)
                                           .toIso8601String()),
                                       Text("at location:"),
-                                      Text(store
-                                              .encointer.nextMeetupLocation.lat
-                                              .toString() +
+                                      Text(
+                                          (store.encointer.nextMeetupLocation.lat / (BigInt.from(2).pow(32))
+                                          ).toStringAsFixed(3) +
                                           " lat, " +
-                                          store.encointer.nextMeetupLocation.lon
-                                              .toString() +
+                                          (store.encointer.nextMeetupLocation.lon/ (BigInt.from(2).pow(32))
+                                          ).toStringAsFixed(3) +
                                           " lon"),
                                     ])
                                   : Text(

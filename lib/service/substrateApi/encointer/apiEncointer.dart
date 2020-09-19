@@ -140,13 +140,14 @@ class ApiEncointer {
   }
 
   Future<dynamic> getClaimOfAttendance(participants) async {
+    var perfectMeetupTime = await getNextMeetupTime();
     var claim = jsonEncode(ClaimOfAttendance(
         store.account.currentAccountPubKey,
         store.encointer.currentCeremonyIndex,
         store.encointer.chosenCid,
         store.encointer.meetupIndex,
         store.encointer.nextMeetupLocation,
-        store.encointer.timeStamp,
+        perfectMeetupTime.millisecondsSinceEpoch,
         participants
     ));
     print(claim);
