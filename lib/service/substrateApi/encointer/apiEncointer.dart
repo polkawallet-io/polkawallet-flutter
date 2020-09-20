@@ -163,6 +163,14 @@ class ApiEncointer {
     return att;
   }
 
+  Future<ClaimOfAttendance> parseClaimOfAttendance(String claimHex) async {
+    var claimJson = await apiRoot.evalJavascript('encointer.parseClaimOfAttendance("$claimHex")');
+    //print("Attestation json: " + attJson.toString());
+    ClaimOfAttendance claim = ClaimOfAttendance.fromJson(claimJson);
+    //print("Attestation parsed: " + attJson.toString());
+    return claim;
+  }
+
   Future<dynamic> attestClaimOfAttendance(String claimHex, String password) async {
     var pubKey = store.account.currentAccountPubKey;
     var att = await apiRoot.evalJavascript('account.attestClaimOfAttendance("$claimHex", "$pubKey", "$password")');

@@ -13,6 +13,7 @@ import 'package:polka_wallet/page-encointer/attesting/qrCode.dart';
 import 'package:polka_wallet/page-encointer/attesting/scanQrCode.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/service/substrateApi/encointer/apiEncointer.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/encointer/types/attestation.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -56,50 +57,63 @@ class _AttestationCardState extends State<AttestationCard> {
     if (widget.myMeetupRegistryIndex < widget.otherMeetupRegistryIndex) {
       //show claimA
       print("I'm party A. showing my claim now");
-      var args = {"title": 'Your Claim', 'qrCodeData': widget.claim};
+      var args = {"title": 'ClaimA', 'qrCodeData': widget.claim};
       await Navigator.of(context).pushNamed(QrCode.route, arguments: args);
 
       // scan AttestationA | claimB
       var attestationAClaimB = await Navigator.of(context)
           .pushNamed(ScanQrCode.route, arguments: {'onScan': onScan});
       var attCla = attestationAClaimB.toString().split(':');
-      print("Attestation received by QR code: " + attCla[0]);
-      print("Claim received by qrCode:" + attCla[1]);
+      var attestationAhex = attCla[0];
+      var claimBhex = attCla[1];
+      print("Attestation received by QR code: " + attestationAhex);
+      print("Claim received by qrCode:" + claimBhex);
+      var claimBjson = await webApi.encointer.parseClaimOfAttendance(claimBhex);
+      print("ClaimB parsed: " + claimBjson.toString());
+      // TODO: compare claimB to own. only sign valid claims. complain in UI and show differences otherwise
+
+      var attestationAjson = await webApi.encointer.parseAttestation(attestationAhex);
+      print("attestationA parsed: " + attestationAjson.toString());
+      // TODO: verify signature and complain in UI if bad
 
       // store AttestationA (my claim, attested by other)
-      store.encointer.addAttestation(widget.otherMeetupRegistryIndex, attCla[0]);
+      store.encointer.addAttestation(widget.otherMeetupRegistryIndex, attestationAhex);
       // attest claimB
       Map attestationB =
-          await webApi.encointer.attestClaimOfAttendance(attCla[0], "123qwe");
-      print("aat: " + attestationB['attestation'].toString());
+          await webApi.encointer.attestClaimOfAttendance(claimBhex, "123qwe");
+      print("att: " + attestationB['attestation'].toString());
       // currently, parsing attestation fails, as it is returned as an `Attestation` from the js_service which implies the the location is in I32F32
       // store.encointer.attestations[widget.otherMeetupRegistryIndex].otherAttestation = Attestation.fromJson(attestationB['attestation']);
       print("Attestation: " + attestationB.toString());
 
       // show attestationB
       var args2 = {
-        "title": 'Attestation from Other',
+        "title": 'AttestationB',
         'qrCodeData': attestationB['attestationHex'].toString(),
       };
       await Navigator.of(context).pushNamed(QrCode.route, arguments: args2);
     } else {
       // scanning claim A
       print("I'm party B. scanning others' claimA now");
-      var claimA = await Navigator.of(context)
+      var claimAhex = await Navigator.of(context)
           .pushNamed(ScanQrCode.route, arguments: {'onScan': onScan});
-      print("Received Claim A: " + claimA.toString());
+      print("Received ClaimA: " + claimAhex.toString());
+
+      var claimA = await webApi.encointer.parseClaimOfAttendance(claimAhex);
+      print("ClaimA parsed: " + claimA.toString());
+      // TODO: compare claimA to own. only sign valid claims. complain in UI and show differences otherwise
 
       // attest claimA
       Map res =
-          await webApi.encointer.attestClaimOfAttendance(claimA, "123qwe");
-      print("aat: " + res['attestation'].toString());
+          await webApi.encointer.attestClaimOfAttendance(claimAhex, "123qwe");
+      print("att: " + res['attestation'].toString());
       // currently, parsing attestation fails, as it is returned as an `Attestation` from the js_service which implies the the location is in I32F32
 //      store.encointer.attestations[widget.otherMeetupRegistryIndex].otherAttestation = Attestation.fromJson(res['attestation']);
       print("Attestation: " + res.toString());
 
       // show AttestationA | claimB
       var args = {
-        "title": 'other Attestation | my claim',
+        "title": 'AttestationA | claimB',
         'qrCodeData': res['attestationHex'].toString() + ":" + widget.claim,
       };
       await Navigator.of(context).pushNamed(QrCode.route, arguments: args);
@@ -108,6 +122,11 @@ class _AttestationCardState extends State<AttestationCard> {
       var attB = await Navigator.of(context)
           .pushNamed(ScanQrCode.route, arguments: {'onScan': onScan});
       print("Received AttestastionB: " + attB.toString());
+
+      var attestationB = await webApi.encointer.parseAttestation(attB);
+      print("attestationB parsed: " + attestationB.toString());
+      // TODO: verify signature and complain in UI if bad
+
       // store AttestationB (my claim, attested by other)
       store.encointer.addAttestation(widget.otherMeetupRegistryIndex, attB.toString());
     }
