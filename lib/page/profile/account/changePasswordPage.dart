@@ -1,10 +1,10 @@
+import 'package:biometric_storage/biometric_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/account.dart';
-import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
@@ -30,6 +30,9 @@ class _ChangePassword extends State<ChangePasswordPage> {
   final TextEditingController _pass2Ctrl = new TextEditingController();
 
   bool _submitting = false;
+
+  bool _supportBiometric = false; // if device support biometric
+  bool _enableBiometric = true; // if the biometric usage checkbox checked
 
   Future<void> _onSave() async {
     if (_formKey.currentState.validate()) {
@@ -68,13 +71,26 @@ class _ChangePassword extends State<ChangePasswordPage> {
         final Map acc = await api.evalJavascript(
             'account.changePassword("${store.currentAccount.pubKey}", "$passOld", "$passNew")');
         // use local name, not webApi returned name
-        Map<String, dynamic> localAcc =
-            AccountData.toJson(store.currentAccount);
-        acc['meta']['name'] = localAcc['meta']['name'];
+        acc['meta']['name'] = store.currentAccount.name;
         store.updateAccount(acc);
         // update encrypted seed after password updated
-        store.updateSeed(
-            store.currentAccount.pubKey, _passOldCtrl.text, _passCtrl.text);
+        store.updateSeed(store.currentAccountPubKey, passOld, passNew);
+
+        // update biometric storage after password updated
+        if (_enableBiometric) {
+          try {
+            final storage = await webApi.account
+                .getBiometricPassStoreFile(context, store.currentAccountPubKey);
+            await storage.write(passNew);
+            webApi.account.setBiometricEnabled(store.currentAccountPubKey);
+          } catch (err) {
+            // user may cancel the biometric auth. then we set biometric disabled
+            webApi.account.setBiometricDisabled(store.currentAccountPubKey);
+          }
+        } else {
+          webApi.account.setBiometricDisabled(store.currentAccountPubKey);
+        }
+
         showCupertinoDialog(
           context: context,
           builder: (BuildContext context) {
@@ -93,6 +109,22 @@ class _ChangePassword extends State<ChangePasswordPage> {
         );
       }
     }
+  }
+
+  Future<void> _checkBiometricSupport() async {
+    final canAuth = await BiometricStorage().canAuthenticate();
+
+    setState(() {
+      _supportBiometric = canAuth == CanAuthenticateResponse.success;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkBiometricSupport();
+    });
   }
 
   @override
@@ -168,6 +200,32 @@ class _ChangePassword extends State<ChangePasswordPage> {
                       },
                       obscureText: true,
                     ),
+                    _supportBiometric
+                        ? Padding(
+                            padding: EdgeInsets.only(top: 24),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: Checkbox(
+                                    value: _enableBiometric,
+                                    onChanged: (v) {
+                                      setState(() {
+                                        _enableBiometric = v;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 16),
+                                  child: Text(I18n.of(context)
+                                      .home['unlock.bio.enable']),
+                                )
+                              ],
+                            ),
+                          )
+                        : Container(),
                   ],
                 ),
               ),

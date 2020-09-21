@@ -14,7 +14,7 @@ description: PolkaWallet made with Flutter.
 version: 1.0.2+1022
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   # intl - format numbers
@@ -38,11 +38,9 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  ota_update: ^2.3.0
   update_app: ^0.1.5
-  flutter_downloader: ^1.4.4
-  path_provider:
   device_info: ^0.4.2
+  biometric_storage: 1.0.1+5
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

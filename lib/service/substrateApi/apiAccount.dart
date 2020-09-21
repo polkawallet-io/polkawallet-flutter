@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:biometric_storage/biometric_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/asExtension/walletExtensionSignPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
@@ -8,12 +10,16 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/account.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
 class ApiAccount {
   ApiAccount(this.apiRoot);
 
   final Api apiRoot;
   final store = globalAppStore;
+
+  final _biometricEnabledKey = 'biometric_enabled_';
+  final _biometricPasswordKey = 'biometric_password_';
 
   Future<void> initAccounts() async {
     if (store.account.accountList.length > 0) {
@@ -184,6 +190,44 @@ class ApiAccount {
     return apiRoot.evalJavascript(
       'account.checkPassword("$pubKey", "$pass")',
       allowRepeat: true,
+    );
+  }
+
+  void setBiometricEnabled(String pubKey) {
+    apiRoot.configStorage.write(
+        '$_biometricEnabledKey$pubKey', DateTime.now().millisecondsSinceEpoch);
+  }
+
+  void setBiometricDisabled(String pubKey) {
+    apiRoot.configStorage.write('$_biometricEnabledKey$pubKey',
+        DateTime.now().millisecondsSinceEpoch - SECONDS_OF_DAY * 7000);
+  }
+
+  bool getBiometricEnabled(String pubKey) {
+    final timestamp =
+        apiRoot.configStorage.read('$_biometricEnabledKey$pubKey');
+    // we cache user's password with biometric for 7 days.
+    if (timestamp != null &&
+        timestamp + SECONDS_OF_DAY * 7000 >
+            DateTime.now().millisecondsSinceEpoch) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<BiometricStorageFile> getBiometricPassStoreFile(
+    BuildContext context,
+    String pubKey,
+  ) async {
+    final dic = I18n.of(context).home;
+    return BiometricStorage().getStorage(
+      '$_biometricPasswordKey$pubKey',
+      options:
+          StorageFileInitOptions(authenticationValidityDurationSeconds: 30),
+      androidPromptInfo: AndroidPromptInfo(
+        title: dic['unlock.bio'],
+        negativeButton: dic['cancel'],
+      ),
     );
   }
 

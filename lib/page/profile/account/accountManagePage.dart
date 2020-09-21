@@ -1,3 +1,4 @@
+import 'package:biometric_storage/biometric_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -11,12 +12,19 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
-class AccountManagePage extends StatelessWidget {
+class AccountManagePage extends StatefulWidget {
   AccountManagePage(this.store);
 
   static final String route = '/profile/account';
-  final Api api = webApi;
   final AppStore store;
+
+  @override
+  _AccountManagePageState createState() => _AccountManagePageState();
+}
+
+class _AccountManagePageState extends State<AccountManagePage> {
+  bool _isBiometricAuthorized = false; // if user authorized biometric usage
+  BiometricStorageFile _authStorage;
 
   void _onDeleteAccount(BuildContext context) {
     showCupertinoDialog(
@@ -24,14 +32,16 @@ class AccountManagePage extends StatelessWidget {
       builder: (BuildContext context) {
         return PasswordInputDialog(
           title: Text(I18n.of(context).profile['delete.confirm']),
-          account: store.account.currentAccount,
+          account: widget.store.account.currentAccount,
           onOk: (_) {
-            store.account.removeAccount(store.account.currentAccount).then((_) {
+            widget.store.account
+                .removeAccount(widget.store.account.currentAccount)
+                .then((_) {
               // refresh balance
-              store.assets.loadAccountCache();
+              widget.store.assets.loadAccountCache();
               webApi.assets.fetchBalance();
               // refresh user's staking info
-              store.staking.loadAccountCache();
+              widget.store.staking.loadAccountCache();
               webApi.staking.fetchAccountStaking();
             });
             Navigator.of(context).pop();
@@ -39,6 +49,49 @@ class AccountManagePage extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _updateBiometricAuth(bool enable, String password) async {
+    final pubKey = widget.store.account.currentAccountPubKey;
+    bool result = !enable;
+    if (enable) {
+      try {
+        await _authStorage.write(password);
+        webApi.account.setBiometricEnabled(pubKey);
+        result = enable;
+      } catch (err) {
+        // user may cancel the biometric auth. then we set biometric disabled
+        webApi.account.setBiometricDisabled(pubKey);
+      }
+    } else {
+      webApi.account.setBiometricDisabled(pubKey);
+      result = enable;
+    }
+
+    if (result == enable) {
+      setState(() {
+        _isBiometricAuthorized = enable;
+      });
+    }
+  }
+
+  Future<void> _checkBiometricAuth() async {
+    final pubKey = widget.store.account.currentAccountPubKey;
+    final storeFile =
+        await webApi.account.getBiometricPassStoreFile(context, pubKey);
+    final isAuthorized = webApi.account.getBiometricEnabled(pubKey);
+    setState(() {
+      _isBiometricAuthorized = isAuthorized;
+      _authStorage = storeFile;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkBiometricAuth();
+    });
   }
 
   @override
@@ -65,13 +118,15 @@ class AccountManagePage extends StatelessWidget {
                       child: ListTile(
                         leading: AddressIcon(
                           '',
-                          pubKey: store.account.currentAccount.pubKey,
+                          pubKey: widget.store.account.currentAccount.pubKey,
                         ),
-                        title: Text(store.account.currentAccount.name ?? 'name',
+                        title: Text(
+                            widget.store.account.currentAccount.name ?? 'name',
                             style:
                                 TextStyle(fontSize: 16, color: Colors.white)),
                         subtitle: Text(
-                          Fmt.address(store.account.currentAddress) ?? '',
+                          Fmt.address(widget.store.account.currentAddress) ??
+                              '',
                           style: TextStyle(fontSize: 16, color: Colors.white70),
                         ),
                       ),
@@ -94,6 +149,28 @@ class AccountManagePage extends StatelessWidget {
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
                       onTap: () => Navigator.of(context)
                           .pushNamed(ExportAccountPage.route),
+                    ),
+                    ListTile(
+                      title: Text(I18n.of(context).home['unlock.bio.enable']),
+                      trailing: CupertinoSwitch(
+                        value: _isBiometricAuthorized,
+                        onChanged: (v) {
+                          if (v != _isBiometricAuthorized) {
+                            showCupertinoDialog(
+                              context: context,
+                              builder: (_) {
+                                return PasswordInputDialog(
+                                  title: Text(I18n.of(context).home['unlock']),
+                                  account: widget.store.account.currentAccount,
+                                  onOk: (password) {
+                                    _updateBiometricAuth(v, password);
+                                  },
+                                );
+                              },
+                            );
+                          }
+                        },
+                      ),
                     ),
                   ],
                 ),

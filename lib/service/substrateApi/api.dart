@@ -27,6 +27,8 @@ class Api {
   final AppStore store;
   final jsStorage = GetStorage();
 
+  final configStorage = GetStorage('configuration');
+
   ApiAccount account;
 
   ApiAcala acala;

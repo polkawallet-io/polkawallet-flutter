@@ -112,6 +112,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     );
   }
 
+  // todo: check if account duplicate, if true, we allow a override.
   Future<void> _checkAccountDuplicate(Map<String, dynamic> acc) async {
     int index =
         store.account.accountList.indexWhere((i) => i.pubKey == acc['pubKey']);

@@ -1,14 +1,17 @@
+import 'package:biometric_storage/biometric_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class PasswordInputDialog extends StatefulWidget {
-  PasswordInputDialog({this.account, this.title, this.onOk});
+  PasswordInputDialog({this.account, this.title, this.content, this.onOk});
 
   final AccountData account;
   final Widget title;
+  final Widget content;
   final Function onOk;
 
   @override
@@ -17,7 +20,13 @@ class PasswordInputDialog extends StatefulWidget {
 
 class _PasswordInputDialog extends State<PasswordInputDialog> {
   final TextEditingController _passCtrl = new TextEditingController();
+
   bool _submitting = false;
+
+  bool _supportBiometric = false; // if device support biometric
+  bool _isBiometricAuthorized = false; // if user authorized biometric usage
+  bool _enableBiometric = true; // if the biometric usage checkbox checked
+  BiometricStorageFile _authStorage;
 
   Future<void> _onOk(String password) async {
     setState(() {
@@ -53,6 +62,49 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
     }
   }
 
+  Future<CanAuthenticateResponse> _checkBiometricAuthenticate() async {
+    final response = await BiometricStorage().canAuthenticate();
+
+    final supportBiometric = response == CanAuthenticateResponse.success;
+    final isBiometricAuthorized =
+        webApi.account.getBiometricEnabled(widget.account.pubKey);
+    setState(() {
+      _supportBiometric = supportBiometric;
+      _isBiometricAuthorized = isBiometricAuthorized;
+    });
+    print('_supportBiometric: $supportBiometric');
+    print('_isBiometricAuthorized: $isBiometricAuthorized');
+    if (supportBiometric) {
+      final authStorage = await webApi.account
+          .getBiometricPassStoreFile(context, widget.account.pubKey);
+      setState(() {
+        _authStorage = authStorage;
+      });
+      // we prompt biometric auth here if device supported
+      // and user authorized to use biometric.
+      if (isBiometricAuthorized) {
+        try {
+          final result = await authStorage.read();
+          print('read password from authStorage: $result');
+          if (result != null) {
+            await _onOk(result);
+          }
+        } catch (err) {
+          Navigator.of(context).pop();
+        }
+      }
+    }
+    return response;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkBiometricAuthenticate();
+    });
+  }
+
   @override
   void dispose() {
     _passCtrl.dispose();
@@ -65,20 +117,30 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
 
     return CupertinoAlertDialog(
       title: widget.title ?? Container(),
-      content: Padding(
-        padding: EdgeInsets.only(top: 16),
-        child: CupertinoTextField(
-          placeholder: I18n.of(context).profile['pass.old'],
-          controller: _passCtrl,
-          onChanged: (v) {
-            return Fmt.checkPassword(v.trim())
-                ? null
-                : I18n.of(context).account['create.password.error'];
-          },
-          obscureText: true,
-          clearButtonMode: OverlayVisibilityMode.editing,
-        ),
-      ),
+      content: _isBiometricAuthorized
+          ? Container()
+          : Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 4),
+                  child: widget.content ?? Container(),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 12),
+                  child: CupertinoTextField(
+                    placeholder: I18n.of(context).profile['pass.old'],
+                    controller: _passCtrl,
+                    onChanged: (v) {
+                      return Fmt.checkPassword(v.trim())
+                          ? null
+                          : I18n.of(context).account['create.password.error'];
+                    },
+                    obscureText: true,
+                    clearButtonMode: OverlayVisibilityMode.editing,
+                  ),
+                ),
+              ],
+            ),
       actions: <Widget>[
         CupertinoButton(
           child: Text(dic['cancel']),

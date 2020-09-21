@@ -1,4 +1,6 @@
 PODS:
+  - biometric_storage (0.0.1):
+    - Flutter
   - connectivity (0.0.1):
     - Flutter
     - Reachability
@@ -6,8 +8,6 @@ PODS:
     - Flutter
   - Flutter (1.0.0)
   - flutter_aes_ecb_pkcs5 (0.0.1):
-    - Flutter
-  - flutter_downloader (0.0.1):
     - Flutter
   - flutter_local_notifications (0.0.1):
     - Flutter
@@ -34,11 +34,11 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - biometric_storage (from `.symlinks/plugins/biometric_storage/ios`)
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
   - device_info (from `.symlinks/plugins/device_info/ios`)
   - Flutter (from `Flutter`)
   - flutter_aes_ecb_pkcs5 (from `.symlinks/plugins/flutter_aes_ecb_pkcs5/ios`)
-  - flutter_downloader (from `.symlinks/plugins/flutter_downloader/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_qr_scan (from `.symlinks/plugins/flutter_qr_scan/ios`)
   - flutter_webview_plugin (from `.symlinks/plugins/flutter_webview_plugin/ios`)
@@ -56,6 +56,8 @@ SPEC REPOS:
     - Reachability
 
 EXTERNAL SOURCES:
+  biometric_storage:
+    :path: ".symlinks/plugins/biometric_storage/ios"
   connectivity:
     :path: ".symlinks/plugins/connectivity/ios"
   device_info:
@@ -64,8 +66,6 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_aes_ecb_pkcs5:
     :path: ".symlinks/plugins/flutter_aes_ecb_pkcs5/ios"
-  flutter_downloader:
-    :path: ".symlinks/plugins/flutter_downloader/ios"
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_qr_scan:
@@ -90,11 +90,11 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter/ios"
 
 SPEC CHECKSUMS:
+  biometric_storage: 1400f1382af3a4cc2bf05340e13c3d8de873ceb9
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_aes_ecb_pkcs5: fb682a7bb13f29cfbb33f88f7e1ed2211eacf5db
-  flutter_downloader: 058b9c41564a90500f67f3e432e3524613a7fd83
   flutter_local_notifications: 9e4738ce2471c5af910d961a6b7eadcf57c50186
   flutter_qr_scan: f7c8c497584bbf395efd56ffcc3a60d27ec9de82
   flutter_webview_plugin: ed9e8a6a96baf0c867e90e1bce2673913eeac694
@@ -108,6 +108,6 @@ SPEC CHECKSUMS:
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
   webview_flutter: d2b4d6c66968ad042ad94cbb791f5b72b4678a96
 
-PODFILE CHECKSUM: ed60d167b06d24f89aa556409ae856e63c9c4416
+PODFILE CHECKSUM: eee6b1f2978962cef7d0e90e7bfbd1b1f0799111
 
 COCOAPODS: 1.8.4

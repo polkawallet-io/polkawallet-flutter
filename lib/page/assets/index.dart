@@ -140,6 +140,7 @@ class _AssetsState extends State<Assets> {
             return PasswordInputDialog(
               account: store.account.currentAccount,
               title: Text(dic['uos.title']),
+              content: Text(dic['uos.pass.warn']),
               onOk: (password) {
                 print('pass ok: $password');
                 _signAsync(password);

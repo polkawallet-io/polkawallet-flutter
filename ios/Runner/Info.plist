@@ -61,5 +61,7 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<string>YES</string>
+	<key>NSFaceIDUsageDescription</key>
+    <string>Encrypt/decrypt password of key pairs</string>
 </dict>
 </plist>
