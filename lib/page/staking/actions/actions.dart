@@ -64,7 +64,8 @@ class _StakingActions extends State<StakingActions>
         _loading = false;
       });
 
-      if (res['extrinsics'] == null ||
+      if (res == null ||
+          res['extrinsics'] == null ||
           res['extrinsics'].length < tx_list_page_size) {
         setState(() {
           _isLastPage = true;
@@ -487,7 +488,6 @@ class RowAccount02 extends StatelessWidget {
     final controllerId = stashInfo.controllerId ?? accountId;
     final String address02 =
         isController && !isSelfControl ? stashId : controllerId;
-    print(isController);
     return Container(
       padding: EdgeInsets.only(top: 8, bottom: 8),
       child: stashInfo != null

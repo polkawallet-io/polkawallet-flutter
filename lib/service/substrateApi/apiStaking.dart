@@ -15,17 +15,23 @@ class ApiStaking {
     }
   }
 
+  Future<List> fetchAccountRewardsEraOptions() async {
+    final List res =
+        await apiRoot.evalJavascript('staking.getAccountRewardsEraOptions()');
+    return res;
+  }
+
   // this query takes extremely long time
-  Future<void> fetchAccountRewards(String pubKey) async {
+  Future<void> fetchAccountRewards(String pubKey, int eras) async {
     if (store.staking.ownStashInfo != null &&
         store.staking.ownStashInfo.stakingLedger != null) {
       int bonded = store.staking.ownStashInfo.stakingLedger['active'];
       List unlocking = store.staking.ownStashInfo.stakingLedger['unlocking'];
       if (pubKey != null && (bonded > 0 || unlocking.length > 0)) {
-        String address = store.account.currentAddress;
+        String address = store.staking.ownStashInfo.stashId;
         print('fetching staking rewards...');
-        Map res = await apiRoot
-            .evalJavascript('staking.loadAccountRewardsData("$address")');
+        Map res = await apiRoot.evalJavascript(
+            'staking.loadAccountRewardsData("$address", $eras)');
         store.staking.setRewards(pubKey, res);
         return;
       }

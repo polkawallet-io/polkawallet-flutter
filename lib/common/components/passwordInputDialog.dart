@@ -23,10 +23,7 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
 
   bool _submitting = false;
 
-  bool _supportBiometric = false; // if device support biometric
   bool _isBiometricAuthorized = false; // if user authorized biometric usage
-  bool _enableBiometric = true; // if the biometric usage checkbox checked
-  BiometricStorageFile _authStorage;
 
   Future<void> _onOk(String password) async {
     setState(() {
@@ -69,7 +66,6 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
     final isBiometricAuthorized =
         webApi.account.getBiometricEnabled(widget.account.pubKey);
     setState(() {
-      _supportBiometric = supportBiometric;
       _isBiometricAuthorized = isBiometricAuthorized;
     });
     print('_supportBiometric: $supportBiometric');
@@ -77,9 +73,6 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
     if (supportBiometric) {
       final authStorage = await webApi.account
           .getBiometricPassStoreFile(context, widget.account.pubKey);
-      setState(() {
-        _authStorage = authStorage;
-      });
       // we prompt biometric auth here if device supported
       // and user authorized to use biometric.
       if (isBiometricAuthorized) {

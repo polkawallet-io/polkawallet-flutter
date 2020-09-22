@@ -61,13 +61,6 @@ List<EndpointData> networkEndpoints = [
     'text': 'Polkadot (Live, hosted by Polkawallet EU)',
     'value': 'wss://polkadot-2.polkawallet.io',
   }),
-  EndpointData.fromJson(const {
-    'color': 'pink',
-    'info': network_name_polkadot,
-    'ss58': 0,
-    'text': 'Polkadot (Live, hosted by Polkawallet EU2)',
-    'value': 'ws://62.171.154.98:9944',
-  }),
   networkEndpointKusama,
   EndpointData.fromJson(const {
     'color': 'black',
@@ -148,8 +141,8 @@ const String cross_chain_transfer_address_laminar =
     '5CLaminarAUSDCrossChainTransferxxxxxxxxxxxxxwisu';
 
 /// app versions
-const String app_beta_version = 'v1.0.2-beta.2';
-const int app_beta_version_code = 1022;
+const String app_beta_version = 'v1.0.3-beta.1';
+const int app_beta_version_code = 1031;
 
 /// js code versions
 const Map<String, int> js_code_version_map = {

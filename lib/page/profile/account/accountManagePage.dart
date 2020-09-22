@@ -23,6 +23,7 @@ class AccountManagePage extends StatefulWidget {
 }
 
 class _AccountManagePageState extends State<AccountManagePage> {
+  bool _supportBiometric = false; // if device support biometric
   bool _isBiometricAuthorized = false; // if user authorized biometric usage
   BiometricStorageFile _authStorage;
 
@@ -76,6 +77,14 @@ class _AccountManagePageState extends State<AccountManagePage> {
   }
 
   Future<void> _checkBiometricAuth() async {
+    final response = await BiometricStorage().canAuthenticate();
+    final supportBiometric = response == CanAuthenticateResponse.success;
+    if (!supportBiometric) {
+      return;
+    }
+    setState(() {
+      _supportBiometric = supportBiometric;
+    });
     final pubKey = widget.store.account.currentAccountPubKey;
     final storeFile =
         await webApi.account.getBiometricPassStoreFile(context, pubKey);
@@ -150,28 +159,33 @@ class _AccountManagePageState extends State<AccountManagePage> {
                       onTap: () => Navigator.of(context)
                           .pushNamed(ExportAccountPage.route),
                     ),
-                    ListTile(
-                      title: Text(I18n.of(context).home['unlock.bio.enable']),
-                      trailing: CupertinoSwitch(
-                        value: _isBiometricAuthorized,
-                        onChanged: (v) {
-                          if (v != _isBiometricAuthorized) {
-                            showCupertinoDialog(
-                              context: context,
-                              builder: (_) {
-                                return PasswordInputDialog(
-                                  title: Text(I18n.of(context).home['unlock']),
-                                  account: widget.store.account.currentAccount,
-                                  onOk: (password) {
-                                    _updateBiometricAuth(v, password);
-                                  },
-                                );
+                    _supportBiometric
+                        ? ListTile(
+                            title: Text(
+                                I18n.of(context).home['unlock.bio.enable']),
+                            trailing: CupertinoSwitch(
+                              value: _isBiometricAuthorized,
+                              onChanged: (v) {
+                                if (v != _isBiometricAuthorized) {
+                                  showCupertinoDialog(
+                                    context: context,
+                                    builder: (_) {
+                                      return PasswordInputDialog(
+                                        title: Text(
+                                            I18n.of(context).home['unlock']),
+                                        account:
+                                            widget.store.account.currentAccount,
+                                        onOk: (password) {
+                                          _updateBiometricAuth(v, password);
+                                        },
+                                      );
+                                    },
+                                  );
+                                }
                               },
-                            );
-                          }
-                        },
-                      ),
-                    ),
+                            ),
+                          )
+                        : Container(),
                   ],
                 ),
               ),

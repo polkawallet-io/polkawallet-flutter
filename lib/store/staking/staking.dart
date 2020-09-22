@@ -145,7 +145,7 @@ abstract class _StakingStore with Store {
     if (rewards['available'] == null) {
       return BigInt.zero;
     }
-    return Fmt.balanceInt(rewards['available'].toString());
+    return Fmt.balanceInt('0x${rewards['available']}');
   }
 
   @computed
