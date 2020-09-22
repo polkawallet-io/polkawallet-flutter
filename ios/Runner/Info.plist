@@ -38,6 +38,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Read QR Code of addresses.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Encrypt/decrypt password of key pairs</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Read QR Code of addresses from photos.</string>
 	<key>UILaunchStoryboardName</key>
@@ -61,7 +63,5 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<string>YES</string>
-	<key>NSFaceIDUsageDescription</key>
-    <string>Encrypt/decrypt password of key pairs</string>
 </dict>
 </plist>
