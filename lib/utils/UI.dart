@@ -52,15 +52,21 @@ class UI {
     String platform = Platform.isAndroid ? 'android' : 'ios';
     final Map dic = I18n.of(context).home;
 
-    int latestCode = versions[platform]['version-code'];
-    String latestBeta = versions[platform]['version-beta'];
-    int latestCodeBeta = versions[platform]['version-code-beta'];
+    final int latestCode = versions[platform]['version-code'];
+    final String latestBeta = versions[platform]['version-beta'];
+    final int latestCodeBeta = versions[platform]['version-code-beta'];
+    final int versionCodeMin = versions[platform]['version-code-min'];
 
     bool needUpdate = false;
+    bool needExit = false;
     if (autoCheck) {
       if (latestCode > app_beta_version_code) {
         // new version found
         needUpdate = true;
+        // app version lower than versionMin, force exit
+        if (versionCodeMin > app_beta_version_code) {
+          needExit = true;
+        }
       } else {
         return;
       }
@@ -103,6 +109,9 @@ class UI {
               child: Text(dic['cancel']),
               onPressed: () {
                 Navigator.of(context).pop();
+                if (needUpdate && needExit) {
+                  exit(0);
+                }
               },
             ),
             CupertinoButton(
