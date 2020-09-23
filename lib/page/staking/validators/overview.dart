@@ -156,6 +156,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     List nominators = [];
     double nominatorListHeight = 48;
     bool isController = false;
+    bool isStash = true;
     if (hashData) {
       bonded = store.staking.ownStashInfo.stakingLedger['active'];
       nominators = store.staking.ownStashInfo.nominating.toList();
@@ -163,9 +164,10 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
         nominatorListHeight = double.parse((nominators.length * 56).toString());
       }
       isController = store.staking.ownStashInfo.isOwnController;
+      isStash = store.staking.ownStashInfo.isOwnStash ||
+          (!store.staking.ownStashInfo.isOwnStash &&
+              !store.staking.ownStashInfo.isOwnController);
     }
-    final isStash = store.staking.ownStashInfo?.stashId ==
-        store.staking.ownStashInfo?.account?.accountId;
 
     Color actionButtonColor = Theme.of(context).primaryColor;
     Color disabledColor = Theme.of(context).disabledColor;
