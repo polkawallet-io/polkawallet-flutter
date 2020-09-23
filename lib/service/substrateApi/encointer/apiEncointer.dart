@@ -119,17 +119,16 @@ class ApiEncointer {
   }
 
   Future<void> subscribeCurrentPhase(String channel, Function callback) async {
-    apiRoot.msgHandlers[channel] = callback;
-    apiRoot.evalJavascript(
-        'encointer.subscribeCurrentPhase("$channel")');
+    apiRoot.subscribeMessage('encointer.subscribeCurrentPhase("$channel")', channel, callback);
   }
 
   Future<void> subscribeTimestamp(String channel) async {
-    apiRoot.msgHandlers[channel] = (data) => {
-      store.encointer.setTimestamp(data)
-    };
-    await apiRoot.evalJavascript(
-        'encointer.subscribeTimestamp("$channel")');
+    apiRoot.subscribeMessage(
+        'encointer.subscribeTimestamp("$channel")',
+        channel,
+        (data) => {
+          store.encointer.setTimestamp(data)
+        });
   }
 
   Future<List<dynamic>> getCurrencyIdentifiers() async {
@@ -179,7 +178,7 @@ class ApiEncointer {
 
   Future<dynamic> sendFaucetTx() async {
     var address = store.account.currentAddress;
-    var amount = Fmt.tokenInt('0.001');
+    var amount = Fmt.tokenInt('0.001', encointerTokenDecimals);
     var res = await apiRoot.evalJavascript('account.sendFaucetTx("$address", "$amount")');
 //    print("Faucet Result :" + res.toString());
     return res;

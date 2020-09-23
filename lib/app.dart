@@ -30,14 +30,6 @@ import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferCrossChainPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
-import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
-import 'package:polka_wallet/page/governance/council/candidateListPage.dart';
-import 'package:polka_wallet/page/governance/council/councilPage.dart';
-import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
-import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
-import 'package:polka_wallet/page/governance/democracy/democracyPage.dart';
-import 'package:polka_wallet/page/governance/democracy/proposalDetailPage.dart';
-import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
 import 'package:polka_wallet/page/homePage.dart';
 import 'package:polka_wallet/page/networkSelectPage.dart';
 import 'package:polka_wallet/page/profile/aboutPage.dart';
@@ -59,12 +51,8 @@ import 'package:polka_wallet/page/profile/recovery/vouchRecoveryPage.dart';
 import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:polka_wallet/page/profile/settings/settingsPage.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
-import 'package:polka_wallet/page/staking/actions/accountSelectPage.dart';
-import 'package:polka_wallet/page/staking/actions/bondExtraPage.dart';
-import 'package:polka_wallet/page/staking/actions/bondPage.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/service/version.dart';
 import 'package:polka_wallet/service/graphql.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/notification.dart';
@@ -222,7 +210,6 @@ class _WalletAppState extends State<WalletApp> {
         CurrencySelectPage.route: (_) => CurrencySelectPage(),
         ClaimPage.route: (_) => ClaimPage(_appStore),
         AttestPage.route: (_) => AttestPage(_appStore),
-        AccountSelectPage.route: (_) => AccountSelectPage(_appStore),
         // profile
         AccountManagePage.route: (_) => AccountManagePage(_appStore),
         ContactsPage.route: (_) => ContactsPage(_appStore.settings),

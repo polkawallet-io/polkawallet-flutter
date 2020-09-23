@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/store/staking/types/txData.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -28,10 +27,6 @@ class TxList extends StatelessWidget {
               width: 80,
               child: Text(txs[i].txNumber),
             ),
-            onTap: () {
-              Navigator.of(context)
-                  .pushNamed(StakingDetailPage.route, arguments: txs[i]);
-            },
           );
         });
   }

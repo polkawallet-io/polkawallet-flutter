@@ -295,9 +295,6 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
     final bool isKusama =
         store.settings.endpoint.info == networkEndpointKusama.info;
-    final bool isAcala =
-        store.settings.endpoint.info == networkEndpointAcala.info;
-
     bool isUnsigned = args['txInfo']['isUnsigned'] ?? false;
     return Scaffold(
       appBar: AppBar(
@@ -316,12 +313,6 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
           final bool isPolkadot =
               store.settings.endpoint.info == network_name_polkadot;
           bool isTxPaused = isPolkadot;
-          if (isTxPaused &&
-              store.gov.bestNumber > 0 &&
-              (store.gov.bestNumber < dot_re_denominate_block - 1200 ||
-                  store.gov.bestNumber > dot_re_denominate_block + 1200)) {
-            isTxPaused = false;
-          }
           return Column(
             children: <Widget>[
               Expanded(
@@ -453,15 +444,6 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                                             Text(
                                               '$fee $tokenView',
                                             ),
-                                            isAcala
-                                                ? Text(
-                                                    I18n.of(context)
-                                                        .acala['tx.fee.or'],
-                                                    style: TextStyle(
-                                                      fontSize: 13,
-                                                    ),
-                                                  )
-                                                : Container(),
                                             Text(
                                               '${_fee['weight']} Weight',
                                               style: TextStyle(

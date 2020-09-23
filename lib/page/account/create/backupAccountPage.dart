@@ -60,7 +60,6 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
     // fetch info for the imported account
     String pubKey = acc['pubKey'];
     webApi.assets.fetchBalance();
-    webApi.staking.fetchAccountStaking();
     webApi.account.fetchAccountsBonded([pubKey]);
     webApi.account.getPubKeyIcons([pubKey]);
 

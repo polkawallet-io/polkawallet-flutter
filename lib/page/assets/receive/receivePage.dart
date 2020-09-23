@@ -19,7 +19,6 @@ class ReceivePage extends StatelessWidget {
         'substrate:${store.account.currentAddress}:${store.account.currentAccount.pubKey}:${store.account.currentAccount.name}';
     Color themeColor = Theme.of(context).primaryColor;
 
-    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
     bool isEncointer = store.settings.endpointIsEncointer;
     final accInfo =
         store.account.accountIndexMap[store.account.currentAccount.address];
@@ -39,7 +38,7 @@ class ReceivePage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(top: 32),
                   child: Image.asset(
-                      'assets/images/assets/receive_line_${isEncointer ? 'indigo' : isKusama ? 'pink800' : 'pink'}.png'),
+                      'assets/images/assets/receive_line_${isEncointer ? 'indigo' : 'pink'}.png'),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 40),

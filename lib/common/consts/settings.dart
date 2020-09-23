@@ -2,8 +2,9 @@ import 'package:polka_wallet/store/settings.dart';
 
 const String network_name_kusama = 'kusama';
 const String network_name_polkadot = 'polkadot';
-const String network_name_acala_mandala = 'acala-mandala';
-const String network_name_laminar_turbulence = 'laminar-turbulence';
+const String network_name_encointer_gesell = 'nctr-gsl';
+const String network_name_encointer_cantillon = 'nctr-ctln';
+
 
 EndpointData networkEndpointPolkadot = EndpointData.fromJson(const {
   'color': 'pink',
@@ -127,6 +128,7 @@ const int app_beta_version_code = 800;
 const Map<String, int> js_code_version_map = {
   network_name_polkadot: 10010,
   network_name_kusama: 10010,
-  network_name_encointer: 10010,
+  network_name_encointer_gesell: 10010,
+  network_name_encointer_cantillon: 10010,
 };
 

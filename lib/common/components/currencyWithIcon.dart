@@ -22,15 +22,7 @@ class CurrencyWithIcon extends StatelessWidget {
     final String networkToken =
         globalAppStore.settings.networkState.tokenSymbol;
     final int decimals = globalAppStore.settings.networkState.tokenDecimals;
-    final bool isLaminar =
-        globalAppStore.settings.endpoint.info == networkEndpointLaminar.info;
     bool hasIcon = true;
-    if (isLaminar &&
-        (symbol != networkToken &&
-            symbol != acala_stable_coin &&
-            symbol != acala_stable_coin_view)) {
-      hasIcon = false;
-    }
     return Row(
       mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
       children: <Widget>[

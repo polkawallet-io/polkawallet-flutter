@@ -158,7 +158,7 @@ abstract class _EncointerStore with Store {
         "from": rootStore.account.currentAddress,
         "to": i['params'][0],
         "token": i['params'][1],
-        "amount": Fmt.balance(i['params'][2], decimals: encointerTokenDecimals),
+        "amount": Fmt.balance(i['params'][2], encointerTokenDecimals),
       };
     }).toList();
     if (reset) {

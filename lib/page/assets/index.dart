@@ -189,7 +189,7 @@ class _AssetsState extends State<Assets> {
     });
 
     var res;
-    if (balancesInfo.freeBalance - Fmt.tokenInt('0.0001') > BigInt.zero) {
+    if (balancesInfo.freeBalance - Fmt.tokenInt('0.0001', encointerTokenDecimals) > BigInt.zero) {
       aboveLimit = true;
     } else {
       res = await webApi.encointer.sendFaucetTx();
@@ -226,58 +226,7 @@ class _AssetsState extends State<Assets> {
                       int.parse(res['params'][
                           1]), // todo: Id is used to group notifications. This is probably not a good idea
                       I18n.of(context).assets['notify.receive'],
-                      'ERT ' + Fmt.balance(res['params'][1]).toString(),
-                    );
-                  }
-                },
-              ),
-            ],
-          );
-        },
-      );
-    });
-  }
-
-  Future<void> _getLaminarTokensFromFaucet() async {
-    setState(() {
-      _faucetSubmitting = true;
-    });
-    final String res =
-        await FaucetApi.getLaminarTokens(store.account.currentAddress);
-    print(res);
-    String dialogContent = I18n.of(context).acala['faucet.ok'];
-    bool isOK = false;
-    if (res == null) {
-      dialogContent = I18n.of(context).acala['faucet.error'];
-    } else if (res == "LIMIT") {
-      dialogContent = I18n.of(context).acala['faucet.limit'];
-    } else {
-      isOK = true;
-    }
-
-    Timer(Duration(seconds: 3), () {
-      setState(() {
-        _faucetSubmitting = false;
-      });
-
-      showCupertinoDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: Container(),
-            content: Text(dialogContent),
-            actions: <Widget>[
-              CupertinoButton(
-                child: Text(I18n.of(context).home['ok']),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  if (isOK) {
-                    Map data = jsonDecode(res);
-                    globalBalanceRefreshKey.currentState.show();
-                    NotificationPlugin.showNotification(
-                      int.parse(data['hash'].substring(0, 6)),
-                      I18n.of(context).assets['notify.receive'],
-                      jsonEncode(data['amount']),
+                      'ERT ' + Fmt.balance(res['params'][1], encointerTokenDecimals).toString(),
                     );
                   }
                 },
@@ -443,6 +392,7 @@ class _AssetsState extends State<Assets> {
         int decimals =
             store.settings.networkState.tokenDecimals ?? kusama_token_decimals;
         String networkName = store.settings.networkName ?? '';
+        final String tokenView = Fmt.tokenView(symbol);
 
         List<String> currencyIds = [];
         if (store.settings.endpointIsEncointer && networkName != null) {
@@ -453,10 +403,10 @@ class _AssetsState extends State<Assets> {
           currencyIds.retainWhere((i) => i != symbol);
         }
 
-        // Map<String, BalanceEntry> nonZeroEntointerEntries = store
+        // Map<String, BalanceEntry> nonZeroEncointerEntries = store
         //     .encointer.balanceEntries
         //   ..removeWhere((key, value) => value.principal == 0);
-        Map<String, BalanceEntry> nonZeroEntointerEntries =
+        Map<String, BalanceEntry> nonZeroEncointerEntries =
             store.encointer.balanceEntries;
 
         BalancesInfo balancesInfo = store.assets.balances[symbol];
@@ -466,47 +416,7 @@ class _AssetsState extends State<Assets> {
           child: Column(
             children: <Widget>[
               _buildTopCard(context),
-              isPolkadot
-                  ? FutureBuilder(
-                      future: _fetchAnnouncements(),
-                      builder: (_, AsyncSnapshot<List> snapshot) {
-                        final String lang =
-                            I18n.of(context).locale.toString().contains('zh')
-                                ? 'zh'
-                                : 'en';
-                        if (!snapshot.hasData || snapshot.data.length == 0) {
-                          return Container(height: 24);
-                        }
-                        final Map announce = snapshot.data[0][lang];
-                        return GestureDetector(
-                          child: Container(
-                            margin: EdgeInsets.all(16),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: TextTag(
-                                    announce['title'],
-                                    padding:
-                                        EdgeInsets.fromLTRB(16, 12, 16, 12),
-                                    color: Colors.lightGreen,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).pushNamed(
-                              AnnouncementPage.route,
-                              arguments: AnnouncePageParams(
-                                title: announce['title'],
-                                link: announce['link'],
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    )
-                  : Container(height: 24),
+              Container(height: 24),
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.only(left: 16, right: 16),
@@ -519,15 +429,6 @@ class _AssetsState extends State<Assets> {
                           BorderedTitle(
                             title: I18n.of(context).home['assets'],
                           ),
-                          isAcala || isLaminar
-                              ? TextTag(
-                                  I18n.of(context).assets['assets.test'],
-                                  fontSize: 16,
-                                  color: Colors.red,
-                                  margin: EdgeInsets.only(left: 12),
-                                  padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
-                                )
-                              : Container()
                         ],
                       ),
                     ),
@@ -556,14 +457,7 @@ class _AssetsState extends State<Assets> {
                                   fontSize: 20,
                                   color: Colors.black54),
                             ),
-                            isPolkadot || isKusama
-                                ? Text(
-                                    '≈ \$ ${tokenPrice ?? '--.--'}',
-                                    style: TextStyle(
-                                      color: Theme.of(context).disabledColor,
-                                    ),
-                                  )
-                                : Container(width: 16),
+                            Container(width: 16),
                           ],
                         ),
                         onTap: () {
@@ -581,9 +475,7 @@ class _AssetsState extends State<Assets> {
                           child: ListTile(
                             leading: Container(
                               width: 36,
-                              child: hasIcon
-                                  ? Image.asset('assets/images/assets/$i.png')
-                                  : CircleAvatar(
+                              child: CircleAvatar(
                                       child: Text(token.substring(0, 2)),
                                     ),
                             ),
@@ -607,9 +499,9 @@ class _AssetsState extends State<Assets> {
                       }).toList(),
                     ),
                     store.settings.endpointIsEncointer &&
-                            nonZeroEntointerEntries.isNotEmpty
+                            nonZeroEncointerEntries.isNotEmpty
                         ? Column(
-                            children: nonZeroEntointerEntries.entries
+                            children: nonZeroEncointerEntries.entries
                                 .map((balanceData) {
 //                        print("balance data: " + balanceData.toString());
                               var cid = balanceData.key;

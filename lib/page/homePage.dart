@@ -2,12 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/backgroundWrapper.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/page-laminar/laminarEntry.dart';
 import 'package:polka_wallet/page/assets/index.dart';
-import 'package:polka_wallet/page/governance/govEntry.dart';
 import 'package:polka_wallet/page/networkSelectPage.dart';
 import 'package:polka_wallet/page/profile/index.dart';
-import 'package:polka_wallet/page/staking/index.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
 
@@ -74,25 +71,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _getPage(i) {
-    final isLaminar =
-        networkEndpointLaminar.info == store.settings.endpoint.info;
-    if (isLaminar) {
-      switch (i) {
-        case 0:
-          return Assets(store);
-        case 1:
-          return LaminarEntry(store);
-        default:
-          return Profile(store);
-      }
-    }
     switch (i) {
       case 0:
         return Assets(store);
-      case 1:
-        return Staking(store);
-      case 2:
-        return GovEntry(store);
       default:
         return Profile(store);
     }
@@ -148,21 +129,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final isLaminar =
-          networkEndpointLaminar.info == store.settings.endpoint.info;
-      if (isLaminar && _tabList.length != _tabListLaminar.length) {
-        setState(() {
-          _tabList = _tabListLaminar;
-        });
-      }
-      if (!isLaminar && _tabList.length != _tabListKusama.length) {
-        setState(() {
-          _tabList = _tabListKusama;
-        });
-      }
-    });
   }
 
   @override

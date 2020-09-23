@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter_qr_reader/qrcode_reader_view.dart';
+import 'package:flutter_qr_scan/qrcode_reader_view.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -34,7 +33,7 @@ class ScanQrCode extends StatelessWidget {
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
     Function onScan = args['onScan'];
 
-    Future _onScan(String data) async {
+    Future _onScan(String data, String _rawData) async {
       if (data != null) {
         onScan(data);
         Navigator.of(context).pop(data);

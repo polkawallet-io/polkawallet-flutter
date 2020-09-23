@@ -79,14 +79,6 @@ class _TransferPageState extends State<TransferPage> {
         .pushNamed(CurrencySelectPage.route, arguments: symbolOptions);
 
     if (currency != null) {
-      if (_crossChain &&
-          (_tokenSymbol == acala_stable_coin_view ||
-              _tokenSymbol == acala_stable_coin) &&
-          _tokenSymbol != currency) {
-        setState(() {
-          _accountTo = null;
-        });
-      }
       setState(() {
         _tokenSymbol = currency;
       });
@@ -138,9 +130,6 @@ class _TransferPageState extends State<TransferPage> {
         if (store.settings.endpointIsEncointer) {
           store.encointer.setTransferTxs([res]);
         }
-        if (isLaminar) {
-          store.laminar.setTransferTxs([res]);
-        }
         Navigator.popUntil(
             txPageContext, ModalRoute.withName(routeArgs.redirect));
         // user may route to transfer page from asset page
@@ -157,8 +146,6 @@ class _TransferPageState extends State<TransferPage> {
   }
 
   void _onCrossChain() {
-    final bool isAcala =
-        store.settings.endpoint.info == network_name_acala_mandala;
     showCupertinoModalPopup(
       context: context,
       builder: (_) => CupertinoActionSheet(
@@ -171,18 +158,11 @@ class _TransferPageState extends State<TransferPage> {
                   padding: EdgeInsets.only(right: 8),
                   child: CircleAvatar(
                     child: Image.asset(
-                      isAcala
-                          ? 'assets/images/public/laminar-turbulence.png'
-                          : 'assets/images/public/acala-mandala.png',
+                      'assets/images/public/acala-mandala.png',
                     ),
                     radius: 16,
                   ),
                 ),
-                Text(
-                  isAcala
-                      ? network_name_laminar_turbulence.toUpperCase()
-                      : network_name_acala_mandala.toUpperCase(),
-                )
               ],
             ),
             onPressed: () {
@@ -249,7 +229,6 @@ class _TransferPageState extends State<TransferPage> {
     return Observer(
       builder: (_) {
         final Map<String, String> dic = I18n.of(context).assets;
-        final int decimals = store.settings.networkState.tokenDecimals;
         final String baseTokenSymbol = store.settings.networkState.tokenSymbol;
         final String baseTokenSymbolView = Fmt.tokenView(baseTokenSymbol);
         String symbol = _tokenSymbol ?? baseTokenSymbol;
@@ -278,7 +257,7 @@ class _TransferPageState extends State<TransferPage> {
             actions: <Widget>[
               IconButton(
                 icon: Image.asset('assets/images/assets/Menu_scan.png'),
-                onPressed: isCrossChain ? null : _onScan,
+                onPressed: _onScan,
               )
             ],
           ),
@@ -293,21 +272,6 @@ class _TransferPageState extends State<TransferPage> {
                         child: ListView(
                           padding: EdgeInsets.all(16),
                           children: <Widget>[
-                            canCrossChain
-                                ? Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      Container(
-                                        margin: EdgeInsets.only(bottom: 16),
-                                        child: OutlinedButtonSmall(
-                                          content: dic['cross.chain'],
-                                          active: true,
-                                          onPressed: _onCrossChain,
-                                        ),
-                                      )
-                                    ],
-                                  )
-                                : Container(),
                             AddressInputField(
                               widget.store,
                               label: dic['address'],
@@ -437,7 +401,7 @@ class _TransferPageState extends State<TransferPage> {
     if (_isEncointerCommunityCurrency) {
       return Fmt.tokenInt(
           store.encointer.balanceEntries[_tokenSymbol].principal.toString(),
-          decimals: encointerTokenDecimals);
+          encointerTokenDecimals);
     } else {
       return isBaseToken
           ? store.assets.balances[symbol.toUpperCase()].transferable

@@ -114,23 +114,15 @@ class _AssetPageState extends State<AssetPage>
 
   List<Widget> _buildTxList() {
     List<Widget> res = [];
+    final String token = ModalRoute.of(context).settings.arguments;
     if (store.settings.endpointIsEncointer) {
       List<TransferData> ls = store.encointer.txsTransfer.reversed.toList();
       final String symbol = store.settings.networkState.tokenSymbol;
-      final String token = ModalRoute.of(context).settings.arguments;
       final bool isBaseToken = token == symbol;
       ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
       res.addAll(ls.map((i) {
         String crossChain;
         Map<String, dynamic> tx = TransferData.toJson(i);
-        if (i.to == cross_chain_transfer_address_acala) {
-          tx['to'] = store.account.currentAddress;
-          crossChain = 'Acala';
-        }
-        if (i.to == cross_chain_transfer_address_laminar) {
-          tx['to'] = store.account.currentAddress;
-          crossChain = 'Laminar';
-        }
         return TransferListItem(
           data: crossChain != null ? TransferData.fromJson(tx) : i,
           token: token,
@@ -163,12 +155,9 @@ class _AssetPageState extends State<AssetPage>
 
   @override
   Widget build(BuildContext context) {
-    final String symbol = store.settings.networkState.tokenSymbol;
     final AssetPageParams params = ModalRoute.of(context).settings.arguments;
-    final String token = params.token;
     final bool isEncointerCommunityCurrency =
         params.isEncointerCommunityCurrency;
-    final bool isBaseToken = token == symbol;
 
     final dic = I18n.of(context).assets;
     final List<Tab> _myTabs = <Tab>[
@@ -204,7 +193,7 @@ class _AssetPageState extends State<AssetPage>
             BigInt balance = isEncointerCommunityCurrency
                 ? Fmt.tokenInt(
                     store.encointer.balanceEntries[token].principal.toString(),
-                    decimals: decimals)
+                    decimals)
                 : Fmt.balanceInt(
                     store.assets.tokenBalances[token.toUpperCase()]);
 

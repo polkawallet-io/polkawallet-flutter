@@ -69,21 +69,6 @@ mixin _$AppStore on _AppStore, Store {
     });
   }
 
-  final _$govAtom = Atom(name: '_AppStore.gov');
-
-  @override
-  GovernanceStore get gov {
-    _$govAtom.reportRead();
-    return super.gov;
-  }
-
-  @override
-  set gov(GovernanceStore value) {
-    _$govAtom.reportWrite(value, super.gov, () {
-      super.gov = value;
-    });
-  }
-
   final _$encointerAtom = Atom(name: '_AppStore.encointer');
 
   @override
@@ -96,21 +81,6 @@ mixin _$AppStore on _AppStore, Store {
   set encointer(EncointerStore value) {
     _$encointerAtom.reportWrite(value, super.encointer, () {
       super.encointer = value;
-    });
-  }
-
-  final _$laminarAtom = Atom(name: '_AppStore.laminar');
-
-  @override
-  dynamic get laminar {
-    _$laminarAtom.reportRead();
-    return super.laminar;
-  }
-
-  @override
-  set laminar(dynamic value) {
-    _$laminarAtom.reportWrite(value, super.laminar, () {
-      super.laminar = value;
     });
   }
 
@@ -143,9 +113,7 @@ settings: ${settings},
 account: ${account},
 assets: ${assets},
 staking: ${staking},
-gov: ${gov},
 encointer: ${encointer},
-laminar: ${laminar},
 isReady: ${isReady}
     ''';
   }

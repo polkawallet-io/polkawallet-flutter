@@ -41,10 +41,6 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
           _tokenSymbol ?? widget.store.settings.networkState.tokenSymbol;
       int decimals = widget.store.settings.networkState.tokenDecimals;
 
-      final bool isAcala =
-          widget.store.settings.endpoint.info == networkEndpointAcala.info;
-      bool isLaminar =
-          widget.store.settings.endpoint.info == networkEndpointLaminar.info;
       var args = {
         "title": I18n.of(context).assets['transfer'] + ' $symbol',
         "txInfo": {
@@ -58,9 +54,6 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
         }),
         "params": [
           // params.to
-          isAcala
-              ? cross_chain_transfer_address_laminar
-              : cross_chain_transfer_address_acala,
           // params.currencyId
           symbol.toUpperCase(),
           // params.amount
@@ -71,12 +64,6 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
       args['onFinish'] = (BuildContext txPageContext, Map res) {
         final TransferPageParams routeArgs =
             ModalRoute.of(context).settings.arguments;
-        if (isAcala) {
-          widget.store.acala.setTransferTxs([res]);
-        }
-        if (isLaminar) {
-          widget.store.laminar.setTransferTxs([res]);
-        }
         Navigator.popUntil(
             txPageContext, ModalRoute.withName(routeArgs.redirect));
         // user may route to transfer page from asset page
@@ -129,8 +116,6 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
             : Fmt.balanceInt(
                 widget.store.assets.tokenBalances[symbol.toUpperCase()]);
 
-        final bool isAcala =
-            widget.store.settings.endpoint.info == networkEndpointAcala.info;
 
         return Scaffold(
           appBar: AppBar(title: Text(dic['transfer']), centerTitle: true),
@@ -162,20 +147,11 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                                   padding: EdgeInsets.only(right: 8),
                                   child: CircleAvatar(
                                     child: Image.asset(
-                                      isAcala
-                                          ? 'assets/images/public/laminar-turbulence.png'
-                                          : 'assets/images/public/acala-mandala.png',
+                                      'assets/images/public/acala-mandala.png'
                                     ),
                                     radius: 16,
                                   ),
                                 ),
-                                Text(
-                                  isAcala
-                                      ? network_name_laminar_turbulence
-                                          .toUpperCase()
-                                      : network_name_acala_mandala
-                                          .toUpperCase(),
-                                )
                               ],
                             ),
                             Padding(

@@ -9,9 +9,7 @@ import 'package:polka_wallet/service/substrateApi/encointer/apiEncointer.dart';
 import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
-import 'package:polka_wallet/service/substrateApi/apiGov.dart';
 import 'package:polka_wallet/service/substrateApi/apiStaking.dart';
-import 'package:polka_wallet/service/substrateApi/laminar/apiLaminar.dart';
 import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/service/substrateApi/types/genExternalLinksParams.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -32,8 +30,6 @@ class Api {
   ApiEncointer encointer;
 
   ApiAssets assets;
-  ApiStaking staking;
-  ApiGovernance gov;
 
   SubScanApi subScanApi = SubScanApi();
 
@@ -53,8 +49,6 @@ class Api {
     encointer = ApiEncointer(this);
 
     assets = ApiAssets(this);
-    staking = ApiStaking(this);
-    gov = ApiGovernance(this);
 
     launchWebview();
 
@@ -88,7 +82,7 @@ class Api {
   }
 
   Future<void> launchWebview({bool customNode = false}) async {
-    msgHandlers = {'txStatusChange': store.account.setTxStatus};
+    _msgHandlers = {'txStatusChange': store.account.setTxStatus};
 
     _evalJavascriptUID = 0;
     _msgCompleters = {};
@@ -146,8 +140,8 @@ class Api {
                     _msgCompleters.remove(path);
                   }
                 }
-                if (msgHandlers[path] != null) {
-                  Function handler = msgHandlers[path];
+                if (_msgHandlers[path] != null) {
+                  Function handler = _msgHandlers[path];
                   handler(msg['data']);
                 }
               });
@@ -237,9 +231,9 @@ class Api {
       String res = await evalJavascript('settings.setWorkerEndpoint("$worker")');
     }
 
-    EndpointData connected =
-        store.settings.endpointList.firstWhere((i) => i.value == res);
-    store.settings.setEndpoint(connected);
+    int index = store.settings.endpointList.indexWhere((i) => i.value == res);
+    if (index < 0) return;
+    store.settings.setEndpoint(store.settings.endpointList[index]);
     fetchNetworkProps();
   }
 
@@ -263,20 +257,9 @@ class Api {
           store.settings.endpoint.info ==
               networkEndpointEncointerCantillon.info;
 
-      if (isEncointer) {
-        await assets.fetchBalance(store.account.currentAccount.pubKey);
-      } else {
-        await Future.wait([
-          assets.fetchBalance(store.account.currentAccount.pubKey),
-          staking.fetchAccountStaking(store.account.currentAccount.pubKey),
-          account.fetchAccountsBonded(
-              store.account.accountList.map((i) => i.pubKey).toList()),
-        ]);
-      }
-    }
 
-    // fetch staking overview data as initializing
-    staking.fetchStakingOverview();
+      await assets.fetchBalance();
+    }
   }
 
   Future<void> updateBlocks(List txs) async {

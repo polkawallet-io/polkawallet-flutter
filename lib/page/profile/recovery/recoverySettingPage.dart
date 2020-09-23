@@ -12,7 +12,6 @@ import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/profile/recovery/createRecoveryPage.dart';
-import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
@@ -441,8 +440,6 @@ class ActiveRecovery extends StatelessWidget {
           action,
           CupertinoActionSheetAction(
             child: Text(I18n.of(context).assets['detail']),
-            onPressed: () => Navigator.of(context)
-                .popAndPushNamed(StakingDetailPage.route, arguments: tx),
           )
         ],
         cancelButton: CupertinoActionSheetAction(
@@ -458,7 +455,7 @@ class ActiveRecovery extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).profile;
-    String frindsVouched =
+    String friendsVouched =
         List.of(status['friends']).map((e) => Fmt.address(e)).join('\n');
     return RoundedCard(
       padding: EdgeInsets.all(16),
@@ -538,7 +535,7 @@ class ActiveRecovery extends StatelessWidget {
                             size: 16,
                           ),
                           message:
-                              '\n${dic['recovery.friends.vouched']}\n$frindsVouched\n',
+                              '\n${dic['recovery.friends.vouched']}\n$friendsVouched\n',
                         )
                       ],
                     ),

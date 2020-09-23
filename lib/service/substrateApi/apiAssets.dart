@@ -25,9 +25,6 @@ class ApiAssets {
     if (store.settings.endpointIsEncointer) {
       apiRoot.encointer.getBalances();
     }
-    if (store.settings.endpoint.info == networkEndpointLaminar.info) {
-      apiRoot.laminar.fetchTokens(store.account.currentAccount.pubKey);
-    }
     _fetchMarketPrice();
   }
 

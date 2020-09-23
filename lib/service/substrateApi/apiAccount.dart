@@ -99,17 +99,6 @@ class ApiAccount {
     if (fetchData) {
       webApi.assets.fetchBalance();
     }
-    if (store.settings.endpoint.info == networkEndpointAcala.info) {
-      store.acala.setTransferTxs([], reset: true);
-      store.acala.loadCache();
-    } else {
-      // refresh user's staking info if network is kusama or polkadot
-      store.staking.clearState();
-      store.staking.loadAccountCache();
-      if (fetchData) {
-        webApi.staking.fetchAccountStaking();
-      }
-    }
   }
 
   Future<void> fetchAccountsBonded(List<String> pubKeys) async {
