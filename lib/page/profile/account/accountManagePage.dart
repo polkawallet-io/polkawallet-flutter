@@ -32,7 +32,6 @@ class AccountManagePage extends StatelessWidget {
               webApi.assets.fetchBalance();
               // refresh user's staking info
               store.staking.loadAccountCache();
-              webApi.staking.fetchAccountStaking();
             });
             Navigator.of(context).pop();
           },

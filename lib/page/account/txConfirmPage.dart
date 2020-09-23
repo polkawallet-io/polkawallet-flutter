@@ -269,10 +269,6 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      webApi.gov.updateBestNumber();
-    });
   }
 
   @override

@@ -212,8 +212,8 @@ class _WalletAppState extends State<WalletApp> {
         AttestPage.route: (_) => AttestPage(_appStore),
         // profile
         AccountManagePage.route: (_) => AccountManagePage(_appStore),
-        ContactsPage.route: (_) => ContactsPage(_appStore.settings),
-        ContactListPage.route: (_) => ContactListPage(_appStore.settings),
+        ContactsPage.route: (_) => ContactsPage(_appStore),
+        ContactListPage.route: (_) => ContactListPage(_appStore),
         ContactPage.route: (_) => ContactPage(_appStore),
         ChangeNamePage.route: (_) => ChangeNamePage(_appStore.account),
         ChangePasswordPage.route: (_) => ChangePasswordPage(_appStore.account),

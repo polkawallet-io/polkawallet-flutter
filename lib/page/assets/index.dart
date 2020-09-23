@@ -54,7 +54,6 @@ class _AssetsState extends State<Assets> {
     } else {
       await Future.wait([
         webApi.assets.fetchBalance(),
-        webApi.staking.fetchAccountStaking(),
       ]);
     }
     webApi.account.fetchAccountsIndex();
