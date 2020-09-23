@@ -191,7 +191,8 @@ class _StakingActions extends State<StakingActions>
     bool isSelfControl = true;
     String account02PubKey = store.account.currentAccountPubKey;
     if (hasData) {
-      isStash = store.staking.ownStashInfo.isOwnStash;
+      isStash = store.staking.ownStashInfo.stashId ==
+          store.staking.ownStashInfo.account.accountId;
       isController = store.staking.ownStashInfo.isOwnController;
       isSelfControl = isStash && isController;
 
