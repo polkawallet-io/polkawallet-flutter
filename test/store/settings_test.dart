@@ -36,6 +36,19 @@ void main() {
       expect(store.networkName, 'Kusama');
       expect(store.loading, false);
     });
+
+    test('network endpoint test', () async {
+      await store.init('_en');
+      expect(store.endpoint.info, networkEndpointKusama.info);
+      expect(store.endpointList.length >= 4, true);
+      store.setEndpoint(networkEndpointPolkadot);
+      expect(store.endpoint.info, networkEndpointPolkadot.info);
+      expect(store.endpointList.length >= 3, true);
+      store.setEndpoint(networkEndpointEncointerGesell);
+      expect(store.endpoint.info, networkEndpointEncointerGesell.info);
+      expect(store.endpointList.length, 1);
+    });
+
     test('set network state properly', () async {
       store.setNetworkState(Map<String, dynamic>.of({
         'ss58Format': 2,
@@ -45,18 +58,6 @@ void main() {
       expect(store.networkState.ss58Format, 2);
       expect(store.networkState.tokenDecimals, 12);
       expect(store.networkState.tokenSymbol, 'KSM');
-    });
-
-    test('network endpoint test', () async {
-      await store.init('_en');
-      expect(store.endpoint.info, networkEndpointKusama.info);
-      expect(store.endpointList.length, 3);
-      store.setEndpoint(networkEndpointPolkadot);
-      expect(store.endpoint.info, networkEndpointPolkadot.info);
-      expect(store.endpointList.length, 3);
-      store.setEndpoint(networkEndpointEncointerGesell);
-      expect(store.endpoint.info, networkEndpointEncointerGesell.info);
-      expect(store.endpointList.length, 1);
     });
   });
 }

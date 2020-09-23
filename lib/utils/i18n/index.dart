@@ -84,4 +84,8 @@ class I18n {
   Map<String, String> get encointer {
     return _localizedValues[locale.languageCode]['encointer'];
   }
+
+  Map<String, String> get laminar {
+    return _localizedValues[locale.languageCode]['laminar'];
+  }
 }

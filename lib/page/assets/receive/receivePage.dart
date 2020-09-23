@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -22,6 +21,8 @@ class ReceivePage extends StatelessWidget {
 
     bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
     bool isEncointer = store.settings.endpointIsEncointer;
+    final accInfo =
+        store.account.accountIndexMap[store.account.currentAccount.address];
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
@@ -60,13 +61,19 @@ class ReceivePage extends StatelessWidget {
                         store.account.currentAccount.name,
                         style: Theme.of(context).textTheme.headline4,
                       ),
+                      accInfo != null && accInfo['accountIndex'] != null
+                          ? Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Text(accInfo['accountIndex']),
+                            )
+                          : Container(width: 8, height: 8),
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(width: 4, color: themeColor),
                           borderRadius:
                               BorderRadius.all(const Radius.circular(8)),
                         ),
-                        margin: EdgeInsets.fromLTRB(48, 24, 48, 24),
+                        margin: EdgeInsets.fromLTRB(48, 16, 48, 24),
                         child: QrImage(
                           data: codeAddress,
                           size: 200,

@@ -9,7 +9,6 @@ import 'package:polka_wallet/page/profile/recovery/recoveryProofPage.dart';
 import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
 import 'package:polka_wallet/page/profile/recovery/recoveryStatePage.dart';
-import 'package:polka_wallet/page/profile/recovery/vouchRecoveryPage.dart';
 import 'package:polka_wallet/page/profile/settings/settingsPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -129,6 +128,19 @@ class Profile extends StatelessWidget {
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
               onTap: () => Navigator.of(context).pushNamed(SettingsPage.route),
             ),
+            isKusama
+                ? ListTile(
+                    leading: Container(
+                      width: 32,
+                      child: Icon(Icons.security, color: grey, size: 22),
+                    ),
+                    title: Text(dic['recovery']),
+                    trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                    onTap: store.settings.loading
+                        ? null
+                        : () => _showRecoveryMenu(context),
+                  )
+                : Container(),
             ListTile(
               leading: Container(
                 width: 32,
@@ -138,17 +150,6 @@ class Profile extends StatelessWidget {
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
               onTap: () => Navigator.of(context).pushNamed(AboutPage.route),
             ),
-            isKusama
-                ? ListTile(
-                    leading: Container(
-                      width: 32,
-                      child: Icon(Icons.security, color: grey, size: 22),
-                    ),
-                    title: Text(dic['recovery']),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                    onTap: () => _showRecoveryMenu(context),
-                  )
-                : Container(),
           ],
         ),
       );

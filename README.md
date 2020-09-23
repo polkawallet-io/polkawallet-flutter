@@ -56,6 +56,11 @@ flutter build appbundle
 ```
 and find the output in `build/app/outputs/bundle/release/app-release.aab`
 
+#### Dev hints
+
+Re-generate mobx g.dart files
+  flutter packages pub run build_runner build --delete-conflicting-outputs
+
 #### Android Studio
 To run the in Android Studio a build flavor must be specified. Go to Run/Debug configurations and add the build flavor `dev` in the appropriate field. Other available values are in the in the android/app/src/build.gradle file.
 

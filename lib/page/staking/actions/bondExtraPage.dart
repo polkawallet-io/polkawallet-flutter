@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -35,14 +34,11 @@ class _BondExtraPageState extends State<BondExtraPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    BigInt balance = store.assets.balances[symbol].freeBalance;
-    BigInt bonded = BigInt.parse(
-        store.staking.ledger['stakingLedger']['active'].toString());
-    BigInt unlocking = BigInt.zero;
-    List unlockingList = store.staking.ledger['stakingLedger']['unlocking'];
-    unlockingList
-        .forEach((i) => unlocking += BigInt.parse(i['value'].toString()));
-    BigInt available = balance - bonded - unlocking;
+    double available = 0;
+    if (store.assets.balances[symbol] != null) {
+      available = Fmt.bigIntToDouble(
+          store.assets.balances[symbol].transferable, decimals);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -60,19 +56,19 @@ class _BondExtraPageState extends State<BondExtraPage> {
                     padding: EdgeInsets.all(16),
                     children: <Widget>[
                       AddressFormItem(
-                        dic['stash'],
                         store.account.currentAccount,
+                        label: dic['stash'],
                       ),
                       TextFormField(
                         decoration: InputDecoration(
                           hintText: assetDic['amount'],
                           labelText:
-                              '${assetDic['amount']} (${dic['available']}: ${Fmt.token(available)} $symbol)',
+                              '${assetDic['amount']} (${dic['available']}: ${Fmt.priceFloor(
+                            available,
+                            lengthMax: 3,
+                          )} $symbol)',
                         ),
-                        inputFormatters: [
-                          RegExInputFormatter.withRegex(
-                              '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                        ],
+                        inputFormatters: [UI.decimalInputFormatter(decimals)],
                         controller: _amountCtrl,
                         keyboardType:
                             TextInputType.numberWithOptions(decimal: true),
@@ -80,8 +76,7 @@ class _BondExtraPageState extends State<BondExtraPage> {
                           if (v.isEmpty) {
                             return assetDic['amount.error'];
                           }
-                          if (double.parse(v.trim()) >=
-                              available / BigInt.from(pow(10, decimals))) {
+                          if (double.parse(v.trim()) >= available) {
                             return assetDic['amount.low'];
                           }
                           return null;

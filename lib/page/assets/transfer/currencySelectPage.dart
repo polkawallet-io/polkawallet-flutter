@@ -8,7 +8,7 @@ class CurrencySelectPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> currencyIds = ModalRoute.of(context).settings.arguments;
+    final List currencyIds = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         title: Text(I18n.of(context).assets['currency.select']),

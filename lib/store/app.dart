@@ -33,6 +33,9 @@ abstract class _AppStore with Store {
   EncointerStore encointer;
 
   @observable
+  LaminarStore laminar;
+
+  @observable
   bool isReady = false;
 
   LocalStorage localStorage = LocalStorage();

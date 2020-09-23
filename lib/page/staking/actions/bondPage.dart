@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/staking/actions/accountSelectPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
@@ -90,9 +89,10 @@ class _BondPageState extends State<BondPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    double balance = 0;
+    double available = 0;
     if (store.assets.balances[symbol] != null) {
-      balance = Fmt.bigIntToDouble(store.assets.balances[symbol].freeBalance);
+      available = Fmt.bigIntToDouble(
+          store.assets.balances[symbol].transferable, decimals);
     }
 
     var rewardToOptions =
@@ -115,15 +115,15 @@ class _BondPageState extends State<BondPage> {
                       Padding(
                         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
                         child: AddressFormItem(
-                          dic['stash'],
                           store.account.currentAccount,
+                          label: dic['stash'],
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 16, right: 16),
                         child: AddressFormItem(
-                          dic['controller'],
                           _controller ?? store.account.currentAccount,
+                          label: dic['controller'],
                           onTap: () => _changeControllerId(context),
                         ),
                       ),
@@ -133,12 +133,12 @@ class _BondPageState extends State<BondPage> {
                           decoration: InputDecoration(
                             hintText: assetDic['amount'],
                             labelText:
-                                '${assetDic['amount']} (${dic['balance']}: ${Fmt.doubleFormat(balance)} $symbol)',
+                                '${assetDic['amount']} (${dic['balance']}: ${Fmt.priceFloor(
+                              available,
+                              lengthMax: 3,
+                            )} $symbol)',
                           ),
-                          inputFormatters: [
-                            RegExInputFormatter.withRegex(
-                                '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                          ],
+                          inputFormatters: [UI.decimalInputFormatter(decimals)],
                           controller: _amountCtrl,
                           keyboardType:
                               TextInputType.numberWithOptions(decimal: true),
@@ -146,7 +146,7 @@ class _BondPageState extends State<BondPage> {
                             if (v.isEmpty) {
                               return assetDic['amount.error'];
                             }
-                            if (double.parse(v.trim()) >= balance) {
+                            if (double.parse(v.trim()) >= available) {
                               return assetDic['amount.low'];
                             }
                             return null;

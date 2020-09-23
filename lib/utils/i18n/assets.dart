@@ -25,6 +25,9 @@ const Map<String, String> enAssets = {
   'fail': 'Failed',
   'value': 'Value',
   'fee': 'Fee',
+  'tip': 'Tip',
+  'tip.tip':
+      '\nAdding a tip to this Tx, paying\nthe block author for greater priority.\n',
   'from': 'From',
   'to': 'To',
   'block': 'Block',
@@ -49,7 +52,9 @@ const Map<String, String> enAssets = {
   'claim.empty': 'does not appear to have a valid claim.',
   'claim.empty2':
       'Please double check that you have signed the transaction correctly on the correct ETH account.',
-  'done?' : 'done?'
+  'done?' : 'done?',
+  'cross.chain': 'Cross chain',
+  'assets.test': 'Test Tokens',
 };
 
 const Map<String, String> zhAssets = {
@@ -79,6 +84,8 @@ const Map<String, String> zhAssets = {
   'fail': '失败',
   'value': '金额',
   'fee': '手续费',
+  'tip': '小费',
+  'tip.tip': '\n为出块人支付额外的费用，\n可以提高交易打包优先级。\n',
   'from': '付款地址',
   'to': '收款地址',
   'block': '区块',
@@ -101,4 +108,6 @@ const Map<String, String> zhAssets = {
   'claim.amount': '可认领代币',
   'claim.empty': '没有可以认领的代币。',
   'claim.empty2': '，请检查您的以太坊地址和签名信息。',
+  'cross.chain': '跨链转账',
+  'assets.test': '测试 Token',
 };

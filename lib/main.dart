@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:polka_wallet/app.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -33,6 +34,9 @@ Future<void> main() async {
     selectNotificationSubject.add(payload);
   });
   print('notification_plugin initialised: $initialised');
+
+  // get_storage dependency
+  await GetStorage.init();
 
   HttpOverrides.global = MyHttpOverrides();
 

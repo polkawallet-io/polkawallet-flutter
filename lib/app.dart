@@ -18,16 +18,25 @@ import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
 import 'package:polka_wallet/page/account/import/importAccountPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
+import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
+import 'package:polka_wallet/page/asExtension/walletExtensionSignPage.dart';
+import 'package:polka_wallet/page/assets/announcementPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
+import 'package:polka_wallet/page/assets/transfer/transferCrossChainPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateListPage.dart';
+import 'package:polka_wallet/page/governance/council/councilPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
+import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
+import 'package:polka_wallet/page/governance/democracy/democracyPage.dart';
+import 'package:polka_wallet/page/governance/democracy/proposalDetailPage.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
 import 'package:polka_wallet/page/homePage.dart';
 import 'package:polka_wallet/page/networkSelectPage.dart';
@@ -53,17 +62,13 @@ import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/page/staking/actions/accountSelectPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondExtraPage.dart';
 import 'package:polka_wallet/page/staking/actions/bondPage.dart';
-import 'package:polka_wallet/page/staking/actions/payoutPage.dart';
-import 'package:polka_wallet/page/staking/actions/redeemPage.dart';
-import 'package:polka_wallet/page/staking/actions/setControllerPage.dart';
-import 'package:polka_wallet/page/staking/actions/setPayeePage.dart';
-import 'package:polka_wallet/page/staking/actions/stakingDetailPage.dart';
-import 'package:polka_wallet/page/staking/actions/unbondPage.dart';
-import 'package:polka_wallet/page/staking/validators/nominatePage.dart';
-import 'package:polka_wallet/page/staking/validators/validatorDetailPage.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/version.dart';
+import 'package:polka_wallet/service/graphql.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/service/notification.dart';
+import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 
@@ -116,8 +121,8 @@ class _WalletAppState extends State<WalletApp> {
     });
   }
 
-  Future<void> _checkUpdate() async {
-    final versions = await VersionApi.getLatestVersion();
+  Future<void> _checkUpdate(BuildContext context) async {
+    final versions = await WalletApi.getLatestVersion();
     UI.checkUpdate(context, versions, autoCheck: true);
   }
 
@@ -135,7 +140,7 @@ class _WalletAppState extends State<WalletApp> {
       _changeLang(context, _appStore.settings.localeCode);
       _changeTheme();
 
-      _checkUpdate();
+      _checkUpdate(context);
     }
     return _appStore.account.accountListAll.length;
   }
@@ -217,23 +222,7 @@ class _WalletAppState extends State<WalletApp> {
         CurrencySelectPage.route: (_) => CurrencySelectPage(),
         ClaimPage.route: (_) => ClaimPage(_appStore),
         AttestPage.route: (_) => AttestPage(_appStore),
-        // staking
-        StakingDetailPage.route: (_) => StakingDetailPage(_appStore),
-        ValidatorDetailPage.route: (_) => ValidatorDetailPage(_appStore),
-        BondPage.route: (_) => BondPage(_appStore),
-        BondExtraPage.route: (_) => BondExtraPage(_appStore),
-        UnBondPage.route: (_) => UnBondPage(_appStore),
-        NominatePage.route: (_) => NominatePage(_appStore),
-        SetPayeePage.route: (_) => SetPayeePage(_appStore),
-        RedeemPage.route: (_) => RedeemPage(_appStore),
-        PayoutPage.route: (_) => PayoutPage(_appStore),
-        SetControllerPage.route: (_) => SetControllerPage(_appStore),
         AccountSelectPage.route: (_) => AccountSelectPage(_appStore),
-        // governance
-        CandidateDetailPage.route: (_) => CandidateDetailPage(_appStore),
-        CouncilVotePage.route: (_) => CouncilVotePage(_appStore),
-        CandidateListPage.route: (_) => CandidateListPage(_appStore),
-        ReferendumVotePage.route: (_) => ReferendumVotePage(_appStore),
         // profile
         AccountManagePage.route: (_) => AccountManagePage(_appStore),
         ContactsPage.route: (_) => ContactsPage(_appStore.settings),

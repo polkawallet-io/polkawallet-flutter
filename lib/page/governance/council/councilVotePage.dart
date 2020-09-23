@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateListPage.dart';
+import 'package:polka_wallet/page/governance/council/councilPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -62,10 +62,11 @@ class _CouncilVote extends State<CouncilVotePage> {
           // "votes"
           selected,
           // "voteValue"
-          (double.parse(amt) * pow(10, decimals)).toInt(),
+          Fmt.tokenInt(amt, decimals).toString(),
         ],
         'onFinish': (BuildContext txPageContext, Map res) {
-          Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+          Navigator.popUntil(
+              txPageContext, ModalRoute.withName(CouncilPage.route));
           globalCouncilRefreshKey.currentState.show();
         }
       };
@@ -104,11 +105,10 @@ class _CouncilVote extends State<CouncilVotePage> {
                             decoration: InputDecoration(
                               hintText: dic['amount'],
                               labelText:
-                                  '${dic['amount']} (${dic['balance']}: ${Fmt.token(balance)})',
+                                  '${dic['amount']} (${dic['balance']}: ${Fmt.token(balance, decimals)})',
                             ),
                             inputFormatters: [
-                              RegExInputFormatter.withRegex(
-                                  '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
+                              UI.decimalInputFormatter(decimals)
                             ],
                             controller: _amountCtrl,
                             keyboardType:
@@ -135,7 +135,7 @@ class _CouncilVote extends State<CouncilVotePage> {
                         ),
                         Column(
                           children: _selected.map((i) {
-                            var accInfo = store.account.accountIndexMap[i[0]];
+                            var accInfo = store.account.addressIndexMap[i[0]];
                             return Container(
                               margin: EdgeInsets.fromLTRB(16, 0, 16, 8),
                               child: Row(
@@ -143,26 +143,25 @@ class _CouncilVote extends State<CouncilVotePage> {
                                   Container(
                                     width: 32,
                                     margin: EdgeInsets.only(right: 8),
-                                    child: AddressIcon(i[0], size: 32),
+                                    child: AddressIcon(
+                                      i[0],
+                                      size: 32,
+                                      tapToCopy: false,
+                                    ),
                                   ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      accInfo != null
-                                          ? accInfo['identity']['display'] !=
-                                                  null
-                                              ? Text(accInfo['identity']
-                                                      ['display']
-                                                  .toString()
-                                                  .toUpperCase())
-                                              : Container()
-                                          : Container(),
-                                      Text(
-                                        Fmt.address(i[0]),
-                                        style: TextStyle(color: Colors.black54),
-                                      ),
-                                    ],
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Fmt.accountDisplayName(i[0], accInfo),
+                                        Text(
+                                          Fmt.address(i[0]),
+                                          style:
+                                              TextStyle(color: Colors.black54),
+                                        ),
+                                      ],
+                                    ),
                                   )
                                 ],
                               ),

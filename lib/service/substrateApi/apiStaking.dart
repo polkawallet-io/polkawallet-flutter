@@ -1,6 +1,3 @@
-import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/service/phalaAirdrop.dart';
-import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -11,78 +8,34 @@ class ApiStaking {
   final Api apiRoot;
   final store = globalAppStore;
 
-  Future<void> fetchAccountStaking(String pubKey) async {
+  Future<void> fetchAccountStaking() async {
+    final String pubKey = store.account.currentAccountPubKey;
     if (pubKey != null && pubKey.isNotEmpty) {
-      String address = store.account.currentAddress;
-      Map ledger = await apiRoot
-          .evalJavascript('api.derive.staking.account("$address")');
-
-      List addressesNeedIcons =
-          ledger['nominators'] != null ? List.of(ledger['nominators']) : List();
-
-      if (ledger['stakingLedger'] == null) {
-        // get stash account info for a controller address
-        var stakingLedger = await Future.wait([
-          apiRoot.evalJavascript('api.query.staking.ledger("$address")'),
-          apiRoot.evalJavascript('api.query.staking.payee("$address")'),
-        ]);
-        if (stakingLedger[0] != null) {
-          var nominators = await apiRoot.evalJavascript(
-              'api.query.staking.nominators("${stakingLedger[0]['stash']}")');
-          if (nominators != null) {
-            ledger['nominators'] = nominators['targets'];
-            addressesNeedIcons.addAll(List.of(nominators['targets']));
-          } else {
-            ledger['nominators'] = [];
-          }
-
-          stakingLedger[0]['payee'] = stakingLedger[1];
-          ledger['stakingLedger'] = stakingLedger[0];
-
-          // get stash's pubKey
-          apiRoot.account.decodeAddress([stakingLedger[0]['stash']]);
-          // get stash's icon
-          addressesNeedIcons.add(stakingLedger[0]['stash']);
-        }
-      } else {
-        // get controller address info for a stash account
-
-        // get controller's pubKey
-        apiRoot.account.decodeAddress([ledger['controllerId']]);
-        // get controller's icon
-        addressesNeedIcons.add(ledger['controllerId']);
-      }
-
-      store.staking
-          .setLedger(pubKey, Map<String, dynamic>.of(ledger), reset: true);
-
-      // get nominators' icons
-      if (addressesNeedIcons.length > 0) {
-        await apiRoot.account.getAddressIcons(addressesNeedIcons);
-      }
+      queryOwnStashInfo(pubKey);
     }
   }
 
   // this query takes extremely long time
   Future<void> fetchAccountRewards(String pubKey) async {
-    if (store.staking.ledger['stakingLedger'] != null) {
-      int bonded = store.staking.ledger['stakingLedger']['active'];
-      List unlocking = store.staking.ledger['stakingLedger']['unlocking'];
+    if (store.staking.ownStashInfo != null &&
+        store.staking.ownStashInfo.stakingLedger != null) {
+      int bonded = store.staking.ownStashInfo.stakingLedger['active'];
+      List unlocking = store.staking.ownStashInfo.stakingLedger['unlocking'];
       if (pubKey != null && (bonded > 0 || unlocking.length > 0)) {
         String address = store.account.currentAddress;
         print('fetching staking rewards...');
         Map res = await apiRoot
             .evalJavascript('staking.loadAccountRewardsData("$address")');
-        store.staking.setLedger(pubKey, {'rewards': res});
+        store.staking.setRewards(pubKey, res);
         return;
       }
     }
-    store.staking.setLedger(pubKey, {'rewards': {}});
+    store.staking.setRewards(pubKey, {});
   }
 
   Future<Map> fetchStakingOverview() async {
     List res = await Future.wait([
-      apiRoot.evalJavascript('api.derive.staking.overview()'),
+      apiRoot.evalJavascript('staking.fetchStakingOverview()'),
       apiRoot.evalJavascript('api.derive.staking.currentPoints()'),
     ]);
     if (res[0] == null || res[1] == null) return null;
@@ -92,12 +45,13 @@ class ApiStaking {
 
     fetchElectedInfo();
     // phala airdrop for kusama
-    if (store.settings.endpoint.info == networkEndpointKusama.info) {
-      fetchPhalaAirdropList();
-    }
+//    if (store.settings.endpoint.info == networkEndpointKusama.info) {
+//      fetchPhalaAirdropList();
+//    }
 
     List validatorAddressList = List.of(overview['validators']);
-    await apiRoot.account.fetchAccountsIndex(validatorAddressList);
+    validatorAddressList.addAll(overview['waiting']);
+    await apiRoot.account.fetchAddressIndex(validatorAddressList);
     apiRoot.account.getAddressIcons(validatorAddressList);
     return overview;
   }
@@ -105,8 +59,8 @@ class ApiStaking {
   Future<Map> updateStaking(int page) async {
     store.staking.setTxsLoading(true);
 
-    Map res = await SubScanApi.fetchTxs(
-      SubScanApi.module_staking,
+    Map res = await apiRoot.subScanApi.fetchTxsAsync(
+      apiRoot.subScanApi.moduleStaking,
       page: page,
       sender: store.account.currentAddress,
       network: store.settings.networkName.toLowerCase(),
@@ -119,6 +73,19 @@ class ApiStaking {
 
     store.staking.setTxsLoading(false);
 
+    return res;
+  }
+
+  Future<Map> updateStakingRewards() async {
+    final address =
+        store.staking.ownStashInfo?.stashId ?? store.account.currentAddress;
+    final res = await apiRoot.subScanApi.fetchRewardTxsAsync(
+      page: 0,
+      sender: address,
+      network: store.settings.networkName.toLowerCase(),
+    );
+
+    await store.staking.addTxsRewards(res, shouldCache: true);
     return res;
   }
 
@@ -147,15 +114,31 @@ class ApiStaking {
     return data;
   }
 
-  Future<List> fetchPhalaAirdropList() async {
-    final today = DateTime.now();
-    // airdrop till 20200816
-    if (today.month > 6 && today.day > 15) {
-      return [];
+  Future<Map> queryOwnStashInfo(String pubKey) async {
+    final accountId = store.account.currentAddress;
+    Map data =
+        await apiRoot.evalJavascript('staking.getOwnStashInfo("$accountId")');
+    store.staking.setOwnStashInfo(pubKey, data);
+
+    final List<String> addressesNeedIcons =
+        store.staking.ownStashInfo?.nominating != null
+            ? store.staking.ownStashInfo.nominating.toList()
+            : [];
+    final List<String> addressesNeedDecode = [];
+    if (store.staking.ownStashInfo?.stashId != null) {
+      addressesNeedIcons.add(store.staking.ownStashInfo.stashId);
+      addressesNeedDecode.add(store.staking.ownStashInfo.stashId);
     }
-    List res = await PhalaAirdropApi.fetchWhiteList();
-    print(res);
-    store.staking.setPhalaAirdropWhiteList(res);
-    return res;
+    if (store.staking.ownStashInfo?.controllerId != null) {
+      addressesNeedIcons.add(store.staking.ownStashInfo.controllerId);
+      addressesNeedDecode.add(store.staking.ownStashInfo.controllerId);
+    }
+
+    await apiRoot.account.getAddressIcons(addressesNeedIcons);
+
+    // get stash&controller's pubKey
+    apiRoot.account.decodeAddress(addressesNeedIcons);
+
+    return data;
   }
 }

@@ -13,10 +13,12 @@ addons:
       - libstdc++6
       - fonts-droid-fallback
 before_script:
-  - git clone https://github.com/flutter/flutter.git -b beta
+  - git clone https://github.com/flutter/flutter.git -b stable
   - ./flutter/bin/flutter doctor
   - cd ./lib/js_service_kusama && npm install && npm run build && cd ../..
   - cd ./lib/js_service_acala && npm install && npm run build && cd ../..
+  - cd ./lib/js_service_laminar && npm install && npm run build && cd ../..
+  - cd ./lib/js_as_extension && npm install && npm run build && cd ../..
 script:
   - ./flutter/bin/flutter test
 cache:

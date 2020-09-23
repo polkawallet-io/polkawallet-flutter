@@ -9,6 +9,7 @@ import 'package:polka_wallet/page/staking/actions/accountSelectPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class SetControllerPage extends StatefulWidget {
@@ -47,11 +48,7 @@ class _SetControllerPageState extends State<SetControllerPage> {
       return;
     }
 
-    String controllerPubKey = _controller != null
-        ? _controller.pubKey
-        : store.account.currentAccount.pubKey;
-    String address = store.account
-        .pubKeyAddressMap[store.settings.endpoint.ss58][controllerPubKey];
+    String address = Fmt.addressOfAccount(_controller, store);
     Map<String, dynamic> args = {
       "title": I18n.of(context).staking['action.control'],
       "txInfo": {
@@ -106,12 +103,12 @@ class _SetControllerPageState extends State<SetControllerPage> {
                   padding: EdgeInsets.all(16),
                   children: <Widget>[
                     AddressFormItem(
-                      dic['stash'],
                       store.account.currentAccount,
+                      label: dic['stash'],
                     ),
                     AddressFormItem(
-                      dic['controller'],
                       _controller ?? store.account.currentAccount,
+                      label: dic['controller'],
                       onTap: () => _changeControllerId(context),
                     ),
                   ],

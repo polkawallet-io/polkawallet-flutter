@@ -99,6 +99,21 @@ mixin _$AppStore on _AppStore, Store {
     });
   }
 
+  final _$laminarAtom = Atom(name: '_AppStore.laminar');
+
+  @override
+  dynamic get laminar {
+    _$laminarAtom.reportRead();
+    return super.laminar;
+  }
+
+  @override
+  set laminar(dynamic value) {
+    _$laminarAtom.reportWrite(value, super.laminar, () {
+      super.laminar = value;
+    });
+  }
+
   final _$isReadyAtom = Atom(name: '_AppStore.isReady');
 
   @override
@@ -130,6 +145,7 @@ assets: ${assets},
 staking: ${staking},
 gov: ${gov},
 encointer: ${encointer},
+laminar: ${laminar},
 isReady: ${isReady}
     ''';
   }

@@ -39,7 +39,7 @@ class _PayoutPageState extends State<PayoutPage> {
     var dic = I18n.of(context).staking;
     final int decimals = store.settings.networkState.tokenDecimals;
 
-    List rewards = store.staking.ledger['rewards']['validators'];
+    List rewards = store.staking.rewards['validators'];
     if (rewards.length == 1 && List.of(rewards[0]['eras']).length == 1) {
       var args = {
         "title": dic['action.payout'],
@@ -50,8 +50,11 @@ class _PayoutPageState extends State<PayoutPage> {
         "detail": jsonEncode({
           'era': rewards[0]['eras'][0]['era'],
           'validator': rewards[0]['validatorId'],
-          'amount': Fmt.token(BigInt.parse(rewards[0]['available'].toString()),
-              length: decimals),
+          'amount': Fmt.token(
+            BigInt.parse(rewards[0]['available'].toString()),
+            decimals,
+            length: decimals,
+          ),
         }),
         "params": [
           // validatorId
@@ -83,7 +86,11 @@ class _PayoutPageState extends State<PayoutPage> {
         "call": 'batch',
       },
       "detail": jsonEncode({
-        'amount': Fmt.token(store.staking.accountRewardTotal, length: decimals),
+        'amount': Fmt.token(
+          store.staking.accountRewardTotal,
+          decimals,
+          length: decimals,
+        ),
         'txs': params,
       }),
       "params": [],
@@ -116,8 +123,8 @@ class _PayoutPageState extends State<PayoutPage> {
                   padding: EdgeInsets.all(16),
                   children: <Widget>[
                     AddressFormItem(
-                      dic['controller'],
                       store.account.currentAccount,
+                      label: dic['controller'],
                     ),
                     rewardLoading
                         ? Column(
@@ -138,8 +145,10 @@ class _PayoutPageState extends State<PayoutPage> {
                               labelText: I18n.of(context).assets['amount'],
                             ),
                             initialValue: Fmt.token(
-                                store.staking.accountRewardTotal,
-                                decimals: decimals),
+                              store.staking.accountRewardTotal,
+                              decimals,
+                              length: 8,
+                            ),
                             readOnly: true,
                           ),
                   ],

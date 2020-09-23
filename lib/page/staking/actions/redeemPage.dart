@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -15,16 +16,28 @@ class RedeemPage extends StatefulWidget {
   static final String route = '/staking/redeem';
   final AppStore store;
   @override
-  _RedeemPageState createState() => _RedeemPageState(store);
+  _RedeemPageState createState() => _RedeemPageState();
 }
 
 class _RedeemPageState extends State<RedeemPage> {
-  _RedeemPageState(this.store);
-  final AppStore store;
+  int _slashingSpans;
+
+  Future<int> _getSlashingSpans() async {
+    if (_slashingSpans != null) return _slashingSpans;
+
+    final String stashId = widget.store.staking.ownStashInfo.stashId ??
+        widget.store.staking.ownStashInfo.account.accountId;
+    final int spans =
+        await webApi.evalJavascript('staking.getSlashingSpans("$stashId")');
+    setState(() {
+      _slashingSpans = spans;
+    });
+    return spans ?? 0;
+  }
 
   void _onSubmit() {
     var dic = I18n.of(context).staking;
-    final int decimals = store.settings.networkState.tokenDecimals;
+    final int decimals = widget.store.settings.networkState.tokenDecimals;
     var args = {
       "title": dic['action.redeem'],
       "txInfo": {
@@ -32,10 +45,15 @@ class _RedeemPageState extends State<RedeemPage> {
         "call": 'withdrawUnbonded',
       },
       "detail": jsonEncode({
-        'amount':
-            Fmt.token(store.staking.ledger['redeemable'], length: decimals)
+        'spanCount': _slashingSpans,
+        'amount': Fmt.token(
+          Fmt.balanceInt(
+              widget.store.staking.ownStashInfo.account.redeemable.toString()),
+          decimals,
+          length: decimals,
+        )
       }),
-      "params": [],
+      "params": [_slashingSpans],
       'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
         globalBondingRefreshKey.currentState.show();
@@ -48,7 +66,7 @@ class _RedeemPageState extends State<RedeemPage> {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
-    final int decimals = store.settings.networkState.tokenDecimals;
+    final int decimals = widget.store.settings.networkState.tokenDecimals;
 
     return Scaffold(
       appBar: AppBar(
@@ -64,8 +82,8 @@ class _RedeemPageState extends State<RedeemPage> {
                   padding: EdgeInsets.all(16),
                   children: <Widget>[
                     AddressFormItem(
-                      dic['controller'],
-                      store.account.currentAccount,
+                      widget.store.account.currentAccount,
+                      label: dic['controller'],
                     ),
                     TextFormField(
                       decoration: InputDecoration(
@@ -73,7 +91,10 @@ class _RedeemPageState extends State<RedeemPage> {
                         labelText: I18n.of(context).assets['amount'],
                       ),
                       initialValue: Fmt.token(
-                          store.staking.ledger['redeemable'],
+                          Fmt.balanceInt(widget
+                              .store.staking.ownStashInfo.account.redeemable
+                              .toString()),
+                          decimals,
                           length: decimals),
                       readOnly: true,
                     ),
@@ -82,9 +103,16 @@ class _RedeemPageState extends State<RedeemPage> {
               ),
               Padding(
                 padding: EdgeInsets.all(16),
-                child: RoundedButton(
-                  text: I18n.of(context).home['submit.tx'],
-                  onPressed: _onSubmit,
+                child: FutureBuilder(
+                  future: _getSlashingSpans(),
+                  builder: (_, AsyncSnapshot snapshot) {
+                    return snapshot.hasData
+                        ? RoundedButton(
+                            text: I18n.of(context).home['submit.tx'],
+                            onPressed: _onSubmit,
+                          )
+                        : CupertinoActivityIndicator();
+                  },
                 ),
               ),
             ],

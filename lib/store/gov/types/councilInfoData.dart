@@ -15,7 +15,7 @@ abstract class _CouncilInfoData {
   int termDuration;
   int votingBond;
 
-  List<List<String>> members;
+  List<List<dynamic>> members;
   List<List<dynamic>> runnersUp;
   List<String> candidates;
 

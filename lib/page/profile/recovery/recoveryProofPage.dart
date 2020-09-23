@@ -6,7 +6,6 @@ import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/TxList.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/profile/recovery/vouchRecoveryPage.dart';
-import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/staking/types/txData.dart';
@@ -27,15 +26,13 @@ class _RecoveryStatePage extends State<RecoveryProofPage> {
   bool _loading = false;
 
   Future<void> _fetchData() async {
-    Map res = await SubScanApi.fetchTxs(
-      SubScanApi.module_Recovery,
+    Map res = await webApi.subScanApi.fetchTxsAsync(
+      webApi.subScanApi.moduleRecovery,
       call: 'vouch_recovery',
-//      sender: widget.store.account.currentAddress,
+      sender: widget.store.account.currentAddress,
     );
     if (res['extrinsics'] == null) return;
     List txs = List.of(res['extrinsics']);
-    print('_activeRecoveries');
-    print(txs);
     if (txs.length > 0) {
       List<TxData> ls = txs.map((e) => TxData.fromJson(e)).toList();
       List<String> pubKeys = [];
@@ -84,7 +81,14 @@ class _RecoveryStatePage extends State<RecoveryProofPage> {
                   key: globalRecoveryProofRefreshKey,
                   child: _txs.length > 0
                       ? TxList(_txs)
-                      : Text(I18n.of(context).home['data.empty']),
+                      : ListView(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Text(I18n.of(context).home['data.empty']),
+                            )
+                          ],
+                        ),
                 ),
               ),
               Padding(

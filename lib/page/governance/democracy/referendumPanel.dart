@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/TapTooltip.dart';
 import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/page/governance/council/motionDetailPage.dart';
 import 'package:polka_wallet/page/governance/democracy/referendumVotePage.dart';
 import 'package:polka_wallet/store/gov/types/referendumInfoData.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -13,17 +13,21 @@ import 'package:polka_wallet/utils/i18n/index.dart';
 class ReferendumPanel extends StatelessWidget {
   ReferendumPanel({
     this.symbol,
+    this.decimals,
     this.data,
     this.bestNumber,
     this.onCancelVote,
     this.blockDuration,
+    this.links,
   });
 
   final String symbol;
+  final int decimals;
   final ReferendumInfo data;
   final int bestNumber;
   final Function(int) onCancelVote;
   final int blockDuration;
+  final Widget links;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +37,7 @@ class ReferendumPanel extends StatelessWidget {
     List<Widget> list = <Widget>[
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
         Text(
-          data.image['proposal'] != null
+          data.image != null && data.image['proposal'] != null
               ? '${data.image['proposal']['section']}.${data.image['proposal']['method']}'
               : '-',
           style: Theme.of(context).textTheme.headline4,
@@ -75,28 +79,31 @@ class ReferendumPanel extends StatelessWidget {
           )
         ],
       ),
-      Container(
-        padding: EdgeInsets.only(top: 16),
-        child: Text(data.detail['content'].toString().trim()),
-      )
+      data.detail['content'] != null
+          ? Container(
+              padding: EdgeInsets.only(top: 16),
+              child: Text(data.detail['content'].toString().trim()),
+            )
+          : Container()
     ];
     if (data.detail['params'] != null && data.detail['params'].length > 0) {
       list.add(
           ReferendumArgsList(data.detail['params'], data.image['proposal']));
     }
-    list.add(Container(
-      padding: EdgeInsets.only(top: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            '${dic['proposal']} hash',
-            style: TextStyle(color: Colors.black54),
+    list.addAll([
+      Padding(
+        padding: EdgeInsets.only(top: 16, bottom: 8),
+        child: ProposalArgsItem(
+          label: Text('Hash'),
+          content: Text(
+            Fmt.address(data.imageHash, pad: 10),
+            style: Theme.of(context).textTheme.headline4,
           ),
-          Text(Fmt.address(data.imageHash))
-        ],
+          margin: EdgeInsets.all(0),
+        ),
       ),
-    ));
+      links,
+    ]);
     list.add(Divider(height: 24));
 
     double widthFull = MediaQuery.of(context).size.width - 72;
@@ -168,16 +175,21 @@ class ReferendumPanel extends StatelessWidget {
             margin: EdgeInsets.only(bottom: 4),
             width: widthYes > widthMin ? widthYes : widthMin,
             decoration: BoxDecoration(
-                border:
-                    Border(bottom: BorderSide(width: 6, color: Colors.pink))),
+              border: Border(
+                bottom: BorderSide(
+                  width: 6,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+            ),
           )
         ],
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text('${Fmt.token(votedNay)} $symbol'),
-          Text('${Fmt.token(votedAye)} $symbol')
+          Text('${Fmt.token(votedNay, decimals)} $symbol'),
+          Text('${Fmt.token(votedAye, decimals)} $symbol')
         ],
       ),
       Row(
@@ -196,7 +208,7 @@ class ReferendumPanel extends StatelessWidget {
                     : dic['vote.change.down'],
               ),
               Text(
-                '${Fmt.balance(data.changeNay)} $symbol',
+                '${Fmt.balance(data.changeNay, decimals)} $symbol',
                 style: TextStyle(
                     color: Theme.of(context).unselectedWidgetColor,
                     fontSize: 13),
@@ -216,7 +228,7 @@ class ReferendumPanel extends StatelessWidget {
                     : dic['vote.change.down'],
               ),
               Text(
-                '${Fmt.balance(data.changeAye)} $symbol',
+                '${Fmt.balance(data.changeAye, decimals)} $symbol',
                 style: TextStyle(
                     color: Theme.of(context).unselectedWidgetColor,
                     fontSize: 13),
@@ -228,7 +240,10 @@ class ReferendumPanel extends StatelessWidget {
     ]);
 
     if (data.userVoted != null) {
-      String amount = Fmt.balance(data.userVoted['balance'].toString());
+      String amount = Fmt.balance(
+        data.userVoted['balance'].toString(),
+        decimals,
+      );
       String conviction = data.userVoted['vote']['conviction'] == 'None'
           ? '0.1x'
           : (data.userVoted['vote']['conviction'] as String).substring(6);
@@ -256,27 +271,14 @@ class ReferendumPanel extends StatelessWidget {
     }
     list.add(Container(
       margin: EdgeInsets.only(top: 16),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: RoundedButton(
-              color: Colors.orange,
-              text: dic['no'],
-              onPressed: () => Navigator.of(context).pushNamed(
-                  ReferendumVotePage.route,
-                  arguments: {'referenda': data, 'voteYes': false}),
-            ),
-          ),
-          Container(width: 8),
-          Expanded(
-            child: RoundedButton(
-              text: dic['yes'],
-              onPressed: () => Navigator.of(context).pushNamed(
-                  ReferendumVotePage.route,
-                  arguments: {'referenda': data, 'voteYes': true}),
-            ),
-          )
-        ],
+      child: ProposalVoteButtonsRow(
+        isCouncil: true,
+        isVotedNo: false,
+        isVotedYes: false,
+        onVote: (res) {
+          Navigator.of(context).pushNamed(ReferendumVotePage.route,
+              arguments: {'referenda': data, 'voteYes': res});
+        },
       ),
     ));
 

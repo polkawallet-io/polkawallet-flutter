@@ -21,7 +21,8 @@ class ExportAccountPage extends StatelessWidget {
     final Map<String, String> accDic = I18n.of(context).account;
 
     Future<void> onOk() async {
-      var res = await webApi.account.checkAccountPassword(_passCtrl.text);
+      var res = await webApi.account
+          .checkAccountPassword(store.currentAccount, _passCtrl.text);
       if (res == null) {
         showCupertinoDialog(
           context: context,

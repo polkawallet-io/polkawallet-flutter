@@ -16,22 +16,20 @@ mixin _$AccountStore on _AccountStore, Store {
           Computed<AccountData>(() => super.currentAccount,
               name: '_AccountStore.currentAccount'))
       .value;
-  Computed<ObservableList<AccountData>> _$optionalAccountsComputed;
+  Computed<List<AccountData>> _$optionalAccountsComputed;
 
   @override
-  ObservableList<AccountData> get optionalAccounts =>
-      (_$optionalAccountsComputed ??= Computed<ObservableList<AccountData>>(
-              () => super.optionalAccounts,
+  List<AccountData> get optionalAccounts => (_$optionalAccountsComputed ??=
+          Computed<List<AccountData>>(() => super.optionalAccounts,
               name: '_AccountStore.optionalAccounts'))
-          .value;
-  Computed<ObservableList<AccountData>> _$accountListAllComputed;
+      .value;
+  Computed<List<AccountData>> _$accountListAllComputed;
 
   @override
-  ObservableList<AccountData> get accountListAll =>
-      (_$accountListAllComputed ??= Computed<ObservableList<AccountData>>(
-              () => super.accountListAll,
+  List<AccountData> get accountListAll => (_$accountListAllComputed ??=
+          Computed<List<AccountData>>(() => super.accountListAll,
               name: '_AccountStore.accountListAll'))
-          .value;
+      .value;
   Computed<String> _$currentAddressComputed;
 
   @override
@@ -117,16 +115,31 @@ mixin _$AccountStore on _AccountStore, Store {
     });
   }
 
+  final _$addressIndexMapAtom = Atom(name: '_AccountStore.addressIndexMap');
+
+  @override
+  ObservableMap<String, Map<dynamic, dynamic>> get addressIndexMap {
+    _$addressIndexMapAtom.reportRead();
+    return super.addressIndexMap;
+  }
+
+  @override
+  set addressIndexMap(ObservableMap<String, Map<dynamic, dynamic>> value) {
+    _$addressIndexMapAtom.reportWrite(value, super.addressIndexMap, () {
+      super.addressIndexMap = value;
+    });
+  }
+
   final _$accountIndexMapAtom = Atom(name: '_AccountStore.accountIndexMap');
 
   @override
-  ObservableMap<String, Map<dynamic, dynamic>> get accountIndexMap {
+  Map<String, Map<dynamic, dynamic>> get accountIndexMap {
     _$accountIndexMapAtom.reportRead();
     return super.accountIndexMap;
   }
 
   @override
-  set accountIndexMap(ObservableMap<String, Map<dynamic, dynamic>> value) {
+  set accountIndexMap(Map<String, Map<dynamic, dynamic>> value) {
     _$accountIndexMapAtom.reportWrite(value, super.accountIndexMap, () {
       super.accountIndexMap = value;
     });
@@ -399,6 +412,17 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
+  void setAddressIndex(List<dynamic> list) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setAddressIndex');
+    try {
+      return super.setAddressIndex(list);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setAccountRecoveryInfo(Map<dynamic, dynamic> json) {
     final _$actionInfo = _$_AccountStoreActionController.startAction(
         name: '_AccountStore.setAccountRecoveryInfo');
@@ -417,6 +441,7 @@ txStatus: ${txStatus},
 newAccount: ${newAccount},
 currentAccountPubKey: ${currentAccountPubKey},
 accountList: ${accountList},
+addressIndexMap: ${addressIndexMap},
 accountIndexMap: ${accountIndexMap},
 pubKeyBondedMap: ${pubKeyBondedMap},
 pubKeyAddressMap: ${pubKeyAddressMap},

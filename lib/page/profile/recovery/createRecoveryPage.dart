@@ -11,9 +11,9 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/profile/recovery/friendListPage.dart';
 import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
-import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
+import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class CreateRecoveryPage extends StatefulWidget {
@@ -28,6 +28,9 @@ class CreateRecoveryPage extends StatefulWidget {
 class _CreateRecoveryPage extends State<CreateRecoveryPage> {
   final FocusNode _delayFocusNode = FocusNode();
   final TextEditingController _delayCtrl = new TextEditingController();
+
+  final double _configDepositBase = 5 / 6;
+  final double _friendDepositFactor = 0.5 / 6;
 
   List<AccountData> _friends = [];
   double _threshold = 1;
@@ -55,7 +58,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
       double value = double.parse(v.trim());
       if (value == 0) {
         setState(() {
-          _delayError = 'err';
+          _delayError = I18n.of(context).home['input.invalid'];
         });
       } else {
         setState(() {
@@ -65,12 +68,24 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
       }
     } catch (err) {
       setState(() {
-        _delayError = 'err';
+        _delayError = I18n.of(context).home['input.invalid'];
       });
     }
   }
 
-  void _onValidateSubmit(String pageTitle) {
+  void _onValidateSubmit() {
+    int decimals = widget.store.settings.networkState.tokenDecimals;
+    String deposit =
+        (_configDepositBase + _friends.length * _friendDepositFactor)
+            .toString();
+    if (!UI.checkBalanceAndAlert(
+      context,
+      widget.store,
+      Fmt.tokenInt(deposit, decimals),
+    )) {
+      return;
+    }
+
     if (_delay < 30) {
       showCupertinoDialog(
         context: context,
@@ -96,7 +111,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
                 child: Text(I18n.of(context).home['ok']),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _onSubmit(pageTitle);
+                  _onSubmit();
                 },
               ),
             ],
@@ -104,17 +119,19 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
         },
       );
     } else {
-      _onSubmit(pageTitle);
+      _onSubmit();
     }
   }
 
-  void _onSubmit(String pageTitle) {
+  void _onSubmit() {
     final Map dic = I18n.of(context).profile;
     List<String> friends = _friends.map((e) => e.address).toList();
     friends.sort();
     int delayBlocks = _delay * SECONDS_OF_DAY ~/ 6;
+    double deposit =
+        _configDepositBase + _friends.length * _friendDepositFactor;
     var args = {
-      "title": pageTitle,
+      "title": dic['recovery.create'],
       "txInfo": {
         "module": 'recovery',
         "call": 'createRecovery',
@@ -124,7 +141,7 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
         'threshold': _threshold.toInt(),
         'delay': '$_delay ${dic['recovery.day']}',
         'deposit':
-            '${5 + _friends.length * 0.5} ${widget.store.settings.networkState.tokenSymbol}'
+            '${Fmt.doubleFormat(deposit)} ${widget.store.settings.networkState.tokenSymbol}'
       }),
       "params": [friends, _threshold.toInt(), delayBlocks],
       'onFinish': (BuildContext txPageContext, Map res) {
@@ -137,54 +154,26 @@ class _CreateRecoveryPage extends State<CreateRecoveryPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final AccountRecoveryInfo recoveryInfo =
-          widget.store.account.recoveryInfo;
-      final List<AccountData> friends =
-          ModalRoute.of(context).settings.arguments;
-      if (recoveryInfo.friends != null) {
-        int delaySeconds = recoveryInfo.delayPeriod *
-            widget.store.settings.networkConst['babe']['expectedBlockTime'] ~/
-            1000;
-        double delayDays = delaySeconds / SECONDS_OF_DAY;
-        setState(() {
-          _friends = friends;
-          _threshold = recoveryInfo.threshold.toDouble();
-          _delay = delayDays;
-          _delayCtrl.text = delayDays.toString();
-        });
-        if (delayDays != 1 && delayDays != 3 && delayDays != 7) {
-          _delayFocusNode.requestFocus();
-        }
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).profile;
     final Color primary = Theme.of(context).primaryColor;
     final Color grey = Theme.of(context).disabledColor;
-    final List<AccountData> friends = ModalRoute.of(context).settings.arguments;
     final String symbol = widget.store.settings.networkState.tokenSymbol;
-
-    final String pageTitle =
-        friends.length > 0 ? dic['recovery.modify'] : dic['recovery.create'];
 
     final String depositMsg = '''
 
 ${dic['recovery.deposit']} = ${dic['recovery.deposit.base']} +
 ${dic['recovery.deposit.factor']} * ${dic['recovery.deposit.friends']}
 
-${dic['recovery.deposit.base']} = 5 $symbol
-${dic['recovery.deposit.factor']} = 0.5 $symbol
+${dic['recovery.deposit.base']} = ${Fmt.doubleFormat(_configDepositBase)} $symbol
+${dic['recovery.deposit.factor']} = ${Fmt.doubleFormat(_friendDepositFactor)} $symbol
 ''';
 
+    double deposit =
+        _configDepositBase + _friends.length * _friendDepositFactor;
     return Scaffold(
       appBar: AppBar(
-        title: Text(pageTitle),
+        title: Text(dic['recovery.create']),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -266,6 +255,7 @@ ${dic['recovery.deposit.factor']} = 0.5 $symbol
                           ),
                           Expanded(
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 CupertinoTextField(
                                   padding: EdgeInsets.fromLTRB(12, 3, 12, 3),
@@ -333,7 +323,7 @@ ${dic['recovery.deposit.factor']} = 0.5 $symbol
                         ),
                       ),
                       trailing: Text(
-                        '${5 + _friends.length * 0.5} $symbol',
+                        '${Fmt.doubleFormat(deposit)} $symbol',
                         style: Theme.of(context).textTheme.headline4,
                       ),
                     )
@@ -346,7 +336,7 @@ ${dic['recovery.deposit.factor']} = 0.5 $symbol
                   text: I18n.of(context).home['next'],
                   onPressed: _friends.length > 0 && _delayError == null
                       ? () {
-                          _onValidateSubmit(pageTitle);
+                          _onValidateSubmit();
                         }
                       : null,
                 ),

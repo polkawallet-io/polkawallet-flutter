@@ -17,6 +17,7 @@ class TransferDetailPage extends StatelessWidget {
     final Map<String, String> dic = I18n.of(context).assets;
     final String symbol = store.settings.networkState.tokenSymbol;
     final int decimals = store.settings.networkState.tokenDecimals;
+    final String tokenView = Fmt.tokenView(symbol);
 
     final TransferData tx = ModalRoute.of(context).settings.arguments;
 
@@ -29,19 +30,19 @@ class TransferDetailPage extends StatelessWidget {
       action: txType,
       eventId: tx.extrinsicIndex,
       hash: tx.hash,
-      blockTime: DateTime.fromMillisecondsSinceEpoch(tx.blockTimestamp * 1000)
-          .toString(),
+      blockTime: Fmt.dateTime(
+          DateTime.fromMillisecondsSinceEpoch(tx.blockTimestamp * 1000)),
       blockNum: tx.blockNum,
       networkName: store.settings.endpoint.info,
       info: <DetailInfoItem>[
         DetailInfoItem(
           label: dic['value'],
-          title: '${tx.amount} $symbol',
+          title: '${tx.amount} $tokenView',
         ),
         DetailInfoItem(
           label: dic['fee'],
           title:
-              '${Fmt.balance(tx.fee, decimals: decimals, length: decimals)} $symbol',
+              '${Fmt.balance(tx.fee, decimals, length: decimals)} $tokenView',
         ),
         DetailInfoItem(
           label: dic['from'],

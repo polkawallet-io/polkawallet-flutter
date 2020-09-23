@@ -1,6 +1,10 @@
 class AccountRecoveryInfo extends _AccountRecoveryInfo {
   static AccountRecoveryInfo fromJson(Map<String, dynamic> json) {
     AccountRecoveryInfo info = AccountRecoveryInfo();
+    if (json == null) {
+      return info;
+    }
+    info.address = json['address'];
     info.delayPeriod = json['delayPeriod'];
     info.threshold = json['threshold'];
     info.friends = List<String>.from(json['friends']);
@@ -10,6 +14,7 @@ class AccountRecoveryInfo extends _AccountRecoveryInfo {
 }
 
 abstract class _AccountRecoveryInfo {
+  String address;
   int delayPeriod;
   int threshold;
   List<String> friends;

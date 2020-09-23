@@ -6,8 +6,6 @@ import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
-import 'package:polka_wallet/page/profile/recovery/friendListPage.dart';
-import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -25,6 +23,8 @@ class InitiateRecoveryPage extends StatefulWidget {
 }
 
 class _InitiateRecoveryPage extends State<InitiateRecoveryPage> {
+  final double _recoveryDeposit = 5 / 6;
+
   AccountData _recoverable;
   bool _loading = false;
 
@@ -38,6 +38,17 @@ class _InitiateRecoveryPage extends State<InitiateRecoveryPage> {
   }
 
   Future<void> _onValidateSubmit() async {
+    /// check if balance enough for deposit
+    int decimals = widget.store.settings.networkState.tokenDecimals;
+    if (!UI.checkBalanceAndAlert(
+      context,
+      widget.store,
+      Fmt.tokenInt(_recoveryDeposit.toString(), decimals),
+    )) {
+      return;
+    }
+
+    /// check if account is recoverable
     setState(() {
       _loading = true;
     });
@@ -83,13 +94,14 @@ class _InitiateRecoveryPage extends State<InitiateRecoveryPage> {
       },
       "detail": jsonEncode({
         'accountId': _recoverable.address,
-        'deposit': '5 ${widget.store.settings.networkState.tokenSymbol}'
+        'deposit':
+            '${Fmt.doubleFormat(_recoveryDeposit)} ${widget.store.settings.networkState.tokenSymbol}'
       }),
       "params": [_recoverable.address],
       'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(
             txPageContext, ModalRoute.withName('/profile/recovery/state'));
-        globalRecoverySettingsRefreshKey.currentState.show();
+        globalRecoveryStateRefreshKey.currentState.show();
       }
     };
     Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
@@ -116,26 +128,27 @@ class _InitiateRecoveryPage extends State<InitiateRecoveryPage> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                       child: AddressFormItem(
-                        dic['recovery.init.new'],
                         widget.store.account.currentAccount,
+                        label: dic['recovery.init.new'],
                       ),
                     ),
                     ListTile(
                       title: Text(dic['recovery.init.old']),
-                      subtitle: Text('tap to select'),
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
                       onTap: () => _handleRecoverableSelect(),
                     ),
                     _recoverable != null
                         ? Padding(
-                            padding: EdgeInsets.only(left: 16),
-                            child: RecoveryFriendList(friends: [_recoverable]),
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: AddressFormItem(
+                              _recoverable,
+                            ),
                           )
                         : Container(),
                     ListTile(
                       title: Text(dic['recovery.deposit']),
                       trailing: Text(
-                        '5 $symbol',
+                        '${Fmt.doubleFormat(_recoveryDeposit)} $symbol',
                         style: Theme.of(context).textTheme.headline4,
                       ),
                     )

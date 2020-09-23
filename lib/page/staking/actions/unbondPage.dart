@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressFormItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
@@ -35,11 +34,12 @@ class _UnBondPageState extends State<UnBondPage> {
     String symbol = store.settings.networkState.tokenSymbol;
     int decimals = store.settings.networkState.tokenDecimals;
 
-    String bonded = '0.000';
-    bool hasData = store.staking.ledger['stakingLedger'] != null;
-    if (hasData) {
-      bonded = Fmt.token(BigInt.parse(
-          store.staking.ledger['stakingLedger']['active'].toString()));
+    double bonded = 0;
+    if (store.staking.ownStashInfo != null) {
+      bonded = Fmt.bigIntToDouble(
+          BigInt.parse(
+              store.staking.ownStashInfo.stakingLedger['active'].toString()),
+          decimals);
     }
 
     return Scaffold(
@@ -58,19 +58,19 @@ class _UnBondPageState extends State<UnBondPage> {
                     padding: EdgeInsets.all(16),
                     children: <Widget>[
                       AddressFormItem(
-                        dic['controller'],
                         store.account.currentAccount,
+                        label: dic['controller'],
                       ),
                       TextFormField(
                         decoration: InputDecoration(
                           hintText: assetDic['amount'],
                           labelText:
-                              '${assetDic['amount']} (${dic['bonded']}: $bonded $symbol)',
+                              '${assetDic['amount']} (${dic['bonded']}: ${Fmt.priceFloor(
+                            bonded,
+                            lengthMax: 3,
+                          )} $symbol)',
                         ),
-                        inputFormatters: [
-                          RegExInputFormatter.withRegex(
-                              '^[0-9]{0,6}(\\.[0-9]{0,$decimals})?\$')
-                        ],
+                        inputFormatters: [UI.decimalInputFormatter(decimals)],
                         controller: _amountCtrl,
                         keyboardType:
                             TextInputType.numberWithOptions(decimal: true),
@@ -78,7 +78,7 @@ class _UnBondPageState extends State<UnBondPage> {
                           if (v.isEmpty) {
                             return assetDic['amount.error'];
                           }
-                          if (double.parse(v.trim()) > double.parse(bonded)) {
+                          if (double.parse(v.trim()) > bonded) {
                             return assetDic['amount.low'];
                           }
                           return null;

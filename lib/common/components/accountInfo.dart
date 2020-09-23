@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
-import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 class AccountInfo extends StatelessWidget {
@@ -48,23 +47,22 @@ class AccountInfo extends StatelessWidget {
           padding: EdgeInsets.only(top: 16, bottom: 8),
           child: AddressIcon(address),
         ),
-//        accInfo != null ? Text(accInfo['accountIndex']) : Container(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            hasJudgements
-                ? Container(
-                    width: 16,
-                    margin: EdgeInsets.only(right: 8),
-                    child: Image.asset('assets/images/assets/success.png'),
-                  )
-                : Container(),
-            Text(Fmt.address(address)),
-            IconButton(
-              icon: Image.asset('assets/images/public/copy.png'),
-              onPressed: () => UI.copyAndNotify(context, address),
-            )
-          ],
+        accInfo != null ? Text(accInfo['accountIndex'] ?? '') : Container(),
+        Padding(
+          padding: EdgeInsets.only(bottom: 16, top: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              hasJudgements
+                  ? Container(
+                      width: 16,
+                      margin: EdgeInsets.only(right: 8),
+                      child: Image.asset('assets/images/assets/success.png'),
+                    )
+                  : Container(),
+              Text(Fmt.address(address)),
+            ],
+          ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

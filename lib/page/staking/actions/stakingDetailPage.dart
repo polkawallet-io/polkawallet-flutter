@@ -17,7 +17,7 @@ class StakingDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var dic = I18n.of(context).staking;
-    String symbol = store.settings.networkState.tokenSymbol;
+    final int decimals = store.settings.networkState.tokenDecimals;
     final TxData detail = ModalRoute.of(context).settings.arguments;
     List<DetailInfoItem> info = <DetailInfoItem>[
       DetailInfoItem(label: dic['action'], title: detail.call),
@@ -30,9 +30,11 @@ class StakingDetailPage extends StatelessWidget {
           value = Fmt.address(value);
           break;
         case "Compact<BalanceOf>":
-          value = Fmt.balance(value);
+          final symbol = store.settings.networkState.tokenSymbol;
+          value = '${Fmt.balance(value, decimals)} $symbol';
           break;
         case "AccountId":
+          value = value.contains('0x') ? value : '0x$value';
           String address = store
               .account.pubKeyAddressMap[store.settings.endpoint.ss58][value];
           value = Fmt.address(address);
@@ -50,9 +52,8 @@ class StakingDetailPage extends StatelessWidget {
       hash: detail.hash,
       eventId: detail.txNumber,
       info: info,
-      blockTime:
-          DateTime.fromMillisecondsSinceEpoch(detail.blockTimestamp * 1000)
-              .toIso8601String(),
+      blockTime: Fmt.dateTime(
+          DateTime.fromMillisecondsSinceEpoch(detail.blockTimestamp * 1000)),
       blockNum: detail.blockNum,
     );
   }

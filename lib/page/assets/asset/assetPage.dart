@@ -41,23 +41,30 @@ class _AssetPageState extends State<AssetPage>
 
   final AppStore store;
 
+  bool _loading = false;
+
   TabController _tabController;
   int _txsPage = 0;
   bool _isLastPage = false;
   ScrollController _scrollController;
 
   Future<void> _updateData() async {
-    if (store.settings.loading) return;
+    if (store.settings.loading || _loading) return;
+    setState(() {
+      _loading = true;
+    });
 
-    String pubKey = store.account.currentAccount.pubKey;
-    webApi.assets.fetchBalance(pubKey);
+    webApi.assets.fetchBalance();
     Map res = {"transfers": []};
 
-    if (store.settings.endpoint.info == networkEndpointKusama.info ||
-        store.settings.endpoint.info == networkEndpointPolkadot.info) {
-      webApi.staking.fetchAccountStaking(pubKey);
+    final String symbol = store.settings.networkState.tokenSymbol;
+    final String token = ModalRoute.of(context).settings.arguments;
+    final bool isBaseToken = token == symbol;
       res = await webApi.assets.updateTxs(_txsPage);
-    }
+    if (!mounted) return;
+    setState(() {
+      _loading = false;
+    });
 
     if (res['transfers'] == null ||
         res['transfers'].length < tx_list_page_size) {
@@ -94,9 +101,7 @@ class _AssetPageState extends State<AssetPage>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (LocalStorage.checkCacheTimeout(store.assets.cacheTxsTimestamp)) {
-        globalAssetRefreshKey.currentState.show();
-      }
+      _refreshData();
     });
   }
 
@@ -109,14 +114,30 @@ class _AssetPageState extends State<AssetPage>
 
   List<Widget> _buildTxList() {
     List<Widget> res = [];
-    final AssetPageParams params = ModalRoute.of(context).settings.arguments;
-    final String token = params.token;
     if (store.settings.endpointIsEncointer) {
       List<TransferData> ls = store.encointer.txsTransfer.reversed.toList();
+      final String symbol = store.settings.networkState.tokenSymbol;
+      final String token = ModalRoute.of(context).settings.arguments;
+      final bool isBaseToken = token == symbol;
       ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
       res.addAll(ls.map((i) {
+        String crossChain;
+        Map<String, dynamic> tx = TransferData.toJson(i);
+        if (i.to == cross_chain_transfer_address_acala) {
+          tx['to'] = store.account.currentAddress;
+          crossChain = 'Acala';
+        }
+        if (i.to == cross_chain_transfer_address_laminar) {
+          tx['to'] = store.account.currentAddress;
+          crossChain = 'Laminar';
+        }
         return TransferListItem(
-            i, token, i.from == store.account.currentAddress, false);
+          data: crossChain != null ? TransferData.fromJson(tx) : i,
+          token: token,
+          isOut: true,
+          hasDetail: false,
+          crossChain: crossChain,
+        );
       }));
       res.add(ListTail(
         isEmpty: ls.length == 0,
@@ -125,7 +146,11 @@ class _AssetPageState extends State<AssetPage>
     } else {
       res.addAll(store.assets.txsView.map((i) {
         return TransferListItem(
-            i, token, i.from == store.account.currentAddress, true);
+          data: i,
+          token: token,
+          isOut: i.from == store.account.currentAddress,
+          hasDetail: true,
+        );
       }));
       res.add(ListTail(
         isEmpty: store.assets.txsView.length == 0,
@@ -146,20 +171,26 @@ class _AssetPageState extends State<AssetPage>
     final bool isBaseToken = token == symbol;
 
     final dic = I18n.of(context).assets;
-
     final List<Tab> _myTabs = <Tab>[
       Tab(text: dic['all']),
       Tab(text: dic['in']),
       Tab(text: dic['out']),
     ];
 
+    final int decimals = store.settings.networkState.tokenDecimals;
+    final String symbol = store.settings.networkState.tokenSymbol;
+    final String token = ModalRoute.of(context).settings.arguments;
+    final String tokenView = Fmt.tokenView(token);
+    final bool isBaseToken = token == symbol;
+
     final primaryColor = Theme.of(context).primaryColor;
     final titleColor = Theme.of(context).cardColor;
+
     return Scaffold(
       appBar: AppBar(
         title: isEncointerCommunityCurrency
             ? Text(Fmt.currencyIdentifier(token))
-            : Text(token),
+            : Text(tokenView),
         centerTitle: true,
         elevation: 0.0,
       ),
@@ -179,13 +210,26 @@ class _AssetPageState extends State<AssetPage>
 
             BalancesInfo balancesInfo = store.assets.balances[symbol];
             String lockedInfo = '\n';
-            if (balancesInfo.lockedBreakdown != null) {
+            if (balancesInfo != null && balancesInfo.lockedBreakdown != null) {
               balancesInfo.lockedBreakdown.forEach((i) {
                 if (i.amount > BigInt.zero) {
-                  lockedInfo +=
-                      '${Fmt.token(i.amount, decimals: decimals)} $symbol ${dic['lock.${i.use}']}\n';
+                  lockedInfo += '${Fmt.priceFloorBigInt(
+                    i.amount,
+                    decimals,
+                    lengthMax: 3,
+                  )} $tokenView ${dic['lock.${i.use}']}\n';
                 }
               });
+            }
+
+            String tokenPrice;
+            if ((store.settings.endpoint.info == network_name_polkadot ||
+                    store.settings.endpoint.info == network_name_kusama) &&
+                store.assets.marketPrices[symbol] != null &&
+                balancesInfo != null) {
+              tokenPrice = (store.assets.marketPrices[symbol] *
+                      Fmt.bigIntToDouble(balancesInfo.total, decimals))
+                  .toStringAsFixed(4);
             }
 
             return Column(
@@ -197,10 +241,12 @@ class _AssetPageState extends State<AssetPage>
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(bottom: 16),
+                        padding: EdgeInsets.only(
+                            bottom: tokenPrice != null ? 4 : 16),
                         child: Text(
                           Fmt.token(isBaseToken ? balancesInfo.total : balance,
-                              decimals: decimals, length: 8),
+                              decimals,
+                              length: 8),
                           style: TextStyle(
                             color: titleColor,
                             fontSize: 28,
@@ -208,53 +254,93 @@ class _AssetPageState extends State<AssetPage>
                           ),
                         ),
                       ),
+                      tokenPrice != null
+                          ? Padding(
+                              padding: EdgeInsets.only(bottom: 16),
+                              child: Text(
+                                '≈ \$ ${tokenPrice ?? '--.--'}',
+                                style: TextStyle(
+                                  color: Theme.of(context).cardColor,
+                                ),
+                              ),
+                            )
+                          : Container(),
                       isBaseToken
-                          ? Builder(
-                              builder: (_) {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(right: 12),
-                                      child: Row(
-                                        children: <Widget>[
-                                          lockedInfo.length > 2
-                                              ? TapTooltip(
-                                                  message: lockedInfo,
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 6),
-                                                    child: Icon(
-                                                      Icons.info,
-                                                      size: 16,
-                                                      color: titleColor,
-                                                    ),
-                                                  ),
-                                                  waitDuration:
-                                                      Duration(seconds: 0),
-                                                )
-                                              : Container(),
-                                          Text(
-                                            '${dic['locked']}: ${Fmt.token(balancesInfo.lockedBalance, decimals: decimals)}',
-                                            style: TextStyle(color: titleColor),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(right: 12),
-                                      child: Text(
-                                        '${dic['available']}: ${Fmt.token(balancesInfo.transferable, decimals: decimals)}',
-                                        style: TextStyle(color: titleColor),
-                                      ),
-                                    ),
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                Column(
+                                  children: [
                                     Text(
-                                      '${dic['reserved']}: ${Fmt.token(balancesInfo.reserved, decimals: decimals)}',
-                                      style: TextStyle(color: titleColor),
+                                      dic['locked'],
+                                      style: TextStyle(
+                                          color: titleColor, fontSize: 12),
+                                    ),
+                                    Row(
+                                      children: [
+                                        lockedInfo.length > 2
+                                            ? TapTooltip(
+                                                message: lockedInfo,
+                                                child: Padding(
+                                                  padding:
+                                                      EdgeInsets.only(right: 6),
+                                                  child: Icon(
+                                                    Icons.info,
+                                                    size: 16,
+                                                    color: titleColor,
+                                                  ),
+                                                ),
+                                                waitDuration:
+                                                    Duration(seconds: 0),
+                                              )
+                                            : Container(),
+                                        Text(
+                                          Fmt.priceFloorBigInt(
+                                            balancesInfo.lockedBalance,
+                                            decimals,
+                                            lengthMax: 3,
+                                          ),
+                                          style: TextStyle(color: titleColor),
+                                        )
+                                      ],
                                     ),
                                   ],
-                                );
-                              },
+                                ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      dic['available'],
+                                      style: TextStyle(
+                                          color: titleColor, fontSize: 12),
+                                    ),
+                                    Text(
+                                      Fmt.priceFloorBigInt(
+                                        balancesInfo.transferable,
+                                        decimals,
+                                        lengthMax: 3,
+                                      ),
+                                      style: TextStyle(color: titleColor),
+                                    )
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      dic['reserved'],
+                                      style: TextStyle(
+                                          color: titleColor, fontSize: 12),
+                                    ),
+                                    Text(
+                                      Fmt.priceFloorBigInt(
+                                        balancesInfo.reserved,
+                                        decimals,
+                                        lengthMax: 3,
+                                      ),
+                                      style: TextStyle(color: titleColor),
+                                    )
+                                  ],
+                                ),
+                              ],
                             )
                           : Container(),
                     ],
@@ -366,24 +452,33 @@ class _AssetPageState extends State<AssetPage>
 }
 
 class TransferListItem extends StatelessWidget {
-  TransferListItem(this.data, this.token, this.isOut, this.hasDetail);
+  TransferListItem({
+    this.data,
+    this.token,
+    this.isOut,
+    this.hasDetail,
+    this.crossChain,
+  });
 
   final TransferData data;
   final String token;
+  final String crossChain;
   final bool isOut;
   final bool hasDetail;
 
   @override
   Widget build(BuildContext context) {
+    String address = isOut ? data.to : data.from;
+    String title =
+        Fmt.address(address) ?? data.extrinsicIndex ?? Fmt.address(data.hash);
     return Container(
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(width: 0.5, color: Colors.black12)),
       ),
       child: ListTile(
-        title: Text(data.extrinsicIndex ?? Fmt.address(data.hash)),
-        subtitle: Text(
-            DateTime.fromMillisecondsSinceEpoch(data.blockTimestamp * 1000)
-                .toString()),
+        title: Text('$title${crossChain != null ? ' ($crossChain)' : ''}'),
+        subtitle: Text(Fmt.dateTime(
+            DateTime.fromMillisecondsSinceEpoch(data.blockTimestamp * 1000))),
         trailing: Container(
           width: 110,
           child: Row(

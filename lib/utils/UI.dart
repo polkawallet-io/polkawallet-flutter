@@ -4,16 +4,19 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:package_info/package_info.dart';
-import 'package:polka_wallet/common/components/currencyWithIcon.dart';
-import 'package:polka_wallet/common/components/downloadDialog.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/common/regInputFormatter.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/service/walletApi.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:update_app/update_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UI {
   static void copyAndNotify(BuildContext context, String text) {
-    Clipboard.setData(ClipboardData(text: text));
+    Clipboard.setData(ClipboardData(text: text ?? ''));
 
     showCupertinoDialog(
       context: context,
@@ -43,56 +46,26 @@ class UI {
     }
   }
 
-  static void showCurrencyPicker(BuildContext context, List<String> currencyIds,
-      String selected, Function(String) onChange) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (_) => Container(
-        height: MediaQuery.of(context).copyWith().size.height / 3,
-        child: CupertinoPicker(
-          backgroundColor: Colors.white,
-          itemExtent: 56,
-          scrollController: FixedExtentScrollController(
-              initialItem: currencyIds.indexOf(selected)),
-          children: currencyIds
-              .map(
-                (i) => Padding(
-                  padding: EdgeInsets.all(16),
-                  child: CurrencyWithIcon(
-                    i,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                  ),
-                ),
-              )
-              .toList(),
-          onSelectedItemChanged: (v) {
-            onChange(currencyIds[v]);
-          },
-        ),
-      ),
-    );
-  }
-
   static Future<void> checkUpdate(BuildContext context, Map versions,
       {bool autoCheck = false}) async {
-    if (!Platform.isAndroid && !Platform.isIOS) return;
+    if (versions == null || !Platform.isAndroid && !Platform.isIOS) return;
     String platform = Platform.isAndroid ? 'android' : 'ios';
     final Map dic = I18n.of(context).home;
-    String latest = versions[platform]['version'];
-    String latestBeta = versions[platform]['version-beta'];
 
-    PackageInfo info = await PackageInfo.fromPlatform();
+    int latestCode = versions[platform]['version-code'];
+    String latestBeta = versions[platform]['version-beta'];
+    int latestCodeBeta = versions[platform]['version-code-beta'];
 
     bool needUpdate = false;
     if (autoCheck) {
-      if (latest.compareTo(info.version) > 0) {
+      if (latestCode > app_beta_version_code) {
         // new version found
         needUpdate = true;
       } else {
         return;
       }
     } else {
-      if (latestBeta.compareTo(app_beta_version) > 0) {
+      if (latestCodeBeta > app_beta_version_code) {
         // new version found
         needUpdate = true;
       }
@@ -134,7 +107,7 @@ class UI {
             ),
             CupertinoButton(
               child: Text(dic['ok']),
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
                 if (!needUpdate) {
                   return;
@@ -147,16 +120,94 @@ class UI {
                   // START LISTENING FOR DOWNLOAD PROGRESS REPORTING EVENTS
                   try {
                     String url = versions['android']['url'];
-                    print(url);
-                    showCupertinoDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return DownloadDialog(url);
-                      },
-                    );
+                    UpdateApp.updateApp(url: url, appleId: "1520301768");
                   } catch (e) {
                     print('Failed to make OTA update. Details: $e');
                   }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static Future<bool> checkJSCodeUpdate(
+    BuildContext context,
+    int jsVersion,
+    String network,
+  ) async {
+    if (jsVersion != null) {
+      final currentVersion = WalletApi.getPolkadotJSVersion(
+        webApi.jsStorage,
+        network,
+      );
+      if (jsVersion > currentVersion) {
+        final Map dic = I18n.of(context).home;
+        final bool isOk = await showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: Text('metadata v$jsVersion'),
+              content: Text(dic['update.js.up']),
+              actions: <Widget>[
+                CupertinoButton(
+                  child: Text(dic['cancel']),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                    exit(0);
+                  },
+                ),
+                CupertinoButton(
+                  child: Text(dic['ok']),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        return isOk;
+      }
+    }
+    return false;
+  }
+
+  static Future<void> updateJSCode(
+    BuildContext context,
+    GetStorage jsStorage,
+    String network,
+    int version,
+  ) async {
+    final Map dic = I18n.of(context).home;
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(dic['update.download']),
+          content: CupertinoActivityIndicator(),
+        );
+      },
+    );
+    final String code = await WalletApi.fetchPolkadotJSCode(network);
+    Navigator.of(context).pop();
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Container(),
+          content:
+              code == null ? Text(dic['update.error']) : Text(dic['success']),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(dic['ok']),
+              onPressed: () {
+                WalletApi.setPolkadotJSCode(jsStorage, network, code, version);
+                Navigator.of(context).pop();
+                if (code == null) {
+                  exit(0);
                 }
               },
             ),
@@ -186,6 +237,36 @@ class UI {
       },
     );
   }
+
+  static bool checkBalanceAndAlert(
+      BuildContext context, AppStore store, BigInt amountNeeded) {
+    String symbol = store.settings.networkState.tokenSymbol;
+    if (store.assets.balances[symbol].transferable <= amountNeeded) {
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text(I18n.of(context).assets['amount.low']),
+            content: Container(),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        },
+      );
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  static TextInputFormatter decimalInputFormatter(int decimals) {
+    return RegExInputFormatter.withRegex(
+        '^[0-9]{0,$decimals}(\\.[0-9]{0,$decimals})?\$');
+  }
 }
 
 // access the refreshIndicator globally
@@ -201,11 +282,18 @@ final GlobalKey<RefreshIndicatorState> globalBondingRefreshKey =
 // staking nominate page:
 final GlobalKey<RefreshIndicatorState> globalNominatingRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
-// council page:
+// council & motions page:
 final GlobalKey<RefreshIndicatorState> globalCouncilRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalMotionsRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
 // democracy page:
 final GlobalKey<RefreshIndicatorState> globalDemocracyRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+// treasury proposals&tips page:
+final GlobalKey<RefreshIndicatorState> globalProposalsRefreshKey =
+    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalTipsRefreshKey =
     new GlobalKey<RefreshIndicatorState>();
 // recovery settings page:
 final GlobalKey<RefreshIndicatorState> globalRecoverySettingsRefreshKey =

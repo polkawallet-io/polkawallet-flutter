@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 
 class OutlinedButtonSmall extends StatelessWidget {
-  OutlinedButtonSmall({this.content, this.active, this.margin, this.onPressed});
+  OutlinedButtonSmall(
+      {this.content,
+      this.active = false,
+      this.color,
+      this.margin,
+      this.onPressed});
   final String content;
   final bool active;
+  final Color color;
   final EdgeInsets margin;
   final Function onPressed;
   @override
   Widget build(BuildContext context) {
-    Color primary = Theme.of(context).primaryColor;
+    Color primary = color ?? Theme.of(context).primaryColor;
     Color grey = Theme.of(context).unselectedWidgetColor;
     Color white = Theme.of(context).cardColor;
     return GestureDetector(

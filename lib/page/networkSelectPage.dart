@@ -59,18 +59,33 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     setState(() {
       _networkChanging = true;
     });
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(I18n.of(context).home['loading']),
+          content: Container(height: 64, child: CupertinoActivityIndicator()),
+        );
+      },
+    );
 
+    store.settings.setNetworkLoading(true);
+    await store.settings.setNetworkConst({}, needCache: false);
     store.settings.setEndpoint(_selectedNetwork);
 
-    store.settings.loadNetworkStateCache();
-    store.settings.setNetworkLoading(true);
-
-    store.gov.setReferendums([]);
     _loadAccountCache();
-    webApi.closeWebView();
+    //webApi.closeWebView();
+
+    await store.settings.loadNetworkStateCache();
+
+    store.gov.clearState();
+    store.assets.loadCache();
+    store.staking.clearState();
+    store.staking.loadCache();
     webApi.launchWebview();
     changeTheme();
     if (mounted) {
+      Navigator.of(context).pop();
       setState(() {
         _networkChanging = false;
       });
@@ -78,17 +93,17 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   }
 
   Future<void> _onSelect(AccountData i, String address) async {
-    if (address != store.account.currentAddress) {
+    bool isCurrentNetwork =
+        _selectedNetwork.info == store.settings.endpoint.info;
+    if (address != store.account.currentAddress || !isCurrentNetwork) {
       /// set current account
       store.account.setCurrentAccount(i.pubKey);
 
-      bool isCurrentNetwork =
-          _selectedNetwork.info == store.settings.endpoint.info;
       if (isCurrentNetwork) {
         _loadAccountCache();
 
         /// reload account info
-        webApi.assets.fetchBalance(i.pubKey);
+        webApi.assets.fetchBalance();
       } else {
         /// set new network and reload web view
         await _reloadNetwork();
@@ -135,17 +150,29 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     accounts.addAll(store.account.optionalAccounts);
 
     res.addAll(accounts.map((i) {
-      String address =
-          store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
+      String address = i.address;
+      if (store.account.pubKeyAddressMap[_selectedNetwork.ss58] != null) {
+        address =
+            store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
+      }
+      final bool isCurrentNetwork =
+          _selectedNetwork.info == store.settings.endpoint.info;
+      final accInfo = store.account.accountIndexMap[i.address];
+      final String accIndex =
+          isCurrentNetwork && accInfo != null && accInfo['accountIndex'] != null
+              ? '${accInfo['accountIndex']}\n'
+              : '';
+      final double padding = accIndex.isEmpty ? 0 : 7;
       return RoundedCard(
         border: address == store.account.currentAddress
             ? Border.all(color: Theme.of(context).primaryColorLight)
             : Border.all(color: Theme.of(context).cardColor),
         margin: EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.only(top: padding, bottom: padding),
         child: ListTile(
-          leading: AddressIcon('', pubKey: i.pubKey),
+          leading: AddressIcon('', pubKey: i.pubKey, addressToCopy: address),
           title: Text(Fmt.accountName(context, i)),
-          subtitle: Text(Fmt.address(address ?? 'address xxxx')),
+          subtitle: Text('$accIndex${Fmt.address(address)}', maxLines: 2),
           onTap: _networkChanging ? null : () => _onSelect(i, address),
         ),
       );

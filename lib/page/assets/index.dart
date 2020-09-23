@@ -1,18 +1,26 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/components/BorderedTitle.dart';
-import 'package:polka_wallet/common/components/addressIcon.dart';
-import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/common/components/passwordInputDialog.dart';
+import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page/account/scanPage.dart';
+import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
+import 'package:polka_wallet/page/assets/announcementPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
+import 'package:polka_wallet/service/faucet.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/common/components/BorderedTitle.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
+import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
@@ -41,14 +49,22 @@ class _AssetsState extends State<Assets> {
   Future<void> _fetchBalance() async {
     if (store.settings.endpointIsEncointer) {
       await Future.wait([
-        webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
+        webApi.assets.fetchBalance(),
       ]);
     } else {
       await Future.wait([
-        webApi.assets.fetchBalance(store.account.currentAccount.pubKey),
-        webApi.staking.fetchAccountStaking(store.account.currentAccount.pubKey),
+        webApi.assets.fetchBalance(),
+        webApi.staking.fetchAccountStaking(),
       ]);
     }
+    webApi.account.fetchAccountsIndex();
+  }
+
+  Future<List> _fetchAnnouncements() async {
+    if (store.assets.announcements != null) return store.assets.announcements;
+    final List res = await WalletApi.getAnnouncements();
+    store.assets.setAnnouncements(res);
+    return res;
   }
 
   Future<String> _checkPreclaim() async {
@@ -67,6 +83,101 @@ class _AssetsState extends State<Assets> {
       Navigator.of(context).pushNamed(AttestPage.route, arguments: ethAddress);
     }
     return ethAddress;
+  }
+
+  Future<void> _handleScan() async {
+    final Map dic = I18n.of(context).account;
+    final data = await Navigator.pushNamed(
+      context,
+      ScanPage.route,
+      arguments: 'tx',
+    );
+    if (data != null) {
+      if (store.account.currentAccount.observation ?? false) {
+        showCupertinoDialog(
+          context: context,
+          builder: (_) {
+            return CupertinoAlertDialog(
+              title: Text(dic['uos.title']),
+              content: Text(dic['uos.acc.invalid']),
+              actions: <Widget>[
+                CupertinoButton(
+                  child: Text(I18n.of(context).home['ok']),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            );
+          },
+        );
+        return;
+      }
+
+      final Map sender =
+          await webApi.account.parseQrCode(data.toString().trim());
+      if (sender['signer'] != store.account.currentAddress) {
+        showCupertinoDialog(
+          context: context,
+          builder: (_) {
+            return CupertinoAlertDialog(
+              title: Text(dic['uos.title']),
+              content: sender['error'] != null
+                  ? Text(sender['error'])
+                  : sender['signer'] == null
+                      ? Text(dic['uos.qr.invalid'])
+                      : Text(dic['uos.acc.mismatch']),
+              actions: <Widget>[
+                CupertinoButton(
+                  child: Text(I18n.of(context).home['ok']),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        showCupertinoDialog(
+          context: context,
+          builder: (_) {
+            return PasswordInputDialog(
+              account: store.account.currentAccount,
+              title: Text(dic['uos.title']),
+              onOk: (password) {
+                print('pass ok: $password');
+                _signAsync(password);
+              },
+            );
+          },
+        );
+      }
+    }
+  }
+
+  Future<void> _signAsync(String password) async {
+    final Map dic = I18n.of(context).account;
+    final Map signed = await webApi.account.signAsync(password);
+    print('signed: $signed');
+    if (signed['error'] != null) {
+      showCupertinoDialog(
+        context: context,
+        builder: (_) {
+          return CupertinoAlertDialog(
+            title: Text(dic['uos.title']),
+            content: Text(signed['error']),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+    Navigator.of(context).pushNamed(
+      QrSignerPage.route,
+      arguments: signed['signature'].toString().substring(2),
+    );
   }
 
   Future<void> _getTokensFromFaucet() async {
@@ -127,6 +238,57 @@ class _AssetsState extends State<Assets> {
     });
   }
 
+  Future<void> _getLaminarTokensFromFaucet() async {
+    setState(() {
+      _faucetSubmitting = true;
+    });
+    final String res =
+        await FaucetApi.getLaminarTokens(store.account.currentAddress);
+    print(res);
+    String dialogContent = I18n.of(context).acala['faucet.ok'];
+    bool isOK = false;
+    if (res == null) {
+      dialogContent = I18n.of(context).acala['faucet.error'];
+    } else if (res == "LIMIT") {
+      dialogContent = I18n.of(context).acala['faucet.limit'];
+    } else {
+      isOK = true;
+    }
+
+    Timer(Duration(seconds: 3), () {
+      setState(() {
+        _faucetSubmitting = false;
+      });
+
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Container(),
+            content: Text(dialogContent),
+            actions: <Widget>[
+              CupertinoButton(
+                child: Text(I18n.of(context).home['ok']),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  if (isOK) {
+                    Map data = jsonDecode(res);
+                    globalBalanceRefreshKey.currentState.show();
+                    NotificationPlugin.showNotification(
+                      int.parse(data['hash'].substring(0, 6)),
+                      I18n.of(context).assets['notify.receive'],
+                      jsonEncode(data['amount']),
+                    );
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
+  }
+
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).assets;
     String network = store.settings.loading
@@ -140,6 +302,10 @@ class _AssetsState extends State<Assets> {
         store.settings.endpoint.info == networkEndpointPolkadot.info;
     bool isEncointer = store.settings.endpointIsEncointer;
 
+    final accInfo = store.account.accountIndexMap[acc.address];
+    final String accIndex = accInfo != null && accInfo['accountIndex'] != null
+        ? '${accInfo['accountIndex']}\n'
+        : '';
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
       padding: EdgeInsets.all(8),
@@ -214,13 +380,37 @@ class _AssetsState extends State<Assets> {
                     : Container(width: 8),
           ),
           ListTile(
-            title: Text(Fmt.address(store.account.currentAddress)),
+            title: Row(
+              children: [
+                GestureDetector(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 2),
+                    child: Image.asset(
+                      'assets/images/assets/qrcode_${store.settings.endpoint.color ?? 'pink'}.png',
+                      width: 24,
+                    ),
+                  ),
+                  onTap: () {
+                    if (acc.address != '') {
+                      Navigator.pushNamed(context, ReceivePage.route);
+                    }
+                  },
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Text(
+                    '$accIndex${Fmt.address(store.account.currentAddress)}',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                )
+              ],
+            ),
             trailing: IconButton(
               icon: Image.asset(
                   'assets/images/assets/qrcode_${isEncointer ? 'indigo' : isKusama ? 'pink800' : 'pink'}.png'),
               onPressed: () {
                 if (acc.address != '') {
-                  Navigator.pushNamed(context, ReceivePage.route);
+                  _handleScan();
                 }
               },
             ),
@@ -246,10 +436,12 @@ class _AssetsState extends State<Assets> {
 
   @override
   Widget build(BuildContext context) {
+    final Map dic = I18n.of(context).home;
     return Observer(
       builder: (_) {
-        String symbol = store.settings.networkState.tokenSymbol;
-        int decimals = store.settings.networkState.tokenDecimals;
+        String symbol = store.settings.networkState.tokenSymbol ?? '';
+        int decimals =
+            store.settings.networkState.tokenDecimals ?? kusama_token_decimals;
         String networkName = store.settings.networkName ?? '';
 
         List<String> currencyIds = [];
@@ -274,14 +466,69 @@ class _AssetsState extends State<Assets> {
           child: Column(
             children: <Widget>[
               _buildTopCard(context),
+              isPolkadot
+                  ? FutureBuilder(
+                      future: _fetchAnnouncements(),
+                      builder: (_, AsyncSnapshot<List> snapshot) {
+                        final String lang =
+                            I18n.of(context).locale.toString().contains('zh')
+                                ? 'zh'
+                                : 'en';
+                        if (!snapshot.hasData || snapshot.data.length == 0) {
+                          return Container(height: 24);
+                        }
+                        final Map announce = snapshot.data[0][lang];
+                        return GestureDetector(
+                          child: Container(
+                            margin: EdgeInsets.all(16),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextTag(
+                                    announce['title'],
+                                    padding:
+                                        EdgeInsets.fromLTRB(16, 12, 16, 12),
+                                    color: Colors.lightGreen,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pushNamed(
+                              AnnouncementPage.route,
+                              arguments: AnnouncePageParams(
+                                title: announce['title'],
+                                link: announce['link'],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    )
+                  : Container(height: 24),
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.only(left: 16, right: 16),
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(top: 24),
-                      child: BorderedTitle(
-                        title: I18n.of(context).home['assets'],
+                      padding: EdgeInsets.only(top: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          BorderedTitle(
+                            title: I18n.of(context).home['assets'],
+                          ),
+                          isAcala || isLaminar
+                              ? TextTag(
+                                  I18n.of(context).assets['assets.test'],
+                                  fontSize: 16,
+                                  color: Colors.red,
+                                  margin: EdgeInsets.only(left: 12),
+                                  padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                                )
+                              : Container()
+                        ],
                       ),
                     ),
                     RoundedCard(
@@ -292,17 +539,32 @@ class _AssetsState extends State<Assets> {
                           child: Image.asset(
                               'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
                         ),
-                        title: Text(symbol ?? ''),
-                        trailing: Text(
-                          Fmt.token(
-                              balancesInfo != null
-                                  ? balancesInfo.total
-                                  : BigInt.zero,
-                              decimals: decimals),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.black54),
+                        title: Text(tokenView),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              Fmt.priceFloorBigInt(
+                                  balancesInfo != null
+                                      ? balancesInfo.total
+                                      : BigInt.zero,
+                                  decimals,
+                                  lengthFixed: 3),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black54),
+                            ),
+                            isPolkadot || isKusama
+                                ? Text(
+                                    '≈ \$ ${tokenPrice ?? '--.--'}',
+                                    style: TextStyle(
+                                      color: Theme.of(context).disabledColor,
+                                    ),
+                                  )
+                                : Container(width: 16),
+                          ],
                         ),
                         onTap: () {
                           Navigator.pushNamed(context, AssetPage.route,
@@ -319,12 +581,18 @@ class _AssetsState extends State<Assets> {
                           child: ListTile(
                             leading: Container(
                               width: 36,
-                              child: Image.asset('assets/images/assets/$i.png'),
+                              child: hasIcon
+                                  ? Image.asset('assets/images/assets/$i.png')
+                                  : CircleAvatar(
+                                      child: Text(token.substring(0, 2)),
+                                    ),
                             ),
                             title: Text(token),
                             trailing: Text(
-                              Fmt.balance(store.assets.tokenBalances[i],
-                                  decimals: decimals),
+                              Fmt.priceFloorBigInt(
+                                  Fmt.balanceInt(store.assets.tokenBalances[i]),
+                                  decimals,
+                                  lengthFixed: 3),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
+import 'package:polka_wallet/page/governance/council/councilPage.dart';
 import 'package:polka_wallet/page/governance/council/councilVotePage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/BorderedTitle.dart';
@@ -35,9 +37,8 @@ class _CouncilState extends State<Council> {
     if (store.settings.loading) {
       return;
     }
-    webApi.gov.fetchCouncilVotes();
+    await webApi.gov.fetchCouncilVotes();
     webApi.gov.fetchUserCouncilVote();
-    await webApi.gov.fetchCouncilInfo();
   }
 
   Future<void> _submitCancelVotes() async {
@@ -51,7 +52,8 @@ class _CouncilState extends State<Council> {
       "detail": '{}',
       "params": [],
       'onFinish': (BuildContext txPageContext, Map res) {
-        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        Navigator.popUntil(
+            txPageContext, ModalRoute.withName(CouncilPage.route));
         globalCouncilRefreshKey.currentState.show();
       }
     };
@@ -94,9 +96,9 @@ class _CouncilState extends State<Council> {
     });
   }
 
-  Widget _buildTopCard() {
-    final int decimals = store.settings.networkState.tokenDecimals;
-    final String symbol = store.settings.networkState.tokenSymbol;
+  Widget _buildTopCard(String tokenView) {
+    final int decimals =
+        store.settings.networkState.tokenDecimals ?? kusama_token_decimals;
     final Map dic = I18n.of(context).gov;
 
     Map userVotes = store.gov.userCouncilVotes;
@@ -154,8 +156,7 @@ class _CouncilState extends State<Council> {
                     },
                   ),
                   InfoItem(
-                    content:
-                        '${Fmt.token(voteAmount, decimals: decimals)} $symbol',
+                    content: '${Fmt.token(voteAmount, decimals)} $tokenView',
                     title: dic['vote.my'],
                   ),
                   OutlinedButtonSmall(
@@ -180,13 +181,13 @@ class _CouncilState extends State<Council> {
                   child: listHeight > 48
                       ? ListView(
                           children: List.of(userVotes['votes']).map((i) {
-                            Map accInfo = store.account.accountIndexMap[i];
+                            Map accInfo = store.account.addressIndexMap[i];
                             return CandidateItem(
                               iconSize: 32,
                               accInfo: accInfo,
                               balance: [i],
-                              tokenSymbol:
-                                  store.settings.networkState.tokenSymbol,
+                              tokenSymbol: tokenView,
+                              decimals: decimals,
                               noTap: true,
                             );
                           }).toList(),
@@ -217,6 +218,8 @@ class _CouncilState extends State<Council> {
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).gov;
     return Observer(builder: (_) {
+      final int decimals = store.settings.networkState.tokenDecimals;
+      final String symbol = store.settings.networkState.tokenSymbol;
       return RefreshIndicator(
         key: globalCouncilRefreshKey,
         onRefresh: _fetchCouncilInfo,
@@ -224,7 +227,7 @@ class _CouncilState extends State<Council> {
             ? Container()
             : ListView(
                 children: <Widget>[
-                  _buildTopCard(),
+                  _buildTopCard(symbol),
                   Container(
                     padding: EdgeInsets.only(top: 16, left: 16, bottom: 8),
                     color: Theme.of(context).cardColor,
@@ -236,11 +239,12 @@ class _CouncilState extends State<Council> {
                     color: Theme.of(context).cardColor,
                     child: Column(
                       children: store.gov.council.members.map((i) {
-                        Map accInfo = store.account.accountIndexMap[i[0]];
+                        Map accInfo = store.account.addressIndexMap[i[0]];
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: i,
-                          tokenSymbol: store.settings.networkState.tokenSymbol,
+                          tokenSymbol: symbol,
+                          decimals: decimals,
                         );
                       }).toList(),
                     ),
@@ -256,11 +260,12 @@ class _CouncilState extends State<Council> {
                     color: Theme.of(context).cardColor,
                     child: Column(
                       children: store.gov.council.runnersUp.map((i) {
-                        Map accInfo = store.account.accountIndexMap[i[0]];
+                        Map accInfo = store.account.addressIndexMap[i[0]];
                         return CandidateItem(
                           accInfo: accInfo,
                           balance: i,
-                          tokenSymbol: store.settings.networkState.tokenSymbol,
+                          tokenSymbol: symbol,
+                          decimals: decimals,
                         );
                       }).toList(),
                     ),
@@ -277,12 +282,12 @@ class _CouncilState extends State<Council> {
                     child: store.gov.council.candidates.length > 0
                         ? Column(
                             children: store.gov.council.candidates.map((i) {
-                              Map accInfo = store.account.accountIndexMap[i];
+                              Map accInfo = store.account.addressIndexMap[i];
                               return CandidateItem(
                                 accInfo: accInfo,
                                 balance: [i],
-                                tokenSymbol:
-                                    store.settings.networkState.tokenSymbol,
+                                tokenSymbol: symbol,
+                                decimals: decimals,
                               );
                             }).toList(),
                           )
@@ -303,51 +308,36 @@ class CandidateItem extends StatelessWidget {
     this.accInfo,
     this.balance,
     this.tokenSymbol,
-    this.switchValue,
-    this.onSwitch,
+    this.decimals,
     this.iconSize,
     this.noTap = false,
+    this.trailing,
   });
   final Map accInfo;
   // balance == [<candidate_address>, <0x_candidate_backing_amount>]
   final List balance;
   final String tokenSymbol;
-  final bool switchValue;
-  final Function(bool) onSwitch;
+  final int decimals;
   final double iconSize;
   final bool noTap;
+  final Widget trailing;
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: AddressIcon(balance[0], size: iconSize),
-      title: Row(
-        children: <Widget>[
-          accInfo != null && accInfo['identity']['judgements'].length > 0
-              ? Container(
-                  width: 14,
-                  margin: EdgeInsets.only(right: 4),
-                  child: Image.asset('assets/images/assets/success.png'),
-                )
-              : Container(),
-          Text(accInfo != null && accInfo['identity']['display'] != null
-              ? accInfo['identity']['display'].toString().toUpperCase()
-              : Fmt.address(balance[0], pad: 6))
-        ],
-      ),
+      title: Fmt.accountDisplayName(balance[0], accInfo),
       subtitle: balance.length == 1
           ? null
-          : Text(
-              '${I18n.of(context).gov['backing']}: ${Fmt.token(BigInt.parse(balance[1].toString()))} $tokenSymbol'),
+          : Text('${I18n.of(context).gov['backing']}: ${Fmt.token(
+              BigInt.parse(balance[1].toString()),
+              decimals,
+              length: 0,
+            )} $tokenSymbol'),
       onTap: noTap
           ? null
           : () => Navigator.of(context).pushNamed(CandidateDetailPage.route,
               arguments: balance.length == 1 ? [balance[0], '0x0'] : balance),
-      trailing: onSwitch == null
-          ? Container(width: 8)
-          : CupertinoSwitch(
-              value: switchValue,
-              onChanged: onSwitch,
-            ),
+      trailing: trailing ?? Container(width: 8),
     );
   }
 }

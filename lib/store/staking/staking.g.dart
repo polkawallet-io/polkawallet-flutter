@@ -9,23 +9,42 @@ part of 'staking.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$StakingStore on _StakingStore, Store {
-  Computed<ObservableList<ValidatorData>> _$activeNominatingListComputed;
+  Computed<List<ValidatorData>> _$nextUpsInfoComputed;
 
   @override
-  ObservableList<ValidatorData> get activeNominatingList =>
-      (_$activeNominatingListComputed ??=
-              Computed<ObservableList<ValidatorData>>(
-                  () => super.activeNominatingList,
-                  name: '_StakingStore.activeNominatingList'))
+  List<ValidatorData> get nextUpsInfo => (_$nextUpsInfoComputed ??=
+          Computed<List<ValidatorData>>(() => super.nextUpsInfo,
+              name: '_StakingStore.nextUpsInfo'))
+      .value;
+  Computed<List<ValidatorData>> _$validatorsAllComputed;
+
+  @override
+  List<ValidatorData> get validatorsAll => (_$validatorsAllComputed ??=
+          Computed<List<ValidatorData>>(() => super.validatorsAll,
+              name: '_StakingStore.validatorsAll'))
+      .value;
+  Computed<List<ValidatorData>> _$activeNominatingListComputed;
+
+  @override
+  List<ValidatorData> get activeNominatingList =>
+      (_$activeNominatingListComputed ??= Computed<List<ValidatorData>>(
+              () => super.activeNominatingList,
+              name: '_StakingStore.activeNominatingList'))
           .value;
-  Computed<ObservableList<ValidatorData>> _$nominatingListComputed;
+  Computed<List<ValidatorData>> _$nominatingListComputed;
 
   @override
-  ObservableList<ValidatorData> get nominatingList =>
-      (_$nominatingListComputed ??= Computed<ObservableList<ValidatorData>>(
-              () => super.nominatingList,
+  List<ValidatorData> get nominatingList => (_$nominatingListComputed ??=
+          Computed<List<ValidatorData>>(() => super.nominatingList,
               name: '_StakingStore.nominatingList'))
-          .value;
+      .value;
+  Computed<Map<String, List<dynamic>>> _$nominationsAllComputed;
+
+  @override
+  Map<String, List<dynamic>> get nominationsAll => (_$nominationsAllComputed ??=
+          Computed<Map<String, List<dynamic>>>(() => super.nominationsAll,
+              name: '_StakingStore.nominationsAll'))
+      .value;
   Computed<BigInt> _$accountUnlockingTotalComputed;
 
   @override
@@ -40,6 +59,14 @@ mixin _$StakingStore on _StakingStore, Store {
           Computed<BigInt>(() => super.accountRewardTotal,
               name: '_StakingStore.accountRewardTotal'))
       .value;
+  Computed<List<String>> _$recommendedValidatorListComputed;
+
+  @override
+  List<String> get recommendedValidatorList =>
+      (_$recommendedValidatorListComputed ??= Computed<List<String>>(
+              () => super.recommendedValidatorList,
+              name: '_StakingStore.recommendedValidatorList'))
+          .value;
 
   final _$cacheTxsTimestampAtom = Atom(name: '_StakingStore.cacheTxsTimestamp');
 
@@ -104,45 +131,45 @@ mixin _$StakingStore on _StakingStore, Store {
   final _$validatorsInfoAtom = Atom(name: '_StakingStore.validatorsInfo');
 
   @override
-  ObservableList<ValidatorData> get validatorsInfo {
+  List<ValidatorData> get validatorsInfo {
     _$validatorsInfoAtom.reportRead();
     return super.validatorsInfo;
   }
 
   @override
-  set validatorsInfo(ObservableList<ValidatorData> value) {
+  set validatorsInfo(List<ValidatorData> value) {
     _$validatorsInfoAtom.reportWrite(value, super.validatorsInfo, () {
       super.validatorsInfo = value;
     });
   }
 
-  final _$nextUpsInfoAtom = Atom(name: '_StakingStore.nextUpsInfo');
+  final _$rewardsAtom = Atom(name: '_StakingStore.rewards');
 
   @override
-  ObservableList<ValidatorData> get nextUpsInfo {
-    _$nextUpsInfoAtom.reportRead();
-    return super.nextUpsInfo;
+  Map<String, dynamic> get rewards {
+    _$rewardsAtom.reportRead();
+    return super.rewards;
   }
 
   @override
-  set nextUpsInfo(ObservableList<ValidatorData> value) {
-    _$nextUpsInfoAtom.reportWrite(value, super.nextUpsInfo, () {
-      super.nextUpsInfo = value;
+  set rewards(Map<String, dynamic> value) {
+    _$rewardsAtom.reportWrite(value, super.rewards, () {
+      super.rewards = value;
     });
   }
 
-  final _$ledgerAtom = Atom(name: '_StakingStore.ledger');
+  final _$ownStashInfoAtom = Atom(name: '_StakingStore.ownStashInfo');
 
   @override
-  ObservableMap<String, dynamic> get ledger {
-    _$ledgerAtom.reportRead();
-    return super.ledger;
+  OwnStashInfoData get ownStashInfo {
+    _$ownStashInfoAtom.reportRead();
+    return super.ownStashInfo;
   }
 
   @override
-  set ledger(ObservableMap<String, dynamic> value) {
-    _$ledgerAtom.reportWrite(value, super.ledger, () {
-      super.ledger = value;
+  set ownStashInfo(OwnStashInfoData value) {
+    _$ownStashInfoAtom.reportWrite(value, super.ownStashInfo, () {
+      super.ownStashInfo = value;
     });
   }
 
@@ -188,6 +215,21 @@ mixin _$StakingStore on _StakingStore, Store {
   set txs(ObservableList<TxData> value) {
     _$txsAtom.reportWrite(value, super.txs, () {
       super.txs = value;
+    });
+  }
+
+  final _$txsRewardsAtom = Atom(name: '_StakingStore.txsRewards');
+
+  @override
+  ObservableList<TxRewardData> get txsRewards {
+    _$txsRewardsAtom.reportRead();
+    return super.txsRewards;
+  }
+
+  @override
+  set txsRewards(ObservableList<TxRewardData> value) {
+    _$txsRewardsAtom.reportWrite(value, super.txsRewards, () {
+      super.txsRewards = value;
     });
   }
 
@@ -242,6 +284,23 @@ mixin _$StakingStore on _StakingStore, Store {
     });
   }
 
+  final _$recommendedValidatorsAtom =
+      Atom(name: '_StakingStore.recommendedValidators');
+
+  @override
+  Map<dynamic, dynamic> get recommendedValidators {
+    _$recommendedValidatorsAtom.reportRead();
+    return super.recommendedValidators;
+  }
+
+  @override
+  set recommendedValidators(Map<dynamic, dynamic> value) {
+    _$recommendedValidatorsAtom.reportWrite(value, super.recommendedValidators,
+        () {
+      super.recommendedValidators = value;
+    });
+  }
+
   final _$clearTxsAsyncAction = AsyncAction('_StakingStore.clearTxs');
 
   @override
@@ -262,6 +321,15 @@ mixin _$StakingStore on _StakingStore, Store {
   Future<void> addTxs(Map<dynamic, dynamic> res, {bool shouldCache = false}) {
     return _$addTxsAsyncAction
         .run(() => super.addTxs(res, shouldCache: shouldCache));
+  }
+
+  final _$addTxsRewardsAsyncAction = AsyncAction('_StakingStore.addTxsRewards');
+
+  @override
+  Future<void> addTxsRewards(Map<dynamic, dynamic> res,
+      {bool shouldCache = false}) {
+    return _$addTxsRewardsAsyncAction
+        .run(() => super.addTxsRewards(res, shouldCache: shouldCache));
   }
 
   final _$loadAccountCacheAsyncAction =
@@ -288,6 +356,15 @@ mixin _$StakingStore on _StakingStore, Store {
         .run(() => super.setPhalaAirdropWhiteList(ls));
   }
 
+  final _$setRecommendedValidatorListAsyncAction =
+      AsyncAction('_StakingStore.setRecommendedValidatorList');
+
+  @override
+  Future<void> setRecommendedValidatorList(Map<dynamic, dynamic> data) {
+    return _$setRecommendedValidatorListAsyncAction
+        .run(() => super.setRecommendedValidatorList(data));
+  }
+
   final _$_StakingStoreActionController =
       ActionController(name: '_StakingStore');
 
@@ -297,17 +374,6 @@ mixin _$StakingStore on _StakingStore, Store {
         name: '_StakingStore.setValidatorsInfo');
     try {
       return super.setValidatorsInfo(data, shouldCache: shouldCache);
-    } finally {
-      _$_StakingStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setNextUpsInfo(dynamic list) {
-    final _$actionInfo = _$_StakingStoreActionController.startAction(
-        name: '_StakingStore.setNextUpsInfo');
-    try {
-      return super.setNextUpsInfo(list);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }
@@ -325,13 +391,23 @@ mixin _$StakingStore on _StakingStore, Store {
   }
 
   @override
-  void setLedger(String pubKey, Map<String, dynamic> data,
-      {bool shouldCache = true, bool reset = false}) {
+  void setRewards(String pubKey, Map<String, dynamic> data) {
     final _$actionInfo = _$_StakingStoreActionController.startAction(
-        name: '_StakingStore.setLedger');
+        name: '_StakingStore.setRewards');
     try {
-      return super
-          .setLedger(pubKey, data, shouldCache: shouldCache, reset: reset);
+      return super.setRewards(pubKey, data);
+    } finally {
+      _$_StakingStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setOwnStashInfo(String pubKey, Map<String, dynamic> data,
+      {bool shouldCache = true}) {
+    final _$actionInfo = _$_StakingStoreActionController.startAction(
+        name: '_StakingStore.setOwnStashInfo');
+    try {
+      return super.setOwnStashInfo(pubKey, data, shouldCache: shouldCache);
     } finally {
       _$_StakingStoreActionController.endAction(_$actionInfo);
     }
@@ -378,18 +454,24 @@ overview: ${overview},
 staked: ${staked},
 nominatorCount: ${nominatorCount},
 validatorsInfo: ${validatorsInfo},
-nextUpsInfo: ${nextUpsInfo},
-ledger: ${ledger},
+rewards: ${rewards},
+ownStashInfo: ${ownStashInfo},
 txsLoading: ${txsLoading},
 txsCount: ${txsCount},
 txs: ${txs},
+txsRewards: ${txsRewards},
 rewardsChartDataCache: ${rewardsChartDataCache},
 stakesChartDataCache: ${stakesChartDataCache},
 phalaAirdropWhiteList: ${phalaAirdropWhiteList},
+recommendedValidators: ${recommendedValidators},
+nextUpsInfo: ${nextUpsInfo},
+validatorsAll: ${validatorsAll},
 activeNominatingList: ${activeNominatingList},
 nominatingList: ${nominatingList},
+nominationsAll: ${nominationsAll},
 accountUnlockingTotal: ${accountUnlockingTotal},
-accountRewardTotal: ${accountRewardTotal}
+accountRewardTotal: ${accountRewardTotal},
+recommendedValidatorList: ${recommendedValidatorList}
     ''';
   }
 }

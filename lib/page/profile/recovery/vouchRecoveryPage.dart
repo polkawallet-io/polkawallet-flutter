@@ -36,19 +36,22 @@ class _VouchRecoveryPage extends State<VouchRecoveryPage> {
     String addressNew = _addressNewCtrl.text.trim();
     String address;
     String errorMsg;
+
+    /// check if old account is recoverable
     Map info =
         await webApi.account.queryRecoverable(_addressOldCtrl.text.trim());
     if (info == null) {
       address = addressOld;
-      errorMsg = 'not recoverable';
+      errorMsg = dic['recovery.not.recoverable'];
     } else {
-      info = await webApi.account.queryActiveRecovery(
+      /// check if there is an active recovery for new account
+      info = (await webApi.account.queryActiveRecoveryAttempts(
         _addressOldCtrl.text.trim(),
-        _addressNewCtrl.text.trim(),
-      );
+        [_addressNewCtrl.text.trim()],
+      ))[0];
       if (info == null) {
         address = addressNew;
-        errorMsg = 'no active';
+        errorMsg = dic['recovery.no.active'];
       }
     }
 
@@ -87,14 +90,14 @@ class _VouchRecoveryPage extends State<VouchRecoveryPage> {
   void _onSubmit(String addressOld, String addressNew) {
     final Map dic = I18n.of(context).profile;
     var args = {
-      "title": dic['recovery.vouch'],
+      "title": dic['recovery.help'],
       "txInfo": {
         "module": 'recovery',
         "call": 'vouchRecovery',
       },
       "detail": jsonEncode({
-        'lost': Fmt.address(_addressOldCtrl.text.trim()),
-        'rescuer': Fmt.address(_addressNewCtrl.text.trim()),
+        'lost': addressOld,
+        'rescuer': addressNew,
       }),
       "params": [addressOld, addressNew],
       'onFinish': (BuildContext txPageContext, Map res) {

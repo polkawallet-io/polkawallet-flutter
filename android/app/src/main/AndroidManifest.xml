@@ -9,6 +9,7 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="Encointerwallet"
         android:icon="@mipmap/launcher_icon"
+        android:allowBackup="false"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"

@@ -1,0 +1,43 @@
+{
+  "name": "polkadot-js-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf dist/*",
+    "build": "webpack -p --mode production",
+    "build-dev": "webpack -d --mode development"
+  },
+  "resolutions": {
+    "@open-web3/orml-types": "0.3.0-beta.9",
+    "@polkadot/api": "1.27.1",
+    "@laminar/api": "0.2.0-beta.137",
+    "@laminar/types": "0.2.0-beta.137",
+    "@laminar/type-definitions": "0.2.0-beta.137"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.8.3",
+    "@laminar/api": "^0.2.0-beta.137",
+    "@laminar/type-definitions": "0.2.0-beta.137",
+    "@laminar/types": "^0.2.0-beta.137",
+    "@open-web3/orml-types": "^0.3.0-beta.9",
+    "@polkadot/api": "^1.27.1",
+    "@polkadot/keyring": "^3.1.0-beta.0",
+    "@polkadot/ui-shared": "^0.51.1",
+    "bn.js": "^5.1.1",
+    "oo7-substrate": "^0.8.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@webpack-cli/info": "^0.2.0",
+    "@webpack-cli/init": "^0.3.0",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
+  }
+}
