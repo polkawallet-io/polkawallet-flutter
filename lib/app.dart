@@ -111,7 +111,7 @@ class _WalletAppState extends State<WalletApp> {
 
   Future<void> _checkUpdate(BuildContext context) async {
     final versions = await WalletApi.getLatestVersion();
-    UI.checkUpdate(context, versions, autoCheck: true);
+    //UI.checkUpdate(context, versions, autoCheck: true);
   }
 
   Future<int> _initStore(BuildContext context) async {

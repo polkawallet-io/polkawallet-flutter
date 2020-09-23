@@ -57,10 +57,8 @@ class _AssetPageState extends State<AssetPage>
     webApi.assets.fetchBalance();
     Map res = {"transfers": []};
 
-    final String symbol = store.settings.networkState.tokenSymbol;
-    final String token = ModalRoute.of(context).settings.arguments;
-    final bool isBaseToken = token == symbol;
-      res = await webApi.assets.updateTxs(_txsPage);
+    res = await webApi.assets.updateTxs(_txsPage);
+
     if (!mounted) return;
     setState(() {
       _loading = false;
@@ -114,7 +112,8 @@ class _AssetPageState extends State<AssetPage>
 
   List<Widget> _buildTxList() {
     List<Widget> res = [];
-    final String token = ModalRoute.of(context).settings.arguments;
+    final AssetPageParams params = ModalRoute.of(context).settings.arguments;
+    final String token = params.token;
     if (store.settings.endpointIsEncointer) {
       List<TransferData> ls = store.encointer.txsTransfer.reversed.toList();
       final String symbol = store.settings.networkState.tokenSymbol;
@@ -158,6 +157,7 @@ class _AssetPageState extends State<AssetPage>
     final AssetPageParams params = ModalRoute.of(context).settings.arguments;
     final bool isEncointerCommunityCurrency =
         params.isEncointerCommunityCurrency;
+    final String token = params.token;
 
     final dic = I18n.of(context).assets;
     final List<Tab> _myTabs = <Tab>[
@@ -168,9 +168,9 @@ class _AssetPageState extends State<AssetPage>
 
     final int decimals = store.settings.networkState.tokenDecimals;
     final String symbol = store.settings.networkState.tokenSymbol;
-    final String token = ModalRoute.of(context).settings.arguments;
     final String tokenView = Fmt.tokenView(token);
     final bool isBaseToken = token == symbol;
+
 
     final primaryColor = Theme.of(context).primaryColor;
     final titleColor = Theme.of(context).cardColor;
