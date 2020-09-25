@@ -27,7 +27,7 @@ class ApiAcala {
       IosDeviceInfo info = await deviceInfo.iosInfo;
       deviceId = info.identifierForVendor;
     }
-    String res = await FaucetApi.getAcalaTokens(address, deviceId);
+    String res = await FaucetApi.getAcalaTokensV2(address, deviceId);
     return res;
   }
 

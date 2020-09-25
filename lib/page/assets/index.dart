@@ -187,12 +187,10 @@ class _AssetsState extends State<Assets> {
     final String res = await webApi.acala.fetchFaucet();
     String dialogContent = I18n.of(context).acala['faucet.ok'];
     bool isOK = false;
-    if (res == null || res == "ERROR") {
-      dialogContent = I18n.of(context).acala['faucet.error'];
-    } else if (res == "LIMIT") {
-      dialogContent = I18n.of(context).acala['faucet.limit'];
-    } else {
+    if (res != null && res == "success") {
       isOK = true;
+    } else {
+      dialogContent = res ?? I18n.of(context).acala['faucet.error'];
     }
 
     Timer(Duration(seconds: 3), () {
@@ -213,11 +211,11 @@ class _AssetsState extends State<Assets> {
                   Navigator.of(context).pop();
                   if (isOK) {
                     globalBalanceRefreshKey.currentState.show();
-                    NotificationPlugin.showNotification(
-                      int.parse(res.substring(0, 6)),
-                      I18n.of(context).assets['notify.receive'],
-                      '{"ACA": 2, "aUSD": 2, "DOT": 2, "XBTC": 0.2}',
-                    );
+                    // NotificationPlugin.showNotification(
+                    //   int.parse(res.substring(0, 6)),
+                    //   I18n.of(context).assets['notify.receive'],
+                    //   '{"ACA": 2, "aUSD": 2, "DOT": 2, "XBTC": 0.2}',
+                    // );
                   }
                 },
               ),

@@ -278,54 +278,61 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
   }
 
   Widget _buildNominatingList() {
-    final dic = I18n.of(context).staking;
     if (store.staking.ownStashInfo == null ||
         store.staking.validatorsInfo.length == 0) {
       return Container();
     }
 
+    final stashId = store.staking.ownStashInfo.stashId;
     final NomineesInfoData nomineesInfo = store.staking.ownStashInfo.inactives;
-    final List<Widget> list = nomineesInfo.nomsActive.map((e) {
-      int validatorIndex =
-          store.staking.validatorsInfo.indexWhere((i) => i.accountId == e);
+    final List<Widget> list = nomineesInfo.nomsActive.map((id) {
       return Expanded(
-        child: validatorIndex < 0
-            ? Container()
-            : _NomineeItem(
-                store.staking.validatorsInfo[validatorIndex],
-                true,
-                store.account.addressIndexMap,
-              ),
+        child: _NomineeItem(
+          id,
+          store.staking.validatorsInfo,
+          stashId,
+          NomStatus.active,
+          store.settings.networkState.tokenDecimals,
+          store.account.addressIndexMap,
+        ),
       );
     }).toList();
 
-    list.addAll(nomineesInfo.nomsInactive.map((e) {
-      final validatorIndex =
-          store.staking.validatorsInfo.indexWhere((i) => i.accountId == e);
-      final validator = validatorIndex < 0
-          ? ValidatorData.fromJson({'accountId': e})
-          : store.staking.validatorsInfo[validatorIndex];
+    list.addAll(nomineesInfo.nomsOver.map((id) {
       return Expanded(
         child: _NomineeItem(
-          validator,
-          false,
+          id,
+          store.staking.validatorsInfo,
+          stashId,
+          NomStatus.over,
+          store.settings.networkState.tokenDecimals,
+          store.account.addressIndexMap,
+        ),
+      );
+    }).toList());
+
+    list.addAll(nomineesInfo.nomsInactive.map((id) {
+      return Expanded(
+        child: _NomineeItem(
+          id,
+          store.staking.validatorsInfo,
+          stashId,
+          NomStatus.inactive,
+          store.settings.networkState.tokenDecimals,
           store.account.addressIndexMap,
         ),
       );
     }).toList());
 
     list.addAll(nomineesInfo.nomsWaiting.map((id) {
-      final validatorIndex =
-          store.staking.validatorsInfo.indexWhere((i) => i.accountId == id);
-      final validator = validatorIndex < 0
-          ? ValidatorData.fromJson({'accountId': id})
-          : store.staking.validatorsInfo[validatorIndex];
       return Expanded(
         child: _NomineeItem(
-          validator,
-          false,
+          id,
+          store.staking.validatorsInfo,
+          stashId,
+          NomStatus.waiting,
+          store.settings.networkState.tokenDecimals,
           store.account.addressIndexMap,
-          waiting: true,
         ),
       );
     }).toList());
@@ -504,26 +511,53 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
   }
 }
 
-class _NomineeItem extends StatelessWidget {
-  _NomineeItem(this.validator, this.active, this.accInfoMap,
-      {this.waiting = false});
+enum NomStatus { active, over, inactive, waiting }
 
-  final ValidatorData validator;
-  final bool active;
-  final bool waiting;
+class _NomineeItem extends StatelessWidget {
+  _NomineeItem(
+    this.id,
+    this.validators,
+    this.stashId,
+    this.nomStatus,
+    this.decimals,
+    this.accInfoMap,
+  );
+
+  final String id;
+  final List<ValidatorData> validators;
+  final String stashId;
+  final NomStatus nomStatus;
+  final int decimals;
   final Map<String, Map> accInfoMap;
 
   @override
   Widget build(BuildContext context) {
     final dic = I18n.of(context).staking;
+
+    final validatorIndex = validators.indexWhere((i) => i.accountId == id);
+    final validator = validatorIndex < 0
+        ? ValidatorData.fromJson({'accountId': id})
+        : validators[validatorIndex];
+
     final accInfo = accInfoMap[validator.accountId];
+    final status = nomStatus.toString().split('.')[1];
+
+    BigInt meStaked;
+    int meIndex = validator.nominators.indexWhere((i) => i['who'] == stashId);
+    if (meIndex >= 0) {
+      meStaked =
+          BigInt.parse(validator.nominators[meIndex]['value'].toString());
+    }
+    String subtitle = dic['nominate.$status'];
+    if (nomStatus == NomStatus.active) {
+      subtitle += ' ${Fmt.token(meStaked ?? BigInt.zero, decimals)}';
+    }
+
     return ListTile(
       dense: true,
       leading: AddressIcon(validator.accountId, size: 32),
       title: Fmt.accountDisplayName(validator.accountId, accInfo),
-      subtitle: Text(waiting
-          ? dic['nominate.waiting']
-          : active ? dic['nominate.active'] : dic['nominate.inactive']),
+      subtitle: Text(subtitle),
       trailing: Container(
         width: 100,
         child: Column(
