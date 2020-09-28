@@ -1,25 +1,21 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/BorderedTitle.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/passwordInputDialog.dart';
-import 'package:polka_wallet/common/components/textTag.dart';
+import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
-import 'package:polka_wallet/page/assets/announcementPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
-import 'package:polka_wallet/service/faucet.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/common/components/BorderedTitle.dart';
-import 'package:polka_wallet/common/components/addressIcon.dart';
-import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -188,7 +184,9 @@ class _AssetsState extends State<Assets> {
     });
 
     var res;
-    if (balancesInfo.freeBalance - Fmt.tokenInt('0.0001', encointerTokenDecimals) > BigInt.zero) {
+    if (balancesInfo.freeBalance -
+            Fmt.tokenInt('0.0001', encointerTokenDecimals) >
+        BigInt.zero) {
       aboveLimit = true;
     } else {
       res = await webApi.encointer.sendFaucetTx();
@@ -199,8 +197,15 @@ class _AssetsState extends State<Assets> {
       bool isOK = false;
       if (aboveLimit) {
         dialogContent = I18n.of(context).encointer['faucet.limit'];
-      } else if (res == null) {
+      } else if (res == null || res["error"] != null) {
         dialogContent = I18n.of(context).encointer['faucet.error'];
+
+        if (res["error"] == "balances.InsufficientBalance") {
+          dialogContent +=
+              "\nError: ${I18n.of(context).encointer['faucet.insufficientBalance']}";
+        } else {
+          dialogContent += "\nError: ${res["error"]}";
+        }
       } else {
         isOK = true;
       }
@@ -221,11 +226,14 @@ class _AssetsState extends State<Assets> {
                   Navigator.of(context).pop();
                   if (isOK) {
                     globalBalanceRefreshKey.currentState.show();
+                    print("Faucet ERrror" + res["error"].toString());
                     NotificationPlugin.showNotification(
                       int.parse(res['params'][
                           1]), // todo: Id is used to group notifications. This is probably not a good idea
                       I18n.of(context).assets['notify.receive'],
-                      'ERT ' + Fmt.balance(res['params'][1], encointerTokenDecimals).toString(),
+                      'ERT ' +
+                          Fmt.balance(res['params'][1], encointerTokenDecimals)
+                              .toString(),
                     );
                   }
                 },
@@ -355,7 +363,7 @@ class _AssetsState extends State<Assets> {
             ),
             trailing: IconButton(
               icon: Image.asset(
-                  'assets/images/assets/qrcode_${isEncointer ? 'indigo' : isKusama ? 'pink800' : 'pink'}.png'),
+                  'assets/images/assets/qrcode_${isEncointer ? 'indigo' : isKusama ? 'pink' : 'pink'}.png'),
               onPressed: () {
                 if (acc.address != '') {
                   _handleScan();
@@ -388,8 +396,11 @@ class _AssetsState extends State<Assets> {
     return Observer(
       builder: (_) {
         String symbol = store.settings.networkState.tokenSymbol ?? '';
-        int decimals =
-            store.settings.networkState.tokenDecimals ?? kusama_token_decimals;
+
+        int decimals = store.settings.endpointIsEncointer
+            ? encointerTokenDecimals
+            : store.settings.networkState.tokenDecimals ??
+                kusama_token_decimals;
         String networkName = store.settings.networkName ?? '';
         final String tokenView = Fmt.tokenView(symbol);
 
@@ -473,8 +484,8 @@ class _AssetsState extends State<Assets> {
                             leading: Container(
                               width: 36,
                               child: CircleAvatar(
-                                      child: Text(token.substring(0, 2)),
-                                    ),
+                                child: Text(token.substring(0, 2)),
+                              ),
                             ),
                             title: Text(token),
                             trailing: Text(

@@ -6,15 +6,17 @@ const Map<String, String> enNctr = {
   'faucet.ok': 'Test Tokens were sent.',
   'faucet.limit': 'You have enough funds, you don\'t need the faucet',
   'faucet.error': 'Request error, try again later.',
+  'faucet.insufficientBalance':
+      'Faucet has run out of funds. Please notify the administrator',
   'encointer.registering': 'Registering',
   'loan.txs': 'History',
   'ceremony': 'Encointer Ceremony',
-  'claim.qr' : 'Claim',
-  'you.attested' : 'You attested other',
-  'other.attested' : 'Other attested you',
-  'attestation.perform' : 'attest',
-  'attestation.revert' : 'revert',
-  'meetup.complete' : 'complete meetup',
+  'claim.qr': 'Claim',
+  'you.attested': 'You attested other',
+  'other.attested': 'Other attested you',
+  'attestation.perform': 'attest',
+  'attestation.revert': 'revert',
+  'meetup.complete': 'complete meetup',
 };
 
 const Map<String, String> zhNctr = {
@@ -28,5 +30,5 @@ const Map<String, String> zhNctr = {
   'encointer.registering': 'Registering',
   'loan.txs': 'History',
   'ceremony': 'Encointer Ceremony',
-  'claim.qr' : 'Claim'
+  'claim.qr': 'Claim'
 };
