@@ -5,7 +5,6 @@ const String network_name_polkadot = 'polkadot';
 const String network_name_encointer_gesell = 'nctr-gsl';
 const String network_name_encointer_cantillon = 'nctr-ctln';
 
-
 EndpointData networkEndpointPolkadot = EndpointData.fromJson(const {
   'color': 'pink',
   'info': network_name_polkadot,
@@ -34,7 +33,8 @@ EndpointData networkEndpointEncointerGesellDev = EndpointData.fromJson(const {
   'info': 'nctr-gsl-dev',
   'ss58': 42,
   'text': 'Encointer Gesell Local Devnet',
-  'value': 'ws://192.168.1.36:9941',
+  // 'value': 'ws://192.168.1.36:9941',
+  'value': 'ws://192.168.1.24:9944',
 });
 
 EndpointData networkEndpointEncointerCantillon = EndpointData.fromJson(const {
@@ -131,4 +131,3 @@ const Map<String, int> js_code_version_map = {
   network_name_encointer_gesell: 10010,
   network_name_encointer_cantillon: 10010,
 };
-
