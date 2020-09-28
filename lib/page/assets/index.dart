@@ -402,11 +402,9 @@ class _AssetsState extends State<Assets> {
           currencyIds.retainWhere((i) => i != symbol);
         }
 
-        // Map<String, BalanceEntry> nonZeroEncointerEntries = store
-        //     .encointer.balanceEntries
-        //   ..removeWhere((key, value) => value.principal == 0);
-        Map<String, BalanceEntry> nonZeroEncointerEntries =
-            store.encointer.balanceEntries;
+        Map<String, BalanceEntry> nonZeroEncointerEntries = store
+            .encointer.balanceEntries
+          ..removeWhere((key, value) => value.principal == 0);
 
         BalancesInfo balancesInfo = store.assets.balances[symbol];
         return RefreshIndicator(
