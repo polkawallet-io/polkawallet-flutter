@@ -14,7 +14,6 @@ import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
@@ -38,7 +37,6 @@ class _AssetsState extends State<Assets> {
   final AppStore store;
 
   bool _faucetSubmitting = false;
-  bool _preclaimChecking = false;
 
   Future<void> _fetchBalance() async {
     if (store.settings.endpointIsEncointer) {
@@ -51,13 +49,6 @@ class _AssetsState extends State<Assets> {
       ]);
     }
     webApi.account.fetchAccountsIndex();
-  }
-
-  Future<List> _fetchAnnouncements() async {
-    if (store.assets.announcements != null) return store.assets.announcements;
-    final List res = await WalletApi.getAnnouncements();
-    store.assets.setAnnouncements(res);
-    return res;
   }
 
   Future<void> _handleScan() async {
