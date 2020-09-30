@@ -103,8 +103,6 @@ flutter:
 
     # images
     ## images - settings
-    - assets/images/public/kusama.png
-    - assets/images/public/kusama_gray.png
     - assets/images/public/nctr-cln.png
     - assets/images/public/nctr-cln_gray.png
     - assets/images/public/nctr-gsl-dev.png
@@ -112,13 +110,6 @@ flutter:
     - assets/images/public/nctr-gsl.png
     - assets/images/public/nctr-gsl_gray.png
     - assets/images/assets/ERT.png
-    - assets/images/assets/ACA.png
-    - assets/images/assets/LAMI.png
-    - assets/images/assets/AUSD.png
-    - assets/images/assets/XBTC.png
-    - assets/images/assets/RENBTC.png
-    - assets/images/assets/LDOT.png
-    - assets/images/assets/KAR.png
     - assets/images/assets/scanner.png
     ## images - acala
     - assets/images/assets/scanner_indigo.png
@@ -128,16 +119,9 @@ flutter:
     - assets/images/assets/plus_indigo.png
     - assets/images/staking/top_bg_indigo.png
     - assets/images/public/Assets_indigo.png
-    - assets/images/public/Governance_indigo.png
     - assets/images/public/Profile_indigo.png
-    - assets/images/public/Staking_indigo.png
     - assets/images/public/Ceremonies_indigo.png
     - assets/images/public/Ceremonies_dark.png
-    - assets/images/acala/exchange.svg
-    - assets/images/acala/swap.svg
-    - assets/images/acala/deposit.svg
-    - assets/images/acala/loan.svg
-    - assets/images/acala/loan-start.svg
     ## images - laminar
     - assets/images/assets/scanner_purple.png
     - assets/images/assets/top_bg_purple.png
@@ -146,39 +130,29 @@ flutter:
     - assets/images/assets/plus_purple.png
     - assets/images/staking/top_bg_purple.png
     - assets/images/public/Assets_purple.png
-    - assets/images/public/Governance_purple.png
     - assets/images/public/Profile_purple.png
-    - assets/images/public/Staking_purple.png
-    - assets/images/public/Acala_purple.png
     ## images - kusama
     - assets/images/assets/scanner_black.png
     - assets/images/public/Assets_black.png
-    - assets/images/public/Governance_black.png
     - assets/images/public/Profile_black.png
-    - assets/images/public/Staking_black.png
     - assets/images/assets/top_bg_black.png
     - assets/images/assets/qrcode_black.png
     - assets/images/assets/plus_black.png
     - assets/images/assets/receive_line_black.png
-    - assets/images/staking/top_bg_black.png
+    - assets/images/public/kusama.png
     ## images - polkadot
     - assets/images/assets/scanner_pink.png
     - assets/images/public/app.png
     - assets/images/public/Assets_pink.png
-    - assets/images/public/Governance_pink.png
     - assets/images/public/Profile_pink.png
-    - assets/images/public/Staking_pink.png
     - assets/images/public/Assets_dark.png
-    - assets/images/public/Governance_dark.png
     - assets/images/public/Profile_dark.png
-    - assets/images/public/Staking_dark.png
     - assets/images/public/logo_about.png
     - assets/images/public/dontscreen.png
     - assets/images/public/copy.png
     - assets/images/public/polkadot.png
     - assets/images/public/polkadot_gray.png
     - assets/images/public/westend.png
-    - assets/images/public/kusama.png
     - assets/images/public/substrate.png
     - assets/images/public/default.png
     - assets/images/assets/logo.png
@@ -196,19 +170,7 @@ flutter:
     - assets/images/assets/assets_fail.png
     - assets/images/assets/success.png
     - assets/images/assets/receive_line_pink.png
-    - assets/images/assets/DOT.png
-    - assets/images/assets/KSM.png
-    - assets/images/assets/FIR.png
     - assets/images/staking/top_bg_pink.png
-    - assets/images/staking/set.png
-    - assets/images/staking/ok.png
-    - assets/images/staking/error.png
-    - assets/images/staking/stake.png
-    - assets/images/staking/nominate.png
-    - assets/images/staking/reward.svg
-    - assets/images/staking/slash.svg
-    - assets/images/gov/time.png
-    - assets/images/gov/polkassembly.png
     - assets/images/profile/about.png
     - assets/images/profile/address.png
     - assets/images/profile/setting.png

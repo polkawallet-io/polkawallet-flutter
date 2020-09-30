@@ -12,8 +12,7 @@ class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   }
 }
 
@@ -139,10 +138,7 @@ class SubScanApi {
 
   static Future<Map> fetchTransfers(SubScanRequestParams params) async {
     String url = '${getSnEndpoint(params.network)}/transfers';
-    Map<String, String> headers = {
-      "Content-type": "application/json",
-      "Accept": "*/*"
-    };
+    Map<String, String> headers = {"Content-type": "application/json", "Accept": "*/*"};
     String body = jsonEncode({
       "page": params.page,
       "row": params.row,
