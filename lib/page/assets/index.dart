@@ -242,10 +242,6 @@ class _AssetsState extends State<Assets> {
 
     AccountData acc = store.account.currentAccount;
 
-    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
-    bool isPolkadot = store.settings.endpoint.info == networkEndpointPolkadot.info;
-    bool isEncointer = store.settings.endpointIsEncointer;
-
     final accInfo = store.account.accountIndexMap[acc.address];
     final String accIndex = accInfo != null && accInfo['accountIndex'] != null ? '${accInfo['accountIndex']}\n' : '';
     return RoundedCard(
@@ -254,73 +250,39 @@ class _AssetsState extends State<Assets> {
       child: Column(
         children: <Widget>[
           ListTile(
-            leading: AddressIcon('', pubKey: acc.pubKey),
-            title: Text(Fmt.accountName(context, acc)),
-            subtitle: Text(network),
-            trailing: isEncointer
-                ? !store.settings.loading
-                    ? GestureDetector(
-                        child: Padding(
-                          padding: EdgeInsets.all(4),
-                          child: Column(
-                            children: <Widget>[
-                              _faucetSubmitting
-                                  ? CupertinoActivityIndicator()
-                                  : Icon(
-                                      Icons.card_giftcard,
-                                      color: Theme.of(context).primaryColor,
-                                      size: 20,
-                                    ),
-                              Text(
-                                I18n.of(context).encointer['faucet.title'],
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          if (acc.address != '') {
-                            _getTokensFromFaucet();
-                          }
-                        },
-                      )
-                    : Container(width: 8)
-                : isPolkadot
-                    ? !store.settings.loading
-                        ? GestureDetector(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 8),
-                              child: Column(
-                                children: <Widget>[
-                                  _faucetSubmitting
-                                      ? CupertinoActivityIndicator()
-                                      : Icon(
-                                          Icons.card_giftcard,
-                                          color: Theme.of(context).primaryColor,
-                                          size: 20,
-                                        ),
-                                  Text(
-                                    dic['claim'],
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  )
-                                ],
+              leading: AddressIcon('', pubKey: acc.pubKey),
+              title: Text(Fmt.accountName(context, acc)),
+              subtitle: Text(network),
+              trailing: !store.settings.loading
+                  ? GestureDetector(
+                      child: Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Column(
+                          children: <Widget>[
+                            _faucetSubmitting
+                                ? CupertinoActivityIndicator()
+                                : Icon(
+                                    Icons.card_giftcard,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 20,
+                                  ),
+                            Text(
+                              I18n.of(context).encointer['faucet.title'],
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Theme.of(context).primaryColor,
                               ),
-                            ),
-                            onTap: _preclaimChecking
-                                ? null
-                                : () {
-                                    _checkPreclaim();
-                                  },
-                          )
-                        : Container(width: 8)
-                    : Container(width: 8),
-          ),
+                            )
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        if (acc.address != '') {
+                          _getTokensFromFaucet();
+                        }
+                      },
+                    )
+                  : Container(width: 8)),
           ListTile(
             title: Row(
               children: [
@@ -348,8 +310,7 @@ class _AssetsState extends State<Assets> {
               ],
             ),
             trailing: IconButton(
-              icon:
-                  Image.asset('assets/images/assets/qrcode_${isEncointer ? 'indigo' : isKusama ? 'pink' : 'pink'}.png'),
+              icon: Image.asset('assets/images/assets/qrcode_indigo.png'),
               onPressed: () {
                 if (acc.address != '') {
                   _handleScan();
@@ -383,9 +344,7 @@ class _AssetsState extends State<Assets> {
       builder: (_) {
         String symbol = store.settings.networkState.tokenSymbol ?? '';
 
-        int decimals = store.settings.endpointIsEncointer
-            ? ert_decimals
-            : store.settings.networkState.tokenDecimals ?? kusama_token_decimals;
+        int decimals = store.settings.networkState.tokenDecimals ?? ert_decimals;
         String networkName = store.settings.networkName ?? '';
         final String tokenView = Fmt.tokenView(symbol);
 

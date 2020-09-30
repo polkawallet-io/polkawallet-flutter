@@ -34,8 +34,7 @@ class AssetPage extends StatefulWidget {
   _AssetPageState createState() => _AssetPageState(store);
 }
 
-class _AssetPageState extends State<AssetPage>
-    with SingleTickerProviderStateMixin {
+class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMixin {
   _AssetPageState(this.store);
 
   final AppStore store;
@@ -63,8 +62,7 @@ class _AssetPageState extends State<AssetPage>
       _loading = false;
     });
 
-    if (res['transfers'] == null ||
-        res['transfers'].length < tx_list_page_size) {
+    if (res['transfers'] == null || res['transfers'].length < tx_list_page_size) {
       setState(() {
         _isLastPage = true;
       });
@@ -86,8 +84,7 @@ class _AssetPageState extends State<AssetPage>
 
     _scrollController = ScrollController();
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent) {
         setState(() {
           if (_tabController.index == 0 && !_isLastPage) {
             _txsPage += 1;
@@ -154,8 +151,7 @@ class _AssetPageState extends State<AssetPage>
   @override
   Widget build(BuildContext context) {
     final AssetPageParams params = ModalRoute.of(context).settings.arguments;
-    final bool isEncointerCommunityCurrency =
-        params.isEncointerCommunityCurrency;
+    final bool isEncointerCommunityCurrency = params.isEncointerCommunityCurrency;
     final String token = params.token;
 
     final dic = I18n.of(context).assets;
@@ -175,9 +171,7 @@ class _AssetPageState extends State<AssetPage>
 
     return Scaffold(
       appBar: AppBar(
-        title: isEncointerCommunityCurrency
-            ? Text(Fmt.currencyIdentifier(token))
-            : Text(tokenView),
+        title: isEncointerCommunityCurrency ? Text(Fmt.currencyIdentifier(token)) : Text(tokenView),
         centerTitle: true,
         elevation: 0.0,
       ),
@@ -186,14 +180,11 @@ class _AssetPageState extends State<AssetPage>
           builder: (_) {
             int decimals = isEncointerCommunityCurrency
                 ? encointer_currencies_decimals
-                : store.settings.networkState.tokenDecimals;
+                : store.settings.networkState.tokenDecimals ?? ert_decimals;
 
             BigInt balance = isEncointerCommunityCurrency
-                ? Fmt.tokenInt(
-                    store.encointer.balanceEntries[token].principal.toString(),
-                    decimals)
-                : Fmt.balanceInt(
-                    store.assets.tokenBalances[token.toUpperCase()]);
+                ? Fmt.tokenInt(store.encointer.balanceEntries[token].principal.toString(), decimals)
+                : Fmt.balanceInt(store.assets.tokenBalances[token.toUpperCase()]);
 
             BalancesInfo balancesInfo = store.assets.balances[symbol];
             String lockedInfo = '\n';
@@ -209,15 +200,8 @@ class _AssetPageState extends State<AssetPage>
               });
             }
 
+            // Todo: Token price not available on encointer network. Subject to change?
             String tokenPrice;
-            if ((store.settings.endpoint.info == network_name_polkadot ||
-                    store.settings.endpoint.info == network_name_kusama) &&
-                store.assets.marketPrices[symbol] != null &&
-                balancesInfo != null) {
-              tokenPrice = (store.assets.marketPrices[symbol] *
-                      Fmt.bigIntToDouble(balancesInfo.total, decimals))
-                  .toStringAsFixed(4);
-            }
 
             return Column(
               children: <Widget>[
@@ -228,12 +212,9 @@ class _AssetPageState extends State<AssetPage>
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(
-                            bottom: tokenPrice != null ? 4 : 16),
+                        padding: EdgeInsets.only(bottom: tokenPrice != null ? 4 : 16),
                         child: Text(
-                          Fmt.token(isBaseToken ? balancesInfo.total : balance,
-                              decimals,
-                              length: 8),
+                          Fmt.token(isBaseToken ? balancesInfo.total : balance, decimals, length: 8),
                           style: TextStyle(
                             color: titleColor,
                             fontSize: 28,
@@ -260,8 +241,7 @@ class _AssetPageState extends State<AssetPage>
                                   children: [
                                     Text(
                                       dic['locked'],
-                                      style: TextStyle(
-                                          color: titleColor, fontSize: 12),
+                                      style: TextStyle(color: titleColor, fontSize: 12),
                                     ),
                                     Row(
                                       children: [
@@ -269,16 +249,14 @@ class _AssetPageState extends State<AssetPage>
                                             ? TapTooltip(
                                                 message: lockedInfo,
                                                 child: Padding(
-                                                  padding:
-                                                      EdgeInsets.only(right: 6),
+                                                  padding: EdgeInsets.only(right: 6),
                                                   child: Icon(
                                                     Icons.info,
                                                     size: 16,
                                                     color: titleColor,
                                                   ),
                                                 ),
-                                                waitDuration:
-                                                    Duration(seconds: 0),
+                                                waitDuration: Duration(seconds: 0),
                                               )
                                             : Container(),
                                         Text(
@@ -297,8 +275,7 @@ class _AssetPageState extends State<AssetPage>
                                   children: [
                                     Text(
                                       dic['available'],
-                                      style: TextStyle(
-                                          color: titleColor, fontSize: 12),
+                                      style: TextStyle(color: titleColor, fontSize: 12),
                                     ),
                                     Text(
                                       Fmt.priceFloorBigInt(
@@ -314,8 +291,7 @@ class _AssetPageState extends State<AssetPage>
                                   children: [
                                     Text(
                                       dic['reserved'],
-                                      style: TextStyle(
-                                          color: titleColor, fontSize: 12),
+                                      style: TextStyle(color: titleColor, fontSize: 12),
                                     ),
                                     Text(
                                       Fmt.priceFloorBigInt(
@@ -379,8 +355,7 @@ class _AssetPageState extends State<AssetPage>
                             children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.only(right: 16),
-                                child: Image.asset(
-                                    'assets/images/assets/assets_send.png'),
+                                child: Image.asset('assets/images/assets/assets_send.png'),
                               ),
                               Text(
                                 I18n.of(context).assets['transfer'],
@@ -395,8 +370,7 @@ class _AssetPageState extends State<AssetPage>
                               arguments: TransferPageParams(
                                   redirect: AssetPage.route,
                                   symbol: token,
-                                  isEncointerCommunityCurrency:
-                                      isEncointerCommunityCurrency),
+                                  isEncointerCommunityCurrency: isEncointerCommunityCurrency),
                             );
                           },
                         ),
@@ -412,8 +386,7 @@ class _AssetPageState extends State<AssetPage>
                             children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.only(right: 16),
-                                child: Image.asset(
-                                    'assets/images/assets/assets_receive.png'),
+                                child: Image.asset('assets/images/assets/assets_receive.png'),
                               ),
                               Text(
                                 I18n.of(context).assets['receive'],
@@ -456,16 +429,14 @@ class TransferListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String address = isOut ? data.to : data.from;
-    String title =
-        Fmt.address(address) ?? data.extrinsicIndex ?? Fmt.address(data.hash);
+    String title = Fmt.address(address) ?? data.extrinsicIndex ?? Fmt.address(data.hash);
     return Container(
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(width: 0.5, color: Colors.black12)),
       ),
       child: ListTile(
         title: Text('$title${crossChain != null ? ' ($crossChain)' : ''}'),
-        subtitle: Text(Fmt.dateTime(
-            DateTime.fromMillisecondsSinceEpoch(data.blockTimestamp * 1000))),
+        subtitle: Text(Fmt.dateTime(DateTime.fromMillisecondsSinceEpoch(data.blockTimestamp * 1000))),
         trailing: Container(
           width: 110,
           child: Row(
@@ -483,8 +454,7 @@ class TransferListItem extends StatelessWidget {
         ),
         onTap: hasDetail
             ? () {
-                Navigator.pushNamed(context, TransferDetailPage.route,
-                    arguments: data);
+                Navigator.pushNamed(context, TransferDetailPage.route, arguments: data);
               }
             : null,
       ),

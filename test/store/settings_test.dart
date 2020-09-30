@@ -32,20 +32,18 @@ void main() {
     });
     test('set network name properly', () async {
       expect(store.networkName, '');
-      store.setNetworkName('Kusama');
-      expect(store.networkName, 'Kusama');
+      store.setNetworkName('Encointer');
+      expect(store.networkName, 'Encointer');
       expect(store.loading, false);
     });
 
     test('network endpoint test', () async {
       await store.init('_en');
-      expect(store.endpoint.info, networkEndpointKusama.info);
-      expect(store.endpointList.length >= 4, true);
-      store.setEndpoint(networkEndpointPolkadot);
-      expect(store.endpoint.info, networkEndpointPolkadot.info);
-      expect(store.endpointList.length >= 3, true);
-      store.setEndpoint(networkEndpointEncointerGesell);
       expect(store.endpoint.info, networkEndpointEncointerGesell.info);
+      expect(store.endpointList.length, 1);
+      expect(store.endpoint.info, networkEndpointEncointerGesellDev.info);
+      expect(store.endpointList.length, 1);
+      expect(store.endpoint.info, networkEndpointEncointerCantillon.info);
       expect(store.endpointList.length, 1);
     });
 

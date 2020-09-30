@@ -1,7 +1,3 @@
-
-import 'package:polka_wallet/service/subscan.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 
@@ -19,8 +15,7 @@ class ApiAssets {
         'account.getBalance("$address")',
         allowRepeat: true,
       );
-      store.assets.setAccountBalances(
-          pubKey, Map.of({store.settings.networkState.tokenSymbol: res}));
+      store.assets.setAccountBalances(pubKey, Map.of({store.settings.networkState.tokenSymbol: res}));
     }
     if (store.settings.endpointIsEncointer) {
       apiRoot.encointer.getBalances();
@@ -49,16 +44,6 @@ class ApiAssets {
   }
 
   Future<void> _fetchMarketPrice() async {
-    if (store.settings.endpoint.info == network_name_kusama ||
-        store.settings.endpoint.info == network_name_polkadot) {
-      final Map res = await webApi.subScanApi
-          .fetchTokenPriceAsync(store.settings.endpoint.info);
-      if (res['token'] == null) {
-        print('fetch market price failed');
-        return;
-      }
-      final String token = res['token'][0];
-      store.assets.setMarketPrices(token, res['detail'][token]['price']);
-    }
+    print("Fetch marketprice not implemented for Encointer networks");
   }
 }

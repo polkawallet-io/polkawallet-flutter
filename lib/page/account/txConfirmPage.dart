@@ -52,8 +52,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     if (_proxyAccount != null) {
       txInfo['proxy'] = _proxyAccount.pubKey;
     }
-    Map fee = await webApi.account
-        .estimateTxFees(txInfo, args['params'], rawParam: args['rawParam']);
+    Map fee = await webApi.account.estimateTxFees(txInfo, args['params'], rawParam: args['rawParam']);
     setState(() {
       _fee = fee;
     });
@@ -134,8 +133,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   }
 
   Future<bool> _validateProxy() async {
-    List proxies =
-        await webApi.account.queryRecoveryProxies([_proxyAccount.address]);
+    List proxies = await webApi.account.queryRecoveryProxies([_proxyAccount.address]);
     print(proxies);
     return proxies[0] == store.account.currentAddress;
   }
@@ -213,9 +211,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     print(txInfo);
     print(args['params']);
 
-    final Map res = viaQr
-        ? await _sendTxViaQr(context, args)
-        : await _sendTx(context, args);
+    final Map res = viaQr ? await _sendTxViaQr(context, args) : await _sendTx(context, args);
     if (res['hash'] == null) {
       _onTxError(context, res['error']);
     } else {
@@ -236,8 +232,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   Future<Map> _sendTxViaQr(BuildContext context, Map args) async {
     final Map dic = I18n.of(context).account;
     print('show qr');
-    final signed = await Navigator.of(context)
-        .pushNamed(QrSenderPage.route, arguments: args);
+    final signed = await Navigator.of(context).pushNamed(QrSenderPage.route, arguments: args);
     if (signed == null) {
       store.assets.setSubmitting(false);
       return {'error': dic['uos.canceled']};
@@ -283,14 +278,11 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     final Map<String, String> dicAcc = I18n.of(context).account;
     final Map<String, String> dicAsset = I18n.of(context).assets;
     final String symbol = store.settings.networkState.tokenSymbol ?? '';
-    final int decimals =
-        store.settings.networkState.tokenDecimals ?? kusama_token_decimals;
+    final int decimals = store.settings.networkState.tokenDecimals ?? ert_decimals;
     final String tokenView = Fmt.tokenView(symbol);
 
     final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
 
-    final bool isKusama =
-        store.settings.endpoint.info == networkEndpointKusama.info;
     bool isUnsigned = args['txInfo']['isUnsigned'] ?? false;
     return Scaffold(
       appBar: AppBar(
@@ -299,16 +291,10 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
       ),
       body: SafeArea(
         child: Observer(builder: (BuildContext context) {
-          final bool isObservation =
-              store.account.currentAccount.observation ?? false;
-          final bool isProxyObservation = _proxyAccount != null
-              ? _proxyAccount.observation ?? false
-              : false;
+          final bool isObservation = store.account.currentAccount.observation ?? false;
+          final bool isProxyObservation = _proxyAccount != null ? _proxyAccount.observation ?? false : false;
           final AccountRecoveryInfo recoverable = store.account.recoveryInfo;
 
-          final bool isPolkadot =
-              store.settings.endpoint.info == network_name_polkadot;
-          bool isTxPaused = isPolkadot;
           return Column(
             children: <Widget>[
               Expanded(
@@ -330,37 +316,13 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                               label: dic["submit.from"],
                             ),
                           ),
-                    isKusama && isObservation && recoverable.address != null
-                        ? Padding(
-                            padding: EdgeInsets.only(left: 16, right: 16),
-                            child: Row(
-                              children: [
-                                TapTooltip(
-                                  message: dicAcc['observe.proxy.brief'],
-                                  child: Icon(Icons.info_outline, size: 16),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 4),
-                                    child: Text(dicAcc['observe.proxy']),
-                                  ),
-                                ),
-                                CupertinoSwitch(
-                                  value: _proxyAccount != null,
-                                  onChanged: (res) => _onSwitch(res),
-                                )
-                              ],
-                            ),
-                          )
-                        : Container(),
                     _proxyAccount != null
                         ? GestureDetector(
                             child: Padding(
                               padding: EdgeInsets.only(left: 16, right: 16),
                               child: AddressFormItem(
                                 _proxyAccount,
-                                label:
-                                    I18n.of(context).profile["recovery.proxy"],
+                                label: I18n.of(context).profile["recovery.proxy"],
                               ),
                             ),
                             onTap: () => _onSwitch(true),
@@ -393,9 +355,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                             ),
                           ),
                           Container(
-                            width:
-                                MediaQuery.of(context).copyWith().size.width -
-                                    120,
+                            width: MediaQuery.of(context).copyWith().size.width - 120,
                             child: Text(
                               args['detail'],
                             ),
@@ -418,8 +378,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                                 ),
                                 FutureBuilder<String>(
                                   future: _getTxFee(),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<String> snapshot) {
+                                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                                     if (snapshot.hasData) {
                                       String fee = Fmt.balance(
                                         _fee['partialFee'].toString(),
@@ -428,14 +387,9 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                                       );
                                       return Container(
                                         margin: EdgeInsets.only(top: 8),
-                                        width: MediaQuery.of(context)
-                                                .copyWith()
-                                                .size
-                                                .width -
-                                            120,
+                                        width: MediaQuery.of(context).copyWith().size.width - 120,
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
                                               '$fee $tokenView',
@@ -444,8 +398,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                                               '${_fee['weight']} Weight',
                                               style: TextStyle(
                                                 fontSize: 13,
-                                                color: Theme.of(context)
-                                                    .unselectedWidgetColor,
+                                                color: Theme.of(context).unselectedWidgetColor,
                                               ),
                                             ),
                                           ],
@@ -504,13 +457,10 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                 children: <Widget>[
                   Expanded(
                     child: Container(
-                      color: store.assets.submitting
-                          ? Colors.black12
-                          : Colors.orange,
+                      color: store.assets.submitting ? Colors.black12 : Colors.orange,
                       child: FlatButton(
                         padding: EdgeInsets.all(16),
-                        child: Text(dic['cancel'],
-                            style: TextStyle(color: Colors.white)),
+                        child: Text(dic['cancel'], style: TextStyle(color: Colors.white)),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -519,31 +469,23 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                   ),
                   Expanded(
                     child: Container(
-                      color: store.assets.submitting || isTxPaused
-                          ? Theme.of(context).disabledColor
-                          : Theme.of(context).primaryColor,
+                      color: store.assets.submitting ? Theme.of(context).disabledColor : Theme.of(context).primaryColor,
                       child: FlatButton(
                         padding: EdgeInsets.all(16),
                         child: Text(
                           isUnsigned
                               ? dic['submit.no.sign']
-                              : (isObservation && _proxyAccount == null) ||
-                                      isProxyObservation
+                              : (isObservation && _proxyAccount == null) || isProxyObservation
                                   ? dic['submit.qr']
                                   // dicAcc['observe.invalid']
                                   : dic['submit'],
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: isTxPaused
-                            ? null
-                            : isUnsigned
-                                ? () => _onSubmit(context)
-                                : (isObservation && _proxyAccount == null) ||
-                                        isProxyObservation
-                                    ? () => _onSubmit(context, viaQr: true)
-                                    : store.assets.submitting
-                                        ? null
-                                        : () => _showPasswordDialog(context),
+                        onPressed: isUnsigned
+                            ? () => _onSubmit(context)
+                            : (isObservation && _proxyAccount == null) || isProxyObservation
+                                ? () => _onSubmit(context, viaQr: true)
+                                : store.assets.submitting ? null : () => _showPasswordDialog(context),
                       ),
                     ),
                   ),

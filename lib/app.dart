@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/willPopScopWrapper.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-encointer/assigning/assigningPage.dart';
 import 'package:polka_wallet/page-encointer/attesting/attestingPage.dart';
 import 'package:polka_wallet/page-encointer/attesting/meetupPage.dart';
@@ -18,17 +17,12 @@ import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
 import 'package:polka_wallet/page/account/import/importAccountPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
-import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
-import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
-import 'package:polka_wallet/page/asExtension/walletExtensionSignPage.dart';
-import 'package:polka_wallet/page/assets/announcementPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/claim/attestPage.dart';
 import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
-import 'package:polka_wallet/page/assets/transfer/transferCrossChainPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
 import 'package:polka_wallet/page/homePage.dart';
 import 'package:polka_wallet/page/networkSelectPage.dart';
@@ -53,12 +47,8 @@ import 'package:polka_wallet/page/profile/settings/settingsPage.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/service/graphql.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/UI.dart';
 
 import 'common/theme.dart';
 import 'utils/i18n/index.dart';
@@ -80,10 +70,6 @@ class _WalletAppState extends State<WalletApp> {
     if (_appStore.settings.endpointIsEncointer) {
       setState(() {
         _theme = appThemeEncointer;
-      });
-    } else if (_appStore.settings.endpoint.info == networkEndpointKusama.info) {
-      setState(() {
-        _theme = appThemeKusama;
       });
     } else {
       setState(() {
@@ -171,18 +157,15 @@ class _WalletAppState extends State<WalletApp> {
       routes: {
         HomePage.route: (context) => Observer(
               builder: (_) {
-                bool isEncointer = _appStore != null &&
-                    _appStore.settings.endpoint != null &&
-                    _appStore.settings.endpointIsEncointer;
+                bool isEncointer =
+                    _appStore != null && _appStore.settings.endpoint != null && _appStore.settings.endpointIsEncointer;
                 return WillPopScopWrapper(
                   child: FutureBuilder<int>(
                     future: _initStore(context),
                     builder: (_, AsyncSnapshot<int> snapshot) {
                       if (snapshot.hasData) {
                         return snapshot.data > 0
-                            ? isEncointer
-                                ? EncointerHomePage(_appStore)
-                                : HomePage(_appStore)
+                            ? isEncointer ? EncointerHomePage(_appStore) : HomePage(_appStore)
                             : CreateAccountEntryPage();
                       } else {
                         return Container();
@@ -192,12 +175,10 @@ class _WalletAppState extends State<WalletApp> {
                 );
               },
             ),
-        NetworkSelectPage.route: (_) =>
-            NetworkSelectPage(_appStore, _changeTheme),
+        NetworkSelectPage.route: (_) => NetworkSelectPage(_appStore, _changeTheme),
         // account
         CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
-        CreateAccountPage.route: (_) =>
-            CreateAccountPage(_appStore.account.setNewAccount),
+        CreateAccountPage.route: (_) => CreateAccountPage(_appStore.account.setNewAccount),
         BackupAccountPage.route: (_) => BackupAccountPage(_appStore),
         ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
         ScanPage.route: (_) => ScanPage(),
@@ -217,8 +198,7 @@ class _WalletAppState extends State<WalletApp> {
         ContactPage.route: (_) => ContactPage(_appStore),
         ChangeNamePage.route: (_) => ChangeNamePage(_appStore.account),
         ChangePasswordPage.route: (_) => ChangePasswordPage(_appStore.account),
-        SettingsPage.route: (_) =>
-            SettingsPage(_appStore.settings, _changeLang),
+        SettingsPage.route: (_) => SettingsPage(_appStore.settings, _changeLang),
         ExportAccountPage.route: (_) => ExportAccountPage(_appStore.account),
         ExportResultPage.route: (_) => ExportResultPage(),
         RemoteNodeListPage.route: (_) => RemoteNodeListPage(_appStore.settings),
@@ -234,8 +214,7 @@ class _WalletAppState extends State<WalletApp> {
 
         // encointer
         RegisteringPage.route: (_) => RegisteringPage(_appStore),
-        RegisterParticipantPanel.route: (_) =>
-            RegisterParticipantPanel(_appStore),
+        RegisterParticipantPanel.route: (_) => RegisterParticipantPanel(_appStore),
         AssigningPage.route: (_) => AssigningPage(_appStore),
         AttestingPage.route: (_) => AttestingPage(_appStore),
         MeetupPage.route: (_) => MeetupPage(_appStore),

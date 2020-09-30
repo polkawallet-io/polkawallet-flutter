@@ -20,8 +20,7 @@ class NetworkSelectPage extends StatefulWidget {
   final Function changeTheme;
 
   @override
-  _NetworkSelectPageState createState() =>
-      _NetworkSelectPageState(store, changeTheme);
+  _NetworkSelectPageState createState() => _NetworkSelectPageState(store, changeTheme);
 }
 
 class _NetworkSelectPageState extends State<NetworkSelectPage> {
@@ -31,8 +30,6 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   final Function changeTheme;
 
   final List<EndpointData> networks = [
-    networkEndpointPolkadot,
-    networkEndpointKusama,
     networkEndpointEncointerGesell,
     networkEndpointEncointerGesellDev,
     networkEndpointEncointerCantillon,
@@ -102,8 +99,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   }
 
   Future<void> _onSelect(AccountData i, String address) async {
-    bool isCurrentNetwork =
-        _selectedNetwork.info == store.settings.endpoint.info;
+    bool isCurrentNetwork = _selectedNetwork.info == store.settings.endpoint.info;
     if (address != store.account.currentAddress || !isCurrentNetwork) {
       /// set current account
       store.account.setCurrentAccount(i.pubKey);
@@ -122,8 +118,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   }
 
   Future<void> _onCreateAccount() async {
-    bool isCurrentNetwork =
-        _selectedNetwork.info == store.settings.endpoint.info;
+    bool isCurrentNetwork = _selectedNetwork.info == store.settings.endpoint.info;
     if (!isCurrentNetwork) {
       await _reloadNetwork();
     }
@@ -132,8 +127,6 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
 
   List<Widget> _buildAccountList() {
     Color primaryColor = Theme.of(context).primaryColor;
-    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
-    bool isEncointer = (store.settings.endpointIsEncointer);
     List<Widget> res = [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -143,8 +136,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
             style: Theme.of(context).textTheme.headline4,
           ),
           IconButton(
-            icon: Image.asset(
-                'assets/images/assets/plus_${isEncointer ? 'indigo' : isKusama ? 'pink800' : 'pink'}.png'),
+            icon: Image.asset('assets/images/assets/plus_indigo.png'),
             color: primaryColor,
             onPressed: () => _onCreateAccount(),
           )
@@ -161,16 +153,12 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     res.addAll(accounts.map((i) {
       String address = i.address;
       if (store.account.pubKeyAddressMap[_selectedNetwork.ss58] != null) {
-        address =
-            store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
+        address = store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
       }
-      final bool isCurrentNetwork =
-          _selectedNetwork.info == store.settings.endpoint.info;
+      final bool isCurrentNetwork = _selectedNetwork.info == store.settings.endpoint.info;
       final accInfo = store.account.accountIndexMap[i.address];
       final String accIndex =
-          isCurrentNetwork && accInfo != null && accInfo['accountIndex'] != null
-              ? '${accInfo['accountIndex']}\n'
-              : '';
+          isCurrentNetwork && accInfo != null && accInfo['accountIndex'] != null ? '${accInfo['accountIndex']}\n' : '';
       final double padding = accIndex.isEmpty ? 0 : 7;
       return RoundedCard(
         border: address == store.account.currentAddress
@@ -230,17 +218,13 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
                   children: networks.map((i) {
                     String network = i.info;
                     bool isCurrent = network == _selectedNetwork.info;
-                    String img =
-                        'assets/images/public/$network${isCurrent ? '' : '_gray'}.png';
+                    String img = 'assets/images/public/$network${isCurrent ? '' : '_gray'}.png';
                     return Container(
                       margin: EdgeInsets.only(bottom: 8),
                       padding: EdgeInsets.only(right: 8),
                       decoration: isCurrent
                           ? BoxDecoration(
-                              border: Border(
-                                  right: BorderSide(
-                                      width: 2,
-                                      color: Theme.of(context).primaryColor)),
+                              border: Border(right: BorderSide(width: 2, color: Theme.of(context).primaryColor)),
                             )
                           : null,
                       child: IconButton(
