@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-encointer/registering/registerParticipantPanel.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
 
 class RegisteringPage extends StatefulWidget {
   RegisteringPage(this.store);
@@ -38,8 +36,6 @@ class _RegisteringPageState extends State<RegisteringPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).encointer;
-    final int decimals = encointerTokenDecimals;
     return SafeArea(
       child: Column(children: <Widget>[
         Container(

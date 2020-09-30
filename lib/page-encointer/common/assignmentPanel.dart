@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
 
 class AssignmentPanel extends StatefulWidget {
   AssignmentPanel(this.store);
@@ -35,8 +33,6 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).encointer;
-    final int decimals = encointerTokenDecimals;
     return Container(
         width: double.infinity,
         child: RoundedCard(
@@ -45,8 +41,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
           child: Column(children: <Widget>[
             FutureBuilder<DateTime>(
                 future: webApi.encointer.getNextMeetupTime(),
-                builder:
-                    (BuildContext context, AsyncSnapshot<DateTime> snapshot) {
+                builder: (BuildContext context, AsyncSnapshot<DateTime> snapshot) {
                   if (snapshot.hasData) {
                     if (store.encointer.currencyIdentifiers.isEmpty) {
                       store.encointer.setChosenCid("");
@@ -59,9 +54,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
                         builder: (_) => Column(children: <Widget>[
                               store.encointer.meetupIndex != 0
                                   ? Column(children: <Widget>[
-                                      Text("You are registered! ",
-                                          style:
-                                              TextStyle(color: Colors.green)),
+                                      Text("You are registered! ", style: TextStyle(color: Colors.green)),
                                       /* TODO this causes an endless loop of reloads
                                       FutureBuilder<dynamic>(
                                           future: webApi.encointer
@@ -78,26 +71,20 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
                                             }
                                           }),*/
                                       Text("Ceremony will take place on:"),
-                                      Text(new DateTime
-                                                  .fromMillisecondsSinceEpoch(
-                                              store.encointer.nextMeetupTime)
+                                      Text(new DateTime.fromMillisecondsSinceEpoch(store.encointer.nextMeetupTime)
                                           .toIso8601String()),
                                       Text("at location:"),
-                                      Text(
-                                          (store.encointer.nextMeetupLocation.lat / (BigInt.from(2).pow(32))
-                                          ).toStringAsFixed(3) +
+                                      Text((store.encointer.nextMeetupLocation.lat / (BigInt.from(2).pow(32)))
+                                              .toStringAsFixed(3) +
                                           " lat, " +
-                                          (store.encointer.nextMeetupLocation.lon/ (BigInt.from(2).pow(32))
-                                          ).toStringAsFixed(3) +
+                                          (store.encointer.nextMeetupLocation.lon / (BigInt.from(2).pow(32)))
+                                              .toStringAsFixed(3) +
                                           " lon"),
                                     ])
                                   : Text(
                                       "You are not registered for ceremony on " +
                                           DateFormat('yyyy-MM-dd').format(
-                                              new DateTime
-                                                      .fromMillisecondsSinceEpoch(
-                                                  store.encointer
-                                                      .nextMeetupTime)) +
+                                              new DateTime.fromMillisecondsSinceEpoch(store.encointer.nextMeetupTime)) +
                                           " for the selected currency",
                                       style: TextStyle(color: Colors.red)),
                             ]));

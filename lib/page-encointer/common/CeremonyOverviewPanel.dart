@@ -47,7 +47,7 @@ class _CeremonyOverviewPanelState extends State<CeremonyOverviewPanel> {
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).encointer;
-    final int decimals = encointerTokenDecimals;
+    final int decimals = encointer_currencies_decimals;
     return Container(
         width: double.infinity,
         child: RoundedCard(

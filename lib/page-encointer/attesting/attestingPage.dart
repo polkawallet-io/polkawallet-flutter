@@ -5,7 +5,6 @@ import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-encointer/attesting/confirmAttendeesDialog.dart';
 import 'package:polka_wallet/page-encointer/attesting/meetupPage.dart';
 import 'package:polka_wallet/page-encointer/common/assignmentPanel.dart';
@@ -58,11 +57,9 @@ class _AttestingPageState extends State<AttestingPage> {
   }
 
   Future<void> _startMeetup(BuildContext context) async {
-    var amount = await Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => ConfirmAttendeesDialog()));
+    var amount = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConfirmAttendeesDialog()));
     setAmountAttendees(amount);
-    var claimHex =
-        await webApi.encointer.getClaimOfAttendance(_amountAttendees);
+    var claimHex = await webApi.encointer.getClaimOfAttendance(_amountAttendees);
     print("Claim: " + claimHex);
 
     var meetupRegistry = await webApi.encointer.getMeetupRegistry();
@@ -89,15 +86,12 @@ class _AttestingPageState extends State<AttestingPage> {
                 i // track our index as it defines if we must show our qr-code first
         );
 
-    print("My index in meetup registry is " +
-        store.encointer.myMeetupRegistryIndex.toString());
+    print("My index in meetup registry is " + store.encointer.myMeetupRegistryIndex.toString());
     return map;
   }
 
-  Future<void> _submitClaim(
-      BuildContext context, String claimHex, String password) async {
-    var att =
-        await webApi.encointer.attestClaimOfAttendance(claimHex, password);
+  Future<void> _submitClaim(BuildContext context, String claimHex, String password) async {
+    var att = await webApi.encointer.attestClaimOfAttendance(claimHex, password);
     print("att: " + att.toString());
 
 //    var args = {
@@ -119,8 +113,7 @@ class _AttestingPageState extends State<AttestingPage> {
 //    Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
   }
 
-  Future<void> _showPasswordDialog(
-      BuildContext context, String claimHex) async {
+  Future<void> _showPasswordDialog(BuildContext context, String claimHex) async {
     showCupertinoDialog(
       context: context,
       builder: (_) {
@@ -134,8 +127,6 @@ class _AttestingPageState extends State<AttestingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).encointer;
-    final int decimals = encointerTokenDecimals;
     return SafeArea(
         child: Column(children: <Widget>[
       AssignmentPanel(store),
@@ -145,9 +136,7 @@ class _AttestingPageState extends State<AttestingPage> {
             margin: EdgeInsets.fromLTRB(16, 4, 16, 16),
             padding: EdgeInsets.all(8),
             child: Column(children: <Widget>[
-              Observer(
-                  builder: (_) => _reportAttestationsCount(
-                      context, store.encointer.attestations)),
+              Observer(builder: (_) => _reportAttestationsCount(context, store.encointer.attestations)),
               FutureBuilder<int>(
                   future: webApi.encointer.getMeetupIndex(),
                   builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
@@ -157,8 +146,7 @@ class _AttestingPageState extends State<AttestingPage> {
                       }
                       return RoundedButton(
                           text: "start meetup",
-                          onPressed: () => _startMeetup(
-                              context) // for testing always allow sending
+                          onPressed: () => _startMeetup(context) // for testing always allow sending
                           );
                     } else {
                       return CupertinoActivityIndicator();
@@ -169,8 +157,7 @@ class _AttestingPageState extends State<AttestingPage> {
     ]));
   }
 
-  Widget _reportAttestationsCount(
-      BuildContext context, Map<int, AttestationState> attestations) {
+  Widget _reportAttestationsCount(BuildContext context, Map<int, AttestationState> attestations) {
     var count = attestations
         .map((key, value) => MapEntry(key, value.yourAttestation))
         .values
@@ -179,12 +166,11 @@ class _AttestingPageState extends State<AttestingPage> {
         .length;
     return Column(children: <Widget>[
       Text("you have been attested by " + count.toString() + " others"),
-      count > 0 ?
-      RoundedButton(
-          text: "submit attestations",
-          onPressed: () => _submit(context) // for testing always allow sending
-          )
-      : Container()
+      count > 0
+          ? RoundedButton(
+              text: "submit attestations", onPressed: () => _submit(context) // for testing always allow sending
+              )
+          : Container()
     ]);
   }
 
@@ -197,8 +183,7 @@ class _AttestingPageState extends State<AttestingPage> {
 
     List<Attestation> attestations = new List();
     for (int i = 0; i < attestationsHex.length; i++) {
-      attestations
-          .add(await webApi.encointer.parseAttestation(attestationsHex[i]));
+      attestations.add(await webApi.encointer.parseAttestation(attestationsHex[i]));
     }
 
     print("Attestations to be submitted: ");
@@ -211,8 +196,7 @@ class _AttestingPageState extends State<AttestingPage> {
         "module": 'encointerCeremonies',
         "call": 'registerAttestations',
       },
-      "detail":
-          "submitting ${attestations.length} attestations for the recent ceremony ",
+      "detail": "submitting ${attestations.length} attestations for the recent ceremony ",
       "params": [attestations],
 //      "rawParam": '[[${attestationsHex.join(',')}]]',
 //      "rawParam": '[$attestations]',

@@ -16,7 +16,6 @@ import 'package:polka_wallet/store/assets/types/transferData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 class AssetPageParams {
   AssetPageParams({this.token, this.isEncointerCommunityCurrency = false});
@@ -171,7 +170,6 @@ class _AssetPageState extends State<AssetPage>
     final String tokenView = Fmt.tokenView(token);
     final bool isBaseToken = token == symbol;
 
-
     final primaryColor = Theme.of(context).primaryColor;
     final titleColor = Theme.of(context).cardColor;
 
@@ -187,7 +185,7 @@ class _AssetPageState extends State<AssetPage>
         child: Observer(
           builder: (_) {
             int decimals = isEncointerCommunityCurrency
-                ? encointerTokenDecimals
+                ? encointer_currencies_decimals
                 : store.settings.networkState.tokenDecimals;
 
             BigInt balance = isEncointerCommunityCurrency

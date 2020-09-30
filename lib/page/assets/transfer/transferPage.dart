@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/AddressInputField.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
-import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
@@ -15,7 +14,6 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferCrossChainPage.dart';
-import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -24,11 +22,7 @@ import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class TransferPageParams {
-  TransferPageParams(
-      {this.symbol,
-      this.address,
-      this.redirect,
-      this.isEncointerCommunityCurrency = false});
+  TransferPageParams({this.symbol, this.address, this.redirect, this.isEncointerCommunityCurrency = false});
   final String address;
   final String redirect;
   final String symbol;
@@ -72,11 +66,9 @@ class _TransferPageState extends State<TransferPage> {
   }
 
   Future<void> _selectCurrency() async {
-    List<String> symbolOptions =
-        List<String>.from(store.settings.networkConst['currencyIds']);
+    List<String> symbolOptions = List<String>.from(store.settings.networkConst['currencyIds']);
 
-    var currency = await Navigator.of(context)
-        .pushNamed(CurrencySelectPage.route, arguments: symbolOptions);
+    var currency = await Navigator.of(context).pushNamed(CurrencySelectPage.route, arguments: symbolOptions);
 
     if (currency != null) {
       setState(() {
@@ -125,13 +117,11 @@ class _TransferPageState extends State<TransferPage> {
         ];
       }
       args['onFinish'] = (BuildContext txPageContext, Map res) {
-        final TransferPageParams routeArgs =
-            ModalRoute.of(context).settings.arguments;
+        final TransferPageParams routeArgs = ModalRoute.of(context).settings.arguments;
         if (store.settings.endpointIsEncointer) {
           store.encointer.setTransferTxs([res]);
         }
-        Navigator.popUntil(
-            txPageContext, ModalRoute.withName(routeArgs.redirect));
+        Navigator.popUntil(txPageContext, ModalRoute.withName(routeArgs.redirect));
         // user may route to transfer page from asset page
         // or from home page with QRCode Scanner
         if (routeArgs.redirect == AssetPage.route) {
@@ -166,14 +156,12 @@ class _TransferPageState extends State<TransferPage> {
               ],
             ),
             onPressed: () {
-              final TransferPageParams args =
-                  ModalRoute.of(context).settings.arguments;
-              Navigator.of(context)
-                  .popAndPushNamed(TransferCrossChainPage.route,
-                      arguments: TransferPageParams(
-                        symbol: _tokenSymbol,
-                        redirect: args?.redirect,
-                      ));
+              final TransferPageParams args = ModalRoute.of(context).settings.arguments;
+              Navigator.of(context).popAndPushNamed(TransferCrossChainPage.route,
+                  arguments: TransferPageParams(
+                    symbol: _tokenSymbol,
+                    redirect: args?.redirect,
+                  ));
             },
           ),
         ],
@@ -240,15 +228,14 @@ class _TransferPageState extends State<TransferPage> {
         _tokenSymbol = params.symbol;
 
         int decimals = _isEncointerCommunityCurrency
-            ? encointerTokenDecimals
-            : store.settings.networkState.tokenDecimals;
+            ? encointer_currencies_decimals
+            : store.settings.networkState.tokenDecimals ?? ert_decimals;
 
         BigInt available; // BigInt
         available = _getAvailableEncointerOrBaseToken(isBaseToken, symbol);
-        print(available);
+        print('Available: $available');
 
-        final Map pubKeyAddressMap =
-            store.account.pubKeyAddressMap[store.settings.endpoint.ss58];
+        final Map pubKeyAddressMap = store.account.pubKeyAddressMap[store.settings.endpoint.ss58];
 
         return Scaffold(
           appBar: AppBar(
@@ -285,19 +272,15 @@ class _TransferPageState extends State<TransferPage> {
                             TextFormField(
                               decoration: InputDecoration(
                                 hintText: dic['amount'],
-                                labelText:
-                                    '${dic['amount']} (${dic['balance']}: ${Fmt.priceFloorBigInt(
+                                labelText: '${dic['amount']} (${dic['balance']}: ${Fmt.priceFloorBigInt(
                                   available,
                                   decimals,
                                   lengthMax: 6,
                                 )})',
                               ),
-                              inputFormatters: [
-                                UI.decimalInputFormatter(decimals)
-                              ],
+                              inputFormatters: [UI.decimalInputFormatter(decimals)],
                               controller: _amountCtrl,
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (v) {
                                 if (v.isEmpty) {
                                   return dic['amount.error'];
@@ -313,25 +296,18 @@ class _TransferPageState extends State<TransferPage> {
                                 color: Theme.of(context).canvasColor,
                                 margin: EdgeInsets.only(top: 16, bottom: 16),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
                                           dic['currency'],
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .unselectedWidgetColor),
+                                          style: TextStyle(color: Theme.of(context).unselectedWidgetColor),
                                         ),
                                         !_isEncointerCommunityCurrency
-                                            ? CurrencyWithIcon(
-                                                _tokenSymbol ?? baseTokenSymbol)
-                                            : Text(Fmt.currencyIdentifier(
-                                                _tokenSymbol,
-                                                pad: 8)),
+                                            ? CurrencyWithIcon(_tokenSymbol ?? baseTokenSymbol)
+                                            : Text(Fmt.currencyIdentifier(_tokenSymbol, pad: 8)),
                                       ],
                                     ),
                                     Icon(
@@ -341,17 +317,14 @@ class _TransferPageState extends State<TransferPage> {
                                   ],
                                 ),
                               ),
-                              onTap: symbolOptions != null
-                                  ? () => _selectCurrency()
-                                  : null,
+                              onTap: symbolOptions != null ? () => _selectCurrency() : null,
                             ),
                             Divider(),
                             Padding(
                               padding: EdgeInsets.only(top: 16),
                               child: Text(
                                   'existentialDeposit: ${store.settings.existentialDeposit} $baseTokenSymbolView',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black54)),
+                                  style: TextStyle(fontSize: 16, color: Colors.black54)),
                             ),
 //                            Padding(
 //                              padding: EdgeInsets.only(top: 16),
@@ -364,8 +337,7 @@ class _TransferPageState extends State<TransferPage> {
                               padding: EdgeInsets.only(top: 16),
                               child: Text(
                                   'transactionByteFee: ${store.settings.transactionByteFee} $baseTokenSymbolView',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black54)),
+                                  style: TextStyle(fontSize: 16, color: Colors.black54)),
                             ),
                           ],
                         ),
@@ -390,18 +362,16 @@ class _TransferPageState extends State<TransferPage> {
 
   bool balanceToLow(String v, BigInt available, int decimals) {
     if (_isEncointerCommunityCurrency) {
-      return double.parse(v.trim()) >= available.toDouble() - 0.001;
+      return double.parse(v.trim()) >= available.toDouble() - 0.0001;
     } else {
-      return double.parse(v.trim()) >=
-          available / BigInt.from(pow(10, decimals)) - 0.001;
+      return double.parse(v.trim()) >= available / BigInt.from(pow(10, decimals)) - 0.0001;
     }
   }
 
   BigInt _getAvailableEncointerOrBaseToken(bool isBaseToken, String symbol) {
     if (_isEncointerCommunityCurrency) {
       return Fmt.tokenInt(
-          store.encointer.balanceEntries[_tokenSymbol].principal.toString(),
-          encointerTokenDecimals);
+          store.encointer.balanceEntries[_tokenSymbol].principal.toString(), encointer_currencies_decimals);
     } else {
       return isBaseToken
           ? store.assets.balances[symbol.toUpperCase()].transferable

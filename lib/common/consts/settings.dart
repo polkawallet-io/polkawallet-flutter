@@ -34,7 +34,8 @@ EndpointData networkEndpointEncointerGesellDev = EndpointData.fromJson(const {
   'ss58': 42,
   'text': 'Encointer Gesell Local Devnet',
   // 'value': 'ws://192.168.1.36:9941',
-  'value': 'ws://192.168.1.24:9944',
+  // 'value': 'ws://192.168.1.24:9944',
+  'value': 'ws://127.0.0.1:9944',
 });
 
 EndpointData networkEndpointEncointerCantillon = EndpointData.fromJson(const {
@@ -112,8 +113,11 @@ const network_ss58_map = {
   'polkadot': 0,
 };
 
-const int encointerTokenDecimals = 18;
+const int ert_decimals = 12;
+const int encointer_currencies_decimals = 18;
 const int kusama_token_decimals = 12;
+
+const double faucetAmount = 0.0001;
 
 const int dot_re_denominate_block = 1248328;
 

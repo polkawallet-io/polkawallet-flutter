@@ -67,8 +67,7 @@ class _AssetsState extends State<Assets> {
       _preclaimChecking = true;
     });
     String address = store.account.currentAddress;
-    String ethAddress =
-        await webApi.evalJavascript('api.query.claims.preclaims("$address")');
+    String ethAddress = await webApi.evalJavascript('api.query.claims.preclaims("$address")');
     setState(() {
       _preclaimChecking = false;
     });
@@ -107,8 +106,7 @@ class _AssetsState extends State<Assets> {
         return;
       }
 
-      final Map sender =
-          await webApi.account.parseQrCode(data.toString().trim());
+      final Map sender = await webApi.account.parseQrCode(data.toString().trim());
       if (sender['signer'] != store.account.currentAddress) {
         showCupertinoDialog(
           context: context,
@@ -117,9 +115,7 @@ class _AssetsState extends State<Assets> {
               title: Text(dic['uos.title']),
               content: sender['error'] != null
                   ? Text(sender['error'])
-                  : sender['signer'] == null
-                      ? Text(dic['uos.qr.invalid'])
-                      : Text(dic['uos.acc.mismatch']),
+                  : sender['signer'] == null ? Text(dic['uos.qr.invalid']) : Text(dic['uos.acc.mismatch']),
               actions: <Widget>[
                 CupertinoButton(
                   child: Text(I18n.of(context).home['ok']),
@@ -184,9 +180,7 @@ class _AssetsState extends State<Assets> {
     });
 
     var res;
-    if (balancesInfo.freeBalance -
-            Fmt.tokenInt('0.0001', encointerTokenDecimals) >
-        BigInt.zero) {
+    if (balancesInfo.freeBalance - Fmt.tokenInt(faucetAmount.toString(), ert_decimals) > BigInt.zero) {
       aboveLimit = true;
     } else {
       res = await webApi.encointer.sendFaucetTx();
@@ -201,8 +195,7 @@ class _AssetsState extends State<Assets> {
         dialogContent = I18n.of(context).encointer['faucet.error'];
 
         if (res["error"] == "balances.InsufficientBalance") {
-          dialogContent +=
-              "\nError: ${I18n.of(context).encointer['faucet.insufficientBalance']}";
+          dialogContent += "\nError: ${I18n.of(context).encointer['faucet.insufficientBalance']}";
         } else {
           dialogContent += "\nError: ${res["error"]}";
         }
@@ -228,12 +221,10 @@ class _AssetsState extends State<Assets> {
                     globalBalanceRefreshKey.currentState.show();
                     print("Faucet ERrror" + res["error"].toString());
                     NotificationPlugin.showNotification(
-                      int.parse(res['params'][
-                          1]), // todo: Id is used to group notifications. This is probably not a good idea
+                      int.parse(res['params']
+                          [1]), // todo: Id is used to group notifications. This is probably not a good idea
                       I18n.of(context).assets['notify.receive'],
-                      'ERT ' +
-                          Fmt.balance(res['params'][1], encointerTokenDecimals)
-                              .toString(),
+                      'ERT ' + Fmt.balance(res['params'][1], ert_decimals).toString(),
                     );
                   }
                 },
@@ -247,21 +238,16 @@ class _AssetsState extends State<Assets> {
 
   Widget _buildTopCard(BuildContext context) {
     var dic = I18n.of(context).assets;
-    String network = store.settings.loading
-        ? dic['node.connecting']
-        : store.settings.networkName ?? dic['node.failed'];
+    String network = store.settings.loading ? dic['node.connecting'] : store.settings.networkName ?? dic['node.failed'];
 
     AccountData acc = store.account.currentAccount;
 
     bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
-    bool isPolkadot =
-        store.settings.endpoint.info == networkEndpointPolkadot.info;
+    bool isPolkadot = store.settings.endpoint.info == networkEndpointPolkadot.info;
     bool isEncointer = store.settings.endpointIsEncointer;
 
     final accInfo = store.account.accountIndexMap[acc.address];
-    final String accIndex = accInfo != null && accInfo['accountIndex'] != null
-        ? '${accInfo['accountIndex']}\n'
-        : '';
+    final String accIndex = accInfo != null && accInfo['accountIndex'] != null ? '${accInfo['accountIndex']}\n' : '';
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 4, 16, 0),
       padding: EdgeInsets.all(8),
@@ -362,8 +348,8 @@ class _AssetsState extends State<Assets> {
               ],
             ),
             trailing: IconButton(
-              icon: Image.asset(
-                  'assets/images/assets/qrcode_${isEncointer ? 'indigo' : isKusama ? 'pink' : 'pink'}.png'),
+              icon:
+                  Image.asset('assets/images/assets/qrcode_${isEncointer ? 'indigo' : isKusama ? 'pink' : 'pink'}.png'),
               onPressed: () {
                 if (acc.address != '') {
                   _handleScan();
@@ -398,23 +384,20 @@ class _AssetsState extends State<Assets> {
         String symbol = store.settings.networkState.tokenSymbol ?? '';
 
         int decimals = store.settings.endpointIsEncointer
-            ? encointerTokenDecimals
-            : store.settings.networkState.tokenDecimals ??
-                kusama_token_decimals;
+            ? ert_decimals
+            : store.settings.networkState.tokenDecimals ?? kusama_token_decimals;
         String networkName = store.settings.networkName ?? '';
         final String tokenView = Fmt.tokenView(symbol);
 
         List<String> currencyIds = [];
         if (store.settings.endpointIsEncointer && networkName != null) {
           if (store.settings.networkConst['currencyIds'] != null) {
-            currencyIds.addAll(
-                List<String>.from(store.settings.networkConst['currencyIds']));
+            currencyIds.addAll(List<String>.from(store.settings.networkConst['currencyIds']));
           }
           currencyIds.retainWhere((i) => i != symbol);
         }
 
-        Map<String, BalanceEntry> nonZeroEncointerEntries = store
-            .encointer.balanceEntries
+        Map<String, BalanceEntry> nonZeroEncointerEntries = store.encointer.balanceEntries
           ..removeWhere((key, value) => value.principal == 0);
 
         BalancesInfo balancesInfo = store.assets.balances[symbol];
@@ -445,8 +428,7 @@ class _AssetsState extends State<Assets> {
                       child: ListTile(
                         leading: Container(
                           width: 36,
-                          child: Image.asset(
-                              'assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
+                          child: Image.asset('assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
                         ),
                         title: Text(tokenView),
                         trailing: Column(
@@ -454,23 +436,15 @@ class _AssetsState extends State<Assets> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              Fmt.priceFloorBigInt(
-                                  balancesInfo != null
-                                      ? balancesInfo.total
-                                      : BigInt.zero,
-                                  decimals,
+                              Fmt.priceFloorBigInt(balancesInfo != null ? balancesInfo.total : BigInt.zero, decimals,
                                   lengthFixed: 3),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black54),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54),
                             ),
                             Container(width: 16),
                           ],
                         ),
                         onTap: () {
-                          Navigator.pushNamed(context, AssetPage.route,
-                              arguments: AssetPageParams(token: symbol));
+                          Navigator.pushNamed(context, AssetPage.route, arguments: AssetPageParams(token: symbol));
                         },
                       ),
                     ),
@@ -489,28 +463,20 @@ class _AssetsState extends State<Assets> {
                             ),
                             title: Text(token),
                             trailing: Text(
-                              Fmt.priceFloorBigInt(
-                                  Fmt.balanceInt(store.assets.tokenBalances[i]),
-                                  decimals,
+                              Fmt.priceFloorBigInt(Fmt.balanceInt(store.assets.tokenBalances[i]), decimals,
                                   lengthFixed: 3),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black54),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54),
                             ),
                             onTap: () {
-                              Navigator.pushNamed(context, AssetPage.route,
-                                  arguments: AssetPageParams(token: token));
+                              Navigator.pushNamed(context, AssetPage.route, arguments: AssetPageParams(token: token));
                             },
                           ),
                         );
                       }).toList(),
                     ),
-                    store.settings.endpointIsEncointer &&
-                            nonZeroEncointerEntries.isNotEmpty
+                    store.settings.endpointIsEncointer && nonZeroEncointerEntries.isNotEmpty
                         ? Column(
-                            children: nonZeroEncointerEntries.entries
-                                .map((balanceData) {
+                            children: nonZeroEncointerEntries.entries.map((balanceData) {
 //                        print("balance data: " + balanceData.toString());
                               var cid = balanceData.key;
                               var balanceEntry = balanceData.value;
@@ -519,24 +485,16 @@ class _AssetsState extends State<Assets> {
                                 child: ListTile(
                                   leading: Container(
                                     width: 36,
-                                    child: Image.asset(
-                                        'assets/images/assets/ERT.png'),
+                                    child: Image.asset('assets/images/assets/ERT.png'),
                                   ),
                                   title: Text(Fmt.currencyIdentifier(cid)),
                                   trailing: Text(
                                     Fmt.doubleFormat(balanceEntry.principal),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                        color: Colors.black54),
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54),
                                   ),
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                        context, AssetPage.route,
-                                        arguments: AssetPageParams(
-                                            token: cid,
-                                            isEncointerCommunityCurrency:
-                                                true));
+                                    Navigator.pushNamed(context, AssetPage.route,
+                                        arguments: AssetPageParams(token: cid, isEncointerCommunityCurrency: true));
                                   },
                                 ),
                               );
