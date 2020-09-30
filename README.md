@@ -30,8 +30,6 @@ yarn install
 yarn run build
 ```
 
-For now (will not be necessary later), do the same for `lib/js_service_kusama`
-
 ### Run App
 
 If you have an AVD or real device attached, you can do
