@@ -87,7 +87,7 @@ class _PhaseAwareBoxState extends State<PhaseAwareBox>
 
   Future<void> _updateData() async {
     String pubKey = store.account.currentAccount.pubKey;
-    await webApi.assets.fetchBalance(pubKey);
+    await webApi.assets.fetchBalance();
   }
 
   Future<void> _refreshData() async {

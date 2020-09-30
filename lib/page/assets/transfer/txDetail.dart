@@ -11,7 +11,7 @@ class TxDetail extends StatelessWidget {
     this.success,
     this.networkName,
     this.action,
-    this.eventId,
+    @required this.eventId,
     this.hash,
     this.blockTime,
     this.blockNum,

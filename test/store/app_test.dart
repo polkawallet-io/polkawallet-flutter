@@ -20,8 +20,6 @@ void main() {
       expect(store.settings, isNotNull);
       expect(store.account, isNotNull);
       expect(store.assets, isNotNull);
-      expect(store.staking, isNotNull);
-      expect(store.gov, isNotNull);
       expect(store.encointer, isNotNull);
 
       expect(store.isReady, true);

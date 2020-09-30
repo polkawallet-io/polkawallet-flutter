@@ -11,6 +11,7 @@ description: EncointerWallet made with Flutter.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+
 version: 0.8.1+800
 
 environment:
@@ -26,18 +27,21 @@ dependencies:
   mobx_codegen: ^1.1.0
   provider: ^3.1.0
   shared_preferences: ^0.5.6
+  get_storage: ^1.2.1
   flutter_aes_ecb_pkcs5: ^0.1.1
   convert: ^2.1.1
   http: ^0.12.0
+  webview_flutter: ^0.3.22+1
   flutter_webview_plugin: ^0.3.11
-  rxdart: ^0.23.1
+  rxdart: ^0.24.0
   flutter_local_notifications: ^1.4.2
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
   flutter_map: ^0.9.0
-  ota_update: ^2.2.1
+  ota_update: ^2.3.0
+  update_app: ^0.1.5
   flutter_downloader: ^1.4.4
   path_provider:
   device_info: ^0.4.2
@@ -47,8 +51,14 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   # QR code generator & reader
-  qr_flutter: ^3.1.0
-  flutter_qr_reader: ^1.0.3
+  qr_flutter:
+    git:
+      url: https://github.com/polkawallet-io/qr.flutter.git
+      ref: master
+  flutter_qr_scan:
+    git:
+      url: https://github.com/polkawallet-io/flutter_qr_reader.git
+      ref: master
   permission_handler: ^4.2.0
   # PackageInfo
   package_info: ^0.4.0
@@ -58,9 +68,12 @@ dependencies:
   flutter_svg: ^0.18.0
   # open link in browser
   url_launcher: ^5.4.2
+  # GraphQL
+  graphql_flutter: ^3.1.0
+  dropdown_search: ^0.4.4
 
 dev_dependencies:
-  flutter_launcher_icons: "^0.7.3"
+#  flutter_launcher_icons: ^0.7.5
   build_runner: ^1.7.4
   json_serializable: ^3.0.0
   mockito: ^4.1.1
@@ -86,13 +99,10 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     # js service
-    - lib/js_service_kusama/dist/main.js
     - lib/js_service_encointer/dist/main.js
 
     # images
     ## images - settings
-    - assets/images/public/kusama.png
-    - assets/images/public/kusama_gray.png
     - assets/images/public/nctr-cln.png
     - assets/images/public/nctr-cln_gray.png
     - assets/images/public/nctr-gsl-dev.png
@@ -100,53 +110,49 @@ flutter:
     - assets/images/public/nctr-gsl.png
     - assets/images/public/nctr-gsl_gray.png
     - assets/images/assets/ERT.png
-    - assets/images/assets/ACA.png
-    - assets/images/assets/AUSD.png
-    - assets/images/assets/XBTC.png
-    - assets/images/assets/LDOT.png
-    - assets/images/assets/KAR.png
+    - assets/images/assets/scanner.png
     ## images - acala
+    - assets/images/assets/scanner_indigo.png
     - assets/images/assets/top_bg_indigo.png
     - assets/images/assets/receive_line_indigo.png
     - assets/images/assets/qrcode_indigo.png
     - assets/images/assets/plus_indigo.png
     - assets/images/staking/top_bg_indigo.png
     - assets/images/public/Assets_indigo.png
-    - assets/images/public/Governance_indigo.png
     - assets/images/public/Profile_indigo.png
-    - assets/images/public/Staking_indigo.png
     - assets/images/public/Ceremonies_indigo.png
     - assets/images/public/Ceremonies_dark.png
-    - assets/images/acala/exchange.svg
-    - assets/images/acala/loan.svg
-    - assets/images/acala/loan-start.svg
+    ## images - laminar
+    - assets/images/assets/scanner_purple.png
+    - assets/images/assets/top_bg_purple.png
+    - assets/images/assets/receive_line_purple.png
+    - assets/images/assets/qrcode_purple.png
+    - assets/images/assets/plus_purple.png
+    - assets/images/staking/top_bg_purple.png
+    - assets/images/public/Assets_purple.png
+    - assets/images/public/Profile_purple.png
     ## images - kusama
-    - assets/images/public/Assets_pink800.png
-    - assets/images/public/Governance_pink800.png
-    - assets/images/public/Profile_pink800.png
-    - assets/images/public/Staking_pink800.png
-    - assets/images/assets/top_bg_pink800.png
-    - assets/images/assets/qrcode_pink800.png
-    - assets/images/assets/plus_pink800.png
-    - assets/images/assets/receive_line_pink800.png
-    - assets/images/staking/top_bg_pink800.png
+    - assets/images/assets/scanner_black.png
+    - assets/images/public/Assets_black.png
+    - assets/images/public/Profile_black.png
+    - assets/images/assets/top_bg_black.png
+    - assets/images/assets/qrcode_black.png
+    - assets/images/assets/plus_black.png
+    - assets/images/assets/receive_line_black.png
+    - assets/images/public/kusama.png
     ## images - polkadot
+    - assets/images/assets/scanner_pink.png
     - assets/images/public/app.png
     - assets/images/public/Assets_pink.png
-    - assets/images/public/Governance_pink.png
     - assets/images/public/Profile_pink.png
-    - assets/images/public/Staking_pink.png
     - assets/images/public/Assets_dark.png
-    - assets/images/public/Governance_dark.png
     - assets/images/public/Profile_dark.png
-    - assets/images/public/Staking_dark.png
     - assets/images/public/logo_about.png
     - assets/images/public/dontscreen.png
     - assets/images/public/copy.png
     - assets/images/public/polkadot.png
     - assets/images/public/polkadot_gray.png
     - assets/images/public/westend.png
-    - assets/images/public/kusama.png
     - assets/images/public/substrate.png
     - assets/images/public/default.png
     - assets/images/assets/logo.png
@@ -164,16 +170,7 @@ flutter:
     - assets/images/assets/assets_fail.png
     - assets/images/assets/success.png
     - assets/images/assets/receive_line_pink.png
-    - assets/images/assets/DOT.png
-    - assets/images/assets/KSM.png
-    - assets/images/assets/FIR.png
     - assets/images/staking/top_bg_pink.png
-    - assets/images/staking/set.png
-    - assets/images/staking/ok.png
-    - assets/images/staking/error.png
-    - assets/images/staking/stake.png
-    - assets/images/staking/nominate.png
-    - assets/images/gov/time.png
     - assets/images/profile/about.png
     - assets/images/profile/address.png
     - assets/images/profile/setting.png

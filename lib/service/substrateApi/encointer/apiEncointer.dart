@@ -1,18 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:device_info/device_info.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/service/faucet.dart';
-import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/encointer/types/encointerBalanceData.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/encointer/types/attestation.dart';
 import 'package:polka_wallet/store/encointer/types/claimOfAttendance.dart';
+import 'package:polka_wallet/store/encointer/types/encointerBalanceData.dart';
+import 'package:polka_wallet/store/encointer/types/encointerTypes.dart';
 import 'package:polka_wallet/store/encointer/types/location.dart';
 import 'package:polka_wallet/utils/format.dart';
-
-import 'package:polka_wallet/store/encointer/types/encointerTypes.dart';
 
 /// Api to interface with the `js_encointer_service.js`
 ///
@@ -33,8 +29,7 @@ class ApiEncointer {
   Future<CeremonyPhase> getCurrentPhase() async {
     Map res = await apiRoot.evalJavascript('encointer.getCurrentPhase()');
 
-    var phase = getEnumFromString(
-        CeremonyPhase.values, res.values.toList()[0].toString().toUpperCase());
+    var phase = getEnumFromString(CeremonyPhase.values, res.values.toList()[0].toString().toUpperCase());
     print("Phase enum: " + phase.toString());
     store.encointer.setCurrentPhase(phase);
     return phase;
@@ -119,17 +114,12 @@ class ApiEncointer {
   }
 
   Future<void> subscribeCurrentPhase(String channel, Function callback) async {
-    apiRoot.msgHandlers[channel] = callback;
-    apiRoot.evalJavascript(
-        'encointer.subscribeCurrentPhase("$channel")');
+    apiRoot.subscribeMessage('encointer.subscribeCurrentPhase("$channel")', channel, callback);
   }
 
   Future<void> subscribeTimestamp(String channel) async {
-    apiRoot.msgHandlers[channel] = (data) => {
-      store.encointer.setTimestamp(data)
-    };
-    await apiRoot.evalJavascript(
-        'encointer.subscribeTimestamp("$channel")');
+    apiRoot.subscribeMessage(
+        'encointer.subscribeTimestamp("$channel")', channel, (data) => {store.encointer.setTimestamp(data)});
   }
 
   Future<List<dynamic>> getCurrencyIdentifiers() async {
@@ -148,8 +138,7 @@ class ApiEncointer {
         store.encointer.meetupIndex,
         store.encointer.nextMeetupLocation,
         perfectMeetupTime.millisecondsSinceEpoch,
-        participants
-    ));
+        participants));
     print(claim);
     var claimHex = await apiRoot.evalJavascript('encointer.getClaimOfAttendance($claim)');
     return claimHex;
@@ -179,7 +168,7 @@ class ApiEncointer {
 
   Future<dynamic> sendFaucetTx() async {
     var address = store.account.currentAddress;
-    var amount = Fmt.tokenInt('0.001');
+    var amount = Fmt.tokenInt(faucetAmount.toString(), ert_decimals);
     var res = await apiRoot.evalJavascript('account.sendFaucetTx("$address", "$amount")');
 //    print("Faucet Result :" + res.toString());
     return res;
@@ -189,11 +178,12 @@ class ApiEncointer {
     var pubKey = store.account.currentAccountPubKey;
     var data = await apiRoot.evalJavascript('encointer.getBalances("$pubKey")');
 
-    List<dynamic> encointerBalances = data.map((e) =>
-        EncointerBalanceData.fromJson(e)).toList();
+    List<dynamic> encointerBalances = data.map((e) => EncointerBalanceData.fromJson(e)).toList();
 
 //    print("encointerBalances list: " + encointerBalances.toString());
-    encointerBalances.forEach((e) {store.encointer.addBalanceEntry(e.cid, e.balanceEntry);});
+    encointerBalances.forEach((e) {
+      store.encointer.addBalanceEntry(e.cid, e.balanceEntry);
+    });
     return encointerBalances;
   }
 

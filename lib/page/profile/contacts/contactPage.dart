@@ -33,6 +33,8 @@ class _Contact extends State<ContactPage> {
 
   AccountData _args;
 
+  bool _submitting = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -48,6 +50,9 @@ class _Contact extends State<ContactPage> {
 
   Future<void> _onSave() async {
     if (_formKey.currentState.validate()) {
+      setState(() {
+        _submitting = true;
+      });
       var dic = I18n.of(context).profile;
       String addr = _addressCtrl.text.trim();
       Map pubKeyAddress = await webApi.account.decodeAddress([addr]);
@@ -59,6 +64,9 @@ class _Contact extends State<ContactPage> {
         'observation': _isObservation,
         'pubKey': pubKey,
       };
+      setState(() {
+        _submitting = false;
+      });
       if (_args == null) {
         // create new contact
         int exist =
@@ -92,6 +100,12 @@ class _Contact extends State<ContactPage> {
       if (_isObservation) {
         webApi.account.encodeAddress([pubKey]);
         webApi.account.getPubKeyIcons([pubKey]);
+      } else {
+        // if this address was used as observation and current account,
+        // we need to change current account
+        if (pubKey == store.account.currentAccountPubKey) {
+          webApi.account.changeCurrentAccount(fetchData: true);
+        }
       }
       webApi.account.getAddressIcons([addr]);
       Navigator.of(context).pop();
@@ -113,8 +127,8 @@ class _Contact extends State<ContactPage> {
       IconButton(
         icon: Image.asset('assets/images/assets/Menu_scan.png'),
         onPressed: () async {
-          var to = await Navigator.of(context).pushNamed(ScanPage.route);
-          _addressCtrl.text = to;
+          final to = await Navigator.of(context).pushNamed(ScanPage.route);
+          _addressCtrl.text = (to as QRCodeAddressResult).address;
         },
       )
     ];
@@ -209,6 +223,7 @@ class _Contact extends State<ContactPage> {
             Container(
               margin: EdgeInsets.all(16),
               child: RoundedButton(
+                submitting: _submitting,
                 text: dic['contact.save'],
                 onPressed: () => _onSave(),
               ),

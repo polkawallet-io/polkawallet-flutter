@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -21,9 +20,6 @@ class QrCode extends StatelessWidget {
     String title = args['title'];
     String qrCodeData = args['qrCodeData'];
 
-    bool isKusama = store.settings.endpoint.info == networkEndpointKusama.info;
-    bool isEncointer = store.settings.endpointIsEncointer;
-
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
@@ -39,14 +35,12 @@ class QrCode extends StatelessWidget {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(top: 32),
-                  child: Image.asset(
-                      'assets/images/assets/receive_line_${isEncointer ? 'indigo' : isKusama ? 'pink800' : 'pink'}.png'),
+                  child: Image.asset('assets/images/assets/receive_line_indigo.png'),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 40),
                   decoration: BoxDecoration(
-                    borderRadius:
-                        const BorderRadius.all(const Radius.circular(4)),
+                    borderRadius: const BorderRadius.all(const Radius.circular(4)),
                     color: Colors.white,
                   ),
                   child: Column(
@@ -65,8 +59,7 @@ class QrCode extends StatelessWidget {
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(width: 4, color: themeColor),
-                          borderRadius:
-                              BorderRadius.all(const Radius.circular(8)),
+                          borderRadius: BorderRadius.all(const Radius.circular(8)),
                         ),
                         //margin: EdgeInsets.fromLTRB(64, 24, 48, 64),
                         child: QrImage(

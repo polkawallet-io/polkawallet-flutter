@@ -54,36 +54,6 @@ mixin _$AppStore on _AppStore, Store {
     });
   }
 
-  final _$stakingAtom = Atom(name: '_AppStore.staking');
-
-  @override
-  StakingStore get staking {
-    _$stakingAtom.reportRead();
-    return super.staking;
-  }
-
-  @override
-  set staking(StakingStore value) {
-    _$stakingAtom.reportWrite(value, super.staking, () {
-      super.staking = value;
-    });
-  }
-
-  final _$govAtom = Atom(name: '_AppStore.gov');
-
-  @override
-  GovernanceStore get gov {
-    _$govAtom.reportRead();
-    return super.gov;
-  }
-
-  @override
-  set gov(GovernanceStore value) {
-    _$govAtom.reportWrite(value, super.gov, () {
-      super.gov = value;
-    });
-  }
-
   final _$encointerAtom = Atom(name: '_AppStore.encointer');
 
   @override
@@ -127,8 +97,6 @@ mixin _$AppStore on _AppStore, Store {
 settings: ${settings},
 account: ${account},
 assets: ${assets},
-staking: ${staking},
-gov: ${gov},
 encointer: ${encointer},
 isReady: ${isReady}
     ''';

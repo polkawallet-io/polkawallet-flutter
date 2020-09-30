@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/service/substrateApi/encointer/apiEncointer.dart';
+import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
-import 'package:polka_wallet/service/substrateApi/apiGov.dart';
-import 'package:polka_wallet/service/substrateApi/apiStaking.dart';
+import 'package:polka_wallet/service/substrateApi/encointer/apiEncointer.dart';
+import 'package:polka_wallet/service/substrateApi/types/genExternalLinksParams.dart';
+import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/settings.dart';
+import 'package:polka_wallet/utils/UI.dart';
 
 // global api instance
 Api webApi;
@@ -20,16 +23,17 @@ class Api {
 
   final BuildContext context;
   final AppStore store;
+  final jsStorage = GetStorage();
 
   ApiAccount account;
 
   ApiEncointer encointer;
 
   ApiAssets assets;
-  ApiStaking staking;
-  ApiGovernance gov;
 
-  Map<String, Function> msgHandlers = {};
+  SubScanApi subScanApi = SubScanApi();
+
+  Map<String, Function> _msgHandlers = {};
   Map<String, Completer> _msgCompleters = {};
   FlutterWebviewPlugin _web;
   int _evalJavascriptUID = 0;
@@ -42,20 +46,39 @@ class Api {
     encointer = ApiEncointer(this);
 
     assets = ApiAssets(this);
-    staking = ApiStaking(this);
-    gov = ApiGovernance(this);
 
     launchWebview();
   }
 
+  Future<void> _checkJSCodeUpdate() async {
+    // check js code update
+    final network = store.settings.endpoint.info;
+    final jsVersion = await WalletApi.fetchPolkadotJSVersion(network);
+    final bool needUpdate = await UI.checkJSCodeUpdate(context, jsVersion, network);
+    if (needUpdate) {
+      await UI.updateJSCode(context, jsStorage, network, jsVersion);
+    }
+  }
+
+  void _startJSCode(String js) {
+    // inject js file to webview
+    _web.evalJavascript(js);
+
+    // load keyPairs from local data
+    account.initAccounts();
+    // connect remote node
+    _connectFunc();
+  }
+
   Future<void> launchWebview({bool customNode = false}) async {
-    msgHandlers = {'txStatusChange': store.account.setTxStatus};
+    _msgHandlers = {'txStatusChange': store.account.setTxStatus};
 
     _evalJavascriptUID = 0;
     _msgCompleters = {};
 
     _connectFunc = customNode ? connectNode : connectNodeAll;
 
+    await _checkJSCodeUpdate();
     if (_web != null) {
       _web.reload();
       return;
@@ -65,19 +88,10 @@ class Api {
 
     _web.onStateChanged.listen((viewState) async {
       if (viewState.type == WebViewState.finishLoad) {
-        String network = 'kusama';
-
-        if (store.settings.endpoint.info.contains('nctr-gsl') ||
-            store.settings.endpoint.info.contains('nctr-gsl-dev') ||
-            store.settings.endpoint.info.contains('nctr-cln')) {
-          network = 'encointer';
-        }
-
+        String network = 'encointer';
         print('webview loaded for network $network');
 
-        DefaultAssetBundle.of(context)
-            .loadString('lib/js_service_$network/dist/main.js')
-            .then((String js) {
+        DefaultAssetBundle.of(context).loadString('lib/js_service_$network/dist/main.js').then((String js) {
           print('js file loaded');
           // inject js file to webview
           _web.evalJavascript(js);
@@ -106,8 +120,8 @@ class Api {
                     _msgCompleters.remove(path);
                   }
                 }
-                if (msgHandlers[path] != null) {
-                  Function handler = msgHandlers[path];
+                if (_msgHandlers[path] != null) {
+                  Function handler = _msgHandlers[path];
                   handler(msg['data']);
                 }
               });
@@ -180,11 +194,9 @@ class Api {
   }
 
   Future<void> connectNodeAll() async {
-    List<String> nodes =
-        store.settings.endpointList.map((e) => e.value).toList();
+    List<String> nodes = store.settings.endpointList.map((e) => e.value).toList();
     // do connect
-    String res =
-        await evalJavascript('settings.connectAll(${jsonEncode(nodes)})');
+    String res = await evalJavascript('settings.connectAll(${jsonEncode(nodes)})');
     if (res == null) {
       print('connect failed');
       store.settings.setNetworkName(null);
@@ -197,9 +209,9 @@ class Api {
       String res = await evalJavascript('settings.setWorkerEndpoint("$worker")');
     }
 
-    EndpointData connected =
-        store.settings.endpointList.firstWhere((i) => i.value == res);
-    store.settings.setEndpoint(connected);
+    int index = store.settings.endpointList.indexWhere((i) => i.value == res);
+    if (index < 0) return;
+    store.settings.setEndpoint(store.settings.endpointList[index]);
     fetchNetworkProps();
   }
 
@@ -208,7 +220,7 @@ class Api {
     List<dynamic> info = await Future.wait([
       evalJavascript('settings.getNetworkConst()'),
       evalJavascript('api.rpc.system.properties()'),
-      evalJavascript('api.rpc.system.chain()'),  // "Development" or "Encointer Testnet Gesell" or whatever
+      evalJavascript('api.rpc.system.chain()'), // "Development" or "Encointer Testnet Gesell" or whatever
     ]);
     store.settings.setNetworkConst(info[0]);
     store.settings.setNetworkState(info[1]);
@@ -216,27 +228,8 @@ class Api {
 
     // fetch account balance
     if (store.account.accountList.length > 0) {
-      bool isEncointer = store.settings.endpoint.info ==
-          networkEndpointEncointerGesell.info ||
-          store.settings.endpoint.info ==
-              networkEndpointEncointerGesellDev.info ||
-          store.settings.endpoint.info ==
-              networkEndpointEncointerCantillon.info;
-
-      if (isEncointer) {
-        await assets.fetchBalance(store.account.currentAccount.pubKey);
-      } else {
-        await Future.wait([
-          assets.fetchBalance(store.account.currentAccount.pubKey),
-          staking.fetchAccountStaking(store.account.currentAccount.pubKey),
-          account.fetchAccountsBonded(
-              store.account.accountList.map((i) => i.pubKey).toList()),
-        ]);
-      }
+      await assets.fetchBalance();
     }
-
-    // fetch staking overview data as initializing
-//    staking.fetchStakingOverview();
   }
 
   Future<void> updateBlocks(List txs) async {
@@ -253,16 +246,19 @@ class Api {
     store.assets.setBlockMap(data);
   }
 
+  Future<String> subscribeBestNumber(Function callback) async {
+    final String channel = _getEvalJavascriptUID().toString();
+    subscribeMessage('settings.subscribeMessage("chain", "bestNumber", [], "$channel")', channel, callback);
+    return channel;
+  }
+
   Future<void> subscribeMessage(
-    String section,
-    String method,
-    List params,
+    String code,
     String channel,
     Function callback,
   ) async {
-    msgHandlers[channel] = callback;
-    evalJavascript(
-        'settings.subscribeMessage("$section", "$method", ${jsonEncode(params)}, "$channel")');
+    _msgHandlers[channel] = callback;
+    evalJavascript(code, allowRepeat: true);
   }
 
   Future<void> unsubscribeMessage(String channel) async {
@@ -275,4 +271,11 @@ class Api {
     _web = null;
   }
 
+  Future<List> getExternalLinks(GenExternalLinksParams params) async {
+    final List res = await evalJavascript(
+      'settings.genLinks(${jsonEncode(GenExternalLinksParams.toJson(params))})',
+      allowRepeat: true,
+    );
+    return res;
+  }
 }

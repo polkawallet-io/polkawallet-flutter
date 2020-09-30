@@ -1,12 +1,12 @@
 class BalancesInfo extends _BalancesInfo {
   static BalancesInfo fromJson(Map<String, dynamic> json) {
     BalancesInfo data = BalancesInfo();
-    data.total = BigInt.parse(json['votingBalance'].toString());
     data.freeBalance = BigInt.parse(json['freeBalance'].toString());
     data.transferable = BigInt.parse(json['availableBalance'].toString());
     data.bonded = BigInt.parse(json['frozenFee'].toString());
     data.reserved = BigInt.parse(json['reservedBalance'].toString());
     data.lockedBalance = BigInt.parse(json['lockedBalance'].toString());
+    data.total = data.freeBalance + data.reserved;
     data.lockedBreakdown = List.of(json['lockedBreakdown']).map((i) {
       return BalanceLockedItemData.fromJson(i);
     }).toList();

@@ -24,6 +24,7 @@ Map<String, dynamic> _$NetworkStateToJson(NetworkState instance) =>
 
 EndpointData _$EndpointDataFromJson(Map<String, dynamic> json) {
   return EndpointData()
+    ..color = json['color'] as String
     ..info = json['info'] as String
     ..ss58 = json['ss58'] as int
     ..text = json['text'] as String
@@ -33,6 +34,7 @@ EndpointData _$EndpointDataFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$EndpointDataToJson(EndpointData instance) =>
     <String, dynamic>{
+      'color': instance.color,
       'info': instance.info,
       'ss58': instance.ss58,
       'text': instance.text,
@@ -60,6 +62,13 @@ mixin _$SettingsStore on _SettingsStore, Store {
   List<EndpointData> get endpointList => (_$endpointListComputed ??=
           Computed<List<EndpointData>>(() => super.endpointList,
               name: '_SettingsStore.endpointList'))
+      .value;
+  Computed<List<AccountData>> _$contactListAllComputed;
+
+  @override
+  List<AccountData> get contactListAll => (_$contactListAllComputed ??=
+          Computed<List<AccountData>>(() => super.contactListAll,
+              name: '_SettingsStore.contactListAll'))
       .value;
   Computed<String> _$existentialDepositComputed;
 
@@ -229,8 +238,10 @@ mixin _$SettingsStore on _SettingsStore, Store {
       AsyncAction('_SettingsStore.setNetworkState');
 
   @override
-  Future<void> setNetworkState(Map<String, dynamic> data) {
-    return _$setNetworkStateAsyncAction.run(() => super.setNetworkState(data));
+  Future<void> setNetworkState(Map<String, dynamic> data,
+      {bool needCache = true}) {
+    return _$setNetworkStateAsyncAction
+        .run(() => super.setNetworkState(data, needCache: needCache));
   }
 
   final _$loadNetworkStateCacheAsyncAction =
@@ -246,8 +257,10 @@ mixin _$SettingsStore on _SettingsStore, Store {
       AsyncAction('_SettingsStore.setNetworkConst');
 
   @override
-  Future<void> setNetworkConst(Map<String, dynamic> data) {
-    return _$setNetworkConstAsyncAction.run(() => super.setNetworkConst(data));
+  Future<void> setNetworkConst(Map<String, dynamic> data,
+      {bool needCache = true}) {
+    return _$setNetworkConstAsyncAction
+        .run(() => super.setNetworkConst(data, needCache: needCache));
   }
 
   final _$loadContactsAsyncAction = AsyncAction('_SettingsStore.loadContacts');
@@ -357,6 +370,7 @@ networkConst: ${networkConst},
 contactList: ${contactList},
 endpointIsEncointer: ${endpointIsEncointer},
 endpointList: ${endpointList},
+contactListAll: ${contactListAll},
 existentialDeposit: ${existentialDeposit},
 transactionBaseFee: ${transactionBaseFee},
 transactionByteFee: ${transactionByteFee}

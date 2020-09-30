@@ -20,6 +20,7 @@ abstract class _AssetsStore with Store {
   final String localStorageBlocksKey = 'blocks';
 
   final String cacheBalanceKey = 'balance';
+  final String cacheTokenBalanceKey = 'token_balance';
   final String cacheTxsKey = 'txs';
   final String cacheTimeKey = 'assets_cache_time';
 
@@ -54,6 +55,12 @@ abstract class _AssetsStore with Store {
 
   @observable
   ObservableMap<int, BlockData> blockMap = ObservableMap<int, BlockData>();
+
+  @observable
+  List announcements;
+
+  @observable
+  ObservableMap<String, double> marketPrices = ObservableMap<String, double>();
 
   @computed
   ObservableList<TransferData> get txsView {
@@ -122,10 +129,21 @@ abstract class _AssetsStore with Store {
   }
 
   @action
-  Future<void> setAccountTokenBalances(String pubKey, Map amt) async {
+  Future<void> setAccountTokenBalances(
+    String pubKey,
+    Map amt, {
+    bool needCache = true,
+  }) async {
     if (rootStore.account.currentAccount.pubKey != pubKey) return;
 
     tokenBalances = Map<String, String>.from(amt);
+
+    if (!needCache) return;
+    rootStore.localStorage.setAccountCache(
+      pubKey,
+      _getCacheKey(cacheTokenBalanceKey),
+      amt,
+    );
   }
 
   @action
@@ -147,7 +165,6 @@ abstract class _AssetsStore with Store {
 
     List ls = res['transfers'];
     if (ls == null) return;
-    print(ls.length);
 
     ls.forEach((i) {
       TransferData tx = TransferData.fromJson(i);
@@ -194,10 +211,20 @@ abstract class _AssetsStore with Store {
   }
 
   @action
+  void setAnnouncements(List data) {
+    announcements = data;
+  }
+
+  @action
+  void setMarketPrices(String token, String price) {
+    marketPrices[token] = double.parse(price);
+  }
+
+  @action
   Future<void> loadAccountCache() async {
-    // loadCache if currentAccount exist
-    String pubKey = rootStore.account.currentAccount.pubKey;
-    if (pubKey == null) {
+    // return if currentAccount not exist
+    String pubKey = rootStore.account.currentAccountPubKey;
+    if (pubKey == null || pubKey.isEmpty) {
       return;
     }
 
@@ -206,6 +233,8 @@ abstract class _AssetsStore with Store {
       rootStore.localStorage.getAccountCache(pubKey, _getCacheKey(cacheTxsKey)),
       rootStore.localStorage
           .getAccountCache(pubKey, _getCacheKey(cacheTimeKey)),
+      rootStore.localStorage
+          .getAccountCache(pubKey, _getCacheKey(cacheTokenBalanceKey)),
     ]);
     if (cache[0] != null) {
       setAccountBalances(pubKey, cache[0], needCache: false);
@@ -213,9 +242,16 @@ abstract class _AssetsStore with Store {
     if (cache[1] != null) {
       txs = ObservableList.of(
           List.of(cache[1]).map((i) => TransferData.fromJson(i)).toList());
+    } else {
+      txs = ObservableList();
     }
     if (cache[2] != null) {
       cacheTxsTimestamp = cache[2];
+    }
+    if (cache[3] != null) {
+      setAccountTokenBalances(pubKey, cache[3], needCache: false);
+    } else {
+      setAccountTokenBalances(pubKey, {}, needCache: false);
     }
   }
 

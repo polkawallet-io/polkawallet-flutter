@@ -24,15 +24,12 @@ class AccountManagePage extends StatelessWidget {
       builder: (BuildContext context) {
         return PasswordInputDialog(
           title: Text(I18n.of(context).profile['delete.confirm']),
+          account: store.account.currentAccount,
           onOk: (_) {
             store.account.removeAccount(store.account.currentAccount).then((_) {
-              String pubKey = store.account.currentAccount.pubKey;
               // refresh balance
               store.assets.loadAccountCache();
-              webApi.assets.fetchBalance(pubKey);
-              // refresh user's staking info
-              store.staking.loadAccountCache();
-              webApi.staking.fetchAccountStaking(pubKey);
+              webApi.assets.fetchBalance();
             });
             Navigator.of(context).pop();
           },
@@ -68,8 +65,7 @@ class AccountManagePage extends StatelessWidget {
                           pubKey: store.account.currentAccount.pubKey,
                         ),
                         title: Text(store.account.currentAccount.name ?? 'name',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.white)),
+                            style: TextStyle(fontSize: 16, color: Colors.white)),
                         subtitle: Text(
                           Fmt.address(store.account.currentAddress) ?? '',
                           style: TextStyle(fontSize: 16, color: Colors.white70),
@@ -80,20 +76,17 @@ class AccountManagePage extends StatelessWidget {
                     ListTile(
                       title: Text(dic['name.change']),
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                      onTap: () =>
-                          Navigator.pushNamed(context, ChangeNamePage.route),
+                      onTap: () => Navigator.pushNamed(context, ChangeNamePage.route),
                     ),
                     ListTile(
                       title: Text(dic['pass.change']),
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                      onTap: () => Navigator.pushNamed(
-                          context, ChangePasswordPage.route),
+                      onTap: () => Navigator.pushNamed(context, ChangePasswordPage.route),
                     ),
                     ListTile(
                       title: Text(dic['export']),
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                      onTap: () => Navigator.of(context)
-                          .pushNamed(ExportAccountPage.route),
+                      onTap: () => Navigator.of(context).pushNamed(ExportAccountPage.route),
                     ),
                   ],
                 ),

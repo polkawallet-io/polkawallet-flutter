@@ -1,13 +1,12 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+
 import 'package:flutter/foundation.dart' show SynchronousFuture;
+import 'package:flutter/material.dart';
 import 'package:polka_wallet/utils/i18n/assets.dart';
 import 'package:polka_wallet/utils/i18n/encointer.dart';
-import 'package:polka_wallet/utils/i18n/staking.dart';
-import 'package:polka_wallet/utils/i18n/gov.dart';
 
-import 'home.dart';
 import 'account.dart';
+import 'home.dart';
 import 'profile.dart';
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<I18n> {
@@ -41,19 +40,8 @@ class I18n {
       'home': enHome,
       'account': enAccount,
       'assets': enAssets,
-      'staking': enStaking,
       'profile': enProfile,
-      'gov': enGov,
       'encointer': enNctr,
-    },
-    'zh': {
-      'home': zhHome,
-      'account': zhAccount,
-      'assets': zhAssets,
-      'staking': zhStaking,
-      'profile': zhProfile,
-      'gov': zhGov,
-      'encointer': zhNctr,
     },
   };
 
@@ -69,16 +57,8 @@ class I18n {
     return _localizedValues[locale.languageCode]['assets'];
   }
 
-  Map<String, String> get staking {
-    return _localizedValues[locale.languageCode]['staking'];
-  }
-
   Map<String, String> get profile {
     return _localizedValues[locale.languageCode]['profile'];
-  }
-
-  Map<String, String> get gov {
-    return _localizedValues[locale.languageCode]['gov'];
   }
 
   Map<String, String> get encointer {

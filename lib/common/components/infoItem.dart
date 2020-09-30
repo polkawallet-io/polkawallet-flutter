@@ -18,7 +18,11 @@ class InfoItem extends StatelessWidget {
           ),
           Text(
             content ?? '-',
-            style: Theme.of(context).textTheme.headline4,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).unselectedWidgetColor,
+            ),
           )
         ],
       ),

@@ -6,7 +6,7 @@ import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 
 class AddressFormItem extends StatelessWidget {
-  AddressFormItem(this.label, this.account, {this.onTap});
+  AddressFormItem(this.account, {this.label, this.onTap});
   final String label;
   final AccountData account;
   final Future<void> Function() onTap;
@@ -15,18 +15,20 @@ class AddressFormItem extends StatelessWidget {
   Widget build(BuildContext context) {
     Color grey = Theme.of(context).unselectedWidgetColor;
 
-    String address = globalAppStore.account.currentAddress;
+    String address = Fmt.addressOfAccount(account, globalAppStore);
 
     Column content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Container(
-          margin: EdgeInsets.only(top: 4),
-          child: Text(
-            label,
-            style: TextStyle(color: grey),
-          ),
-        ),
+        label != null
+            ? Container(
+                margin: EdgeInsets.only(top: 4),
+                child: Text(
+                  label,
+                  style: TextStyle(color: grey),
+                ),
+              )
+            : Container(),
         Container(
           margin: EdgeInsets.only(top: 4, bottom: 4),
           padding: EdgeInsets.all(8),
@@ -39,7 +41,12 @@ class AddressFormItem extends StatelessWidget {
             children: <Widget>[
               Container(
                 margin: EdgeInsets.only(right: 8),
-                child: AddressIcon(address, pubKey: account.pubKey, size: 32),
+                child: AddressIcon(
+                  address,
+                  pubKey: account.pubKey,
+                  size: 32,
+                  tapToCopy: false,
+                ),
               ),
               Expanded(
                 child: Column(

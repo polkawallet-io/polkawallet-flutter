@@ -6,6 +6,8 @@ part 'transferData.g.dart';
 class TransferData extends _TransferData {
   static TransferData fromJson(Map<String, dynamic> json) =>
       _$TransferDataFromJson(json);
+  static Map<String, dynamic> toJson(TransferData data) =>
+      _$TransferDataToJson(data);
 }
 
 abstract class _TransferData {

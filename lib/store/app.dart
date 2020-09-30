@@ -1,10 +1,8 @@
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/store/encointer/encointer.dart';
-import 'package:polka_wallet/store/settings.dart';
-import 'package:polka_wallet/store/staking/staking.dart';
 import 'package:polka_wallet/store/account/account.dart';
 import 'package:polka_wallet/store/assets/assets.dart';
-import 'package:polka_wallet/store/gov/governance.dart';
+import 'package:polka_wallet/store/encointer/encointer.dart';
+import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'app.g.dart';
@@ -24,12 +22,6 @@ abstract class _AppStore with Store {
   AssetsStore assets;
 
   @observable
-  StakingStore staking;
-
-  @observable
-  GovernanceStore gov;
-
-  @observable
   EncointerStore encointer;
 
   @observable
@@ -47,12 +39,8 @@ abstract class _AppStore with Store {
     await account.loadAccount();
 
     assets = AssetsStore(this);
-    staking = StakingStore(this);
-    gov = GovernanceStore(this);
 
     assets.loadCache();
-    staking.loadCache();
-    gov.loadCache();
 
     encointer = EncointerStore(this);
     encointer.loadCache();

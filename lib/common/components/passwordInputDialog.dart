@@ -1,29 +1,35 @@
 import 'package:flutter/cupertino.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class PasswordInputDialog extends StatefulWidget {
-  PasswordInputDialog({this.title, this.onOk});
+  PasswordInputDialog({this.account, this.title, this.onOk});
 
+  final AccountData account;
   final Widget title;
   final Function onOk;
 
   @override
-  _PasswordInputDialog createState() =>
-      _PasswordInputDialog(title: title, onOk: onOk);
+  _PasswordInputDialog createState() => _PasswordInputDialog();
 }
 
 class _PasswordInputDialog extends State<PasswordInputDialog> {
-  _PasswordInputDialog({this.title, this.onOk});
-
-  final Widget title;
-  final Function(String) onOk;
-
   final TextEditingController _passCtrl = new TextEditingController();
+  bool _submitting = false;
 
   Future<void> _onOk(String password) async {
-    var res = await webApi.account.checkAccountPassword(password);
+    setState(() {
+      _submitting = true;
+    });
+    var res =
+        await webApi.account.checkAccountPassword(widget.account, password);
+    if (mounted) {
+      setState(() {
+        _submitting = false;
+      });
+    }
     if (res == null) {
       final Map<String, String> dic = I18n.of(context).profile;
       showCupertinoDialog(
@@ -42,7 +48,7 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
         },
       );
     } else {
-      onOk(password);
+      widget.onOk(password);
       Navigator.of(context).pop();
     }
   }
@@ -58,7 +64,7 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
     final Map<String, String> dic = I18n.of(context).home;
 
     return CupertinoAlertDialog(
-      title: title ?? Container(),
+      title: widget.title ?? Container(),
       content: Padding(
         padding: EdgeInsets.only(top: 16),
         child: CupertinoTextField(
@@ -81,8 +87,14 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
           },
         ),
         CupertinoButton(
-          child: Text(dic['ok']),
-          onPressed: () => _onOk(_passCtrl.text.trim()),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _submitting ? CupertinoActivityIndicator() : Container(),
+              Text(dic['ok'])
+            ],
+          ),
+          onPressed: _submitting ? null : () => _onOk(_passCtrl.text.trim()),
         ),
       ],
     );

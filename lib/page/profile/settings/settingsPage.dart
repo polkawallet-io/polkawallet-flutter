@@ -21,7 +21,10 @@ class _Settings extends State<SettingsPage> {
   final SettingsStore store;
   final Function changeLang;
 
-  final _langOptions = [null, 'en', 'zh'];
+  final _langOptions = [
+    null,
+    'en',
+  ];
 
   int _selected = 0;
 
@@ -31,8 +34,6 @@ class _Settings extends State<SettingsPage> {
 
     String getLang(String code) {
       switch (code) {
-        case 'zh':
-          return '简体中文';
         case 'en':
           return 'English';
         default:
@@ -49,11 +50,9 @@ class _Settings extends State<SettingsPage> {
             child: CupertinoPicker(
               backgroundColor: Colors.white,
               itemExtent: 58,
-              scrollController: FixedExtentScrollController(
-                  initialItem: _langOptions.indexOf(store.localeCode)),
+              scrollController: FixedExtentScrollController(initialItem: _langOptions.indexOf(store.localeCode)),
               children: _langOptions.map((i) {
-                return Padding(
-                    padding: EdgeInsets.all(16), child: Text(getLang(i)));
+                return Padding(padding: EdgeInsets.all(16), child: Text(getLang(i)));
               }).toList(),
               onSelectedItemChanged: (v) {
                 setState(() {
@@ -86,26 +85,22 @@ class _Settings extends State<SettingsPage> {
               ListTile(
                 leading: Container(
                   width: 36,
-                  child: Image.asset(
-                      'assets/images/public/${store.endpoint.info}.png'),
+                  child: Image.asset('assets/images/public/${store.endpoint.info}.png'),
                 ),
                 title: Text(dic['setting.node']),
                 subtitle: Text(store.endpoint.text ?? ''),
                 trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                onTap: () =>
-                    Navigator.of(context).pushNamed(RemoteNodeListPage.route),
+                onTap: () => Navigator.of(context).pushNamed(RemoteNodeListPage.route),
               ),
               ListTile(
                 leading: Container(
                   width: 36,
-                  child: Image.asset(
-                      'assets/images/public/${store.customSS58Format['info']}.png'),
+                  child: Image.asset('assets/images/public/${store.customSS58Format['info']}.png'),
                 ),
                 title: Text(dic['setting.prefix']),
                 subtitle: Text(store.customSS58Format['text'] ?? ''),
                 trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                onTap: () =>
-                    Navigator.of(context).pushNamed(SS58PrefixListPage.route),
+                onTap: () => Navigator.of(context).pushNamed(SS58PrefixListPage.route),
               ),
               ListTile(
                 title: Text(dic['setting.lang']),

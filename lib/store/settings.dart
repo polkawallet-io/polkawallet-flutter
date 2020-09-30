@@ -22,6 +22,11 @@ abstract class _SettingsStore with Store {
   final String localStorageSS58Key = 'custom_ss58';
 
   final String cacheNetworkStateKey = 'network';
+  final String cacheNetworkConstKey = 'network_const';
+
+  String _getCacheKeyOfNetwork(String key) {
+    return '${endpoint.info}_$key';
+  }
 
   @observable
   bool loading = true;
@@ -62,10 +67,17 @@ abstract class _SettingsStore with Store {
   }
 
   @computed
+  List<AccountData> get contactListAll {
+    List<AccountData> ls = List<AccountData>.of(rootStore.account.accountList);
+    ls.addAll(contactList);
+    return ls;
+  }
+
+  @computed
   String get existentialDeposit {
     return Fmt.token(
         BigInt.parse(networkConst['balances']['existentialDeposit'].toString()),
-        decimals: networkState.tokenDecimals);
+        networkState.tokenDecimals);
   }
 
   @computed
@@ -73,7 +85,7 @@ abstract class _SettingsStore with Store {
     return Fmt.token(
         BigInt.parse(networkConst['transactionPayment']['transactionBaseFee']
             .toString()),
-        decimals: networkState.tokenDecimals);
+        networkState.tokenDecimals);
   }
 
   @computed
@@ -81,15 +93,15 @@ abstract class _SettingsStore with Store {
     return Fmt.token(
         BigInt.parse(networkConst['transactionPayment']['transactionByteFee']
             .toString()),
-        decimals: networkState.tokenDecimals,
+        networkState.tokenDecimals,
         length: networkState.tokenDecimals);
   }
 
   @action
   Future<void> init(String sysLocaleCode) async {
     await loadLocalCode();
+    await loadEndpoint(sysLocaleCode);
     await Future.wait([
-      loadEndpoint(sysLocaleCode),
       loadCustomSS58Format(),
       loadNetworkStateCache(),
       loadContacts(),
@@ -124,27 +136,54 @@ abstract class _SettingsStore with Store {
 
   //TODO: this doesn't work for Development network. Fields of rpc.system.properties() are empty
   @action
-  Future<void> setNetworkState(Map<String, dynamic> data) async {
-    rootStore.localStorage
-        .setObject('${cacheNetworkStateKey}_${endpoint.info}', data);
-
+  Future<void> setNetworkState(
+    Map<String, dynamic> data, {
+    bool needCache = true,
+  }) async {
     networkState = NetworkState.fromJson(data);
-  }
 
-  @action
-  Future<void> loadNetworkStateCache() async {
-    var data = await rootStore.localStorage
-        .getObject('${cacheNetworkStateKey}_${endpoint.info}');
-    if (data != null) {
-      networkState = NetworkState.fromJson(data);
-    } else {
-      networkState = NetworkState();
+    if (needCache) {
+      rootStore.localStorage.setObject(
+        _getCacheKeyOfNetwork(cacheNetworkStateKey),
+        data,
+      );
     }
   }
 
   @action
-  Future<void> setNetworkConst(Map<String, dynamic> data) async {
+  Future<void> loadNetworkStateCache() async {
+    final List data = await Future.wait([
+      rootStore.localStorage
+          .getObject(_getCacheKeyOfNetwork(cacheNetworkStateKey)),
+      rootStore.localStorage
+          .getObject(_getCacheKeyOfNetwork(cacheNetworkConstKey)),
+    ]);
+    if (data[0] != null) {
+      setNetworkState(Map<String, dynamic>.of(data[0]), needCache: false);
+    } else {
+      setNetworkState({}, needCache: false);
+    }
+
+    if (data[1] != null) {
+      setNetworkConst(Map<String, dynamic>.of(data[1]), needCache: false);
+    } else {
+      setNetworkConst({}, needCache: false);
+    }
+  }
+
+  @action
+  Future<void> setNetworkConst(
+    Map<String, dynamic> data, {
+    bool needCache = true,
+  }) async {
     networkConst = data;
+
+    if (needCache) {
+      rootStore.localStorage.setObject(
+        _getCacheKeyOfNetwork(cacheNetworkConstKey),
+        data,
+      );
+    }
   }
 
   @action
@@ -209,8 +248,14 @@ abstract class _SettingsStore with Store {
 
 @JsonSerializable()
 class NetworkState extends _NetworkState {
-  static NetworkState fromJson(Map<String, dynamic> json) =>
-      _$NetworkStateFromJson(json);
+  static NetworkState fromJson(Map<String, dynamic> json) {
+    NetworkState ns = _$NetworkStateFromJson(json);
+    // --dev chain doesn't specify token symbol -> will break things if not specified
+    if (ns.tokenSymbol.length < 1) {
+      ns.tokenSymbol = 'ERT';
+    }
+    return ns;
+  }
   static Map<String, dynamic> toJson(NetworkState net) =>
       _$NetworkStateToJson(net);
 }
@@ -220,7 +265,7 @@ abstract class _NetworkState {
   String endpoint = '';
   int ss58Format = 42;
   int tokenDecimals = 12;
-  String tokenSymbol = 'DOT';
+  String tokenSymbol = 'ERT';
 }
 
 @JsonSerializable()
@@ -232,6 +277,7 @@ class EndpointData extends _EndpointData {
 }
 
 abstract class _EndpointData {
+  String color = 'pink';
   String info = '';
   int ss58 = 42;
   String text = '';
