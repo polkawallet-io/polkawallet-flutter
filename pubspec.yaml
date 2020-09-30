@@ -100,7 +100,6 @@ flutter:
   assets:
     # js service
     - lib/js_service_encointer/dist/main.js
-    - lib/js_as_extension/dist/main.js
 
     # images
     ## images - settings

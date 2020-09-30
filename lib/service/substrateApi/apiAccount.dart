@@ -2,12 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/page/asExtension/walletExtensionSignPage.dart';
-import 'package:polka_wallet/store/account/types/accountData.dart';
-import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/account.dart';
+import 'package:polka_wallet/store/account/types/accountData.dart';
+import 'package:polka_wallet/store/app.dart';
 
 class ApiAccount {
   ApiAccount(this.apiRoot);
@@ -17,12 +16,10 @@ class ApiAccount {
 
   Future<void> initAccounts() async {
     if (store.account.accountList.length > 0) {
-      String accounts = jsonEncode(
-          store.account.accountList.map((i) => AccountData.toJson(i)).toList());
+      String accounts = jsonEncode(store.account.accountList.map((i) => AccountData.toJson(i)).toList());
 
       String ss58 = jsonEncode(network_ss58_map.values.toSet().toList());
-      Map keys =
-          await apiRoot.evalJavascript('account.initKeys($accounts, $ss58)');
+      Map keys = await apiRoot.evalJavascript('account.initKeys($accounts, $ss58)');
       store.account.setPubKeyAddressMap(Map<String, Map>.from(keys));
 
       // get accounts icons
@@ -30,8 +27,7 @@ class ApiAccount {
     }
 
     // and contacts icons
-    List<AccountData> contacts =
-        List<AccountData>.of(store.settings.contactList);
+    List<AccountData> contacts = List<AccountData>.of(store.settings.contactList);
     getAddressIcons(contacts.map((i) => i.address).toList());
     // set pubKeyAddressMap for observation accounts
     contacts.retainWhere((i) => i.observation);
@@ -64,8 +60,7 @@ class ApiAccount {
       allowRepeat: true,
     );
     if (res != null) {
-      store.account.setPubKeyAddressMap(Map<String, Map>.from(
-          {store.settings.endpoint.ss58.toString(): res}));
+      store.account.setPubKeyAddressMap(Map<String, Map>.from({store.settings.endpoint.ss58.toString(): res}));
     }
     return res;
   }
@@ -103,8 +98,7 @@ class ApiAccount {
 
   Future<void> fetchAccountsBonded(List<String> pubKeys) async {
     if (pubKeys.length > 0) {
-      List res = await apiRoot.evalJavascript(
-          'account.queryAccountsBonded(${jsonEncode(pubKeys)})');
+      List res = await apiRoot.evalJavascript('account.queryAccountsBonded(${jsonEncode(pubKeys)})');
       store.account.setAccountsBonded(res);
     }
   }
@@ -112,9 +106,7 @@ class ApiAccount {
   Future<Map> estimateTxFees(Map txInfo, List params, {String rawParam}) async {
     String param = rawParam != null ? rawParam : jsonEncode(params);
     print(txInfo);
-    Map res = await apiRoot.evalJavascript(
-        'account.txFeeEstimate(${jsonEncode(txInfo)}, $param)',
-        allowRepeat: true);
+    Map res = await apiRoot.evalJavascript('account.txFeeEstimate(${jsonEncode(txInfo)}, $param)', allowRepeat: true);
     return res;
   }
 
@@ -128,9 +120,7 @@ class ApiAccount {
     return c.future;
   }
 
-  Future<dynamic> sendTx(
-      Map txInfo, List params, String pageTile, String notificationTitle,
-      {String rawParam}) async {
+  Future<dynamic> sendTx(Map txInfo, List params, String pageTile, String notificationTitle, {String rawParam}) async {
     String param = rawParam != null ? rawParam : jsonEncode(params);
     String call = 'account.sendTx(${jsonEncode(txInfo)}, $param)';
 //    print(call);
@@ -159,11 +149,9 @@ class ApiAccount {
   }) async {
     String key = store.account.newAccount.key;
     String pass = store.account.newAccount.password;
-    String code =
-        'account.recover("$keyType", "$cryptoType", \'$key$derivePath\', "$pass")';
+    String code = 'account.recover("$keyType", "$cryptoType", \'$key$derivePath\', "$pass")';
     code = code.replaceAll(RegExp(r'\t|\n|\r'), '');
-    Map<String, dynamic> acc =
-        await apiRoot.evalJavascript(code, allowRepeat: true);
+    Map<String, dynamic> acc = await apiRoot.evalJavascript(code, allowRepeat: true);
     return acc;
   }
 
@@ -180,8 +168,7 @@ class ApiAccount {
     if (addresses == null || addresses.length == 0) {
       return [];
     }
-    addresses
-        .retainWhere((i) => !store.account.addressIndexMap.keys.contains(i));
+    addresses.retainWhere((i) => !store.account.addressIndexMap.keys.contains(i));
     if (addresses.length == 0) {
       return [];
     }
@@ -195,8 +182,7 @@ class ApiAccount {
   }
 
   Future<List> fetchAccountsIndex() async {
-    final addresses =
-        store.account.accountListAll.map((e) => e.address).toList();
+    final addresses = store.account.accountListAll.map((e) => e.address).toList();
     if (addresses == null || addresses.length == 0) {
       return [];
     }
@@ -214,28 +200,22 @@ class ApiAccount {
     if (keys.length == 0) {
       return [];
     }
-    List res = await apiRoot.evalJavascript(
-        'account.genPubKeyIcons(${jsonEncode(keys)})',
-        allowRepeat: true);
+    List res = await apiRoot.evalJavascript('account.genPubKeyIcons(${jsonEncode(keys)})', allowRepeat: true);
     store.account.setPubKeyIconsMap(res);
     return res;
   }
 
   Future<List> getAddressIcons(List addresses) async {
-    addresses
-        .retainWhere((i) => !store.account.addressIconsMap.keys.contains(i));
+    addresses.retainWhere((i) => !store.account.addressIconsMap.keys.contains(i));
     if (addresses.length == 0) {
       return [];
     }
-    List res = await apiRoot.evalJavascript(
-        'account.genIcons(${jsonEncode(addresses)})',
-        allowRepeat: true);
+    List res = await apiRoot.evalJavascript('account.genIcons(${jsonEncode(addresses)})', allowRepeat: true);
     store.account.setAddressIconsMap(res);
     return res;
   }
 
-  Future<String> checkDerivePath(
-      String seed, String path, String pairType) async {
+  Future<String> checkDerivePath(String seed, String path, String pairType) async {
     String res = await apiRoot.evalJavascript(
       'account.checkDerivePath("$seed", "$path", "$pairType")',
       allowRepeat: true,
@@ -245,8 +225,7 @@ class ApiAccount {
 
   Future<Map> queryRecoverable(String address) async {
 //    address = "J4sW13h2HNerfxTzPGpLT66B3HVvuU32S6upxwSeFJQnAzg";
-    Map res = await apiRoot
-        .evalJavascript('api.query.recovery.recoverable("$address")');
+    Map res = await apiRoot.evalJavascript('api.query.recovery.recoverable("$address")');
     if (res != null) {
       res['address'] = address;
     }
@@ -259,8 +238,7 @@ class ApiAccount {
   }
 
   Future<List> queryRecoverableList(List<String> addresses) async {
-    List queries =
-        addresses.map((e) => 'api.query.recovery.recoverable("$e")').toList();
+    List queries = addresses.map((e) => 'api.query.recovery.recoverable("$e")').toList();
     final List ls = await apiRoot.evalJavascript(
       'Promise.all([${queries.join(',')}])',
       allowRepeat: true,
@@ -277,11 +255,8 @@ class ApiAccount {
     return res;
   }
 
-  Future<List> queryActiveRecoveryAttempts(
-      String address, List<String> addressNew) async {
-    List queries = addressNew
-        .map((e) => 'api.query.recovery.activeRecoveries("$address", "$e")')
-        .toList();
+  Future<List> queryActiveRecoveryAttempts(String address, List<String> addressNew) async {
+    List queries = addressNew.map((e) => 'api.query.recovery.activeRecoveries("$address", "$e")').toList();
     final res = await apiRoot.evalJavascript(
       'Promise.all([${queries.join(',')}])',
       allowRepeat: true,
@@ -289,11 +264,8 @@ class ApiAccount {
     return res;
   }
 
-  Future<List> queryActiveRecoveries(
-      List<String> addresses, String addressNew) async {
-    List queries = addresses
-        .map((e) => 'api.query.recovery.activeRecoveries("$e", "$addressNew")')
-        .toList();
+  Future<List> queryActiveRecoveries(List<String> addresses, String addressNew) async {
+    List queries = addresses.map((e) => 'api.query.recovery.activeRecoveries("$e", "$addressNew")').toList();
     final res = await apiRoot.evalJavascript(
       'Promise.all([${queries.join(',')}])',
       allowRepeat: true,
@@ -302,8 +274,7 @@ class ApiAccount {
   }
 
   Future<List> queryRecoveryProxies(List<String> addresses) async {
-    List queries =
-        addresses.map((e) => 'api.query.recovery.proxy("$e")').toList();
+    List queries = addresses.map((e) => 'api.query.recovery.proxy("$e")').toList();
     final res = await apiRoot.evalJavascript(
       'Promise.all([${queries.join(',')}])',
       allowRepeat: true,
@@ -351,17 +322,6 @@ class ApiAccount {
         '$pageTile - ${txInfo['module']}.${txInfo['call']}',
       );
     }
-    return res;
-  }
-
-  Future<Map> signAsExtension(String password, Map args) async {
-    final String call = args['msgType'] == WalletExtensionSignPage.signTypeBytes
-        ? 'signBytesAsExtension'
-        : 'signTxAsExtension';
-    final res = await apiRoot.evalJavascript(
-      'account.$call("$password", ${jsonEncode(args['request'])})',
-      allowRepeat: true,
-    );
     return res;
   }
 }
