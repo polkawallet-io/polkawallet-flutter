@@ -42,16 +42,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     // refresh balance
     store.assets.clearTxs();
     store.assets.loadAccountCache();
-
-    if (store.settings.endpointIsEncointer) {
-      store.encointer.loadCache();
-    } else {
-      // refresh user's staking info if network is kusama or polkadot
-      if (store.staking != null) {
-        store.staking.clearState();
-      }
-      store.staking.loadAccountCache();
-    }
+    store.encointer.loadCache();
   }
 
   Future<void> _reloadNetwork() async {
@@ -78,16 +69,8 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     await store.settings.loadNetworkStateCache();
 
     store.assets.loadCache();
+    store.encointer.loadCache();
 
-    if (store.settings.endpointIsEncointer) {
-      // Fixme: We may need to clear cache, if we change in between different encointer networks.
-      store.encointer.loadCache();
-    } else {
-      if (store.staking != null) {
-        store.staking.clearState();
-      }
-      store.staking.loadCache();
-    }
     webApi.launchWebview();
     changeTheme();
     if (mounted) {

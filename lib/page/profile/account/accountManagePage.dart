@@ -30,8 +30,6 @@ class AccountManagePage extends StatelessWidget {
               // refresh balance
               store.assets.loadAccountCache();
               webApi.assets.fetchBalance();
-              // refresh user's staking info
-              store.staking.loadAccountCache();
             });
             Navigator.of(context).pop();
           },
@@ -67,8 +65,7 @@ class AccountManagePage extends StatelessWidget {
                           pubKey: store.account.currentAccount.pubKey,
                         ),
                         title: Text(store.account.currentAccount.name ?? 'name',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.white)),
+                            style: TextStyle(fontSize: 16, color: Colors.white)),
                         subtitle: Text(
                           Fmt.address(store.account.currentAddress) ?? '',
                           style: TextStyle(fontSize: 16, color: Colors.white70),
@@ -79,20 +76,17 @@ class AccountManagePage extends StatelessWidget {
                     ListTile(
                       title: Text(dic['name.change']),
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                      onTap: () =>
-                          Navigator.pushNamed(context, ChangeNamePage.route),
+                      onTap: () => Navigator.pushNamed(context, ChangeNamePage.route),
                     ),
                     ListTile(
                       title: Text(dic['pass.change']),
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                      onTap: () => Navigator.pushNamed(
-                          context, ChangePasswordPage.route),
+                      onTap: () => Navigator.pushNamed(context, ChangePasswordPage.route),
                     ),
                     ListTile(
                       title: Text(dic['export']),
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                      onTap: () => Navigator.of(context)
-                          .pushNamed(ExportAccountPage.route),
+                      onTap: () => Navigator.of(context).pushNamed(ExportAccountPage.route),
                     ),
                   ],
                 ),

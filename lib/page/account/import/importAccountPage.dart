@@ -64,8 +64,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
               final Map<String, String> accDic = I18n.of(context).account;
               return CupertinoAlertDialog(
                 title: Container(),
-                content:
-                    Text('${accDic['import.invalid']} ${accDic[_keyType]}'),
+                content: Text('${accDic['import.invalid']} ${accDic[_keyType]}'),
                 actions: <Widget>[
                   CupertinoButton(
                     child: Text(I18n.of(context).home['ok']),
@@ -99,8 +98,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
         final Map<String, String> accDic = I18n.of(context).account;
         return CupertinoAlertDialog(
           title: Container(),
-          content:
-              Text('${accDic['import.invalid']} ${accDic['create.password']}'),
+          content: Text('${accDic['import.invalid']} ${accDic['create.password']}'),
           actions: <Widget>[
             CupertinoButton(
               child: Text(I18n.of(context).home['cancel']),
@@ -113,11 +111,9 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
   }
 
   Future<void> _checkAccountDuplicate(Map<String, dynamic> acc) async {
-    int index =
-        store.account.accountList.indexWhere((i) => i.pubKey == acc['pubKey']);
+    int index = store.account.accountList.indexWhere((i) => i.pubKey == acc['pubKey']);
     if (index > -1) {
-      Map<String, String> pubKeyMap =
-          store.account.pubKeyAddressMap[store.settings.endpoint.ss58];
+      Map<String, String> pubKeyMap = store.account.pubKeyAddressMap[store.settings.endpoint.ss58];
       String address = pubKeyMap[acc['pubKey']];
       if (address != null) {
         showCupertinoDialog(
@@ -153,7 +149,6 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     webApi.account.encodeAddress([acc['pubKey']]);
 
     store.assets.loadAccountCache();
-    store.staking.loadAccountCache();
 
     // fetch info for the imported account
     String pubKey = acc['pubKey'];

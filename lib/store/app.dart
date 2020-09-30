@@ -1,9 +1,8 @@
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/store/encointer/encointer.dart';
-import 'package:polka_wallet/store/settings.dart';
-import 'package:polka_wallet/store/staking/staking.dart';
 import 'package:polka_wallet/store/account/account.dart';
 import 'package:polka_wallet/store/assets/assets.dart';
+import 'package:polka_wallet/store/encointer/encointer.dart';
+import 'package:polka_wallet/store/settings.dart';
 import 'package:polka_wallet/utils/localStorage.dart';
 
 part 'app.g.dart';
@@ -21,9 +20,6 @@ abstract class _AppStore with Store {
 
   @observable
   AssetsStore assets;
-
-  @observable
-  StakingStore staking;
 
   @observable
   EncointerStore encointer;

@@ -54,21 +54,6 @@ mixin _$AppStore on _AppStore, Store {
     });
   }
 
-  final _$stakingAtom = Atom(name: '_AppStore.staking');
-
-  @override
-  StakingStore get staking {
-    _$stakingAtom.reportRead();
-    return super.staking;
-  }
-
-  @override
-  set staking(StakingStore value) {
-    _$stakingAtom.reportWrite(value, super.staking, () {
-      super.staking = value;
-    });
-  }
-
   final _$encointerAtom = Atom(name: '_AppStore.encointer');
 
   @override
@@ -112,7 +97,6 @@ mixin _$AppStore on _AppStore, Store {
 settings: ${settings},
 account: ${account},
 assets: ${assets},
-staking: ${staking},
 encointer: ${encointer},
 isReady: ${isReady}
     ''';

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -16,12 +15,10 @@ class DrawerMenu extends StatelessWidget {
 
   List<Widget> _buildAccList(BuildContext context) {
     return store.account.optionalAccounts.map((i) {
-      String address = store
-          .account.pubKeyAddressMap[store.settings.endpoint.info][i.pubKey];
+      String address = store.account.pubKeyAddressMap[store.settings.endpoint.info][i.pubKey];
       return ListTile(
         leading: AddressIcon(i.address, pubKey: i.pubKey, size: 36),
-        title: Text(i.name ?? 'name',
-            style: TextStyle(fontSize: 16, color: Colors.white)),
+        title: Text(i.name ?? 'name', style: TextStyle(fontSize: 16, color: Colors.white)),
         subtitle: Text(
           Fmt.address(address ?? i.address),
           style: TextStyle(fontSize: 16, color: Colors.white70),
@@ -32,8 +29,6 @@ class DrawerMenu extends StatelessWidget {
           // refresh balance
           store.assets.loadAccountCache();
           globalBalanceRefreshKey.currentState.show();
-          // refresh user's staking info
-          store.staking.loadAccountCache();
         },
       );
     }).toList();
@@ -66,8 +61,7 @@ class DrawerMenu extends StatelessWidget {
             Container(
               color: Colors.indigo,
               child: ListTile(
-                leading: AddressIcon('',
-                    pubKey: store.account.currentAccount.pubKey, size: 36),
+                leading: AddressIcon('', pubKey: store.account.currentAccount.pubKey, size: 36),
                 title: Text(store.account.currentAccount.name ?? 'name',
                     style: TextStyle(fontSize: 16, color: Colors.white)),
                 subtitle: Text(
@@ -86,10 +80,8 @@ class DrawerMenu extends StatelessWidget {
                 height: 40,
                 child: Image.asset('assets/images/assets/Menu_scan.png'),
               ),
-              title: Text(I18n.of(context).home['scan'],
-                  style: TextStyle(fontSize: 16, color: Colors.white)),
-              onTap: () =>
-                  Navigator.pushNamed(context, ScanPage.route, arguments: 'tx'),
+              title: Text(I18n.of(context).home['scan'], style: TextStyle(fontSize: 16, color: Colors.white)),
+              onTap: () => Navigator.pushNamed(context, ScanPage.route, arguments: 'tx'),
             ),
             ListTile(
               leading: Container(
@@ -97,8 +89,7 @@ class DrawerMenu extends StatelessWidget {
                 height: 40,
                 child: Image.asset('assets/images/assets/Menu_wallet.png'),
               ),
-              title: Text(I18n.of(context).home['create'],
-                  style: TextStyle(fontSize: 16, color: Colors.white)),
+              title: Text(I18n.of(context).home['create'], style: TextStyle(fontSize: 16, color: Colors.white)),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, CreateAccountEntryPage.route);

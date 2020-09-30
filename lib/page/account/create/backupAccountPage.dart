@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/accountAdvanceOption.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -36,8 +36,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
       _submitting = true;
     });
     var acc = await webApi.account.importAccount(
-      cryptoType:
-          _advanceOptions.type ?? AccountAdvanceOptionParams.encryptTypeSR,
+      cryptoType: _advanceOptions.type ?? AccountAdvanceOptionParams.encryptTypeSR,
       derivePath: _advanceOptions.path ?? '',
     );
 
@@ -55,7 +54,6 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
     webApi.account.encodeAddress([acc['pubKey']]);
 
     store.assets.loadAccountCache();
-    store.staking.loadAccountCache();
 
     // fetch info for the imported account
     String pubKey = acc['pubKey'];
@@ -199,8 +197,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
                         ),
                         onTap: () {
                           setState(() {
-                            _wordsLeft =
-                                store.account.newAccount.key.split(' ');
+                            _wordsLeft = store.account.newAccount.key.split(' ');
                             _wordsSelected = [];
                           });
                         },
@@ -230,10 +227,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
               child: RoundedButton(
                 submitting: _submitting,
                 text: I18n.of(context).home['next'],
-                onPressed:
-                    _wordsSelected.join(' ') == store.account.newAccount.key
-                        ? () => _importAccount()
-                        : null,
+                onPressed: _wordsSelected.join(' ') == store.account.newAccount.key ? () => _importAccount() : null,
               ),
             ),
           ],
@@ -252,11 +246,7 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
       if (_wordsLeft.length > r * 3) {
         rows.add(Row(
           children: _wordsLeft
-              .getRange(
-                  r * 3,
-                  _wordsLeft.length > (r + 1) * 3
-                      ? (r + 1) * 3
-                      : _wordsLeft.length)
+              .getRange(r * 3, _wordsLeft.length > (r + 1) * 3 ? (r + 1) * 3 : _wordsLeft.length)
               .map(
                 (i) => Container(
                   padding: EdgeInsets.only(left: 4, right: 4),
