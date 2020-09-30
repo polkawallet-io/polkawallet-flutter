@@ -78,9 +78,6 @@ class _WalletAppState extends State<WalletApp> {
   void _changeLang(BuildContext context, String code) {
     Locale res;
     switch (code) {
-      case 'zh':
-        res = const Locale('zh', '');
-        break;
       case 'en':
         res = const Locale('en', '');
         break;
@@ -146,7 +143,6 @@ class _WalletAppState extends State<WalletApp> {
       ],
       supportedLocales: [
         const Locale('en', ''),
-        const Locale('zh', ''),
       ],
       initialRoute: EncointerHomePage.route,
       theme: _theme,
