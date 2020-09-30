@@ -5,9 +5,6 @@ import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/page/profile/aboutPage.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
-import 'package:polka_wallet/page/profile/recovery/recoveryProofPage.dart';
-import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
-import 'package:polka_wallet/page/profile/recovery/recoveryStatePage.dart';
 import 'package:polka_wallet/page/profile/settings/settingsPage.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -18,41 +15,6 @@ class Profile extends StatelessWidget {
   Profile(this.store);
 
   final AppStore store;
-
-  void _showRecoveryMenu(BuildContext context) {
-    final Map<String, String> dic = I18n.of(context).profile;
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        actions: [
-          CupertinoActionSheetAction(
-            child: Text(dic['recovery.make']),
-            onPressed: () {
-              Navigator.of(context).popAndPushNamed(RecoverySettingPage.route);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text(dic['recovery.init']),
-            onPressed: () {
-              Navigator.of(context).popAndPushNamed(RecoveryStatePage.route);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text(dic['recovery.help']),
-            onPressed: () {
-              Navigator.of(context).popAndPushNamed(RecoveryProofPage.route);
-            },
-          )
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          child: Text(I18n.of(context).home['cancel']),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,17 +82,6 @@ class Profile extends StatelessWidget {
               trailing: Icon(Icons.arrow_forward_ios, size: 18),
               onTap: () => Navigator.of(context).pushNamed(SettingsPage.route),
             ),
-            // Todo: This used to be displayed if isKusama was true. What kind of recovery mechanism is that, can
-            // we use that too?
-            // ListTile(
-            //   leading: Container(
-            //     width: 32,
-            //     child: Icon(Icons.security, color: grey, size: 22),
-            //   ),
-            //   title: Text(dic['recovery']),
-            //   trailing: Icon(Icons.arrow_forward_ios, size: 18),
-            //   onTap: store.settings.loading ? null : () => _showRecoveryMenu(context),
-            // ),
             ListTile(
               leading: Container(
                 width: 32,

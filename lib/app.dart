@@ -32,13 +32,6 @@ import 'package:polka_wallet/page/profile/account/exportResultPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactPage.dart';
 import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
-import 'package:polka_wallet/page/profile/recovery/createRecoveryPage.dart';
-import 'package:polka_wallet/page/profile/recovery/friendListPage.dart';
-import 'package:polka_wallet/page/profile/recovery/initiateRecoveryPage.dart';
-import 'package:polka_wallet/page/profile/recovery/recoveryProofPage.dart';
-import 'package:polka_wallet/page/profile/recovery/recoverySettingPage.dart';
-import 'package:polka_wallet/page/profile/recovery/recoveryStatePage.dart';
-import 'package:polka_wallet/page/profile/recovery/vouchRecoveryPage.dart';
 import 'package:polka_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:polka_wallet/page/profile/settings/settingsPage.dart';
 import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
@@ -191,14 +184,6 @@ class _WalletAppState extends State<WalletApp> {
         RemoteNodeListPage.route: (_) => RemoteNodeListPage(_appStore.settings),
         SS58PrefixListPage.route: (_) => SS58PrefixListPage(_appStore.settings),
         AboutPage.route: (_) => AboutPage(),
-        RecoverySettingPage.route: (_) => RecoverySettingPage(_appStore),
-        RecoveryStatePage.route: (_) => RecoveryStatePage(_appStore),
-        RecoveryProofPage.route: (_) => RecoveryProofPage(_appStore),
-        CreateRecoveryPage.route: (_) => CreateRecoveryPage(_appStore),
-        FriendListPage.route: (_) => FriendListPage(_appStore),
-        InitiateRecoveryPage.route: (_) => InitiateRecoveryPage(_appStore),
-        VouchRecoveryPage.route: (_) => VouchRecoveryPage(_appStore),
-
         // encointer
         RegisteringPage.route: (_) => RegisteringPage(_appStore),
         RegisterParticipantPanel.route: (_) => RegisterParticipantPanel(_appStore),
