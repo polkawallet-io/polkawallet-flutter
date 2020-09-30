@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/service/substrateApi/encointer/apiEncointer.dart';
 import 'package:polka_wallet/service/subscan.dart';
 import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
 import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
-import 'package:polka_wallet/service/substrateApi/apiStaking.dart';
-import 'package:polka_wallet/service/walletApi.dart';
+import 'package:polka_wallet/service/substrateApi/encointer/apiEncointer.dart';
 import 'package:polka_wallet/service/substrateApi/types/genExternalLinksParams.dart';
+import 'package:polka_wallet/service/walletApi.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 
@@ -52,9 +52,7 @@ class Api {
 
     launchWebview();
 
-    DefaultAssetBundle.of(context)
-        .loadString('lib/js_as_extension/dist/main.js')
-        .then((String js) {
+    DefaultAssetBundle.of(context).loadString('lib/js_as_extension/dist/main.js').then((String js) {
       print('asExtensionJSCode loaded');
       asExtensionJSCode = js;
     });
@@ -64,8 +62,7 @@ class Api {
     // check js code update
     final network = store.settings.endpoint.info;
     final jsVersion = await WalletApi.fetchPolkadotJSVersion(network);
-    final bool needUpdate =
-        await UI.checkJSCodeUpdate(context, jsVersion, network);
+    final bool needUpdate = await UI.checkJSCodeUpdate(context, jsVersion, network);
     if (needUpdate) {
       await UI.updateJSCode(context, jsStorage, network, jsVersion);
     }
@@ -99,19 +96,10 @@ class Api {
 
     _web.onStateChanged.listen((viewState) async {
       if (viewState.type == WebViewState.finishLoad) {
-        String network = 'kusama';
-
-        if (store.settings.endpoint.info.contains('nctr-gsl') ||
-            store.settings.endpoint.info.contains('nctr-gsl-dev') ||
-            store.settings.endpoint.info.contains('nctr-cln')) {
-          network = 'encointer';
-        }
-
+        String network = 'encointer';
         print('webview loaded for network $network');
 
-        DefaultAssetBundle.of(context)
-            .loadString('lib/js_service_$network/dist/main.js')
-            .then((String js) {
+        DefaultAssetBundle.of(context).loadString('lib/js_service_$network/dist/main.js').then((String js) {
           print('js file loaded');
           // inject js file to webview
           _web.evalJavascript(js);
@@ -214,11 +202,9 @@ class Api {
   }
 
   Future<void> connectNodeAll() async {
-    List<String> nodes =
-        store.settings.endpointList.map((e) => e.value).toList();
+    List<String> nodes = store.settings.endpointList.map((e) => e.value).toList();
     // do connect
-    String res =
-        await evalJavascript('settings.connectAll(${jsonEncode(nodes)})');
+    String res = await evalJavascript('settings.connectAll(${jsonEncode(nodes)})');
     if (res == null) {
       print('connect failed');
       store.settings.setNetworkName(null);
@@ -242,7 +228,7 @@ class Api {
     List<dynamic> info = await Future.wait([
       evalJavascript('settings.getNetworkConst()'),
       evalJavascript('api.rpc.system.properties()'),
-      evalJavascript('api.rpc.system.chain()'),  // "Development" or "Encointer Testnet Gesell" or whatever
+      evalJavascript('api.rpc.system.chain()'), // "Development" or "Encointer Testnet Gesell" or whatever
     ]);
     store.settings.setNetworkConst(info[0]);
     store.settings.setNetworkState(info[1]);
@@ -250,14 +236,6 @@ class Api {
 
     // fetch account balance
     if (store.account.accountList.length > 0) {
-      bool isEncointer = store.settings.endpoint.info ==
-          networkEndpointEncointerGesell.info ||
-          store.settings.endpoint.info ==
-              networkEndpointEncointerGesellDev.info ||
-          store.settings.endpoint.info ==
-              networkEndpointEncointerCantillon.info;
-
-
       await assets.fetchBalance();
     }
   }
@@ -278,10 +256,7 @@ class Api {
 
   Future<String> subscribeBestNumber(Function callback) async {
     final String channel = _getEvalJavascriptUID().toString();
-    subscribeMessage(
-        'settings.subscribeMessage("chain", "bestNumber", [], "$channel")',
-        channel,
-        callback);
+    subscribeMessage('settings.subscribeMessage("chain", "bestNumber", [], "$channel")', channel, callback);
     return channel;
   }
 

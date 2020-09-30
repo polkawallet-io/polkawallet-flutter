@@ -11,8 +11,6 @@ import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
-import 'package:polka_wallet/page/assets/claim/attestPage.dart';
-import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -60,23 +58,6 @@ class _AssetsState extends State<Assets> {
     final List res = await WalletApi.getAnnouncements();
     store.assets.setAnnouncements(res);
     return res;
-  }
-
-  Future<String> _checkPreclaim() async {
-    setState(() {
-      _preclaimChecking = true;
-    });
-    String address = store.account.currentAddress;
-    String ethAddress = await webApi.evalJavascript('api.query.claims.preclaims("$address")');
-    setState(() {
-      _preclaimChecking = false;
-    });
-    if (ethAddress == null) {
-      Navigator.of(context).pushNamed(ClaimPage.route, arguments: '');
-    } else {
-      Navigator.of(context).pushNamed(AttestPage.route, arguments: ethAddress);
-    }
-    return ethAddress;
   }
 
   Future<void> _handleScan() async {

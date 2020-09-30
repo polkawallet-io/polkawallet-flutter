@@ -18,13 +18,10 @@ import 'package:polka_wallet/page/account/import/importAccountPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
-import 'package:polka_wallet/page/assets/claim/attestPage.dart';
-import 'package:polka_wallet/page/assets/claim/claimPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
-import 'package:polka_wallet/page/homePage.dart';
 import 'package:polka_wallet/page/networkSelectPage.dart';
 import 'package:polka_wallet/page/profile/aboutPage.dart';
 import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
@@ -151,22 +148,18 @@ class _WalletAppState extends State<WalletApp> {
         const Locale('en', ''),
         const Locale('zh', ''),
       ],
-      initialRoute: HomePage.route,
+      initialRoute: EncointerHomePage.route,
       theme: _theme,
 //      darkTheme: darkTheme,
       routes: {
-        HomePage.route: (context) => Observer(
+        EncointerHomePage.route: (context) => Observer(
               builder: (_) {
-                bool isEncointer =
-                    _appStore != null && _appStore.settings.endpoint != null && _appStore.settings.endpointIsEncointer;
                 return WillPopScopWrapper(
                   child: FutureBuilder<int>(
                     future: _initStore(context),
                     builder: (_, AsyncSnapshot<int> snapshot) {
                       if (snapshot.hasData) {
-                        return snapshot.data > 0
-                            ? isEncointer ? EncointerHomePage(_appStore) : HomePage(_appStore)
-                            : CreateAccountEntryPage();
+                        return snapshot.data > 0 ? EncointerHomePage(_appStore) : CreateAccountEntryPage();
                       } else {
                         return Container();
                       }
@@ -189,8 +182,6 @@ class _WalletAppState extends State<WalletApp> {
         ReceivePage.route: (_) => ReceivePage(_appStore),
         TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
         CurrencySelectPage.route: (_) => CurrencySelectPage(),
-        ClaimPage.route: (_) => ClaimPage(_appStore),
-        AttestPage.route: (_) => AttestPage(_appStore),
         // profile
         AccountManagePage.route: (_) => AccountManagePage(_appStore),
         ContactsPage.route: (_) => ContactsPage(_appStore),

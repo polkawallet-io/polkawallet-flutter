@@ -4,7 +4,6 @@ import 'package:polka_wallet/page/assets/index.dart';
 import 'package:polka_wallet/page/profile/index.dart';
 import 'package:polka_wallet/service/notification.dart';
 import 'package:polka_wallet/store/app.dart';
-
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class EncointerHomePage extends StatefulWidget {
@@ -43,11 +42,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
                   : 'assets/images/public/${i}_dark.png'),
               title: Text(
                 tabs[i.toLowerCase()] ?? 'Cermonies',
-                style: TextStyle(
-                    fontSize: 14,
-                    color: _tabList[activeItem] == i
-                        ? Colors.indigo
-                        : Colors.grey),
+                style: TextStyle(fontSize: 14, color: _tabList[activeItem] == i ? Colors.indigo : Colors.grey),
               ),
             ))
         .toList();
@@ -59,8 +54,6 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
         return Assets(store);
       case 1:
         return EncointerEntry(store);
-//      case 2:
-//        return Governance(store);
       default:
         return Profile(store);
     }
@@ -98,8 +91,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
                 actions: <Widget>[
                   IconButton(
                     icon: Icon(Icons.menu),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed('/network'),
+                    onPressed: () => Navigator.of(context).pushNamed('/network'),
                   ),
                 ],
               ),
@@ -122,8 +114,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 alignment: Alignment.topLeft,
-                image: AssetImage(
-                    "assets/images/${i == 1 ? 'staking' : 'assets'}/top_bg_indigo.png"),
+                image: AssetImage("assets/images/${i == 1 ? 'staking' : 'assets'}/top_bg_indigo.png"),
                 fit: BoxFit.contain,
               ),
             ),
