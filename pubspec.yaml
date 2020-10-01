@@ -21,17 +21,14 @@ dependencies:
   # intl - format numbers
   intl: ^0.16.0
   json_annotation: ^3.0.1
-  # state management with mobx & provider
+  # state management with mobx
   mobx: ^1.2.0
   flutter_mobx: ^1.1.0
-  mobx_codegen: ^1.1.0
-  provider: ^3.1.0
   shared_preferences: ^0.5.6
   get_storage: ^1.2.1
   flutter_aes_ecb_pkcs5: ^0.1.1
   convert: ^2.1.1
   http: ^0.12.0
-  webview_flutter: ^0.3.22+1
   flutter_webview_plugin: ^0.3.11
   rxdart: ^0.24.0
   flutter_local_notifications: ^1.4.2
@@ -39,12 +36,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_map: ^0.9.0
   ota_update: ^2.3.0
   update_app: ^0.1.5
-  flutter_downloader: ^1.4.4
-  path_provider:
-  device_info: ^0.4.2
   base58check: ^1.0.1
 
   # The following adds the Cupertino Icons font to your application.
@@ -60,23 +53,20 @@ dependencies:
       url: https://github.com/polkawallet-io/flutter_qr_reader.git
       ref: master
   permission_handler: ^4.2.0
-  # PackageInfo
-  package_info: ^0.4.0
-  # charts
   charts_flutter: ^0.8.1
-  # svg renderer
   flutter_svg: ^0.18.0
-  # open link in browser
   url_launcher: ^5.4.2
-  # GraphQL
-  graphql_flutter: ^3.1.0
   dropdown_search: ^0.4.4
 
 dev_dependencies:
-#  flutter_launcher_icons: ^0.7.5
   build_runner: ^1.7.4
   json_serializable: ^3.0.0
+  mobx_codegen: ^1.1.0
   mockito: ^4.1.1
+  # Check unused dependencies. Note: Some packages are not imported by any dart files but are used
+  # for their executables. If that is the case, they can be white-listed by using the --ignore option.
+  # mobx_codegen, json_seriablizable belong to these.
+  dependency_validator: any
   flutter_test:
     sdk: flutter
 
