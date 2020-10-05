@@ -251,7 +251,7 @@ class NetworkState extends _NetworkState {
   static NetworkState fromJson(Map<String, dynamic> json) {
     NetworkState ns = _$NetworkStateFromJson(json);
     // --dev chain doesn't specify token symbol -> will break things if not specified
-    if (ns.tokenSymbol.length < 1) {
+    if (ns.tokenSymbol == null || (ns.tokenSymbol.length < 1)) {
       ns.tokenSymbol = 'ERT';
     }
     return ns;
