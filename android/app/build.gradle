@@ -84,7 +84,7 @@ android {
         fdroid {
             dimension "deploy"
             signingConfig null
-            versionNameSuffix "-fdroid-release"
+            versionNameSuffix ""
         }
     }
 }
