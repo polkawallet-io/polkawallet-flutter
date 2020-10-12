@@ -8,7 +8,7 @@ before_script:
 - brew link usbmuxd
 - brew install ideviceinstaller
 - brew install ios-deploy
-- git clone https://github.com/flutter/flutter.git -t 1.20.1 --depth 1
+- git clone https://github.com/flutter/flutter.git -b beta --depth 1
 script:
 - flutter/bin/flutter build ios --debug --no-codesign
 cache:
