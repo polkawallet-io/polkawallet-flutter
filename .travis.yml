@@ -1,26 +1,32 @@
-language: node_js
-node_js:
-  - 12
-os:
-  - linux
-sudo: false
-addons:
-  apt:
-    # Flutter depends on /usr/lib/x86_64-linux-gnu/libstdc++.so.6 version GLIBCXX_3.4.18
-    sources:
-      - ubuntu-toolchain-r-test # if we don't specify this, the libstdc++6 we get is the wrong version
-    packages:
-      - libstdc++6
-      - fonts-droid-fallback
+os: osx
+language: generic
 before_script:
-  - git clone https://github.com/flutter/flutter.git -b stable
-  - ./flutter/bin/flutter doctor
-  - cd ./lib/js_service_kusama && npm install && npm run build && cd ../..
-  - cd ./lib/js_service_acala && npm install && npm run build && cd ../..
-  - cd ./lib/js_service_laminar && npm install && npm run build && cd ../..
-  - cd ./lib/js_as_extension && npm install && npm run build && cd ../..
+- brew update
+- brew install --HEAD usbmuxd
+- brew unlink usbmuxd
+- brew link usbmuxd
+- brew install --HEAD libimobiledevice
+- brew install ideviceinstaller
+- brew install ios-deploy
+- git clone https://github.com/flutter/flutter.git -b beta --depth 1
 script:
-  - ./flutter/bin/flutter test
+- flutter/bin/flutter build ios --debug --no-codesign
 cache:
   directories:
-    - $HOME/.pub-cache
+  - "$HOME/.pub-cache"
+before_deploy:
+- pushd build/ios/iphoneos
+- mkdir Payload
+- cd Payload
+- ln -s ../Runner.app
+- cd ..
+- zip -r app.ipa Payload
+- popd
+deploy:
+  provider: releases
+  api_key:
+    secure: Iz2UqvsL8efZNLRZvLnQj8TwZNq0KYY5lrWhsZBboOORQ4y+tjtTiHo5OSHrJh2YsDZ+FUWfx1MQLlR5KjDd1fs14gEIVvkGTfurmiys3QSWXcn7VWphJlWDXanOCZxArITXV35iVrrNSCdnuFKzWgkfsXzFHKM8tEUHU3Vz2Po2VEM20VfjkBAWxBKAPjvVDQ4SrDpDCcW4hbUhZ932AixS1qaHs+aDn+no/HlkjwAF/Fj9GrlK9U/Mfdaym/ZzChCWluOWiHvN1G9PkG/MvlrJzEp5/zFIaxUwzNLynbDgPDd/8mRBq02RIW1KS3KoNN8kK2xyHI+wdl5BLY5OQkMZ56vJaApltIASa7LrYMSktQSLPaJhcvf78thlh3vN1BpfDPr8EEfcoDA8guV9ZrJqNZO+GCy/i1Fh/5xkIkcZVvy3C1KoKvdU5J2AE9+hqz53Rkx55vWD2ipWiv3+cd9APO+OtCuZiVonGPDqLLyJoRdPQVw7vsVivxL2iTMOFLIwyBZViQyibunZFsxfKs00PwimHYcSbFwkszWttxbMnqj32yNbG2Wu5rIkwvQSSvpxXWC2orDj867IX7VOYystYn9hb46dLkZc18nRPXVlM8/+CFMRm58+QXP/LeFvbS9MdncQ9H278TZr/9i4cji8k9zYenNHeh7Wvu2DpIM=
+  file: build/ios/iphoneos/app.ipa
+  on:
+    repo: encointer/encointer-wallet-flutter
+  skip_cleanup: 'true'
