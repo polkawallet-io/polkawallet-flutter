@@ -145,6 +145,7 @@ class UI {
   static Future<bool> checkJSCodeUpdate(
     BuildContext context,
     int jsVersion,
+    jsVersionMin,
     String network,
   ) async {
     if (jsVersion != null) {
@@ -165,7 +166,9 @@ class UI {
                   child: Text(dic['cancel']),
                   onPressed: () {
                     Navigator.of(context).pop(false);
-                    exit(0);
+                    if (currentVersion < jsVersionMin) {
+                      exit(0);
+                    }
                   },
                 ),
                 CupertinoButton(

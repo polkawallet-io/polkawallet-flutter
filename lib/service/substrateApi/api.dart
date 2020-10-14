@@ -73,11 +73,13 @@ class Api {
   Future<void> _checkJSCodeUpdate() async {
     // check js code update
     final network = store.settings.endpoint.info;
-    final jsVersion = await WalletApi.fetchPolkadotJSVersion(network);
+    final jsVersions = await WalletApi.fetchPolkadotJSVersion();
+    final version = jsVersions[network];
+    final versionMin = jsVersions['$network-min'];
     final bool needUpdate =
-        await UI.checkJSCodeUpdate(context, jsVersion, network);
+        await UI.checkJSCodeUpdate(context, version, versionMin, network);
     if (needUpdate) {
-      await UI.updateJSCode(context, jsStorage, network, jsVersion);
+      await UI.updateJSCode(context, jsStorage, network, version);
     }
   }
 

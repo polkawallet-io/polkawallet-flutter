@@ -38,13 +38,13 @@ class WalletApi {
     }
   }
 
-  static Future<int> fetchPolkadotJSVersion(String networkName) async {
+  static Future<Map> fetchPolkadotJSVersion() async {
     try {
       Response res = await get('$_endpoint/jsCodeVersions.json');
       if (res == null) {
         return null;
       } else {
-        return Map.of(jsonDecode(res.body))[networkName];
+        return Map.of(jsonDecode(res.body));
       }
     } catch (err) {
       print(err);
