@@ -74,6 +74,8 @@ class Api {
     // check js code update
     final network = store.settings.endpoint.info;
     final jsVersions = await WalletApi.fetchPolkadotJSVersion();
+    if (jsVersions == null) return;
+
     final version = jsVersions[network];
     final versionMin = jsVersions['$network-min'];
     final bool needUpdate =

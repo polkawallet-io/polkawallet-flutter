@@ -70,12 +70,15 @@ class WalletApi {
     GetStorage jsStorage,
     String networkName,
   ) {
-    String version = jsStorage.read('$_jsCodeStorageVersionKey$networkName');
+    final int appJSVersion = js_code_version_map[networkName];
+    final String version =
+        jsStorage.read('$_jsCodeStorageVersionKey$networkName');
     if (version != null) {
-      return int.parse(version);
+      final updatedVersion = int.parse(version);
+      return updatedVersion > appJSVersion ? updatedVersion : appJSVersion;
     }
     // default version
-    return js_code_version_map[networkName];
+    return appJSVersion;
   }
 
   static String getPolkadotJSCode(

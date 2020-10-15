@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/service/walletApi.dart';
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class AboutPage extends StatefulWidget {
+  AboutPage(this.store);
+
+  final AppStore store;
+
   static final String route = '/profile/about';
 
   @override
@@ -31,6 +37,10 @@ class _AboutPage extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).profile;
+    final currentJSVersion = WalletApi.getPolkadotJSVersion(
+      webApi.jsStorage,
+      widget.store.settings.endpoint.info,
+    );
     return Scaffold(
       backgroundColor: Theme.of(context).cardColor,
       appBar: AppBar(
@@ -63,6 +73,10 @@ class _AboutPage extends State<AboutPage> {
             Padding(
               padding: EdgeInsets.all(8),
               child: Text('${dic['about.version']}: $app_beta_version'),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Text('API: $currentJSVersion'),
             ),
             Padding(
               padding: EdgeInsets.all(16),

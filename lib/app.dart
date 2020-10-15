@@ -309,7 +309,7 @@ class _WalletAppState extends State<WalletApp> {
               RemoteNodeListPage(_appStore.settings),
           SS58PrefixListPage.route: (_) =>
               SS58PrefixListPage(_appStore.settings),
-          AboutPage.route: (_) => AboutPage(),
+          AboutPage.route: (_) => AboutPage(_appStore),
           RecoverySettingPage.route: (_) => RecoverySettingPage(_appStore),
           RecoveryStatePage.route: (_) => RecoveryStatePage(_appStore),
           RecoveryProofPage.route: (_) => RecoveryProofPage(_appStore),
