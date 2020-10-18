@@ -27,7 +27,7 @@ class ConfirmAttendeesDialog extends StatelessWidget {
                       Text(
                         'How many attendees are present?',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
                       )

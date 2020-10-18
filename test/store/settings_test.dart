@@ -3,7 +3,7 @@ import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/settings.dart';
 
-import 'localStorage_mock.dart';
+import '../mocks/localStorage_mock.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -40,10 +40,6 @@ void main() {
     test('network endpoint test', () async {
       await store.init('_en');
       expect(store.endpoint.info, networkEndpointEncointerGesell.info);
-      expect(store.endpointList.length, 1);
-      expect(store.endpoint.info, networkEndpointEncointerGesellDev.info);
-      expect(store.endpointList.length, 1);
-      expect(store.endpoint.info, networkEndpointEncointerCantillon.info);
       expect(store.endpointList.length, 1);
     });
 

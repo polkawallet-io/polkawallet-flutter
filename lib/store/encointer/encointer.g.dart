@@ -168,13 +168,13 @@ mixin _$EncointerStore on _EncointerStore, Store {
       Atom(name: '_EncointerStore.currencyIdentifiers');
 
   @override
-  List<dynamic> get currencyIdentifiers {
+  List<String> get currencyIdentifiers {
     _$currencyIdentifiersAtom.reportRead();
     return super.currencyIdentifiers;
   }
 
   @override
-  set currencyIdentifiers(List<dynamic> value) {
+  set currencyIdentifiers(List<String> value) {
     _$currencyIdentifiersAtom.reportWrite(value, super.currencyIdentifiers, () {
       super.currencyIdentifiers = value;
     });
@@ -192,6 +192,21 @@ mixin _$EncointerStore on _EncointerStore, Store {
   set chosenCid(String value) {
     _$chosenCidAtom.reportWrite(value, super.chosenCid, () {
       super.chosenCid = value;
+    });
+  }
+
+  final _$claimHexAtom = Atom(name: '_EncointerStore.claimHex');
+
+  @override
+  String get claimHex {
+    _$claimHexAtom.reportRead();
+    return super.claimHex;
+  }
+
+  @override
+  set claimHex(String value) {
+    _$claimHexAtom.reportWrite(value, super.claimHex, () {
+      super.claimHex = value;
     });
   }
 
@@ -319,7 +334,7 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void setCurrencyIdentifiers(dynamic cids) {
+  void setCurrencyIdentifiers(List<String> cids) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
         name: '_EncointerStore.setCurrencyIdentifiers');
     try {
@@ -330,7 +345,7 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void setChosenCid(dynamic cid) {
+  void setChosenCid(String cid) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
         name: '_EncointerStore.setChosenCid');
     try {
@@ -341,11 +356,44 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void addAttestation(dynamic idx, dynamic att) {
+  void setClaimHex(String claimHex) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
-        name: '_EncointerStore.addAttestation');
+        name: '_EncointerStore.setClaimHex');
     try {
-      return super.addAttestation(idx, att);
+      return super.setClaimHex(claimHex);
+    } finally {
+      _$_EncointerStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void addYourAttestation(int idx, String att) {
+    final _$actionInfo = _$_EncointerStoreActionController.startAction(
+        name: '_EncointerStore.addYourAttestation');
+    try {
+      return super.addYourAttestation(idx, att);
+    } finally {
+      _$_EncointerStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void addOtherAttestation(int idx, String att) {
+    final _$actionInfo = _$_EncointerStoreActionController.startAction(
+        name: '_EncointerStore.addOtherAttestation');
+    try {
+      return super.addOtherAttestation(idx, att);
+    } finally {
+      _$_EncointerStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateAttestationStep(int idx, CurrentAttestationStep step) {
+    final _$actionInfo = _$_EncointerStoreActionController.startAction(
+        name: '_EncointerStore.updateAttestationStep');
+    try {
+      return super.updateAttestationStep(idx, step);
     } finally {
       _$_EncointerStoreActionController.endAction(_$actionInfo);
     }
@@ -363,7 +411,7 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void addBalanceEntry(dynamic cid, dynamic balanceEntry) {
+  void addBalanceEntry(String cid, BalanceEntry balanceEntry) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
         name: '_EncointerStore.addBalanceEntry');
     try {
@@ -421,6 +469,7 @@ timeStamp: ${timeStamp},
 balanceEntries: ${balanceEntries},
 currencyIdentifiers: ${currencyIdentifiers},
 chosenCid: ${chosenCid},
+claimHex: ${claimHex},
 attestations: ${attestations},
 txsTransfer: ${txsTransfer}
     ''';

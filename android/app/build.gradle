@@ -70,6 +70,7 @@ android {
 
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
+            // remove the following line to sign the release for google playSS
             signingConfig signingConfigs.debug
         }
     }
@@ -84,6 +85,11 @@ android {
         fdroid {
             dimension "deploy"
             signingConfig null
+            versionNameSuffix ""
+        }
+        play {
+            dimension "deploy"
+            signingConfig signingConfigs.release
             versionNameSuffix ""
         }
     }

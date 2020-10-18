@@ -27,25 +27,17 @@ class AddressIcon extends StatelessWidget {
         rawSvg = globalAppStore.account.addressIconsMap[address];
         if (pubKey != null) {
           rawSvg = globalAppStore.account.pubKeyIconsMap[pubKey] ?? rawSvg;
-          if (globalAppStore.account
-                  .pubKeyAddressMap[globalAppStore.settings.endpoint.ss58] !=
-              null) {
-            addressView = globalAppStore.account
-                    .pubKeyAddressMap[globalAppStore.settings.endpoint.ss58]
-                [pubKey];
+          if (globalAppStore.account.pubKeyAddressMap[globalAppStore.settings.endpoint.ss58] != null) {
+            addressView = globalAppStore.account.pubKeyAddressMap[globalAppStore.settings.endpoint.ss58][pubKey];
           }
         }
         return GestureDetector(
           child: Container(
             width: size ?? 40,
             height: size ?? 40,
-            child: rawSvg == null
-                ? Image.asset('assets/images/assets/Assets_nav_0.png')
-                : SvgPicture.string(rawSvg),
+            child: rawSvg == null ? Image.asset('assets/images/assets/Assets_nav_0.png') : SvgPicture.string(rawSvg),
           ),
-          onTap: tapToCopy
-              ? () => UI.copyAndNotify(context, addressToCopy ?? addressView)
-              : null,
+          onTap: tapToCopy ? () => UI.copyAndNotify(context, addressToCopy ?? addressView) : null,
         );
       },
     );

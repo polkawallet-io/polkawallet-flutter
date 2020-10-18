@@ -1,11 +1,6 @@
-
 import 'dart:convert';
 
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/common/components/passwordInputDialog.dart';
-
-import 'attestation.dart';
-import 'claimOfAttendance.dart';
 
 part 'attestationState.g.dart';
 
@@ -18,8 +13,16 @@ abstract class _AttestationState with Store {
   @observable
   bool done = false;
 
+  // your claim, attested by other
   @observable
   String yourAttestation;
+
+  // other claim, attested by me
+  @observable
+  String otherAttestation;
+
+  @observable
+  CurrentAttestationStep currentAttestationStep = CurrentAttestationStep.STEP1;
 
   @override
   String toString() {
@@ -27,10 +30,22 @@ abstract class _AttestationState with Store {
   }
 
   @action
-  void setAttestation(String att) {
+  void setYourAttestation(String att) {
     yourAttestation = att;
     done = true;
     print("attestation done for " + pubKey);
   }
 
+  @action
+  void setOtherAttestation(String att) {
+    otherAttestation = att;
+    print("set your attestation for other: " + pubKey);
+  }
+
+  @action
+  void setAttestationStep(CurrentAttestationStep step) {
+    currentAttestationStep = step;
+  }
 }
+
+enum CurrentAttestationStep { STEP1, STEP2, STEP3, FINISHED }

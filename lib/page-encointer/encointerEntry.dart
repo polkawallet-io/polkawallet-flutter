@@ -1,23 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/page-encointer/registering/registeringPage.dart';
-import 'package:polka_wallet/page-encointer/assigning/assigningPage.dart';
-import 'package:polka_wallet/page-encointer/attesting/attestingPage.dart';
-import 'package:polka_wallet/page-encointer/common/CeremonyOverviewPanel.dart';
 import 'package:polka_wallet/page-encointer/common/currencyChooserPanel.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:polka_wallet/page-encointer/phases/assigning/assigningPage.dart';
+import 'package:polka_wallet/page-encointer/phases/attesting/attestingPage.dart';
+import 'package:polka_wallet/page-encointer/phases/registering/registeringPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/utils/UI.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/page/account/txConfirmPage.dart';
-
+import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/encointer/types/encointerTypes.dart';
+import 'package:polka_wallet/utils/i18n/index.dart';
 
 class EncointerEntry extends StatelessWidget {
   EncointerEntry(this.store);
@@ -71,8 +62,7 @@ class PhaseAwareBox extends StatefulWidget {
   _PhaseAwareBoxState createState() => _PhaseAwareBoxState(store);
 }
 
-class _PhaseAwareBoxState extends State<PhaseAwareBox>
-    with SingleTickerProviderStateMixin {
+class _PhaseAwareBoxState extends State<PhaseAwareBox> with SingleTickerProviderStateMixin {
   _PhaseAwareBoxState(this.store);
 
   final AppStore store;
@@ -111,8 +101,7 @@ class _PhaseAwareBoxState extends State<PhaseAwareBox>
 
     if (!store.settings.loading) {
       print('Subscribing to current phase');
-      webApi.encointer.subscribeCurrentPhase(_currentPhaseSubscribeChannel,
-          (data) {
+      webApi.encointer.subscribeCurrentPhase(_currentPhaseSubscribeChannel, (data) {
         var phase = getEnumFromString(CeremonyPhase.values, data.toUpperCase());
         store.encointer.setCurrentPhase(phase);
       });
@@ -135,8 +124,7 @@ class _PhaseAwareBoxState extends State<PhaseAwareBox>
             return Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
               CurrencyChooserPanel(store),
               //CeremonyOverviewPanel(store),
-              Observer(
-                  builder: (_) => _getPhaseView(store.encointer.currentPhase))
+              Observer(builder: (_) => _getPhaseView(store.encointer.currentPhase))
             ]);
           } else {
             return CupertinoActivityIndicator();

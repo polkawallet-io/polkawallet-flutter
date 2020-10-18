@@ -61,10 +61,13 @@ abstract class _EncointerStore with Store {
   Map<String, BalanceEntry> balanceEntries = new Map();
 
   @observable
-  List<dynamic> currencyIdentifiers = [];
+  List<String> currencyIdentifiers = [];
 
   @observable
-  var chosenCid = "";
+  String chosenCid = "";
+
+  @observable
+  String claimHex = "";
 
   @observable
   Map<int, AttestationState> attestations = Map<int, AttestationState>();
@@ -103,19 +106,36 @@ abstract class _EncointerStore with Store {
   }
 
   @action
-  void setCurrencyIdentifiers(cids) {
+  void setCurrencyIdentifiers(List<String> cids) {
     currencyIdentifiers = cids;
   }
 
   @action
-  void setChosenCid(cid) {
+  void setChosenCid(String cid) {
     chosenCid = cid;
     rootStore.localStorage.setObject(_getCacheKey(encointerCurrencyKey), cid);
   }
 
   @action
-  void addAttestation(idx, att) {
-    attestations[idx].setAttestation(att);
+  void setClaimHex(String claimHex) {
+    this.claimHex = claimHex;
+  }
+
+  @action
+  void addYourAttestation(int idx, String att) {
+    attestations[idx].setYourAttestation(att);
+    rootStore.localStorage.setObject(_getCacheKey(encointerAttestationsKey), attestations);
+  }
+
+  @action
+  void addOtherAttestation(int idx, String att) {
+    attestations[idx].setOtherAttestation(att);
+    rootStore.localStorage.setObject(_getCacheKey(encointerAttestationsKey), attestations);
+  }
+
+  @action
+  void updateAttestationStep(int idx, CurrentAttestationStep step) {
+    attestations[idx].setAttestationStep(step);
     rootStore.localStorage.setObject(_getCacheKey(encointerAttestationsKey), attestations);
   }
 
@@ -126,7 +146,7 @@ abstract class _EncointerStore with Store {
   }
 
   @action
-  void addBalanceEntry(cid, balanceEntry) {
+  void addBalanceEntry(String cid, BalanceEntry balanceEntry) {
     balanceEntries[cid] = balanceEntry;
   }
 

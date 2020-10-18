@@ -36,7 +36,7 @@ class ApiEncointer {
   }
 
   Future<int> getCurrentCeremonyIndex() async {
-    var cIndex = await apiRoot.evalJavascript('encointer.getCurrentCeremonyIndex()');
+    int cIndex = await apiRoot.evalJavascript('encointer.getCurrentCeremonyIndex()');
     print("Current Ceremony index: " + cIndex.toString());
     store.encointer.setCurrentCeremonyIndex(cIndex);
     return cIndex;
@@ -46,71 +46,73 @@ class ApiEncointer {
     if (store.encointer.currencyIdentifiers == null) {
       return null;
     }
-    var cid = store.encointer.chosenCid ?? store.encointer.currencyIdentifiers[0];
+    String cid = store.encointer.chosenCid ?? store.encointer.currencyIdentifiers[0];
     await getNextMeetupLocation();
-    var loc = jsonEncode(store.encointer.nextMeetupLocation);
-    var time = await apiRoot.evalJavascript('encointer.getNextMeetupTime("$cid", $loc)');
+    String loc = jsonEncode(store.encointer.nextMeetupLocation);
+    int time = await apiRoot.evalJavascript('encointer.getNextMeetupTime("$cid", $loc)');
     print("Next Meetup Time: " + time.toString());
     store.encointer.setNextMeetupTime(time);
     return DateTime.fromMillisecondsSinceEpoch(time);
   }
 
   Future<int> getMeetupIndex() async {
-    var address = store.account.currentAccountPubKey;
-    var cid = store.encointer.chosenCid;
-    var cIndex = store.encointer.currentCeremonyIndex;
-    var mIndex = await apiRoot.evalJavascript('encointer.getMeetupIndex("$cid", "$cIndex","$address")');
+    String address = store.account.currentAccountPubKey;
+    String cid = store.encointer.chosenCid;
+    int cIndex = store.encointer.currentCeremonyIndex;
+    int mIndex = await apiRoot.evalJavascript('encointer.getMeetupIndex("$cid", "$cIndex","$address")');
     print("Next Meetup Index: " + mIndex.toString());
     store.encointer.setMeetupIndex(mIndex);
     return mIndex;
   }
 
   Future<void> getNextMeetupLocation() async {
-    var address = store.account.currentAccountPubKey;
-    var cid = store.encointer.chosenCid;
+    String address = store.account.currentAccountPubKey;
+    String cid = store.encointer.chosenCid;
     if (cid.isEmpty) {
       return; // zero means: not registered
     }
-    var mIndex = await getMeetupIndex();
-    var locj = await apiRoot.evalJavascript('encointer.getNextMeetupLocation("$cid", "$mIndex","$address")');
+    int mIndex = await getMeetupIndex();
+    Map<String, dynamic> locj =
+        await apiRoot.evalJavascript('encointer.getNextMeetupLocation("$cid", "$mIndex","$address")');
     print("Next Meetup Location: " + locj.toString());
     Location loc = Location.fromJson(locj);
     store.encointer.setNextMeetupLocation(loc);
   }
 
   Future<int> getParticipantIndex() async {
-    var address = store.account.currentAccountPubKey;
-    var cid = store.encointer.chosenCid;
+    String address = store.account.currentAccountPubKey;
+    String cid = store.encointer.chosenCid;
     if (cid.isEmpty) {
       return 0; // zero means: not registered
     }
-    var cIndex = await getCurrentCeremonyIndex();
-    print("geting participant index for " + address);
-    var pIndex = await apiRoot.evalJavascript('encointer.getParticipantIndex("$cid", "$cIndex" ,"$address")');
+    int cIndex = await getCurrentCeremonyIndex();
+    print("Getting participant index for " + address);
+    int pIndex = await apiRoot.evalJavascript('encointer.getParticipantIndex("$cid", "$cIndex" ,"$address")');
     print("Participant Index: " + pIndex.toString());
     store.encointer.setParticipantIndex(pIndex);
     return pIndex;
   }
 
   Future<void> getParticipantCount() async {
-    var cid = store.encointer.chosenCid;
-    var cIndex = store.encointer.currentCeremonyIndex;
-    var pCount = await apiRoot.evalJavascript('encointer.getParticipantCount("$cid", "$cIndex")');
+    String cid = store.encointer.chosenCid;
+    int cIndex = store.encointer.currentCeremonyIndex;
+    int pCount = await apiRoot.evalJavascript('encointer.getParticipantCount("$cid", "$cIndex")');
     print("Participant Count: " + pCount.toString());
     store.encointer.setParticipantCount(pCount);
   }
 
-  Future<dynamic> getMeetupRegistry() async {
-    var cIndex = await getCurrentCeremonyIndex();
-    var cid = store.encointer.chosenCid;
+  Future<List<String>> getMeetupRegistry() async {
+    int cIndex = await getCurrentCeremonyIndex();
+    String cid = store.encointer.chosenCid;
     if (cid.isEmpty) {
       return new List(); // empty
     }
-    var mIndex = await getMeetupIndex();
+    int mIndex = await getMeetupIndex();
     print("get meetup registry for cindex " + cIndex.toString() + " mindex " + mIndex.toString() + " cid " + cid);
-    var meetupRegistry = await apiRoot.evalJavascript('encointer.getMeetupRegistry("$cid", "$cIndex", "$mIndex")');
+    List<dynamic> meetupRegistry =
+        await apiRoot.evalJavascript('encointer.getMeetupRegistry("$cid", "$cIndex", "$mIndex")');
     print("Participants: " + meetupRegistry.toString());
-    return meetupRegistry;
+    return meetupRegistry.map((e) => e.toString()).toList();
   }
 
   Future<void> subscribeCurrentPhase(String channel, Function callback) async {
@@ -122,14 +124,20 @@ class ApiEncointer {
         'encointer.subscribeTimestamp("$channel")', channel, (data) => {store.encointer.setTimestamp(data)});
   }
 
-  Future<List<dynamic>> getCurrencyIdentifiers() async {
+  Future<List<String>> getCurrencyIdentifiers() async {
     Map<String, dynamic> res = await apiRoot.evalJavascript('encointer.getCurrencyIdentifiers()');
-    print("CID: " + res['cids'].toString());
-    store.encointer.setCurrencyIdentifiers(res['cids']);
-    return res['cids'];
+
+    List<String> cids = new List<String>();
+    res['cids'].forEach((e) {
+      cids.add(e.toString());
+    });
+
+    print("CID: " + cids.toString());
+    store.encointer.setCurrencyIdentifiers(cids);
+    return cids;
   }
 
-  Future<dynamic> getClaimOfAttendance(participants) async {
+  Future<String> getClaimOfAttendance(participants) async {
     var perfectMeetupTime = await getNextMeetupTime();
     var claim = jsonEncode(ClaimOfAttendance(
         store.account.currentAccountPubKey,
@@ -140,7 +148,7 @@ class ApiEncointer {
         perfectMeetupTime.millisecondsSinceEpoch,
         participants));
     print(claim);
-    var claimHex = await apiRoot.evalJavascript('encointer.getClaimOfAttendance($claim)');
+    String claimHex = await apiRoot.evalJavascript('encointer.getClaimOfAttendance($claim)');
     return claimHex;
   }
 
@@ -160,25 +168,30 @@ class ApiEncointer {
     return claim;
   }
 
-  Future<dynamic> attestClaimOfAttendance(String claimHex, String password) async {
+  Future<AttestationResult> attestClaimOfAttendance(String claimHex, String password) async {
     var pubKey = store.account.currentAccountPubKey;
     var att = await apiRoot.evalJavascript('account.attestClaimOfAttendance("$claimHex", "$pubKey", "$password")');
-    return att;
+    AttestationResult attestation = AttestationResult.fromJson(att);
+    print("Att: ${attestation.toString()}");
+    return attestation;
   }
 
   Future<dynamic> sendFaucetTx() async {
     var address = store.account.currentAddress;
     var amount = Fmt.tokenInt(faucetAmount.toString(), ert_decimals);
     var res = await apiRoot.evalJavascript('account.sendFaucetTx("$address", "$amount")');
-//    print("Faucet Result :" + res.toString());
+    // print("Faucet Result :" + res.toString());
     return res;
   }
 
-  Future<List<dynamic>> getBalances() async {
+  Future<List<EncointerBalanceData>> getBalances() async {
     var pubKey = store.account.currentAccountPubKey;
     var data = await apiRoot.evalJavascript('encointer.getBalances("$pubKey")');
 
-    List<dynamic> encointerBalances = data.map((e) => EncointerBalanceData.fromJson(e)).toList();
+    List<EncointerBalanceData> encointerBalances = new List<EncointerBalanceData>();
+    data.map((e) => EncointerBalanceData.fromJson(e)).toList().forEach((e) {
+      encointerBalances.add(e);
+    });
 
 //    print("encointerBalances list: " + encointerBalances.toString());
     encointerBalances.forEach((e) {

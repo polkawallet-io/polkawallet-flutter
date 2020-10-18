@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:polka_wallet/store/app.dart';
 
-import 'localStorage_mock.dart';
+import '../mocks/localStorage_mock.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -84,8 +84,7 @@ void main() {
       Map<String, dynamic> contact = {
         "name": "gav",
         "address": "FcxNWVy5RESDsErjwyZmPCW6Z8Y3fbfLzmou34YZTrbcraL",
-        "pubKey":
-            "0x86b7409a11700afb027924cb40fa43889d98709ea35319d48fea85dd35004e64",
+        "pubKey": "0x86b7409a11700afb027924cb40fa43889d98709ea35319d48fea85dd35004e64",
         "observation": true,
       };
       await root.settings.addContact(contact);

@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/willPopScopWrapper.dart';
-import 'package:polka_wallet/page-encointer/assigning/assigningPage.dart';
-import 'package:polka_wallet/page-encointer/attesting/attestingPage.dart';
-import 'package:polka_wallet/page-encointer/attesting/meetupPage.dart';
-import 'package:polka_wallet/page-encointer/attesting/qrCode.dart';
-import 'package:polka_wallet/page-encointer/attesting/scanQrCode.dart';
 import 'package:polka_wallet/page-encointer/homePage.dart';
-import 'package:polka_wallet/page-encointer/registering/registerParticipantPanel.dart';
-import 'package:polka_wallet/page-encointer/registering/registeringPage.dart';
+import 'package:polka_wallet/page-encointer/meetup/MeetupPage.dart';
+import 'package:polka_wallet/page-encointer/phases/assigning/assigningPage.dart';
+import 'package:polka_wallet/page-encointer/phases/attesting/attestingPage.dart';
+import 'package:polka_wallet/page-encointer/phases/registering/registerParticipantPanel.dart';
+import 'package:polka_wallet/page-encointer/phases/registering/registeringPage.dart';
 import 'package:polka_wallet/page/account/create/backupAccountPage.dart';
 import 'package:polka_wallet/page/account/create/createAccountPage.dart';
 import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
@@ -190,8 +188,6 @@ class _WalletAppState extends State<WalletApp> {
         AssigningPage.route: (_) => AssigningPage(_appStore),
         AttestingPage.route: (_) => AttestingPage(_appStore),
         MeetupPage.route: (_) => MeetupPage(_appStore),
-        QrCode.route: (_) => QrCode(_appStore),
-        ScanQrCode.route: (_) => ScanQrCode(),
       },
     );
   }

@@ -23,7 +23,7 @@ class Api {
 
   final BuildContext context;
   final AppStore store;
-  final jsStorage = GetStorage();
+  var jsStorage;
 
   ApiAccount account;
 
@@ -41,6 +41,8 @@ class Api {
   Function _connectFunc;
 
   void init() {
+    jsStorage = GetStorage();
+
     account = ApiAccount(this);
 
     encointer = ApiEncointer(this);

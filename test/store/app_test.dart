@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:polka_wallet/store/app.dart';
 
-import 'localStorage_mock.dart';
+import '../mocks/localStorage_mock.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

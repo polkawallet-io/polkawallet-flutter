@@ -7,24 +7,26 @@ import 'package:polka_wallet/utils/i18n/index.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QrCode extends StatelessWidget {
-  QrCode(this.store);
+  QrCode(
+    this.store, {
+    @required this.title,
+    @required this.qrCodeData,
+  });
 
-  static final String route = '/encointer/attestation/qrCodeClaim';
   final AppStore store;
+
+  final String title;
+  final String qrCodeData;
 
   @override
   Widget build(BuildContext context) {
     Color themeColor = Theme.of(context).primaryColor;
 
-    final Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
-    String title = args['title'];
-    String qrCodeData = args['qrCodeData'];
-
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: Text(I18n.of(context).assets['receive']),
+        title: Text(""),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -75,7 +77,7 @@ class QrCode extends StatelessWidget {
                         width: MediaQuery.of(context).size.width / 2,
                         padding: EdgeInsets.only(top: 16, bottom: 32),
                         child: RoundedButton(
-                          text: I18n.of(context).assets['done?'],
+                          text: I18n.of(context).encointer['done'],
                           onPressed: () => Navigator.pop(context),
                         ),
                       )

@@ -13,9 +13,21 @@ class ActivityIndicator extends StatefulWidget {
 }
 
 class _ActivityIndicatorState extends State<ActivityIndicator> {
+  bool _isAwaitingFuture = true;
+  dynamic futureResult;
+
+  void _awaitFuture() async {
+    futureResult = await widget.future;
+    Navigator.of(context).pop(futureResult);
+    setState(() {
+      _isAwaitingFuture = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _awaitFuture();
   }
 
   @override
@@ -25,17 +37,9 @@ class _ActivityIndicatorState extends State<ActivityIndicator> {
 
   @override
   Widget build(BuildContext context) {
-    return new FutureBuilder(
-        future: widget.future,
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (snapshot.hasData) {
-            Navigator.of(context).pop(snapshot.data);
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return new CupertinoAlertDialog(title: Text(widget.title));
-          }
-          return Container();
-        });
+    return new CupertinoAlertDialog(
+      title: Text(widget.title),
+      content: _isAwaitingFuture ? CupertinoActivityIndicator() : Container(),
+    );
   }
 }

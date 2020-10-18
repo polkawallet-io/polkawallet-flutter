@@ -39,15 +39,70 @@ mixin _$AttestationState on _AttestationState, Store {
     });
   }
 
+  final _$otherAttestationAtom =
+      Atom(name: '_AttestationState.otherAttestation');
+
+  @override
+  String get otherAttestation {
+    _$otherAttestationAtom.reportRead();
+    return super.otherAttestation;
+  }
+
+  @override
+  set otherAttestation(String value) {
+    _$otherAttestationAtom.reportWrite(value, super.otherAttestation, () {
+      super.otherAttestation = value;
+    });
+  }
+
+  final _$currentAttestationStepAtom =
+      Atom(name: '_AttestationState.currentAttestationStep');
+
+  @override
+  CurrentAttestationStep get currentAttestationStep {
+    _$currentAttestationStepAtom.reportRead();
+    return super.currentAttestationStep;
+  }
+
+  @override
+  set currentAttestationStep(CurrentAttestationStep value) {
+    _$currentAttestationStepAtom
+        .reportWrite(value, super.currentAttestationStep, () {
+      super.currentAttestationStep = value;
+    });
+  }
+
   final _$_AttestationStateActionController =
       ActionController(name: '_AttestationState');
 
   @override
-  void setAttestation(String att) {
+  void setYourAttestation(String att) {
     final _$actionInfo = _$_AttestationStateActionController.startAction(
-        name: '_AttestationState.setAttestation');
+        name: '_AttestationState.setYourAttestation');
     try {
-      return super.setAttestation(att);
+      return super.setYourAttestation(att);
+    } finally {
+      _$_AttestationStateActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setOtherAttestation(String att) {
+    final _$actionInfo = _$_AttestationStateActionController.startAction(
+        name: '_AttestationState.setOtherAttestation');
+    try {
+      return super.setOtherAttestation(att);
+    } finally {
+      _$_AttestationStateActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setAttestationStep(CurrentAttestationStep step) {
+    final _$actionInfo = _$_AttestationStateActionController.startAction(
+        name: '_AttestationState.setAttestationStep');
+    try {
+      return super.setAttestationStep(step);
     } finally {
       _$_AttestationStateActionController.endAction(_$actionInfo);
     }
@@ -57,7 +112,9 @@ mixin _$AttestationState on _AttestationState, Store {
   String toString() {
     return '''
 done: ${done},
-yourAttestation: ${yourAttestation}
+yourAttestation: ${yourAttestation},
+otherAttestation: ${otherAttestation},
+currentAttestationStep: ${currentAttestationStep}
     ''';
   }
 }

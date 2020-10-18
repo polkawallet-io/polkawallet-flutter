@@ -52,7 +52,7 @@ const Map<String, String> enAssets = {
   'claim.empty': 'does not appear to have a valid claim.',
   'claim.empty2':
       'Please double check that you have signed the transaction correctly on the correct ETH account.',
-  'done?' : 'done?',
+  'done?' : 'done',
   'cross.chain': 'Cross chain',
   'assets.test': 'Test Tokens',
 };

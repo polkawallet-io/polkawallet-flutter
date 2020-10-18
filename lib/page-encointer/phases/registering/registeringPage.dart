@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/page-encointer/registering/registerParticipantPanel.dart';
+import 'package:polka_wallet/page-encointer/phases/registering/registerParticipantPanel.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 

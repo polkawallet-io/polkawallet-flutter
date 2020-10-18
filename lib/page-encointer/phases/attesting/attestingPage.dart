@@ -5,9 +5,9 @@ import 'package:mobx/mobx.dart';
 import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/page-encointer/attesting/confirmAttendeesDialog.dart';
-import 'package:polka_wallet/page-encointer/attesting/meetupPage.dart';
 import 'package:polka_wallet/page-encointer/common/assignmentPanel.dart';
+import 'package:polka_wallet/page-encointer/meetup/MeetupPage.dart';
+import 'package:polka_wallet/page-encointer/meetup/confirmAttendeesDialog.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -58,40 +58,12 @@ class _AttestingPageState extends State<AttestingPage> {
 
   Future<void> _startMeetup(BuildContext context) async {
     var amount = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConfirmAttendeesDialog()));
-    setAmountAttendees(amount);
-    var claimHex = await webApi.encointer.getClaimOfAttendance(_amountAttendees);
-    print("Claim: " + claimHex);
-
-    var meetupRegistry = await webApi.encointer.getMeetupRegistry();
-/*    var meetupRegistry = List.filled(amount, '0x44495e0e8733d0b65ea1333c8bf7f4c54dc9f580b38aaadc3d771c771fb70260');
-    meetupRegistry[0] = '0x11195e0e8733d0b65ea1333c8bf7f4c54dc9f580b38aaadc3d771c771fb70260';
-    meetupRegistry[1] = store.account.currentAccountPubKey;
-    meetupRegistry[2] = '0x22295e0e8733d0b65ea1333c8bf7f4c54dc9f580b38aaadc3d771c771fb70260';
-    meetupRegistry[3] = '0x33395e0e8733d0b65ea1333c8bf7f4c54dc9f580b38aaadc3d771c771fb70260';
-    meetupRegistry[4] = '0x44495e0e8733d0b65ea1333c8bf7f4c54dc9f580b38aaadc3d771c771fb70260';
-*/
-    store.encointer.attestations = _buildAttestationStateMap(meetupRegistry);
-
-    var args = {'claim': claimHex, 'confirmedParticipants': amount};
-
-//    _showPasswordDialog(context, claimHex);
+    var args = {'confirmedParticipants': amount};
     Navigator.pushNamed(context, MeetupPage.route, arguments: args);
   }
 
-  Map<int, AttestationState> _buildAttestationStateMap(List<dynamic> pubKeys) {
-    final map = Map<int, AttestationState>();
-    pubKeys.asMap().forEach((i, key) => !(key == store.account.currentAddress)
-            ? map.putIfAbsent(i, () => AttestationState(key))
-            : store.encointer.myMeetupRegistryIndex =
-                i // track our index as it defines if we must show our qr-code first
-        );
-
-    print("My index in meetup registry is " + store.encointer.myMeetupRegistryIndex.toString());
-    return map;
-  }
-
   Future<void> _submitClaim(BuildContext context, String claimHex, String password) async {
-    var att = await webApi.encointer.attestClaimOfAttendance(claimHex, password);
+    AttestationResult att = await webApi.encointer.attestClaimOfAttendance(claimHex, password);
     print("att: " + att.toString());
 
 //    var args = {
