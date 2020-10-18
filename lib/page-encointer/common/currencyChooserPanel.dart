@@ -50,7 +50,9 @@ class _CurrencyChooserPanelState extends State<CurrencyChooserPanel> {
                       store.encointer.setChosenCid("");
                       return Text("no currencies found");
                     }
-                    var selectedCid = store.encointer.chosenCid.isEmpty
+                    var selectedCid = (store.encointer.chosenCid.isEmpty
+                        || !store.encointer.currencyIdentifiers
+                            .contains(store.encointer.chosenCid))
                         ? store.encointer.currencyIdentifiers[0]
                         : store.encointer.chosenCid;
                     return Observer(
