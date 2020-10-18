@@ -44,7 +44,7 @@ const network_ss58_map = {
 const int ert_decimals = 12;
 const int encointer_currencies_decimals = 18;
 
-const double faucetAmount = 0.0001;
+const double faucetAmount = 0.1;
 
 const int dot_re_denominate_block = 1248328;
 
