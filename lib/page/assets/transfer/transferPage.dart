@@ -15,7 +15,6 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferCrossChainPage.dart';
-import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
@@ -127,7 +126,7 @@ class _TransferPageState extends State<TransferPage> {
           // params.to
           address,
           // params.currencyId
-          symbol.toUpperCase(),
+          {'Token': symbol.toUpperCase()},
           // params.amount
           Fmt.tokenInt(_amountCtrl.text.trim(), decimals).toString(),
         ];

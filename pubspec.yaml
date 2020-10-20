@@ -14,12 +14,12 @@ description: PolkaWallet made with Flutter.
 version: 1.0.5+1052
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.10.0 <3.0.0"
 
 dependencies:
   # intl - format numbers
   intl: ^0.16.0
-  json_annotation: ^3.0.1
+  json_annotation: ^3.1.0
   # state management with mobx & provider
   mobx: ^1.2.0
   flutter_mobx: ^1.1.0
@@ -69,8 +69,8 @@ dependencies:
 
 dev_dependencies:
 #  flutter_launcher_icons: ^0.7.5
-  build_runner: ^1.7.4
-  json_serializable: ^3.0.0
+  build_runner: ^1.10.3
+  json_serializable: ^3.5.0
   mockito: ^4.1.1
   flutter_test:
     sdk: flutter

@@ -447,10 +447,11 @@ class _AssetsState extends State<Assets> {
         List<String> currencyIds = [];
         if ((isAcala || isLaminar) && networkName != null) {
           if (store.settings.networkConst['currencyIds'] != null) {
-            currencyIds.addAll(
-                List<String>.from(store.settings.networkConst['currencyIds']));
+            currencyIds.addAll(List.of(store.settings.networkConst['accounts']
+                    ['allNonNativeCurrencyIds'])
+                .map((e) => e['Token'].toString())
+                .toList());
           }
-          currencyIds.retainWhere((i) => i != symbol);
         }
 
         BalancesInfo balancesInfo = store.assets.balances[symbol];

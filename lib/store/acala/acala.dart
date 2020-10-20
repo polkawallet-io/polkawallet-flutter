@@ -159,7 +159,7 @@ abstract class _AcalaStore with Store {
         "success": true,
         "from": rootStore.account.currentAddress,
         "to": i['params'][0],
-        "token": i['params'][1],
+        "token": i['params'][1]['Token'],
         "amount": Fmt.balance(
           i['params'][2],
           rootStore.settings.networkState.tokenDecimals,

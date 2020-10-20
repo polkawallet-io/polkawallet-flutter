@@ -6,8 +6,7 @@ part 'laminarMarginData.g.dart';
 class LaminarMarginPoolInfoData extends _LaminarMarginPoolInfoData {
   static LaminarMarginPoolInfoData fromJson(Map<String, dynamic> json) =>
       _$LaminarMarginPoolInfoDataFromJson(json);
-  static Map<String, dynamic> toJson(LaminarMarginPoolInfoData info) =>
-      _$LaminarMarginPoolInfoDataToJson(info);
+  Map<String, dynamic> toJson() => _$LaminarMarginPoolInfoDataToJson(this);
 }
 
 abstract class _LaminarMarginPoolInfoData {
@@ -20,8 +19,7 @@ abstract class _LaminarMarginPoolInfoData {
 class LaminarMarginPairData extends _LaminarMarginPoolPairData {
   static LaminarMarginPairData fromJson(Map<String, dynamic> json) =>
       _$LaminarMarginPairDataFromJson(json);
-  static Map<String, dynamic> toJson(LaminarMarginPairData info) =>
-      _$LaminarMarginPairDataToJson(info);
+  Map<String, dynamic> toJson() => _$LaminarMarginPairDataToJson(this);
 }
 
 abstract class _LaminarMarginPoolPairData {
@@ -37,8 +35,7 @@ abstract class _LaminarMarginPoolPairData {
 class LaminarMarginPairItemData extends _LaminarMarginPairItemData {
   static LaminarMarginPairItemData fromJson(Map<String, dynamic> json) =>
       _$LaminarMarginPairItemDataFromJson(json);
-  static Map<String, dynamic> toJson(LaminarMarginPairItemData info) =>
-      _$LaminarMarginPairItemDataToJson(info);
+  Map<String, dynamic> toJson() => _$LaminarMarginPairItemDataToJson(this);
 }
 
 abstract class _LaminarMarginPairItemData {
@@ -50,8 +47,7 @@ abstract class _LaminarMarginPairItemData {
 class LaminarMarginTraderInfoData extends _LaminarMarginTraderInfoData {
   static LaminarMarginTraderInfoData fromJson(Map<String, dynamic> json) =>
       _$LaminarMarginTraderInfoDataFromJson(json);
-  static Map<String, dynamic> toJson(LaminarMarginTraderInfoData info) =>
-      _$LaminarMarginTraderInfoDataToJson(info);
+  Map<String, dynamic> toJson() => _$LaminarMarginTraderInfoDataToJson(this);
 }
 
 abstract class _LaminarMarginTraderInfoData {

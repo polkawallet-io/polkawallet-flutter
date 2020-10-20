@@ -27,7 +27,7 @@ EndpointData networkEndpointAcala = EndpointData.fromJson(const {
   'info': network_name_acala_mandala,
   'ss58': 42,
   'text': 'Acala Mandala (Hosted by Acala Network)',
-  'value': 'wss://testnet-node-1.acala.laminar.one/ws',
+  'value': 'wss://node-6714447553211260928.rz.onfinality.io/ws',
 });
 
 EndpointData networkEndpointLaminar = EndpointData.fromJson(const {
@@ -91,20 +91,20 @@ List<EndpointData> networkEndpoints = [
     'value': 'wss://kusama.polkadot.cloud.ava.do/',
   }),
   networkEndpointAcala,
-  EndpointData.fromJson(const {
-    'color': 'indigo',
-    'info': network_name_acala_mandala,
-    'ss58': 42,
-    'text': 'Mandala TC4 Node 1 (Hosted by OnFinality)',
-    'value': 'wss://node-6684611762228215808.jm.onfinality.io/ws'
-  }),
-  EndpointData.fromJson(const {
-    'color': 'indigo',
-    'info': network_name_acala_mandala,
-    'ss58': 42,
-    'text': 'Mandala TC4 Node 2 (Hosted by OnFinality)',
-    'value': 'wss://node-6684611760525328384.rz.onfinality.io/ws'
-  }),
+  // EndpointData.fromJson(const {
+  //   'color': 'indigo',
+  //   'info': network_name_acala_mandala,
+  //   'ss58': 42,
+  //   'text': 'Mandala TC4 Node 1 (Hosted by OnFinality)',
+  //   'value': 'wss://node-6684611762228215808.jm.onfinality.io/ws'
+  // }),
+  // EndpointData.fromJson(const {
+  //   'color': 'indigo',
+  //   'info': network_name_acala_mandala,
+  //   'ss58': 42,
+  //   'text': 'Mandala TC4 Node 2 (Hosted by OnFinality)',
+  //   'value': 'wss://node-6684611760525328384.rz.onfinality.io/ws'
+  // }),
   networkEndpointLaminar,
   EndpointData.fromJson(const {
     'color': 'purple',
