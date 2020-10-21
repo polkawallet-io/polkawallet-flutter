@@ -244,8 +244,7 @@ class _WalletAppState extends State<WalletApp> {
               NetworkSelectPage(_appStore, _changeTheme),
           // account
           CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
-          CreateAccountPage.route: (_) =>
-              CreateAccountPage(_appStore.account.setNewAccount),
+          CreateAccountPage.route: (_) => CreateAccountPage(_appStore),
           BackupAccountPage.route: (_) => BackupAccountPage(_appStore),
           ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
           ScanPage.route: (_) => ScanPage(),

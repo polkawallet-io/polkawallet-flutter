@@ -16,7 +16,6 @@ import 'package:polka_wallet/store/assets/types/transferData.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
 
 class AssetPage extends StatefulWidget {
   AssetPage(this.store);

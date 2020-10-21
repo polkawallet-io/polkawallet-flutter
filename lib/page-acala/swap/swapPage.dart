@@ -45,6 +45,7 @@ class _SwapPageState extends State<SwapPage> {
   double _slippage = 0.005;
   String _slippageError;
   List<String> _swapPair = [];
+  int _swapMode = 0; // 0 for 'EXACT_INPUT' and 1 for 'EXACT_OUTPUT'
   double _swapRatio = 0;
 
   Future<void> _refreshData() async {
@@ -55,13 +56,12 @@ class _SwapPageState extends State<SwapPage> {
     setState(() {
       _swapPair = [_swapPair[1], _swapPair[0]];
     });
-    await _calcSwapAmount(_amountPayCtrl.text.trim(), null);
+    await _updateSwapAmount();
     _refreshData();
   }
 
   Future<void> _selectCurrencyPay() async {
     List<String> currencyOptions = List<String>.of(store.acala.swapTokens);
-    currencyOptions.add(acala_stable_coin_view);
     currencyOptions.retainWhere((i) => i != _swapPair[0] && i != _swapPair[1]);
     var selected = await Navigator.of(context)
         .pushNamed(CurrencySelectPage.route, arguments: currencyOptions);
@@ -69,14 +69,13 @@ class _SwapPageState extends State<SwapPage> {
       setState(() {
         _swapPair = [selected, _swapPair[1]];
       });
-      await _calcSwapAmount(_amountPayCtrl.text, null);
+      await _updateSwapAmount();
       _refreshData();
     }
   }
 
   Future<void> _selectCurrencyReceive() async {
     List<String> currencyOptions = List<String>.of(store.acala.swapTokens);
-    currencyOptions.add(acala_stable_coin_view);
     currencyOptions.retainWhere((i) => i != _swapPair[0] && i != _swapPair[1]);
     var selected = await Navigator.of(context)
         .pushNamed(CurrencySelectPage.route, arguments: currencyOptions);
@@ -84,7 +83,7 @@ class _SwapPageState extends State<SwapPage> {
       setState(() {
         _swapPair = [_swapPair[0], selected];
       });
-      await _calcSwapAmount(_amountPayCtrl.text, null);
+      await _updateSwapAmount();
       _refreshData();
     }
   }
@@ -105,6 +104,14 @@ class _SwapPageState extends State<SwapPage> {
     _calcSwapAmount(null, target);
   }
 
+  Future<void> _updateSwapAmount() async {
+    if (_swapMode == 0) {
+      await _calcSwapAmount(_amountPayCtrl.text.trim(), null);
+    } else {
+      await _calcSwapAmount(null, _amountReceiveCtrl.text.trim());
+    }
+  }
+
   Future<void> _calcSwapAmount(
     String supply,
     String target, {
@@ -119,6 +126,7 @@ class _SwapPageState extends State<SwapPage> {
             _amountPayCtrl.text = output;
           }
           _swapRatio = double.parse(target) / double.parse(output);
+          _swapMode = 1;
         });
         if (!init) {
           _formKey.currentState.validate();
@@ -133,6 +141,7 @@ class _SwapPageState extends State<SwapPage> {
             _amountReceiveCtrl.text = output;
           }
           _swapRatio = double.parse(output) / double.parse(supply);
+          _swapMode = 0;
         });
         if (!init) {
           _formKey.currentState.validate();
@@ -221,7 +230,7 @@ class _SwapPageState extends State<SwapPage> {
       List currencyIds = store.acala.swapTokens;
       if (currencyIds != null) {
         setState(() {
-          _swapPair = [store.acala.swapTokens[0], acala_stable_coin_view];
+          _swapPair = [store.acala.swapTokens[0], store.acala.swapTokens[1]];
         });
         _refreshData();
         _calcSwapAmount('1', null, init: true);

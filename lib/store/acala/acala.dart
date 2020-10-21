@@ -78,8 +78,13 @@ abstract class _AcalaStore with Store {
 
   @computed
   List<String> get swapTokens {
-    return List<String>.from(
-        rootStore.settings.networkConst['dex']['enabledCurrencyIds']);
+    final res = List.of(rootStore.settings.networkConst['accounts']
+            ['allNonNativeCurrencyIds'])
+        .map((e) => e['Token'].toString())
+        .toList();
+    res.add(rootStore.settings.networkConst['accounts']['nativeCurrencyId']
+        ['Token']);
+    return res;
   }
 
   @computed

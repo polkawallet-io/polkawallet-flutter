@@ -115,18 +115,17 @@ class ApiAcala {
     await apiRoot.unsubscribeMessage(tokenPricesSubscribeChannel);
   }
 
-  Future<String> fetchTokenSwapAmount(String supplyAmount, String targetAmount,
-      List<String> swapPair, String slippage) async {
-    /// baseCoin = 0, supplyToken == AUSD
-    /// baseCoin = 1, targetToken == AUSD
-    /// baseCoin = -1, no AUSD
-    int baseCoin =
-        swapPair.indexWhere((i) => i.toUpperCase() == acala_stable_coin);
-    String output = await apiRoot.evalJavascript(
-      'acala.calcTokenSwapAmount(api, $supplyAmount, $targetAmount, ${jsonEncode(swapPair)}, $baseCoin, $slippage)',
+  Future<String> fetchTokenSwapAmount(
+    String supplyAmount,
+    String targetAmount,
+    List<String> swapPair,
+    String slippage,
+  ) async {
+    final output = await apiRoot.evalJavascript(
+      'acala.calcTokenSwapAmount(api, $supplyAmount, $targetAmount, ${jsonEncode(swapPair)}, $slippage)',
       allowRepeat: true,
     );
-    return output;
+    return output.toString();
   }
 
   Future<void> fetchDexLiquidityPoolSwapRatio(String currencyId) async {
@@ -136,16 +135,16 @@ class ApiAcala {
   }
 
   Future<void> fetchDexLiquidityPoolRewards() async {
-    List<String> tokens = store.acala.swapTokens;
-    String code = tokens
-        .map((i) => 'api.query.dex.liquidityIncentiveRate("$i")')
-        .join(',');
-    List list = await apiRoot.evalJavascript('Promise.all([$code])');
-    Map<String, dynamic> rewards = Map<String, dynamic>();
-    tokens.asMap().forEach((k, v) {
-      rewards[v] = list[k];
-    });
-    store.acala.setSwapPoolRewards(rewards);
+    // List<List> tokens = store.acala.swapTokens;
+    // String code = tokens
+    //     .map((i) => 'api.query.dex.liquidityIncentiveRate("$i")')
+    //     .join(',');
+    // List list = await apiRoot.evalJavascript('Promise.all([$code])');
+    // Map<String, dynamic> rewards = Map<String, dynamic>();
+    // tokens.asMap().forEach((k, v) {
+    //   rewards[v] = list[k];
+    // });
+    // store.acala.setSwapPoolRewards(rewards);
   }
 
   Future<void> fetchDexPoolInfo(String currencyId) async {

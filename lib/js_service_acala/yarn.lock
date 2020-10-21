@@ -2,55 +2,75 @@
 # yarn lockfile v1
 
 
-"@acala-network/api-derive@0.4.0-beta.16", "@acala-network/api-derive@^0.4.0-beta.16":
-  version "0.4.0-beta.16"
-  resolved "https://registry.npm.taobao.org/@acala-network/api-derive/download/@acala-network/api-derive-0.4.0-beta.16.tgz#64e5cafa83f82d1bac36b687435152134de5bd59"
-  integrity sha1-ZOXK+oP4LRusNraHQ1FSE03lvVk=
+"@acala-network/api-derive@0.4.0-beta.18", "@acala-network/api-derive@^0.4.0-beta.18":
+  version "0.4.0-beta.18"
+  resolved "https://registry.npm.taobao.org/@acala-network/api-derive/download/@acala-network/api-derive-0.4.0-beta.18.tgz#bbb0850e82d1dfe939c5c0e434e3b16ab4467901"
+  integrity sha1-u7CFDoLR3+k5xcDkNOOxarRGeQE=
   dependencies:
-    "@acala-network/types" "^0.4.0-beta.16"
+    "@acala-network/types" "^0.4.0-beta.18"
     "@babel/runtime" "^7.10.2"
-    "@polkadot/api-derive" "^2.1.2-8"
+    "@polkadot/api-derive" "^2.2.1"
     rxjs "^6.5.5"
 
-"@acala-network/api@0.4.0-beta.16", "@acala-network/api@^0.4.0-beta.16":
-  version "0.4.0-beta.16"
-  resolved "https://registry.npm.taobao.org/@acala-network/api/download/@acala-network/api-0.4.0-beta.16.tgz#38036347add11678bae5ec4addb8b891ba7e0587"
-  integrity sha1-OANjR63RFni65exK3bi4kbp+BYc=
+"@acala-network/api@0.4.0-beta.18", "@acala-network/api@^0.4.0-beta.18":
+  version "0.4.0-beta.18"
+  resolved "https://registry.npm.taobao.org/@acala-network/api/download/@acala-network/api-0.4.0-beta.18.tgz#d15c6af7cea7d406fcd361d8882abfe5372e8a19"
+  integrity sha1-0Vxq986n1Ab802HYiCq/5Tcuihk=
   dependencies:
-    "@acala-network/api-derive" "^0.4.0-beta.16"
-    "@acala-network/types" "^0.4.0-beta.16"
+    "@acala-network/api-derive" "^0.4.0-beta.18"
+    "@acala-network/types" "^0.4.0-beta.18"
     "@babel/runtime" "^7.10.2"
     "@open-web3/orml-api-derive" "^0.6.0-beta.26"
-    "@polkadot/api" "^2.1.2-8"
-    "@polkadot/rpc-core" "^2.1.2-8"
+    "@polkadot/api" "^2.2.1"
+    "@polkadot/rpc-core" "^2.2.1"
 
-"@acala-network/app-util@0.4.0-beta.16", "@acala-network/app-util@^0.4.0-beta.16":
-  version "0.4.0-beta.16"
-  resolved "https://registry.npm.taobao.org/@acala-network/app-util/download/@acala-network/app-util-0.4.0-beta.16.tgz#49ec99c6dba69d7022b19c22c5354d7cf39272dd"
-  integrity sha1-SeyZxtumnXAisZwixTVNfPOSct0=
+"@acala-network/app-util@0.4.0-beta.18", "@acala-network/app-util@^0.4.0-beta.18":
+  version "0.4.0-beta.18"
+  resolved "https://registry.npm.taobao.org/@acala-network/app-util/download/@acala-network/app-util-0.4.0-beta.18.tgz#aafb093c39290c0f30ffbfa672154c117d90d85c"
+  integrity sha1-qvsJPDkpDA8w/7+mchVMEX2Q2Fw=
   dependencies:
     "@babel/runtime" "^7.10.2"
     bignumber.js "^9.0.0"
 
-"@acala-network/type-definitions@0.4.0-beta.16", "@acala-network/type-definitions@^0.4.0-beta.16":
-  version "0.4.0-beta.16"
-  resolved "https://registry.npm.taobao.org/@acala-network/type-definitions/download/@acala-network/type-definitions-0.4.0-beta.16.tgz#86be45391cedcb24ea8ddd14dfb2c70dd3cf2dce"
-  integrity sha1-hr5FORztyyTqjd0U37LHDdPPLc4=
+"@acala-network/sdk-core@0.4.0-beta.18", "@acala-network/sdk-core@^0.4.0-beta.18":
+  version "0.4.0-beta.18"
+  resolved "https://registry.npm.taobao.org/@acala-network/sdk-core/download/@acala-network/sdk-core-0.4.0-beta.18.tgz#6953d8ba5c074adb8d39c4effff7906ce70b1e25"
+  integrity sha1-aVPYulwHStuNOcTv//eQbOcLHiU=
+  dependencies:
+    "@acala-network/api" "^0.4.0-beta.18"
+    "@polkadot/api" "^2.2.1"
+    "@types/events" "^3.0.0"
+    bignumber.js "^9.0.0"
+    events "^3.2.0"
+    lodash "^4.17.20"
+
+"@acala-network/sdk-swap@0.4.0-beta.18", "@acala-network/sdk-swap@^0.4.0-beta.18":
+  version "0.4.0-beta.18"
+  resolved "https://registry.npm.taobao.org/@acala-network/sdk-swap/download/@acala-network/sdk-swap-0.4.0-beta.18.tgz#dc692e03f72c2ff52f71a5a89bf65d175ff102d8"
+  integrity sha1-3GkuA/csL/UvcaWom/ZdF1/xAtg=
+  dependencies:
+    "@acala-network/sdk-core" "^0.4.0-beta.18"
+    lodash "^4.17.20"
+
+"@acala-network/type-definitions@0.4.0-beta.18", "@acala-network/type-definitions@^0.4.0-beta.18":
+  version "0.4.0-beta.18"
+  resolved "https://registry.npm.taobao.org/@acala-network/type-definitions/download/@acala-network/type-definitions-0.4.0-beta.18.tgz#0310ef7c0798d8c5d3b6c2cdb3dac6d6ed85fbea"
+  integrity sha1-AxDvfAeY2MXTtsLNs9rG1u2F++o=
   dependencies:
     "@open-web3/orml-type-definitions" "^0.6.0-beta.26"
 
-"@acala-network/types@0.4.0-beta.16", "@acala-network/types@^0.4.0-beta.16":
-  version "0.4.0-beta.16"
-  resolved "https://registry.npm.taobao.org/@acala-network/types/download/@acala-network/types-0.4.0-beta.16.tgz#de22ee4ecf9655c1c63ae7c9dd8e9f386a3bc3f8"
-  integrity sha1-3iLuTs+WVcHGOufJ3Y6fOGo7w/g=
+"@acala-network/types@0.4.0-beta.18", "@acala-network/types@^0.4.0-beta.18":
+  version "0.4.0-beta.18"
+  resolved "https://registry.npm.taobao.org/@acala-network/types/download/@acala-network/types-0.4.0-beta.18.tgz#07d41af7a980bab4c228dca770fe9c19b17fb964"
+  integrity sha1-B9Qa96mAurTCKNyncP6cGbF/uWQ=
   dependencies:
-    "@acala-network/type-definitions" "^0.4.0-beta.16"
+    "@acala-network/type-definitions" "^0.4.0-beta.18"
     "@babel/runtime" "^7.10.2"
     "@open-web3/api-mobx" "^0.6.0-beta.26"
     "@open-web3/orml-types" "^0.6.0-beta.26"
-    "@polkadot/api" "^2.1.2-8"
-    "@polkadot/typegen" "^2.1.2-8"
-    "@polkadot/types" "^2.1.2-8"
+    "@polkadot/api" "^2.2.1"
+    "@polkadot/typegen" "^2.2.1"
+    "@polkadot/types" "^2.2.1"
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4":
   version "7.10.4"
@@ -1275,7 +1295,7 @@
   dependencies:
     "@open-web3/orml-type-definitions" "^0.6.0-beta.26"
 
-"@polkadot/api-derive@2.3.1", "@polkadot/api-derive@^2.1.2-8":
+"@polkadot/api-derive@2.3.1", "@polkadot/api-derive@^2.2.1":
   version "2.3.1"
   resolved "https://registry.npm.taobao.org/@polkadot/api-derive/download/@polkadot/api-derive-2.3.1.tgz#7917035c087724782dc275411a256f5b8f747af4"
   integrity sha1-eRcDXAh3JHgtwnVBGiVvW490evQ=
@@ -1291,7 +1311,7 @@
     memoizee "^0.4.14"
     rxjs "^6.6.3"
 
-"@polkadot/api@2.3.1", "@polkadot/api@^2.1.2-8", "@polkadot/api@^2.3.1":
+"@polkadot/api@2.3.1", "@polkadot/api@^2.2.1", "@polkadot/api@^2.3.1":
   version "2.3.1"
   resolved "https://registry.npm.taobao.org/@polkadot/api/download/@polkadot/api-2.3.1.tgz#70be0f4558b4cff85323ea36767bdacb51e8323c"
   integrity sha1-cL4PRVi0z/hTI+o2dnvay1HoMjw=
@@ -1338,7 +1358,7 @@
   dependencies:
     "@babel/runtime" "^7.12.1"
 
-"@polkadot/rpc-core@2.3.1", "@polkadot/rpc-core@^2.1.2-8":
+"@polkadot/rpc-core@2.3.1", "@polkadot/rpc-core@^2.2.1":
   version "2.3.1"
   resolved "https://registry.npm.taobao.org/@polkadot/rpc-core/download/@polkadot/rpc-core-2.3.1.tgz#aa89b13eb51c5919944c785cebfe9c1dbf57a7fe"
   integrity sha1-qomxPrUcWRmUTHhc6/6cHb9Xp/4=
@@ -1366,7 +1386,7 @@
     bn.js "^5.1.3"
     eventemitter3 "^4.0.7"
 
-"@polkadot/typegen@2.3.1", "@polkadot/typegen@^2.1.2-8":
+"@polkadot/typegen@2.3.1", "@polkadot/typegen@^2.2.1":
   version "2.3.1"
   resolved "https://registry.npm.taobao.org/@polkadot/typegen/download/@polkadot/typegen-2.3.1.tgz#be2604a5558f2621db2f3a62a50b9d8fba42720f"
   integrity sha1-viYEpVWPJiHbLzpipQudj7pCcg8=
@@ -1393,7 +1413,7 @@
     "@polkadot/util" "^3.6.1"
     bn.js "^5.1.3"
 
-"@polkadot/types@2.3.1", "@polkadot/types@^2.1.2-8":
+"@polkadot/types@2.3.1", "@polkadot/types@^2.2.1":
   version "2.3.1"
   resolved "https://registry.npm.taobao.org/@polkadot/types/download/@polkadot/types-2.3.1.tgz#8a91678bf67f27c8e174dbf565ec5738bbd0d344"
   integrity sha1-ipFni/Z/J8jhdNv1ZexXOLvQ00Q=
@@ -1572,6 +1592,11 @@
   version "0.1.1"
   resolved "https://registry.npm.taobao.org/@types/deasync/download/@types/deasync-0.1.1.tgz#69ca6999a2e40e329599da9f093b67e3e6cc0833"
   integrity sha1-acppmaLkDjKVmdqfCTtn4+bMCDM=
+
+"@types/events@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.npm.taobao.org/@types/events/download/@types/events-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
+  integrity sha1-KGLz9Yqaf3w+eNefEw3U1xwlwqc=
 
 "@types/glob@^7.1.1":
   version "7.1.3"
@@ -3924,7 +3949,7 @@ eventemitter3@^4.0.0, eventemitter3@^4.0.7:
   resolved "https://registry.npm.taobao.org/eventemitter3/download/eventemitter3-4.0.7.tgz?cache=0&sync_timestamp=1598517907052&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Feventemitter3%2Fdownload%2Feventemitter3-4.0.7.tgz#2de9b68f6528d5644ef5c59526a1b4a07306169f"
   integrity sha1-Lem2j2Uo1WRO9cWVJqG0oHMGFp8=
 
-events@^3.0.0:
+events@^3.0.0, events@^3.2.0:
   version "3.2.0"
   resolved "https://registry.npm.taobao.org/events/download/events-3.2.0.tgz?cache=0&sync_timestamp=1595422555438&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fevents%2Fdownload%2Fevents-3.2.0.tgz#93b87c18f8efcd4202a461aec4dfc0556b639379"
   integrity sha1-k7h8GPjvzUICpGGuxN/AVWtjk3k=
@@ -6125,9 +6150,9 @@ lodash@4.17.15:
   resolved "https://registry.npm.taobao.org/lodash/download/lodash-4.17.15.tgz?cache=0&sync_timestamp=1597337964525&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Flodash%2Fdownload%2Flodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha1-tEf2ZwoEVbv+7dETku/zMOoJdUg=
 
-lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.2:
+lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.2, lodash@^4.17.20:
   version "4.17.20"
-  resolved "https://registry.npm.taobao.org/lodash/download/lodash-4.17.20.tgz?cache=0&sync_timestamp=1597337964525&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Flodash%2Fdownload%2Flodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
+  resolved "https://registry.npm.taobao.org/lodash/download/lodash-4.17.20.tgz?cache=0&sync_timestamp=1597335994883&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Flodash%2Fdownload%2Flodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha1-tEqbYpe8tpjxxRo1RaKzs2jVnFI=
 
 log-symbols@3.0.0:
