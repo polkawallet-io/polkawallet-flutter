@@ -47,6 +47,7 @@ class _SwapPageState extends State<SwapPage> {
   List<String> _swapPair = [];
   int _swapMode = 0; // 0 for 'EXACT_INPUT' and 1 for 'EXACT_OUTPUT'
   double _swapRatio = 0;
+  List<String> _swapPath = [];
 
   Future<void> _refreshData() async {
     webApi.assets.fetchBalance();
@@ -93,6 +94,9 @@ class _SwapPageState extends State<SwapPage> {
     if (supply.isEmpty) {
       return;
     }
+    setState(() {
+      _swapMode = 0;
+    });
     _calcSwapAmount(supply, null);
   }
 
@@ -101,6 +105,9 @@ class _SwapPageState extends State<SwapPage> {
     if (target.isEmpty) {
       return;
     }
+    setState(() {
+      _swapMode = 1;
+    });
     _calcSwapAmount(null, target);
   }
 
@@ -118,34 +125,42 @@ class _SwapPageState extends State<SwapPage> {
     bool init = false,
   }) async {
     if (supply == null) {
-      if (target.isNotEmpty) {
-        String output = await webApi.acala.fetchTokenSwapAmount(
-            supply, target, _swapPair, _slippage.toString());
-        setState(() {
-          if (!init) {
-            _amountPayCtrl.text = output;
-          }
-          _swapRatio = double.parse(target) / double.parse(output);
-          _swapMode = 1;
-        });
-        if (!init) {
-          _formKey.currentState.validate();
+      final output = await webApi.acala.fetchTokenSwapAmount(
+        supply,
+        target.isEmpty ? '1' : target,
+        _swapPair,
+        _slippage.toString(),
+      );
+      setState(() {
+        if (!init && target.isNotEmpty) {
+          _amountPayCtrl.text = output.amount.toString();
         }
+        _swapRatio = target.isEmpty
+            ? output.amount
+            : double.parse(target) / output.amount;
+        _swapPath = output.path;
+      });
+      if (!init && target.isNotEmpty) {
+        _formKey.currentState.validate();
       }
     } else if (target == null) {
-      if (supply.isNotEmpty) {
-        String output = await webApi.acala.fetchTokenSwapAmount(
-            supply, target, _swapPair, _slippage.toString());
-        setState(() {
-          if (!init) {
-            _amountReceiveCtrl.text = output;
-          }
-          _swapRatio = double.parse(output) / double.parse(supply);
-          _swapMode = 0;
-        });
-        if (!init) {
-          _formKey.currentState.validate();
+      final output = await webApi.acala.fetchTokenSwapAmount(
+        supply.isEmpty ? '1' : supply,
+        target,
+        _swapPair,
+        _slippage.toString(),
+      );
+      setState(() {
+        if (!init && supply.isNotEmpty) {
+          _amountReceiveCtrl.text = output.amount.toString();
         }
+        _swapRatio = supply.isEmpty
+            ? output.amount
+            : output.amount / double.parse(supply);
+        _swapPath = output.path;
+      });
+      if (!init && supply.isNotEmpty) {
+        _formKey.currentState.validate();
       }
     }
   }
@@ -269,7 +284,7 @@ class _SwapPageState extends State<SwapPage> {
               key: _refreshKey,
               onRefresh: _refreshData,
               child: ListView(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.fromLTRB(8, 16, 8, 16),
                 children: <Widget>[
                   RoundedCard(
                     padding: EdgeInsets.all(16),
@@ -442,40 +457,76 @@ class _SwapPageState extends State<SwapPage> {
                               ),
                               Divider(),
                               Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        dic['dex.rate'],
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .unselectedWidgetColor),
+                                      ),
+                                      Text(
+                                          '1 ${_swapPair[0]} = ${_swapRatio.toStringAsFixed(6)} ${_swapPair[1]}'),
+                                    ],
+                                  ),
+                                  GestureDetector(
+                                    child: Container(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Icon(Icons.history, color: primary),
+                                          Text(
+                                            dic['loan.txs'],
+                                            style: TextStyle(
+                                                color: primary, fontSize: 14),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    onTap: () => Navigator.of(context)
+                                        .pushNamed(SwapHistoryPage.route),
+                                  ),
+                                ],
+                              ),
+                              _swapPath.length > 2
+                                  ? Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          dic['dex.rate'],
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .unselectedWidgetColor),
-                                        ),
-                                        Text(
-                                            '1 ${_swapPair[0]} = ${_swapRatio.toStringAsFixed(6)} ${_swapPair[1]}'),
+                                      children: [
+                                        Divider(),
+                                        Text(dic['dex.route'],
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .unselectedWidgetColor)),
+                                        Row(
+                                          children: _swapPath.map((e) {
+                                            return CurrencyWithIcon(
+                                              e.toUpperCase(),
+                                              textStyle: Theme.of(context)
+                                                  .textTheme
+                                                  .headline4,
+                                              trailing: e ==
+                                                      _swapPath[
+                                                          _swapPath.length - 1]
+                                                  ? null
+                                                  : Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 8, right: 8),
+                                                      child: Icon(
+                                                          Icons
+                                                              .arrow_forward_ios,
+                                                          size: 18),
+                                                    ),
+                                            );
+                                          }).toList(),
+                                        )
                                       ],
-                                    ),
-                                    GestureDetector(
-                                      child: Container(
-                                        child: Column(
-                                          children: <Widget>[
-                                            Icon(Icons.history, color: primary),
-                                            Text(
-                                              dic['loan.txs'],
-                                              style: TextStyle(
-                                                  color: primary, fontSize: 14),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () => Navigator.of(context)
-                                          .pushNamed(SwapHistoryPage.route),
-                                    ),
-                                  ])
+                                    )
+                                  : Container()
                             ],
                           )
                         : CupertinoActivityIndicator(),

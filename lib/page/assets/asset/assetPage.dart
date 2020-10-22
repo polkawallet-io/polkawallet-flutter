@@ -50,12 +50,16 @@ class _AssetPageState extends State<AssetPage>
     webApi.assets.fetchBalance();
     Map res = {"transfers": []};
 
+    if (store.settings.endpoint.info == networkEndpointKusama.info ||
+        store.settings.endpoint.info == networkEndpointPolkadot.info) {
+      webApi.staking.fetchAccountStaking();
+    }
+
     final String symbol = store.settings.networkState.tokenSymbol;
     final String token = ModalRoute.of(context).settings.arguments;
     final bool isBaseToken = token == symbol;
     if (isBaseToken &&
         store.settings.endpoint.info != networkEndpointLaminar.info) {
-      webApi.staking.fetchAccountStaking();
       res = await webApi.assets.updateTxs(_txsPage);
     }
     if (!mounted) return;

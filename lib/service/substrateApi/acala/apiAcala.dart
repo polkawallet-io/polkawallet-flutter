@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/faucet.dart';
+import 'package:polka_wallet/store/acala/types/swapOutputData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -115,23 +116,22 @@ class ApiAcala {
     await apiRoot.unsubscribeMessage(tokenPricesSubscribeChannel);
   }
 
-  Future<String> fetchTokenSwapAmount(
+  Future<SwapOutputData> fetchTokenSwapAmount(
     String supplyAmount,
     String targetAmount,
     List<String> swapPair,
     String slippage,
   ) async {
-    final output = await apiRoot.evalJavascript(
-      'acala.calcTokenSwapAmount(api, $supplyAmount, $targetAmount, ${jsonEncode(swapPair)}, $slippage)',
-      allowRepeat: true,
-    );
-    return output.toString();
+    final code =
+        'acala.calcTokenSwapAmount(api, $supplyAmount, $targetAmount, ${jsonEncode(swapPair)}, $slippage)';
+    final output = await apiRoot.evalJavascript(code, allowRepeat: true);
+    return SwapOutputData.fromJson(output);
   }
 
   Future<void> fetchDexLiquidityPoolSwapRatio(String currencyId) async {
-    String res = await fetchTokenSwapAmount(
-        '1', null, [currencyId, acala_stable_coin], '0');
-    store.acala.setSwapPoolRatio(currencyId, res);
+    // String res = await fetchTokenSwapAmount(
+    //     '1', null, [currencyId, acala_stable_coin], '0');
+    // store.acala.setSwapPoolRatio(currencyId, res);
   }
 
   Future<void> fetchDexLiquidityPoolRewards() async {
