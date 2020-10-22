@@ -63,6 +63,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
         await _authBiometric();
       }
 
+      widget.store.resetNewAccount();
       Navigator.popUntil(context, ModalRoute.withName('/'));
     }
   }

@@ -44,9 +44,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           _advanceOptions.type ?? AccountAdvanceOptionParams.encryptTypeSR,
       derivePath: _advanceOptions.path ?? '',
     );
-    Navigator.of(context).pop();
 
     if (acc['error'] != null) {
+      Navigator.of(context).pop();
       UI.alertWASM(context, () {
         setState(() {
           _submitting = false;
@@ -73,6 +73,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     setState(() {
       _submitting = false;
     });
+    Navigator.of(context).pop();
     return true;
   }
 

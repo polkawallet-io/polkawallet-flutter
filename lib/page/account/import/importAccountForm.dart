@@ -435,6 +435,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                 });
                 if (saved) {
                   await _authBiometric();
+
+                  widget.store.account.resetNewAccount();
                   Navigator.popUntil(context, ModalRoute.withName('/'));
                 }
               }

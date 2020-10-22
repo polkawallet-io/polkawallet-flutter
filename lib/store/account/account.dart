@@ -187,8 +187,9 @@ abstract class _AccountStore with Store {
 
     await loadAccount();
 
-    // clear the temp account after addAccount finished
-    newAccount = AccountCreate();
+    /// do not clear the temp account after addAccount finished because
+    /// user may need to save password with biometric.
+    // newAccount = AccountCreate();
   }
 
   @action

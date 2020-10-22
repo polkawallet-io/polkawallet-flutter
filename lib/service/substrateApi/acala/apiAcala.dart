@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/faucet.dart';
 import 'package:polka_wallet/store/acala/types/swapOutputData.dart';
 import 'package:polka_wallet/store/app.dart';

@@ -49,10 +49,6 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
       cryptoType: _cryptoType,
       derivePath: _derivePath,
     );
-    setState(() {
-      _submitting = false;
-    });
-    Navigator.of(context).pop();
 
     /// check if account duplicate
     if (acc != null) {
@@ -87,13 +83,25 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
             });
           });
         }
+        Navigator.of(context).pop();
+        setState(() {
+          _submitting = false;
+        });
         return false;
       }
       final duplicated = await _checkAccountDuplicate(acc);
       if (duplicated) {
+        Navigator.of(context).pop();
+        setState(() {
+          _submitting = false;
+        });
         return false;
       }
       await _saveAccount(acc);
+      setState(() {
+        _submitting = false;
+      });
+      Navigator.of(context).pop();
       return true;
     }
 
