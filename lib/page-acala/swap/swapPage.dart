@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -12,6 +13,7 @@ import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/acala/types/swapOutputData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -47,7 +49,10 @@ class _SwapPageState extends State<SwapPage> {
   List<String> _swapPair = [];
   int _swapMode = 0; // 0 for 'EXACT_INPUT' and 1 for 'EXACT_OUTPUT'
   double _swapRatio = 0;
-  List<String> _swapPath = [];
+  SwapOutputData _swapOutput = SwapOutputData();
+
+  // use a _timer to control swap amount query
+  Timer _timer;
 
   Future<void> _refreshData() async {
     webApi.assets.fetchBalance();
@@ -97,7 +102,13 @@ class _SwapPageState extends State<SwapPage> {
     setState(() {
       _swapMode = 0;
     });
-    _calcSwapAmount(supply, null);
+
+    if (_timer != null) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(seconds: 1), () {
+      _calcSwapAmount(supply, null);
+    });
   }
 
   void _onTargetAmountChange(String v) {
@@ -108,7 +119,13 @@ class _SwapPageState extends State<SwapPage> {
     setState(() {
       _swapMode = 1;
     });
-    _calcSwapAmount(null, target);
+
+    if (_timer != null) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(seconds: 1), () {
+      _calcSwapAmount(null, target);
+    });
   }
 
   Future<void> _updateSwapAmount() async {
@@ -138,7 +155,7 @@ class _SwapPageState extends State<SwapPage> {
         _swapRatio = target.isEmpty
             ? output.amount
             : double.parse(target) / output.amount;
-        _swapPath = output.path;
+        _swapOutput = output;
       });
       if (!init && target.isNotEmpty) {
         _formKey.currentState.validate();
@@ -157,7 +174,7 @@ class _SwapPageState extends State<SwapPage> {
         _swapRatio = supply.isEmpty
             ? output.amount
             : output.amount / double.parse(supply);
-        _swapPath = output.path;
+        _swapOutput = output;
       });
       if (!init && supply.isNotEmpty) {
         _formKey.currentState.validate();
@@ -202,14 +219,14 @@ class _SwapPageState extends State<SwapPage> {
 
   void _onSubmit() {
     if (_formKey.currentState.validate()) {
-      int decimals = store.settings.networkState.tokenDecimals;
       String pay = _amountPayCtrl.text.trim();
       String receive = _amountReceiveCtrl.text.trim();
       var args = {
         "title": I18n.of(context).acala['dex.title'],
         "txInfo": {
           "module": 'dex',
-          "call": 'swapCurrency',
+          "call":
+              _swapMode == 0 ? 'swapWithExactSupply' : 'swapWithExactTarget',
         },
         "detail": jsonEncode({
           "currencyPay": _swapPair[0],
@@ -218,15 +235,13 @@ class _SwapPageState extends State<SwapPage> {
           "amountReceive": receive,
         }),
         "params": [
-          // params.supply
-          _swapPair[0],
-          Fmt.tokenInt(pay, decimals).toString(),
-          // params.target
-          _swapPair[1],
-          Fmt.tokenInt(receive, decimals).toString(),
+          _swapOutput.path,
+          _swapOutput.input,
+          _swapOutput.output,
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
 //          print(res);
+          res['mode'] = _swapMode;
           store.acala.setSwapTxs([res]);
           Navigator.popUntil(
               txPageContext, ModalRoute.withName(SwapPage.route));
@@ -492,7 +507,7 @@ class _SwapPageState extends State<SwapPage> {
                                   ),
                                 ],
                               ),
-                              _swapPath.length > 2
+                              (_swapOutput.path?.length ?? 0) > 2
                                   ? Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -503,15 +518,17 @@ class _SwapPageState extends State<SwapPage> {
                                                 color: Theme.of(context)
                                                     .unselectedWidgetColor)),
                                         Row(
-                                          children: _swapPath.map((e) {
+                                          children: _swapOutput.path.map((e) {
                                             return CurrencyWithIcon(
-                                              e.toUpperCase(),
+                                              e['Token'].toUpperCase(),
                                               textStyle: Theme.of(context)
                                                   .textTheme
                                                   .headline4,
                                               trailing: e ==
-                                                      _swapPath[
-                                                          _swapPath.length - 1]
+                                                      _swapOutput.path[
+                                                          _swapOutput
+                                                                  .path.length -
+                                                              1]
                                                   ? null
                                                   : Padding(
                                                       padding: EdgeInsets.only(

@@ -8,6 +8,8 @@ class SwapOutputData extends _SwapOutputData {
 }
 
 abstract class _SwapOutputData {
-  List<String> path;
+  List path;
   double amount;
+  String input;
+  String output;
 }
