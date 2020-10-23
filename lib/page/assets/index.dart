@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
@@ -21,6 +22,7 @@ import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/service/walletApi.dart';
+import 'package:polka_wallet/store/acala/types/swapOutputData.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
@@ -572,7 +574,8 @@ class _AssetsState extends State<Assets> {
                         ),
                         onTap: () {
                           Navigator.pushNamed(context, AssetPage.route,
-                              arguments: symbol);
+                              arguments: TokenData(
+                                  tokenType: TokenType.Native, id: symbol));
                         },
                       ),
                     ),
@@ -610,12 +613,20 @@ class _AssetsState extends State<Assets> {
                             ),
                             onTap: () {
                               Navigator.pushNamed(context, AssetPage.route,
-                                  arguments: token);
+                                  arguments: TokenData(
+                                      tokenType: TokenType.Token, id: token));
                             },
                           ),
                         );
                       }).toList(),
                     ),
+                    isAcala && store.acala.lpTokens.length > 0
+                        ? Column(
+                            children: store.acala.lpTokens.map((e) {
+                              return LPTokenItem(e, decimals: decimals);
+                            }).toList(),
+                          )
+                        : Container(),
                     isAcala && store.acala.airdrops.keys.length > 0
                         ? Padding(
                             padding: EdgeInsets.only(top: 24),
@@ -663,6 +674,43 @@ class _AssetsState extends State<Assets> {
           ),
         );
       },
+    );
+  }
+}
+
+class LPTokenItem extends StatelessWidget {
+  LPTokenItem(this.data, {this.decimals});
+  final LPTokenData data;
+  final int decimals;
+  @override
+  Widget build(BuildContext context) {
+    final id = data.currencyId.map((e) => Fmt.tokenView(e)).join('-');
+    return RoundedCard(
+      margin: EdgeInsets.only(top: 16),
+      child: ListTile(
+        leading: Container(
+          width: 44,
+          child: TokenIcon(data.currencyId.join("-")),
+        ),
+        title: Text(Fmt.tokenView(id)),
+        trailing: Text(
+          Fmt.priceFloorBigInt(Fmt.balanceInt(data.free), decimals,
+              lengthFixed: 3),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54),
+        ),
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            AssetPage.route,
+            arguments: TokenData(
+              tokenType: TokenType.LPToken,
+              id: id,
+              amount: data.free,
+            ),
+          );
+        },
+      ),
     );
   }
 }

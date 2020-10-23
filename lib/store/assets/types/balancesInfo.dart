@@ -52,3 +52,13 @@ class _BalanceLockedItemData {
   String reasons;
   String use;
 }
+
+/// TokenType: LP-Token in acala.network
+enum TokenType { Native, Token, LPToken }
+
+class TokenData {
+  TokenData({this.tokenType, this.id, this.amount});
+  final TokenType tokenType;
+  final String id;
+  final String amount;
+}

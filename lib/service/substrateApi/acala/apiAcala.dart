@@ -40,20 +40,23 @@ class ApiAcala {
       final String queries = tokens
           .map((i) => 'acala.getTokens("$address", ${jsonEncode(i)})')
           .join(",");
-      var res = await apiRoot.evalJavascript('Promise.all([$queries])',
-          allowRepeat: true);
+      var res = await Future.wait([
+        apiRoot.evalJavascript('Promise.all([$queries])', allowRepeat: true),
+        apiRoot.evalJavascript('acala.queryLPTokens("$address")',
+            allowRepeat: true),
+      ]);
       Map balances = {};
       balances[symbol] = store.assets.balances[symbol].transferable.toString();
       tokens.asMap().forEach((index, token) {
-        balances[token['Token']] = res[index].toString();
+        balances[token['Token']] = res[0][index].toString();
       });
       store.assets.setAccountTokenBalances(pubKey, balances);
+      store.acala.setLPTokens(res[1]);
     }
   }
 
   Future<void> fetchAirdropTokens() async {
-    String getCurrencyIds =
-        'api.registry.createType("AirDropCurrencyId").defKeys';
+    String getCurrencyIds = 'api.createType("AirDropCurrencyId").defKeys';
     if (Platform.isIOS) {
       getCurrencyIds =
           'JSON.stringify(api.registry.createType("AirDropCurrencyId").defKeys)';

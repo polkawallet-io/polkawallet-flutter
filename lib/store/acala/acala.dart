@@ -3,6 +3,7 @@ import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/acala/types/dexPoolInfoData.dart';
 import 'package:polka_wallet/store/acala/types/loanType.dart';
 import 'package:polka_wallet/store/acala/types/stakingPoolInfoData.dart';
+import 'package:polka_wallet/store/acala/types/swapOutputData.dart';
 import 'package:polka_wallet/store/acala/types/txHomaData.dart';
 import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/acala/types/txLoanData.dart';
@@ -39,6 +40,9 @@ abstract class _AcalaStore with Store {
 
   @observable
   Map<String, BigInt> prices = {};
+
+  @observable
+  List<LPTokenData> lpTokens = List<LPTokenData>();
 
   @observable
   ObservableList<TransferData> txsTransfer = ObservableList<TransferData>();
@@ -122,6 +126,11 @@ abstract class _AcalaStore with Store {
   }
 
   @action
+  void setLPTokens(List list) {
+    lpTokens = list.map((e) => LPTokenData.fromJson(e)).toList();
+  }
+
+  @action
   void setAccountLoans(List list) {
     Map<String, LoanData> data = {};
     list.forEach((i) {
@@ -164,7 +173,8 @@ abstract class _AcalaStore with Store {
         "success": true,
         "from": rootStore.account.currentAddress,
         "to": i['params'][0],
-        "token": i['params'][1]['Token'],
+        "token": i['params'][1]['Token'] ??
+            List.of(i['params'][1]['DEXShare']).join('-').toUpperCase(),
         "amount": Fmt.balance(
           i['params'][2],
           rootStore.settings.networkState.tokenDecimals,

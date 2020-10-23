@@ -90,6 +90,21 @@ mixin _$AcalaStore on _AcalaStore, Store {
     });
   }
 
+  final _$lpTokensAtom = Atom(name: '_AcalaStore.lpTokens');
+
+  @override
+  List<LPTokenData> get lpTokens {
+    _$lpTokensAtom.reportRead();
+    return super.lpTokens;
+  }
+
+  @override
+  set lpTokens(List<LPTokenData> value) {
+    _$lpTokensAtom.reportWrite(value, super.lpTokens, () {
+      super.lpTokens = value;
+    });
+  }
+
   final _$txsTransferAtom = Atom(name: '_AcalaStore.txsTransfer');
 
   @override
@@ -365,6 +380,17 @@ mixin _$AcalaStore on _AcalaStore, Store {
   }
 
   @override
+  void setLPTokens(List<dynamic> list) {
+    final _$actionInfo = _$_AcalaStoreActionController.startAction(
+        name: '_AcalaStore.setLPTokens');
+    try {
+      return super.setLPTokens(list);
+    } finally {
+      _$_AcalaStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setAccountLoans(List<dynamic> list) {
     final _$actionInfo = _$_AcalaStoreActionController.startAction(
         name: '_AcalaStore.setAccountLoans');
@@ -415,6 +441,7 @@ airdrops: ${airdrops},
 loanTypes: ${loanTypes},
 loans: ${loans},
 prices: ${prices},
+lpTokens: ${lpTokens},
 txsTransfer: ${txsTransfer},
 txsLoan: ${txsLoan},
 txsSwap: ${txsSwap},

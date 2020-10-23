@@ -55,10 +55,9 @@ class _AssetPageState extends State<AssetPage>
       webApi.staking.fetchAccountStaking();
     }
 
-    final String symbol = store.settings.networkState.tokenSymbol;
-    final String token = ModalRoute.of(context).settings.arguments;
-    final bool isBaseToken = token == symbol;
-    if (isBaseToken &&
+    final TokenData token = ModalRoute.of(context).settings.arguments;
+    final bool isNativeToken = token.tokenType == TokenType.Native;
+    if (isNativeToken &&
         store.settings.endpoint.info != networkEndpointLaminar.info) {
       res = await webApi.assets.updateTxs(_txsPage);
     }
@@ -115,17 +114,16 @@ class _AssetPageState extends State<AssetPage>
 
   List<Widget> _buildTxList() {
     List<Widget> res = [];
-    final String symbol = store.settings.networkState.tokenSymbol;
-    final String token = ModalRoute.of(context).settings.arguments;
-    final bool isBaseToken = token == symbol;
+    final TokenData token = ModalRoute.of(context).settings.arguments;
+    final bool isNativeToken = token.tokenType == TokenType.Native;
 //    final isAcala = store.settings.endpoint.info == networkEndpointAcala.info;
     final isLaminar =
         store.settings.endpoint.info == networkEndpointLaminar.info;
-    if (!isBaseToken || isLaminar) {
+    if (!isNativeToken || isLaminar) {
       List<TransferData> ls = isLaminar
           ? store.laminar.txsTransfer.reversed.toList()
           : store.acala.txsTransfer.reversed.toList();
-      ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
+      ls.retainWhere((i) => i.token.toUpperCase() == token.id.toUpperCase());
       res.addAll(ls.map((i) {
         String crossChain;
         Map<String, dynamic> tx = TransferData.toJson(i);
@@ -139,7 +137,7 @@ class _AssetPageState extends State<AssetPage>
         }
         return TransferListItem(
           data: crossChain != null ? TransferData.fromJson(tx) : i,
-          token: token,
+          token: token.id,
           isOut: true,
           hasDetail: false,
           crossChain: crossChain,
@@ -153,7 +151,7 @@ class _AssetPageState extends State<AssetPage>
       res.addAll(store.assets.txsView.map((i) {
         return TransferListItem(
           data: i,
-          token: token,
+          token: token.id,
           isOut: i.from == store.account.currentAddress,
           hasDetail: true,
         );
@@ -178,9 +176,9 @@ class _AssetPageState extends State<AssetPage>
 
     final int decimals = store.settings.networkState.tokenDecimals;
     final String symbol = store.settings.networkState.tokenSymbol;
-    final String token = ModalRoute.of(context).settings.arguments;
-    final String tokenView = Fmt.tokenView(token);
-    final bool isBaseToken = token == symbol;
+    final TokenData token = ModalRoute.of(context).settings.arguments;
+    final String tokenView = Fmt.tokenView(token.id);
+    final bool isNativeToken = token.tokenType == TokenType.Native;
 
     final isLaminar =
         store.settings.endpoint.info == networkEndpointLaminar.info;
@@ -197,8 +195,10 @@ class _AssetPageState extends State<AssetPage>
       body: SafeArea(
         child: Observer(
           builder: (_) {
-            BigInt balance =
-                Fmt.balanceInt(store.assets.tokenBalances[token.toUpperCase()]);
+            BigInt balance = token.tokenType == TokenType.LPToken
+                ? Fmt.balanceInt(token.amount)
+                : Fmt.balanceInt(
+                    store.assets.tokenBalances[token.id.toUpperCase()]);
 
             BalancesInfo balancesInfo = store.assets.balances[symbol];
             String lockedInfo = '\n';
@@ -236,7 +236,8 @@ class _AssetPageState extends State<AssetPage>
                         padding: EdgeInsets.only(
                             bottom: tokenPrice != null ? 4 : 16),
                         child: Text(
-                          Fmt.token(isBaseToken ? balancesInfo.total : balance,
+                          Fmt.token(
+                              isNativeToken ? balancesInfo.total : balance,
                               decimals,
                               length: 8),
                           style: TextStyle(
@@ -257,7 +258,7 @@ class _AssetPageState extends State<AssetPage>
                               ),
                             )
                           : Container(),
-                      isBaseToken
+                      isNativeToken
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
@@ -338,7 +339,7 @@ class _AssetPageState extends State<AssetPage>
                     ],
                   ),
                 ),
-                isBaseToken && !isLaminar
+                isNativeToken && !isLaminar
                     ? TabBar(
                         labelColor: Colors.black87,
                         labelStyle: TextStyle(fontSize: 18),
@@ -399,7 +400,7 @@ class _AssetPageState extends State<AssetPage>
                               TransferPage.route,
                               arguments: TransferPageParams(
                                 redirect: AssetPage.route,
-                                symbol: token,
+                                token: token,
                               ),
                             );
                           },
@@ -476,7 +477,7 @@ class TransferListItem extends StatelessWidget {
             children: <Widget>[
               Expanded(
                   child: Text(
-                '${data.amount} $token',
+                '${data.amount} ${Fmt.tokenView(token)}',
                 style: Theme.of(context).textTheme.headline4,
               )),
               isOut

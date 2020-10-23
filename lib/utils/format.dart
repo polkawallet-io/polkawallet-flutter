@@ -226,11 +226,23 @@ class Fmt {
     var cmpStake = a.total < b.total ? 1 : -1;
     switch (sortType) {
       case 0:
-        return a.total != b.total ? cmpStake : comA > comB ? 1 : -1;
+        return a.total != b.total
+            ? cmpStake
+            : comA > comB
+                ? 1
+                : -1;
       case 1:
-        return a.points == b.points ? cmpStake : a.points < b.points ? 1 : -1;
+        return a.points == b.points
+            ? cmpStake
+            : a.points < b.points
+                ? 1
+                : -1;
       case 2:
-        return comA == comB ? cmpStake : comA > comB ? 1 : -1;
+        return comA == comB
+            ? cmpStake
+            : comA > comB
+                ? 1
+                : -1;
       case 3:
         final infoA = addressIndexMap[a.accountId];
         if (infoA != null && infoA['identity'] != null) {
@@ -361,6 +373,9 @@ class Fmt {
     }
     if (token == acala_token_ren_btc) {
       tokenView = acala_token_ren_btc_view;
+    }
+    if (token.contains('-')) {
+      tokenView = '$token LP';
     }
     return tokenView;
   }

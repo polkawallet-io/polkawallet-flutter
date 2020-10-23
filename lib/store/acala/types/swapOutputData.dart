@@ -13,3 +13,13 @@ abstract class _SwapOutputData {
   String input;
   String output;
 }
+
+@JsonSerializable()
+class LPTokenData extends _LPTokenData {
+  static LPTokenData fromJson(Map json) => _$LPTokenDataFromJson(json);
+}
+
+abstract class _LPTokenData {
+  List<String> currencyId;
+  String free;
+}

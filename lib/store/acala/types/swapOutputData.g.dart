@@ -21,3 +21,16 @@ Map<String, dynamic> _$SwapOutputDataToJson(SwapOutputData instance) =>
       'input': instance.input,
       'output': instance.output,
     };
+
+LPTokenData _$LPTokenDataFromJson(Map<String, dynamic> json) {
+  return LPTokenData()
+    ..currencyId =
+        (json['currencyId'] as List)?.map((e) => e as String)?.toList()
+    ..free = json['free'] as String;
+}
+
+Map<String, dynamic> _$LPTokenDataToJson(LPTokenData instance) =>
+    <String, dynamic>{
+      'currencyId': instance.currencyId,
+      'free': instance.free,
+    };
