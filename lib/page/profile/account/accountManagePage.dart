@@ -95,6 +95,14 @@ class _AccountManagePageState extends State<AccountManagePage> {
     });
   }
 
+  Future<void> _onChangePass() async {
+    final res = await Navigator.pushNamed(context, ChangePasswordPage.route);
+    // refresh biometric auth status after password changed
+    if (res ?? false) {
+      _checkBiometricAuth();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -150,8 +158,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
                     ListTile(
                       title: Text(dic['pass.change']),
                       trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                      onTap: () => Navigator.pushNamed(
-                          context, ChangePasswordPage.route),
+                      onTap: () => _onChangePass(),
                     ),
                     ListTile(
                       title: Text(dic['export']),
