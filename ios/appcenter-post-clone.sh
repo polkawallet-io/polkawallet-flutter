@@ -17,9 +17,7 @@ flutter doctor
 NODE_VERSION="12.16.0"
 curl "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.pkg" > "$HOME/Downloads/node-installer.pkg"
 sudo installer -store -pkg "$HOME/Downloads/node-installer.pkg" -target "/"
-cd ./lib/js_service_kusama && yarn install && yarn run build && cd ../..
-cd ./lib/js_service_acala && yarn install && yarn run build && cd ../..
-cd ./lib/js_service_laminar && yarn install && yarn run build && cd ../..
-cd ./lib/js_as_extension && yarn install && yarn run build && cd ../..
+
+cd ./lib/js_service_encointer && yarn install && yarn run build && cd ../..
 
 flutter build ios --release --no-codesign
