@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/roundedCard.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class StateMachineWidget extends StatelessWidget {
   StateMachineWidget({

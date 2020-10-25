@@ -1,21 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/components/BorderedTitle.dart';
-import 'package:polka_wallet/common/components/TapTooltip.dart';
-import 'package:polka_wallet/common/components/listTail.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/page/assets/receive/receivePage.dart';
-import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
-import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
-import 'package:polka_wallet/service/subscan.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
-import 'package:polka_wallet/store/assets/types/transferData.dart';
-import 'package:polka_wallet/utils/UI.dart';
-import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/BorderedTitle.dart';
+import 'package:encointer_wallet/common/components/TapTooltip.dart';
+import 'package:encointer_wallet/common/components/listTail.dart';
+import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/page/assets/receive/receivePage.dart';
+import 'package:encointer_wallet/page/assets/transfer/detailPage.dart';
+import 'package:encointer_wallet/page/assets/transfer/transferPage.dart';
+import 'package:encointer_wallet/service/subscan.dart';
+import 'package:encointer_wallet/service/substrateApi/api.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/assets/types/balancesInfo.dart';
+import 'package:encointer_wallet/store/assets/types/transferData.dart';
+import 'package:encointer_wallet/utils/UI.dart';
+import 'package:encointer_wallet/utils/format.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class AssetPageParams {
   AssetPageParams({this.token, this.isEncointerCommunityCurrency = false});

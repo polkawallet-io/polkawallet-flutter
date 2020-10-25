@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/page-encointer/encointerEntry.dart';
-import 'package:polka_wallet/page/assets/index.dart';
-import 'package:polka_wallet/page/profile/index.dart';
-import 'package:polka_wallet/service/notification.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/page-encointer/encointerEntry.dart';
+import 'package:encointer_wallet/page/assets/index.dart';
+import 'package:encointer_wallet/page/profile/index.dart';
+import 'package:encointer_wallet/service/notification.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class EncointerHomePage extends StatefulWidget {
   EncointerHomePage(this.store);

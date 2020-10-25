@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
-import 'package:polka_wallet/store/account/types/accountData.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/format.dart';
+import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/page/profile/settings/ss58PrefixListPage.dart';
+import 'package:encointer_wallet/store/account/types/accountData.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/utils/format.dart';
 
 part 'settings.g.dart';
 

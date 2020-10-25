@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/page-encointer/meetup/attestation/components/qrCode.dart';
-import 'package:polka_wallet/page-encointer/meetup/attestation/components/scanQrCode.dart';
-import 'package:polka_wallet/page-encointer/meetup/attestation/components/stateMachineWidget.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/encointer/types/attestationState.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/page-encointer/meetup/attestation/components/qrCode.dart';
+import 'package:encointer_wallet/page-encointer/meetup/attestation/components/scanQrCode.dart';
+import 'package:encointer_wallet/page-encointer/meetup/attestation/components/stateMachineWidget.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 Widget makeTestableWidget({Widget child}) {
   return MediaQuery(

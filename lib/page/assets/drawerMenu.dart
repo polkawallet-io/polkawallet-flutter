@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/components/addressIcon.dart';
-import 'package:polka_wallet/page/account/createAccountEntryPage.dart';
-import 'package:polka_wallet/page/account/scanPage.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/UI.dart';
-import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/addressIcon.dart';
+import 'package:encointer_wallet/page/account/createAccountEntryPage.dart';
+import 'package:encointer_wallet/page/account/scanPage.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/utils/UI.dart';
+import 'package:encointer_wallet/utils/format.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class DrawerMenu extends StatelessWidget {
   DrawerMenu(this.store);

@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
-import 'package:polka_wallet/store/assets/types/transferData.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/assets/types/balancesInfo.dart';
+import 'package:encointer_wallet/store/assets/types/transferData.dart';
 
 part 'assets.g.dart';
 

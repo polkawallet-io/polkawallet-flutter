@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/page-encointer/meetup/attestation/components/stateMachinePartyA.dart';
-import 'package:polka_wallet/page-encointer/meetup/attestation/components/stateMachinePartyB.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/encointer/types/attestationState.dart';
-import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/common/components/roundedCard.dart';
+import 'package:encointer_wallet/page-encointer/meetup/attestation/components/stateMachinePartyA.dart';
+import 'package:encointer_wallet/page-encointer/meetup/attestation/components/stateMachinePartyB.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
+import 'package:encointer_wallet/utils/format.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class AttestationCard extends StatefulWidget {
   AttestationCard(

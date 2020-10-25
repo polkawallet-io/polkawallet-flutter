@@ -1,9 +1,9 @@
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/store/account/account.dart';
-import 'package:polka_wallet/store/assets/assets.dart';
-import 'package:polka_wallet/store/encointer/encointer.dart';
-import 'package:polka_wallet/store/settings.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
+import 'package:encointer_wallet/store/account/account.dart';
+import 'package:encointer_wallet/store/assets/assets.dart';
+import 'package:encointer_wallet/store/encointer/encointer.dart';
+import 'package:encointer_wallet/store/settings.dart';
+import 'package:encointer_wallet/utils/localStorage.dart';
 
 part 'app.g.dart';
 

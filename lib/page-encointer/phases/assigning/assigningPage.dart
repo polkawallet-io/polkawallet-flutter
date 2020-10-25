@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/page-encointer/common/assignmentPanel.dart';
-import 'package:polka_wallet/store/app.dart';
+import 'package:encointer_wallet/page-encointer/common/assignmentPanel.dart';
+import 'package:encointer_wallet/store/app.dart';
 
 class AssigningPage extends StatefulWidget {
   AssigningPage(this.store);

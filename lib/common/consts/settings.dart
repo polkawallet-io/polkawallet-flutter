@@ -1,4 +1,4 @@
-import 'package:polka_wallet/store/settings.dart';
+import 'package:encointer_wallet/store/settings.dart';
 
 const String network_name_encointer_gesell = 'nctr-gsl';
 const String network_name_encointer_cantillon = 'nctr-ctln';

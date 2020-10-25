@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/roundedCard.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 
 class ConfirmAttendeesDialog extends StatelessWidget {

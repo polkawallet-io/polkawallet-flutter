@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:polka_wallet/store/app.dart';
+import 'package:encointer_wallet/store/app.dart';
 
 import '../mocks/localStorage_mock.dart';
 

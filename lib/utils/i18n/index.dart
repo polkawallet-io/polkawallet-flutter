@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show SynchronousFuture;
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/utils/i18n/assets.dart';
-import 'package:polka_wallet/utils/i18n/encointer.dart';
+import 'package:encointer_wallet/utils/i18n/assets.dart';
+import 'package:encointer_wallet/utils/i18n/encointer.dart';
 
 import 'account.dart';
 import 'home.dart';

@@ -1,12 +1,12 @@
 import 'package:flutter_aes_ecb_pkcs5/flutter_aes_ecb_pkcs5.dart';
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/page/profile/settings/ss58PrefixListPage.dart';
-import 'package:polka_wallet/store/account/types/accountBondedInfo.dart';
-import 'package:polka_wallet/store/account/types/accountData.dart';
-import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:encointer_wallet/page/profile/settings/ss58PrefixListPage.dart';
+import 'package:encointer_wallet/store/account/types/accountBondedInfo.dart';
+import 'package:encointer_wallet/store/account/types/accountData.dart';
+import 'package:encointer_wallet/store/account/types/accountRecoveryInfo.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/utils/format.dart';
+import 'package:encointer_wallet/service/substrateApi/api.dart';
 
 part 'account.g.dart';
 

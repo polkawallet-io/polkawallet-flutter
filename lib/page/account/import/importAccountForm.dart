@@ -2,14 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/accountAdvanceOption.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/page/account/scanPage.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/account/account.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/accountAdvanceOption.dart';
+import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/page/account/scanPage.dart';
+import 'package:encointer_wallet/service/substrateApi/api.dart';
+import 'package:encointer_wallet/store/account/account.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/utils/format.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class ImportAccountForm extends StatefulWidget {
   const ImportAccountForm(this.store, this.onSubmit);

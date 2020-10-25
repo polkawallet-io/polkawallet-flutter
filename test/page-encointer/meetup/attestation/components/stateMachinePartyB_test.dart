@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:polka_wallet/page-encointer/meetup/attestation/components/stateMachinePartyB.dart';
-import 'package:polka_wallet/page-encointer/meetup/attestation/components/stateMachineWidget.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/encointer/types/attestationState.dart';
+import 'package:encointer_wallet/page-encointer/meetup/attestation/components/stateMachinePartyB.dart';
+import 'package:encointer_wallet/page-encointer/meetup/attestation/components/stateMachineWidget.dart';
+import 'package:encointer_wallet/service/substrateApi/api.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
 
 import '../../../../mocks/apiEncointer_mock.dart';
 import '../../../../mocks/data/mockEncointerData.dart';

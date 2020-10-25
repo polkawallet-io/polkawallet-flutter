@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/page/assets/transfer/txDetail.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/assets/types/transferData.dart';
-import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/page/assets/transfer/txDetail.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/assets/types/transferData.dart';
+import 'package:encointer_wallet/utils/format.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class TransferDetailPage extends StatelessWidget {
   TransferDetailPage(this.store);

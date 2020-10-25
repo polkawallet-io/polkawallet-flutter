@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/components/addressIcon.dart';
-import 'package:polka_wallet/page/profile/aboutPage.dart';
-import 'package:polka_wallet/page/profile/account/accountManagePage.dart';
-import 'package:polka_wallet/page/profile/contacts/contactsPage.dart';
-import 'package:polka_wallet/page/profile/settings/settingsPage.dart';
-import 'package:polka_wallet/store/account/types/accountData.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/format.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/addressIcon.dart';
+import 'package:encointer_wallet/page/profile/aboutPage.dart';
+import 'package:encointer_wallet/page/profile/account/accountManagePage.dart';
+import 'package:encointer_wallet/page/profile/contacts/contactsPage.dart';
+import 'package:encointer_wallet/page/profile/settings/settingsPage.dart';
+import 'package:encointer_wallet/store/account/types/accountData.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/utils/format.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class Profile extends StatelessWidget {
   Profile(this.store);

@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:polka_wallet/service/substrateApi/encointer/apiEncointer.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/encointer/types/attestation.dart';
-import 'package:polka_wallet/store/encointer/types/claimOfAttendance.dart';
+import 'package:encointer_wallet/service/substrateApi/encointer/apiEncointer.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/encointer/types/attestation.dart';
+import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
 
 import 'data/mockEncointerData.dart';
 

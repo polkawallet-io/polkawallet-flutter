@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/common/consts/settings.dart';
 
 class WalletApi {
   static const String _endpoint = 'https://api.polkawallet.io';

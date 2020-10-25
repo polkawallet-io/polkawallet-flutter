@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:polka_wallet/store/encointer/types/location.dart';
+import 'package:encointer_wallet/store/encointer/types/location.dart';
 
 // Run: `flutter pub run build_runner build` in order to create/update the *.g.dart
 

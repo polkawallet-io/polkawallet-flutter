@@ -5,15 +5,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/service/subscan.dart';
-import 'package:polka_wallet/service/substrateApi/apiAccount.dart';
-import 'package:polka_wallet/service/substrateApi/apiAssets.dart';
-import 'package:polka_wallet/service/substrateApi/encointer/apiEncointer.dart';
-import 'package:polka_wallet/service/substrateApi/types/genExternalLinksParams.dart';
-import 'package:polka_wallet/service/walletApi.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/UI.dart';
+import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/service/subscan.dart';
+import 'package:encointer_wallet/service/substrateApi/apiAccount.dart';
+import 'package:encointer_wallet/service/substrateApi/apiAssets.dart';
+import 'package:encointer_wallet/service/substrateApi/encointer/apiEncointer.dart';
+import 'package:encointer_wallet/service/substrateApi/types/genExternalLinksParams.dart';
+import 'package:encointer_wallet/service/walletApi.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/utils/UI.dart';
 
 // global api instance
 Api webApi;

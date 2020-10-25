@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
-import 'package:polka_wallet/common/components/addressIcon.dart';
-import 'package:polka_wallet/utils/format.dart';
+import 'package:encointer_wallet/common/components/JumpToBrowserLink.dart';
+import 'package:encointer_wallet/common/components/addressIcon.dart';
+import 'package:encointer_wallet/utils/format.dart';
 
 class AccountInfo extends StatelessWidget {
   AccountInfo({this.accInfo, this.address});

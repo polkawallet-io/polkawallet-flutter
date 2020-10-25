@@ -1,5 +1,5 @@
 import 'package:mockito/mockito.dart';
-import 'package:polka_wallet/utils/localStorage.dart';
+import 'package:encointer_wallet/utils/localStorage.dart';
 
 class MockLocalStorage extends Mock implements LocalStorage {}
 

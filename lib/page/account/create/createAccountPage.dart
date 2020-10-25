@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/page/account/create/backupAccountPage.dart';
-import 'package:polka_wallet/page/account/create/createAccountForm.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/page/account/create/backupAccountPage.dart';
+import 'package:encointer_wallet/page/account/create/createAccountForm.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage(this.setNewAccount);

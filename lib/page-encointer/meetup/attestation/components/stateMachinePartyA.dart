@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/common/components/activityIndicator.dart';
-import 'package:polka_wallet/page-encointer/meetup/attestation/components/qrCode.dart';
-import 'package:polka_wallet/page-encointer/meetup/attestation/components/scanQrCode.dart';
-import 'package:polka_wallet/page-encointer/meetup/attestation/components/stateMachineWidget.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/encointer/types/attestation.dart';
-import 'package:polka_wallet/store/encointer/types/attestationState.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/activityIndicator.dart';
+import 'package:encointer_wallet/page-encointer/meetup/attestation/components/qrCode.dart';
+import 'package:encointer_wallet/page-encointer/meetup/attestation/components/scanQrCode.dart';
+import 'package:encointer_wallet/page-encointer/meetup/attestation/components/stateMachineWidget.dart';
+import 'package:encointer_wallet/service/substrateApi/api.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/encointer/types/attestation.dart';
+import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class StateMachinePartyA extends StatefulWidget {
   StateMachinePartyA(

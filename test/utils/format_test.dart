@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:polka_wallet/utils/format.dart';
+import 'package:encointer_wallet/utils/format.dart';
 
 void main() {
   group('Fmt', () {

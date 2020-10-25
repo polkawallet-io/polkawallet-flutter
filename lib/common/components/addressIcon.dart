@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/UI.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/utils/UI.dart';
 
 class AddressIcon extends StatelessWidget {
   AddressIcon(

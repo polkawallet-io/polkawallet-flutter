@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/page/account/create/createAccountPage.dart';
-import 'package:polka_wallet/page/account/import/importAccountPage.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/page/account/create/createAccountPage.dart';
+import 'package:encointer_wallet/page/account/import/importAccountPage.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class CreateAccountEntryPage extends StatelessWidget {
   static final String route = '/account/entry';

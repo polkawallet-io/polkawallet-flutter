@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class ListTail extends StatelessWidget {
   ListTail({this.isEmpty, this.isLoading});

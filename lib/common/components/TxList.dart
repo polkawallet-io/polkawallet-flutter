@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/txData.dart';
-import 'package:polka_wallet/utils/format.dart';
+import 'package:encointer_wallet/common/components/txData.dart';
+import 'package:encointer_wallet/utils/format.dart';
 
 class TxList extends StatelessWidget {
   TxList(this.txs);

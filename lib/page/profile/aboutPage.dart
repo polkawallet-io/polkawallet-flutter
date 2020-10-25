@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/service/walletApi.dart';
-import 'package:polka_wallet/utils/UI.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/JumpToBrowserLink.dart';
+import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/service/walletApi.dart';
+import 'package:encointer_wallet/utils/UI.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class AboutPage extends StatefulWidget {
   static final String route = '/profile/about';

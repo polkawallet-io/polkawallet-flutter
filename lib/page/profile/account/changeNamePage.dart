@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/store/account/account.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/store/account/account.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class ChangeNamePage extends StatefulWidget {
   ChangeNamePage(this.store);

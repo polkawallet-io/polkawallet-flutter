@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:polka_wallet/page-encointer/common/currencyChooserPanel.dart';
-import 'package:polka_wallet/page-encointer/phases/assigning/assigningPage.dart';
-import 'package:polka_wallet/page-encointer/phases/attesting/attestingPage.dart';
-import 'package:polka_wallet/page-encointer/phases/registering/registeringPage.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/encointer/types/encointerTypes.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/page-encointer/common/currencyChooserPanel.dart';
+import 'package:encointer_wallet/page-encointer/phases/assigning/assigningPage.dart';
+import 'package:encointer_wallet/page-encointer/phases/attesting/attestingPage.dart';
+import 'package:encointer_wallet/page-encointer/phases/registering/registeringPage.dart';
+import 'package:encointer_wallet/service/substrateApi/api.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class EncointerEntry extends StatelessWidget {
   EncointerEntry(this.store);

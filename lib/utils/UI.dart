@@ -5,12 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/common/regInputFormatter.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/service/walletApi.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/common/regInputFormatter.dart';
+import 'package:encointer_wallet/service/substrateApi/api.dart';
+import 'package:encointer_wallet/service/walletApi.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:update_app/update_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 

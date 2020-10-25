@@ -1,15 +1,15 @@
 import 'package:mobx/mobx.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
-import 'package:polka_wallet/store/app.dart';
-import 'package:polka_wallet/store/assets/types/transferData.dart';
-import 'package:polka_wallet/store/encointer/types/attestationState.dart';
-import 'package:polka_wallet/store/encointer/types/encointerBalanceData.dart';
-import 'package:polka_wallet/store/encointer/types/encointerTypes.dart';
-import 'package:polka_wallet/store/encointer/types/claimOfAttendance.dart';
-import 'package:polka_wallet/store/encointer/types/attestation.dart';
-import 'package:polka_wallet/store/encointer/types/location.dart';
-import 'package:polka_wallet/utils/format.dart';
+import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/service/substrateApi/api.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/assets/types/transferData.dart';
+import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
+import 'package:encointer_wallet/store/encointer/types/encointerBalanceData.dart';
+import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
+import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
+import 'package:encointer_wallet/store/encointer/types/attestation.dart';
+import 'package:encointer_wallet/store/encointer/types/location.dart';
+import 'package:encointer_wallet/utils/format.dart';
 
 part 'encointer.g.dart';
 

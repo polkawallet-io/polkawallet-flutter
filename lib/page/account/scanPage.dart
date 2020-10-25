@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_qr_scan/qrcode_reader_view.dart';
 
 import 'package:permission_handler/permission_handler.dart';
-import 'package:polka_wallet/page/account/uos/qrSenderPage.dart';
-import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
-import 'package:polka_wallet/utils/format.dart';
+import 'package:encointer_wallet/page/account/uos/qrSenderPage.dart';
+import 'package:encointer_wallet/page/assets/transfer/transferPage.dart';
+import 'package:encointer_wallet/utils/format.dart';
 
 // TODO: scan image failed
 class ScanPage extends StatelessWidget {

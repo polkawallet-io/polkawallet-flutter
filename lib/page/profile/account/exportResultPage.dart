@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:polka_wallet/store/account/account.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/store/account/account.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class ExportResultPage extends StatelessWidget {
   static final String route = '/account/key';

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class WillPopScopWrapper extends StatelessWidget {
   WillPopScopWrapper({this.child});

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:polka_wallet/common/components/currencyWithIcon.dart';
-import 'package:polka_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/common/components/currencyWithIcon.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class CurrencySelectPage extends StatelessWidget {
   static const String route = '/assets/currency';
