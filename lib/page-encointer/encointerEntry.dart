@@ -17,7 +17,9 @@ class EncointerEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).encointer;
+    final Map dic = I18n
+        .of(context)
+        .encointer;
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
@@ -32,7 +34,9 @@ class EncointerEntry extends StatelessWidget {
                     dic['encointer'] ?? 'Encointer Ceremony',
                     style: TextStyle(
                       fontSize: 20,
-                      color: Theme.of(context).cardColor,
+                      color: Theme
+                          .of(context)
+                          .cardColor,
                       fontWeight: FontWeight.w500,
                     ),
                   )
@@ -62,13 +66,12 @@ class PhaseAwareBox extends StatefulWidget {
   _PhaseAwareBoxState createState() => _PhaseAwareBoxState(store);
 }
 
-class _PhaseAwareBoxState extends State<PhaseAwareBox> with SingleTickerProviderStateMixin {
+class _PhaseAwareBoxState extends State<PhaseAwareBox>
+    with SingleTickerProviderStateMixin {
   _PhaseAwareBoxState(this.store);
 
   final AppStore store;
 
-  final String _currentPhaseSubscribeChannel = 'currentPhase';
-  final String _timeStampSubscribeChannel = 'timestamp';
 
   TabController _tabController;
   int _txsPage = 0;
@@ -89,47 +92,26 @@ class _PhaseAwareBoxState extends State<PhaseAwareBox> with SingleTickerProvider
   }
 
   @override
-  void initState() {
-    super.initState();
-    // get current phase before we subscribe
-
-    // simply for debug to test that subscriptions are working
-    webApi.encointer.subscribeTimestamp(_timeStampSubscribeChannel);
-
-    webApi.encointer.getCurrencyIdentifiers();
-    webApi.encointer.getCurrentCeremonyIndex();
-
-    if (!store.settings.loading) {
-      print('Subscribing to current phase');
-      webApi.encointer.subscribeCurrentPhase(_currentPhaseSubscribeChannel, (data) {
-        var phase = getEnumFromString(CeremonyPhase.values, data.toUpperCase());
-        store.encointer.setCurrentPhase(phase);
-      });
-    }
-  }
-
-  @override
   void dispose() {
-    webApi.unsubscribeMessage(_currentPhaseSubscribeChannel);
-    webApi.unsubscribeMessage(_timeStampSubscribeChannel);
+    //print("stopping subscriptions");
+    //webApi.encointer.stopSubscriptions();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<CeremonyPhase>(
-        future: webApi.encointer.getCurrentPhase(),
-        builder: (BuildContext context, AsyncSnapshot<CeremonyPhase> snapshot) {
-          if (snapshot.hasData) {
-            return Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
+    return Observer(
+        builder: (_) =>
+        Column(children: <Widget>[
+          (store.encointer.currentPhase != null) ?
+            Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
               CurrencyChooserPanel(store),
               //CeremonyOverviewPanel(store),
               Observer(builder: (_) => _getPhaseView(store.encointer.currentPhase))
-            ]);
-          } else {
-            return CupertinoActivityIndicator();
-          }
-        });
+            ])
+          : CupertinoActivityIndicator()
+        ])
+    );
   }
 
   Widget _getPhaseView(CeremonyPhase phase) {

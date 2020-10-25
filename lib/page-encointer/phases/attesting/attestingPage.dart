@@ -40,22 +40,6 @@ class _AttestingPageState extends State<AttestingPage> {
 
   String _tab = 'DOT';
 
-  @override
-  void initState() {
-    // check whether the cached attestations are recent
-    /*
-    //TODO parse attestations and compare cindex. if outdated, purge!
-    var cindex = webApi.encointer.fetchCurrentCeremonyIndex();
-
-    if (this.store.encointer.attestations.length > 0 ) {
-      Attestation firstatt = this.store.encointer.attestations.map((key, value) => MapEntry(key, value.yourAttestation))
-          .values.toList()[0];
-      if (
-    }
-    */
-    super.initState();
-  }
-
   Future<void> _startMeetup(BuildContext context) async {
     var amount = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConfirmAttendeesDialog()));
     var args = {'confirmedParticipants': amount};
@@ -109,21 +93,14 @@ class _AttestingPageState extends State<AttestingPage> {
             padding: EdgeInsets.all(8),
             child: Column(children: <Widget>[
               Observer(builder: (_) => _reportAttestationsCount(context, store.encointer.attestations)),
-              FutureBuilder<int>(
-                  future: webApi.encointer.getMeetupIndex(),
-                  builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                    if (snapshot.hasData) {
-                      if (store.encointer.meetupIndex == 0) {
-                        return Text("you are not assigned to a meetup");
-                      }
-                      return RoundedButton(
-                          text: "start meetup",
-                          onPressed: () => _startMeetup(context) // for testing always allow sending
-                          );
-                    } else {
-                      return CupertinoActivityIndicator();
-                    }
-                  }),
+              Observer(builder: (_) =>
+                ((store.encointer.meetupIndex == null) | (store.encointer.meetupIndex == 0))
+                  ? Text("you are not assigned to a meetup")
+                  : RoundedButton(
+                    text: "start meetup",
+                    onPressed: () => _startMeetup(context) // for testing always allow sending
+                  )
+              )
             ]),
           ))
     ]));

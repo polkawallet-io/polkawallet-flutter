@@ -119,6 +119,7 @@ class _WalletAppState extends State<WalletApp> {
 
     didReceiveLocalNotificationSubject.close();
     selectNotificationSubject.close();
+    webApi.closeWebView();
     super.dispose();
   }
 
@@ -139,26 +140,27 @@ class _WalletAppState extends State<WalletApp> {
       theme: _theme,
 //      darkTheme: darkTheme,
       routes: {
-        EncointerHomePage.route: (context) => Observer(
-              builder: (_) {
-                return WillPopScopWrapper(
-                  child: FutureBuilder<int>(
-                    future: _initStore(context),
-                    builder: (_, AsyncSnapshot<int> snapshot) {
-                      if (snapshot.hasData) {
-                        return snapshot.data > 0 ? EncointerHomePage(_appStore) : CreateAccountEntryPage();
-                      } else {
-                        return Container();
-                      }
-                    },
-                  ),
-                );
-              },
+        EncointerHomePage.route: (context) => WillPopScopWrapper(
+              child: FutureBuilder<int>(
+                future: _initStore(context),
+                builder: (_, AsyncSnapshot<int> snapshot) {
+                  if (snapshot.hasData) {
+                    return snapshot.data > 0
+                        ? EncointerHomePage(_appStore)
+                        : CreateAccountEntryPage();
+                  } else {
+                    return CupertinoActivityIndicator();
+                  }
+                },
+              ),
             ),
-        NetworkSelectPage.route: (_) => NetworkSelectPage(_appStore, _changeTheme),
+
+        NetworkSelectPage.route: (_) =>
+            NetworkSelectPage(_appStore, _changeTheme),
         // account
         CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
-        CreateAccountPage.route: (_) => CreateAccountPage(_appStore.account.setNewAccount),
+        CreateAccountPage.route: (_) =>
+            CreateAccountPage(_appStore.account.setNewAccount),
         BackupAccountPage.route: (_) => BackupAccountPage(_appStore),
         ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
         ScanPage.route: (_) => ScanPage(),
@@ -176,7 +178,8 @@ class _WalletAppState extends State<WalletApp> {
         ContactPage.route: (_) => ContactPage(_appStore),
         ChangeNamePage.route: (_) => ChangeNamePage(_appStore.account),
         ChangePasswordPage.route: (_) => ChangePasswordPage(_appStore.account),
-        SettingsPage.route: (_) => SettingsPage(_appStore.settings, _changeLang),
+        SettingsPage.route: (_) =>
+            SettingsPage(_appStore.settings, _changeLang),
         ExportAccountPage.route: (_) => ExportAccountPage(_appStore.account),
         ExportResultPage.route: (_) => ExportResultPage(),
         RemoteNodeListPage.route: (_) => RemoteNodeListPage(_appStore.settings),
@@ -184,7 +187,8 @@ class _WalletAppState extends State<WalletApp> {
         AboutPage.route: (_) => AboutPage(),
         // encointer
         RegisteringPage.route: (_) => RegisteringPage(_appStore),
-        RegisterParticipantPanel.route: (_) => RegisterParticipantPanel(_appStore),
+        RegisterParticipantPanel.route: (_) =>
+            RegisterParticipantPanel(_appStore),
         AssigningPage.route: (_) => AssigningPage(_appStore),
         AttestingPage.route: (_) => AttestingPage(_appStore),
         MeetupPage.route: (_) => MeetupPage(_appStore),

@@ -19,13 +19,13 @@ MockApiEncointer getMockApiEncointer() {
   when(apiEncointer.getCurrentCeremonyIndex()).thenAnswer((invocation) {
     return Future.value(1);
   });
-  when(apiEncointer.getNextMeetupTime()).thenAnswer((invocation) {
+  when(apiEncointer.getMeetupTime()).thenAnswer((invocation) {
     return Future.value(null);
   });
   when(apiEncointer.getMeetupIndex()).thenAnswer((invocation) {
     return Future.value(1);
   });
-  when(apiEncointer.getNextMeetupLocation()).thenAnswer((_) {
+  when(apiEncointer.getMeetupLocation()).thenAnswer((_) {
     return Future.value();
   });
   when(apiEncointer.getParticipantIndex()).thenAnswer((invocation) {
@@ -40,7 +40,7 @@ MockApiEncointer getMockApiEncointer() {
   when(apiEncointer.getCurrencyIdentifiers()).thenAnswer((invocation) {
     return Future.value(currencyIdentifiers);
   });
-  when(apiEncointer.getClaimOfAttendance(any)).thenAnswer((invocation) {
+  when(apiEncointer.getClaimOfAttendanceHex(any)).thenAnswer((invocation) {
     return Future.value(claimHex);
   });
   when(apiEncointer.parseAttestation(any)).thenAnswer((invocation) {

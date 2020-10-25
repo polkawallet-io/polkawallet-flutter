@@ -94,7 +94,7 @@ class Api {
         print('webview loaded for network $network');
 
         DefaultAssetBundle.of(context).loadString('lib/js_service_$network/dist/main.js').then((String js) {
-          print('js file loaded');
+          print('js_service_$network loaded in webview');
           // inject js file to webview
           _web.evalJavascript(js);
 
@@ -228,6 +228,9 @@ class Api {
     store.settings.setNetworkState(info[1]);
     store.settings.setNetworkName(info[2]);
 
+    // init subscriptions for all apis
+    this.encointer.startSubscriptions();
+
     // fetch account balance
     if (store.account.accountList.length > 0) {
       await assets.fetchBalance();
@@ -280,4 +283,7 @@ class Api {
     );
     return res;
   }
+
+
+
 }

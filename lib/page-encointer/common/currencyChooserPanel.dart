@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
 
@@ -21,19 +20,6 @@ class _CurrencyChooserPanelState extends State<CurrencyChooserPanel> {
   final AppStore store;
 
   @override
-  void initState() {
-    // dropdown menu must include chosen cid even if currencies haven't been fetched
-    //store.encointer.setCurrencyIdentifiers([store.encointer.chosenCid]);
-    _refreshData();
-    super.initState();
-  }
-
-  Future<void> _refreshData() async {
-    // refreshed by parent!
-    //await webApi.encointer.fetchCurrencyIdentifiers();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
         width: double.infinity,
@@ -42,42 +28,34 @@ class _CurrencyChooserPanelState extends State<CurrencyChooserPanel> {
           padding: EdgeInsets.all(8),
           child: Column(children: <Widget>[
             Text("Choose currency:"),
-            FutureBuilder<List<dynamic>>(
-                future: webApi.encointer.getCurrencyIdentifiers(),
-                builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-                  if (snapshot.hasData) {
-                    if (store.encointer.currencyIdentifiers.isEmpty) {
-                      store.encointer.setChosenCid("");
-                      return Text("no currencies found");
-                    }
-                    var selectedCid = (store.encointer.chosenCid.isEmpty
-                        || !store.encointer.currencyIdentifiers
-                            .contains(store.encointer.chosenCid))
-                        ? store.encointer.currencyIdentifiers[0]
-                        : store.encointer.chosenCid;
-                    return Observer(
-                        builder: (_) => DropdownButton<dynamic>(
-                              value: selectedCid,
+            Observer(
+                builder: (_) => (store.encointer.currencyIdentifiers == null)
+                ? CupertinoActivityIndicator()
+                : (store.encointer.currencyIdentifiers.isEmpty)
+                    ? Text("no currencies found")
+                    : DropdownButton<dynamic>(
+                              value: (store.encointer.chosenCid.isEmpty ||
+                                      !store.encointer.currencyIdentifiers
+                                          .contains(store.encointer.chosenCid))
+                                  ? store.encointer.currencyIdentifiers[0]
+                                  : store.encointer.chosenCid,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 32,
                               elevation: 32,
                               onChanged: (newValue) {
                                 setState(() {
                                   store.encointer.setChosenCid(newValue);
-                                  _refreshData();
                                 });
                               },
                               items: store.encointer.currencyIdentifiers
-                                  .map<DropdownMenuItem<dynamic>>((value) => DropdownMenuItem<dynamic>(
+                                  .map<DropdownMenuItem<dynamic>>((value) =>
+                                      DropdownMenuItem<dynamic>(
                                         value: value,
-                                        child: Text(Fmt.currencyIdentifier(value)),
+                                        child:
+                                            Text(Fmt.currencyIdentifier(value)),
                                       ))
                                   .toList(),
-                            ));
-                  } else {
-                    return CupertinoActivityIndicator();
-                  }
-                })
+                            ))
           ]),
         ));
   }

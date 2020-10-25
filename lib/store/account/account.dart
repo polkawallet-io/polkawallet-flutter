@@ -6,6 +6,7 @@ import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/format.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
 
 part 'account.g.dart';
 
@@ -128,8 +129,12 @@ abstract class _AccountStore with Store {
   @action
   void setCurrentAccount(String pubKey) {
     currentAccountPubKey = pubKey;
-
     rootStore.localStorage.setCurrentAccount(pubKey);
+    // update depending values
+    if (!rootStore.settings.loading) {
+      webApi.encointer.getMeetupIndex();
+      webApi.encointer.subscribeParticipantIndex();
+    }
   }
 
   @action

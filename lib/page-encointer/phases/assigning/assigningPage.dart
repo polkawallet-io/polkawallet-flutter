@@ -22,19 +22,9 @@ class _AssigningPageState extends State<AssigningPage> {
 
   @override
   void initState() {
-    _refreshData();
     // TODO: remove once we're doing this in init of attesting
     this.store.encointer.purgeAttestations();
     super.initState();
-  }
-
-  Future<void> _refreshData() async {
-    // refreshed by parent!
-    // await webApi.encointer.fetchParticipantIndex();
-    // await webApi.encointer.fetchParticipantCount();
-    // await webApi.encointer.fetchMeetupIndex();
-    //await webApi.encointer.fetchNextMeetupTime();
-    //await webApi.encointer.fetchNextMeetupLocation();
   }
 
   @override
