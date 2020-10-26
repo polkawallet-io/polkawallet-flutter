@@ -1,5 +1,6 @@
 const Map<String, String> enHome = {
   'assets': 'Assets',
+  'wallet': "Wallet",
   'exchange': 'Exchange',
   'loan': 'Loan',
   'staking': 'Staking',
@@ -41,6 +42,7 @@ const Map<String, String> enHome = {
   'copy': 'Copy to clipboard',
   'setting.network': 'Select Wallet',
   'encointer': 'Encointer',
+  'ceremonies': 'Ceremonies',
   'update': 'Check Update',
   'update.latest': 'Your App is the newest version.',
   'update.up': 'New version found, update now?',

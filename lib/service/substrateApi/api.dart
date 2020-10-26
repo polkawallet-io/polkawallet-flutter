@@ -1,10 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:encointer_wallet/common/consts/settings.dart';
 import 'package:encointer_wallet/service/subscan.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAccount.dart';
@@ -14,6 +10,10 @@ import 'package:encointer_wallet/service/substrateApi/types/genExternalLinksPara
 import 'package:encointer_wallet/service/walletApi.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/UI.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:get_storage/get_storage.dart';
 
 // global api instance
 Api webApi;
@@ -230,6 +230,7 @@ class Api {
 
     // init subscriptions for all apis
     this.encointer.startSubscriptions();
+    this.assets.startSubscriptions();
 
     // fetch account balance
     if (store.account.accountList.length > 0) {
@@ -267,7 +268,9 @@ class Api {
   }
 
   Future<void> unsubscribeMessage(String channel) async {
-    _web.evalJavascript('unsub$channel()');
+    if (_msgHandlers[channel] != null) {
+      _web.evalJavascript('unsub$channel()');
+    }
   }
 
   Future<void> closeWebView() async {
@@ -283,7 +286,4 @@ class Api {
     );
     return res;
   }
-
-
-
 }

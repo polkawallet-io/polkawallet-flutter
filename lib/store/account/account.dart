@@ -1,12 +1,12 @@
-import 'package:flutter_aes_ecb_pkcs5/flutter_aes_ecb_pkcs5.dart';
-import 'package:mobx/mobx.dart';
 import 'package:encointer_wallet/page/profile/settings/ss58PrefixListPage.dart';
+import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountBondedInfo.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:encointer_wallet/service/substrateApi/api.dart';
+import 'package:flutter_aes_ecb_pkcs5/flutter_aes_ecb_pkcs5.dart';
+import 'package:mobx/mobx.dart';
 
 part 'account.g.dart';
 
@@ -134,6 +134,8 @@ abstract class _AccountStore with Store {
     if (!rootStore.settings.loading) {
       webApi.encointer.getMeetupIndex();
       webApi.encointer.subscribeParticipantIndex();
+      webApi.encointer.subscribeEncointerBalance();
+      webApi.assets.subscribeBalance();
     }
   }
 

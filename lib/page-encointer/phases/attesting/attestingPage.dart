@@ -1,7 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobx/mobx.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
@@ -14,6 +10,10 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/attestation.dart';
 import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
 
 class AttestingPage extends StatefulWidget {
   AttestingPage(this.store);
@@ -86,21 +86,20 @@ class _AttestingPageState extends State<AttestingPage> {
     return SafeArea(
         child: Column(children: <Widget>[
       AssignmentPanel(store),
+      SizedBox(height: 16),
       Container(
           width: double.infinity,
           child: RoundedCard(
-            margin: EdgeInsets.fromLTRB(16, 4, 16, 16),
             padding: EdgeInsets.all(8),
             child: Column(children: <Widget>[
               Observer(builder: (_) => _reportAttestationsCount(context, store.encointer.attestations)),
-              Observer(builder: (_) =>
-                ((store.encointer.meetupIndex == null) | (store.encointer.meetupIndex == 0))
-                  ? Text("you are not assigned to a meetup")
-                  : RoundedButton(
-                    text: "start meetup",
-                    onPressed: () => _startMeetup(context) // for testing always allow sending
-                  )
-              )
+              Observer(
+                  builder: (_) => ((store.encointer.meetupIndex == null) | (store.encointer.meetupIndex == 0))
+                      ? Text("you are not assigned to a meetup")
+                      : RoundedButton(
+                          text: "start meetup",
+                          onPressed: () => _startMeetup(context) // for testing always allow sending
+                          ))
             ]),
           ))
     ]));

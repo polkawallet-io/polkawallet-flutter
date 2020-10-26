@@ -1,8 +1,7 @@
+import 'package:encointer_wallet/page-encointer/phases/registering/registerParticipantPanel.dart';
+import 'package:encointer_wallet/store/app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/page-encointer/phases/registering/registerParticipantPanel.dart';
-import 'package:encointer_wallet/service/substrateApi/api.dart';
-import 'package:encointer_wallet/store/app.dart';
 
 class RegisteringPage extends StatefulWidget {
   RegisteringPage(this.store);

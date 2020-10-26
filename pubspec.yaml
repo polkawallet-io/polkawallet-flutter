@@ -108,7 +108,7 @@ flutter:
     - assets/images/assets/qrcode_indigo.png
     - assets/images/assets/plus_indigo.png
     - assets/images/staking/top_bg_indigo.png
-    - assets/images/public/Assets_indigo.png
+    - assets/images/public/Wallet_indigo.png
     - assets/images/public/Profile_indigo.png
     - assets/images/public/Ceremonies_indigo.png
     - assets/images/public/Ceremonies_dark.png
@@ -119,11 +119,11 @@ flutter:
     - assets/images/assets/qrcode_purple.png
     - assets/images/assets/plus_purple.png
     - assets/images/staking/top_bg_purple.png
-    - assets/images/public/Assets_purple.png
+    - assets/images/public/Wallet_purple.png
     - assets/images/public/Profile_purple.png
     ## images - kusama
     - assets/images/assets/scanner_black.png
-    - assets/images/public/Assets_black.png
+    - assets/images/public/Wallet_black.png
     - assets/images/public/Profile_black.png
     - assets/images/assets/top_bg_black.png
     - assets/images/assets/qrcode_black.png
@@ -133,9 +133,9 @@ flutter:
     ## images - polkadot
     - assets/images/assets/scanner_pink.png
     - assets/images/public/app.png
-    - assets/images/public/Assets_pink.png
+    - assets/images/public/Wallet_pink.png
     - assets/images/public/Profile_pink.png
-    - assets/images/public/Assets_dark.png
+    - assets/images/public/Wallet_dark.png
     - assets/images/public/Profile_dark.png
     - assets/images/public/logo_about.png
     - assets/images/public/dontscreen.png

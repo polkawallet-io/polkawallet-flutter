@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:encointer_wallet/page-encointer/encointerEntry.dart';
 import 'package:encointer_wallet/page/assets/index.dart';
 import 'package:encointer_wallet/page/profile/index.dart';
 import 'package:encointer_wallet/service/notification.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/material.dart';
 
 class EncointerHomePage extends StatefulWidget {
   EncointerHomePage(this.store);
@@ -26,9 +26,8 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
   NotificationPlugin _notificationPlugin;
 
   final List<String> _tabList = [
-    'Assets',
+    'Wallet',
     'Ceremonies',
-//    'Governance',
     'Profile',
   ];
   int _tabIndex = 0;
@@ -40,10 +39,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
               icon: Image.asset(_tabList[activeItem] == i
                   ? 'assets/images/public/${i}_indigo.png'
                   : 'assets/images/public/${i}_dark.png'),
-              title: Text(
-                tabs[i.toLowerCase()] ?? 'Cermonies',
-                style: TextStyle(fontSize: 14, color: _tabList[activeItem] == i ? Colors.indigo : Colors.grey),
-              ),
+              label: tabs[i.toLowerCase()],
             ))
         .toList();
   }

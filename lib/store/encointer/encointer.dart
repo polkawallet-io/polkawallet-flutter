@@ -1,15 +1,14 @@
-import 'package:mobx/mobx.dart';
 import 'package:encointer_wallet/common/consts/settings.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/assets/types/transferData.dart';
 import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
+import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
-import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
-import 'package:encointer_wallet/store/encointer/types/attestation.dart';
 import 'package:encointer_wallet/store/encointer/types/location.dart';
 import 'package:encointer_wallet/utils/format.dart';
+import 'package:mobx/mobx.dart';
 
 part 'encointer.g.dart';
 
@@ -67,7 +66,7 @@ abstract class _EncointerStore with Store {
   ClaimOfAttendance myClaim;
 
   @observable
-  Map<String, BalanceEntry> balanceEntries = new Map();
+  Map<String, BalanceEntry> balanceEntries = new ObservableMap();
 
   @observable
   List<String> currencyIdentifiers;
@@ -120,8 +119,6 @@ abstract class _EncointerStore with Store {
         break;
     }
     webApi.encointer.subscribeParticipantIndex();
-    //TODO this should be a subscription
-    webApi.encointer.getBalances();
   }
 
   @action
@@ -193,38 +190,33 @@ abstract class _EncointerStore with Store {
       if (!rootStore.settings.loading) {
         webApi.encointer.getMeetupIndex();
         webApi.encointer.subscribeParticipantIndex();
+        webApi.encointer.subscribeEncointerBalance();
       }
     }
   }
 
-
-
   @action
   void addYourAttestation(int idx, String att) {
     attestations[idx].setYourAttestation(att);
-    rootStore.localStorage
-        .setObject(_getCacheKey(encointerAttestationsKey), attestations);
+    rootStore.localStorage.setObject(_getCacheKey(encointerAttestationsKey), attestations);
   }
 
   @action
   void addOtherAttestation(int idx, String att) {
     attestations[idx].setOtherAttestation(att);
-    rootStore.localStorage
-        .setObject(_getCacheKey(encointerAttestationsKey), attestations);
+    rootStore.localStorage.setObject(_getCacheKey(encointerAttestationsKey), attestations);
   }
 
   @action
   void updateAttestationStep(int idx, CurrentAttestationStep step) {
     attestations[idx].setAttestationStep(step);
-    rootStore.localStorage
-        .setObject(_getCacheKey(encointerAttestationsKey), attestations);
+    rootStore.localStorage.setObject(_getCacheKey(encointerAttestationsKey), attestations);
   }
 
   @action
   void purgeAttestations() {
     attestations.clear();
-    rootStore.localStorage
-        .setObject(_getCacheKey(encointerAttestationsKey), attestations);
+    rootStore.localStorage.setObject(_getCacheKey(encointerAttestationsKey), attestations);
   }
 
   @action
@@ -248,8 +240,7 @@ abstract class _EncointerStore with Store {
   }
 
   @action
-  Future<void> setTransferTxs(List list,
-      {bool reset = false, needCache = true}) async {
+  Future<void> setTransferTxs(List list, {bool reset = false, needCache = true}) async {
     List transfers = list.map((i) {
       return {
         "block_timestamp": i['time'],
@@ -257,16 +248,14 @@ abstract class _EncointerStore with Store {
         "success": true,
         "from": rootStore.account.currentAddress,
         "to": i['params'][0],
-        "token": i['params'][1],
-        "amount": Fmt.balance(i['params'][2], ert_decimals),
+        "token": "ERT", // i['params'][1],
+        "amount": Fmt.balance(i['params'][1], ert_decimals),
       };
     }).toList();
     if (reset) {
-      txsTransfer = ObservableList.of(transfers
-          .map((i) => TransferData.fromJson(Map<String, dynamic>.from(i))));
+      txsTransfer = ObservableList.of(transfers.map((i) => TransferData.fromJson(Map<String, dynamic>.from(i))));
     } else {
-      txsTransfer.addAll(transfers
-          .map((i) => TransferData.fromJson(Map<String, dynamic>.from(i))));
+      txsTransfer.addAll(transfers.map((i) => TransferData.fromJson(Map<String, dynamic>.from(i))));
     }
 
     if (needCache && txsTransfer.length > 0) {
@@ -277,8 +266,7 @@ abstract class _EncointerStore with Store {
   @action
   Future<void> _cacheTxs(List list, String cacheKey) async {
     String pubKey = rootStore.account.currentAccount.pubKey;
-    List cached =
-        await rootStore.localStorage.getAccountCache(pubKey, cacheKey);
+    List cached = await rootStore.localStorage.getAccountCache(pubKey, cacheKey);
     if (cached != null) {
       cached.addAll(list);
     } else {
@@ -289,15 +277,13 @@ abstract class _EncointerStore with Store {
 
   @action
   Future<void> loadCache() async {
-    var data = await rootStore.localStorage
-        .getObject(_getCacheKey(encointerCurrencyKey));
+    var data = await rootStore.localStorage.getObject(_getCacheKey(encointerCurrencyKey));
     if (data != null) {
       print("found cached choice of cid. will recover it: " + data.toString());
       setChosenCid(data);
     }
 
-    data = await rootStore.localStorage
-        .getObject(_getCacheKey(encointerAttestationsKey));
+    data = await rootStore.localStorage.getObject(_getCacheKey(encointerAttestationsKey));
     if (data != null) {
       print("found cached attestations. will recover them");
       attestations = Map.castFrom<String, dynamic, int, AttestationState>(data);
