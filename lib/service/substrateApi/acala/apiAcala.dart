@@ -130,6 +130,11 @@ class ApiAcala {
     return SwapOutputData.fromJson(output);
   }
 
+  Future<void> fetchDexPools() async {
+    final res = await apiRoot.evalJavascript('acala.getTokenPairs()');
+    store.acala.setDexPools(res);
+  }
+
   Future<void> fetchDexLiquidityPoolSwapRatio(String currencyId) async {
     // String res = await fetchTokenSwapAmount(
     //     '1', null, [currencyId, acala_stable_coin], '0');
@@ -137,24 +142,45 @@ class ApiAcala {
   }
 
   Future<void> fetchDexLiquidityPoolRewards() async {
-    // List<List> tokens = store.acala.swapTokens;
-    // String code = tokens
-    //     .map((i) => 'api.query.dex.liquidityIncentiveRate("$i")')
-    //     .join(',');
-    // List list = await apiRoot.evalJavascript('Promise.all([$code])');
-    // Map<String, dynamic> rewards = Map<String, dynamic>();
-    // tokens.asMap().forEach((k, v) {
-    //   rewards[v] = list[k];
-    // });
-    // store.acala.setSwapPoolRewards(rewards);
+    await webApi.acala.fetchDexPools();
+    final pools = store.acala.dexPools
+        .map((pool) =>
+            jsonEncode({'DEXShare': pool.map((e) => e.name).toList()}))
+        .toList();
+    final incentiveQuery = pools
+        .map((i) => 'api.query.incentives.dEXIncentiveRewards($i)')
+        .join(',');
+    print(pools);
+    final savingRateQuery =
+        pools.map((i) => 'api.query.incentives.dEXSavingRates($i)').join(',');
+    print(incentiveQuery);
+    print(savingRateQuery);
+    final incentivesData =
+        await apiRoot.evalJavascript('Promise.all([$incentiveQuery])');
+    final savingRatesData =
+        await apiRoot.evalJavascript('Promise.all([$savingRateQuery])');
+    final incentives = Map<String, dynamic>();
+    final savingRates = Map<String, dynamic>();
+    final tokenPairs = store.acala.dexPools
+        .map((e) => e.map((i) => i.symbol).join('-'))
+        .toList();
+    print(tokenPairs);
+    tokenPairs.asMap().forEach((k, v) {
+      incentives[v] = incentivesData[k];
+      savingRates[v] = savingRatesData[k];
+    });
+    store.acala.setSwapPoolRewards(incentives);
+    store.acala.setSwapSavingRates(savingRates);
   }
 
-  Future<void> fetchDexPoolInfo(String currencyId) async {
+  Future<void> fetchDexPoolInfo(String pool) async {
     Map info = await apiRoot.evalJavascript(
-      'acala.fetchDexPoolInfo("$currencyId", "${store.account.currentAddress}")',
+      'acala.fetchDexPoolInfo(${jsonEncode({
+        'DEXShare': pool.split('-').map((e) => e.toUpperCase()).toList()
+      })}, "${store.account.currentAddress}")',
       allowRepeat: true,
     );
-    store.acala.setDexPoolInfo(currencyId, info);
+    store.acala.setDexPoolInfo(pool, info);
   }
 
   Future<void> fetchHomaStakingPool() async {

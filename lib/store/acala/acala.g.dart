@@ -22,13 +22,6 @@ mixin _$AcalaStore on _AcalaStore, Store {
   double get swapFee => (_$swapFeeComputed ??=
           Computed<double>(() => super.swapFee, name: '_AcalaStore.swapFee'))
       .value;
-  Computed<double> _$dexLiquidityRewardsComputed;
-
-  @override
-  double get dexLiquidityRewards => (_$dexLiquidityRewardsComputed ??=
-          Computed<double>(() => super.dexLiquidityRewards,
-              name: '_AcalaStore.dexLiquidityRewards'))
-      .value;
 
   final _$airdropsAtom = Atom(name: '_AcalaStore.airdrops');
 
@@ -225,6 +218,37 @@ mixin _$AcalaStore on _AcalaStore, Store {
     });
   }
 
+  final _$swapPoolSavingRatesAtom =
+      Atom(name: '_AcalaStore.swapPoolSavingRates');
+
+  @override
+  Map<String, double> get swapPoolSavingRates {
+    _$swapPoolSavingRatesAtom.reportRead();
+    return super.swapPoolSavingRates;
+  }
+
+  @override
+  set swapPoolSavingRates(Map<String, double> value) {
+    _$swapPoolSavingRatesAtom.reportWrite(value, super.swapPoolSavingRates, () {
+      super.swapPoolSavingRates = value;
+    });
+  }
+
+  final _$dexPoolsAtom = Atom(name: '_AcalaStore.dexPools');
+
+  @override
+  List<List<AcalaTokenData>> get dexPools {
+    _$dexPoolsAtom.reportRead();
+    return super.dexPools;
+  }
+
+  @override
+  set dexPools(List<List<AcalaTokenData>> value) {
+    _$dexPoolsAtom.reportWrite(value, super.dexPools, () {
+      super.dexPools = value;
+    });
+  }
+
   final _$dexPoolInfoMapAtom = Atom(name: '_AcalaStore.dexPoolInfoMap');
 
   @override
@@ -341,6 +365,22 @@ mixin _$AcalaStore on _AcalaStore, Store {
         .run(() => super.setSwapPoolRewards(map));
   }
 
+  final _$setSwapSavingRatesAsyncAction =
+      AsyncAction('_AcalaStore.setSwapSavingRates');
+
+  @override
+  Future<void> setSwapSavingRates(Map<String, dynamic> map) {
+    return _$setSwapSavingRatesAsyncAction
+        .run(() => super.setSwapSavingRates(map));
+  }
+
+  final _$setDexPoolsAsyncAction = AsyncAction('_AcalaStore.setDexPools');
+
+  @override
+  Future<void> setDexPools(List<dynamic> pools) {
+    return _$setDexPoolsAsyncAction.run(() => super.setDexPools(pools));
+  }
+
   final _$setDexPoolInfoAsyncAction = AsyncAction('_AcalaStore.setDexPoolInfo');
 
   @override
@@ -450,12 +490,13 @@ txsHoma: ${txsHoma},
 txsLoading: ${txsLoading},
 swapPoolRatios: ${swapPoolRatios},
 swapPoolRewards: ${swapPoolRewards},
+swapPoolSavingRates: ${swapPoolSavingRates},
+dexPools: ${dexPools},
 dexPoolInfoMap: ${dexPoolInfoMap},
 stakingPoolInfo: ${stakingPoolInfo},
 homaUserInfo: ${homaUserInfo},
 swapTokens: ${swapTokens},
-swapFee: ${swapFee},
-dexLiquidityRewards: ${dexLiquidityRewards}
+swapFee: ${swapFee}
     ''';
   }
 }

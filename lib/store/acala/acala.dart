@@ -71,6 +71,12 @@ abstract class _AcalaStore with Store {
   Map<String, double> swapPoolRewards = Map<String, double>();
 
   @observable
+  Map<String, double> swapPoolSavingRates = Map<String, double>();
+
+  @observable
+  List<List<AcalaTokenData>> dexPools = List<List<AcalaTokenData>>();
+
+  @observable
   ObservableMap<String, DexPoolInfoData> dexPoolInfoMap =
       ObservableMap<String, DexPoolInfoData>();
 
@@ -93,17 +99,8 @@ abstract class _AcalaStore with Store {
 
   @computed
   double get swapFee {
-    return Fmt.balanceDouble(
-        rootStore.settings.networkConst['dex']['getExchangeFee'].toString(),
-        rootStore.settings.networkState.tokenDecimals);
-  }
-
-  @computed
-  double get dexLiquidityRewards {
-    return Fmt.bigIntToDouble(
-        Fmt.balanceInt(rootStore.settings.networkConst['dex']['getExchangeFee']
-            .toString()),
-        rootStore.settings.networkState.tokenDecimals);
+    return rootStore.settings.networkConst['dex']['getExchangeFee'][0] /
+        rootStore.settings.networkConst['dex']['getExchangeFee'][1];
   }
 
   @action
@@ -337,15 +334,41 @@ abstract class _AcalaStore with Store {
   Future<void> setSwapPoolRewards(Map<String, dynamic> map) async {
     final int blockTime =
         rootStore.settings.networkConst['babe']['expectedBlockTime'];
+    final int epoch =
+        rootStore.settings.networkConst['incentives']['accumulatePeriod'];
+    final epochOfYear = SECONDS_OF_YEAR * 1000 / blockTime / epoch;
     Map<String, double> rewards = {};
     map.forEach((k, v) {
       rewards[k] = Fmt.balanceDouble(
               v.toString(), rootStore.settings.networkState.tokenDecimals) *
-          SECONDS_OF_YEAR *
-          1000 /
-          blockTime;
+          epochOfYear;
     });
+    print(rewards);
     swapPoolRewards = rewards;
+  }
+
+  @action
+  Future<void> setSwapSavingRates(Map<String, dynamic> map) async {
+    final int blockTime =
+        rootStore.settings.networkConst['babe']['expectedBlockTime'];
+    final int epoch =
+        rootStore.settings.networkConst['incentives']['accumulatePeriod'];
+    final epochOfYear = SECONDS_OF_YEAR * 1000 / blockTime / epoch;
+    Map<String, double> rewards = {};
+    map.forEach((k, v) {
+      rewards[k] = Fmt.balanceDouble(
+              v.toString(), rootStore.settings.networkState.tokenDecimals) *
+          epochOfYear;
+    });
+    swapPoolSavingRates = rewards;
+  }
+
+  @action
+  Future<void> setDexPools(List pools) async {
+    dexPools = pools
+        .map((pool) =>
+            List.of(pool).map((e) => AcalaTokenData.fromJson(e)).toList())
+        .toList();
   }
 
   @action

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
@@ -225,12 +226,12 @@ class CurrencySelector extends StatelessWidget {
         ],
       ),
       child: ListTile(
-        leading: CircleAvatar(
-          child: Image.asset('assets/images/assets/$token.png'),
-          radius: 16,
+        leading: SizedBox(
+          width: 44,
+          child: TokenIcon(token),
         ),
         title: Text(
-          Fmt.tokenView(token),
+          token,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,

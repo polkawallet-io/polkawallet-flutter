@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/infoItem.dart';
+import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
@@ -34,34 +35,132 @@ class _EarnPageState extends State<EarnPage> {
 
   final AppStore store;
 
-  String _tab = 'DOT';
+  String _tab = 'ACA-aUSD';
 
   Future<void> _fetchData() async {
     webApi.acala.fetchDexLiquidityPoolSwapRatio(_tab);
     await webApi.acala.fetchDexPoolInfo(_tab);
   }
 
-  Future<void> _onWithdrawReward(double reward) async {
-    String amount = Fmt.doubleFormat(reward, length: 6);
-    var args = {
-      "title": I18n.of(context).acala['earn.get'],
-      "txInfo": {
-        "module": 'dex',
-        "call": 'withdrawIncentiveInterest',
-      },
-      "detail": jsonEncode({
-        "currencyId": _tab,
-        "amount": '$amount $acala_stable_coin_view',
-      }),
-      "params": [_tab],
-      "onFinish": (BuildContext txPageContext, Map res) {
-        res['action'] = TxDexLiquidityData.actionReward;
-        res['reward'] = amount;
-        store.acala.setDexLiquidityTxs([res]);
-        Navigator.popUntil(txPageContext, ModalRoute.withName(EarnPage.route));
-        globalDexLiquidityRefreshKey.currentState.show();
-      }
-    };
+  void _onStake() {
+    print('stake');
+    // final args = {
+    //   "title": I18n.of(context).acala['earn.get'],
+    //   "txInfo": {
+    //     "module": 'incentives',
+    //     "call": 'depositDexShare',
+    //   },
+    //   "detail": jsonEncode({
+    //     "poolId": _tab,
+    //     "amount": '$incentiveReward $symbol',
+    //   }),
+    //   "params": [],
+    //   "rawParam": '[{DexIncentive: {DEXShare: $pool}}]',
+    //   "onFinish": (BuildContext txPageContext, Map res) {
+    //     res['action'] = TxDexLiquidityData.actionRewardIncentive;
+    //     res['params'] = [symbol, incentiveReward, ''];
+    //     store.acala.setDexLiquidityTxs([res]);
+    //     Navigator.popUntil(txPageContext, ModalRoute.withName(EarnPage.route));
+    //     globalDexLiquidityRefreshKey.currentState.show();
+    //   }
+    // };
+  }
+
+  void _onUnstake() {
+    print('unstake');
+  }
+
+  Future<void> _onWithdrawReward(LPRewardData reward) async {
+    final decimals = store.settings.networkState.tokenDecimals;
+    final symbol = store.settings.networkState.tokenSymbol;
+    final incentiveReward = Fmt.token(reward.incentive, decimals);
+    final savingReward = Fmt.token(reward.saving, decimals);
+    final pool =
+        jsonEncode(_tab.split('-').map((e) => e.toUpperCase()).toList());
+
+    Map args;
+    if (reward.saving > BigInt.zero && reward.incentive > BigInt.zero) {
+      final params = [
+        'api.tx.incentives.claimRewards({DexIncentive: {DEXShare: $pool}})',
+        'api.tx.incentives.claimRewards({DexSaving: {DEXShare: $pool}})',
+      ];
+      args = {
+        "title": I18n.of(context).acala['earn.get'],
+        "txInfo": {
+          "module": 'utility',
+          "call": 'batch',
+        },
+        "detail": jsonEncode({
+          "poolId": _tab,
+          "incentiveReward": '$incentiveReward $symbol',
+          "savingReward": '$savingReward $acala_stable_coin_view',
+        }),
+        "params": [],
+        "rawParam": '[[${params.join(',')}]]',
+        "onFinish": (BuildContext txPageContext, Map res) {
+          final tx1 = {
+            'hash': res['hash'],
+            'time': res['time'],
+            'action': TxDexLiquidityData.actionRewardIncentive,
+            'params': [symbol, incentiveReward, '']
+          };
+          final tx2 = {
+            'hash': res['hash'],
+            'time': res['time'],
+            'action': TxDexLiquidityData.actionRewardSaving,
+            'params': [symbol, '', savingReward]
+          };
+          store.acala.setDexLiquidityTxs([tx1, tx2]);
+          Navigator.popUntil(
+              txPageContext, ModalRoute.withName(EarnPage.route));
+          globalDexLiquidityRefreshKey.currentState.show();
+        }
+      };
+    } else if (reward.incentive > BigInt.zero) {
+      args = {
+        "title": I18n.of(context).acala['earn.get'],
+        "txInfo": {
+          "module": 'incentives',
+          "call": 'claimRewards',
+        },
+        "detail": jsonEncode({
+          "poolId": _tab,
+          "incentiveReward": '$incentiveReward $symbol',
+        }),
+        "params": [],
+        "rawParam": '[{DexIncentive: {DEXShare: $pool}}]',
+        "onFinish": (BuildContext txPageContext, Map res) {
+          res['action'] = TxDexLiquidityData.actionRewardIncentive;
+          res['params'] = [symbol, incentiveReward, ''];
+          store.acala.setDexLiquidityTxs([res]);
+          Navigator.popUntil(
+              txPageContext, ModalRoute.withName(EarnPage.route));
+          globalDexLiquidityRefreshKey.currentState.show();
+        }
+      };
+    } else if (reward.saving > BigInt.zero) {
+      args = {
+        "title": I18n.of(context).acala['earn.get'],
+        "txInfo": {
+          "module": 'incentives',
+          "call": 'claimRewards',
+        },
+        "detail": jsonEncode({
+          "poolId": _tab,
+          "savingReward": '$savingReward $acala_stable_coin_view',
+        }),
+        "params": [],
+        "rawParam": '[{DexSaving: {DEXShare: $pool}}]',
+        "onFinish": (BuildContext txPageContext, Map res) {
+          res['action'] = TxDexLiquidityData.actionRewardSaving;
+          res['params'] = [symbol, '', savingReward];
+          store.acala.setDexLiquidityTxs([res]);
+          Navigator.popUntil(
+              txPageContext, ModalRoute.withName(EarnPage.route));
+          globalDexLiquidityRefreshKey.currentState.show();
+        }
+      };
+    }
     Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
   }
 
@@ -78,20 +177,27 @@ class _EarnPageState extends State<EarnPage> {
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
-    final int decimals = acala_token_decimals;
+    final int decimals = store.settings.networkState.tokenDecimals;
     return Scaffold(
       backgroundColor: Theme.of(context).cardColor,
-      appBar: AppBar(title: Text(dic['earn.title']), centerTitle: true),
+      appBar: AppBar(
+        title: Text(dic['earn.title']),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.history),
+            onPressed: () => Navigator.of(context)
+                .pushNamed(EarnHistoryPage.route, arguments: _tab),
+          )
+        ],
+      ),
       body: Observer(
         builder: (_) {
           BigInt shareTotal = BigInt.zero;
           BigInt share = BigInt.zero;
           double userShare = 0;
 
-          double amountToken = 0;
-          double amountStableCoin = 0;
-          double amountTokenUser = 0;
-          double amountStableCoinUser = 0;
+          String lpAmountString = '~';
 
           DexPoolInfoData poolInfo = store.acala.dexPoolInfoMap[_tab];
           if (poolInfo != null) {
@@ -99,15 +205,20 @@ class _EarnPageState extends State<EarnPage> {
             share = poolInfo.shares;
             userShare = share / shareTotal;
 
-            amountToken = Fmt.bigIntToDouble(poolInfo.amountToken, decimals);
-            amountStableCoin =
-                Fmt.bigIntToDouble(poolInfo.amountStableCoin, decimals);
-            amountTokenUser = amountToken * userShare;
-            amountStableCoinUser = amountStableCoin * userShare;
+            final lpAmount =
+                Fmt.bigIntToDouble(poolInfo.amountToken, decimals) *
+                    poolInfo.proportion;
+            print(poolInfo.amountToken);
+            print(poolInfo.amountStableCoin);
+            print(poolInfo.proportion);
+            print(lpAmount);
+            final lpAmount2 =
+                Fmt.bigIntToDouble(poolInfo.amountStableCoin, decimals) *
+                    poolInfo.proportion;
+            print(lpAmount2);
+            final pair = _tab.split('-');
+            lpAmountString = '$lpAmount ${pair[0]} + $lpAmount2 ${pair[1]}';
           }
-
-          double swapRatio = double.parse(
-              (store.acala.swapPoolRatios[_tab] ?? '0').toString());
 
           Color cardColor = Theme.of(context).cardColor;
           Color primaryColor = Theme.of(context).primaryColor;
@@ -121,7 +232,9 @@ class _EarnPageState extends State<EarnPage> {
                   CurrencySelector(
                     token: _tab,
                     decimals: decimals,
-                    tokenOptions: store.acala.swapTokens.toList(),
+                    tokenOptions: store.acala.dexPools
+                        .map((e) => e.map((e) => e.symbol).join('-'))
+                        .toList(),
                     onSelect: (res) {
                       setState(() {
                         _tab = res;
@@ -136,68 +249,87 @@ class _EarnPageState extends State<EarnPage> {
                           reward: store.acala.swapPoolRewards[_tab],
                           fee: store.acala.swapFee,
                           token: _tab,
-                          swapRatio: Fmt.doubleFormat(swapRatio, length: 2),
-                          amountToken: Fmt.doubleFormat(amountToken),
-                          amountStableCoin:
-                              Fmt.doubleFormat(amountStableCoin, length: 2),
+                          total: Fmt.bigIntToDouble(
+                                  poolInfo?.sharesTotal ?? BigInt.zero,
+                                  decimals)
+                              .toStringAsFixed(3),
+                          userStaked: Fmt.bigIntToDouble(
+                                  poolInfo?.shares ?? BigInt.zero, decimals)
+                              .toStringAsFixed(3),
+                          actions: Row(
+                            children: [
+                              Expanded(
+                                child: RoundedButton(
+                                  text: 'stake',
+                                  onPressed: _onStake,
+                                ),
+                              ),
+                              (poolInfo?.shares ?? BigInt.zero) > BigInt.zero
+                                  ? Container(width: 16)
+                                  : Container(),
+                              (poolInfo?.shares ?? BigInt.zero) > BigInt.zero
+                                  ? Expanded(
+                                      child: RoundedButton(
+                                        text: 'unstake',
+                                        onPressed: _onUnstake,
+                                      ),
+                                    )
+                                  : Container()
+                            ],
+                          ),
                         ),
                         _UserCard(
                           share: userShare,
-                          reward: poolInfo != null ? poolInfo.reward : 0,
+                          poolInfo: poolInfo,
+                          decimals: decimals,
+                          lpAmountString: lpAmountString,
                           token: _tab,
-                          amountToken: Fmt.doubleFormat(amountTokenUser),
-                          amountStableCoin:
-                              Fmt.doubleFormat(amountStableCoinUser, length: 2),
                           onWithdrawReward: () =>
                               _onWithdrawReward(poolInfo.reward),
                         )
                       ],
                     ),
                   ),
-                  swapRatio > 0
-                      ? Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(
-                                color: Colors.blue,
-                                child: FlatButton(
-                                    padding:
-                                        EdgeInsets.only(top: 16, bottom: 16),
-                                    child: Text(
-                                      dic['earn.deposit'],
-                                      style: TextStyle(color: cardColor),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context).pushNamed(
-                                        AddLiquidityPage.route,
-                                        arguments: _tab,
-                                      );
-                                    }),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          color: Colors.blue,
+                          child: FlatButton(
+                              padding: EdgeInsets.only(top: 16, bottom: 16),
+                              child: Text(
+                                dic['earn.deposit'],
+                                style: TextStyle(color: cardColor),
                               ),
-                            ),
-                            share > BigInt.zero
-                                ? Expanded(
-                                    child: Container(
-                                      color: primaryColor,
-                                      child: FlatButton(
-                                        padding: EdgeInsets.only(
-                                            top: 16, bottom: 16),
-                                        child: Text(
-                                          dic['earn.withdraw'],
-                                          style: TextStyle(color: cardColor),
-                                        ),
-                                        onPressed: () =>
-                                            Navigator.of(context).pushNamed(
-                                          WithdrawLiquidityPage.route,
-                                          arguments: _tab,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : Container(),
-                          ],
-                        )
-                      : Container(),
+                              onPressed: () {
+                                Navigator.of(context).pushNamed(
+                                  AddLiquidityPage.route,
+                                  arguments: _tab,
+                                );
+                              }),
+                        ),
+                      ),
+                      share > BigInt.zero
+                          ? Expanded(
+                              child: Container(
+                                color: primaryColor,
+                                child: FlatButton(
+                                  padding: EdgeInsets.only(top: 16, bottom: 16),
+                                  child: Text(
+                                    dic['earn.withdraw'],
+                                    style: TextStyle(color: cardColor),
+                                  ),
+                                  onPressed: () =>
+                                      Navigator.of(context).pushNamed(
+                                    WithdrawLiquidityPage.route,
+                                    arguments: _tab,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -213,16 +345,16 @@ class _SystemCard extends StatelessWidget {
     this.reward,
     this.fee,
     this.token,
-    this.swapRatio,
-    this.amountToken,
-    this.amountStableCoin,
+    this.total,
+    this.userStaked,
+    this.actions,
   });
   final double reward;
   final double fee;
   final String token;
-  final String swapRatio;
-  final String amountToken;
-  final String amountStableCoin;
+  final String total;
+  final String userStaked;
+  final Widget actions;
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
@@ -232,45 +364,34 @@ class _SystemCard extends StatelessWidget {
       fontWeight: FontWeight.bold,
       color: primary,
     );
-    String tokenView = Fmt.tokenView(token);
+    print(total);
     return RoundedCard(
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(bottom: 16),
-            child: Text(dic['earn.pool']),
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  Text(tokenView),
-                  Text(
-                    amountToken,
-                    style: primaryText,
+                  Text(dic['earn.pool']),
+                  Padding(
+                    padding: EdgeInsets.only(top: 8, bottom: 8),
+                    child: Text(total, style: primaryText),
                   ),
                 ],
               ),
               Column(
                 children: <Widget>[
-                  Text(acala_stable_coin_view),
-                  Text(
-                    amountStableCoin,
-                    style: primaryText,
+                  Text('staked'),
+                  Padding(
+                    padding: EdgeInsets.only(top: 8, bottom: 8),
+                    child: Text(userStaked, style: primaryText),
                   ),
                 ],
               )
             ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 8),
-            child: Text(
-              '${dic['dex.rate']} 1 $tokenView = $swapRatio $acala_stable_coin_view',
-              style: TextStyle(fontSize: 12),
-            ),
           ),
           Divider(height: 24),
           Row(
@@ -287,6 +408,8 @@ class _SystemCard extends StatelessWidget {
               ),
             ],
           ),
+          Divider(height: 24),
+          actions
         ],
       ),
     );
@@ -296,21 +419,23 @@ class _SystemCard extends StatelessWidget {
 class _UserCard extends StatelessWidget {
   _UserCard({
     this.share,
-    this.reward,
+    this.poolInfo,
+    this.decimals,
     this.token,
-    this.amountToken,
-    this.amountStableCoin,
+    this.lpAmountString,
     this.onWithdrawReward,
   });
   final double share;
-  final double reward;
+  final DexPoolInfoData poolInfo;
+  final int decimals;
   final String token;
-  final String amountToken;
-  final String amountStableCoin;
+  final String lpAmountString;
   final Function onWithdrawReward;
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).acala;
+    final reward = poolInfo?.reward?.incentive ?? BigInt.zero;
+    final rewardSaving = poolInfo?.reward?.saving ?? BigInt.zero;
     final Color primary = Theme.of(context).primaryColor;
     final TextStyle primaryText = TextStyle(
       fontSize: 22,
@@ -325,88 +450,57 @@ class _UserCard extends StatelessWidget {
         children: <Widget>[
           Column(
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 8, bottom: 20),
-                child: Text(dic['earn.deposit.user']),
-              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Column(
                     children: <Widget>[
-                      Text(Fmt.tokenView(token)),
-                      Text(
-                        amountToken,
-                        style: primaryText,
+                      Text('incentive (ACA)'),
+                      Padding(
+                        padding: EdgeInsets.only(top: 8, bottom: 8),
+                        child: Text(
+                            Fmt.bigIntToDouble(reward, decimals)
+                                .toStringAsFixed(3),
+                            style: primaryText),
                       ),
                     ],
                   ),
                   Column(
                     children: <Widget>[
-                      Text(acala_stable_coin_view),
-                      Text(
-                        amountStableCoin,
-                        style: primaryText,
+                      Text('saving (aUSD)'),
+                      Padding(
+                        padding: EdgeInsets.only(top: 8, bottom: 8),
+                        child: Text(
+                            Fmt.bigIntToDouble(rewardSaving, decimals)
+                                .toStringAsFixed(2),
+                            style: primaryText),
                       ),
                     ],
                   )
                 ],
               ),
+              Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text(
+                  '${Fmt.tokenView(token)} = $lpAmountString',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ),
               Divider(height: 24),
               Row(
-                children: <Widget>[
-                  InfoItem(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    title: dic['earn.share'],
-                    content: Fmt.ratio(share),
-                  ),
+                children: [
                   Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(dic['earn.reward']),
-                            reward != null && reward >= 0.01
-                                ? GestureDetector(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(left: 4),
-                                      child: Icon(
-                                        Icons.card_giftcard,
-                                        size: 18,
-                                        color: primary,
-                                      ),
-                                    ),
-                                    onTap: onWithdrawReward,
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                        Text(
-                          '${Fmt.doubleFormat(reward, length: 4)} $acala_stable_coin_view',
-                          style: Theme.of(context).textTheme.headline4,
-                        )
-                      ],
+                    child: RoundedButton(
+                      text: 'harvest',
+                      onPressed:
+                          reward > BigInt.zero || rewardSaving > BigInt.zero
+                              ? onWithdrawReward
+                              : null,
                     ),
                   )
                 ],
-              )
-            ],
-          ),
-          GestureDetector(
-            child: Container(
-              child: Column(
-                children: <Widget>[
-                  Icon(Icons.history, color: primary),
-                  Text(
-                    dic['loan.txs'],
-                    style: TextStyle(color: primary, fontSize: 12),
-                  )
-                ],
               ),
-            ),
-            onTap: () => Navigator.of(context)
-                .pushNamed(EarnHistoryPage.route, arguments: token),
+            ],
           ),
         ],
       ),

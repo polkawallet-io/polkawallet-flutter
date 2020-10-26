@@ -60,6 +60,7 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
           builder: (_) {
             final Map dic = I18n.of(context).acala;
             final int decimals = store.settings.networkState.tokenDecimals;
+            final symbol = store.settings.networkState.tokenSymbol;
             final String token = ModalRoute.of(context).settings.arguments;
             List<TxDexLiquidityData> list =
                 store.acala.txsDexLiquidity.reversed.toList();
@@ -107,7 +108,11 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                         amount =
                             '${Fmt.priceFloorBigInt(detail.amountShare, decimals, lengthFixed: 0)} Share';
                         break;
-                      case TxDexLiquidityData.actionReward:
+                      case TxDexLiquidityData.actionRewardIncentive:
+                        amount =
+                            '${Fmt.priceCeilBigInt(detail.amountToken, decimals)} $symbol';
+                        break;
+                      case TxDexLiquidityData.actionRewardSaving:
                         amount =
                             '${Fmt.priceCeilBigInt(detail.amountStableCoin, decimals)} $acala_stable_coin_view';
                         break;
