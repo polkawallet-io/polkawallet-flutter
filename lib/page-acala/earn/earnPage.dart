@@ -7,6 +7,7 @@ import 'package:polka_wallet/common/components/infoItem.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/earn/LPStakePage.dart';
 import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
 import 'package:polka_wallet/page-acala/earn/earnHistoryPage.dart';
 import 'package:polka_wallet/page-acala/earn/withdrawLiquidityPage.dart';
@@ -35,39 +36,26 @@ class _EarnPageState extends State<EarnPage> {
 
   final AppStore store;
 
-  String _tab = 'ACA-aUSD';
+  String _tab = 'aUSD-DOT';
 
   Future<void> _fetchData() async {
-    webApi.acala.fetchDexLiquidityPoolSwapRatio(_tab);
+    await webApi.acala.fetchDexLiquidityPoolRewards();
+    await webApi.assets.fetchBalance();
     await webApi.acala.fetchDexPoolInfo(_tab);
   }
 
-  void _onStake() {
-    print('stake');
-    // final args = {
-    //   "title": I18n.of(context).acala['earn.get'],
-    //   "txInfo": {
-    //     "module": 'incentives',
-    //     "call": 'depositDexShare',
-    //   },
-    //   "detail": jsonEncode({
-    //     "poolId": _tab,
-    //     "amount": '$incentiveReward $symbol',
-    //   }),
-    //   "params": [],
-    //   "rawParam": '[{DexIncentive: {DEXShare: $pool}}]',
-    //   "onFinish": (BuildContext txPageContext, Map res) {
-    //     res['action'] = TxDexLiquidityData.actionRewardIncentive;
-    //     res['params'] = [symbol, incentiveReward, ''];
-    //     store.acala.setDexLiquidityTxs([res]);
-    //     Navigator.popUntil(txPageContext, ModalRoute.withName(EarnPage.route));
-    //     globalDexLiquidityRefreshKey.currentState.show();
-    //   }
-    // };
+  Future<void> _onStake() async {
+    Navigator.of(context).pushNamed(
+      LPStakePage.route,
+      arguments: LPStakePageParams(_tab, LPStakePage.actionStake),
+    );
   }
 
-  void _onUnstake() {
-    print('unstake');
+  Future<void> _onUnStake() async {
+    Navigator.of(context).pushNamed(
+      LPStakePage.route,
+      arguments: LPStakePageParams(_tab, LPStakePage.actionUnStake),
+    );
   }
 
   Future<void> _onWithdrawReward(LPRewardData reward) async {
@@ -78,7 +66,7 @@ class _EarnPageState extends State<EarnPage> {
     final pool =
         jsonEncode(_tab.split('-').map((e) => e.toUpperCase()).toList());
 
-    Map args;
+    var args;
     if (reward.saving > BigInt.zero && reward.incentive > BigInt.zero) {
       final params = [
         'api.tx.incentives.claimRewards({DexIncentive: {DEXShare: $pool}})',
@@ -167,7 +155,6 @@ class _EarnPageState extends State<EarnPage> {
   @override
   void initState() {
     super.initState();
-    webApi.acala.fetchDexLiquidityPoolRewards();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       globalDexLiquidityRefreshKey.currentState.show();
@@ -193,31 +180,34 @@ class _EarnPageState extends State<EarnPage> {
       ),
       body: Observer(
         builder: (_) {
+          BigInt issuance = BigInt.zero;
           BigInt shareTotal = BigInt.zero;
           BigInt share = BigInt.zero;
-          double userShare = 0;
+          double stakeShare = 0;
+          double poolShare = 0;
+          double reward = 0;
+          double rewardSaving = 0;
 
           String lpAmountString = '~';
 
           DexPoolInfoData poolInfo = store.acala.dexPoolInfoMap[_tab];
           if (poolInfo != null) {
+            issuance = poolInfo.issuance;
             shareTotal = poolInfo.sharesTotal;
             share = poolInfo.shares;
-            userShare = share / shareTotal;
+            stakeShare = share / shareTotal;
+            poolShare = share / issuance;
 
             final lpAmount =
-                Fmt.bigIntToDouble(poolInfo.amountToken, decimals) *
-                    poolInfo.proportion;
-            print(poolInfo.amountToken);
-            print(poolInfo.amountStableCoin);
-            print(poolInfo.proportion);
-            print(lpAmount);
+                Fmt.bigIntToDouble(poolInfo.amountToken, decimals) * poolShare;
             final lpAmount2 =
                 Fmt.bigIntToDouble(poolInfo.amountStableCoin, decimals) *
-                    poolInfo.proportion;
-            print(lpAmount2);
+                    poolShare;
             final pair = _tab.split('-');
-            lpAmountString = '$lpAmount ${pair[0]} + $lpAmount2 ${pair[1]}';
+            lpAmountString =
+                '${lpAmount.toStringAsFixed(3)} ${pair[0]} + ${lpAmount2.toStringAsFixed(3)} ${pair[1]}';
+            reward = store.acala.swapPoolRewards[_tab] * stakeShare;
+            rewardSaving = store.acala.swapPoolSavingRewards[_tab] * stakeShare;
           }
 
           Color cardColor = Theme.of(context).cardColor;
@@ -246,21 +236,18 @@ class _EarnPageState extends State<EarnPage> {
                     child: ListView(
                       children: <Widget>[
                         _SystemCard(
-                          reward: store.acala.swapPoolRewards[_tab],
-                          fee: store.acala.swapFee,
                           token: _tab,
                           total: Fmt.bigIntToDouble(
-                                  poolInfo?.sharesTotal ?? BigInt.zero,
-                                  decimals)
-                              .toStringAsFixed(3),
+                              poolInfo?.sharesTotal ?? BigInt.zero, decimals),
                           userStaked: Fmt.bigIntToDouble(
-                                  poolInfo?.shares ?? BigInt.zero, decimals)
-                              .toStringAsFixed(3),
+                              poolInfo?.shares ?? BigInt.zero, decimals),
+                          lpAmountString: lpAmountString,
                           actions: Row(
                             children: [
                               Expanded(
                                 child: RoundedButton(
-                                  text: 'stake',
+                                  color: Colors.blue,
+                                  text: dic['earn.stake'],
                                   onPressed: _onStake,
                                 ),
                               ),
@@ -270,8 +257,8 @@ class _EarnPageState extends State<EarnPage> {
                               (poolInfo?.shares ?? BigInt.zero) > BigInt.zero
                                   ? Expanded(
                                       child: RoundedButton(
-                                        text: 'unstake',
-                                        onPressed: _onUnstake,
+                                        text: dic['earn.unStake'],
+                                        onPressed: _onUnStake,
                                       ),
                                     )
                                   : Container()
@@ -279,11 +266,13 @@ class _EarnPageState extends State<EarnPage> {
                           ),
                         ),
                         _UserCard(
-                          share: userShare,
+                          share: stakeShare,
                           poolInfo: poolInfo,
                           decimals: decimals,
-                          lpAmountString: lpAmountString,
                           token: _tab,
+                          rewardEstimate: reward,
+                          rewardSavingEstimate: rewardSaving,
+                          fee: store.acala.swapFee,
                           onWithdrawReward: () =>
                               _onWithdrawReward(poolInfo.reward),
                         )
@@ -342,18 +331,16 @@ class _EarnPageState extends State<EarnPage> {
 
 class _SystemCard extends StatelessWidget {
   _SystemCard({
-    this.reward,
-    this.fee,
     this.token,
     this.total,
     this.userStaked,
+    this.lpAmountString,
     this.actions,
   });
-  final double reward;
-  final double fee;
   final String token;
-  final String total;
-  final String userStaked;
+  final double total;
+  final double userStaked;
+  final String lpAmountString;
   final Widget actions;
   @override
   Widget build(BuildContext context) {
@@ -364,47 +351,38 @@ class _SystemCard extends StatelessWidget {
       fontWeight: FontWeight.bold,
       color: primary,
     );
-    print(total);
     return RoundedCard(
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Column(
             children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Text(dic['earn.pool']),
-                  Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: 8),
-                    child: Text(total, style: primaryText),
-                  ),
-                ],
+              Text(dic['earn.staked']),
+              Padding(
+                padding: EdgeInsets.only(top: 16, bottom: 8),
+                child: Text(userStaked.toStringAsFixed(3), style: primaryText),
               ),
-              Column(
-                children: <Widget>[
-                  Text('staked'),
-                  Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: 8),
-                    child: Text(userStaked, style: primaryText),
-                  ),
-                ],
-              )
             ],
           ),
-          Divider(height: 24),
+          Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: Text(
+              '≈ $lpAmountString',
+              style: TextStyle(fontSize: 12),
+            ),
+          ),
           Row(
             children: <Widget>[
               InfoItem(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                title: dic['earn.reward.year'],
-                content: Fmt.ratio(reward),
+                title: dic['earn.pool'],
+                content: total.toStringAsFixed(3),
               ),
               InfoItem(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                title: dic['earn.fee'],
-                content: Fmt.ratio(fee),
+                title: dic['earn.share'],
+                content: Fmt.ratio(userStaked / total),
               ),
             ],
           ),
@@ -422,14 +400,18 @@ class _UserCard extends StatelessWidget {
     this.poolInfo,
     this.decimals,
     this.token,
-    this.lpAmountString,
+    this.rewardEstimate,
+    this.rewardSavingEstimate,
+    this.fee,
     this.onWithdrawReward,
   });
   final double share;
   final DexPoolInfoData poolInfo;
   final int decimals;
   final String token;
-  final String lpAmountString;
+  final double rewardEstimate;
+  final double rewardSavingEstimate;
+  final double fee;
   final Function onWithdrawReward;
   @override
   Widget build(BuildContext context) {
@@ -442,6 +424,7 @@ class _UserCard extends StatelessWidget {
       fontWeight: FontWeight.bold,
       color: primary,
     );
+
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 0, 16, 24),
       padding: EdgeInsets.all(16),
@@ -450,16 +433,22 @@ class _UserCard extends StatelessWidget {
         children: <Widget>[
           Column(
             children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: Text(dic['earn.reward']),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Column(
                     children: <Widget>[
-                      Text('incentive (ACA)'),
+                      Text('${dic['earn.incentive']} (ACA)'),
                       Padding(
                         padding: EdgeInsets.only(top: 8, bottom: 8),
                         child: Text(
-                            Fmt.bigIntToDouble(reward, decimals)
+                            Fmt.bigIntToDouble(
+                                    reward < BigInt.zero ? BigInt.zero : reward,
+                                    decimals)
                                 .toStringAsFixed(3),
                             style: primaryText),
                       ),
@@ -467,11 +456,15 @@ class _UserCard extends StatelessWidget {
                   ),
                   Column(
                     children: <Widget>[
-                      Text('saving (aUSD)'),
+                      Text('${dic['earn.saving']} (aUSD)'),
                       Padding(
                         padding: EdgeInsets.only(top: 8, bottom: 8),
                         child: Text(
-                            Fmt.bigIntToDouble(rewardSaving, decimals)
+                            Fmt.bigIntToDouble(
+                                    rewardSaving < BigInt.zero
+                                        ? BigInt.zero
+                                        : rewardSaving,
+                                    decimals)
                                 .toStringAsFixed(2),
                             style: primaryText),
                       ),
@@ -480,9 +473,23 @@ class _UserCard extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(top: 8),
+                padding: EdgeInsets.only(bottom: 4),
                 child: Text(
-                  '${Fmt.tokenView(token)} = $lpAmountString',
+                  '${dic['earn.incentive']} ≈ ${rewardEstimate.toStringAsFixed(3)} ACA / year',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: Text(
+                  '${dic['earn.saving']} ≈ ${rewardSavingEstimate.toStringAsFixed(3)} aUSD / year',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: Text(
+                  '${dic['earn.fee']} ${Fmt.ratio(fee)}',
                   style: TextStyle(fontSize: 12),
                 ),
               ),
@@ -491,7 +498,7 @@ class _UserCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: RoundedButton(
-                      text: 'harvest',
+                      text: dic['earn.claim'],
                       onPressed:
                           reward > BigInt.zero || rewardSaving > BigInt.zero
                               ? onWithdrawReward

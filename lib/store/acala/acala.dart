@@ -71,7 +71,7 @@ abstract class _AcalaStore with Store {
   Map<String, double> swapPoolRewards = Map<String, double>();
 
   @observable
-  Map<String, double> swapPoolSavingRates = Map<String, double>();
+  Map<String, double> swapPoolSavingRewards = Map<String, double>();
 
   @observable
   List<List<AcalaTokenData>> dexPools = List<List<AcalaTokenData>>();
@@ -343,7 +343,6 @@ abstract class _AcalaStore with Store {
               v.toString(), rootStore.settings.networkState.tokenDecimals) *
           epochOfYear;
     });
-    print(rewards);
     swapPoolRewards = rewards;
   }
 
@@ -360,7 +359,7 @@ abstract class _AcalaStore with Store {
               v.toString(), rootStore.settings.networkState.tokenDecimals) *
           epochOfYear;
     });
-    swapPoolSavingRates = rewards;
+    swapPoolSavingRewards = rewards;
   }
 
   @action

@@ -39,11 +39,22 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
   final TextEditingController _amountCtrl = new TextEditingController();
 
   BigInt _shareInput = BigInt.zero;
+  double _price = 0;
 
   Future<void> _refreshData() async {
-    String token = ModalRoute.of(context).settings.arguments;
-    webApi.acala.fetchDexLiquidityPoolSwapRatio(token);
-    await webApi.acala.fetchDexPoolInfo(token);
+    final String poolId = ModalRoute.of(context).settings.arguments;
+    webApi.assets.fetchBalance();
+    await webApi.acala.fetchDexPoolInfo(poolId);
+
+    final output = await webApi.acala.fetchTokenSwapAmount(
+      '1',
+      null,
+      poolId.toUpperCase().split('-'),
+      '0.005',
+    );
+    setState(() {
+      _price = output.amount;
+    });
   }
 
   void _onAmountChange(String v) {
@@ -66,24 +77,27 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
 
   void _onSubmit() {
     if (_formKey.currentState.validate()) {
-      String token = ModalRoute.of(context).settings.arguments;
+      final String poolId = ModalRoute.of(context).settings.arguments;
+      final pair = poolId.toUpperCase().split('-');
       String amount = _amountCtrl.text.trim();
       var args = {
         "title": I18n.of(context).acala['earn.withdraw'],
         "txInfo": {
           "module": 'dex',
-          "call": 'withdrawLiquidity',
+          "call": 'removeLiquidity',
         },
         "detail": jsonEncode({
-          "currencyId": token,
-          "amountOfShare": amount,
+          "poolId": poolId,
+          "amount": amount,
         }),
         "params": [
-          token,
+          {'Token': pair[0]},
+          {'Token': pair[1]},
           _shareInput.toString(),
         ],
         "onFinish": (BuildContext txPageContext, Map res) {
           res['action'] = TxDexLiquidityData.actionWithdraw;
+          res['params'] = [poolId, res['params'][2]];
           store.acala.setDexLiquidityTxs([res]);
           Navigator.popUntil(
               txPageContext, ModalRoute.withName(EarnPage.route));
@@ -116,7 +130,8 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
         final Map dic = I18n.of(context).acala;
         final Map dicAssets = I18n.of(context).assets;
         final int decimals = store.settings.networkState.tokenDecimals;
-        String token = ModalRoute.of(context).settings.arguments;
+        final String poolId = ModalRoute.of(context).settings.arguments;
+        final pair = poolId.split('-');
 
         double shareTotal = 0;
         BigInt shareInt = BigInt.zero;
@@ -132,10 +147,12 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
         double amountToken = 0;
         double amountStableCoin = 0;
 
-        DexPoolInfoData poolInfo = store.acala.dexPoolInfoMap[token];
+        DexPoolInfoData poolInfo = store.acala.dexPoolInfoMap[poolId];
         if (poolInfo != null) {
-          shareTotal = Fmt.bigIntToDouble(poolInfo.sharesTotal, decimals);
-          shareInt = poolInfo.shares;
+          shareTotal = Fmt.bigIntToDouble(poolInfo.issuance, decimals);
+          shareInt = Fmt.balanceInt(store.acala.lpTokens
+              .firstWhere((e) => e.currencyId.join('-') == poolId.toUpperCase())
+              .free);
           shareInt10 = BigInt.from(shareInt / BigInt.from(10));
           shareInt25 = BigInt.from(shareInt / BigInt.from(4));
           shareInt50 = BigInt.from(shareInt / BigInt.from(2));
@@ -151,9 +168,6 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
 
           shareRatioNew = (share - shareInput) / (shareTotal - shareInput);
         }
-
-        double swapRatio =
-            double.parse(store.acala.swapPoolRatios[token].toString());
 
         return Scaffold(
           appBar: AppBar(title: Text(dic['earn.withdraw']), centerTitle: true),
@@ -245,7 +259,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                               style: Theme.of(context).textTheme.headline4,
                             ),
                             Text(
-                              '${Fmt.doubleFormat(amountToken)} $token + ${Fmt.doubleFormat(amountStableCoin, length: 2)} $acala_stable_coin_view',
+                              '${Fmt.doubleFormat(amountToken)} ${pair[0]} + ${Fmt.doubleFormat(amountStableCoin, length: 2)} ${pair[1]}',
                               style: Theme.of(context).textTheme.headline4,
                             ),
                           ],
@@ -264,7 +278,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                             ),
                           ),
                           Text(
-                              '1 $token = ${Fmt.doubleFormat(swapRatio, length: 2)} $acala_stable_coin_view'),
+                              '1 ${pair[0]} = ${Fmt.doubleFormat(_price, length: 2)} ${pair[1]}'),
                         ],
                       ),
                       Row(
@@ -279,7 +293,7 @@ class _WithdrawLiquidityPageState extends State<WithdrawLiquidityPage> {
                             ),
                           ),
                           Text(
-                            '${Fmt.doubleFormat(poolToken)} $token\n+ ${Fmt.doubleFormat(poolStableCoin, length: 2)} $acala_stable_coin_view',
+                            '${Fmt.doubleFormat(poolToken)} ${pair[0]}\n+ ${Fmt.doubleFormat(poolStableCoin, length: 2)} ${pair[1]}',
                             textAlign: TextAlign.right,
                           ),
                         ],

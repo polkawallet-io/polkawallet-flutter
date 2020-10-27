@@ -61,10 +61,11 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
             final Map dic = I18n.of(context).acala;
             final int decimals = store.settings.networkState.tokenDecimals;
             final symbol = store.settings.networkState.tokenSymbol;
-            final String token = ModalRoute.of(context).settings.arguments;
+            final String poolId = ModalRoute.of(context).settings.arguments;
+            final pair = poolId.split('-');
             List<TxDexLiquidityData> list =
                 store.acala.txsDexLiquidity.reversed.toList();
-            list.retainWhere((i) => i.currencyId == token);
+            list.retainWhere((i) => i.currencyId == poolId);
 
             return RefreshIndicator(
                 key: _refreshKey,
@@ -101,12 +102,12 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                     switch (detail.action) {
                       case TxDexLiquidityData.actionDeposit:
                         amount =
-                            '${Fmt.priceCeilBigInt(detail.amountToken, decimals)} ${detail.currencyId}\n+ ${Fmt.priceCeilBigInt(detail.amountStableCoin, decimals)} $acala_stable_coin_view';
+                            '${Fmt.priceCeilBigInt(detail.amountToken, decimals)} ${pair[0]}\n+ ${Fmt.priceCeilBigInt(detail.amountStableCoin, decimals)} ${pair[1]}';
                         image = 'assets/images/assets/assets_up.png';
                         break;
                       case TxDexLiquidityData.actionWithdraw:
                         amount =
-                            '${Fmt.priceFloorBigInt(detail.amountShare, decimals, lengthFixed: 0)} Share';
+                            '${Fmt.priceFloorBigInt(detail.amountShare, decimals, lengthFixed: 0)} ${Fmt.tokenView(poolId)}';
                         break;
                       case TxDexLiquidityData.actionRewardIncentive:
                         amount =
@@ -115,6 +116,11 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                       case TxDexLiquidityData.actionRewardSaving:
                         amount =
                             '${Fmt.priceCeilBigInt(detail.amountStableCoin, decimals)} $acala_stable_coin_view';
+                        break;
+                      case TxDexLiquidityData.actionStake:
+                      case TxDexLiquidityData.actionUnStake:
+                        amount =
+                            '${Fmt.priceCeilBigInt(detail.amountShare, decimals)} ${Fmt.tokenView(poolId)}';
                         break;
                     }
                     return Container(

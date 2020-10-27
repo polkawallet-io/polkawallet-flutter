@@ -13,6 +13,7 @@ class DexPoolInfoData extends _DexPoolInfoData {
       Fmt.balanceInt(json['reward']['incentive'].toString()),
       Fmt.balanceInt(json['reward']['saving'].toString()),
     );
+    data.issuance = Fmt.balanceInt(json['issuance'].toString());
     return data;
   }
 }
@@ -25,6 +26,7 @@ abstract class _DexPoolInfoData {
   BigInt shares;
   LPRewardData reward;
   double proportion;
+  BigInt issuance;
 }
 
 class LPRewardData {

@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/willPopScopWrapper.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/earn/LPStakePage.dart';
 import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
 import 'package:polka_wallet/page-acala/earn/earnHistoryPage.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
@@ -328,6 +329,7 @@ class _WalletAppState extends State<WalletApp> {
           EarnPage.route: (_) => EarnPage(_appStore),
           AddLiquidityPage.route: (_) => AddLiquidityPage(_appStore),
           WithdrawLiquidityPage.route: (_) => WithdrawLiquidityPage(_appStore),
+          LPStakePage.route: (_) => LPStakePage(_appStore),
           EarnHistoryPage.route: (_) => EarnHistoryPage(_appStore),
           HomaPage.route: (_) => HomaPage(_appStore),
           MintPage.route: (_) => MintPage(_appStore),

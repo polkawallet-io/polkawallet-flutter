@@ -135,12 +135,6 @@ class ApiAcala {
     store.acala.setDexPools(res);
   }
 
-  Future<void> fetchDexLiquidityPoolSwapRatio(String currencyId) async {
-    // String res = await fetchTokenSwapAmount(
-    //     '1', null, [currencyId, acala_stable_coin], '0');
-    // store.acala.setSwapPoolRatio(currencyId, res);
-  }
-
   Future<void> fetchDexLiquidityPoolRewards() async {
     await webApi.acala.fetchDexPools();
     final pools = store.acala.dexPools
@@ -150,11 +144,8 @@ class ApiAcala {
     final incentiveQuery = pools
         .map((i) => 'api.query.incentives.dEXIncentiveRewards($i)')
         .join(',');
-    print(pools);
     final savingRateQuery =
         pools.map((i) => 'api.query.incentives.dEXSavingRates($i)').join(',');
-    print(incentiveQuery);
-    print(savingRateQuery);
     final incentivesData =
         await apiRoot.evalJavascript('Promise.all([$incentiveQuery])');
     final savingRatesData =
@@ -164,7 +155,6 @@ class ApiAcala {
     final tokenPairs = store.acala.dexPools
         .map((e) => e.map((i) => i.symbol).join('-'))
         .toList();
-    print(tokenPairs);
     tokenPairs.asMap().forEach((k, v) {
       incentives[v] = incentivesData[k];
       savingRates[v] = savingRatesData[k];
