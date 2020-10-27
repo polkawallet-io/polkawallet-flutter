@@ -1,6 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/page-encointer/meetup/attestation/components/stateMachinePartyA.dart';
@@ -9,12 +6,16 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class AttestationCard extends StatefulWidget {
   AttestationCard(
     this.store, {
     this.myMeetupRegistryIndex,
     this.otherMeetupRegistryIndex,
+    this.accountPassword,
   });
 
   static const String route = '/encointer/meetup/';
@@ -22,6 +23,7 @@ class AttestationCard extends StatefulWidget {
 
   final int myMeetupRegistryIndex;
   final int otherMeetupRegistryIndex;
+  final String accountPassword;
 
   @override
   _AttestationCardState createState() => _AttestationCardState(store);
@@ -46,6 +48,7 @@ class _AttestationCardState extends State<AttestationCard> {
             store,
             otherMeetupRegistryIndex: widget.otherMeetupRegistryIndex,
             myMeetupRegistryIndex: widget.myMeetupRegistryIndex,
+            accountPassword: widget.accountPassword,
           ),
         ),
       );
@@ -56,6 +59,7 @@ class _AttestationCardState extends State<AttestationCard> {
             store,
             otherMeetupRegistryIndex: widget.otherMeetupRegistryIndex,
             myMeetupRegistryIndex: widget.myMeetupRegistryIndex,
+            accountPassword: widget.accountPassword,
           ),
         ),
       );

@@ -1,11 +1,12 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import 'attestation/attestationCard.dart';
 
@@ -24,7 +25,32 @@ class _MeetupPageState extends State<MeetupPage> {
 
   final AppStore store;
   var _amountAttendees;
+  String pwd;
   bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _showPasswordDialog(context);
+    });
+  }
+
+  Future<void> _showPasswordDialog(BuildContext context) async {
+    showCupertinoDialog(
+      context: context,
+      builder: (_) {
+        return PasswordInputDialog(
+          title: Text(I18n.of(context).home['unlock']),
+          account: store.account.currentAccount,
+          onOk: (password) {
+            pwd = password;
+            // Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
 
   List<Widget> _buildAttestationCardList(String claim) {
     return store.encointer.attestations
@@ -39,12 +65,11 @@ class _MeetupPageState extends State<MeetupPage> {
         .toList();
   }
 
-
   void _initMeetup() async {
     print("creating my claim with vote $_amountAttendees");
     webApi.encointer.createClaimOfAttendance(_amountAttendees);
     var claimHex = await webApi.encointer.encodeClaimOfAttendance();
-    if ((store.encointer.attestations == null)|(store.encointer.attestations.isEmpty)) {
+    if ((store.encointer.attestations == null) || (store.encointer.attestations.isEmpty)) {
       store.encointer.attestations = _buildAttestationStateMap(store.encointer.meetupRegistry);
     }
     setState(() {
@@ -74,15 +99,16 @@ class _MeetupPageState extends State<MeetupPage> {
     final Map dic = I18n.of(context).encointer;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(dic['ceremony']),
-          centerTitle: true,
-        ),
-        backgroundColor: Theme.of(context).canvasColor,
-        body: SafeArea(
-          child: _isLoading
-              ? Center(child: CupertinoActivityIndicator())
-              : Column(children: <Widget>[
+      appBar: AppBar(
+        title: Text(dic['ceremony']),
+        centerTitle: true,
+      ),
+      backgroundColor: Theme.of(context).canvasColor,
+      body: SafeArea(
+        child: _isLoading
+            ? Center(child: CupertinoActivityIndicator())
+            : Column(
+                children: <Widget>[
                   Padding(
                     padding: EdgeInsets.all(16),
                     child: Row(
@@ -122,7 +148,9 @@ class _MeetupPageState extends State<MeetupPage> {
                   RoundedButton(
                       text: dic['meetup.complete'],
                       onPressed: () => Navigator.popUntil(context, ModalRoute.withName('/')))
-                ]),
-        ));
+                ],
+              ),
+      ),
+    );
   }
 }

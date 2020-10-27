@@ -1,6 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/activityIndicator.dart';
 import 'package:encointer_wallet/page-encointer/meetup/attestation/components/qrCode.dart';
 import 'package:encointer_wallet/page-encointer/meetup/attestation/components/scanQrCode.dart';
@@ -10,6 +7,9 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/attestation.dart';
 import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class StateMachinePartyB extends StatefulWidget {
   StateMachinePartyB(
@@ -17,12 +17,14 @@ class StateMachinePartyB extends StatefulWidget {
     this.otherMeetupRegistryIndex,
     this.myMeetupRegistryIndex,
     this.initialAttestationStep,
+    this.accountPassword,
   }) : super();
 
   final AppStore store;
   final int otherMeetupRegistryIndex;
   final int myMeetupRegistryIndex;
   final CurrentAttestationStep initialAttestationStep;
+  final String accountPassword;
 
   @override
   _StateMachinePartyBState createState() {
@@ -71,7 +73,7 @@ class _StateMachinePartyBState extends State<StateMachinePartyB> {
         pageBuilder: (BuildContext context, _, __) {
           return ActivityIndicator(
             title: "Attesting ClaimA",
-            future: webApi.encointer.attestClaimOfAttendance(claimAhex, "123qwe"),
+            future: webApi.encointer.attestClaimOfAttendance(claimAhex, widget.accountPassword),
           );
         },
       ),

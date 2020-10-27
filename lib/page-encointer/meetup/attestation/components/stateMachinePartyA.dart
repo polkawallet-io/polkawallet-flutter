@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/activityIndicator.dart';
 import 'package:encointer_wallet/page-encointer/meetup/attestation/components/qrCode.dart';
 import 'package:encointer_wallet/page-encointer/meetup/attestation/components/scanQrCode.dart';
@@ -9,17 +7,22 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/attestation.dart';
 import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class StateMachinePartyA extends StatefulWidget {
   StateMachinePartyA(
     this.store, {
     this.otherMeetupRegistryIndex,
     this.myMeetupRegistryIndex,
+    this.accountPassword,
   }) : super();
 
   final AppStore store;
   final int otherMeetupRegistryIndex;
   final int myMeetupRegistryIndex;
+  final String accountPassword;
+
   @override
   _StateMachinePartyAState createState() {
     return _StateMachinePartyAState(store);
@@ -92,7 +95,7 @@ class _StateMachinePartyAState extends State<StateMachinePartyA> {
         opaque: false,
         pageBuilder: (BuildContext context, _, __) => ActivityIndicator(
           title: "Attesting ClaimB",
-          future: webApi.encointer.attestClaimOfAttendance(claimBhex, "123qwe"),
+          future: webApi.encointer.attestClaimOfAttendance(claimBhex, widget.accountPassword),
         ),
       ),
     );

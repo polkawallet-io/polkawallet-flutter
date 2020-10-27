@@ -384,7 +384,7 @@ class _AssetsState extends State<Assets> {
             ],
           );
         }),
-        Expanded(child: _communityCurrencyAssets(context, store)),
+        _communityCurrencyAssets(context, store),
       ],
     );
   }
