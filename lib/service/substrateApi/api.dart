@@ -149,7 +149,7 @@ class Api {
     if (!allowRepeat) {
       for (String i in _msgCompleters.keys) {
         String call = code.split('(')[0];
-        if (i.contains(call)) {
+        if (i.compareTo(call) == 0) {
           print('request $call loading');
           return _msgCompleters[i].future;
         }
