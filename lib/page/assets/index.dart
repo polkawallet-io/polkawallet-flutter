@@ -406,7 +406,7 @@ class _AssetsState extends State<Assets> {
         ),
         CurrencyChooserPanel(store),
         Observer(builder: (_) {
-          return store.encointer.currencyIdentifiers != null
+          return (store.encointer.currencyIdentifiers != null) & (store.encointer.chosenCid != null)
               ? RoundedCard(
                   margin: EdgeInsets.only(top: 16),
                   child: ListTile(

@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:encointer_wallet/page/profile/account/exportResultPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/account.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class ExportAccountPage extends StatelessWidget {
   ExportAccountPage(this.store);
@@ -21,8 +21,7 @@ class ExportAccountPage extends StatelessWidget {
     final Map<String, String> accDic = I18n.of(context).account;
 
     Future<void> onOk() async {
-      var res = await webApi.account
-          .checkAccountPassword(store.currentAccount, _passCtrl.text);
+      var res = await webApi.account.checkAccountPassword(store.currentAccount, _passCtrl.text);
       if (res == null) {
         showCupertinoDialog(
           context: context,
@@ -41,8 +40,7 @@ class ExportAccountPage extends StatelessWidget {
         );
       } else {
         Navigator.of(context).pop();
-        String seed = await store.decryptSeed(
-            store.currentAccount.pubKey, seedType, _passCtrl.text.trim());
+        String seed = await store.decryptSeed(store.currentAccount.pubKey, seedType, _passCtrl.text.trim());
         Navigator.of(context).pushNamed(ExportResultPage.route, arguments: {
           'key': seed,
           'type': seedType,
@@ -58,13 +56,12 @@ class ExportAccountPage extends StatelessWidget {
           content: Padding(
             padding: EdgeInsets.only(top: 16),
             child: CupertinoTextField(
+              keyboardType: TextInputType.number,
               placeholder: dic['pass.old'],
               controller: _passCtrl,
               clearButtonMode: OverlayVisibilityMode.editing,
               onChanged: (v) {
-                return Fmt.checkPassword(v.trim())
-                    ? null
-                    : accDic['create.password.error'];
+                return Fmt.checkPassword(v.trim()) ? null : accDic['create.password.error'];
               },
               obscureText: true,
             ),
@@ -104,23 +101,20 @@ class ExportAccountPage extends StatelessWidget {
               Map json = AccountData.toJson(store.currentAccount);
               json.remove('name');
               json['meta']['name'] = store.currentAccount.name;
-              Navigator.of(context)
-                  .pushNamed(ExportResultPage.route, arguments: {
+              Navigator.of(context).pushNamed(ExportResultPage.route, arguments: {
                 'key': jsonEncode(json),
                 'type': AccountStore.seedTypeKeystore,
               });
             },
           ),
           FutureBuilder(
-            future: store.checkSeedExist(
-                AccountStore.seedTypeMnemonic, store.currentAccount.pubKey),
+            future: store.checkSeedExist(AccountStore.seedTypeMnemonic, store.currentAccount.pubKey),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.hasData && snapshot.data == true) {
                 return ListTile(
                   title: Text(dicAcc[AccountStore.seedTypeMnemonic]),
                   trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                  onTap: () => _showPasswordDialog(
-                      context, AccountStore.seedTypeMnemonic),
+                  onTap: () => _showPasswordDialog(context, AccountStore.seedTypeMnemonic),
                 );
               } else {
                 return Container();
@@ -128,15 +122,13 @@ class ExportAccountPage extends StatelessWidget {
             },
           ),
           FutureBuilder(
-            future: store.checkSeedExist(
-                AccountStore.seedTypeRawSeed, store.currentAccount.pubKey),
+            future: store.checkSeedExist(AccountStore.seedTypeRawSeed, store.currentAccount.pubKey),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.hasData && snapshot.data == true) {
                 return ListTile(
                   title: Text(dicAcc[AccountStore.seedTypeRawSeed]),
                   trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                  onTap: () => _showPasswordDialog(
-                      context, AccountStore.seedTypeRawSeed),
+                  onTap: () => _showPasswordDialog(context, AccountStore.seedTypeRawSeed),
                 );
               } else {
                 return Container();

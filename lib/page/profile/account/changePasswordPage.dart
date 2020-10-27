@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/page/profile/account/accountManagePage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
@@ -7,6 +5,8 @@ import 'package:encointer_wallet/store/account/account.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   ChangePasswordPage(this.store);
@@ -40,8 +40,7 @@ class _ChangePassword extends State<ChangePasswordPage> {
       final String passOld = _passOldCtrl.text.trim();
       final String passNew = _passCtrl.text.trim();
       // check password
-      final passChecked = await webApi.account
-          .checkAccountPassword(store.currentAccount, passOld);
+      final passChecked = await webApi.account.checkAccountPassword(store.currentAccount, passOld);
       if (passChecked == null) {
         showCupertinoDialog(
           context: context,
@@ -65,16 +64,14 @@ class _ChangePassword extends State<ChangePasswordPage> {
           },
         );
       } else {
-        final Map acc = await api.evalJavascript(
-            'account.changePassword("${store.currentAccount.pubKey}", "$passOld", "$passNew")');
+        final Map acc = await api
+            .evalJavascript('account.changePassword("${store.currentAccount.pubKey}", "$passOld", "$passNew")');
         // use local name, not webApi returned name
-        Map<String, dynamic> localAcc =
-            AccountData.toJson(store.currentAccount);
+        Map<String, dynamic> localAcc = AccountData.toJson(store.currentAccount);
         acc['meta']['name'] = localAcc['meta']['name'];
         store.updateAccount(acc);
         // update encrypted seed after password updated
-        store.updateSeed(
-            store.currentAccount.pubKey, _passOldCtrl.text, _passCtrl.text);
+        store.updateSeed(store.currentAccount.pubKey, _passOldCtrl.text, _passCtrl.text);
         showCupertinoDialog(
           context: context,
           builder: (BuildContext context) {
@@ -84,8 +81,7 @@ class _ChangePassword extends State<ChangePasswordPage> {
               actions: <Widget>[
                 CupertinoButton(
                   child: Text(I18n.of(context).home['ok']),
-                  onPressed: () => Navigator.popUntil(
-                      context, ModalRoute.withName(AccountManagePage.route)),
+                  onPressed: () => Navigator.popUntil(context, ModalRoute.withName(AccountManagePage.route)),
                 ),
               ],
             );
@@ -114,6 +110,7 @@ class _ChangePassword extends State<ChangePasswordPage> {
                   padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
                   children: <Widget>[
                     TextFormField(
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         icon: Icon(Icons.lock),
                         hintText: dic['pass.old'],
@@ -125,8 +122,7 @@ class _ChangePassword extends State<ChangePasswordPage> {
                             color: Theme.of(context).unselectedWidgetColor,
                           ),
                           onPressed: () {
-                            WidgetsBinding.instance.addPostFrameCallback(
-                                (_) => _passOldCtrl.clear());
+                            WidgetsBinding.instance.addPostFrameCallback((_) => _passOldCtrl.clear());
                           },
                         ),
                       ),
@@ -134,13 +130,12 @@ class _ChangePassword extends State<ChangePasswordPage> {
                       validator: (v) {
                         // TODO: fix me: disable validator for polkawallet-RN exported keystore importing
                         return null;
-                        return Fmt.checkPassword(v.trim())
-                            ? null
-                            : accDic['create.password.error'];
+                        return Fmt.checkPassword(v.trim()) ? null : accDic['create.password.error'];
                       },
                       obscureText: true,
                     ),
                     TextFormField(
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         icon: Icon(Icons.lock),
                         hintText: dic['pass.new'],
@@ -148,13 +143,12 @@ class _ChangePassword extends State<ChangePasswordPage> {
                       ),
                       controller: _passCtrl,
                       validator: (v) {
-                        return Fmt.checkPassword(v.trim())
-                            ? null
-                            : accDic['create.password.error'];
+                        return Fmt.checkPassword(v.trim()) ? null : accDic['create.password.error'];
                       },
                       obscureText: true,
                     ),
                     TextFormField(
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         icon: Icon(Icons.lock),
                         hintText: dic['pass.new2'],
@@ -162,9 +156,7 @@ class _ChangePassword extends State<ChangePasswordPage> {
                       ),
                       controller: _pass2Ctrl,
                       validator: (v) {
-                        return v.trim() != _passCtrl.text
-                            ? accDic['create.password2.error']
-                            : null;
+                        return v.trim() != _passCtrl.text ? accDic['create.password2.error'] : null;
                       },
                       obscureText: true,
                     ),

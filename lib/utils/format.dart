@@ -6,11 +6,11 @@ import 'dart:typed_data';
 import 'package:base58check/base58.dart';
 import 'package:base58check/base58check.dart';
 import 'package:convert/convert.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 class Fmt {
   static String passwordToEncryptKey(String password) {
@@ -206,7 +206,7 @@ class Fmt {
   }
 
   static bool checkPassword(String pass) {
-    var reg = RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[\S]{6,20}$');
+    var reg = RegExp(r'^([0-9]){6,20}$');
     return reg.hasMatch(pass);
   }
 

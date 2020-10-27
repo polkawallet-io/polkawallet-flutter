@@ -5,33 +5,29 @@ const Map<String, String> enAccount = {
   'create.name': 'Name',
   'create.name.error': 'Name can not be empty',
   'create.password': 'Password',
-  'create.password.error': 'At least 6 digits and contains numbers and letters',
+  'create.password.error': 'Password must contain at least 6 digits and no other signs',
   'create.password2': 'Confirm Password',
   'create.password2.error': 'Inconsistent passwords',
   'create.warn1': 'Backup prom',
   'create.warn2': 'Getting a mnemonic equals ownership of a wallet asset',
   'create.warn3': 'Backup mnemonic',
   'create.warn4': 'Use paper and pen to correctly copy mnemonics',
-  'create.warn5':
-      'If your phone is lost, stolen or damaged, the mnemonic will restore your assets',
+  'create.warn5': 'If your phone is lost, stolen or damaged, the mnemonic will restore your assets',
   'create.warn6': 'Offline storage',
   'create.warn7': 'Keep it safe to a safe place on the isolated network',
   'create.warn8':
       'Do not share and store mnemonics in a networked environment, such as emails, photo albums, social applications',
   'create.warn9': 'Do not take screenshots',
-  'create.warn10':
-      'Do not take screenshots, which may be collected by third-party malware, resulting in asset loss',
+  'create.warn10': 'Do not take screenshots, which may be collected by third-party malware, resulting in asset loss',
   'backup': 'Confirm the mnemonic',
-  'backup.confirm':
-      'Please click on the mnemonic in the correct order to confirm that the backup is correct',
+  'backup.confirm': 'Please click on the mnemonic in the correct order to confirm that the backup is correct',
   'backup.reset': 'Reset',
   'backup.error':
       'This device does not support key type sr25519, you can select [Advanced Options -> Encrypt Type -> ed25519] to continue.',
   'import.type': 'Source Type',
   'import.encrypt': 'Encrypt Type',
   'import.invalid': 'Invalid',
-  'import.duplicate':
-      'account exist, do you want to override the existing account?',
+  'import.duplicate': 'account exist, do you want to override the existing account?',
   'advanced': 'Advanced Options',
   'path': 'Secret derivation path',
   'observe': 'Observation',
@@ -39,8 +35,7 @@ const Map<String, String> enAccount = {
       '\nMark this address as observation,\nthen you can select this address\nin account select page, to watch\nit\'s assets and actions\n',
   'observe.tx': 'For observing only',
   'observe.proxy': 'sign with proxy account',
-  'observe.proxy.brief':
-      '\nA recoverable account can\nsend Tx through a proxy account\n',
+  'observe.proxy.brief': '\nA recoverable account can\nsend Tx through a proxy account\n',
   'observe.proxy.invalid': 'Invalid proxy account',
   'observe.invalid': 'Invalid',
   'list': 'Account Select',
@@ -85,8 +80,7 @@ const Map<String, String> zhAccount = {
   'advanced': '高级选项',
   'path': '加密派生路径',
   'observe': '观察账户',
-  'observe.brief':
-      '\n将该地址标记为观察账户后，\n您可以在账户切换页面选择该地址，\n在钱包中观察该地址的资产、\n操作记录等信息。\n',
+  'observe.brief': '\n将该地址标记为观察账户后，\n您可以在账户切换页面选择该地址，\n在钱包中观察该地址的资产、\n操作记录等信息。\n',
   'observe.tx': '仅供查看',
   'observe.proxy': '使用代理账户签名',
   'observe.proxy.brief': '\n完成社交恢复流程的账户\n可以使用代理账户发送交易\n',

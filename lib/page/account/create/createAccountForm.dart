@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class CreateAccountForm extends StatelessWidget {
   CreateAccountForm({this.setNewAccount, this.submitting, this.onSubmit});
@@ -37,12 +37,11 @@ class CreateAccountForm extends StatelessWidget {
                   ),
                   controller: _nameCtrl,
                   validator: (v) {
-                    return v.trim().length > 0
-                        ? null
-                        : dic['create.name.error'];
+                    return v.trim().length > 0 ? null : dic['create.name.error'];
                   },
                 ),
                 TextFormField(
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     icon: Icon(Icons.lock),
                     hintText: dic['create.password'],
@@ -50,13 +49,12 @@ class CreateAccountForm extends StatelessWidget {
                   ),
                   controller: _passCtrl,
                   validator: (v) {
-                    return Fmt.checkPassword(v.trim())
-                        ? null
-                        : dic['create.password.error'];
+                    return Fmt.checkPassword(v.trim()) ? null : dic['create.password.error'];
                   },
                   obscureText: true,
                 ),
                 TextFormField(
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     icon: Icon(Icons.lock),
                     hintText: dic['create.password2'],
@@ -65,9 +63,7 @@ class CreateAccountForm extends StatelessWidget {
                   controller: _pass2Ctrl,
                   obscureText: true,
                   validator: (v) {
-                    return _passCtrl.text != v
-                        ? dic['create.password2.error']
-                        : null;
+                    return _passCtrl.text != v ? dic['create.password2.error'] : null;
                   },
                 ),
               ],

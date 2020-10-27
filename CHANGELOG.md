@@ -1,3 +1,5 @@
+- 7f84a59cc97087c5820f0c412aee7b1914ec7907: Passwords must contain at least 6 digits and no other signs. This breaks all previous accounts.
+
 # 0.8.3 UX improvements and substrate 2.0.0 compatibility
 - clearer meetup UX flow. less error prone
 - upgrade dependencies to support new Gesell node based on substrate 2.0.0

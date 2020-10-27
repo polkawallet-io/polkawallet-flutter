@@ -70,6 +70,8 @@ class ApiEncointer {
     String address = store.account.currentAccountPubKey;
     String cid = store.encointer.chosenCid;
     int cIndex = store.encointer.currentCeremonyIndex;
+
+    if (address == null) return 0;
     if ((address.isEmpty) | (cid == null) | (cIndex == null)) {
       return 0;
     }

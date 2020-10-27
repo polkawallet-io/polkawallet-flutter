@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
 
 class PasswordInputDialog extends StatefulWidget {
   PasswordInputDialog({this.account, this.title, this.onOk});
@@ -23,8 +23,7 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
     setState(() {
       _submitting = true;
     });
-    var res =
-        await webApi.account.checkAccountPassword(widget.account, password);
+    var res = await webApi.account.checkAccountPassword(widget.account, password);
     if (mounted) {
       setState(() {
         _submitting = false;
@@ -68,12 +67,11 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
       content: Padding(
         padding: EdgeInsets.only(top: 16),
         child: CupertinoTextField(
+          keyboardType: TextInputType.number,
           placeholder: I18n.of(context).profile['pass.old'],
           controller: _passCtrl,
           onChanged: (v) {
-            return Fmt.checkPassword(v.trim())
-                ? null
-                : I18n.of(context).account['create.password.error'];
+            return Fmt.checkPassword(v.trim()) ? null : I18n.of(context).account['create.password.error'];
           },
           obscureText: true,
           clearButtonMode: OverlayVisibilityMode.editing,
@@ -89,10 +87,7 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
         CupertinoButton(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _submitting ? CupertinoActivityIndicator() : Container(),
-              Text(dic['ok'])
-            ],
+            children: [_submitting ? CupertinoActivityIndicator() : Container(), Text(dic['ok'])],
           ),
           onPressed: _submitting ? null : () => _onOk(_passCtrl.text.trim()),
         ),

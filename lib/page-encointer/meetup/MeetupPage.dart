@@ -31,22 +31,54 @@ class _MeetupPageState extends State<MeetupPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _showPasswordDialog(context);
-    });
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) async {
+        await _showPasswordDialog(context);
+
+        if (pwd == null) {
+          await _showPasswordDeniedDialog(context);
+          Navigator.of(context).pop();
+        }
+      },
+    );
   }
 
   Future<void> _showPasswordDialog(BuildContext context) async {
-    showCupertinoDialog(
+    await showCupertinoDialog(
       context: context,
       builder: (_) {
         return PasswordInputDialog(
           title: Text(I18n.of(context).home['unlock']),
           account: store.account.currentAccount,
           onOk: (password) {
-            pwd = password;
-            // Navigator.of(context).pop();
+            setState(() {
+              pwd = password;
+            });
           },
+        );
+      },
+    );
+  }
+
+  Future<void> _showPasswordDeniedDialog(BuildContext context) async {
+    await showCupertinoDialog(
+      context: context,
+      builder: (_) {
+        return CupertinoAlertDialog(
+          title: Text(I18n.of(context).encointer['meetup.pwd.needed']),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(
+                I18n.of(context).home['ok'],
+                style: TextStyle(
+                    // color: Theme.of(context).unselectedWidgetColor,
+                    ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         );
       },
     );
