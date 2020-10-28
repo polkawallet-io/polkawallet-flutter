@@ -37,6 +37,7 @@ class CurrencyWithIcon extends StatelessWidget {
       children: <Widget>[
         Container(
           width: symbol.contains('-') ? 48 : 32,
+          height: 32,
           padding: EdgeInsets.only(right: 4),
           child: hasIcon
               ? TokenIcon(symbol)

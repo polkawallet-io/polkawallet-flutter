@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
@@ -242,7 +243,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
               key: _refreshKey,
               onRefresh: _fetchData,
               child: ListView(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.fromLTRB(8, 16, 8, 16),
                 children: <Widget>[
                   RoundedCard(
                     padding: EdgeInsets.all(16),
@@ -318,7 +319,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
                                           Padding(
                                             padding: EdgeInsets.only(top: 8),
                                             child: Text(
-                                              '${dicAssets['balance']}: ${Fmt.token(balance, decimals)} ${Fmt.tokenView(_tokenPay)}',
+                                              '${dicAssets['balance']}: ${Fmt.token(balance, decimals)}',
                                               style: TextStyle(
                                                   color: Theme.of(context)
                                                       .unselectedWidgetColor),

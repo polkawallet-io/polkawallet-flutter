@@ -135,7 +135,9 @@ class _TransferPageState extends State<TransferPage> {
           // params.currencyId
           symbol.contains('-')
               ? {'DEXShare': symbol.toUpperCase().split('-')}
-              : {'Token': symbol.toUpperCase()},
+              : isLaminar
+                  ? symbol.toUpperCase()
+                  : {'Token': symbol.toUpperCase()},
           // params.amount
           Fmt.tokenInt(_amountCtrl.text.trim(), decimals).toString(),
         ];

@@ -77,11 +77,15 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
             },
           );
         } else {
-          UI.alertWASM(context, () {
-            setState(() {
-              _step = 0;
-            });
-          });
+          UI.alertWASM(
+            context,
+            () {
+              setState(() {
+                _step = 0;
+              });
+            },
+            isImport: true,
+          );
         }
         Navigator.of(context).pop();
         setState(() {

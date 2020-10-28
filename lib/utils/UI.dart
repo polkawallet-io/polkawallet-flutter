@@ -229,13 +229,18 @@ class UI {
     );
   }
 
-  static Future<void> alertWASM(BuildContext context, Function onCancel) async {
+  static Future<void> alertWASM(BuildContext context, Function onCancel,
+      {bool isImport = false}) async {
+    String msg = I18n.of(context).account['backup.error'];
+    if (!isImport) {
+      msg += I18n.of(context).account['backup.error.2'];
+    }
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: Container(),
-          content: Text(I18n.of(context).account['backup.error']),
+          content: Text(msg),
           actions: <Widget>[
             CupertinoButton(
               child: Text(I18n.of(context).home['ok']),

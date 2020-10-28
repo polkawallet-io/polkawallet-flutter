@@ -447,8 +447,13 @@ class _AssetsState extends State<Assets> {
         bool isKusama = store.settings.endpoint.info == network_name_kusama;
 
         List<String> currencyIds = [];
-        if ((isAcala || isLaminar) && networkName != null) {
-          if (store.settings.networkConst['currencyIds'] != null) {
+        if (networkName != null) {
+          if (isLaminar && store.settings.networkConst['currencyIds'] != null) {
+            currencyIds.addAll(
+                List<String>.from(store.settings.networkConst['currencyIds']));
+            currencyIds.retainWhere((i) => i != symbol);
+          }
+          if (isAcala && store.settings.networkConst['accounts'] != null) {
             currencyIds.addAll(List.of(store.settings.networkConst['accounts']
                     ['allNonNativeCurrencyIds'])
                 .map((e) => e['Token'].toString())
