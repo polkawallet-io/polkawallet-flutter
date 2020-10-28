@@ -97,6 +97,8 @@ const Map<String, String> enDex = {
   'homa.redeem.day': 'Days',
   'homa.redeem.free': 'Pool',
   'tx.fee.or': 'or equivalent in other tokens',
+  'nft.title': 'NFTs',
+  'nft.brief': 'NFTs on Acala network.',
 };
 
 const Map<String, String> zhDex = {
@@ -194,4 +196,6 @@ const Map<String, String> zhDex = {
   'homa.redeem.day': '天',
   'homa.redeem.free': '资金池',
   'tx.fee.or': '或等额其他代币',
+  'nft.title': 'NFTs',
+  'nft.brief': 'Acala 网络上的 NFT.',
 };

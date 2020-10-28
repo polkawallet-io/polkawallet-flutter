@@ -51,6 +51,9 @@ abstract class _SettingsStore with Store {
   Map networkConst = Map();
 
   @observable
+  Map liveModules = Map();
+
+  @observable
   ObservableList<AccountData> contactList = ObservableList<AccountData>();
 
   @computed
@@ -234,6 +237,11 @@ abstract class _SettingsStore with Store {
         await rootStore.localStorage.getObject(localStorageSS58Key);
 
     customSS58Format = ss58 ?? default_ss58_prefix;
+  }
+
+  @action
+  void setLiveModules(Map value) {
+    liveModules = value;
   }
 }
 

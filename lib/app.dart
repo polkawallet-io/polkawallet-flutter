@@ -20,6 +20,7 @@ import 'package:polka_wallet/page-acala/loan/loanCreatePage.dart';
 import 'package:polka_wallet/page-acala/loan/loanHistoryPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanTxDetailPage.dart';
+import 'package:polka_wallet/page-acala/nft/nftPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapPage.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginPoolDepositPage.dart';
@@ -154,9 +155,20 @@ class _WalletAppState extends State<WalletApp> {
     });
   }
 
+  Future<void> _fetchLiveModules() async {
+    print('getLiveModules');
+    final res = await WalletApi.getLiveModules();
+    print('getLiveModules finish');
+    if (res != null) {
+      print(res);
+      _appStore.settings.setLiveModules(res);
+    }
+  }
+
   Future<void> _checkUpdate(BuildContext context) async {
     final versions = await WalletApi.getLatestVersion();
     UI.checkUpdate(context, versions, autoCheck: true);
+    _fetchLiveModules();
   }
 
   Future<int> _initStore(BuildContext context) async {
@@ -335,6 +347,7 @@ class _WalletAppState extends State<WalletApp> {
           MintPage.route: (_) => MintPage(_appStore),
           HomaRedeemPage.route: (_) => HomaRedeemPage(_appStore),
           HomaHistoryPage.route: (_) => HomaHistoryPage(_appStore),
+          NFTPage.route: (_) => NFTPage(_appStore),
 
           // laminar flow exchange
           LaminarSwapPage.route: (_) => LaminarSwapPage(_appStore),

@@ -135,6 +135,7 @@ flutter:
     - assets/images/acala/deposit.svg
     - assets/images/acala/loan.svg
     - assets/images/acala/loan-start.svg
+    - assets/images/acala/nft.svg
     ## images - laminar
     - assets/images/assets/scanner_purple.png
     - assets/images/assets/top_bg_purple.png
