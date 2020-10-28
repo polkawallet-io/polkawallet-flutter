@@ -72,6 +72,7 @@ class ScanPage extends StatelessWidget {
           if (snapshot.hasData && snapshot.data == true) {
             return QrcodeReaderView(
                 key: _qrViewKey,
+                helpWidget: Text("scan QR code"),
                 headerWidget: SafeArea(
                   child: IconButton(
                     icon: Icon(
