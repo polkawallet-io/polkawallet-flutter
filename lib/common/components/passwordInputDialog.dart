@@ -67,6 +67,7 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
       content: Padding(
         padding: EdgeInsets.only(top: 16),
         child: CupertinoTextField(
+          autofocus: true,
           keyboardType: TextInputType.number,
           placeholder: I18n.of(context).profile['pass.old'],
           controller: _passCtrl,

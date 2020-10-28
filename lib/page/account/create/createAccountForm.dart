@@ -32,13 +32,10 @@ class CreateAccountForm extends StatelessWidget {
                 TextFormField(
                   decoration: InputDecoration(
                     icon: Icon(Icons.person),
-                    hintText: dic['create.name'],
-                    labelText: dic['create.name'],
+                    hintText: dic['create.hint'],
+                    labelText: "${dic['create.name']}: ${dic['create.hint']}",
                   ),
                   controller: _nameCtrl,
-                  validator: (v) {
-                    return v.trim().length > 0 ? null : dic['create.name.error'];
-                  },
                 ),
                 TextFormField(
                   keyboardType: TextInputType.number,
@@ -72,15 +69,13 @@ class CreateAccountForm extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(16),
             child: RoundedButton(
-              text: I18n.of(context).home['next'],
-              onPressed: submitting
-                  ? null
-                  : () {
-                      if (_formKey.currentState.validate()) {
-                        setNewAccount(_nameCtrl.text, _passCtrl.text);
-                        onSubmit();
-                      }
-                    },
+              text: I18n.of(context).account['create'],
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  setNewAccount(_nameCtrl.text.isNotEmpty ? _nameCtrl.text : dic['create.default'], _passCtrl.text);
+                  onSubmit();
+                }
+              },
             ),
           ),
         ],

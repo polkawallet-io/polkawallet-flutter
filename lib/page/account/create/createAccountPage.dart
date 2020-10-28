@@ -54,6 +54,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     webApi.assets.fetchBalance();
     webApi.account.fetchAccountsBonded([pubKey]);
     webApi.account.getPubKeyIcons([pubKey]);
+    store.account.setCurrentAccount(pubKey);
 
     setState(() {
       _submitting = false;
@@ -108,15 +109,17 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['create'])),
       body: SafeArea(
-        child: CreateAccountForm(
-          setNewAccount: store.account.setNewAccount,
-          submitting: _submitting,
-          onSubmit: () {
-            setState(() {
-              _createAndImportAccount();
-            });
-          },
-        ),
+        child: !_submitting
+            ? CreateAccountForm(
+                setNewAccount: store.account.setNewAccount,
+                submitting: _submitting,
+                onSubmit: () {
+                  setState(() {
+                    _createAndImportAccount();
+                  });
+                },
+              )
+            : Center(child: CupertinoActivityIndicator()),
       ),
     );
   }

@@ -1,4 +1,3 @@
-import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/page-encointer/common/assignmentPanel.dart';
@@ -9,11 +8,9 @@ import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/attestation.dart';
 import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobx/mobx.dart';
 
 class AttestingPage extends StatefulWidget {
   AttestingPage(this.store);
@@ -30,55 +27,12 @@ class _AttestingPageState extends State<AttestingPage> {
 
   final AppStore store;
 
-  @observable
-  var _amountAttendees;
-
-  @action
-  setAmountAttendees(amount) {
-    _amountAttendees = amount;
-  }
-
   String _tab = 'DOT';
 
   Future<void> _startMeetup(BuildContext context) async {
     var amount = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConfirmAttendeesDialog()));
     var args = {'confirmedParticipants': amount};
     Navigator.pushNamed(context, MeetupPage.route, arguments: args);
-  }
-
-  Future<void> _submitClaim(BuildContext context, String claimHex, String password) async {
-    AttestationResult att = await webApi.encointer.attestClaimOfAttendance(claimHex, password);
-    print("att: " + att.toString());
-
-//    var args = {
-//      "title": 'register_attestations',
-//      "txInfo": {
-//        "module": 'encointerCeremonies',
-//        "call": 'registerAttestations',
-//      },
-//      "detail": jsonEncode({
-//        "attestations": [att],
-//      }),
-//      "params": [
-//        [att], // we usually supply a list of attestations
-//      ],
-//      'onFinish': (BuildContext txPageContext, Map res) {
-//        Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
-//      }
-//    };
-//    Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
-  }
-
-  Future<void> _showPasswordDialog(BuildContext context, String claimHex) async {
-    showCupertinoDialog(
-      context: context,
-      builder: (_) {
-        return PasswordInputDialog(
-          title: Text(I18n.of(context).home['unlock']),
-          onOk: (password) => _submitClaim(context, claimHex, password),
-        );
-      },
-    );
   }
 
   @override

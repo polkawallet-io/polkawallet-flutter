@@ -206,7 +206,7 @@ class Fmt {
   }
 
   static bool checkPassword(String pass) {
-    var reg = RegExp(r'^([0-9]){6,20}$');
+    var reg = RegExp(r'^([0-9]){4,20}$');
     return reg.hasMatch(pass);
   }
 

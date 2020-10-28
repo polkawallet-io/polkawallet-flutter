@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:encointer_wallet/common/components/accountAdvanceOption.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/page/account/scanPage.dart';
@@ -10,6 +8,8 @@ import 'package:encointer_wallet/store/account/account.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class ImportAccountForm extends StatefulWidget {
   const ImportAccountForm(this.store, this.onSubmit);
@@ -39,10 +39,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
   final TextEditingController _nameCtrl = new TextEditingController();
   final TextEditingController _passCtrl = new TextEditingController();
 
-  final TextEditingController _observationAddressCtrl =
-      new TextEditingController();
-  final TextEditingController _observationNameCtrl =
-      new TextEditingController();
+  final TextEditingController _observationAddressCtrl = new TextEditingController();
+  final TextEditingController _observationNameCtrl = new TextEditingController();
   final TextEditingController _memoCtrl = new TextEditingController();
 
   String _keyCtrlText = '';
@@ -56,13 +54,10 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
           padding: EdgeInsets.only(left: 16, right: 16),
           child: TextFormField(
             decoration: InputDecoration(
-              hintText: dic['create.name'],
-              labelText: dic['create.name'],
+              hintText: dic['create.hint'],
+              labelText: "${dic['create.name']}: ${dic['create.hint']}",
             ),
             controller: _nameCtrl,
-            validator: (v) {
-              return v.trim().length > 0 ? null : dic['create.name.error'];
-            },
           ),
         ),
         Padding(
@@ -78,8 +73,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                   color: Theme.of(context).unselectedWidgetColor,
                 ),
                 onPressed: () {
-                  WidgetsBinding.instance
-                      .addPostFrameCallback((_) => _passCtrl.clear());
+                  WidgetsBinding.instance.addPostFrameCallback((_) => _passCtrl.clear());
                 },
               ),
             ),
@@ -109,8 +103,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
               suffix: GestureDetector(
                 child: Icon(Icons.camera_alt),
                 onTap: () async {
-                  final acc = (await Navigator.of(context)
-                      .pushNamed(ScanPage.route)) as QRCodeAddressResult;
+                  final acc = (await Navigator.of(context).pushNamed(ScanPage.route)) as QRCodeAddressResult;
                   if (acc != null) {
                     setState(() {
                       _observationAddressCtrl.text = acc.address;
@@ -182,8 +175,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
       'pubKey': pubKey,
     };
     // create new contact
-    int exist = widget.store.settings.contactList
-        .indexWhere((i) => i.address == address);
+    int exist = widget.store.settings.contactList.indexWhere((i) => i.address == address);
     if (exist > -1) {
       setState(() {
         _observationSubmitting = false;
@@ -244,9 +236,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
           // ignore
         }
     }
-    return passed
-        ? null
-        : '${dic['import.invalid']} ${dic[_keyOptions[_keySelection]]}';
+    return passed ? null : '${dic['import.invalid']} ${dic[_keyOptions[_keySelection]]}';
   }
 
   void _onKeyChange(String v) {
@@ -295,17 +285,13 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                     showCupertinoModalPopup(
                       context: context,
                       builder: (_) => Container(
-                        height:
-                            MediaQuery.of(context).copyWith().size.height / 3,
+                        height: MediaQuery.of(context).copyWith().size.height / 3,
                         child: CupertinoPicker(
                           backgroundColor: Colors.white,
                           itemExtent: 56,
-                          scrollController: FixedExtentScrollController(
-                              initialItem: _keySelection),
+                          scrollController: FixedExtentScrollController(initialItem: _keySelection),
                           children: _keyOptions
-                              .map((i) => Padding(
-                                  padding: EdgeInsets.all(12),
-                                  child: Text(dic[i])))
+                              .map((i) => Padding(padding: EdgeInsets.all(12), child: Text(dic[i])))
                               .toList(),
                           onSelectedItemChanged: (v) {
                             setState(() {
@@ -354,21 +340,19 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
           child: RoundedButton(
             text: I18n.of(context).home['next'],
             onPressed: () async {
-              if (_formKey.currentState.validate() &&
-                  !(_advanceOptions.error ?? false)) {
+              if (_formKey.currentState.validate() && !(_advanceOptions.error ?? false)) {
                 if (_keySelection == 3) {
                   _onAddObservationAccount();
                   return;
                 }
                 if (_keySelection == 2) {
                   widget.store.account.setNewAccount(
-                      _nameCtrl.text.trim(), _passCtrl.text.trim());
+                      _nameCtrl.text.isNotEmpty ? _nameCtrl.text.trim() : dic['create.default'], _passCtrl.text.trim());
                 }
                 widget.store.account.setNewAccountKey(_keyCtrl.text.trim());
                 widget.onSubmit({
                   'keyType': _keyOptions[_keySelection],
-                  'cryptoType': _advanceOptions.type ??
-                      AccountAdvanceOptionParams.encryptTypeSR,
+                  'cryptoType': _advanceOptions.type ?? AccountAdvanceOptionParams.encryptTypeSR,
                   'derivePath': _advanceOptions.path ?? '',
                   'finish': _keySelection == 2 ? true : null,
                 });

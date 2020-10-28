@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:encointer_wallet/page/account/create/createAccountForm.dart';
 import 'package:encointer_wallet/page/account/import/importAccountForm.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
@@ -7,6 +5,8 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class ImportAccountPage extends StatefulWidget {
   const ImportAccountPage(this.store);
@@ -49,10 +49,6 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
       cryptoType: _cryptoType,
       derivePath: _derivePath,
     );
-    setState(() {
-      _submitting = false;
-    });
-    Navigator.of(context).pop();
 
     /// check if account duplicate
     if (acc != null) {
@@ -108,6 +104,11 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
         );
       },
     );
+
+    Navigator.of(context).pop();
+    setState(() {
+      _submitting = false;
+    });
   }
 
   Future<void> _checkAccountDuplicate(Map<String, dynamic> acc) async {
@@ -155,6 +156,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     webApi.assets.fetchBalance();
     webApi.account.fetchAccountsBonded([pubKey]);
     webApi.account.getPubKeyIcons([pubKey]);
+    store.account.setCurrentAccount(pubKey);
 
     // go to home page
     Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -176,34 +178,38 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
           ),
         ),
         body: SafeArea(
-          child: CreateAccountForm(
-            setNewAccount: store.account.setNewAccount,
-            submitting: _submitting,
-            onSubmit: _importAccount,
-          ),
+          child: !_submitting
+              ? CreateAccountForm(
+                  setNewAccount: store.account.setNewAccount,
+                  submitting: _submitting,
+                  onSubmit: _importAccount,
+                )
+              : Center(child: CupertinoActivityIndicator()),
         ),
       );
     }
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['import'])),
       body: SafeArea(
-        child: ImportAccountForm(store, (Map<String, dynamic> data) {
-          if (data['finish'] == null) {
-            setState(() {
-              _keyType = data['keyType'];
-              _cryptoType = data['cryptoType'];
-              _derivePath = data['derivePath'];
-              _step = 1;
-            });
-          } else {
-            setState(() {
-              _keyType = data['keyType'];
-              _cryptoType = data['cryptoType'];
-              _derivePath = data['derivePath'];
-            });
-            _importAccount();
-          }
-        }),
+        child: !_submitting
+            ? ImportAccountForm(store, (Map<String, dynamic> data) {
+                if (data['finish'] == null) {
+                  setState(() {
+                    _keyType = data['keyType'];
+                    _cryptoType = data['cryptoType'];
+                    _derivePath = data['derivePath'];
+                    _step = 1;
+                  });
+                } else {
+                  setState(() {
+                    _keyType = data['keyType'];
+                    _cryptoType = data['cryptoType'];
+                    _derivePath = data['derivePath'];
+                  });
+                  _importAccount();
+                }
+              })
+            : Center(child: CupertinoActivityIndicator()),
       ),
     );
   }

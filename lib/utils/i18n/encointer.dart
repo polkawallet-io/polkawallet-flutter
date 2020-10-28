@@ -18,7 +18,7 @@ const Map<String, String> enNctr = {
   'attestation.performing.with': 'Performing mutual attestation with',
   'attestation.revert': 'revert',
   'meetup.complete': 'complete meetup',
-  'meetup.pwd.needed': 'Password is needed to start the meetup',
+  'meetup.pwd.needed': 'PIN is needed to start the meetup',
   'myself': 'Myself',
   // partyA
   'attestation.partyA.step1': 'STEP 1/3: Show claimA',

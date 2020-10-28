@@ -92,6 +92,7 @@ class _MeetupPageState extends State<MeetupPage> {
               store,
               myMeetupRegistryIndex: store.encointer.myMeetupRegistryIndex,
               otherMeetupRegistryIndex: i,
+              accountPassword: pwd,
             )))
         .values
         .toList();
