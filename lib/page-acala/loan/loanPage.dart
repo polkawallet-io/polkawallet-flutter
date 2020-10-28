@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
@@ -38,25 +40,48 @@ class _LoanPageState extends State<LoanPage> {
     await Future.wait([
       webApi.acala.fetchTokens(store.account.currentAccount.pubKey),
       webApi.acala.fetchLoanTypes(),
+      webApi.acala.fetchHomaStakingPool(),
     ]);
     webApi.acala.fetchAccountLoans();
+  }
+
+  Future<void> _subscribeTokenPrices() async {
+    final List res = await webApi
+        .evalJavascript('api.rpc.oracle.getAllValues("Aggregated")');
+    if (res != null) {
+      final decimals = store.settings.networkState.tokenDecimals;
+      double priceDOT = 0;
+      final prices = res.map((e) {
+        if (e[0]['Token'] == 'DOT') {
+          priceDOT = Fmt.balanceDouble(e[1]['value'], decimals);
+        }
+        return {'token': e[0]['Token'], 'price': e[1]};
+      }).toList();
+      final priceLDOT = store.acala.stakingPoolInfo.liquidExchangeRate;
+      prices.add({
+        'token': 'LDOT',
+        'price': {
+          'value':
+              Fmt.tokenInt((priceDOT * (priceLDOT ?? 1)).toString(), decimals)
+                  .toString()
+        }
+      });
+      store.acala.setPrices(prices);
+    }
+
+    if (mounted) {
+      Timer(Duration(seconds: 5), _subscribeTokenPrices);
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    webApi.acala.subscribeTokenPrices();
+    _subscribeTokenPrices();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       globalLoanRefreshKey.currentState.show();
     });
-  }
-
-  @override
-  void dispose() {
-    webApi.acala.unsubscribeTokenPrices();
-
-    super.dispose();
   }
 
   @override
@@ -227,7 +252,7 @@ class CurrencySelector extends StatelessWidget {
       ),
       child: ListTile(
         leading: SizedBox(
-          width: 44,
+          width: token.contains('-') ? 44 : 36,
           child: TokenIcon(token),
         ),
         title: Text(

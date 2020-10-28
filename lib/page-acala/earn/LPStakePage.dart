@@ -67,7 +67,6 @@ class _LPStakePage extends State<LPStakePage> {
     final dic = I18n.of(context).acala;
     final LPStakePageParams params = ModalRoute.of(context).settings.arguments;
     final isStake = params.action == LPStakePage.actionStake;
-    print('stake');
     final pool = params.poolId.split('-').map((e) => e.toUpperCase()).toList();
     String input = _amountCtrl.text.trim();
     BigInt amount = Fmt.tokenInt(input, decimals);
@@ -128,9 +127,6 @@ class _LPStakePage extends State<LPStakePage> {
             } else {
               final balanceIndex = widget.store.acala.lpTokens.indexWhere(
                   (e) => e.currencyId.join('-') == args.poolId.toUpperCase());
-              print(args.poolId);
-              print(widget.store.acala.lpTokens[0].currencyId);
-              print(balanceIndex);
               if (balanceIndex >= 0) {
                 balance = Fmt.balanceInt(
                     widget.store.acala.lpTokens[balanceIndex].free);

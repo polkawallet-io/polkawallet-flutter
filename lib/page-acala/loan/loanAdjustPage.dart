@@ -56,7 +56,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     final LoanAdjustPageParams params =
         ModalRoute.of(context).settings.arguments;
     BigInt tokenPrice = store.acala.prices[params.token];
-    BigInt stableCoinPrice = store.acala.prices[acala_stable_coin];
+    BigInt stableCoinPrice = Fmt.tokenInt('1', decimals);
     BigInt collateralInUSD =
         loanType.tokenToUSD(collateral, tokenPrice, decimals);
     BigInt debitInUSD = loanType.tokenToUSD(debit, stableCoinPrice, decimals);
@@ -248,7 +248,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
             "amount": _amountCtrl2.text.trim(),
           }),
           'params': [
-            params.token,
+            {'Token': params.token},
             0,
             debitAdd.toString(),
           ]
@@ -275,7 +275,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
             "amount": _amountCtrl2.text.trim(),
           }),
           'params': [
-            params.token,
+            {'Token': params.token},
             _paybackAndCloseChecked
                 ? (BigInt.zero - loan.collaterals).toString()
                 : 0,
@@ -288,7 +288,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
             "amount": _amountCtrl.text.trim(),
           }),
           'params': [
-            params.token,
+            {'Token': params.token},
             _amountCollateral.toString(),
             0,
           ]
@@ -305,7 +305,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
             "amount": _amountCtrl.text.trim(),
           }),
           'params': [
-            params.token,
+            {'Token': params.token},
             (BigInt.zero - amt).toString(),
             0,
           ]
@@ -371,7 +371,7 @@ class _LoanAdjustPageState extends State<LoanAdjustPage> {
     final LoanData loan = store.acala.loans[symbol];
 
     final BigInt price = store.acala.prices[symbol];
-    final BigInt stableCoinPrice = store.acala.prices[acala_stable_coin];
+    final BigInt stableCoinPrice = Fmt.tokenInt('1', decimals);
 
     String titleSuffix = ' $symbol';
     bool showCollateral = true;

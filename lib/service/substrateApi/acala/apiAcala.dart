@@ -91,33 +91,6 @@ class ApiAcala {
     store.acala.setLoanTypes(res);
   }
 
-  Future<Map> _fetchPriceOfLDOT() async {
-    final decimals = store.settings.networkState.tokenDecimals;
-    final res = await apiRoot.evalJavascript(
-      'acala.fetchLDOTPrice(api)',
-      allowRepeat: true,
-    );
-    return {
-      "token": 'LDOT',
-      "price": {"value": Fmt.tokenInt(res.toString(), decimals).toString()}
-    };
-  }
-
-  Future<void> subscribeTokenPrices() async {
-    final String code =
-        'settings.subscribeMessage("price", "allPrices", [], "$tokenPricesSubscribeChannel")';
-    await apiRoot.subscribeMessage(code, tokenPricesSubscribeChannel,
-        (List res) async {
-      var priceOfLDOT = await _fetchPriceOfLDOT();
-      res.add(priceOfLDOT);
-      store.acala.setPrices(res);
-    });
-  }
-
-  Future<void> unsubscribeTokenPrices() async {
-    await apiRoot.unsubscribeMessage(tokenPricesSubscribeChannel);
-  }
-
   Future<SwapOutputData> fetchTokenSwapAmount(
     String supplyAmount,
     String targetAmount,
@@ -146,18 +119,20 @@ class ApiAcala {
         .join(',');
     final savingRateQuery =
         pools.map((i) => 'api.query.incentives.dEXSavingRates($i)').join(',');
-    final incentivesData =
-        await apiRoot.evalJavascript('Promise.all([$incentiveQuery])');
-    final savingRatesData =
-        await apiRoot.evalJavascript('Promise.all([$savingRateQuery])');
+    final res = await Future.wait([
+      apiRoot.evalJavascript('Promise.all([$incentiveQuery])',
+          allowRepeat: true),
+      apiRoot.evalJavascript('Promise.all([$savingRateQuery])',
+          allowRepeat: true)
+    ]);
     final incentives = Map<String, dynamic>();
     final savingRates = Map<String, dynamic>();
     final tokenPairs = store.acala.dexPools
         .map((e) => e.map((i) => i.symbol).join('-'))
         .toList();
     tokenPairs.asMap().forEach((k, v) {
-      incentives[v] = incentivesData[k];
-      savingRates[v] = savingRatesData[k];
+      incentives[v] = res[0][k];
+      savingRates[v] = res[1][k];
     });
     store.acala.setSwapPoolRewards(incentives);
     store.acala.setSwapSavingRates(savingRates);

@@ -39,9 +39,11 @@ class _EarnPageState extends State<EarnPage> {
   String _tab = 'aUSD-DOT';
 
   Future<void> _fetchData() async {
-    await webApi.acala.fetchDexLiquidityPoolRewards();
-    await webApi.assets.fetchBalance();
-    await webApi.acala.fetchDexPoolInfo(_tab);
+    await Future.wait([
+      webApi.acala.fetchDexLiquidityPoolRewards(),
+      webApi.assets.fetchBalance(),
+      webApi.acala.fetchDexPoolInfo(_tab),
+    ]);
   }
 
   Future<void> _onStake() async {
@@ -206,8 +208,16 @@ class _EarnPageState extends State<EarnPage> {
             final pair = _tab.split('-');
             lpAmountString =
                 '${lpAmount.toStringAsFixed(3)} ${pair[0]} + ${lpAmount2.toStringAsFixed(3)} ${pair[1]}';
-            reward = store.acala.swapPoolRewards[_tab] * stakeShare;
-            rewardSaving = store.acala.swapPoolSavingRewards[_tab] * stakeShare;
+            reward = (store.acala.swapPoolRewards[_tab] ?? 0) * stakeShare;
+            rewardSaving =
+                (store.acala.swapPoolSavingRewards[_tab] ?? 0) * stakeShare;
+          }
+
+          final balanceIndex = store.acala.lpTokens
+              .indexWhere((e) => e.currencyId.join('-') == _tab.toUpperCase());
+          BigInt balance = BigInt.zero;
+          if (balanceIndex >= 0) {
+            balance = Fmt.balanceInt(store.acala.lpTokens[balanceIndex].free);
           }
 
           Color cardColor = Theme.of(context).cardColor;
@@ -248,7 +258,8 @@ class _EarnPageState extends State<EarnPage> {
                                 child: RoundedButton(
                                   color: Colors.blue,
                                   text: dic['earn.stake'],
-                                  onPressed: _onStake,
+                                  onPressed:
+                                      balance > BigInt.zero ? _onStake : null,
                                 ),
                               ),
                               (poolInfo?.shares ?? BigInt.zero) > BigInt.zero
@@ -298,7 +309,7 @@ class _EarnPageState extends State<EarnPage> {
                               }),
                         ),
                       ),
-                      share > BigInt.zero
+                      balance > BigInt.zero
                           ? Expanded(
                               child: Container(
                                 color: primaryColor,
@@ -358,7 +369,7 @@ class _SystemCard extends StatelessWidget {
         children: <Widget>[
           Column(
             children: <Widget>[
-              Text(dic['earn.staked']),
+              Text('${dic['earn.staked']} ${Fmt.tokenView(token)}'),
               Padding(
                 padding: EdgeInsets.only(top: 16, bottom: 8),
                 child: Text(userStaked.toStringAsFixed(3), style: primaryText),
@@ -425,6 +436,8 @@ class _UserCard extends StatelessWidget {
       color: primary,
     );
 
+    final canClaim = reward > BigInt.zero || rewardSaving > BigInt.zero;
+
     return RoundedCard(
       margin: EdgeInsets.fromLTRB(16, 0, 16, 24),
       padding: EdgeInsets.all(16),
@@ -487,26 +500,18 @@ class _UserCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 4),
+                padding: EdgeInsets.only(bottom: 8),
                 child: Text(
                   '${dic['earn.fee']} ${Fmt.ratio(fee)}',
                   style: TextStyle(fontSize: 12),
                 ),
               ),
-              Divider(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: RoundedButton(
+              canClaim
+                  ? RoundedButton(
                       text: dic['earn.claim'],
-                      onPressed:
-                          reward > BigInt.zero || rewardSaving > BigInt.zero
-                              ? onWithdrawReward
-                              : null,
-                    ),
-                  )
-                ],
-              ),
+                      onPressed: onWithdrawReward,
+                    )
+                  : Container(),
             ],
           ),
         ],

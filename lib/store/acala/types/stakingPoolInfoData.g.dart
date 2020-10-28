@@ -9,7 +9,6 @@ part of 'stakingPoolInfoData.dart';
 StakingPoolInfoData _$StakingPoolInfoDataFromJson(Map<String, dynamic> json) {
   return StakingPoolInfoData()
     ..rewardRate = json['rewardRate'] as String
-    ..priceLDOT = (json['priceLDOT'] as num)?.toDouble()
     ..freeList = (json['freeList'] as List)
         ?.map((e) => e == null
             ? null
@@ -37,7 +36,6 @@ Map<String, dynamic> _$StakingPoolInfoDataToJson(
         StakingPoolInfoData instance) =>
     <String, dynamic>{
       'rewardRate': instance.rewardRate,
-      'priceLDOT': instance.priceLDOT,
       'freeList': instance.freeList,
       'claimFeeRatio': instance.claimFeeRatio,
       'unbondingDuration': instance.unbondingDuration,

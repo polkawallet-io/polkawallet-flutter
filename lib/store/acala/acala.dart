@@ -131,12 +131,11 @@ abstract class _AcalaStore with Store {
   void setAccountLoans(List list) {
     Map<String, LoanData> data = {};
     list.forEach((i) {
-      String token = i['token'];
+      String token = i['currency']['Token'];
       data[token] = LoanData.fromJson(
         Map<String, dynamic>.from(i),
         loanTypes.firstWhere((t) => t.token == token),
         prices[token] ?? BigInt.zero,
-        prices[acala_stable_coin] ?? BigInt.zero,
         rootStore.settings.networkState.tokenDecimals,
       );
     });
@@ -151,6 +150,7 @@ abstract class _AcalaStore with Store {
 
   @action
   void setPrices(List list) {
+    print(list);
     Map<String, BigInt> data = {};
     list.forEach((i) {
       data[i['token']] = i['price'] == null

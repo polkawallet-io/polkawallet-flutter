@@ -218,18 +218,18 @@ mixin _$AcalaStore on _AcalaStore, Store {
     });
   }
 
-  final _$swapPoolSavingRatesAtom =
-      Atom(name: '_AcalaStore.swapPoolSavingRates');
+  final _$swapPoolSavingRewardsAtom =
+      Atom(name: '_AcalaStore.swapPoolSavingRewards');
 
   @override
   Map<String, double> get swapPoolSavingRewards {
-    _$swapPoolSavingRatesAtom.reportRead();
+    _$swapPoolSavingRewardsAtom.reportRead();
     return super.swapPoolSavingRewards;
   }
 
   @override
   set swapPoolSavingRewards(Map<String, double> value) {
-    _$swapPoolSavingRatesAtom.reportWrite(value, super.swapPoolSavingRewards,
+    _$swapPoolSavingRewardsAtom.reportWrite(value, super.swapPoolSavingRewards,
         () {
       super.swapPoolSavingRewards = value;
     });
@@ -491,7 +491,7 @@ txsHoma: ${txsHoma},
 txsLoading: ${txsLoading},
 swapPoolRatios: ${swapPoolRatios},
 swapPoolRewards: ${swapPoolRewards},
-swapPoolSavingRates: ${swapPoolSavingRewards},
+swapPoolSavingRewards: ${swapPoolSavingRewards},
 dexPools: ${dexPools},
 dexPoolInfoMap: ${dexPoolInfoMap},
 stakingPoolInfo: ${stakingPoolInfo},
