@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 class EncointerHomePage extends StatefulWidget {
   EncointerHomePage(this.store);
 
+  static final GlobalKey encointerHomePageKey = GlobalKey();
   static final String route = '/';
   final AppStore store;
 
@@ -137,6 +138,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: EncointerHomePage.encointerHomePageKey,
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {

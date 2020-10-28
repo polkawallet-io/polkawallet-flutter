@@ -19,6 +19,7 @@ const Map<String, String> enAccount = {
       'Do not share and store mnemonics in a networked environment, such as emails, photo albums, social applications',
   'create.warn9': 'Do not take screenshots',
   'create.warn10': 'Do not take screenshots, which may be collected by third-party malware, resulting in asset loss',
+  'create.error': 'There was an error creating your account',
   'backup': 'Confirm the mnemonic',
   'backup.confirm': 'Please click on the mnemonic in the correct order to confirm that the backup is correct',
   'backup.reset': 'Reset',

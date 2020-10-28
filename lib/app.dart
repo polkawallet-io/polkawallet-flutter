@@ -1,7 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/willPopScopWrapper.dart';
 import 'package:encointer_wallet/page-encointer/homePage.dart';
 import 'package:encointer_wallet/page-encointer/meetup/MeetupPage.dart';
@@ -9,7 +5,6 @@ import 'package:encointer_wallet/page-encointer/phases/assigning/assigningPage.d
 import 'package:encointer_wallet/page-encointer/phases/attesting/attestingPage.dart';
 import 'package:encointer_wallet/page-encointer/phases/registering/registerParticipantPanel.dart';
 import 'package:encointer_wallet/page-encointer/phases/registering/registeringPage.dart';
-import 'package:encointer_wallet/page/account/create/backupAccountPage.dart';
 import 'package:encointer_wallet/page/account/create/createAccountPage.dart';
 import 'package:encointer_wallet/page/account/createAccountEntryPage.dart';
 import 'package:encointer_wallet/page/account/import/importAccountPage.dart';
@@ -37,6 +32,10 @@ import 'package:encointer_wallet/service/notification.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/service/walletApi.dart';
 import 'package:encointer_wallet/store/app.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'common/theme.dart';
 import 'utils/i18n/index.dart';
@@ -140,28 +139,26 @@ class _WalletAppState extends State<WalletApp> {
       theme: _theme,
 //      darkTheme: darkTheme,
       routes: {
-        EncointerHomePage.route: (context) => WillPopScopWrapper(
-              child: FutureBuilder<int>(
-                future: _initStore(context),
-                builder: (_, AsyncSnapshot<int> snapshot) {
-                  if (snapshot.hasData) {
-                    return snapshot.data > 0
-                        ? EncointerHomePage(_appStore)
-                        : CreateAccountEntryPage();
-                  } else {
-                    return CupertinoActivityIndicator();
-                  }
-                },
-              ),
+        EncointerHomePage.route: (context) => Observer(
+              builder: (_) {
+                return WillPopScopWrapper(
+                  child: FutureBuilder<int>(
+                    future: _initStore(context),
+                    builder: (_, AsyncSnapshot<int> snapshot) {
+                      if (snapshot.hasData) {
+                        return snapshot.data > 0 ? EncointerHomePage(_appStore) : CreateAccountEntryPage();
+                      } else {
+                        return CupertinoActivityIndicator();
+                      }
+                    },
+                  ),
+                );
+              },
             ),
-
-        NetworkSelectPage.route: (_) =>
-            NetworkSelectPage(_appStore, _changeTheme),
+        NetworkSelectPage.route: (_) => NetworkSelectPage(_appStore, _changeTheme),
         // account
         CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
-        CreateAccountPage.route: (_) =>
-            CreateAccountPage(_appStore.account.setNewAccount),
-        BackupAccountPage.route: (_) => BackupAccountPage(_appStore),
+        CreateAccountPage.route: (_) => CreateAccountPage(_appStore),
         ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
         ScanPage.route: (_) => ScanPage(),
         TxConfirmPage.route: (_) => TxConfirmPage(_appStore),
@@ -178,8 +175,7 @@ class _WalletAppState extends State<WalletApp> {
         ContactPage.route: (_) => ContactPage(_appStore),
         ChangeNamePage.route: (_) => ChangeNamePage(_appStore.account),
         ChangePasswordPage.route: (_) => ChangePasswordPage(_appStore.account),
-        SettingsPage.route: (_) =>
-            SettingsPage(_appStore.settings, _changeLang),
+        SettingsPage.route: (_) => SettingsPage(_appStore.settings, _changeLang),
         ExportAccountPage.route: (_) => ExportAccountPage(_appStore.account),
         ExportResultPage.route: (_) => ExportResultPage(),
         RemoteNodeListPage.route: (_) => RemoteNodeListPage(_appStore.settings),
@@ -187,8 +183,7 @@ class _WalletAppState extends State<WalletApp> {
         AboutPage.route: (_) => AboutPage(),
         // encointer
         RegisteringPage.route: (_) => RegisteringPage(_appStore),
-        RegisterParticipantPanel.route: (_) =>
-            RegisterParticipantPanel(_appStore),
+        RegisterParticipantPanel.route: (_) => RegisterParticipantPanel(_appStore),
         AssigningPage.route: (_) => AssigningPage(_appStore),
         AttestingPage.route: (_) => AttestingPage(_appStore),
         MeetupPage.route: (_) => MeetupPage(_appStore),

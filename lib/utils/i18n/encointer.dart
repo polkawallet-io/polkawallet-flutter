@@ -1,6 +1,7 @@
 const Map<String, String> enNctr = {
   'encointer': 'Encointer Ceremony',
   'txs.action': 'Action',
+  'faucet.try': 'Try the faucet to get your new account started with some funds!',
   'faucet.title': 'Faucet',
   'faucet.brief': 'Get test Tokens Encointer testnet.',
   'faucet.ok': 'Test Tokens were sent.',
