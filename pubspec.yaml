@@ -39,6 +39,7 @@ dependencies:
   ota_update: ^2.3.0
   update_app: ^0.1.5
   base58check: ^1.0.1
+  package_info: ^0.4.0+16
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

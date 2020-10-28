@@ -38,7 +38,7 @@ const Map<String, String> enProfile = {
   'export.rawSeed.ok': 'Raw Seed was copied to clipboard.',
   'delete': 'Delete Account',
   'delete.confirm': 'Input your password to confirm',
-  'about.brif': 'Mobile Wallet for Polkadot',
+  'about.brif': 'Mobile Wallet for Encointer',
   'about.version': 'Version',
   'recovery': 'Social Recovery',
   'recovery.brief':
@@ -124,7 +124,7 @@ const Map<String, String> zhProfile = {
   'export.rawSeed.ok': 'Raw Seed 已经复制到剪切板',
   'delete': '删除账户',
   'delete.confirm': '输入密码确认操作',
-  'about.brif': 'Mobile Wallet for Polkadot',
+  'about.brif': 'Mobile Wallet for Encointer',
   'about.version': '版本',
   'recovery': '社交恢复',
   'recovery.brief':
