@@ -1,4 +1,11 @@
-- 7f84a59cc97087c5820f0c412aee7b1914ec7907: Passwords must contain at least 6 digits and no other signs. This breaks all previous accounts.
+# 0.9.0 pre
+- breaking changes!
+- Passwords must contain at least 6 digits and no other signs. This breaks all previous accounts. please re-import with mnemonic
+- flutter toolchain upgrade to 1.22.2
+
+# 0.8.4 performance improvements
+- onchain state dependencies respected
+- faster sync
 
 # 0.8.3 UX improvements and substrate 2.0.0 compatibility
 - clearer meetup UX flow. less error prone
