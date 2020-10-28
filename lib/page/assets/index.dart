@@ -319,7 +319,7 @@ class _AssetsState extends State<Assets> {
           return Column(
             children: <Widget>[
               _buildTopCard(context),
-              Container(height: 24),
+              _communityCurrencyAssets(context, store),
               Padding(
                 padding: EdgeInsets.only(top: 4),
                 child: Row(
@@ -384,7 +384,6 @@ class _AssetsState extends State<Assets> {
             ],
           );
         }),
-        _communityCurrencyAssets(context, store),
       ],
     );
   }
