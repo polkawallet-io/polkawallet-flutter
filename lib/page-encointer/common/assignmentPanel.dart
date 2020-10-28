@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
+import 'package:encointer_wallet/common/components/JumpToBrowserLink.dart';
 
 class AssignmentPanel extends StatefulWidget {
   AssignmentPanel(this.store);
@@ -19,6 +20,18 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
 
   final AppStore store;
 
+  Widget _meetupLocationLink() {
+    var lat = (store.encointer.meetupLocation.lat / (BigInt.from(2).pow(32)));
+    var lon = (store.encointer.meetupLocation.lon / (BigInt.from(2).pow(32)));
+    return JumpToBrowserLink('https://www.openstreetmap.org/?mlat=' +
+        lat.toStringAsFixed(5) +
+        '&mlon=' + lon.toStringAsFixed(5) +
+        '&zoom=18',
+        text: lat.toStringAsFixed(3) + " lat, " +
+            lon.toStringAsFixed(3) + " lon"
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,12 +51,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
                                     Text(new DateTime.fromMillisecondsSinceEpoch(store.encointer.meetupTime)
                                         .toIso8601String()),
                                     Text("at location:"),
-                                    Text((store.encointer.meetupLocation.lat / (BigInt.from(2).pow(32)))
-                                            .toStringAsFixed(3) +
-                                        " lat, " +
-                                        (store.encointer.meetupLocation.lon / (BigInt.from(2).pow(32)))
-                                            .toStringAsFixed(3) +
-                                        " lon"),
+                                    _meetupLocationLink(),
                                   ])
                                 : Text(
                                     "You are not registered for ceremony on " +
