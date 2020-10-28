@@ -4,3 +4,4 @@ The Encointer wallet is your tool to participate in local communitiy currencies,
   <li>register for ceremonies</li>
   <li>perform ceremony meetups</li>
 </ul>
+Please try our tutorials: <a href=https://book.encointer.org/app.html>Encointer Book</a>

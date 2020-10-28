@@ -1,7 +1,8 @@
-# 0.9.0 pre
+# 0.9.0
 - breaking changes!
-- Passwords must contain at least 6 digits and no other signs. This breaks all previous accounts. please re-import with mnemonic
+- PIN instead of password. Must contain at least 4 digits and no other signs. This breaks all previous accounts. Please re-import with mnemonic
 - flutter toolchain upgrade to 1.22.2
+- remove branding leftover from polkawallet
 
 # 0.8.4 performance improvements
 - onchain state dependencies respected
