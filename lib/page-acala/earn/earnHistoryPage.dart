@@ -118,6 +118,10 @@ class _EarnHistoryPage extends State<EarnHistoryPage> {
                             '${Fmt.priceCeilBigInt(detail.amountStableCoin, decimals)} $acala_stable_coin_view';
                         break;
                       case TxDexLiquidityData.actionStake:
+                        amount =
+                            '${Fmt.priceCeilBigInt(detail.amountShare, decimals)} ${Fmt.tokenView(poolId)}';
+                        image = 'assets/images/assets/assets_up.png';
+                        break;
                       case TxDexLiquidityData.actionUnStake:
                         amount =
                             '${Fmt.priceCeilBigInt(detail.amountShare, decimals)} ${Fmt.tokenView(poolId)}';

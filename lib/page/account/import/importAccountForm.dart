@@ -124,7 +124,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
         ),
         _supportBiometric
             ? Padding(
-                padding: EdgeInsets.only(top: 24),
+                padding: EdgeInsets.only(left: 16, top: 24),
                 child: Row(
                   children: [
                     SizedBox(
@@ -434,7 +434,9 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                   'finish': _keySelection == 2 ? true : null,
                 });
                 if (saved) {
-                  await _authBiometric();
+                  if (_enableBiometric) {
+                    await _authBiometric();
+                  }
 
                   widget.store.account.resetNewAccount();
                   Navigator.popUntil(context, ModalRoute.withName('/'));
