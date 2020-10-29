@@ -295,6 +295,21 @@ mixin _$AcalaStore on _AcalaStore, Store {
     });
   }
 
+  final _$userNFTsAtom = Atom(name: '_AcalaStore.userNFTs');
+
+  @override
+  List<dynamic> get userNFTs {
+    _$userNFTsAtom.reportRead();
+    return super.userNFTs;
+  }
+
+  @override
+  set userNFTs(List<dynamic> value) {
+    _$userNFTsAtom.reportWrite(value, super.userNFTs, () {
+      super.userNFTs = value;
+    });
+  }
+
   final _$setTransferTxsAsyncAction = AsyncAction('_AcalaStore.setTransferTxs');
 
   @override
@@ -407,6 +422,13 @@ mixin _$AcalaStore on _AcalaStore, Store {
     return _$setHomaUserInfoAsyncAction.run(() => super.setHomaUserInfo(info));
   }
 
+  final _$setUserNFTsAsyncAction = AsyncAction('_AcalaStore.setUserNFTs');
+
+  @override
+  Future<void> setUserNFTs(List<dynamic> info) {
+    return _$setUserNFTsAsyncAction.run(() => super.setUserNFTs(info));
+  }
+
   final _$_AcalaStoreActionController = ActionController(name: '_AcalaStore');
 
   @override
@@ -496,6 +518,7 @@ dexPools: ${dexPools},
 dexPoolInfoMap: ${dexPoolInfoMap},
 stakingPoolInfo: ${stakingPoolInfo},
 homaUserInfo: ${homaUserInfo},
+userNFTs: ${userNFTs},
 swapTokens: ${swapTokens},
 swapFee: ${swapFee}
     ''';

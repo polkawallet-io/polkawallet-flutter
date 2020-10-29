@@ -60,7 +60,6 @@ class AcalaEntry extends StatelessWidget {
                     );
                   }
                   final List liveModules = store.settings.liveModules['acala'];
-                  print(liveModules);
                   return ListView(
                     padding: EdgeInsets.all(16),
                     children: <Widget>[

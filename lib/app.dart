@@ -156,9 +156,7 @@ class _WalletAppState extends State<WalletApp> {
   }
 
   Future<void> _fetchLiveModules() async {
-    print('getLiveModules');
     final res = await WalletApi.getLiveModules();
-    print('getLiveModules finish');
     if (res != null) {
       print(res);
       _appStore.settings.setLiveModules(res);

@@ -99,6 +99,9 @@ const Map<String, String> enDex = {
   'tx.fee.or': 'or equivalent in other tokens',
   'nft.title': 'NFTs',
   'nft.brief': 'NFTs on Acala network.',
+  'nft.testnet-2': 'Mandala TC2 badge',
+  'nft.testnet-3': 'Mandala TC3 badge',
+  'nft.testnet-4': 'Mandala TC4 badge',
 };
 
 const Map<String, String> zhDex = {
@@ -198,4 +201,7 @@ const Map<String, String> zhDex = {
   'tx.fee.or': '或等额其他代币',
   'nft.title': 'NFTs',
   'nft.brief': 'Acala 网络上的 NFT.',
+  'nft.testnet-2': 'Mandala TC2 徽章',
+  'nft.testnet-3': 'Mandala TC3 徽章',
+  'nft.testnet-4': 'Mandala TC4 徽章',
 };

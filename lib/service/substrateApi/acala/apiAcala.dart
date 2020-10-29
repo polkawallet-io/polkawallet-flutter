@@ -159,4 +159,12 @@ class ApiAcala {
         .evalJavascript('acala.fetchHomaUserInfo(api, "$address")');
     store.acala.setHomaUserInfo(res);
   }
+
+  Future<void> fetchUserNFTs() async {
+    final address = store.account.currentAddress;
+    final code =
+        'api.derive.nft.queryTokensByAccount("$address", 0).then(res => res.map(e => ({...e.value, metadata: e.value.metadata.toUtf8()})))';
+    final List res = await apiRoot.evalJavascript(code);
+    store.acala.setUserNFTs(res);
+  }
 }

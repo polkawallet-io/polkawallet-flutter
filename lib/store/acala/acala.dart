@@ -86,6 +86,9 @@ abstract class _AcalaStore with Store {
   @observable
   HomaUserInfoData homaUserInfo = HomaUserInfoData();
 
+  @observable
+  List userNFTs = List();
+
   @computed
   List<String> get swapTokens {
     final res = List.of(rootStore.settings.networkConst['accounts']
@@ -383,5 +386,10 @@ abstract class _AcalaStore with Store {
   @action
   Future<void> setHomaUserInfo(Map info) async {
     homaUserInfo = HomaUserInfoData.fromJson(info);
+  }
+
+  @action
+  Future<void> setUserNFTs(List info) async {
+    userNFTs = info;
   }
 }

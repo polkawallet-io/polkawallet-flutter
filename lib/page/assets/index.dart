@@ -448,16 +448,16 @@ class _AssetsState extends State<Assets> {
 
         List<String> currencyIds = [];
         if (networkName != null) {
-          if (isLaminar && store.settings.networkConst['currencyIds'] != null) {
-            currencyIds.addAll(
-                List<String>.from(store.settings.networkConst['currencyIds']));
-            currencyIds.retainWhere((i) => i != symbol);
-          }
           if (isAcala && store.settings.networkConst['accounts'] != null) {
             currencyIds.addAll(List.of(store.settings.networkConst['accounts']
                     ['allNonNativeCurrencyIds'])
                 .map((e) => e['Token'].toString())
                 .toList());
+          } else if (isLaminar &&
+              store.settings.networkConst['currencyIds'] != null) {
+            currencyIds.addAll(
+                List<String>.from(store.settings.networkConst['currencyIds']));
+            currencyIds.retainWhere((i) => i != symbol);
           }
         }
 
