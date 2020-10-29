@@ -30,7 +30,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
     'observe',
   ];
 
-  int _keySelection = 0;
+  KeySelection _keySelection = KeySelection.MNEMONIC;
   bool _observationSubmitting = false;
 
   final _formKey = GlobalKey<FormState>();
@@ -68,10 +68,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
               labelText: dic['create.password'],
               suffixIcon: IconButton(
                 iconSize: 18,
-                icon: Icon(
-                  CupertinoIcons.clear_thick_circled,
-                  color: Theme.of(context).unselectedWidgetColor,
-                ),
+                icon: Icon(CupertinoIcons.clear_thick_circled, color: Theme.of(context).unselectedWidgetColor),
                 onPressed: () {
                   WidgetsBinding.instance.addPostFrameCallback((_) => _passCtrl.clear());
                 },
@@ -217,30 +214,33 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
     Map<String, String> dic = I18n.of(context).account;
     String input = v.trim();
     switch (_keySelection) {
-      case 0:
+      case KeySelection.MNEMONIC:
         int len = input.split(' ').length;
         if (len == 12 || len == 24) {
           passed = true;
         }
         break;
-      case 1:
+      case KeySelection.RAW_SEED:
         if (input.length <= 32 || input.length == 66) {
           passed = true;
         }
         break;
-      case 2:
+      case KeySelection.KEYSTORE_JSON:
         try {
           jsonDecode(input);
           passed = true;
         } catch (_) {
           // ignore
         }
+        break;
+      case KeySelection.OBSERVATION:
+        break;
     }
-    return passed ? null : '${dic['import.invalid']} ${dic[_keyOptions[_keySelection]]}';
+    return passed ? null : '${dic['import.invalid']} ${dic[_keyOptions[_keySelection.index]]}';
   }
 
   void _onKeyChange(String v) {
-    if (_keySelection == 2) {
+    if (_keySelection == KeySelection.KEYSTORE_JSON) {
       // auto set account name
       var json = jsonDecode(v.trim());
       if (json['meta']['name'] != null) {
@@ -268,7 +268,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
   @override
   Widget build(BuildContext context) {
     Map<String, String> dic = I18n.of(context).account;
-    String selected = dic[_keyOptions[_keySelection]];
+    String selected = dic[_keyOptions[_keySelection.index]];
     return Column(
       children: <Widget>[
         Expanded(
@@ -289,14 +289,14 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                         child: CupertinoPicker(
                           backgroundColor: Colors.white,
                           itemExtent: 56,
-                          scrollController: FixedExtentScrollController(initialItem: _keySelection),
+                          scrollController: FixedExtentScrollController(initialItem: _keySelection.index),
                           children: _keyOptions
                               .map((i) => Padding(padding: EdgeInsets.all(12), child: Text(dic[i])))
                               .toList(),
                           onSelectedItemChanged: (v) {
                             setState(() {
                               _keyCtrl.value = TextEditingValue(text: '');
-                              _keySelection = v;
+                              _keySelection = KeySelection.values[v];
                             });
                           },
                         ),
@@ -304,7 +304,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                     );
                   },
                 ),
-                _keySelection != 3
+                _keySelection != KeySelection.OBSERVATION
                     ? Padding(
                         padding: EdgeInsets.only(left: 16, right: 16),
                         child: TextFormField(
@@ -319,9 +319,9 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                         ),
                       )
                     : Container(),
-                _keySelection == 2
+                _keySelection == KeySelection.KEYSTORE_JSON
                     ? _buildNameAndPassInput()
-                    : _keySelection == 3
+                    : _keySelection == KeySelection.OBSERVATION
                         ? _buildAddressAndNameInput()
                         : AccountAdvanceOption(
                             seed: _keyCtrlText,
@@ -341,20 +341,20 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
             text: I18n.of(context).home['next'],
             onPressed: () async {
               if (_formKey.currentState.validate() && !(_advanceOptions.error ?? false)) {
-                if (_keySelection == 3) {
+                if (_keySelection == KeySelection.OBSERVATION) {
                   _onAddObservationAccount();
                   return;
                 }
-                if (_keySelection == 2) {
+                if (_keySelection == KeySelection.KEYSTORE_JSON) {
                   widget.store.account.setNewAccount(
                       _nameCtrl.text.isNotEmpty ? _nameCtrl.text.trim() : dic['create.default'], _passCtrl.text.trim());
                 }
                 widget.store.account.setNewAccountKey(_keyCtrl.text.trim());
                 widget.onSubmit({
-                  'keyType': _keyOptions[_keySelection],
+                  'keyType': _keyOptions[_keySelection.index],
                   'cryptoType': _advanceOptions.type ?? AccountAdvanceOptionParams.encryptTypeSR,
                   'derivePath': _advanceOptions.path ?? '',
-                  'finish': _keySelection == 2 ? true : null,
+                  'finish': _keySelection == KeySelection.KEYSTORE_JSON ? true : null,
                 });
               }
             },
@@ -363,4 +363,11 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
       ],
     );
   }
+}
+
+enum KeySelection {
+  MNEMONIC,
+  RAW_SEED,
+  KEYSTORE_JSON,
+  OBSERVATION,
 }

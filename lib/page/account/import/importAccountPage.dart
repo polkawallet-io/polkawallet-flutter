@@ -50,6 +50,8 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
       derivePath: _derivePath,
     );
 
+    Navigator.of(context).pop();
+
     /// check if account duplicate
     if (acc != null) {
       if (acc['error'] != null) {
@@ -67,6 +69,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
                     onPressed: () {
                       setState(() {
                         _step = 0;
+                        _submitting = false;
                       });
                       Navigator.of(context).pop();
                     },
@@ -79,6 +82,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
           UI.alertWASM(context, () {
             setState(() {
               _step = 0;
+              _submitting = false;
             });
           });
         }
@@ -88,6 +92,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
       return;
     }
 
+    // account == null
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
@@ -98,17 +103,17 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
           actions: <Widget>[
             CupertinoButton(
               child: Text(I18n.of(context).home['cancel']),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                setState(() {
+                  _submitting = false;
+                });
+                Navigator.of(context).pop();
+              },
             ),
           ],
         );
       },
     );
-
-    Navigator.of(context).pop();
-    setState(() {
-      _submitting = false;
-    });
   }
 
   Future<void> _checkAccountDuplicate(Map<String, dynamic> acc) async {
@@ -126,7 +131,12 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
               actions: <Widget>[
                 CupertinoButton(
                   child: Text(I18n.of(context).home['cancel']),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    setState(() {
+                      _submitting = false;
+                    });
+                    Navigator.of(context).pop();
+                  },
                 ),
                 CupertinoButton(
                   child: Text(I18n.of(context).home['ok']),

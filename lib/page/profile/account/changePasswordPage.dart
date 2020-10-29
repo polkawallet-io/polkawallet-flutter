@@ -68,7 +68,9 @@ class _ChangePassword extends State<ChangePasswordPage> {
             .evalJavascript('account.changePassword("${store.currentAccount.pubKey}", "$passOld", "$passNew")');
         // use local name, not webApi returned name
         Map<String, dynamic> localAcc = AccountData.toJson(store.currentAccount);
-        acc['meta']['name'] = localAcc['meta']['name'];
+
+        // make metadata the same as the polkadot-js/api's
+        acc['meta']['name'] = localAcc['name'];
         store.updateAccount(acc);
         // update encrypted seed after password updated
         store.updateSeed(store.currentAccount.pubKey, _passOldCtrl.text, _passCtrl.text);
