@@ -40,7 +40,7 @@ class Api {
 
   Function _connectFunc;
 
-  void init() {
+  void init() async {
     jsStorage = GetStorage();
 
     account = ApiAccount(this);
@@ -49,7 +49,17 @@ class Api {
 
     assets = ApiAssets(this);
 
-    launchWebview();
+    print("first launch of webview");
+    await launchWebview();
+
+    //TODO: fix this properly!
+    // hack to allow hot-restart with re-loaded webview
+    // the problem is that hot-restart doesn't call dispose(),
+    // so the webview will not be closed properly. Therefore,
+    // the first call to launchWebView will crash. The second
+    // one seems to succeed
+    print("second launch of webview");
+    await launchWebview();
   }
 
   Future<void> _checkJSCodeUpdate() async {
@@ -80,10 +90,9 @@ class Api {
 
     _connectFunc = customNode ? connectNode : connectNodeAll;
 
-    await _checkJSCodeUpdate();
     if (_web != null) {
-      _web.reload();
-      return;
+      print("reloading webview. close first");
+      _web.close();
     }
 
     _web = FlutterWebviewPlugin();
@@ -276,8 +285,13 @@ class Api {
 
   Future<void> closeWebView() async {
     print("closing webview");
-    _web.close();
-    _web = null;
+    if (_web != null) {
+      _web.close();
+      _web = null;
+    } else {
+      print("was null already");
+    }
+
   }
 
   Future<List> getExternalLinks(GenExternalLinksParams params) async {

@@ -79,11 +79,6 @@ class _WalletAppState extends State<WalletApp> {
     });
   }
 
-  Future<void> _checkUpdate(BuildContext context) async {
-    final versions = await WalletApi.getLatestVersion();
-    //UI.checkUpdate(context, versions, autoCheck: true);
-  }
-
   Future<int> _initStore(BuildContext context) async {
     if (_appStore == null) {
       _appStore = globalAppStore;
@@ -97,10 +92,16 @@ class _WalletAppState extends State<WalletApp> {
 
       _changeLang(context, _appStore.settings.localeCode);
       _changeTheme();
-
-      _checkUpdate(context);
     }
     return _appStore.account.accountListAll.length;
+  }
+
+  @protected
+  @mustCallSuper
+  void reassemble() {
+    // this gets executed upon hot-restart or hot-reload only!
+    super.reassemble();
+    // TODO: reload dictionary in case it was updated
   }
 
   @override
