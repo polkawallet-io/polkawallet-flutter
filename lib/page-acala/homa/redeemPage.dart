@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -42,22 +43,39 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
 
   int _radioSelect = 0;
   int _eraSelected = 0;
+  double _fee = 0;
+
+  Timer _timer;
 
   Future<void> _refreshData() async {
     webApi.acala.fetchTokens(store.account.currentAccount.pubKey);
     await webApi.acala.fetchHomaStakingPool();
-    if (_amountReceiveCtrl.text.isEmpty) {
-      await _updateReceiveAmount(0);
-    }
+    // if (_amountReceiveCtrl.text.isEmpty) {
+    //   await _updateReceiveAmount(0);
+    // }
   }
 
   Future<void> _updateReceiveAmount(double input) async {
+    if (input == null || input == 0) return;
+
+    final era = store.acala.stakingPoolInfo.freeList[_eraSelected].era;
+    final res = await webApi.evalJavascript(
+      'acala.queryHomaRedeemAmount($input, $_radioSelect, $era)',
+      allowRepeat: true,
+    );
+    double fee = 0;
+    double amount = 0;
+    if (res['fee'] != null) {
+      fee = res['fee'];
+      amount = res['received'];
+    } else {
+      amount = res['amount'];
+    }
+
     if (mounted) {
       setState(() {
-        _amountReceiveCtrl.text = Fmt.priceFloor(
-          input * store.acala.stakingPoolInfo.liquidExchangeRate,
-          lengthFixed: 3,
-        );
+        _amountReceiveCtrl.text = Fmt.priceFloor(amount, lengthFixed: 3);
+        _fee = fee;
       });
     }
   }
@@ -67,7 +85,13 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
     if (supply.isEmpty) {
       return;
     }
-    _updateReceiveAmount(double.parse(supply));
+
+    if (_timer != null) {
+      _timer.cancel();
+    }
+    _timer = Timer(Duration(seconds: 1), () {
+      _updateReceiveAmount(double.parse(supply));
+    });
   }
 
   void _onRadioChange(int value) {
@@ -109,16 +133,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
     setState(() {
       _radioSelect = value;
     });
-  }
-
-  double _getClaimFeeRatio() {
-    StakingPoolInfoData pool = store.acala.stakingPoolInfo;
-    if (_radioSelect == 0) {
-      return pool.claimFeeRatio;
-    } else if (_radioSelect == 1) {
-      return pool.freeList[_eraSelected].claimFeeRatio;
-    }
-    return 0;
+    _updateReceiveAmount(double.parse(_amountPayCtrl.text.trim()));
   }
 
   void _onSubmit() {
@@ -126,7 +141,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
       int decimals = store.settings.networkState.tokenDecimals;
       String pay = _amountPayCtrl.text.trim();
       String receive = Fmt.priceFloor(
-        double.parse(_amountReceiveCtrl.text) * (1 - _getClaimFeeRatio()),
+        double.parse(_amountReceiveCtrl.text),
         lengthMax: 4,
       );
       String strategy = TxHomaData.redeemTypeNow;
@@ -171,7 +186,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _refreshData();
+      _refreshKey.currentState.show();
     });
   }
 
@@ -197,7 +212,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
         Color primary = Theme.of(context).primaryColor;
         Color grey = Theme.of(context).unselectedWidgetColor;
 
-        double available = pool.communalFree;
+        double available = 0;
         String eraSelectText = dic['homa.era'];
         String eraSelectTextTail = '';
         if (pool.freeList.length > 0) {
@@ -206,14 +221,6 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
           eraSelectText += ': ${item.era}';
           eraSelectTextTail =
               '(≈ ${(item.era - pool.currentEra).toInt()}${dic['homa.redeem.day']}, ${dicAssets['available']}: ${Fmt.priceFloor(pool.freeList[_eraSelected].free, lengthMax: 3)} DOT)';
-        }
-        double claimFeeRatio = _getClaimFeeRatio();
-        String claimFee = '0';
-        if (_amountReceiveCtrl.text.isNotEmpty) {
-          claimFee = Fmt.priceCeil(
-            Fmt.balanceDouble(_amountReceiveCtrl.text, 0) * claimFeeRatio,
-            lengthMax: 4,
-          );
         }
 
         return Scaffold(
@@ -386,9 +393,8 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Text(
-                                  '${dic['homa.redeem.fee']}: ${Fmt.ratio(claimFeeRatio)}'),
-                              Text('(≈ $claimFee DOT)'),
+                              Text('${dic['homa.redeem.fee']}:'),
+                              Text('(≈ ${Fmt.doubleFormat(_fee)} DOT)'),
                             ],
                           ),
                         ),
@@ -405,7 +411,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                 child: Text(dic['homa.now']),
                               ),
                               Text(
-                                '(${dic['homa.redeem.free']}: ${Fmt.priceFloor(pool.communalFree)} DOT)',
+                                '(${dic['homa.redeem.free']}: ${Fmt.priceFloor(pool.communalTotal * pool.communalFreeRatio)} DOT)',
                                 style: TextStyle(fontSize: 14),
                               ),
                             ],
@@ -450,7 +456,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                 child: Text(dic['homa.unbond']),
                               ),
                               Text(
-                                '(${pool.bondingDuration.toInt()} Era ≈ ${pool.unbondingDuration / 1000 ~/ SECONDS_OF_DAY} ${dic['homa.redeem.day']})',
+                                '(${pool.bondingDuration.toInt() + 1} Era ≈ ${(pool.unbondingDuration / 1000 ~/ SECONDS_OF_DAY) + 1} ${dic['homa.redeem.day']})',
                                 style: TextStyle(fontSize: 14),
                               ),
                             ],

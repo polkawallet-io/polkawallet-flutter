@@ -100,7 +100,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
       final TransferPageParams args = ModalRoute.of(context).settings.arguments;
       setState(() {
         _tokenSymbol =
-            args.symbol ?? widget.store.settings.networkState.tokenSymbol;
+            args.token.id ?? widget.store.settings.networkState.tokenSymbol;
       });
 
       webApi.assets.fetchBalance();

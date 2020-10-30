@@ -7,7 +7,6 @@ class RoundedButton extends StatelessWidget {
     this.onPressed,
     this.icon,
     this.color,
-    this.expand,
     this.submitting = false,
   }) : assert(text != null);
 
@@ -15,7 +14,6 @@ class RoundedButton extends StatelessWidget {
   final Function onPressed;
   final Widget icon;
   final Color color;
-  final bool expand;
   final bool submitting;
 
   @override

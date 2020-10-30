@@ -6,8 +6,7 @@ part 'laminarSyntheticData.g.dart';
 class LaminarSyntheticPoolInfoData extends _LaminarSyntheticPoolInfoData {
   static LaminarSyntheticPoolInfoData fromJson(Map<String, dynamic> json) =>
       _$LaminarSyntheticPoolInfoDataFromJson(json);
-  static Map<String, dynamic> toJson(LaminarSyntheticPoolInfoData info) =>
-      _$LaminarSyntheticPoolInfoDataToJson(info);
+  Map<String, dynamic> toJson() => _$LaminarSyntheticPoolInfoDataToJson(this);
 }
 
 abstract class _LaminarSyntheticPoolInfoData {
@@ -19,8 +18,7 @@ abstract class _LaminarSyntheticPoolInfoData {
 class LaminarSyntheticPoolTokenData extends _LaminarSyntheticPoolTokenData {
   static LaminarSyntheticPoolTokenData fromJson(Map<String, dynamic> json) =>
       _$LaminarSyntheticPoolTokenDataFromJson(json);
-  static Map<String, dynamic> toJson(LaminarSyntheticPoolTokenData info) =>
-      _$LaminarSyntheticPoolTokenDataToJson(info);
+  Map<String, dynamic> toJson() => _$LaminarSyntheticPoolTokenDataToJson(this);
 }
 
 abstract class _LaminarSyntheticPoolTokenData {

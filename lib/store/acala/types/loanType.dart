@@ -6,7 +6,7 @@ import 'package:polka_wallet/utils/format.dart';
 class LoanType extends _LoanType {
   static LoanType fromJson(Map<String, dynamic> json) {
     LoanType data = LoanType();
-    data.token = json['token'];
+    data.token = json['currency']['Token'];
     data.debitExchangeRate = BigInt.parse(json['debitExchangeRate'].toString());
     data.liquidationPenalty =
         BigInt.parse(json['liquidationPenalty'].toString());
@@ -85,17 +85,18 @@ abstract class _LoanType {
 
 class LoanData extends _LoanData {
   static LoanData fromJson(Map<String, dynamic> json, LoanType type,
-      BigInt tokenPrice, stableCoinPrice, int decimals) {
+      BigInt tokenPrice, int decimals) {
     LoanData data = LoanData();
-    data.token = json['token'];
+    data.token = json['currency']['Token'];
     data.type = type;
     data.price = tokenPrice;
-    data.stableCoinPrice = stableCoinPrice;
-    data.debitShares = BigInt.parse(json['debits'].toString());
+    data.stableCoinPrice = Fmt.tokenInt('1', decimals);
+    data.debitShares = BigInt.parse(json['debit'].toString());
     data.debits = type.debitShareToDebit(data.debitShares, decimals);
-    data.collaterals = BigInt.parse(json['collaterals'].toString());
+    data.collaterals = BigInt.parse(json['collateral'].toString());
 
-    data.debitInUSD = type.tokenToUSD(data.debits, stableCoinPrice, decimals);
+    data.debitInUSD =
+        type.tokenToUSD(data.debits, data.stableCoinPrice, decimals);
     data.collateralInUSD =
         type.tokenToUSD(data.collaterals, tokenPrice, decimals);
     data.collateralRatio =
@@ -103,7 +104,7 @@ class LoanData extends _LoanData {
     data.requiredCollateral =
         type.calcRequiredCollateral(data.debitInUSD, tokenPrice);
     data.maxToBorrow = type.calcMaxToBorrow(
-        data.collaterals, tokenPrice, stableCoinPrice, decimals);
+        data.collaterals, tokenPrice, data.stableCoinPrice, decimals);
     data.stableFeeDay = data.calcStableFee(SECONDS_OF_DAY);
     data.stableFeeYear = data.calcStableFee(SECONDS_OF_YEAR);
     data.liquidationPrice =

@@ -3,6 +3,7 @@ import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/store/acala/types/dexPoolInfoData.dart';
 import 'package:polka_wallet/store/acala/types/loanType.dart';
 import 'package:polka_wallet/store/acala/types/stakingPoolInfoData.dart';
+import 'package:polka_wallet/store/acala/types/swapOutputData.dart';
 import 'package:polka_wallet/store/acala/types/txHomaData.dart';
 import 'package:polka_wallet/store/acala/types/txLiquidityData.dart';
 import 'package:polka_wallet/store/acala/types/txLoanData.dart';
@@ -41,6 +42,9 @@ abstract class _AcalaStore with Store {
   Map<String, BigInt> prices = {};
 
   @observable
+  List<LPTokenData> lpTokens = List<LPTokenData>();
+
+  @observable
   ObservableList<TransferData> txsTransfer = ObservableList<TransferData>();
 
   @observable
@@ -67,6 +71,12 @@ abstract class _AcalaStore with Store {
   Map<String, double> swapPoolRewards = Map<String, double>();
 
   @observable
+  Map<String, double> swapPoolSavingRewards = Map<String, double>();
+
+  @observable
+  List<List<AcalaTokenData>> dexPools = List<List<AcalaTokenData>>();
+
+  @observable
   ObservableMap<String, DexPoolInfoData> dexPoolInfoMap =
       ObservableMap<String, DexPoolInfoData>();
 
@@ -76,25 +86,24 @@ abstract class _AcalaStore with Store {
   @observable
   HomaUserInfoData homaUserInfo = HomaUserInfoData();
 
+  @observable
+  List userNFTs = List();
+
   @computed
   List<String> get swapTokens {
-    return List<String>.from(
-        rootStore.settings.networkConst['dex']['enabledCurrencyIds']);
+    final res = List.of(rootStore.settings.networkConst['accounts']
+            ['allNonNativeCurrencyIds'])
+        .map((e) => e['Token'].toString())
+        .toList();
+    res.add(rootStore.settings.networkConst['accounts']['nativeCurrencyId']
+        ['Token']);
+    return res;
   }
 
   @computed
   double get swapFee {
-    return Fmt.balanceDouble(
-        rootStore.settings.networkConst['dex']['getExchangeFee'].toString(),
-        rootStore.settings.networkState.tokenDecimals);
-  }
-
-  @computed
-  double get dexLiquidityRewards {
-    return Fmt.bigIntToDouble(
-        Fmt.balanceInt(rootStore.settings.networkConst['dex']['getExchangeFee']
-            .toString()),
-        rootStore.settings.networkState.tokenDecimals);
+    return rootStore.settings.networkConst['dex']['getExchangeFee'][0] /
+        rootStore.settings.networkConst['dex']['getExchangeFee'][1];
   }
 
   @action
@@ -117,15 +126,19 @@ abstract class _AcalaStore with Store {
   }
 
   @action
+  void setLPTokens(List list) {
+    lpTokens = list.map((e) => LPTokenData.fromJson(e)).toList();
+  }
+
+  @action
   void setAccountLoans(List list) {
     Map<String, LoanData> data = {};
     list.forEach((i) {
-      String token = i['token'];
+      String token = i['currency']['Token'];
       data[token] = LoanData.fromJson(
         Map<String, dynamic>.from(i),
         loanTypes.firstWhere((t) => t.token == token),
         prices[token] ?? BigInt.zero,
-        prices[acala_stable_coin] ?? BigInt.zero,
         rootStore.settings.networkState.tokenDecimals,
       );
     });
@@ -140,6 +153,7 @@ abstract class _AcalaStore with Store {
 
   @action
   void setPrices(List list) {
+    print(list);
     Map<String, BigInt> data = {};
     list.forEach((i) {
       data[i['token']] = i['price'] == null
@@ -159,7 +173,8 @@ abstract class _AcalaStore with Store {
         "success": true,
         "from": rootStore.account.currentAddress,
         "to": i['params'][0],
-        "token": i['params'][1],
+        "token": i['params'][1]['Token'] ??
+            List.of(i['params'][1]['DEXShare']).join('-').toUpperCase(),
         "amount": Fmt.balance(
           i['params'][2],
           rootStore.settings.networkState.tokenDecimals,
@@ -322,15 +337,40 @@ abstract class _AcalaStore with Store {
   Future<void> setSwapPoolRewards(Map<String, dynamic> map) async {
     final int blockTime =
         rootStore.settings.networkConst['babe']['expectedBlockTime'];
+    final int epoch =
+        rootStore.settings.networkConst['incentives']['accumulatePeriod'];
+    final epochOfYear = SECONDS_OF_YEAR * 1000 / blockTime / epoch;
     Map<String, double> rewards = {};
     map.forEach((k, v) {
       rewards[k] = Fmt.balanceDouble(
               v.toString(), rootStore.settings.networkState.tokenDecimals) *
-          SECONDS_OF_YEAR *
-          1000 /
-          blockTime;
+          epochOfYear;
     });
     swapPoolRewards = rewards;
+  }
+
+  @action
+  Future<void> setSwapSavingRates(Map<String, dynamic> map) async {
+    final int blockTime =
+        rootStore.settings.networkConst['babe']['expectedBlockTime'];
+    final int epoch =
+        rootStore.settings.networkConst['incentives']['accumulatePeriod'];
+    final epochOfYear = SECONDS_OF_YEAR * 1000 / blockTime / epoch;
+    Map<String, double> rewards = {};
+    map.forEach((k, v) {
+      rewards[k] = Fmt.balanceDouble(
+              v.toString(), rootStore.settings.networkState.tokenDecimals) *
+          epochOfYear;
+    });
+    swapPoolSavingRewards = rewards;
+  }
+
+  @action
+  Future<void> setDexPools(List pools) async {
+    dexPools = pools
+        .map((pool) =>
+            List.of(pool).map((e) => AcalaTokenData.fromJson(e)).toList())
+        .toList();
   }
 
   @action
@@ -346,5 +386,10 @@ abstract class _AcalaStore with Store {
   @action
   Future<void> setHomaUserInfo(Map info) async {
     homaUserInfo = HomaUserInfoData.fromJson(info);
+  }
+
+  @action
+  Future<void> setUserNFTs(List info) async {
+    userNFTs = info;
   }
 }

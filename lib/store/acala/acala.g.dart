@@ -22,13 +22,6 @@ mixin _$AcalaStore on _AcalaStore, Store {
   double get swapFee => (_$swapFeeComputed ??=
           Computed<double>(() => super.swapFee, name: '_AcalaStore.swapFee'))
       .value;
-  Computed<double> _$dexLiquidityRewardsComputed;
-
-  @override
-  double get dexLiquidityRewards => (_$dexLiquidityRewardsComputed ??=
-          Computed<double>(() => super.dexLiquidityRewards,
-              name: '_AcalaStore.dexLiquidityRewards'))
-      .value;
 
   final _$airdropsAtom = Atom(name: '_AcalaStore.airdrops');
 
@@ -87,6 +80,21 @@ mixin _$AcalaStore on _AcalaStore, Store {
   set prices(Map<String, BigInt> value) {
     _$pricesAtom.reportWrite(value, super.prices, () {
       super.prices = value;
+    });
+  }
+
+  final _$lpTokensAtom = Atom(name: '_AcalaStore.lpTokens');
+
+  @override
+  List<LPTokenData> get lpTokens {
+    _$lpTokensAtom.reportRead();
+    return super.lpTokens;
+  }
+
+  @override
+  set lpTokens(List<LPTokenData> value) {
+    _$lpTokensAtom.reportWrite(value, super.lpTokens, () {
+      super.lpTokens = value;
     });
   }
 
@@ -210,6 +218,38 @@ mixin _$AcalaStore on _AcalaStore, Store {
     });
   }
 
+  final _$swapPoolSavingRewardsAtom =
+      Atom(name: '_AcalaStore.swapPoolSavingRewards');
+
+  @override
+  Map<String, double> get swapPoolSavingRewards {
+    _$swapPoolSavingRewardsAtom.reportRead();
+    return super.swapPoolSavingRewards;
+  }
+
+  @override
+  set swapPoolSavingRewards(Map<String, double> value) {
+    _$swapPoolSavingRewardsAtom.reportWrite(value, super.swapPoolSavingRewards,
+        () {
+      super.swapPoolSavingRewards = value;
+    });
+  }
+
+  final _$dexPoolsAtom = Atom(name: '_AcalaStore.dexPools');
+
+  @override
+  List<List<AcalaTokenData>> get dexPools {
+    _$dexPoolsAtom.reportRead();
+    return super.dexPools;
+  }
+
+  @override
+  set dexPools(List<List<AcalaTokenData>> value) {
+    _$dexPoolsAtom.reportWrite(value, super.dexPools, () {
+      super.dexPools = value;
+    });
+  }
+
   final _$dexPoolInfoMapAtom = Atom(name: '_AcalaStore.dexPoolInfoMap');
 
   @override
@@ -252,6 +292,21 @@ mixin _$AcalaStore on _AcalaStore, Store {
   set homaUserInfo(HomaUserInfoData value) {
     _$homaUserInfoAtom.reportWrite(value, super.homaUserInfo, () {
       super.homaUserInfo = value;
+    });
+  }
+
+  final _$userNFTsAtom = Atom(name: '_AcalaStore.userNFTs');
+
+  @override
+  List<dynamic> get userNFTs {
+    _$userNFTsAtom.reportRead();
+    return super.userNFTs;
+  }
+
+  @override
+  set userNFTs(List<dynamic> value) {
+    _$userNFTsAtom.reportWrite(value, super.userNFTs, () {
+      super.userNFTs = value;
     });
   }
 
@@ -326,6 +381,22 @@ mixin _$AcalaStore on _AcalaStore, Store {
         .run(() => super.setSwapPoolRewards(map));
   }
 
+  final _$setSwapSavingRatesAsyncAction =
+      AsyncAction('_AcalaStore.setSwapSavingRates');
+
+  @override
+  Future<void> setSwapSavingRates(Map<String, dynamic> map) {
+    return _$setSwapSavingRatesAsyncAction
+        .run(() => super.setSwapSavingRates(map));
+  }
+
+  final _$setDexPoolsAsyncAction = AsyncAction('_AcalaStore.setDexPools');
+
+  @override
+  Future<void> setDexPools(List<dynamic> pools) {
+    return _$setDexPoolsAsyncAction.run(() => super.setDexPools(pools));
+  }
+
   final _$setDexPoolInfoAsyncAction = AsyncAction('_AcalaStore.setDexPoolInfo');
 
   @override
@@ -351,6 +422,13 @@ mixin _$AcalaStore on _AcalaStore, Store {
     return _$setHomaUserInfoAsyncAction.run(() => super.setHomaUserInfo(info));
   }
 
+  final _$setUserNFTsAsyncAction = AsyncAction('_AcalaStore.setUserNFTs');
+
+  @override
+  Future<void> setUserNFTs(List<dynamic> info) {
+    return _$setUserNFTsAsyncAction.run(() => super.setUserNFTs(info));
+  }
+
   final _$_AcalaStoreActionController = ActionController(name: '_AcalaStore');
 
   @override
@@ -359,6 +437,17 @@ mixin _$AcalaStore on _AcalaStore, Store {
         name: '_AcalaStore.setAirdrops');
     try {
       return super.setAirdrops(amount, needCache: needCache);
+    } finally {
+      _$_AcalaStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setLPTokens(List<dynamic> list) {
+    final _$actionInfo = _$_AcalaStoreActionController.startAction(
+        name: '_AcalaStore.setLPTokens');
+    try {
+      return super.setLPTokens(list);
     } finally {
       _$_AcalaStoreActionController.endAction(_$actionInfo);
     }
@@ -415,6 +504,7 @@ airdrops: ${airdrops},
 loanTypes: ${loanTypes},
 loans: ${loans},
 prices: ${prices},
+lpTokens: ${lpTokens},
 txsTransfer: ${txsTransfer},
 txsLoan: ${txsLoan},
 txsSwap: ${txsSwap},
@@ -423,12 +513,14 @@ txsHoma: ${txsHoma},
 txsLoading: ${txsLoading},
 swapPoolRatios: ${swapPoolRatios},
 swapPoolRewards: ${swapPoolRewards},
+swapPoolSavingRewards: ${swapPoolSavingRewards},
+dexPools: ${dexPools},
 dexPoolInfoMap: ${dexPoolInfoMap},
 stakingPoolInfo: ${stakingPoolInfo},
 homaUserInfo: ${homaUserInfo},
+userNFTs: ${userNFTs},
 swapTokens: ${swapTokens},
-swapFee: ${swapFee},
-dexLiquidityRewards: ${dexLiquidityRewards}
+swapFee: ${swapFee}
     ''';
   }
 }

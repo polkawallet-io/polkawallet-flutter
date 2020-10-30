@@ -34,8 +34,8 @@ class _HomaPageState extends State<HomaPage> {
 
   Future<void> _refreshData() async {
     webApi.acala.fetchTokens(store.account.currentAccount.pubKey);
-    webApi.acala.fetchHomaUserInfo();
     await webApi.acala.fetchHomaStakingPool();
+    webApi.acala.fetchHomaUserInfo();
   }
 
   void _onSubmitWithdraw() {
@@ -138,7 +138,7 @@ class _HomaPageState extends State<HomaPage> {
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 8),
                                     child: Text(
-                                      Fmt.doubleFormat(pool.communalTotal),
+                                      Fmt.doubleFormat(pool.communalTotal ?? 0),
                                       style: TextStyle(
                                         color: primary,
                                         fontSize: 28,
@@ -153,7 +153,7 @@ class _HomaPageState extends State<HomaPage> {
                                             CrossAxisAlignment.center,
                                         title: dic['homa.pool.bonded'],
                                         content: Fmt.doubleFormat(
-                                          pool.communalBonded,
+                                          pool.communalBonded ?? 0,
                                         ),
                                       ),
                                     ],
@@ -166,7 +166,8 @@ class _HomaPageState extends State<HomaPage> {
                                             CrossAxisAlignment.center,
                                         title: dic['homa.pool.free'],
                                         content: Fmt.doubleFormat(
-                                          pool.communalFree,
+                                          (pool.communalTotal ?? 0) *
+                                              (pool.communalFreeRatio ?? 0),
                                         ),
                                       ),
                                       InfoItem(
@@ -174,7 +175,8 @@ class _HomaPageState extends State<HomaPage> {
                                             CrossAxisAlignment.center,
                                         title: dic['homa.pool.unbonding'],
                                         content: Fmt.doubleFormat(
-                                          pool.unbondingToFree,
+                                          (pool.communalTotal ?? 0) *
+                                              (pool.unbondingToFreeRatio ?? 0),
                                         ),
                                       ),
                                       InfoItem(
@@ -182,7 +184,7 @@ class _HomaPageState extends State<HomaPage> {
                                             CrossAxisAlignment.center,
                                         title: dic['homa.pool.ratio'],
                                         content: Fmt.ratio(
-                                          pool.communalBondedRatio,
+                                          pool.communalBondedRatio ?? 0,
                                         ),
                                       ),
                                     ],

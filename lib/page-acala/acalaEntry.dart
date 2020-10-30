@@ -6,6 +6,7 @@ import 'package:polka_wallet/common/components/entryPageCard.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
 import 'package:polka_wallet/page-acala/homa/homaPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanPage.dart';
+import 'package:polka_wallet/page-acala/nft/nftPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapPage.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
@@ -14,6 +15,10 @@ class AcalaEntry extends StatelessWidget {
   AcalaEntry(this.store);
 
   final AppStore store;
+
+  final _liveModuleRoutes = {
+    'nft': NFTPage.route,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +59,7 @@ class AcalaEntry extends StatelessWidget {
                       ),
                     );
                   }
+                  final List liveModules = store.settings.liveModules['acala'];
                   return ListView(
                     padding: EdgeInsets.all(16),
                     children: <Widget>[
@@ -117,6 +123,28 @@ class AcalaEntry extends StatelessWidget {
                               Navigator.of(context).pushNamed(HomaPage.route),
                         ),
                       ),
+                      liveModules != null
+                          ? Column(
+                              children: liveModules.map((e) {
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 16),
+                                  child: GestureDetector(
+                                    child: EntryPageCard(
+                                      dic['$e.title'],
+                                      dic['$e.brief'],
+                                      SvgPicture.asset(
+                                        'assets/images/acala/$e.svg',
+                                        color: Colors.white,
+                                        height: 56,
+                                      ),
+                                    ),
+                                    onTap: () => Navigator.of(context)
+                                        .pushNamed(_liveModuleRoutes[e]),
+                                  ),
+                                );
+                              }).toList(),
+                            )
+                          : Container()
                     ],
                   );
                 },

@@ -4,7 +4,10 @@ import 'package:polka_wallet/utils/format.dart';
 class TxDexLiquidityData extends _TxDexLiquidityData {
   static const String actionDeposit = 'deposit';
   static const String actionWithdraw = 'withdraw';
-  static const String actionReward = 'reward';
+  static const String actionRewardIncentive = 'rewardIncentive';
+  static const String actionRewardSaving = 'rewardSaving';
+  static const String actionStake = 'stake';
+  static const String actionUnStake = 'unStake';
   static TxDexLiquidityData fromJson(Map<String, dynamic> json, int decimals) {
     TxDexLiquidityData data = TxDexLiquidityData();
     data.hash = json['hash'];
@@ -18,8 +21,15 @@ class TxDexLiquidityData extends _TxDexLiquidityData {
       case actionWithdraw:
         data.amountShare = Fmt.balanceInt(json['params'][1]);
         break;
-      case actionReward:
-        data.amountStableCoin = Fmt.tokenInt(json['reward'], decimals);
+      case actionRewardIncentive:
+        data.amountToken = Fmt.balanceInt(json['params'][1]);
+        break;
+      case actionRewardSaving:
+        data.amountStableCoin = Fmt.balanceInt(json['params'][2]);
+        break;
+      case actionStake:
+      case actionUnStake:
+        data.amountShare = Fmt.balanceInt(json['params'][1]);
         break;
     }
     data.time = DateTime.fromMillisecondsSinceEpoch(json['time']);

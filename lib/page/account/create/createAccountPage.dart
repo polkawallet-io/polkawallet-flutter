@@ -1,30 +1,84 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:polka_wallet/common/components/accountAdvanceOption.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/page/account/create/backupAccountPage.dart';
 import 'package:polka_wallet/page/account/create/createAccountForm.dart';
+import 'package:polka_wallet/service/substrateApi/api.dart';
+import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class CreateAccountPage extends StatefulWidget {
-  const CreateAccountPage(this.setNewAccount);
+  const CreateAccountPage(this.store);
 
   static final String route = '/account/create';
-  final Function setNewAccount;
+  final AppStore store;
 
   @override
-  _CreateAccountPageState createState() =>
-      _CreateAccountPageState(setNewAccount);
+  _CreateAccountPageState createState() => _CreateAccountPageState();
 }
 
 class _CreateAccountPageState extends State<CreateAccountPage> {
-  _CreateAccountPageState(this.setNewAccount);
+  AccountAdvanceOptionParams _advanceOptions = AccountAdvanceOptionParams();
 
-  final Function setNewAccount;
+  int _step = 0;
+  bool _submitting = false;
 
-  int _step = 1;
-
-  void _onFinish() {
+  Future<bool> _importAccount() async {
+    setState(() {
+      _submitting = true;
+    });
     showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(I18n.of(context).home['loading']),
+          content: Container(height: 64, child: CupertinoActivityIndicator()),
+        );
+      },
+    );
+
+    var acc = await webApi.account.importAccount(
+      cryptoType:
+          _advanceOptions.type ?? AccountAdvanceOptionParams.encryptTypeSR,
+      derivePath: _advanceOptions.path ?? '',
+    );
+
+    if (acc['error'] != null) {
+      Navigator.of(context).pop();
+      UI.alertWASM(context, () {
+        setState(() {
+          _submitting = false;
+          _step = 0;
+        });
+      });
+      return false;
+    }
+
+    await widget.store.account
+        .addAccount(acc, widget.store.account.newAccount.password);
+    webApi.account.encodeAddress([acc['pubKey']]);
+
+    widget.store.assets.loadAccountCache();
+    widget.store.staking.loadAccountCache();
+
+    // fetch info for the imported account
+    String pubKey = acc['pubKey'];
+    webApi.assets.fetchBalance();
+    webApi.staking.fetchAccountStaking();
+    webApi.account.fetchAccountsBonded([pubKey]);
+    webApi.account.getPubKeyIcons([pubKey]);
+
+    setState(() {
+      _submitting = false;
+    });
+    Navigator.of(context).pop();
+    return true;
+  }
+
+  Future<void> _onNext() async {
+    final next = await showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
@@ -45,37 +99,33 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           actions: <Widget>[
             CupertinoButton(
               child: Text(I18n.of(context).home['cancel']),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(context).pop(false),
             ),
             CupertinoButton(
               child: Text(I18n.of(context).home['ok']),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.pushNamed(context, BackupAccountPage.route);
-              },
+              onPressed: () => Navigator.of(context).pop(true),
             ),
           ],
         );
       },
     );
+    if (next) {
+      final advancedOptions =
+          await Navigator.pushNamed(context, BackupAccountPage.route);
+      if (advancedOptions != null) {
+        setState(() {
+          _step = 1;
+        });
+      }
+    }
   }
 
-  Widget _buildStep2(BuildContext context) {
+  Widget _generateSeed(BuildContext context) {
     var theme = Theme.of(context).textTheme;
     final Map<String, String> i18n = I18n.of(context).account;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(I18n.of(context).home['create']),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            setState(() {
-              _step = 1;
-            });
-          },
-        ),
-      ),
+      appBar: AppBar(title: Text(I18n.of(context).home['create'])),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -114,7 +164,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
               padding: EdgeInsets.all(16),
               child: RoundedButton(
                 text: I18n.of(context).home['next'],
-                onPressed: _onFinish,
+                onPressed: () => _onNext(),
               ),
             ),
           ],
@@ -125,20 +175,26 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_step == 2) {
-      return _buildStep2(context);
+    if (_step == 0) {
+      return _generateSeed(context);
     }
     return Scaffold(
-      appBar: AppBar(title: Text(I18n.of(context).home['create'])),
-      body: SafeArea(
-        child: CreateAccountForm(
-          setNewAccount: setNewAccount,
-          submitting: false,
-          onSubmit: () {
+      appBar: AppBar(
+        title: Text(I18n.of(context).home['create']),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
             setState(() {
-              _step = 2;
+              _step = 0;
             });
           },
+        ),
+      ),
+      body: SafeArea(
+        child: CreateAccountForm(
+          widget.store.account,
+          submitting: _submitting,
+          onSubmit: _importAccount,
         ),
       ),
     );

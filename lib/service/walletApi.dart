@@ -38,6 +38,20 @@ class WalletApi {
     }
   }
 
+  static Future<Map> getLiveModules() async {
+    try {
+      Response res = await get('$_endpoint/liveModules.json');
+      if (res == null) {
+        return null;
+      } else {
+        return jsonDecode(res.body) as Map;
+      }
+    } catch (err) {
+      print(err);
+      return null;
+    }
+  }
+
   static Future<Map> fetchPolkadotJSVersion() async {
     try {
       Response res = await get('$_endpoint/jsCodeVersions.json');
@@ -103,6 +117,45 @@ class WalletApi {
   static Future<List> getAnnouncements() async {
     try {
       Response res = await get('$_endpoint/announce.json');
+      if (res == null) {
+        return null;
+      } else {
+        return jsonDecode(utf8.decode(res.bodyBytes));
+      }
+    } catch (err) {
+      print(err);
+      return null;
+    }
+  }
+
+  static Future<Map> queryCandy(String address) async {
+    try {
+      Response res = await get('$_endpoint/v2/candy/candy?address=$address');
+      if (res == null) {
+        return null;
+      } else {
+        return jsonDecode(utf8.decode(res.bodyBytes));
+      }
+    } catch (err) {
+      print(err);
+      return null;
+    }
+  }
+
+  static Future<Map> claimCandy(String address) async {
+    try {
+      final Map<String, String> headers = {
+        "Content-type": "application/json",
+        "Accept": "*/*"
+      };
+      final body = jsonEncode({
+        "address": address,
+      });
+      final Response res = await post(
+        '$_endpoint/v2/candy/candy?address=$address',
+        headers: headers,
+        body: body,
+      );
       if (res == null) {
         return null;
       } else {

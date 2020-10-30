@@ -188,6 +188,21 @@ mixin _$SettingsStore on _SettingsStore, Store {
     });
   }
 
+  final _$liveModulesAtom = Atom(name: '_SettingsStore.liveModules');
+
+  @override
+  Map<dynamic, dynamic> get liveModules {
+    _$liveModulesAtom.reportRead();
+    return super.liveModules;
+  }
+
+  @override
+  set liveModules(Map<dynamic, dynamic> value) {
+    _$liveModulesAtom.reportWrite(value, super.liveModules, () {
+      super.liveModules = value;
+    });
+  }
+
   final _$contactListAtom = Atom(name: '_SettingsStore.contactList');
 
   @override
@@ -349,6 +364,17 @@ mixin _$SettingsStore on _SettingsStore, Store {
   }
 
   @override
+  void setLiveModules(Map<dynamic, dynamic> value) {
+    final _$actionInfo = _$_SettingsStoreActionController.startAction(
+        name: '_SettingsStore.setLiveModules');
+    try {
+      return super.setLiveModules(value);
+    } finally {
+      _$_SettingsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 loading: ${loading},
@@ -358,6 +384,7 @@ customSS58Format: ${customSS58Format},
 networkName: ${networkName},
 networkState: ${networkState},
 networkConst: ${networkConst},
+liveModules: ${liveModules},
 contactList: ${contactList},
 endpointList: ${endpointList},
 contactListAll: ${contactListAll},

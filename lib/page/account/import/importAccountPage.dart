@@ -29,7 +29,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
   String _derivePath = '';
   bool _submitting = false;
 
-  Future<void> _importAccount() async {
+  Future<bool> _importAccount() async {
     setState(() {
       _submitting = true;
     });
@@ -49,10 +49,6 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
       cryptoType: _cryptoType,
       derivePath: _derivePath,
     );
-    setState(() {
-      _submitting = false;
-    });
-    Navigator.of(context).pop();
 
     /// check if account duplicate
     if (acc != null) {
@@ -81,16 +77,36 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
             },
           );
         } else {
-          UI.alertWASM(context, () {
-            setState(() {
-              _step = 0;
-            });
-          });
+          UI.alertWASM(
+            context,
+            () {
+              setState(() {
+                _step = 0;
+              });
+            },
+            isImport: true,
+          );
         }
-        return;
+        Navigator.of(context).pop();
+        setState(() {
+          _submitting = false;
+        });
+        return false;
       }
-      _checkAccountDuplicate(acc);
-      return;
+      final duplicated = await _checkAccountDuplicate(acc);
+      if (duplicated) {
+        Navigator.of(context).pop();
+        setState(() {
+          _submitting = false;
+        });
+        return false;
+      }
+      await _saveAccount(acc);
+      setState(() {
+        _submitting = false;
+      });
+      Navigator.of(context).pop();
+      return true;
     }
 
     showCupertinoDialog(
@@ -110,9 +126,10 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
         );
       },
     );
+    return false;
   }
 
-  Future<void> _checkAccountDuplicate(Map<String, dynamic> acc) async {
+  Future<bool> _checkAccountDuplicate(Map<String, dynamic> acc) async {
     int index =
         store.account.accountList.indexWhere((i) => i.pubKey == acc['pubKey']);
     if (index > -1) {
@@ -120,7 +137,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
           store.account.pubKeyAddressMap[store.settings.endpoint.ss58];
       String address = pubKeyMap[acc['pubKey']];
       if (address != null) {
-        showCupertinoDialog(
+        final duplicate = await showCupertinoDialog(
           context: context,
           builder: (BuildContext context) {
             return CupertinoAlertDialog(
@@ -129,23 +146,20 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
               actions: <Widget>[
                 CupertinoButton(
                   child: Text(I18n.of(context).home['cancel']),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => Navigator.of(context).pop(true),
                 ),
                 CupertinoButton(
                   child: Text(I18n.of(context).home['ok']),
-                  onPressed: () {
-                    _saveAccount(acc);
-                    Navigator.of(context).pop();
-                  },
+                  onPressed: () => Navigator.of(context).pop(false),
                 ),
               ],
             );
           },
         );
+        return duplicate;
       }
-    } else {
-      _saveAccount(acc);
     }
+    return false;
   }
 
   Future<void> _saveAccount(Map<String, dynamic> acc) async {
@@ -161,9 +175,26 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     webApi.staking.fetchAccountStaking();
     webApi.account.fetchAccountsBonded([pubKey]);
     webApi.account.getPubKeyIcons([pubKey]);
+  }
 
-    // go to home page
-    Navigator.popUntil(context, ModalRoute.withName('/'));
+  Future<bool> _onNext(Map<String, dynamic> data) async {
+    if (data['finish'] == null) {
+      setState(() {
+        _keyType = data['keyType'];
+        _cryptoType = data['cryptoType'];
+        _derivePath = data['derivePath'];
+        _step = 1;
+      });
+      return false;
+    } else {
+      setState(() {
+        _keyType = data['keyType'];
+        _cryptoType = data['cryptoType'];
+        _derivePath = data['derivePath'];
+      });
+      final saved = await _importAccount();
+      return saved;
+    }
   }
 
   @override
@@ -183,7 +214,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
         ),
         body: SafeArea(
           child: CreateAccountForm(
-            setNewAccount: store.account.setNewAccount,
+            store.account,
             submitting: _submitting,
             onSubmit: _importAccount,
           ),
@@ -193,23 +224,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     return Scaffold(
       appBar: AppBar(title: Text(I18n.of(context).home['import'])),
       body: SafeArea(
-        child: ImportAccountForm(store, (Map<String, dynamic> data) {
-          if (data['finish'] == null) {
-            setState(() {
-              _keyType = data['keyType'];
-              _cryptoType = data['cryptoType'];
-              _derivePath = data['derivePath'];
-              _step = 1;
-            });
-          } else {
-            setState(() {
-              _keyType = data['keyType'];
-              _cryptoType = data['cryptoType'];
-              _derivePath = data['derivePath'];
-            });
-            _importAccount();
-          }
-        }),
+        child: ImportAccountForm(store, _onNext),
       ),
     );
   }

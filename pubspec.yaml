@@ -11,15 +11,15 @@ description: PolkaWallet made with Flutter.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.5+1052
+version: 1.0.6+1061
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.10.0 <3.0.0"
 
 dependencies:
   # intl - format numbers
   intl: ^0.16.0
-  json_annotation: ^3.0.1
+  json_annotation: ^3.1.0
   # state management with mobx & provider
   mobx: ^1.2.0
   flutter_mobx: ^1.1.0
@@ -69,8 +69,8 @@ dependencies:
 
 dev_dependencies:
 #  flutter_launcher_icons: ^0.7.5
-  build_runner: ^1.7.4
-  json_serializable: ^3.0.0
+  build_runner: ^1.10.3
+  json_serializable: ^3.5.0
   mockito: ^4.1.1
   flutter_test:
     sdk: flutter
@@ -135,6 +135,7 @@ flutter:
     - assets/images/acala/deposit.svg
     - assets/images/acala/loan.svg
     - assets/images/acala/loan-start.svg
+    - assets/images/acala/nft.svg
     ## images - laminar
     - assets/images/assets/scanner_purple.png
     - assets/images/assets/top_bg_purple.png

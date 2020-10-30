@@ -15,23 +15,23 @@ import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/asset/assetPage.dart';
 import 'package:polka_wallet/page/assets/transfer/currencySelectPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferCrossChainPage.dart';
-import 'package:polka_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
+import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
 import 'package:polka_wallet/utils/UI.dart';
 import 'package:polka_wallet/utils/format.dart';
 import 'package:polka_wallet/utils/i18n/index.dart';
 
 class TransferPageParams {
   TransferPageParams({
-    this.symbol,
+    this.token,
     this.address,
     this.redirect,
   });
   final String address;
   final String redirect;
-  final String symbol;
+  final TokenData token;
 }
 
 class TransferPage extends StatefulWidget {
@@ -72,6 +72,12 @@ class _TransferPageState extends State<TransferPage> {
   Future<void> _selectCurrency() async {
     List<String> symbolOptions =
         List<String>.from(store.settings.networkConst['currencyIds']);
+    if (store.settings.endpoint.info == networkEndpointAcala.info) {
+      symbolOptions = store.acala.swapTokens;
+      symbolOptions.addAll(store.acala.lpTokens
+          .map((e) => e.currencyId.map((id) => Fmt.tokenView(id)).join('-'))
+          .toList());
+    }
 
     var currency = await Navigator.of(context)
         .pushNamed(CurrencySelectPage.route, arguments: symbolOptions);
@@ -127,7 +133,11 @@ class _TransferPageState extends State<TransferPage> {
           // params.to
           address,
           // params.currencyId
-          symbol.toUpperCase(),
+          symbol.contains('-')
+              ? {'DEXShare': symbol.toUpperCase().split('-')}
+              : isLaminar
+                  ? symbol.toUpperCase()
+                  : {'Token': symbol.toUpperCase()},
           // params.amount
           Fmt.tokenInt(_amountCtrl.text.trim(), decimals).toString(),
         ];
@@ -188,12 +198,13 @@ class _TransferPageState extends State<TransferPage> {
             onPressed: () {
               final TransferPageParams args =
                   ModalRoute.of(context).settings.arguments;
-              Navigator.of(context)
-                  .popAndPushNamed(TransferCrossChainPage.route,
-                      arguments: TransferPageParams(
-                        symbol: _tokenSymbol,
-                        redirect: args?.redirect,
-                      ));
+              Navigator.of(context).popAndPushNamed(
+                  TransferCrossChainPage.route,
+                  arguments: TransferPageParams(
+                    token:
+                        TokenData(tokenType: TokenType.Token, id: _tokenSymbol),
+                    redirect: args?.redirect,
+                  ));
             },
           ),
         ],
@@ -231,7 +242,7 @@ class _TransferPageState extends State<TransferPage> {
         }
       }
       setState(() {
-        _tokenSymbol = args.symbol ?? store.settings.networkState.tokenSymbol;
+        _tokenSymbol = args.token.id ?? store.settings.networkState.tokenSymbol;
       });
 
       webApi.assets.fetchBalance();
@@ -251,17 +262,20 @@ class _TransferPageState extends State<TransferPage> {
         final Map<String, String> dic = I18n.of(context).assets;
         final int decimals = store.settings.networkState.tokenDecimals;
         final String baseTokenSymbol = store.settings.networkState.tokenSymbol;
-        final String baseTokenSymbolView = Fmt.tokenView(baseTokenSymbol);
+
         String symbol = _tokenSymbol ?? baseTokenSymbol;
         final bool isBaseToken = _tokenSymbol == baseTokenSymbol;
         List symbolOptions = store.settings.networkConst['currencyIds'];
 
-        BigInt available = isBaseToken
-            ? store.assets.balances[symbol.toUpperCase()].transferable
-            : Fmt.balanceInt(store.assets.tokenBalances[symbol.toUpperCase()]);
-
-        final Map pubKeyAddressMap =
-            store.account.pubKeyAddressMap[store.settings.endpoint.ss58];
+        BigInt available = symbol.contains('-')
+            ? Fmt.balanceInt(store.acala.lpTokens
+                .firstWhere(
+                    (e) => e.currencyId.join('-') == _tokenSymbol.toUpperCase())
+                .free)
+            : isBaseToken
+                ? store.assets.balances[symbol.toUpperCase()].transferable
+                : Fmt.balanceInt(
+                    store.assets.tokenBalances[symbol.toUpperCase()]);
 
         final bool isAcala =
             store.settings.endpoint.info == networkEndpointAcala.info;
@@ -304,8 +318,8 @@ class _TransferPageState extends State<TransferPage> {
                                         margin: EdgeInsets.only(bottom: 16),
                                         child: OutlinedButtonSmall(
                                           content: dic['cross.chain'],
-                                          active: true,
-                                          onPressed: _onCrossChain,
+                                          // active: true,
+                                          // onPressed: _onCrossChain,
                                         ),
                                       )
                                     ],
@@ -381,28 +395,6 @@ class _TransferPageState extends State<TransferPage> {
                               onTap: symbolOptions != null
                                   ? () => _selectCurrency()
                                   : null,
-                            ),
-                            Divider(),
-                            Padding(
-                              padding: EdgeInsets.only(top: 16),
-                              child: Text(
-                                  'existentialDeposit: ${store.settings.existentialDeposit} $baseTokenSymbolView',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black54)),
-                            ),
-//                            Padding(
-//                              padding: EdgeInsets.only(top: 16),
-//                              child: Text(
-//                                  'TransferFee: ${store.settings.transactionBaseFee} $baseTokenSymbol',
-//                                  style: TextStyle(
-//                                      fontSize: 16, color: Colors.black54)),
-//                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 16),
-                              child: Text(
-                                  'transactionByteFee: ${store.settings.transactionByteFee} $baseTokenSymbolView',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black54)),
                             ),
                           ],
                         ),

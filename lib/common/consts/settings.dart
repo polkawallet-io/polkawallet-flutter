@@ -27,7 +27,7 @@ EndpointData networkEndpointAcala = EndpointData.fromJson(const {
   'info': network_name_acala_mandala,
   'ss58': 42,
   'text': 'Acala Mandala (Hosted by Acala Network)',
-  'value': 'wss://testnet-node-1.acala.laminar.one/ws',
+  'value': 'wss://node-6714447553211260928.rz.onfinality.io/ws',
 });
 
 EndpointData networkEndpointLaminar = EndpointData.fromJson(const {
@@ -95,16 +95,16 @@ List<EndpointData> networkEndpoints = [
     'color': 'indigo',
     'info': network_name_acala_mandala,
     'ss58': 42,
-    'text': 'Mandala TC4 Node 1 (Hosted by OnFinality)',
-    'value': 'wss://node-6684611762228215808.jm.onfinality.io/ws'
+    'text': 'Mandala TC5 Node 1 (Hosted by OnFinality)',
+    'value': 'wss://node-6714447553777491968.jm.onfinality.io/ws'
   }),
-  EndpointData.fromJson(const {
-    'color': 'indigo',
-    'info': network_name_acala_mandala,
-    'ss58': 42,
-    'text': 'Mandala TC4 Node 2 (Hosted by OnFinality)',
-    'value': 'wss://node-6684611760525328384.rz.onfinality.io/ws'
-  }),
+  // EndpointData.fromJson(const {
+  //   'color': 'indigo',
+  //   'info': network_name_acala_mandala,
+  //   'ss58': 42,
+  //   'text': 'Mandala TC4 Node 2 (Hosted by OnFinality)',
+  //   'value': 'wss://node-6684611760525328384.rz.onfinality.io/ws'
+  // }),
   networkEndpointLaminar,
   EndpointData.fromJson(const {
     'color': 'purple',
@@ -141,8 +141,8 @@ const String cross_chain_transfer_address_laminar =
     '5CLaminarAUSDCrossChainTransferxxxxxxxxxxxxxwisu';
 
 /// app versions
-const String app_beta_version = 'v1.0.5-beta.2';
-const int app_beta_version_code = 1052;
+const String app_beta_version = 'v1.0.6-beta.1';
+const int app_beta_version_code = 1061;
 
 /// js code versions
 const Map<String, int> js_code_version_map = {

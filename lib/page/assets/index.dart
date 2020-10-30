@@ -4,9 +4,12 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:polka_wallet/common/components/currencyWithIcon.dart';
+import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/candy/candyClaimPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:polka_wallet/page/assets/announcementPage.dart';
@@ -21,6 +24,7 @@ import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
 import 'package:polka_wallet/service/walletApi.dart';
+import 'package:polka_wallet/store/acala/types/swapOutputData.dart';
 import 'package:polka_wallet/store/account/types/accountData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/store/assets/types/balancesInfo.dart';
@@ -445,12 +449,18 @@ class _AssetsState extends State<Assets> {
         bool isKusama = store.settings.endpoint.info == network_name_kusama;
 
         List<String> currencyIds = [];
-        if ((isAcala || isLaminar) && networkName != null) {
-          if (store.settings.networkConst['currencyIds'] != null) {
+        if (networkName != null) {
+          if (isAcala && store.settings.networkConst['accounts'] != null) {
+            currencyIds.addAll(List.of(store.settings.networkConst['accounts']
+                    ['allNonNativeCurrencyIds'])
+                .map((e) => e['Token'].toString())
+                .toList());
+          } else if (isLaminar &&
+              store.settings.networkConst['currencyIds'] != null) {
             currencyIds.addAll(
                 List<String>.from(store.settings.networkConst['currencyIds']));
+            currencyIds.retainWhere((i) => i != symbol);
           }
-          currencyIds.retainWhere((i) => i != symbol);
         }
 
         BalancesInfo balancesInfo = store.assets.balances[symbol];
@@ -571,7 +581,8 @@ class _AssetsState extends State<Assets> {
                         ),
                         onTap: () {
                           Navigator.pushNamed(context, AssetPage.route,
-                              arguments: symbol);
+                              arguments: TokenData(
+                                  tokenType: TokenType.Native, id: symbol));
                         },
                       ),
                     ),
@@ -609,18 +620,40 @@ class _AssetsState extends State<Assets> {
                             ),
                             onTap: () {
                               Navigator.pushNamed(context, AssetPage.route,
-                                  arguments: token);
+                                  arguments: TokenData(
+                                      tokenType: TokenType.Token, id: token));
                             },
                           ),
                         );
                       }).toList(),
                     ),
+                    isAcala && store.acala.lpTokens.length > 0
+                        ? Column(
+                            children: store.acala.lpTokens.map((e) {
+                              return LPTokenItem(e, decimals: decimals);
+                            }).toList(),
+                          )
+                        : Container(),
                     isAcala && store.acala.airdrops.keys.length > 0
-                        ? Padding(
-                            padding: EdgeInsets.only(top: 24),
-                            child: BorderedTitle(
-                              title: I18n.of(context).acala['airdrop'],
-                            ),
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(top: 24, right: 8),
+                                child: BorderedTitle(
+                                  title: I18n.of(context).acala['airdrop'],
+                                ),
+                              ),
+                              OutlinedButtonSmall(
+                                content: I18n.of(context).acala['candy.title'],
+                                color: Colors.purple,
+                                active: true,
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pushNamed(CandyClaimPage.route);
+                                },
+                              )
+                            ],
                           )
                         : Container(),
                     isAcala && store.acala.airdrops.keys.length > 0
@@ -662,6 +695,43 @@ class _AssetsState extends State<Assets> {
           ),
         );
       },
+    );
+  }
+}
+
+class LPTokenItem extends StatelessWidget {
+  LPTokenItem(this.data, {this.decimals});
+  final LPTokenData data;
+  final int decimals;
+  @override
+  Widget build(BuildContext context) {
+    final id = data.currencyId.map((e) => Fmt.tokenView(e)).join('-');
+    return RoundedCard(
+      margin: EdgeInsets.only(top: 16),
+      child: ListTile(
+        leading: Container(
+          width: 44,
+          child: TokenIcon(data.currencyId.join("-")),
+        ),
+        title: Text(Fmt.tokenView(id)),
+        trailing: Text(
+          Fmt.priceFloorBigInt(Fmt.balanceInt(data.free), decimals,
+              lengthFixed: 3),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54),
+        ),
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            AssetPage.route,
+            arguments: TokenData(
+              tokenType: TokenType.LPToken,
+              id: id,
+              amount: data.free,
+            ),
+          );
+        },
+      ),
     );
   }
 }

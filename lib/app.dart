@@ -5,6 +5,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/willPopScopWrapper.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/candy/candyClaimPage.dart';
+import 'package:polka_wallet/page-acala/earn/LPStakePage.dart';
 import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
 import 'package:polka_wallet/page-acala/earn/earnHistoryPage.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
@@ -19,6 +21,7 @@ import 'package:polka_wallet/page-acala/loan/loanCreatePage.dart';
 import 'package:polka_wallet/page-acala/loan/loanHistoryPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanTxDetailPage.dart';
+import 'package:polka_wallet/page-acala/nft/nftPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapHistoryPage.dart';
 import 'package:polka_wallet/page-acala/swap/swapPage.dart';
 import 'package:polka_wallet/page-laminar/margin/laminarMarginPoolDepositPage.dart';
@@ -153,9 +156,18 @@ class _WalletAppState extends State<WalletApp> {
     });
   }
 
+  Future<void> _fetchLiveModules() async {
+    final res = await WalletApi.getLiveModules();
+    if (res != null) {
+      print(res);
+      _appStore.settings.setLiveModules(res);
+    }
+  }
+
   Future<void> _checkUpdate(BuildContext context) async {
     final versions = await WalletApi.getLatestVersion();
     UI.checkUpdate(context, versions, autoCheck: true);
+    _fetchLiveModules();
   }
 
   Future<int> _initStore(BuildContext context) async {
@@ -244,8 +256,7 @@ class _WalletAppState extends State<WalletApp> {
               NetworkSelectPage(_appStore, _changeTheme),
           // account
           CreateAccountEntryPage.route: (_) => CreateAccountEntryPage(),
-          CreateAccountPage.route: (_) =>
-              CreateAccountPage(_appStore.account.setNewAccount),
+          CreateAccountPage.route: (_) => CreateAccountPage(_appStore),
           BackupAccountPage.route: (_) => BackupAccountPage(_appStore),
           ImportAccountPage.route: (_) => ImportAccountPage(_appStore),
           ScanPage.route: (_) => ScanPage(),
@@ -329,11 +340,14 @@ class _WalletAppState extends State<WalletApp> {
           EarnPage.route: (_) => EarnPage(_appStore),
           AddLiquidityPage.route: (_) => AddLiquidityPage(_appStore),
           WithdrawLiquidityPage.route: (_) => WithdrawLiquidityPage(_appStore),
+          LPStakePage.route: (_) => LPStakePage(_appStore),
           EarnHistoryPage.route: (_) => EarnHistoryPage(_appStore),
           HomaPage.route: (_) => HomaPage(_appStore),
           MintPage.route: (_) => MintPage(_appStore),
           HomaRedeemPage.route: (_) => HomaRedeemPage(_appStore),
           HomaHistoryPage.route: (_) => HomaHistoryPage(_appStore),
+          NFTPage.route: (_) => NFTPage(_appStore),
+          CandyClaimPage.route: (_) => CandyClaimPage(_appStore),
 
           // laminar flow exchange
           LaminarSwapPage.route: (_) => LaminarSwapPage(_appStore),

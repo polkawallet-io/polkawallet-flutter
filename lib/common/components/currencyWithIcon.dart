@@ -7,11 +7,13 @@ import 'package:polka_wallet/utils/format.dart';
 class CurrencyWithIcon extends StatelessWidget {
   CurrencyWithIcon(
     this.symbol, {
+    this.showLP = true,
     this.textStyle,
     this.trailing,
     this.mainAxisAlignment,
   });
 
+  final bool showLP;
   final String symbol;
   final TextStyle textStyle;
   final MainAxisAlignment mainAxisAlignment;
@@ -21,7 +23,6 @@ class CurrencyWithIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final String networkToken =
         globalAppStore.settings.networkState.tokenSymbol;
-    final int decimals = globalAppStore.settings.networkState.tokenDecimals;
     final bool isLaminar =
         globalAppStore.settings.endpoint.info == networkEndpointLaminar.info;
     bool hasIcon = true;
@@ -35,11 +36,11 @@ class CurrencyWithIcon extends StatelessWidget {
       mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,
       children: <Widget>[
         Container(
-          width: 32,
+          width: symbol.contains('-') ? 48 : 32,
           height: 32,
           padding: EdgeInsets.only(right: 4),
           child: hasIcon
-              ? Image.asset('assets/images/assets/${symbol.toUpperCase()}.png')
+              ? TokenIcon(symbol)
               : CircleAvatar(
                   child: Text(symbol.substring(0, 2)),
                 ),
@@ -47,12 +48,38 @@ class CurrencyWithIcon extends StatelessWidget {
         Expanded(
           flex: 0,
           child: Text(
-            Fmt.tokenView(symbol),
+            showLP ? Fmt.tokenView(symbol) : symbol,
             style: textStyle,
           ),
         ),
         trailing ?? Container()
       ],
     );
+  }
+}
+
+class TokenIcon extends StatelessWidget {
+  TokenIcon(this.symbol);
+  final String symbol;
+  @override
+  Widget build(BuildContext context) {
+    if (symbol.contains('-')) {
+      final pair = symbol.split('-');
+      return Stack(
+        children: [
+          Container(
+            margin: EdgeInsets.only(left: 16),
+            child: Image.asset(
+                'assets/images/assets/${pair[1].toUpperCase()}.png'),
+          ),
+          SizedBox(
+            width: 29,
+            child: Image.asset(
+                'assets/images/assets/${pair[0].toUpperCase()}.png'),
+          )
+        ],
+      );
+    }
+    return Image.asset('assets/images/assets/${symbol.toUpperCase()}.png');
   }
 }

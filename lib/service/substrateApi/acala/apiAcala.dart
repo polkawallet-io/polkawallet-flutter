@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/service/faucet.dart';
+import 'package:polka_wallet/store/acala/types/swapOutputData.dart';
 import 'package:polka_wallet/store/app.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
 import 'package:polka_wallet/utils/format.dart';
@@ -33,27 +33,30 @@ class ApiAcala {
 
   Future<void> fetchTokens(String pubKey) async {
     if (pubKey != null && pubKey.isNotEmpty) {
-      String symbol = store.settings.networkState.tokenSymbol;
-      String address = store.account.currentAddress;
-      List<String> tokens =
-          List<String>.from(store.settings.networkConst['currencyIds']);
-      tokens.retainWhere((i) => i != symbol);
-      String queries =
-          tokens.map((i) => 'acala.getTokens("$address", "$i")').join(",");
-      var res = await apiRoot.evalJavascript('Promise.all([$queries])',
-          allowRepeat: true);
+      final symbol = store.settings.networkState.tokenSymbol;
+      final address = store.account.currentAddress;
+      final List tokens =
+          store.settings.networkConst['accounts']['allNonNativeCurrencyIds'];
+      final String queries = tokens
+          .map((i) => 'acala.getTokens("$address", ${jsonEncode(i)})')
+          .join(",");
+      var res = await Future.wait([
+        apiRoot.evalJavascript('Promise.all([$queries])', allowRepeat: true),
+        apiRoot.evalJavascript('acala.queryLPTokens("$address")',
+            allowRepeat: true),
+      ]);
       Map balances = {};
       balances[symbol] = store.assets.balances[symbol].transferable.toString();
       tokens.asMap().forEach((index, token) {
-        balances[token] = res[index].toString();
+        balances[token['Token']] = res[0][index].toString();
       });
       store.assets.setAccountTokenBalances(pubKey, balances);
+      store.acala.setLPTokens(res[1]);
     }
   }
 
   Future<void> fetchAirdropTokens() async {
-    String getCurrencyIds =
-        'api.registry.createType("AirDropCurrencyId").defKeys';
+    String getCurrencyIds = 'api.createType("AirDropCurrencyId").defKeys';
     if (Platform.isIOS) {
       getCurrencyIds =
           'JSON.stringify(api.registry.createType("AirDropCurrencyId").defKeys)';
@@ -88,72 +91,61 @@ class ApiAcala {
     store.acala.setLoanTypes(res);
   }
 
-  Future<Map> _fetchPriceOfLDOT() async {
-    final decimals = store.settings.networkState.tokenDecimals;
-    final res = await apiRoot.evalJavascript(
-      'acala.fetchLDOTPrice(api)',
-      allowRepeat: true,
-    );
-    return {
-      "token": 'LDOT',
-      "price": {"value": Fmt.tokenInt(res.toString(), decimals).toString()}
-    };
+  Future<SwapOutputData> fetchTokenSwapAmount(
+    String supplyAmount,
+    String targetAmount,
+    List<String> swapPair,
+    String slippage,
+  ) async {
+    final code =
+        'acala.calcTokenSwapAmount(api, $supplyAmount, $targetAmount, ${jsonEncode(swapPair)}, $slippage)';
+    final output = await apiRoot.evalJavascript(code, allowRepeat: true);
+    return SwapOutputData.fromJson(output);
   }
 
-  Future<void> subscribeTokenPrices() async {
-    final String code =
-        'settings.subscribeMessage("price", "allPrices", [], "$tokenPricesSubscribeChannel")';
-    await apiRoot.subscribeMessage(code, tokenPricesSubscribeChannel,
-        (List res) async {
-      var priceOfLDOT = await _fetchPriceOfLDOT();
-      res.add(priceOfLDOT);
-      store.acala.setPrices(res);
-    });
-  }
-
-  Future<void> unsubscribeTokenPrices() async {
-    await apiRoot.unsubscribeMessage(tokenPricesSubscribeChannel);
-  }
-
-  Future<String> fetchTokenSwapAmount(String supplyAmount, String targetAmount,
-      List<String> swapPair, String slippage) async {
-    /// baseCoin = 0, supplyToken == AUSD
-    /// baseCoin = 1, targetToken == AUSD
-    /// baseCoin = -1, no AUSD
-    int baseCoin =
-        swapPair.indexWhere((i) => i.toUpperCase() == acala_stable_coin);
-    String output = await apiRoot.evalJavascript(
-      'acala.calcTokenSwapAmount(api, $supplyAmount, $targetAmount, ${jsonEncode(swapPair)}, $baseCoin, $slippage)',
-      allowRepeat: true,
-    );
-    return output;
-  }
-
-  Future<void> fetchDexLiquidityPoolSwapRatio(String currencyId) async {
-    String res = await fetchTokenSwapAmount(
-        '1', null, [currencyId, acala_stable_coin], '0');
-    store.acala.setSwapPoolRatio(currencyId, res);
+  Future<void> fetchDexPools() async {
+    final res = await apiRoot.evalJavascript('acala.getTokenPairs()');
+    store.acala.setDexPools(res);
   }
 
   Future<void> fetchDexLiquidityPoolRewards() async {
-    List<String> tokens = store.acala.swapTokens;
-    String code = tokens
-        .map((i) => 'api.query.dex.liquidityIncentiveRate("$i")')
+    await webApi.acala.fetchDexPools();
+    final pools = store.acala.dexPools
+        .map((pool) =>
+            jsonEncode({'DEXShare': pool.map((e) => e.name).toList()}))
+        .toList();
+    final incentiveQuery = pools
+        .map((i) => 'api.query.incentives.dEXIncentiveRewards($i)')
         .join(',');
-    List list = await apiRoot.evalJavascript('Promise.all([$code])');
-    Map<String, dynamic> rewards = Map<String, dynamic>();
-    tokens.asMap().forEach((k, v) {
-      rewards[v] = list[k];
+    final savingRateQuery =
+        pools.map((i) => 'api.query.incentives.dEXSavingRates($i)').join(',');
+    final res = await Future.wait([
+      apiRoot.evalJavascript('Promise.all([$incentiveQuery])',
+          allowRepeat: true),
+      apiRoot.evalJavascript('Promise.all([$savingRateQuery])',
+          allowRepeat: true)
+    ]);
+    final incentives = Map<String, dynamic>();
+    final savingRates = Map<String, dynamic>();
+    final tokenPairs = store.acala.dexPools
+        .map((e) => e.map((i) => i.symbol).join('-'))
+        .toList();
+    tokenPairs.asMap().forEach((k, v) {
+      incentives[v] = res[0][k];
+      savingRates[v] = res[1][k];
     });
-    store.acala.setSwapPoolRewards(rewards);
+    store.acala.setSwapPoolRewards(incentives);
+    store.acala.setSwapSavingRates(savingRates);
   }
 
-  Future<void> fetchDexPoolInfo(String currencyId) async {
+  Future<void> fetchDexPoolInfo(String pool) async {
     Map info = await apiRoot.evalJavascript(
-      'acala.fetchDexPoolInfo("$currencyId", "${store.account.currentAddress}")',
+      'acala.fetchDexPoolInfo(${jsonEncode({
+        'DEXShare': pool.split('-').map((e) => e.toUpperCase()).toList()
+      })}, "${store.account.currentAddress}")',
       allowRepeat: true,
     );
-    store.acala.setDexPoolInfo(currencyId, info);
+    store.acala.setDexPoolInfo(pool, info);
   }
 
   Future<void> fetchHomaStakingPool() async {
@@ -166,5 +158,15 @@ class ApiAcala {
     Map res = await apiRoot
         .evalJavascript('acala.fetchHomaUserInfo(api, "$address")');
     store.acala.setHomaUserInfo(res);
+  }
+
+  Future<void> fetchUserNFTs() async {
+    final address = store.account.currentAddress;
+    final time = DateTime.now();
+    final enable = time.millisecondsSinceEpoch > 1604099149427;
+    final code =
+        'api.derive.nft.queryTokensByAccount("$address", ${enable ? 1 : 0}).then(res => res.map(e => ({...e.data.value, metadata: e.data.value.metadata.toUtf8()})))';
+    final List res = await apiRoot.evalJavascript(code, allowRepeat: true);
+    store.acala.setUserNFTs(res);
   }
 }

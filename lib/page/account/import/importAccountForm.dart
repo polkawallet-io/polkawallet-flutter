@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:biometric_storage/biometric_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/accountAdvanceOption.dart';
@@ -15,7 +16,7 @@ class ImportAccountForm extends StatefulWidget {
   const ImportAccountForm(this.store, this.onSubmit);
 
   final AppStore store;
-  final Function onSubmit;
+  final Future<bool> Function(Map<String, dynamic>) onSubmit;
 
   @override
   _ImportAccountFormState createState() => _ImportAccountFormState();
@@ -29,6 +30,9 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
     AccountStore.seedTypeKeystore,
     'observe',
   ];
+
+  bool _supportBiometric = false;
+  bool _enableBiometric = true; // if the biometric usage checkbox checked
 
   int _keySelection = 0;
   bool _observationSubmitting = false;
@@ -47,6 +51,32 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
 
   String _keyCtrlText = '';
   AccountAdvanceOptionParams _advanceOptions = AccountAdvanceOptionParams();
+
+  Future<void> _checkBiometricAuth() async {
+    final response = await BiometricStorage().canAuthenticate();
+    final supportBiometric = response == CanAuthenticateResponse.success;
+    if (!supportBiometric) {
+      return;
+    }
+    setState(() {
+      _supportBiometric = supportBiometric;
+    });
+  }
+
+  Future<void> _authBiometric() async {
+    final storeFile = await webApi.account.getBiometricPassStoreFile(
+      context,
+      widget.store.account.currentAccountPubKey,
+    );
+
+    try {
+      await storeFile.write(widget.store.account.newAccount.password);
+      webApi.account
+          .setBiometricEnabled(widget.store.account.currentAccountPubKey);
+    } catch (err) {
+      // ignore
+    }
+  }
 
   Widget _buildNameAndPassInput() {
     final Map<String, String> dic = I18n.of(context).account;
@@ -92,6 +122,31 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
             },
           ),
         ),
+        _supportBiometric
+            ? Padding(
+                padding: EdgeInsets.only(left: 16, top: 24),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: Checkbox(
+                        value: _enableBiometric,
+                        onChanged: (v) {
+                          setState(() {
+                            _enableBiometric = v;
+                          });
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 16),
+                      child: Text(I18n.of(context).home['unlock.bio.enable']),
+                    )
+                  ],
+                ),
+              )
+            : Container(),
       ],
     );
   }
@@ -265,6 +320,12 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _checkBiometricAuth();
+  }
+
+  @override
   void dispose() {
     _nameCtrl.dispose();
     _passCtrl.dispose();
@@ -365,13 +426,21 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                       _nameCtrl.text.trim(), _passCtrl.text.trim());
                 }
                 widget.store.account.setNewAccountKey(_keyCtrl.text.trim());
-                widget.onSubmit({
+                final saved = await widget.onSubmit({
                   'keyType': _keyOptions[_keySelection],
                   'cryptoType': _advanceOptions.type ??
                       AccountAdvanceOptionParams.encryptTypeSR,
                   'derivePath': _advanceOptions.path ?? '',
                   'finish': _keySelection == 2 ? true : null,
                 });
+                if (saved) {
+                  if (_enableBiometric) {
+                    await _authBiometric();
+                  }
+
+                  widget.store.account.resetNewAccount();
+                  Navigator.popUntil(context, ModalRoute.withName('/'));
+                }
               }
             },
           ),

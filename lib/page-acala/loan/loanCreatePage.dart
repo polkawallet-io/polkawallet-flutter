@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/loan/loanAdjustPage.dart';
 import 'package:polka_wallet/page-acala/loan/loanInfoPanel.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
@@ -46,7 +45,7 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
     final LoanAdjustPageParams params =
         ModalRoute.of(context).settings.arguments;
     BigInt tokenPrice = store.acala.prices[params.token];
-    BigInt stableCoinPrice = store.acala.prices[acala_stable_coin];
+    BigInt stableCoinPrice = Fmt.tokenInt('1', decimals);
     BigInt collateralInUSD =
         loanType.tokenToUSD(collateral, tokenPrice, decimals);
     BigInt debitInUSD = loanType.tokenToUSD(debit, stableCoinPrice, decimals);
@@ -63,7 +62,7 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
     String value,
     LoanType loanType,
     BigInt price,
-    BigInt stableCoinPrice,
+    stableCoinPrice,
     int decimals,
   ) {
     String v = value.trim();
@@ -75,7 +74,7 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
       _maxToBorrow = loanType.calcMaxToBorrow(
           collateral, price, stableCoinPrice, decimals);
     });
-//    print(_maxToBorrow.toString());
+    print(_maxToBorrow.toString());
 
     if (_amountDebit > BigInt.zero) {
       _updateState(loanType, collateral, _amountDebit);
@@ -163,7 +162,7 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
         "debits": Fmt.token(_amountDebit, decimals),
       }),
       'params': [
-        params.token,
+        {'Token': params.token},
         _amountCollateral.toString(),
         debitShare.toString(),
       ]
@@ -208,7 +207,7 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
     String pageTitle = '${dic['loan.create']} $symbol';
 
     BigInt price = store.acala.prices[symbol];
-    BigInt stableCoinPrice = store.acala.prices[acala_stable_coin];
+    BigInt stableCoinPrice = Fmt.tokenInt('1', decimals);
 
     LoanType loanType =
         store.acala.loanTypes.firstWhere((i) => i.token == symbol);
@@ -230,7 +229,9 @@ class _LoanCreatePageState extends State<LoanCreatePage> {
               Expanded(
                 child: Form(
                   key: _formKey,
-                  autovalidate: _autoValidate,
+                  autovalidateMode: _autoValidate
+                      ? AutovalidateMode.onUserInteraction
+                      : AutovalidateMode.disabled,
                   child: ListView(
                     padding: EdgeInsets.all(16),
                     children: <Widget>[

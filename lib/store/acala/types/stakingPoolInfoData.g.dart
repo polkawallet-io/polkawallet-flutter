@@ -9,7 +9,6 @@ part of 'stakingPoolInfoData.dart';
 StakingPoolInfoData _$StakingPoolInfoDataFromJson(Map<String, dynamic> json) {
   return StakingPoolInfoData()
     ..rewardRate = json['rewardRate'] as String
-    ..priceLDOT = (json['priceLDOT'] as num)?.toDouble()
     ..freeList = (json['freeList'] as List)
         ?.map((e) => e == null
             ? null
@@ -17,12 +16,9 @@ StakingPoolInfoData _$StakingPoolInfoDataFromJson(Map<String, dynamic> json) {
         ?.toList()
     ..claimFeeRatio = (json['claimFeeRatio'] as num)?.toDouble()
     ..unbondingDuration = (json['unbondingDuration'] as num)?.toDouble()
-    ..totalBonded = (json['totalBonded'] as num)?.toDouble()
-    ..communalFree = (json['communalFree'] as num)?.toDouble()
-    ..unbondingToFree = (json['unbondingToFree'] as num)?.toDouble()
-    ..nextEraClaimedUnbonded =
-        (json['nextEraClaimedUnbonded'] as num)?.toDouble()
-    ..liquidTokenIssuance = (json['liquidTokenIssuance'] as num)?.toDouble()
+    ..communalFreeRatio = (json['communalFreeRatio'] as num)?.toDouble()
+    ..unbondingToFreeRatio = (json['unbondingToFreeRatio'] as num)?.toDouble()
+    ..liquidTokenIssuance = json['liquidTokenIssuance'] as String
     ..defaultExchangeRate = (json['defaultExchangeRate'] as num)?.toDouble()
     ..maxClaimFee = (json['maxClaimFee'] as num)?.toDouble()
     ..bondingDuration = (json['bondingDuration'] as num)?.toDouble()
@@ -37,14 +33,11 @@ Map<String, dynamic> _$StakingPoolInfoDataToJson(
         StakingPoolInfoData instance) =>
     <String, dynamic>{
       'rewardRate': instance.rewardRate,
-      'priceLDOT': instance.priceLDOT,
       'freeList': instance.freeList,
       'claimFeeRatio': instance.claimFeeRatio,
       'unbondingDuration': instance.unbondingDuration,
-      'totalBonded': instance.totalBonded,
-      'communalFree': instance.communalFree,
-      'unbondingToFree': instance.unbondingToFree,
-      'nextEraClaimedUnbonded': instance.nextEraClaimedUnbonded,
+      'communalFreeRatio': instance.communalFreeRatio,
+      'unbondingToFreeRatio': instance.unbondingToFreeRatio,
       'liquidTokenIssuance': instance.liquidTokenIssuance,
       'defaultExchangeRate': instance.defaultExchangeRate,
       'maxClaimFee': instance.maxClaimFee,
@@ -60,8 +53,7 @@ StakingPoolFreeItemData _$StakingPoolFreeItemDataFromJson(
     Map<String, dynamic> json) {
   return StakingPoolFreeItemData()
     ..era = json['era'] as int
-    ..free = (json['free'] as num)?.toDouble()
-    ..claimFeeRatio = (json['claimFeeRatio'] as num)?.toDouble();
+    ..free = (json['free'] as num)?.toDouble();
 }
 
 Map<String, dynamic> _$StakingPoolFreeItemDataToJson(
@@ -69,5 +61,4 @@ Map<String, dynamic> _$StakingPoolFreeItemDataToJson(
     <String, dynamic>{
       'era': instance.era,
       'free': instance.free,
-      'claimFeeRatio': instance.claimFeeRatio,
     };

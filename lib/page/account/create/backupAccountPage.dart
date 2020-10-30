@@ -29,48 +29,6 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
   List<String> _wordsSelected;
   List<String> _wordsLeft;
 
-  bool _submitting = false;
-
-  Future<void> _importAccount() async {
-    setState(() {
-      _submitting = true;
-    });
-    var acc = await webApi.account.importAccount(
-      cryptoType:
-          _advanceOptions.type ?? AccountAdvanceOptionParams.encryptTypeSR,
-      derivePath: _advanceOptions.path ?? '',
-    );
-
-    if (acc['error'] != null) {
-      UI.alertWASM(context, () {
-        setState(() {
-          _submitting = false;
-          _step = 0;
-        });
-      });
-      return;
-    }
-
-    await store.account.addAccount(acc, store.account.newAccount.password);
-    webApi.account.encodeAddress([acc['pubKey']]);
-
-    store.assets.loadAccountCache();
-    store.staking.loadAccountCache();
-
-    // fetch info for the imported account
-    String pubKey = acc['pubKey'];
-    webApi.assets.fetchBalance();
-    webApi.staking.fetchAccountStaking();
-    webApi.account.fetchAccountsBonded([pubKey]);
-    webApi.account.getPubKeyIcons([pubKey]);
-
-    setState(() {
-      _submitting = false;
-    });
-    // go to home page
-    Navigator.popUntil(context, ModalRoute.withName('/'));
-  }
-
   @override
   void initState() {
     webApi.account.generateAccount();
@@ -229,11 +187,10 @@ class _BackupAccountPageState extends State<BackupAccountPage> {
             Container(
               padding: EdgeInsets.all(16),
               child: RoundedButton(
-                submitting: _submitting,
                 text: I18n.of(context).home['next'],
                 onPressed:
                     _wordsSelected.join(' ') == store.account.newAccount.key
-                        ? () => _importAccount()
+                        ? () => Navigator.of(context).pop(_advanceOptions)
                         : null,
               ),
             ),
