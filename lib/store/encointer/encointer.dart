@@ -242,14 +242,15 @@ abstract class _EncointerStore with Store {
   @action
   Future<void> setTransferTxs(List list, {bool reset = false, needCache = true}) async {
     List transfers = list.map((i) {
+      bool isCommunityCurrency = i['params'].length == 3;
       return {
         "block_timestamp": i['time'],
         "hash": i['hash'],
         "success": true,
         "from": rootStore.account.currentAddress,
         "to": i['params'][0],
-        "token": "ERT", // i['params'][1],
-        "amount": Fmt.balance(i['params'][1], ert_decimals),
+        "token": isCommunityCurrency ? i['params'][1] : rootStore.settings.networkState.tokenSymbol,
+        "amount": isCommunityCurrency ? Fmt.doubleFormat(i['params'][2]) : Fmt.balance(i['params'][1], ert_decimals),
       };
     }).toList();
     if (reset) {

@@ -1,6 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/BorderedTitle.dart';
 import 'package:encointer_wallet/common/components/TapTooltip.dart';
 import 'package:encointer_wallet/common/components/listTail.dart';
@@ -16,6 +13,9 @@ import 'package:encointer_wallet/store/assets/types/transferData.dart';
 import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class AssetPageParams {
   AssetPageParams({this.token, this.isEncointerCommunityCurrency = false});
@@ -113,14 +113,13 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
     if (store.settings.endpointIsEncointer) {
       List<TransferData> ls = store.encointer.txsTransfer.reversed.toList();
       final String symbol = store.settings.networkState.tokenSymbol;
-      final bool isBaseToken = token == symbol;
       ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
       res.addAll(ls.map((i) {
         String crossChain;
         Map<String, dynamic> tx = TransferData.toJson(i);
         return TransferListItem(
           data: crossChain != null ? TransferData.fromJson(tx) : i,
-          token: token,
+          token: token == symbol ? token : "",
           isOut: true,
           hasDetail: false,
           crossChain: crossChain,
@@ -130,21 +129,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
         isEmpty: ls.length == 0,
         isLoading: false,
       ));
-    } else {
-      res.addAll(store.assets.txsView.map((i) {
-        return TransferListItem(
-          data: i,
-          token: token,
-          isOut: i.from == store.account.currentAddress,
-          hasDetail: true,
-        );
-      }));
-      res.add(ListTail(
-        isEmpty: store.assets.txsView.length == 0,
-        isLoading: store.assets.isTxsLoading,
-      ));
     }
-
     return res;
   }
 
@@ -330,6 +315,19 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                           ],
                         ),
                       ),
+                store.encointer.txsTransfer.isNotEmpty
+                    ? Container(
+                        color: titleColor,
+                        padding: EdgeInsets.all(16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text("From/To", style: Theme.of(context).textTheme.headline4),
+                            Text("Amount", style: Theme.of(context).textTheme.headline4),
+                          ],
+                        ),
+                      )
+                    : Container(),
                 Expanded(
                   child: Container(
                     color: Colors.white,
@@ -445,6 +443,7 @@ class TransferListItem extends StatelessWidget {
                   child: Text(
                 '${data.amount} $token',
                 style: Theme.of(context).textTheme.headline4,
+                textAlign: TextAlign.end,
               )),
               isOut
                   ? Image.asset('assets/images/assets/assets_up.png')
