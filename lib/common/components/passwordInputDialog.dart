@@ -68,8 +68,6 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
     setState(() {
       _isBiometricAuthorized = isBiometricAuthorized;
     });
-    print('_supportBiometric: $supportBiometric');
-    print('_isBiometricAuthorized: $isBiometricAuthorized');
     if (supportBiometric) {
       final authStorage = await webApi.account
           .getBiometricPassStoreFile(context, widget.account.pubKey);
@@ -83,7 +81,8 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
             await _onOk(result);
           }
         } catch (err) {
-          Navigator.of(context).pop();
+          print(err);
+          // Navigator.of(context).pop();
         }
       }
     }
@@ -110,30 +109,28 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
 
     return CupertinoAlertDialog(
       title: widget.title ?? Container(),
-      content: _isBiometricAuthorized
-          ? Container()
-          : Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 4),
-                  child: widget.content ?? Container(),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 12),
-                  child: CupertinoTextField(
-                    placeholder: I18n.of(context).profile['pass.old'],
-                    controller: _passCtrl,
-                    onChanged: (v) {
-                      return Fmt.checkPassword(v.trim())
-                          ? null
-                          : I18n.of(context).account['create.password.error'];
-                    },
-                    obscureText: true,
-                    clearButtonMode: OverlayVisibilityMode.editing,
-                  ),
-                ),
-              ],
+      content: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: widget.content ?? Container(),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 12),
+            child: CupertinoTextField(
+              placeholder: I18n.of(context).profile['pass.old'],
+              controller: _passCtrl,
+              onChanged: (v) {
+                return Fmt.checkPassword(v.trim())
+                    ? null
+                    : I18n.of(context).account['create.password.error'];
+              },
+              obscureText: true,
+              clearButtonMode: OverlayVisibilityMode.editing,
             ),
+          ),
+        ],
+      ),
       actions: <Widget>[
         CupertinoButton(
           child: Text(dic['cancel']),

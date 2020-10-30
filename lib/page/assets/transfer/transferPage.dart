@@ -318,8 +318,8 @@ class _TransferPageState extends State<TransferPage> {
                                         margin: EdgeInsets.only(bottom: 16),
                                         child: OutlinedButtonSmall(
                                           content: dic['cross.chain'],
-                                          active: true,
-                                          onPressed: _onCrossChain,
+                                          // active: true,
+                                          // onPressed: _onCrossChain,
                                         ),
                                       )
                                     ],

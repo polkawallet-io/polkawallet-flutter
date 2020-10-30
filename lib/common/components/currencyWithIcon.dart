@@ -7,7 +7,7 @@ import 'package:polka_wallet/utils/format.dart';
 class CurrencyWithIcon extends StatelessWidget {
   CurrencyWithIcon(
     this.symbol, {
-    this.showLP = false,
+    this.showLP = true,
     this.textStyle,
     this.trailing,
     this.mainAxisAlignment,

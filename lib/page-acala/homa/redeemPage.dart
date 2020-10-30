@@ -456,7 +456,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                 child: Text(dic['homa.unbond']),
                               ),
                               Text(
-                                '(${pool.bondingDuration.toInt()}+ Era ≈ ${(pool.unbondingDuration / 1000 ~/ SECONDS_OF_DAY)}+ ${dic['homa.redeem.day']})',
+                                '(${pool.bondingDuration.toInt() + 1} Era ≈ ${(pool.unbondingDuration / 1000 ~/ SECONDS_OF_DAY) + 1} ${dic['homa.redeem.day']})',
                                 style: TextStyle(fontSize: 14),
                               ),
                             ],

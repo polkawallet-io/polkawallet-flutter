@@ -379,7 +379,7 @@ class _SwapPageState extends State<SwapPage> {
                                           Padding(
                                             padding: EdgeInsets.only(top: 8),
                                             child: Text(
-                                              '${dicAssets['balance']}: ${Fmt.token(balance, decimals)} ${_swapPair[0]}',
+                                              '${dicAssets['balance']}: ${Fmt.token(balance, decimals)} ${Fmt.tokenView(_swapPair[0])}',
                                               style: TextStyle(
                                                   color: Theme.of(context)
                                                       .unselectedWidgetColor),
@@ -485,7 +485,7 @@ class _SwapPageState extends State<SwapPage> {
                                                 .unselectedWidgetColor),
                                       ),
                                       Text(
-                                          '1 ${_swapPair[0]} = ${_swapRatio.toStringAsFixed(6)} ${_swapPair[1]}'),
+                                          '1 ${Fmt.tokenView(_swapPair[0])} = ${_swapRatio.toStringAsFixed(6)} ${Fmt.tokenView(_swapPair[1])}'),
                                     ],
                                   ),
                                   GestureDetector(
