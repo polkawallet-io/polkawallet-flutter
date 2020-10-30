@@ -163,8 +163,8 @@ class ApiAcala {
   Future<void> fetchUserNFTs() async {
     final address = store.account.currentAddress;
     final code =
-        'api.derive.nft.queryTokensByAccount("$address", 0).then(res => res.map(e => ({...e.value, metadata: e.value.metadata.toUtf8()})))';
-    final List res = await apiRoot.evalJavascript(code);
+        'api.derive.nft.queryTokensByAccount("$address", 0).then(res => res.map(e => ({...e.data.value, metadata: e.data.value.metadata.toUtf8()})))';
+    final List res = await apiRoot.evalJavascript(code, allowRepeat: true);
     store.acala.setUserNFTs(res);
   }
 }

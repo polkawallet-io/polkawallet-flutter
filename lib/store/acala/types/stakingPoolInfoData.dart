@@ -13,11 +13,9 @@ abstract class _StakingPoolInfoData {
   List<StakingPoolFreeItemData> freeList;
   double claimFeeRatio;
   double unbondingDuration;
-  double totalBonded;
-  double communalFree;
-  double unbondingToFree;
-  double nextEraClaimedUnbonded;
-  double liquidTokenIssuance;
+  double communalFreeRatio;
+  double unbondingToFreeRatio;
+  String liquidTokenIssuance;
   double defaultExchangeRate;
   double maxClaimFee;
   double bondingDuration;
@@ -32,7 +30,6 @@ abstract class _StakingPoolInfoData {
 class StakingPoolFreeItemData {
   int era;
   double free;
-  double claimFeeRatio;
 
   static StakingPoolFreeItemData fromJson(Map<String, dynamic> json) =>
       _$StakingPoolFreeItemDataFromJson(json);

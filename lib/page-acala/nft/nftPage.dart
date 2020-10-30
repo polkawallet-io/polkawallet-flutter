@@ -20,9 +20,9 @@ class _NFTPageState extends State<NFTPage> {
       new GlobalKey<RefreshIndicatorState>();
 
   final _nftMap = {
-    'testnet-2': 'https://api.polkawallet.io/nft/img/nft01.jpg',
-    'testnet-3': 'https://api.polkawallet.io/nft/img/nft02.jpg',
-    'testnet-4': 'https://api.polkawallet.io/nft/img/nft03.jpg',
+    'testnet-1': 'https://api.polkawallet.io/nft/img/nft01.jpg',
+    'testnet-2': 'https://api.polkawallet.io/nft/img/nft02.jpg',
+    'testnet-3': 'https://api.polkawallet.io/nft/img/nft03.jpg',
   };
 
   Future<void> _refreshData() async {
@@ -72,7 +72,7 @@ class _NFTPageState extends State<NFTPage> {
                         Padding(
                           padding: EdgeInsets.only(top: 8),
                           child: Text(
-                            dic['nft.${_nftMap.keys.toList()[i]}'],
+                            dic['nft.testnet'],
                             style: Theme.of(context).textTheme.headline4,
                           ),
                         )
