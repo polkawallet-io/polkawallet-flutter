@@ -3,6 +3,7 @@ import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 class PasswordInputDialog extends StatefulWidget {
   PasswordInputDialog({this.account, this.title, this.onOk});
@@ -76,6 +77,9 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
           },
           obscureText: true,
           clearButtonMode: OverlayVisibilityMode.editing,
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly
+          ],
         ),
       ),
       actions: <Widget>[

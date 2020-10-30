@@ -7,6 +7,7 @@ import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   ChangePasswordPage(this.store);
@@ -135,6 +136,9 @@ class _ChangePassword extends State<ChangePasswordPage> {
                         return Fmt.checkPassword(v.trim()) ? null : accDic['create.password.error'];
                       },
                       obscureText: true,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
                     ),
                     TextFormField(
                       keyboardType: TextInputType.number,
@@ -148,6 +152,9 @@ class _ChangePassword extends State<ChangePasswordPage> {
                         return Fmt.checkPassword(v.trim()) ? null : accDic['create.password.error'];
                       },
                       obscureText: true,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
                     ),
                     TextFormField(
                       keyboardType: TextInputType.number,
@@ -161,6 +168,9 @@ class _ChangePassword extends State<ChangePasswordPage> {
                         return v.trim() != _passCtrl.text ? accDic['create.password2.error'] : null;
                       },
                       obscureText: true,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
                     ),
                   ],
                 ),

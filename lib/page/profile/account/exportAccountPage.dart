@@ -8,6 +8,7 @@ import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ExportAccountPage extends StatelessWidget {
   ExportAccountPage(this.store);
@@ -64,6 +65,9 @@ class ExportAccountPage extends StatelessWidget {
                 return Fmt.checkPassword(v.trim()) ? null : accDic['create.password.error'];
               },
               obscureText: true,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
             ),
           ),
           actions: <Widget>[

@@ -3,6 +3,7 @@ import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CreateAccountForm extends StatelessWidget {
   CreateAccountForm({this.setNewAccount, this.submitting, this.onSubmit});
@@ -49,6 +50,9 @@ class CreateAccountForm extends StatelessWidget {
                     return Fmt.checkPassword(v.trim()) ? null : dic['create.password.error'];
                   },
                   obscureText: true,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
                 ),
                 TextFormField(
                   keyboardType: TextInputType.number,
@@ -62,6 +66,9 @@ class CreateAccountForm extends StatelessWidget {
                   validator: (v) {
                     return _passCtrl.text != v ? dic['create.password2.error'] : null;
                   },
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
                 ),
               ],
             ),

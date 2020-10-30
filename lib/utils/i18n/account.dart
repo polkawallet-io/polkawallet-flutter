@@ -8,7 +8,7 @@ const Map<String, String> enAccount = {
   'create.default': 'My Account',
   'create.name.error': 'Name can not be empty',
   'create.password': 'PIN',
-  'create.password.error': 'PIN must contain at least 6 digits and no other signs',
+  'create.password.error': 'PIN must contain at least 4 digits and no other signs',
   'create.password2': 'Confirm PIN',
   'create.password2.error': 'Inconsistent PINs',
   'create.warn1': 'Backup prom',

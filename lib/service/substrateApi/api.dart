@@ -130,6 +130,7 @@ class Api {
             }),
       ].toSet(),
       ignoreSSLErrors: true,
+//      debuggingEnabled: true,
 //        withLocalUrl: true,
 //        localUrlScope: 'lib/polkadot_js_service/dist/',
       hidden: true,

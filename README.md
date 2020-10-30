@@ -79,6 +79,25 @@ To run the in Android Studio a build flavor must be specified. Go to Run/Debug c
 >substrate `sr25519` keyPair is generated within an `WASM` virtual
 >machine which is **not supported** by IOS simulators.
 
+## Developer Remarks
+
+### Release Flow
+
+F-Droid triggers builds based on the version it reads from pubspec.yaml which it reads from branch `beta` HEAD`.
+AppCenter automatically builds and deploys the HEAD of `beta`
+
+VersionName should follow semver. Minor version bump on pre-1.0.0 release indicates breaking change
+
+VersionCode should monotonically increase by 1 for every tagged build
+
+  # bump version on some commit on master
+  git checkout master
+  git tag v0.9.0
+  git push
+  git checkout beta
+  git merge v0.9.0
+  git push
+
 ## Acknowledgements
 
 This app has been built based on [polkawallet.io](https://polkawallet.io)
