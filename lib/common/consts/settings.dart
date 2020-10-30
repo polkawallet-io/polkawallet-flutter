@@ -91,13 +91,13 @@ List<EndpointData> networkEndpoints = [
     'value': 'wss://kusama.polkadot.cloud.ava.do/',
   }),
   networkEndpointAcala,
-  // EndpointData.fromJson(const {
-  //   'color': 'indigo',
-  //   'info': network_name_acala_mandala,
-  //   'ss58': 42,
-  //   'text': 'Mandala TC4 Node 1 (Hosted by OnFinality)',
-  //   'value': 'wss://node-6684611762228215808.jm.onfinality.io/ws'
-  // }),
+  EndpointData.fromJson(const {
+    'color': 'indigo',
+    'info': network_name_acala_mandala,
+    'ss58': 42,
+    'text': 'Mandala TC5 Node 1 (Hosted by OnFinality)',
+    'value': 'wss://node-6714447553777491968.jm.onfinality.io/ws'
+  }),
   // EndpointData.fromJson(const {
   //   'color': 'indigo',
   //   'info': network_name_acala_mandala,

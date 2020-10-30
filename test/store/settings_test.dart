@@ -46,7 +46,7 @@ void main() {
       expect(store.endpointList.length >= 3, true);
       store.setEndpoint(networkEndpointAcala);
       expect(store.endpoint.info, networkEndpointAcala.info);
-      expect(store.endpointList.length >= 3, true);
+      expect(store.endpointList.length >= 2, true);
     });
 
     test('set network state properly', () async {
