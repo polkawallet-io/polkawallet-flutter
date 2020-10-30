@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/willPopScopWrapper.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/candy/candyClaimPage.dart';
 import 'package:polka_wallet/page-acala/earn/LPStakePage.dart';
 import 'package:polka_wallet/page-acala/earn/addLiquidityPage.dart';
 import 'package:polka_wallet/page-acala/earn/earnHistoryPage.dart';
@@ -346,6 +347,7 @@ class _WalletAppState extends State<WalletApp> {
           HomaRedeemPage.route: (_) => HomaRedeemPage(_appStore),
           HomaHistoryPage.route: (_) => HomaHistoryPage(_appStore),
           NFTPage.route: (_) => NFTPage(_appStore),
+          CandyClaimPage.route: (_) => CandyClaimPage(_appStore),
 
           // laminar flow exchange
           LaminarSwapPage.route: (_) => LaminarSwapPage(_appStore),

@@ -5,9 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
+import 'package:polka_wallet/common/components/outlinedButtonSmall.dart';
 import 'package:polka_wallet/common/components/passwordInputDialog.dart';
 import 'package:polka_wallet/common/components/textTag.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page-acala/candy/candyClaimPage.dart';
 import 'package:polka_wallet/page/account/scanPage.dart';
 import 'package:polka_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:polka_wallet/page/assets/announcementPage.dart';
@@ -633,11 +635,25 @@ class _AssetsState extends State<Assets> {
                           )
                         : Container(),
                     isAcala && store.acala.airdrops.keys.length > 0
-                        ? Padding(
-                            padding: EdgeInsets.only(top: 24),
-                            child: BorderedTitle(
-                              title: I18n.of(context).acala['airdrop'],
-                            ),
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(top: 24, right: 8),
+                                child: BorderedTitle(
+                                  title: I18n.of(context).acala['airdrop'],
+                                ),
+                              ),
+                              OutlinedButtonSmall(
+                                content: I18n.of(context).acala['candy.title'],
+                                color: Colors.purple,
+                                active: true,
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pushNamed(CandyClaimPage.route);
+                                },
+                              )
+                            ],
                           )
                         : Container(),
                     isAcala && store.acala.airdrops.keys.length > 0

@@ -20,9 +20,9 @@ class _NFTPageState extends State<NFTPage> {
       new GlobalKey<RefreshIndicatorState>();
 
   final _nftMap = {
-    'testnet-1': 'https://api.polkawallet.io/nft/img/nft01.jpg',
-    'testnet-2': 'https://api.polkawallet.io/nft/img/nft02.jpg',
-    'testnet-3': 'https://api.polkawallet.io/nft/img/nft03.jpg',
+    'level_1': 'https://api.polkawallet.io/nft/img/nft01.jpg',
+    'level_2': 'https://api.polkawallet.io/nft/img/nft02.jpg',
+    'level_3': 'https://api.polkawallet.io/nft/img/nft03.jpg',
   };
 
   Future<void> _refreshData() async {

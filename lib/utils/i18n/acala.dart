@@ -100,6 +100,10 @@ const Map<String, String> enDex = {
   'nft.title': 'NFTs',
   'nft.brief': 'NFTs on Acala network.',
   'nft.testnet': 'Mandala testnet badge',
+  'candy.title': 'Candy Claim',
+  'candy.claim': 'Claim',
+  'candy.amount': 'Candies to claim',
+  'candy.claimed': 'Claimed',
 };
 
 const Map<String, String> zhDex = {
@@ -200,4 +204,8 @@ const Map<String, String> zhDex = {
   'nft.title': 'NFTs',
   'nft.brief': 'Acala 网络上的 NFT.',
   'nft.testnet': 'Mandala 测试网徽章',
+  'candy.title': '领糖果',
+  'candy.claim': '马上领取',
+  'candy.amount': '待领取',
+  'candy.claimed': '已领取',
 };
