@@ -113,14 +113,15 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
     if (store.settings.endpointIsEncointer) {
       List<TransferData> ls = store.encointer.txsTransfer.reversed.toList();
       final String symbol = store.settings.networkState.tokenSymbol;
-      ls.retainWhere((i) => i.token.toUpperCase() == token.toUpperCase());
+      ls.retainWhere((i) =>
+          i.token.toUpperCase() == token.toUpperCase() && i.concernsCurrentAccount(store.account.currentAddress));
       res.addAll(ls.map((i) {
         String crossChain;
         Map<String, dynamic> tx = TransferData.toJson(i);
         return TransferListItem(
           data: crossChain != null ? TransferData.fromJson(tx) : i,
           token: token == symbol ? token : "",
-          isOut: true,
+          isOut: i.from == store.account.currentAddress,
           hasDetail: false,
           crossChain: crossChain,
         );
