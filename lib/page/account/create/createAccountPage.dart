@@ -56,20 +56,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
       return false;
     }
 
-    await widget.store.account
-        .addAccount(acc, widget.store.account.newAccount.password);
-    webApi.account.encodeAddress([acc['pubKey']]);
-
-    widget.store.assets.loadAccountCache();
-    widget.store.staking.loadAccountCache();
-
-    // fetch info for the imported account
-    String pubKey = acc['pubKey'];
-    webApi.assets.fetchBalance();
-    webApi.staking.fetchAccountStaking();
-    webApi.account.fetchAccountsBonded([pubKey]);
-    webApi.account.getPubKeyIcons([pubKey]);
-
+    await webApi.account.saveAccount(acc);
     setState(() {
       _submitting = false;
     });

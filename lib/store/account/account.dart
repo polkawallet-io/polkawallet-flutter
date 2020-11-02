@@ -76,7 +76,7 @@ abstract class _AccountStore with Store {
   AccountData get currentAccount {
     int i = accountListAll.indexWhere((i) => i.pubKey == currentAccountPubKey);
     if (i < 0) {
-      return accountListAll[0] ?? AccountData();
+      return AccountData();
     }
     return accountListAll[i];
   }

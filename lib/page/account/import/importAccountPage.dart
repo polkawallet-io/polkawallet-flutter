@@ -101,7 +101,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
         });
         return false;
       }
-      await _saveAccount(acc);
+      await webApi.account.saveAccount(acc);
       setState(() {
         _submitting = false;
       });
@@ -160,21 +160,6 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
       }
     }
     return false;
-  }
-
-  Future<void> _saveAccount(Map<String, dynamic> acc) async {
-    await store.account.addAccount(acc, store.account.newAccount.password);
-    webApi.account.encodeAddress([acc['pubKey']]);
-
-    store.assets.loadAccountCache();
-    store.staking.loadAccountCache();
-
-    // fetch info for the imported account
-    String pubKey = acc['pubKey'];
-    webApi.assets.fetchBalance();
-    webApi.staking.fetchAccountStaking();
-    webApi.account.fetchAccountsBonded([pubKey]);
-    webApi.account.getPubKeyIcons([pubKey]);
   }
 
   Future<bool> _onNext(Map<String, dynamic> data) async {

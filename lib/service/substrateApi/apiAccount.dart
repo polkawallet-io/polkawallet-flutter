@@ -184,6 +184,25 @@ class ApiAccount {
     return acc;
   }
 
+  Future<void> saveAccount(Map<String, dynamic> acc) async {
+    await store.account.addAccount(acc, store.account.newAccount.password);
+    webApi.account.encodeAddress([acc['pubKey']]);
+
+    store.assets.loadAccountCache();
+    store.staking.loadAccountCache();
+
+    try {
+      // fetch info for the imported account
+      String pubKey = acc['pubKey'];
+      webApi.assets.fetchBalance();
+      webApi.staking.fetchAccountStaking();
+      webApi.account.fetchAccountsBonded([pubKey]);
+      webApi.account.getPubKeyIcons([pubKey]);
+    } catch (e) {
+      print('network may not connected');
+    }
+  }
+
   Future<dynamic> checkAccountPassword(AccountData account, String pass) async {
     String pubKey = account.pubKey;
     print('checkpass: $pubKey, $pass');

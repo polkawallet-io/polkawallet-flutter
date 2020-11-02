@@ -434,7 +434,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                   'finish': _keySelection == 2 ? true : null,
                 });
                 if (saved) {
-                  if (_enableBiometric) {
+                  if (_supportBiometric && _enableBiometric) {
                     await _authBiometric();
                   }
 

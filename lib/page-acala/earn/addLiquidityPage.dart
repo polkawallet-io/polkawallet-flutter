@@ -6,7 +6,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:polka_wallet/common/components/currencyWithIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
-import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page-acala/earn/earnPage.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/service/substrateApi/api.dart';
@@ -69,7 +68,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
     }
     setState(() {
       _amountBaseCoinCtrl.text =
-          (double.parse(supply) * _price).toStringAsFixed(2);
+          (double.parse(supply) * _price).toStringAsFixed(6);
     });
     _formKey.currentState.validate();
   }
@@ -85,7 +84,7 @@ class _AddLiquidityPageState extends State<AddLiquidityPage> {
     }
     setState(() {
       _amountTokenCtrl.text =
-          (double.parse(target) / _price).toStringAsFixed(3);
+          (double.parse(target) / _price).toStringAsFixed(6);
     });
     _formKey.currentState.validate();
   }
