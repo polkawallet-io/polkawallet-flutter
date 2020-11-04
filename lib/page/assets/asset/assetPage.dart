@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -5,6 +7,7 @@ import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/TapTooltip.dart';
 import 'package:polka_wallet/common/components/listTail.dart';
 import 'package:polka_wallet/common/consts/settings.dart';
+import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/assets/receive/receivePage.dart';
 import 'package:polka_wallet/page/assets/transfer/detailPage.dart';
 import 'package:polka_wallet/page/assets/transfer/transferPage.dart';
@@ -41,6 +44,40 @@ class _AssetPageState extends State<AssetPage>
   bool _isLastPage = false;
   ScrollController _scrollController;
 
+  List<int> _unlocks = [];
+
+  Future<void> _queryDemocracyUnlocks() async {
+    final List unlocks = await webApi.gov.getDemocracyUnlocks();
+    if (unlocks != null && unlocks.length > 0) {
+      setState(() {
+        _unlocks = unlocks;
+      });
+    }
+  }
+
+  void _onUnlock() async {
+    final address = store.account.currentAddress;
+    final txs = _unlocks.map((e) => 'api.tx.democracy.removeVote($e)').toList();
+    txs.add('api.tx.democracy.unlock("$address")');
+    final args = {
+      "title": I18n.of(context).assets['lock.unlock'],
+      "txInfo": {
+        "module": 'utility',
+        "call": 'batch',
+      },
+      "detail": jsonEncode({
+        "actions": ['democracy.removeVote', 'democracy.unlock'],
+      }),
+      "params": [],
+      "rawParam": '[[${txs.join(',')}]]',
+      'onFinish': (BuildContext txPageContext, Map res) {
+        Navigator.of(context).pop();
+        globalAssetRefreshKey.currentState.show();
+      }
+    };
+    Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
+  }
+
   Future<void> _updateData() async {
     if (store.settings.loading || _loading) return;
     setState(() {
@@ -53,6 +90,7 @@ class _AssetPageState extends State<AssetPage>
     if (store.settings.endpoint.info == networkEndpointKusama.info ||
         store.settings.endpoint.info == networkEndpointPolkadot.info) {
       webApi.staking.fetchAccountStaking();
+      _queryDemocracyUnlocks();
     }
 
     final TokenData token = ModalRoute.of(context).settings.arguments;
@@ -294,7 +332,13 @@ class _AssetPageState extends State<AssetPage>
                                             lengthMax: 3,
                                           ),
                                           style: TextStyle(color: titleColor),
-                                        )
+                                        ),
+                                        _unlocks.length > 0
+                                            ? GestureDetector(
+                                                child: Icon(Icons.lock_open),
+                                                onTap: _onUnlock,
+                                              )
+                                            : Container(),
                                       ],
                                     ),
                                   ],

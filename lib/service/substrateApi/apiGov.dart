@@ -122,4 +122,13 @@ class ApiGovernance {
         await apiRoot.evalJavascript('api.derive.chain.bestNumber()');
     store.gov.setBestNumber(bestNumber);
   }
+
+  Future<List> getDemocracyUnlocks() async {
+    final address = store.account.currentAddress;
+    final List res = await apiRoot.evalJavascript(
+      'gov.getDemocracyUnlocks("$address")',
+      allowRepeat: true,
+    );
+    return res;
+  }
 }

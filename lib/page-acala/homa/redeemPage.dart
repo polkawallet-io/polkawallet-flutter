@@ -293,7 +293,8 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                           return dicAssets['amount.low'];
                                         }
                                         if (_radioSelect < 2 &&
-                                            double.parse(v.trim()) >
+                                            double.parse(v.trim()) *
+                                                    pool.liquidExchangeRate >
                                                 available) {
                                           return dic['homa.pool.low'];
                                         }
