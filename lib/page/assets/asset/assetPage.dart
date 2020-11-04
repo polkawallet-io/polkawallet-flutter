@@ -335,7 +335,15 @@ class _AssetPageState extends State<AssetPage>
                                         ),
                                         _unlocks.length > 0
                                             ? GestureDetector(
-                                                child: Icon(Icons.lock_open),
+                                                child: Padding(
+                                                  padding:
+                                                      EdgeInsets.only(left: 6),
+                                                  child: Icon(
+                                                    Icons.lock_open,
+                                                    size: 16,
+                                                    color: titleColor,
+                                                  ),
+                                                ),
                                                 onTap: _onUnlock,
                                               )
                                             : Container(),

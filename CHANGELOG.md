@@ -1,3 +1,24 @@
+# 1.0.7
+- fix Acala TC5 bugs
+- add Polkadot/Kusama expired democracy unlocking
+
+# 1.0.6
+- update Acala to TC5
+
+# 1.0.5
+- update polkadot-js/api version
+
+# 1.0.4
+- add over subscribed nominations.
+
+# 1.0.3
+- Add fingerprint/faceID support.
+- Update staking rewards payout page.
+
+# 1.0.2
+- fix Acala transaction sending
+- add offline-signature safety warning
+
 # 1.0.1
 - add unbonding time left display
 - fix acala data bug
