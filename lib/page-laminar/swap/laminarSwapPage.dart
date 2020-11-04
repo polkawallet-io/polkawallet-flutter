@@ -80,6 +80,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
         _tokenPool = widget.store.laminar.syntheticTokens
             .firstWhere((e) => e.tokenId == selected);
       });
+      _calcSwapAmount(_amountPayCtrl.text.trim(), null);
     }
   }
 
@@ -96,6 +97,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
         _tokenPool = widget.store.laminar.syntheticTokens
             .firstWhere((e) => e.tokenId == selected);
       });
+      _calcSwapAmount(_amountPayCtrl.text.trim(), null);
     }
   }
 
@@ -129,7 +131,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
             ? double.parse(target) / price
             : double.parse(target) * price;
         setState(() {
-          _amountPayCtrl.text = output.toStringAsFixed(2);
+          _amountPayCtrl.text = output.toStringAsFixed(6);
         });
         _formKey.currentState.validate();
       }
@@ -145,7 +147,7 @@ class _LaminarSwapPageState extends State<LaminarSwapPage> {
             ? double.parse(supply) * price
             : double.parse(supply) / price;
         setState(() {
-          _amountReceiveCtrl.text = output.toStringAsFixed(2);
+          _amountReceiveCtrl.text = output.toStringAsFixed(6);
         });
         _formKey.currentState.validate();
       }

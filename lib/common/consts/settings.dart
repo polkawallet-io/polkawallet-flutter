@@ -34,8 +34,8 @@ EndpointData networkEndpointLaminar = EndpointData.fromJson(const {
   'color': 'purple',
   'info': network_name_laminar_turbulence,
   'ss58': 42,
-  'text': 'Laminar TC1',
-  'value': 'wss://node-6685729082874970112.jm.onfinality.io/ws',
+  'text': 'Laminar TC2',
+  'value': 'wss://node-6729167516986527744.jm.onfinality.io/ws',
 });
 
 List<EndpointData> networkEndpoints = [
@@ -110,8 +110,8 @@ List<EndpointData> networkEndpoints = [
     'color': 'purple',
     'info': network_name_laminar_turbulence,
     'ss58': 42,
-    'text': 'Laminar TC1',
-    'value': 'wss://testnet-node-1.laminar-chain.laminar.one/ws',
+    'text': 'Laminar TC2',
+    'value': 'wss://node-6729167516973944832.rz.onfinality.io/ws',
   }),
 ];
 

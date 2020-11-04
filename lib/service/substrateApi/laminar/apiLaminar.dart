@@ -40,7 +40,7 @@ class ApiLaminar {
 
   Future<void> subscribeTokenPrices() async {
     await apiRoot.subscribeMessage(
-      'laminar.subscribeMessage("currencies", "oracleValues", [], "$priceSubscribeChannel")',
+      'laminar.subscribeMessage("currencies", "oracleValues", ["Aggregated"], "$priceSubscribeChannel")',
       priceSubscribeChannel,
       (List res) {
         store.laminar.setTokenPrices(res);
