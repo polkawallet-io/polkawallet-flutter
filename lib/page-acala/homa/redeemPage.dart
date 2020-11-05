@@ -74,9 +74,10 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
 
     if (mounted) {
       setState(() {
-        _amountReceiveCtrl.text = Fmt.priceFloor(amount, lengthFixed: 3);
+        _amountReceiveCtrl.text = amount.toStringAsFixed(6);
         _fee = fee;
       });
+      _formKey.currentState.validate();
     }
   }
 
@@ -94,14 +95,14 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
     });
   }
 
-  void _onRadioChange(int value) {
+  Future<void> _onRadioChange(int value) async {
     if (value == 1) {
       final Map dic = I18n.of(context).acala;
       StakingPoolInfoData pool = store.acala.stakingPoolInfo;
       if (pool.freeList.length == 0) return;
 
       if (pool.freeList.length > 1) {
-        showCupertinoModalPopup(
+        await showCupertinoModalPopup(
           context: context,
           builder: (_) => Container(
             height: MediaQuery.of(context).copyWith().size.height / 3,
@@ -212,6 +213,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
         Color primary = Theme.of(context).primaryColor;
         Color grey = Theme.of(context).unselectedWidgetColor;
 
+        final availableNow = pool.communalTotal * pool.communalFreeRatio;
         double available = 0;
         String eraSelectText = dic['homa.era'];
         String eraSelectTextTail = '';
@@ -292,10 +294,14 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                                 balance, decimals)) {
                                           return dicAssets['amount.low'];
                                         }
-                                        if (_radioSelect < 2 &&
-                                            double.parse(v.trim()) *
-                                                    pool.liquidExchangeRate >
-                                                available) {
+                                        final input = double.parse(v.trim()) *
+                                            pool.liquidExchangeRate;
+                                        if (_radioSelect == 0 &&
+                                            input > availableNow) {
+                                          return dic['homa.pool.low'];
+                                        }
+                                        if (_radioSelect == 1 &&
+                                            input > available) {
                                           return dic['homa.pool.low'];
                                         }
                                         return null;
@@ -412,7 +418,7 @@ class _HomaRedeemPageState extends State<HomaRedeemPage> {
                                 child: Text(dic['homa.now']),
                               ),
                               Text(
-                                '(${dic['homa.redeem.free']}: ${Fmt.priceFloor(pool.communalTotal * pool.communalFreeRatio)} DOT)',
+                                '(${dic['homa.redeem.free']}: ${Fmt.priceFloor(availableNow)} DOT)',
                                 style: TextStyle(fontSize: 14),
                               ),
                             ],

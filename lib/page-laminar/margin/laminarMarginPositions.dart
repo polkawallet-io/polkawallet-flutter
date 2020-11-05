@@ -107,7 +107,7 @@ class _LaminarMarginPageWrapperState extends State<LaminarMarginPageWrapper> {
         Future<QueryResult> Function() refetch,
         FetchMore fetchMore,
       }) {
-//        print(JsonEncoder.withIndent('  ').convert(result.data));
+        // print(JsonEncoder.withIndent('  ').convert(result.data));
         final Future<QueryResult> Function() refreshOpened = refetch;
         return Query(
           options: QueryOptions(

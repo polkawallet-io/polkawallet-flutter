@@ -76,14 +76,14 @@ class LaminarMarginPosition extends StatelessWidget {
     final String leverage = getLeverage(position['args'][4]);
     final int positionId = position['args'][1];
 
-    final BigInt amtInt = BigInt.parse(position['args'][5]);
+    final BigInt amtInt = BigInt.parse(position['args'][5].toString());
     final String amt = Fmt.token(
       amtInt,
       decimals,
     );
     final BigInt rawPriceQuote =
         Fmt.balanceInt(prices[pairData.pair.quote]?.value);
-    final BigInt openPriceInt = BigInt.parse(position['args'][6]);
+    final BigInt openPriceInt = BigInt.parse(position['args'][6].toString());
     final String openPrice = Fmt.token(
       openPriceInt,
       decimals,
@@ -113,7 +113,8 @@ class LaminarMarginPosition extends StatelessWidget {
                 margin: EdgeInsets.only(right: 8),
               ),
               Expanded(
-                child: Text('${pairData.pairId} ($leverage) #$positionId'),
+                child: Text(
+                    '${pairData.pairId} ($leverage) #${positionId.toString()}'),
               ),
               isClosed
                   ? Container()

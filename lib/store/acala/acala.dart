@@ -339,12 +339,12 @@ abstract class _AcalaStore with Store {
         rootStore.settings.networkConst['babe']['expectedBlockTime'];
     final int epoch =
         rootStore.settings.networkConst['incentives']['accumulatePeriod'];
-    final epochOfYear = SECONDS_OF_YEAR * 1000 / blockTime / epoch;
+    final epochOfDay = SECONDS_OF_DAY * 1000 / blockTime / epoch;
     Map<String, double> rewards = {};
     map.forEach((k, v) {
       rewards[k] = Fmt.balanceDouble(
               v.toString(), rootStore.settings.networkState.tokenDecimals) *
-          epochOfYear;
+          epochOfDay;
     });
     swapPoolRewards = rewards;
   }

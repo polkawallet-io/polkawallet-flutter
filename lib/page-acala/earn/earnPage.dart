@@ -488,14 +488,14 @@ class _UserCard extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(bottom: 4),
                 child: Text(
-                  '${dic['earn.incentive']} ≈ ${rewardEstimate.toStringAsFixed(3)} ACA / year',
+                  '${dic['earn.incentive']} ≈ ${Fmt.priceFloor(rewardEstimate, lengthMax: 6)} ACA / day',
                   style: TextStyle(fontSize: 12),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: 4),
                 child: Text(
-                  '${dic['earn.saving']} ≈ ${rewardSavingEstimate.toStringAsFixed(3)} aUSD / year',
+                  '${dic['earn.saving']} ≈ ${Fmt.priceFloor(rewardSavingEstimate)} aUSD / day',
                   style: TextStyle(fontSize: 12),
                 ),
               ),
