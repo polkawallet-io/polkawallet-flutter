@@ -1,3 +1,7 @@
+# 0.9.1
+- prevent non-digits in PIN entry
+- improve tx history
+
 # 0.9.0
 - breaking changes!
 - PIN instead of password. Must contain at least 4 digits and no other signs. This breaks all previous accounts. Please re-import with mnemonic
