@@ -53,25 +53,29 @@ android {
     }
 
     signingConfigs {
-        release {
+    /*    release {
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
             storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
             storePassword keystoreProperties['storePassword']
         }
+    */
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // AppCenter will take care of signing, so the bundle may not be signed here.
+            // uncomment the following line if you need to sign locally and provide all
+            // credentials and jsk file path in ../key.properties
+            // also uncomment the signing config referenced
+            //signingConfig signingConfigs.release
+
+            // To run `flutter run --release` locally, uncomment the following line
+            //signingConfig signingConfigs.debug
+
             minifyEnabled true
             useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            // remove the following line to sign the release for google playSS
-            //signingConfig signingConfigs.debug
         }
     }
     // add a product flavor for fdroid release
@@ -89,7 +93,7 @@ android {
         }
         play {
             dimension "deploy"
-            signingConfig signingConfigs.release
+            //signingConfig signingConfigs.release
             versionNameSuffix ""
         }
     }
