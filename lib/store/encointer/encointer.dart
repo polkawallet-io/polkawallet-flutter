@@ -22,11 +22,13 @@ abstract class _EncointerStore with Store {
   final AppStore rootStore;
   final String cacheTxsTransferKey = 'transfer_txs';
   final String encointerCurrencyKey = 'wallet_encointer_currency';
+  // offline meetup cache.
+  final String encointerCurrentPhaseKey = 'wallet_encointer_current_phase';
+  final String encointerMeetupIndexKey = 'wallet_encointer_meetup_index';
+  final String encointerMeetupLocationKey = 'wallet_encointer_meetup_location';
+  final String encointerMeetupRegistryKey = 'wallet_encointer_meetup_registry';
   final String encointerAttestationsKey = 'wallet_encointer_attestations';
-
-  String _getCacheKey(String key) {
-    return '${rootStore.settings.endpoint.info}_$key';
-  }
+  final String encointerMeetupTimeKey = 'wallet_encointer_meetup_time';
 
   // Note: In synchronous code, every modification of an @obervable is tracked by mobx and
   // fires a reaction. However, modifications in asynchronous code must be wrapped in
@@ -39,28 +41,28 @@ abstract class _EncointerStore with Store {
   CeremonyPhase currentPhase;
 
   @observable
-  var currentCeremonyIndex;
+  int currentCeremonyIndex;
 
   @observable
-  var meetupIndex;
+  int meetupIndex;
 
   @observable
   Location meetupLocation;
 
   @observable
-  var meetupTime;
+  int meetupTime;
 
   @observable
   List<String> meetupRegistry;
 
   @observable
-  var myMeetupRegistryIndex;
+  int myMeetupRegistryIndex;
 
   @observable
-  var participantIndex;
+  int participantIndex;
 
   @observable
-  var participantCount;
+  int participantCount;
 
   @observable
   ClaimOfAttendance myClaim;
@@ -87,6 +89,8 @@ abstract class _EncointerStore with Store {
   void setCurrentPhase(CeremonyPhase phase) {
     print("store: set currentPhase to $phase");
     if (currentPhase != phase) {
+      // jsonEncode fails if we don't call toString for an enum
+      cacheObject(encointerCurrentPhaseKey, phase.toString());
       currentPhase = phase;
       // update depending values without awaiting
       webApi.encointer.getCurrentCeremonyIndex();
@@ -125,6 +129,7 @@ abstract class _EncointerStore with Store {
   void setMeetupIndex([int index]) {
     print("store: set meetupIndex to $index");
     if (meetupIndex != index) {
+      cacheObject(encointerMeetupIndexKey, index);
       meetupIndex = index;
       if (index != null) {
         // update depending values
@@ -138,6 +143,7 @@ abstract class _EncointerStore with Store {
   void setMeetupLocation([Location location]) {
     print("store: set meetupLocation to $location");
     if (meetupLocation != location) {
+      cacheObject(encointerMeetupLocationKey, location);
       meetupLocation = location;
       if (location != null) {
         // update depending values
@@ -150,13 +156,29 @@ abstract class _EncointerStore with Store {
   void setMeetupTime([int time]) {
     print("store: set meetupTime to $time");
     if (meetupTime != time) {
+      cacheObject(encointerMeetupTimeKey, time);
       meetupTime = time;
+    }
+  }
+
+  /// Calculates the remaining time until the next meetup starts. As Gesell and Cantillon currently implement timewarp
+  /// we cannot use the time received by the blockchain. Hence, we need to calculate it differently.
+  int getTimeToMeetup() {
+    var now = DateTime.now();
+    if (10 <= now.minute && now.minute < 20) {
+      return ((19 - now.minute) * 60 + 60 - now.second);
+    } else if (40 <= now.minute && now.minute < 50) {
+      return ((49 - now.minute) * 60 + 60 - now.second);
+    } else {
+      print("Warning: Invalid time to meetup");
+      return 0;
     }
   }
 
   @action
   void setMeetupRegistry([List<String> reg]) {
     print("store: set meetupRegistry to $reg");
+    cacheObject(encointerMeetupRegistryKey, reg);
     meetupRegistry = reg;
   }
 
@@ -185,7 +207,7 @@ abstract class _EncointerStore with Store {
   void setChosenCid(String cid) {
     if (chosenCid != cid) {
       chosenCid = cid;
-      rootStore.localStorage.setObject(_getCacheKey(encointerCurrencyKey), cid);
+      cacheObject(encointerCurrencyKey, cid);
       // update depending values without awaiting
       if (!rootStore.settings.loading) {
         webApi.encointer.getMeetupIndex();
@@ -198,25 +220,25 @@ abstract class _EncointerStore with Store {
   @action
   void addYourAttestation(int idx, String att) {
     attestations[idx].setYourAttestation(att);
-    rootStore.localStorage.setObject(_getCacheKey(encointerAttestationsKey), attestations);
+    cacheObject(encointerAttestationsKey, attestations);
   }
 
   @action
   void addOtherAttestation(int idx, String att) {
     attestations[idx].setOtherAttestation(att);
-    rootStore.localStorage.setObject(_getCacheKey(encointerAttestationsKey), attestations);
+    cacheObject(encointerAttestationsKey, attestations);
   }
 
   @action
   void updateAttestationStep(int idx, CurrentAttestationStep step) {
     attestations[idx].setAttestationStep(step);
-    rootStore.localStorage.setObject(_getCacheKey(encointerAttestationsKey), attestations);
+    cacheObject(encointerAttestationsKey, attestations);
   }
 
   @action
   void purgeAttestations() {
     attestations.clear();
-    rootStore.localStorage.setObject(_getCacheKey(encointerAttestationsKey), attestations);
+    cacheObject(encointerAttestationsKey, attestations);
   }
 
   @action
@@ -278,16 +300,48 @@ abstract class _EncointerStore with Store {
 
   @action
   Future<void> loadCache() async {
-    var data = await rootStore.localStorage.getObject(_getCacheKey(encointerCurrencyKey));
+    var data = await loadObject(encointerCurrencyKey);
     if (data != null) {
       print("found cached choice of cid. will recover it: " + data.toString());
       setChosenCid(data);
     }
 
-    data = await rootStore.localStorage.getObject(_getCacheKey(encointerAttestationsKey));
+    // get meetup related data
+    data = await loadObject(encointerAttestationsKey);
     if (data != null) {
       print("found cached attestations. will recover them");
       attestations = Map.castFrom<String, dynamic, int, AttestationState>(data);
     }
+    currentPhase = await loadCurrentPhase();
+    meetupIndex = await loadObject(encointerMeetupIndexKey);
+
+    var loc = await loadObject(encointerMeetupLocationKey);
+    if (loc != null) {
+      meetupLocation = Location.fromJson(loc);
+    }
+
+    var reg = await loadObject(encointerMeetupRegistryKey);
+    if (reg != null) {
+      meetupRegistry = List<String>.from(reg);
+    }
+
+    meetupTime = await loadObject(encointerMeetupTimeKey);
+  }
+
+  Future<void> cacheObject(String key, value) {
+    return rootStore.localStorage.setObject(_getCacheKey(key), value);
+  }
+
+  Future<Object> loadObject(String key) {
+    return rootStore.localStorage.getObject(_getCacheKey(key));
+  }
+
+  String _getCacheKey(String key) {
+    return '${rootStore.settings.endpoint.info}_$key';
+  }
+
+  Future<CeremonyPhase> loadCurrentPhase() async {
+    Object obj = await rootStore.localStorage.getObject(_getCacheKey(encointerCurrentPhaseKey));
+    return getEnumFromString(CeremonyPhase.values, obj);
   }
 }

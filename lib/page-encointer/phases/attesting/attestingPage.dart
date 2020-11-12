@@ -8,6 +8,7 @@ import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/attestation.dart';
 import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -37,29 +38,34 @@ class _AttestingPageState extends State<AttestingPage> {
 
   @override
   Widget build(BuildContext context) {
+    Map dic = I18n.of(context).encointer;
     return SafeArea(
-        child: Column(children: <Widget>[
-      AssignmentPanel(store),
-      SizedBox(height: 16),
-      Container(
+      child: Column(children: <Widget>[
+        AssignmentPanel(store),
+        SizedBox(height: 16),
+        Container(
           width: double.infinity,
           child: RoundedCard(
             padding: EdgeInsets.all(8),
             child: Column(children: <Widget>[
               Observer(builder: (_) => _reportAttestationsCount(context, store.encointer.attestations)),
               Observer(
-                  builder: (_) => ((store.encointer.meetupIndex == null) | (store.encointer.meetupIndex == 0))
-                      ? Text("you are not assigned to a meetup")
-                      : RoundedButton(
-                          text: "start meetup",
-                          onPressed: () => _startMeetup(context) // for testing always allow sending
-                          ))
+                builder: (_) => ((store.encointer.meetupIndex == null) | (store.encointer.meetupIndex == 0))
+                    ? Text(dic['meetup.not.assigned'])
+                    : RoundedButton(
+                        text: dic['meetup.start'],
+                        onPressed: () => _startMeetup(context),
+                      ),
+              )
             ]),
-          ))
-    ]));
+          ),
+        )
+      ]),
+    );
   }
 
   Widget _reportAttestationsCount(BuildContext context, Map<int, AttestationState> attestations) {
+    Map<String, String> dic = I18n.of(context).encointer;
     var count = attestations
         .map((key, value) => MapEntry(key, value.yourAttestation))
         .values
@@ -67,10 +73,10 @@ class _AttestingPageState extends State<AttestingPage> {
         .toList()
         .length;
     return Column(children: <Widget>[
-      Text("you have been attested by " + count.toString() + " others"),
+      Text(dic['attestation.total'].replaceAll('AMOUNT_PLACEHOLDER', count.toString())),
       count > 0
           ? RoundedButton(
-              text: "submit attestations", onPressed: () => _submit(context) // for testing always allow sending
+              text: dic['attestation.submit'], onPressed: () => _submit(context) // for testing always allow sending
               )
           : Container()
     ]);

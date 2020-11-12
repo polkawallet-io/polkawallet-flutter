@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:encointer_wallet/page/profile/settings/ss58PrefixListPage.dart';
+import 'package:encointer_wallet/service/notification.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountBondedInfo.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
@@ -68,6 +71,9 @@ abstract class _AccountStore with Store {
   @observable
   AccountRecoveryInfo recoveryInfo = AccountRecoveryInfo();
 
+  @observable
+  List<Map<String, dynamic>> queuedTxs = ObservableList<Map<String, dynamic>>();
+
   @computed
   AccountData get currentAccount {
     int i = accountListAll.indexWhere((i) => i.pubKey == currentAccountPubKey);
@@ -124,6 +130,44 @@ abstract class _AccountStore with Store {
   @action
   void resetNewAccount() {
     newAccount = AccountCreate();
+  }
+
+  @action
+  void queueTx(Map<String, dynamic> tx) {
+    queuedTxs.add(tx);
+
+    new Timer.periodic(Duration(seconds: 5), (Timer timer) async {
+      if (await webApi.isConnected()) {
+        queuedTxs.forEach((args) async {
+          Map res = await webApi.account.sendTx(
+            args['txInfo'],
+            args['params'],
+            args['title'],
+            args['notificationTitle'],
+            rawParam: args['rawParam'],
+          );
+
+          print("Queued tx result: ${res.toString()}");
+          if (res['hash'] == null) {
+            NotificationPlugin.showNotification(
+              0,
+              args['notificationTitle'],
+              'Failed to sendTx: ${args['title']} - ${args['txInfo']['module']}.${args['txInfo']['call']}',
+            );
+          } else {
+            if (rootStore.settings.endpointIsEncointer) {
+              rootStore.encointer.setTransferTxs([res]);
+            }
+          }
+        });
+        rootStore.assets.setSubmitting(false);
+        rootStore.account.setTxStatus('');
+        timer.cancel();
+        queuedTxs = [];
+      } else {
+        print("Waiting for the api to reconnect to send ${queuedTxs.length} queued tx(s)");
+      }
+    });
   }
 
   @action

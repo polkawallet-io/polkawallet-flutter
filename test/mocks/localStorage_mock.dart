@@ -1,5 +1,8 @@
-import 'package:mockito/mockito.dart';
+import 'dart:convert';
+import 'dart:core';
+
 import 'package:encointer_wallet/utils/localStorage.dart';
+import 'package:mockito/mockito.dart';
 
 class MockLocalStorage extends Mock implements LocalStorage {}
 
@@ -44,6 +47,8 @@ String currentAccountPubKey = accList[0]['pubKey'];
 
 List<Map<String, dynamic>> contactList = [];
 
+Map<String, dynamic> storage = new Map<String, dynamic>();
+
 MockLocalStorage getMockLocalStorage() {
   final localStorage = MockLocalStorage();
   when(localStorage.getAccountList()).thenAnswer((_) {
@@ -64,7 +69,6 @@ MockLocalStorage getMockLocalStorage() {
   when(localStorage.getCurrentAccount()).thenAnswer((_) {
     return Future.value(currentAccountPubKey);
   });
-  when(localStorage.getObject(any)).thenAnswer((_) => Future.value(null));
   when(localStorage.getSeeds(any)).thenAnswer((_) => Future.value({}));
   when(localStorage.getAccountCache(any, any)).thenAnswer((_) => Future.value(null));
 
@@ -82,5 +86,22 @@ MockLocalStorage getMockLocalStorage() {
     contactList.add(invocation.positionalArguments[0]);
     return Future.value();
   });
+
+  when(localStorage.getObject(any)).thenAnswer((realInvocation) async {
+    String value = storage[realInvocation.positionalArguments.first];
+    if (value != null) {
+      Object data = jsonDecode(value);
+      return data;
+    }
+    return null;
+  });
+
+  when(localStorage.setObject(any, any)).thenAnswer((realInvocation) async {
+    var args = realInvocation.positionalArguments;
+    String str = jsonEncode(args[1]);
+    storage[args[0]] = str;
+    return Future.value();
+  });
+
   return localStorage;
 }

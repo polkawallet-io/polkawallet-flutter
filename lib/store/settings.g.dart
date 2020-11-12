@@ -56,6 +56,13 @@ mixin _$SettingsStore on _SettingsStore, Store {
           Computed<bool>(() => super.endpointIsEncointer,
               name: '_SettingsStore.endpointIsEncointer'))
       .value;
+  Computed<bool> _$endpointIsGesellComputed;
+
+  @override
+  bool get endpointIsGesell => (_$endpointIsGesellComputed ??= Computed<bool>(
+          () => super.endpointIsGesell,
+          name: '_SettingsStore.endpointIsGesell'))
+      .value;
   Computed<List<EndpointData>> _$endpointListComputed;
 
   @override
@@ -369,6 +376,7 @@ networkState: ${networkState},
 networkConst: ${networkConst},
 contactList: ${contactList},
 endpointIsEncointer: ${endpointIsEncointer},
+endpointIsGesell: ${endpointIsGesell},
 endpointList: ${endpointList},
 contactListAll: ${contactListAll},
 existentialDeposit: ${existentialDeposit},

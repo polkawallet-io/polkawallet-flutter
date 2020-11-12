@@ -33,3 +33,8 @@ const List<String> currencyIdentifiers = [
   '0x2ebf164a5bb618ec6caad31488161b237e24d75efa3040286767b620d9183989',
   '0xc792bf36f892404a27603ffd14cd5a12e794ed3c740bab0929ba55b8c747c615',
 ];
+
+const List<String> meetupRegistry = [
+  "0xb67fe3812b469da5cac180161851120a45b6c6cf13f5be7062874bfa6cec381f",
+  "0x1cc4e46bbd2bb547d93d952c5de12ea7e3a3f3b638551a8eaf35ad086700c00c",
+];

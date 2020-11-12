@@ -40,6 +40,7 @@ dependencies:
   update_app: ^0.1.5
   base58check: ^1.0.1
   package_info: ^0.4.0+16
+  quiver: ^2.1.5
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

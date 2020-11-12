@@ -42,6 +42,11 @@ class Fmt {
     return DateFormat('yyyy-MM-dd hh:mm').format(time);
   }
 
+  static String hhmmss(int seconds) {
+    Duration d = Duration(seconds: seconds);
+    return d.toString().split('.').first.padLeft(8, "0");
+  }
+
   /// number transform 1:
   /// from raw <String> of Api data to <BigInt>
   static BigInt balanceInt(String raw) {

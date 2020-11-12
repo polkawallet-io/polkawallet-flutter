@@ -283,6 +283,12 @@ class Api {
     }
   }
 
+  Future<bool> isConnected() async {
+    bool connected = await evalJavascript('settings.isConnected()');
+    print("Api is connected: $connected");
+    return connected;
+  }
+
   Future<void> closeWebView() async {
     print("closing webview");
     if (_web != null) {
@@ -291,7 +297,6 @@ class Api {
     } else {
       print("was null already");
     }
-
   }
 
   Future<List> getExternalLinks(GenExternalLinksParams params) async {

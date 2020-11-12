@@ -1,9 +1,9 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:encointer_wallet/service/substrateApi/encointer/apiEncointer.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/attestation.dart';
 import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 
 import 'data/mockEncointerData.dart';
 
@@ -40,7 +40,7 @@ MockApiEncointer getMockApiEncointer() {
   when(apiEncointer.getCurrencyIdentifiers()).thenAnswer((invocation) {
     return Future.value(currencyIdentifiers);
   });
-  when(apiEncointer.getClaimOfAttendanceHex(any)).thenAnswer((invocation) {
+  when(apiEncointer.createClaimOfAttendance(any)).thenAnswer((invocation) {
     return Future.value(claimHex);
   });
   when(apiEncointer.parseAttestation(any)).thenAnswer((invocation) {

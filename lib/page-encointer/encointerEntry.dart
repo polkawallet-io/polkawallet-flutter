@@ -2,6 +2,7 @@ import 'package:encointer_wallet/page-encointer/common/currencyChooserPanel.dart
 import 'package:encointer_wallet/page-encointer/phases/assigning/assigningPage.dart';
 import 'package:encointer_wallet/page-encointer/phases/attesting/attestingPage.dart';
 import 'package:encointer_wallet/page-encointer/phases/registering/registeringPage.dart';
+import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
@@ -28,7 +29,7 @@ class EncointerEntry extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    dic['encointer'] ?? 'Encointer Ceremony',
+                    dic['encointer'],
                     style: TextStyle(
                       fontSize: 20,
                       color: Theme.of(context).cardColor,
@@ -38,10 +39,6 @@ class EncointerEntry extends StatelessWidget {
                 ],
               ),
             ),
-            //Expanded(
-            //    child: Observer(
-            //        builder: (_) =>
-            //            Text(store.encointer.currentPhase.toString()))),
             PhaseAwareBox(store)
           ],
         ),
@@ -65,24 +62,21 @@ class _PhaseAwareBoxState extends State<PhaseAwareBox> with SingleTickerProvider
   _PhaseAwareBoxState(this.store);
 
   final AppStore store;
+  bool appConnected = false;
 
-  TabController _tabController;
-  int _txsPage = 0;
-  bool _isLastPage = false;
-  ScrollController _scrollController;
-
-  Future<void> _refreshData() async {
-    setState(() {
-      _txsPage = 0;
-      _isLastPage = false;
-    });
+  @override
+  void initState() {
+    _checkConnectionState();
+    super.initState();
   }
 
   @override
   void dispose() {
-    //print("stopping subscriptions");
-    //webApi.encointer.stopSubscriptions();
     super.dispose();
+  }
+
+  _checkConnectionState() async {
+    appConnected = await webApi.isConnected();
   }
 
   @override
@@ -99,7 +93,9 @@ class _PhaseAwareBoxState extends State<PhaseAwareBox> with SingleTickerProvider
                     SizedBox(
                       height: 16,
                     ),
-                    Observer(builder: (_) => _getPhaseView(store.encointer.currentPhase))
+                    appConnected
+                        ? Observer(builder: (_) => _getPhaseView(store.encointer.currentPhase))
+                        : _getPhaseViewOffline(),
                   ])
                 : CupertinoActivityIndicator()
           ],
@@ -119,6 +115,19 @@ class _PhaseAwareBoxState extends State<PhaseAwareBox> with SingleTickerProvider
         return AssigningPage(store);
       case CeremonyPhase.ATTESTING:
         return AttestingPage(store);
+    }
+  }
+
+  Widget _getPhaseViewOffline() {
+    if (store.encointer.meetupIndex == null || store.encointer.meetupIndex == 0) {
+      return RegisteringPage(store);
+    } else {
+      int timeToMeetup = store.encointer.getTimeToMeetup();
+      if (0 < timeToMeetup && timeToMeetup < 10 * 60) {
+        return AssigningPage(store);
+      } else {
+        return AttestingPage(store);
+      }
     }
   }
 }

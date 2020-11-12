@@ -1,8 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/TapTooltip.dart';
 import 'package:encointer_wallet/common/components/addressFormItem.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
@@ -15,6 +12,9 @@ import 'package:encointer_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 // TODO: Add biometrics
 class TxConfirmPage extends StatefulWidget {
@@ -32,6 +32,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
   final AppStore store;
 
+  bool appConnected = true;
+
   Map _fee = {};
   double _tip = 0;
   BigInt _tipValue = BigInt.zero;
@@ -41,6 +43,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     if (_fee['partialFee'] != null && !reload) {
       return _fee['partialFee'].toString();
     }
+
     if (store.account.currentAccount.observation ?? false) {
       webApi.account.queryRecoverable(store.account.currentAddress);
     }
@@ -187,17 +190,6 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
 
     store.assets.setSubmitting(true);
     store.account.setTxStatus('queued');
-    Scaffold.of(context).showSnackBar(SnackBar(
-      backgroundColor: Theme.of(context).cardColor,
-      content: ListTile(
-        leading: CupertinoActivityIndicator(),
-        title: Text(
-          dic['tx.${store.account.txStatus}'] ?? dic['tx.queued'],
-          style: TextStyle(color: Colors.black54),
-        ),
-      ),
-      duration: Duration(minutes: 5),
-    ));
 
     Map txInfo = args['txInfo'];
     txInfo['pubKey'] = store.account.currentAccount.pubKey;
@@ -211,12 +203,34 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     print(txInfo);
     print(args['params']);
 
-    final Map res = viaQr ? await _sendTxViaQr(context, args) : await _sendTx(context, args);
-    if (res['hash'] == null) {
-      _onTxError(context, res['error']);
+    if (await webApi.isConnected()) {
+      _showTxStatusSnackbar(
+          context, dic['tx.${store.account.txStatus}'] ?? dic['tx.queued'], CupertinoActivityIndicator());
+      final Map res = viaQr ? await _sendTxViaQr(context, args) : await _sendTx(context, args);
+      if (res['hash'] == null) {
+        _onTxError(context, res['error']);
+      } else {
+        _onTxFinish(context, res);
+      }
     } else {
-      _onTxFinish(context, res);
+      _showTxStatusSnackbar(context, dic['tx.queued.offline'], null);
+      args['notificationTitle'] = I18n.of(context).home['notify.submitted.queued'];
+      store.account.queueTx(args);
     }
+  }
+
+  void _showTxStatusSnackbar(BuildContext context, String status, Widget leading) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      backgroundColor: Theme.of(context).cardColor,
+      content: ListTile(
+        leading: leading,
+        title: Text(
+          status,
+          style: TextStyle(color: Colors.black54),
+        ),
+      ),
+      duration: Duration(minutes: 5),
+    ));
   }
 
   Future<Map> _sendTx(BuildContext context, Map args) async {
@@ -264,6 +278,14 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   @override
   void initState() {
     super.initState();
+    _checkConnectionState();
+  }
+
+  Future<void> _checkConnectionState() async {
+    bool isConnected = await webApi.isConnected();
+    setState(() {
+      appConnected = isConnected;
+    });
   }
 
   @override
@@ -376,39 +398,45 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                                     dic["submit.fees"],
                                   ),
                                 ),
-                                FutureBuilder<String>(
-                                  future: _getTxFee(),
-                                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                                    if (snapshot.hasData) {
-                                      String fee = Fmt.balance(
-                                        _fee['partialFee'].toString(),
-                                        decimals,
-                                        length: 6,
-                                      );
-                                      return Container(
+                                appConnected
+                                    ? FutureBuilder<String>(
+                                        future: _getTxFee(),
+                                        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                          if (snapshot.hasData) {
+                                            String fee = Fmt.balance(
+                                              _fee['partialFee'].toString(),
+                                              decimals,
+                                              length: 6,
+                                            );
+                                            return Container(
+                                              margin: EdgeInsets.only(top: 8),
+                                              width: MediaQuery.of(context).copyWith().size.width - 120,
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                    '$fee $tokenView',
+                                                  ),
+                                                  Text(
+                                                    '${_fee['weight']} Weight',
+                                                    style: TextStyle(
+                                                      fontSize: 13,
+                                                      color: Theme.of(context).unselectedWidgetColor,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          } else {
+                                            return CupertinoActivityIndicator();
+                                          }
+                                        },
+                                      )
+                                    : Container(
                                         margin: EdgeInsets.only(top: 8),
                                         width: MediaQuery.of(context).copyWith().size.width - 120,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              '$fee $tokenView',
-                                            ),
-                                            Text(
-                                              '${_fee['weight']} Weight',
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                color: Theme.of(context).unselectedWidgetColor,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    } else {
-                                      return CupertinoActivityIndicator();
-                                    }
-                                  },
-                                ),
+                                        child: Text(dic['submit.fees.offline']),
+                                      ),
                               ],
                             ),
                           ),
@@ -485,7 +513,9 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                             ? () => _onSubmit(context)
                             : (isObservation && _proxyAccount == null) || isProxyObservation
                                 ? () => _onSubmit(context, viaQr: true)
-                                : store.assets.submitting ? null : () => _showPasswordDialog(context),
+                                : store.assets.submitting
+                                    ? null
+                                    : () => _showPasswordDialog(context),
                       ),
                     ),
                   ),
