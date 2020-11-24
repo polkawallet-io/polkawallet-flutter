@@ -26,7 +26,7 @@ class TransferDetailPage extends StatelessWidget {
         : dic['receive'];
 
     return TxDetail(
-      success: true,
+      success: tx.success,
       action: txType,
       eventId: tx.extrinsicIndex,
       hash: tx.hash,

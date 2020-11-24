@@ -39,6 +39,10 @@ class _CandidateList extends State<CandidateListPage> {
         _notSelected.add(i);
         _selectedMap[i[0]] = false;
       });
+      store.gov.council.candidates.forEach((i) {
+        _notSelected.add([i, '0']);
+        _selectedMap[i] = false;
+      });
     });
   }
 

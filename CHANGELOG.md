@@ -1,3 +1,9 @@
+# 1.0.8
+- bug fix
+
+# 1.0.8
+- remove Acala candyDrop button
+
 # 1.0.7
 - fix Acala TC5 bugs
 - add Polkadot/Kusama expired democracy unlocking

@@ -48,7 +48,8 @@ class _SetControllerPageState extends State<SetControllerPage> {
       return;
     }
 
-    String address = Fmt.addressOfAccount(_controller, store);
+    String address = Fmt.addressOfAccount(
+        _controller ?? store.account.currentAccount, store);
     Map<String, dynamic> args = {
       "title": I18n.of(context).staking['action.control'],
       "txInfo": {

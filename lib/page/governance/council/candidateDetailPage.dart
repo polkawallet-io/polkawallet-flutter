@@ -49,7 +49,7 @@ class CandidateDetailPage extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(top: 8, bottom: 8),
                         child: Text(
-                            '${Fmt.token(BigInt.parse(info[1]), decimals)} $symbol',
+                            '${Fmt.token(BigInt.parse(info[1].toString()), decimals)} $symbol',
                             style: style),
                       ),
                       Text(dic['backing'])

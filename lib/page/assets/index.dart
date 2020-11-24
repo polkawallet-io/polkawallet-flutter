@@ -644,15 +644,6 @@ class _AssetsState extends State<Assets> {
                                   title: I18n.of(context).acala['airdrop'],
                                 ),
                               ),
-                              OutlinedButtonSmall(
-                                content: I18n.of(context).acala['candy.title'],
-                                color: Colors.purple,
-                                active: true,
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pushNamed(CandyClaimPage.route);
-                                },
-                              )
                             ],
                           )
                         : Container(),
