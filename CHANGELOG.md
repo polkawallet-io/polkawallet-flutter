@@ -1,3 +1,7 @@
+# 0.9.2
+- upgrade to post-2.0.0 Gesell runtime V6
+- add Bazaar PoC
+
 # 0.9.1
 - prevent non-digits in PIN entry
 - improve tx history
