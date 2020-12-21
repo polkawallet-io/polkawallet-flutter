@@ -36,6 +36,7 @@ class Api {
   Map<String, Function> _msgHandlers = {};
   Map<String, Completer> _msgCompleters = {};
   FlutterWebviewPlugin _web;
+
   int _evalJavascriptUID = 0;
 
   Function _connectFunc;
@@ -48,6 +49,8 @@ class Api {
     encointer = ApiEncointer(this);
 
     assets = ApiAssets(this);
+
+    //ipfs = ApiIpfs(this);
 
     print("first launch of webview");
     await launchWebview();

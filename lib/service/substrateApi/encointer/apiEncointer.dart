@@ -30,6 +30,7 @@ class ApiEncointer {
   final String _participantIndexChannel = 'participantIndex';
   final String _currencyIdentifiersChannel = 'currencyIdentifiers';
   final String _encointerBalanceChannel = 'encointerBalance';
+  final String _shopRegistryChannel = 'shopRegistry';
 
   Future<void> startSubscriptions() async {
     print("api: starting encointer subscriptions");
@@ -37,6 +38,7 @@ class ApiEncointer {
     this.subscribeCurrentPhase();
     this.subscribeCurrencyIdentifiers();
     this.subscribeEncointerBalance();
+    this.subscribeShopRegistry();
   }
 
   Future<void> stopSubscriptions() async {
@@ -46,6 +48,7 @@ class ApiEncointer {
     apiRoot.unsubscribeMessage(_participantIndexChannel);
     apiRoot.unsubscribeMessage(_currencyIdentifiersChannel);
     apiRoot.unsubscribeMessage(_encointerBalanceChannel);
+    apiRoot.unsubscribeMessage(_shopRegistryChannel);
   }
 
   Future<CeremonyPhase> getCurrentPhase() async {
@@ -217,6 +220,21 @@ class ApiEncointer {
     );
   }
 
+  Future<void> subscribeShopRegistry() async {
+    // try to unsubscribe first in case parameters have changed
+    if (store.encointer.shopRegistry != null) {
+      apiRoot.unsubscribeMessage(_shopRegistryChannel);
+    }
+    String cid = store.encointer.chosenCid;
+    if (cid == null) {
+      return 0; // zero means: not registered
+    }
+    apiRoot.subscribeMessage('encointer.subscribeShopRegistry("$_shopRegistryChannel", "$cid")', _shopRegistryChannel,
+        (data) {
+      store.encointer.setShopRegistry(data.cast<String>());
+    });
+  }
+
   Future<List<String>> getCurrencyIdentifiers() async {
     Map<String, dynamic> res = await apiRoot.evalJavascript('encointer.getCurrencyIdentifiers()');
 
@@ -291,5 +309,21 @@ class ApiEncointer {
     var cid = store.encointer.chosenCid;
     var balance = await apiRoot.evalJavascript('worker.getBalance("$pubKey", "$cid", "123qwe")');
     print("balance: " + balance);
+  }
+
+  // not yet used
+  Future<List<String>> getShopRegistry() async {
+    String cid = store.encointer.chosenCid;
+
+    Map<String, dynamic> res = await apiRoot.evalJavascript('encointer.getShopRegistry("$cid")');
+
+    List<String> shops = new List<String>();
+    res['shops'].forEach((e) {
+      shops.add(e.toString());
+    });
+
+    print("SHOPS: " + shops.toString());
+    store.encointer.setShopRegistry(shops);
+    return shops;
   }
 }

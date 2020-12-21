@@ -16,7 +16,9 @@ EndpointData networkEndpointEncointerGesellDev = EndpointData.fromJson(const {
   'text': 'Encointer Gesell Local Devnet',
   // 'value': 'ws://192.168.1.36:9941',
   // 'value': 'ws://192.168.1.24:9944',
-  'value': 'ws://127.0.0.1:9944',
+  //'value': 'ws://127.0.0.1:9944',
+  'value': 'ws://10.0.2.2:9994', // AVD
+  //'value': 'ws://172.20.4.143:9994',
 });
 
 EndpointData networkEndpointEncointerCantillon = EndpointData.fromJson(const {
@@ -40,6 +42,8 @@ const network_ss58_map = {
   'nctr-gsl-dev': 42,
   'substrate': 42,
 };
+
+const String ipfs_gateway_address = "http://ipfs.encointer.org:8080"; // AVD: 10.0.2.2 = 127.0.0.1
 
 const int ert_decimals = 12;
 const int encointer_currencies_decimals = 18;

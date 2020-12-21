@@ -32,8 +32,8 @@ abstract class _EncointerStore with Store {
 
   // Note: In synchronous code, every modification of an @obervable is tracked by mobx and
   // fires a reaction. However, modifications in asynchronous code must be wrapped in
-  // a @action block to fire a reaction.
-
+  // a @action block to fire a reaction
+  // .
   @observable
   var timeStamp;
 
@@ -84,6 +84,9 @@ abstract class _EncointerStore with Store {
 
   @observable
   ObservableList<TransferData> txsTransfer = ObservableList<TransferData>();
+
+  @observable
+  List<String> shopRegistry;
 
   @action
   void setCurrentPhase(CeremonyPhase phase) {
@@ -305,7 +308,6 @@ abstract class _EncointerStore with Store {
       print("found cached choice of cid. will recover it: " + data.toString());
       setChosenCid(data);
     }
-
     // get meetup related data
     data = await loadObject(encointerAttestationsKey);
     if (data != null) {
@@ -326,6 +328,11 @@ abstract class _EncointerStore with Store {
     }
 
     meetupTime = await loadObject(encointerMeetupTimeKey);
+  }
+
+  @action
+  void setShopRegistry(List<String> shops) {
+    shopRegistry = shops;
   }
 
   Future<void> cacheObject(String key, value) {
