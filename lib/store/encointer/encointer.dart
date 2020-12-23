@@ -85,6 +85,7 @@ abstract class _EncointerStore with Store {
   @observable
   ObservableList<TransferData> txsTransfer = ObservableList<TransferData>();
 
+  // not working as obsverable (no item change registered -> if necessary change to ObservableList)
   @observable
   List<String> shopRegistry;
 
@@ -210,6 +211,7 @@ abstract class _EncointerStore with Store {
   void setChosenCid(String cid) {
     if (chosenCid != cid) {
       chosenCid = cid;
+      webApi.encointer.subscribeShopRegistry();
       cacheObject(encointerCurrencyKey, cid);
       // update depending values without awaiting
       if (!rootStore.settings.loading) {
@@ -333,6 +335,10 @@ abstract class _EncointerStore with Store {
   @action
   void setShopRegistry(List<String> shops) {
     shopRegistry = shops;
+  }
+
+  Future<void> reloadShopRegistry() async {
+    await webApi.encointer.getShopRegistry();
   }
 
   Future<void> cacheObject(String key, value) {

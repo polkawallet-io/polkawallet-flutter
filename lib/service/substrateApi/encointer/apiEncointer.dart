@@ -227,7 +227,7 @@ class ApiEncointer {
     }
     String cid = store.encointer.chosenCid;
     if (cid == null) {
-      return 0; // zero means: not registered
+      return; // zero means: not registered
     }
     apiRoot.subscribeMessage('encointer.subscribeShopRegistry("$_shopRegistryChannel", "$cid")', _shopRegistryChannel,
         (data) {
@@ -311,19 +311,16 @@ class ApiEncointer {
     print("balance: " + balance);
   }
 
-  // not yet used
-  Future<List<String>> getShopRegistry() async {
+  Future<void> getShopRegistry() async {
     String cid = store.encointer.chosenCid;
 
-    Map<String, dynamic> res = await apiRoot.evalJavascript('encointer.getShopRegistry("$cid")');
+    if (cid == null) {
+      return;
+    }
+    List<dynamic> res = await apiRoot.evalJavascript('encointer.getShopRegistry("$cid")');
 
-    List<String> shops = new List<String>();
-    res['shops'].forEach((e) {
-      shops.add(e.toString());
-    });
+    List<String> shops = res.cast<String>();
 
-    print("SHOPS: " + shops.toString());
     store.encointer.setShopRegistry(shops);
-    return shops;
   }
 }

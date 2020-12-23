@@ -1,3 +1,5 @@
+// Currently obsolete - not being deleted due to the idea of "offline state" of shops. Realisable?
+
 import 'package:encointer_wallet/page-encointer/common/currencyChooserPanel.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopOverviewPanel.dart';
 import 'package:encointer_wallet/store/app.dart';
