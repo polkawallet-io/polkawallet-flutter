@@ -35,6 +35,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     networkEndpointKusama,
     networkEndpointAcala,
     networkEndpointLaminar,
+    networkEndpointEdgeware,
   ];
 
   EndpointData _selectedNetwork;
@@ -252,6 +253,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
                           if (!isCurrent) {
                             setState(() {
                               _selectedNetwork = i;
+                              _reloadNetwork();
                             });
                           }
                         },

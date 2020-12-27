@@ -51,7 +51,8 @@ class ApiAssets {
 
   Future<void> _fetchMarketPrice() async {
     if (store.settings.endpoint.info == network_name_kusama ||
-        store.settings.endpoint.info == network_name_polkadot) {
+        store.settings.endpoint.info == network_name_polkadot ||
+        store.settings.endpoint.info == network_name_edgeware) {
       final Map res = await webApi.subScanApi
           .fetchTokenPriceAsync(store.settings.endpoint.info);
       if (res['token'] == null) {

@@ -208,6 +208,12 @@ class Fmt {
     return reg.hasMatch(hex);
   }
 
+  static String amountToFullDecimalIntString(String amount, int decimals) {
+    String s = (double.parse(amount.trim()) * pow(10, decimals)).toString();
+    if (s.endsWith(".0")) return s.substring(0, s.length - 2);
+    return s;
+  }
+
   static bool checkPassword(String pass) {
     var reg = RegExp(r'^(?![0-9]+$)(?![a-zA-Z]+$)[\S]{6,20}$');
     return reg.hasMatch(pass);

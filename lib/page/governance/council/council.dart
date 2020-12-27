@@ -46,7 +46,9 @@ class _CouncilState extends State<Council> {
     var args = {
       "title": govDic['vote.remove'],
       "txInfo": {
-        "module": 'electionsPhragmen',
+        "module": store.settings.endpoint.info == networkEndpointEdgeware.info
+            ? 'elections'
+            : 'electionsPhragmen',
         "call": 'removeVoter',
       },
       "detail": '{}',

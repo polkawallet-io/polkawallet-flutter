@@ -152,13 +152,13 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
     bool hashData = store.staking.ownStashInfo != null &&
         store.staking.ownStashInfo.stakingLedger != null;
 
-    int bonded = 0;
+    BigInt bonded = BigInt.zero;
     List nominators = [];
     double nominatorListHeight = 48;
     bool isController = false;
     bool isStash = true;
     if (hashData) {
-      bonded = store.staking.ownStashInfo.stakingLedger['active'];
+      bonded = BigInt.parse(store.staking.ownStashInfo.stakingLedger['active']);
       nominators = store.staking.ownStashInfo.nominating.toList();
       if (nominators.length > 0) {
         nominatorListHeight = double.parse((nominators.length * 56).toString());
@@ -247,7 +247,7 @@ class _StakingOverviewPageState extends State<StakingOverviewPage>
                               )
                             ],
                           ),
-                          onTap: bonded > 0
+                          onTap: bonded > BigInt.zero
                               ? _onSetPayee
                               : () => _goToBond(bondExtra: true),
                         ),

@@ -38,7 +38,9 @@ class _ProposalsState extends State<SpendProposals> {
       final int period =
           widget.store.settings.networkConst['treasury']['spendPeriod'];
       final int blockTime =
-          widget.store.settings.networkConst['babe']['expectedBlockTime'];
+          widget.store.settings.networkConst.containsKey('babe')
+              ? widget.store.settings.networkConst['babe']['expectedBlockTime']
+              : 6000;
       spendDays = period * (blockTime ~/ 1000) ~/ SECONDS_OF_DAY;
     }
     return spendDays;

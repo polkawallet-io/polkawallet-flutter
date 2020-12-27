@@ -128,8 +128,11 @@ class _DemocracyState extends State<Democracy> {
                             symbol: symbol,
                             decimals: decimals,
                             onCancelVote: _submitCancelVote,
-                            blockDuration: store.settings.networkConst['babe']
-                                ['expectedBlockTime'],
+                            blockDuration: widget.store.settings.networkConst
+                                    .containsKey('babe')
+                                ? widget.store.settings.networkConst['babe']
+                                    ['expectedBlockTime']
+                                : 6000,
                             links: FutureBuilder(
                               future: _getExternalLinks(list[i].index),
                               builder: (_, AsyncSnapshot snapshot) {

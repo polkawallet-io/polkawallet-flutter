@@ -18,6 +18,7 @@ before_script:
   - cd ./lib/js_service_kusama && npm install && npm run build && cd ../..
   - cd ./lib/js_service_acala && npm install && npm run build && cd ../..
   - cd ./lib/js_service_laminar && npm install && npm run build && cd ../..
+  - cd ./lib/js_service_edgeware && npm install && npm run build && cd ../..
   - cd ./lib/js_as_extension && npm install && npm run build && cd ../..
 script:
   - ./flutter/bin/flutter test

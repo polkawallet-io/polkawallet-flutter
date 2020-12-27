@@ -97,6 +97,7 @@ flutter:
     - lib/js_service_kusama/dist/main.js
     - lib/js_service_acala/dist/main.js
     - lib/js_service_laminar/dist/main.js
+    - lib/js_service_edgeware/dist/main.js
     - lib/js_as_extension/dist/main.js
 
     # images
@@ -109,6 +110,8 @@ flutter:
     - assets/images/public/acala_gray.png
     - assets/images/public/laminar-turbulence.png
     - assets/images/public/laminar-turbulence_gray.png
+    - assets/images/public/edgeware.png
+    - assets/images/public/edgeware_gray.png
     - assets/images/assets/ACA.png
     - assets/images/assets/LAMI.png
     - assets/images/assets/AUSD.png
@@ -116,6 +119,7 @@ flutter:
     - assets/images/assets/RENBTC.png
     - assets/images/assets/LDOT.png
     - assets/images/assets/KAR.png
+    - assets/images/assets/EDG.png
     - assets/images/assets/scanner.png
     ## images - acala
     - assets/images/assets/scanner_indigo.png
@@ -159,6 +163,17 @@ flutter:
     - assets/images/assets/plus_black.png
     - assets/images/assets/receive_line_black.png
     - assets/images/staking/top_bg_black.png
+    ## images - edgeware
+    - assets/images/assets/scanner_green.png
+    - assets/images/public/Assets_green.png
+    - assets/images/public/Governance_green.png
+    - assets/images/public/Profile_green.png
+    - assets/images/public/Staking_green.png
+    - assets/images/assets/top_bg_green.png
+    - assets/images/assets/qrcode_green.png
+    - assets/images/assets/plus_green.png
+    - assets/images/assets/receive_line_green.png
+    - assets/images/staking/top_bg_green.png
     ## images - polkadot
     - assets/images/assets/scanner_pink.png
     - assets/images/public/app.png

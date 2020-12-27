@@ -7,6 +7,7 @@ import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/governance/council/council.dart';
 import 'package:polka_wallet/page/governance/council/councilPage.dart';
@@ -106,8 +107,9 @@ class _MotionDetailPageState extends State<MotionDetailPage> {
       builder: (BuildContext context) {
         int blockTime = 6000;
         if (widget.store.settings.networkConst['treasury'] != null) {
-          blockTime =
-              widget.store.settings.networkConst['babe']['expectedBlockTime'];
+          blockTime = widget.store.settings.networkConst.containsKey('babe')
+              ? widget.store.settings.networkConst['babe']['expectedBlockTime']
+              : 6000;
         }
         List<List<String>> params = [];
         motion.proposal.meta.args.asMap().forEach((k, v) {

@@ -105,9 +105,8 @@ class _UnBondPageState extends State<UnBondPage> {
                         }),
                         "params": [
                           // "amount"
-                          (double.parse(_amountCtrl.text.trim()) *
-                                  pow(10, decimals))
-                              .toInt(),
+                          Fmt.amountToFullDecimalIntString(
+                              _amountCtrl.text, decimals),
                         ],
                         'onFinish': (BuildContext txPageContext, Map res) {
                           Navigator.popUntil(

@@ -44,7 +44,10 @@ class CandidateDetailPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      AccountInfo(accInfo: accInfo, address: info[0]),
+                      AccountInfo(
+                          accInfo: accInfo,
+                          address: info[0],
+                          network: store.settings.networkName),
                       Divider(),
                       Padding(
                         padding: EdgeInsets.only(top: 8, bottom: 8),
