@@ -34,8 +34,8 @@ Polkawallet is aiming to provide a more convenient entrance of the polkadot netw
 
 ### Todos
 
-- [ ] Login polkassembly with a wallet account.
-- [ ] Refactor the App to support any Substrate-based-blockchain to integrate as plugins.
+- [x] Login polkassembly with a wallet account.
+- [x] Refactor the App to support any Substrate-based-blockchain to integrate as plugins. <https://github.com/polkawallet-io/app>.
 
 ### Building
 
