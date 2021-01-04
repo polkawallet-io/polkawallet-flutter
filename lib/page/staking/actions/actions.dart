@@ -302,8 +302,9 @@ class _StakingActions extends State<StakingActions>
                   accountId: store.account.currentAddress,
                   stashInfo: store.staking.ownStashInfo,
                   decimals: decimals,
-                  blockDuration: store.settings.networkConst['babe']
-                      ['expectedBlockTime'],
+                  blockDuration: store.settings.networkConst.containsKey('babe')
+                      ? store.settings.networkConst['babe']['expectedBlockTime']
+                      : 6000,
                   bonded: bonded,
                   unlocking: unlocking,
                   redeemable: redeemable,

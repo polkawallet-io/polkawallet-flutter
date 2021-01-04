@@ -43,7 +43,7 @@ class _BondPageState extends State<BondPage> {
       String controllerId = store.account.currentAddress;
       if (_controller != null) {
         controllerId = store.account
-            .pubKeyAddressMap[store.settings.endpoint.info][_controller.pubKey];
+            .pubKeyAddressMap[store.settings.endpoint.ss58][_controller.pubKey];
       }
 
       var args = {
@@ -60,7 +60,7 @@ class _BondPageState extends State<BondPage> {
           // "controllerId":
           controllerId,
           // "amount":
-          (double.parse(_amountCtrl.text.trim()) * pow(10, decimals)).toInt(),
+          Fmt.amountToFullDecimalIntString(_amountCtrl.text, decimals),
           // "to"
           _rewardTo,
         ],

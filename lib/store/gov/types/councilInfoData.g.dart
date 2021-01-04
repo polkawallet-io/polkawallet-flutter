@@ -10,13 +10,13 @@ CouncilInfoData _$CouncilInfoDataFromJson(Map<String, dynamic> json) {
   return CouncilInfoData()
     ..desiredSeats = json['desiredSeats'] as int
     ..termDuration = json['termDuration'] as int
-    ..votingBond = json['votingBond'] as int
+    ..votingBond = json['votingBond'] as String
     ..members = (json['members'] as List)?.map((e) => e as List)?.toList()
     ..runnersUp = (json['runnersUp'] as List)?.map((e) => e as List)?.toList()
     ..candidates =
         (json['candidates'] as List)?.map((e) => e as String)?.toList()
     ..candidateCount = json['candidateCount'] as int
-    ..candidacyBond = json['candidacyBond'] as int;
+    ..candidacyBond = json['candidacyBond'] as String;
 }
 
 Map<String, dynamic> _$CouncilInfoDataToJson(CouncilInfoData instance) =>

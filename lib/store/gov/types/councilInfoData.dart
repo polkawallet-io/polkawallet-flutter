@@ -13,12 +13,12 @@ class CouncilInfoData extends _CouncilInfoData {
 abstract class _CouncilInfoData {
   int desiredSeats;
   int termDuration;
-  int votingBond;
+  String votingBond; //can overflow int
 
   List<List<dynamic>> members;
   List<List<dynamic>> runnersUp;
   List<String> candidates;
 
   int candidateCount;
-  int candidacyBond;
+  String candidacyBond; //can overflow int
 }

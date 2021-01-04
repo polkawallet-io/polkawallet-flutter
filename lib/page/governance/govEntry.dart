@@ -112,23 +112,24 @@ class GovEntry extends StatelessWidget {
                               .pushNamed(TreasuryPage.route),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 16),
-                        child: GestureDetector(
-                          child: EntryPageCard(
-                            'Polkassembly',
-                            dic['polkassembly'],
-                            Image.asset(
-                              'assets/images/gov/polkassembly.png',
-                              width: 56,
+                      if (store.settings.endpoint.info != network_name_edgeware)
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 16),
+                          child: GestureDetector(
+                            child: EntryPageCard(
+                              'Polkassembly',
+                              dic['polkassembly'],
+                              Image.asset(
+                                'assets/images/gov/polkassembly.png',
+                                width: 56,
+                              ),
+                              color: Colors.black87,
                             ),
-                            color: Colors.black87,
+                            onTap: () => Navigator.of(context).pushNamed(
+                                DAppWrapperPage.route,
+                                arguments: 'https://$network.polkassembly.io/'),
                           ),
-                          onTap: () => Navigator.of(context).pushNamed(
-                              DAppWrapperPage.route,
-                              arguments: 'https://$network.polkassembly.io/'),
                         ),
-                      ),
                     ],
                   );
                 },

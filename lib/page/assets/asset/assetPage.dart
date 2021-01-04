@@ -88,7 +88,8 @@ class _AssetPageState extends State<AssetPage>
     Map res = {"transfers": []};
 
     if (store.settings.endpoint.info == networkEndpointKusama.info ||
-        store.settings.endpoint.info == networkEndpointPolkadot.info) {
+        store.settings.endpoint.info == networkEndpointPolkadot.info ||
+        store.settings.endpoint.info == networkEndpointEdgeware.info) {
       webApi.staking.fetchAccountStaking();
       _queryDemocracyUnlocks();
     }
@@ -254,7 +255,8 @@ class _AssetPageState extends State<AssetPage>
 
             String tokenPrice;
             if ((store.settings.endpoint.info == network_name_polkadot ||
-                    store.settings.endpoint.info == network_name_kusama) &&
+                    store.settings.endpoint.info == network_name_kusama ||
+                    store.settings.endpoint.info == network_name_edgeware) &&
                 store.assets.marketPrices[symbol] != null &&
                 balancesInfo != null) {
               tokenPrice = (store.assets.marketPrices[symbol] *

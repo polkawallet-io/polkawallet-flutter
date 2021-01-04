@@ -13,7 +13,8 @@ const prefixList = [
   default_ss58_prefix,
   {'info': 'substrate', 'text': 'Substrate (development)', 'value': 42},
   {'info': 'kusama', 'text': 'Kusama (canary)', 'value': 2},
-  {'info': 'polkadot', 'text': 'Polkadot (live)', 'value': 0}
+  {'info': 'polkadot', 'text': 'Polkadot (live)', 'value': 0},
+  {'info': 'edgeware', 'text': 'Edgeware (mainnet)', 'value': 7}
 ];
 
 class SS58PrefixListPage extends StatelessWidget {

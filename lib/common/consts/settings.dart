@@ -4,6 +4,7 @@ const String network_name_kusama = 'kusama';
 const String network_name_polkadot = 'polkadot';
 const String network_name_acala_mandala = 'acala-mandala';
 const String network_name_laminar_turbulence = 'laminar-turbulence';
+const String network_name_edgeware = 'edgeware';
 
 EndpointData networkEndpointPolkadot = EndpointData.fromJson(const {
   'color': 'pink',
@@ -36,6 +37,14 @@ EndpointData networkEndpointLaminar = EndpointData.fromJson(const {
   'ss58': 42,
   'text': 'Laminar TC2',
   'value': 'wss://node-6729167516986527744.jm.onfinality.io/ws',
+});
+
+EndpointData networkEndpointEdgeware = EndpointData.fromJson(const {
+  'color': 'green',
+  'info': network_name_edgeware,
+  'ss58': 7,
+  'text': 'Edgeware Mainnet #1 (hosted by Commonwealth Labs)',
+  'value': 'wss://mainnet1.edgewa.re/',
 });
 
 List<EndpointData> networkEndpoints = [
@@ -113,6 +122,30 @@ List<EndpointData> networkEndpoints = [
     'text': 'Laminar TC2',
     'value': 'wss://node-6729167516973944832.rz.onfinality.io/ws',
   }),
+  networkEndpointEdgeware,
+  EndpointData.fromJson(const {
+    'color': 'green',
+    'info': network_name_edgeware,
+    'ss58': 7,
+    'text': 'Edgeware Mainnet #2 (hosted by Commonwealth Labs)',
+    'value': 'wss://mainnet2.edgewa.re/',
+  }),
+  networkEndpointEdgeware,
+  EndpointData.fromJson(const {
+    'color': 'green',
+    'info': network_name_edgeware,
+    'ss58': 7,
+    'text': 'Edgeware Mainnet #3 (hosted by Commonwealth Labs)',
+    'value': 'wss://mainnet3.edgewa.re/',
+  }),
+  networkEndpointEdgeware,
+  EndpointData.fromJson(const {
+    'color': 'green',
+    'info': network_name_edgeware,
+    'ss58': 7,
+    'text': 'Edgeware Mainnet #4 (hosted by Commonwealth Labs)',
+    'value': 'wss://mainnet4.edgewa.re/',
+  }),
 ];
 
 const network_ss58_map = {
@@ -121,10 +154,12 @@ const network_ss58_map = {
   'kusama': 2,
   'substrate': 42,
   'polkadot': 0,
+  'edgeware': 7,
 };
 
 const int kusama_token_decimals = 12;
 const int acala_token_decimals = 18;
+const int edgeware_token_decimals = 18;
 
 const int dot_re_denominate_block = 1248328;
 

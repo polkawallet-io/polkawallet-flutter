@@ -113,7 +113,8 @@ class Api {
 
     _web.onStateChanged.listen((viewState) async {
       if (viewState.type == WebViewState.finishLoad) {
-        String network = 'kusama';
+        String network =
+            store.settings.endpoint.info == 'edgeware' ? 'edgeware' : 'kusama';
         if (store.settings.endpoint.info.contains('acala')) {
           network = 'acala';
         } else if (store.settings.endpoint.info.contains('laminar')) {

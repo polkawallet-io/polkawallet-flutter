@@ -36,9 +36,13 @@ class _TreasuryPageState extends State<TreasuryPage> {
   Widget build(BuildContext context) {
     var dic = I18n.of(context).gov;
     var tabs = [dic['treasury'], dic['treasury.tip']];
-    bool isKusama =
-        widget.store.settings.endpoint.info == networkEndpointKusama.info;
-    String imageColor = isKusama ? 'black' : 'pink';
+    String imageColor = networkEndpointKusama.info ==
+            widget.store.settings.endpoint.info
+        ? 'black' //Kusama
+        : networkEndpointEdgeware.info == widget.store.settings.endpoint.info
+            ? 'green' //Edgeware
+            : //Default
+            'pink';
     return BackgroundWrapper(
       AssetImage("assets/images/staking/top_bg_$imageColor.png"),
       Scaffold(

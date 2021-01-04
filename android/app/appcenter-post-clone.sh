@@ -22,6 +22,7 @@ sudo installer -store -pkg "$HOME/Downloads/node-installer.pkg" -target "/"
 cd ./lib/js_service_kusama && yarn install && yarn run build && cd ../..
 cd ./lib/js_service_acala && yarn install && yarn run build && cd ../..
 cd ./lib/js_service_laminar && yarn install && yarn run build && cd ../..
+cd ./lib/js_service_edgeware && yarn install && yarn run build && cd ../..
 cd ./lib/js_as_extension && yarn install && yarn run build && cd ../..
 
 flutter build apk --release --flavor prod

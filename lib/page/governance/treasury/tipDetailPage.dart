@@ -7,6 +7,7 @@ import 'package:polka_wallet/common/components/BorderedTitle.dart';
 import 'package:polka_wallet/common/components/addressIcon.dart';
 import 'package:polka_wallet/common/components/roundedButton.dart';
 import 'package:polka_wallet/common/components/roundedCard.dart';
+import 'package:polka_wallet/common/consts/settings.dart';
 import 'package:polka_wallet/page/account/txConfirmPage.dart';
 import 'package:polka_wallet/page/governance/council/candidateDetailPage.dart';
 import 'package:polka_wallet/page/governance/treasury/treasuryPage.dart';
@@ -240,8 +241,9 @@ class _TipDetailPageState extends State<TipDetailPage> {
     bool isTipped = tipData.tips.length > 0;
     int blockTime = 6000;
     if (widget.store.settings.networkConst['treasury'] != null) {
-      blockTime =
-          widget.store.settings.networkConst['babe']['expectedBlockTime'];
+      blockTime = widget.store.settings.networkConst.containsKey('babe')
+          ? widget.store.settings.networkConst['babe']['expectedBlockTime']
+          : 6000;
     }
 
     final List<BigInt> values =

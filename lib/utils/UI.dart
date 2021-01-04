@@ -50,6 +50,9 @@ class UI {
       {bool autoCheck = false}) async {
     if (versions == null || !Platform.isAndroid && !Platform.isIOS) return;
     String platform = Platform.isAndroid ? 'android' : 'ios';
+    if (null == I18n.of(context)) {
+      return;
+    }
     final Map dic = I18n.of(context).home;
 
     final int latestCode = versions[platform]['version-code'];
