@@ -1377,10 +1377,15 @@
     memoizee "^0.4.14"
     rxjs "^6.6.3"
 
-"@open-web3/orml-type-definitions@^0.6.0-beta.26", "@open-web3/orml-type-definitions@^0.6.0-beta.28":
+"@open-web3/orml-type-definitions@^0.6.0-beta.26":
   version "0.6.0-beta.28"
   resolved "https://registry.yarnpkg.com/@open-web3/orml-type-definitions/-/orml-type-definitions-0.6.0-beta.28.tgz#a2668dc756b3e478e2695e8eeb1af87efe895987"
   integrity sha512-zD5Pb8nWrXETB9bw/TQikh5ZUS6AFDoKWGmirc1Mq2SXsdyypYGQ4r5kSR3ugOQ57AlWBbJPH1c5ccNtMOqNOw==
+
+"@open-web3/orml-type-definitions@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@open-web3/orml-type-definitions/-/orml-type-definitions-0.6.1.tgz#eb7fadf598f24f5024f5d2a1fd39ccc97c801104"
+  integrity sha512-6asf2W/sluGQ6LNiGSdCg/Xop54mq/Q2FcV2Z9cBxys6QC4qXfo4JwUL6kJsRh/vcIIbUxoyGgKUrU/6Xdm7wA==
 
 "@open-web3/orml-types@0.6.0-beta.26":
   version "0.6.0-beta.26"
@@ -1390,11 +1395,11 @@
     "@open-web3/orml-type-definitions" "^0.6.0-beta.26"
 
 "@open-web3/orml-types@^0.6.0-beta.26":
-  version "0.6.0-beta.28"
-  resolved "https://registry.yarnpkg.com/@open-web3/orml-types/-/orml-types-0.6.0-beta.28.tgz#004f14f51a021478999d87385048960c27a91f6f"
-  integrity sha512-f3n/Sgk7p9o+DLWawYKismpvCigLsoUAwkIZtT+VX1jy6mtGZFM5CFvqaGBHjZngZ7hJYlf6Y30TXwRuIKsmlQ==
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@open-web3/orml-types/-/orml-types-0.6.1.tgz#85eca19146d32c8cef0ace07c2aaf0f13ccc0350"
+  integrity sha512-wP0pguZuIrLpjz3TWrvRHFOp62giZIettAIT6ueED6pVUqNXFersrZZis6RmgbRBZggYhD7FgM/Z+DxVsR7HUQ==
   dependencies:
-    "@open-web3/orml-type-definitions" "^0.6.0-beta.28"
+    "@open-web3/orml-type-definitions" "^0.6.1"
 
 "@polkadot/api-derive@^2.5.1":
   version "2.5.1"
@@ -5324,9 +5329,9 @@ inherits@2.0.3:
   integrity sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=
 
 ini@^1.3.4, ini@^1.3.5:
-  version "1.3.5"
-  resolved "https://registry.npm.taobao.org/ini/download/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
-  integrity sha1-7uJfVtscnsYIXgwid4CD9Zar+Sc=
+  version "1.3.8"
+  resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.8.tgz#a29da425b48806f34767a4efce397269af28432c"
+  integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
 
 inquirer-autocomplete-prompt@1.0.1:
   version "1.0.1"
