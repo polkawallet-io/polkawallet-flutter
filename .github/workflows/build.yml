@@ -1,0 +1,36 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: build app
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '12.x'
+    - uses: subosito/flutter-action@v1
+      with:
+        flutter-version: '1.22.4'
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '12'
+    - run: |
+        pushd ./lib/js_service_encointer
+        yarn install
+        yarn run build
+        popd
+    - run: flutter pub get
+    - run: flutter test
+    - run: flutter build apk --flavor fdroid
+
