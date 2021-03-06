@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:encointer_wallet/common/components/TapTooltip.dart';
 import 'package:encointer_wallet/common/components/addressFormItem.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
-import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/page/account/uos/qrSenderPage.dart';
 import 'package:encointer_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';

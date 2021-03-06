@@ -42,6 +42,9 @@ abstract class _AccountStore with Store {
   String txStatus = '';
 
   @observable
+  String cachedPin = '';
+
+  @observable
   AccountCreate newAccount = AccountCreate();
 
   @observable
@@ -117,9 +120,19 @@ abstract class _AccountStore with Store {
   }
 
   @action
+  void setPin(String pin) {
+    cachedPin = pin;
+    if (pin.isNotEmpty) {
+      rootStore.encointer.updateState();
+      webApi.encointer.getEncointerBalance();
+    }
+  }
+
+  @action
   void setNewAccount(String name, String password) {
     newAccount.name = name;
     newAccount.password = password;
+    cachedPin = password;
   }
 
   @action
@@ -172,13 +185,12 @@ abstract class _AccountStore with Store {
 
   @action
   void setCurrentAccount(String pubKey) {
-    currentAccountPubKey = pubKey;
-    rootStore.localStorage.setCurrentAccount(pubKey);
-    // update depending values
+    if (currentAccountPubKey != pubKey) {
+      currentAccountPubKey = pubKey;
+      rootStore.localStorage.setCurrentAccount(pubKey);
+      setPin('');
+    }
     if (!rootStore.settings.loading) {
-      webApi.encointer.getMeetupIndex();
-      webApi.encointer.subscribeParticipantIndex();
-      webApi.encointer.subscribeEncointerBalance();
       webApi.assets.subscribeBalance();
     }
   }

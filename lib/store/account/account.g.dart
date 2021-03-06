@@ -68,6 +68,21 @@ mixin _$AccountStore on _AccountStore, Store {
     });
   }
 
+  final _$cachedPinAtom = Atom(name: '_AccountStore.cachedPin');
+
+  @override
+  String get cachedPin {
+    _$cachedPinAtom.reportRead();
+    return super.cachedPin;
+  }
+
+  @override
+  set cachedPin(String value) {
+    _$cachedPinAtom.reportWrite(value, super.cachedPin, () {
+      super.cachedPin = value;
+    });
+  }
+
   final _$newAccountAtom = Atom(name: '_AccountStore.newAccount');
 
   @override
@@ -220,6 +235,21 @@ mixin _$AccountStore on _AccountStore, Store {
     });
   }
 
+  final _$queuedTxsAtom = Atom(name: '_AccountStore.queuedTxs');
+
+  @override
+  List<Map<String, dynamic>> get queuedTxs {
+    _$queuedTxsAtom.reportRead();
+    return super.queuedTxs;
+  }
+
+  @override
+  set queuedTxs(List<Map<String, dynamic>> value) {
+    _$queuedTxsAtom.reportWrite(value, super.queuedTxs, () {
+      super.queuedTxs = value;
+    });
+  }
+
   final _$updateAccountNameAsyncAction =
       AsyncAction('_AccountStore.updateAccountName');
 
@@ -324,6 +354,17 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
+  void setPin(String pin) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.setPin');
+    try {
+      return super.setPin(pin);
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setNewAccount(String name, String password) {
     final _$actionInfo = _$_AccountStoreActionController.startAction(
         name: '_AccountStore.setNewAccount');
@@ -351,6 +392,17 @@ mixin _$AccountStore on _AccountStore, Store {
         name: '_AccountStore.resetNewAccount');
     try {
       return super.resetNewAccount();
+    } finally {
+      _$_AccountStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void queueTx(Map<String, dynamic> tx) {
+    final _$actionInfo = _$_AccountStoreActionController.startAction(
+        name: '_AccountStore.queueTx');
+    try {
+      return super.queueTx(tx);
     } finally {
       _$_AccountStoreActionController.endAction(_$actionInfo);
     }
@@ -438,6 +490,7 @@ mixin _$AccountStore on _AccountStore, Store {
     return '''
 loading: ${loading},
 txStatus: ${txStatus},
+cachedPin: ${cachedPin},
 newAccount: ${newAccount},
 currentAccountPubKey: ${currentAccountPubKey},
 accountList: ${accountList},
@@ -448,6 +501,7 @@ pubKeyAddressMap: ${pubKeyAddressMap},
 pubKeyIconsMap: ${pubKeyIconsMap},
 addressIconsMap: ${addressIconsMap},
 recoveryInfo: ${recoveryInfo},
+queuedTxs: ${queuedTxs},
 currentAccount: ${currentAccount},
 optionalAccounts: ${optionalAccounts},
 accountListAll: ${accountListAll},

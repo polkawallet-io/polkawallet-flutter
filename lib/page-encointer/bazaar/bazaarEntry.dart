@@ -5,7 +5,7 @@ import 'package:encointer_wallet/page-encointer/bazaar/article/articleCard.dart'
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopCard.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopClass.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopOverviewPanel.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/common/currencyChooserHandler.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/common/communityChooserHandler.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/common/menuHandler.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
@@ -29,10 +29,10 @@ class _BazaarEntryState extends State<BazaarEntry> {
   _BazaarEntryState(this.store);
 
   final AppStore store;
-  Future<void> _chooseCurrency() async {
+  Future<void> _chooseCommunity() async {
     await Navigator.push(
       context,
-      PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => CurrencyChooserHandler(store)),
+      PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => CommunityChooserHandler(store)),
     );
   }
 
@@ -83,7 +83,7 @@ class _BazaarEntryState extends State<BazaarEntry> {
           ),
           title: Text(dic['bazaar.title']),
           centerTitle: true,
-          leading: IconButton(icon: Image.asset('assets/images/assets/ERT.png'), onPressed: () => _chooseCurrency()),
+          leading: IconButton(icon: Image.asset('assets/images/assets/ERT.png'), onPressed: () => _chooseCommunity()),
           actions: <Widget>[
             IconButton(
               icon: Icon(
@@ -105,11 +105,11 @@ class _BazaarEntryState extends State<BazaarEntry> {
                 return store.encointer.balanceEntries[store.encointer.chosenCid] != null
                     ? Stack(children: <Widget>[
                         Text(
-                          Fmt.currencyIdentifier(store.encointer.chosenCid),
+                          Fmt.communityIdentifier(store.encointer.chosenCid),
                           style: TextStyle(fontSize: 12, color: Colors.white),
                         ),
                         GestureDetector(
-                          onTap: () => _chooseCurrency(),
+                          onTap: () => _chooseCommunity(),
                           child: Container(
                             color: Colors.transparent,
                             width: 120,
@@ -118,9 +118,9 @@ class _BazaarEntryState extends State<BazaarEntry> {
                         ),
                       ])
                     : GestureDetector(
-                        onTap: () => _chooseCurrency(),
+                        onTap: () => _chooseCommunity(),
                         child: Text(
-                          dic['currency.load'],
+                          dic['community.load'],
                           style: TextStyle(fontSize: 12, color: Colors.white),
                         ),
                       );

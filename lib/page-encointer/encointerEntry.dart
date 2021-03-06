@@ -1,4 +1,4 @@
-import 'package:encointer_wallet/page-encointer/common/currencyChooserPanel.dart';
+import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
 import 'package:encointer_wallet/page-encointer/phases/assigning/assigningPage.dart';
 import 'package:encointer_wallet/page-encointer/phases/attesting/attestingPage.dart';
 import 'package:encointer_wallet/page-encointer/phases/registering/registeringPage.dart';
@@ -77,6 +77,8 @@ class _PhaseAwareBoxState extends State<PhaseAwareBox> with SingleTickerProvider
 
   _checkConnectionState() async {
     appConnected = await webApi.isConnected();
+
+    setState(() {});
   }
 
   @override
@@ -88,7 +90,7 @@ class _PhaseAwareBoxState extends State<PhaseAwareBox> with SingleTickerProvider
           children: <Widget>[
             (store.encointer.currentPhase != null)
                 ? Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
-                    CurrencyChooserPanel(store),
+                    CommunityChooserPanel(store),
                     //CeremonyOverviewPanel(store),
                     SizedBox(
                       height: 16,

@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopClass.dart';
-import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/config/consts.dart';
 
 class ShopOverviewPanel extends StatefulWidget {
   ShopOverviewPanel(this.store);

@@ -17,9 +17,9 @@ const Map<String, String> enBazaar = {
   'camera.default': 'Camera',
   'gallery.default': 'Gallery',
   'cancel.default': 'Cancel',
-  'currency.choose': 'Choose currency:',
-  'currency.load': 'Loading currency..',
-  'currency.notFound': 'No currency found',
+  'community.choose': 'Choose community:',
+  'community.load': 'Loading community..',
+  'community.notFound': 'No community found',
   'menu': 'Menu',
   'my.shops': 'My shops',
 };

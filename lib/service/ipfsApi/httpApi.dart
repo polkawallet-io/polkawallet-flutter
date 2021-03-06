@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'dart:io';
-import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/config/consts.dart';
 
 class Ipfs {
   Future getJson(String cid) async {

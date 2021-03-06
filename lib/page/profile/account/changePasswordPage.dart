@@ -75,6 +75,7 @@ class _ChangePassword extends State<ChangePasswordPage> {
         store.updateAccount(acc);
         // update encrypted seed after password updated
         store.updateSeed(store.currentAccount.pubKey, _passOldCtrl.text, _passCtrl.text);
+        store.setPin(passNew);
         showCupertinoDialog(
           context: context,
           builder: (BuildContext context) {
@@ -136,9 +137,7 @@ class _ChangePassword extends State<ChangePasswordPage> {
                         return Fmt.checkPassword(v.trim()) ? null : accDic['create.password.error'];
                       },
                       obscureText: true,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
+                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                     ),
                     TextFormField(
                       keyboardType: TextInputType.number,
@@ -152,9 +151,7 @@ class _ChangePassword extends State<ChangePasswordPage> {
                         return Fmt.checkPassword(v.trim()) ? null : accDic['create.password.error'];
                       },
                       obscureText: true,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
+                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                     ),
                     TextFormField(
                       keyboardType: TextInputType.number,
@@ -168,9 +165,7 @@ class _ChangePassword extends State<ChangePasswordPage> {
                         return v.trim() != _passCtrl.text ? accDic['create.password2.error'] : null;
                       },
                       obscureText: true,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
+                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                     ),
                   ],
                 ),

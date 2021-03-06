@@ -6,17 +6,17 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-class CurrencyChooserHandler extends StatefulWidget {
-  CurrencyChooserHandler(this.store);
+class CommunityChooserHandler extends StatefulWidget {
+  CommunityChooserHandler(this.store);
 
   final AppStore store;
 
   @override
-  _CurrencyChooserHandlerState createState() => _CurrencyChooserHandlerState(store);
+  _CommunityChooserHandlerState createState() => _CommunityChooserHandlerState(store);
 }
 
-class _CurrencyChooserHandlerState extends State<CurrencyChooserHandler> {
-  _CurrencyChooserHandlerState(this.store);
+class _CommunityChooserHandlerState extends State<CommunityChooserHandler> {
+  _CommunityChooserHandlerState(this.store);
 
   BuildContext context;
   final AppStore store;
@@ -51,10 +51,10 @@ class _CurrencyChooserHandlerState extends State<CurrencyChooserHandler> {
               padding: EdgeInsets.fromLTRB(10, 10, 100, 50),
               child: RoundedCard(
                 child: Observer(
-                  builder: (_) => (store.encointer.currencyIdentifiers == null)
+                  builder: (_) => (store.encointer.communityIdentifiers == null)
                       ? CupertinoActivityIndicator()
-                      : (store.encointer.currencyIdentifiers.isEmpty)
-                          ? Text(dic['currency.notFound'])
+                      : (store.encointer.communityIdentifiers.isEmpty)
+                          ? Text(dic['community.notFound'])
                           : SingleChildScrollView(
                               child: Column(
                                 children: <Widget>[
@@ -68,7 +68,7 @@ class _CurrencyChooserHandlerState extends State<CurrencyChooserHandler> {
                                       ),
                                       Container(width: 15),
                                       Text(
-                                        dic['currency.choose'],
+                                        dic['community.choose'],
                                       ),
                                     ],
                                   )),
@@ -76,12 +76,12 @@ class _CurrencyChooserHandlerState extends State<CurrencyChooserHandler> {
                                     shrinkWrap: true,
                                     scrollDirection: Axis.vertical,
                                     //padding: const EdgeInsets.all(8.0),
-                                    itemCount: store.encointer.currencyIdentifiers.length,
+                                    itemCount: store.encointer.communityIdentifiers.length,
                                     itemBuilder: (BuildContext context, int index) {
                                       return ListTile(
-                                        title: Text(Fmt.currencyIdentifier(store.encointer.currencyIdentifiers[index])),
+                                        title: Text(Fmt.communityIdentifier(store.encointer.communityIdentifiers[index])),
                                         onTap: () {
-                                          _setStateAndReturn(store.encointer.currencyIdentifiers[index]);
+                                          _setStateAndReturn(store.encointer.communityIdentifiers[index]);
                                         },
                                       );
                                     },

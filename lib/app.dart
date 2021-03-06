@@ -173,7 +173,7 @@ class _WalletAppState extends State<WalletApp> {
         TransferPage.route: (_) => TransferPage(_appStore),
         ReceivePage.route: (_) => ReceivePage(_appStore),
         TransferDetailPage.route: (_) => TransferDetailPage(_appStore),
-        CurrencySelectPage.route: (_) => CurrencySelectPage(),
+        CommunitySelectPage.route: (_) => CommunitySelectPage(),
         // profile
         AccountManagePage.route: (_) => AccountManagePage(_appStore),
         ContactsPage.route: (_) => ContactsPage(_appStore),

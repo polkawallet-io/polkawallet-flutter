@@ -1,6 +1,6 @@
 // Currently obsolete - not being deleted due to the idea of "offline state" of shops. Realisable?
 
-import 'package:encointer_wallet/page-encointer/common/currencyChooserPanel.dart';
+import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopOverviewPanel.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
@@ -74,7 +74,7 @@ class _ShopObserverState extends State<ShopObserver> with SingleTickerProviderSt
       builder: (_) => Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
-            CurrencyChooserPanel(store),
+            CommunityChooserPanel(store),
             // TODO: what to show in case of offline?
             //appConnected ? _getShopView(store.encointer.currentPhase) : _getShopViewOffline(),
             _getShopView(),

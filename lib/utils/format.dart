@@ -28,7 +28,7 @@ class Fmt {
     return addr.substring(0, pad) + '...' + addr.substring(addr.length - pad);
   }
 
-  static String currencyIdentifier(String cid, {int pad = 8}) {
+  static String communityIdentifier(String cid, {int pad = 8}) {
     List<int> cidBytes = hexToBytes(cid);
     Base58Codec codec = Base58Codec(Base58CheckCodec.BITCOIN_ALPHABET);
     var cidBase58 = codec.encode(cidBytes);

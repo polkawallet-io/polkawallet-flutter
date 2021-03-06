@@ -1,38 +1,50 @@
+import 'package:encointer_wallet/config/node.dart';
 import 'package:encointer_wallet/store/settings.dart';
 
 const String network_name_encointer_gesell = 'nctr-gsl';
 const String network_name_encointer_cantillon = 'nctr-ctln';
 
-EndpointData networkEndpointEncointerGesell = EndpointData.fromJson(const {
+EndpointData networkEndpointEncointerGesell = EndpointData.fromJson({
   'info': 'nctr-gsl',
   'ss58': 42,
   'text': 'Encointer Gesell (Hosted by Encointer Association)',
   'value': 'wss://gesell.encointer.org',
+  'overrideConfig': GesellConfig.toJson()
 });
 
-EndpointData networkEndpointEncointerGesellDev = EndpointData.fromJson(const {
+EndpointData networkEndpointEncointerGesellDev = EndpointData.fromJson({
   'info': 'nctr-gsl-dev',
   'ss58': 42,
   'text': 'Encointer Gesell Local Devnet',
-  // 'value': 'ws://192.168.1.36:9941',
-  // 'value': 'ws://192.168.1.24:9944',
-  //'value': 'ws://127.0.0.1:9944',
-  'value': 'ws://10.0.2.2:9994', // AVD
-  //'value': 'ws://172.20.4.143:9994',
+  'value': 'ws://192.168.1.24:9979',  // do not use the docker's address, use the host's
+  'overrideConfig': MasterBranchConfig.toJson()
 });
 
-EndpointData networkEndpointEncointerCantillon = EndpointData.fromJson(const {
+EndpointData networkEndpointEncointerCantillon = EndpointData.fromJson({
   'info': 'nctr-cln',
   'ss58': 42,
   'text': 'Encointer Cantillon (Hosted by Encointer Association)',
   'value': 'wss://cantillon.encointer.org',
-  'worker': 'wss://substratee03.scs.ch'
+  'worker': 'wss://substratee03.scs.ch',
+  'mrenclave': 'CbE3fPWjeYVo9LSNKgPPiCXThFBjfhP1GK6Y9S7t5WVe',
+  'overrideConfig': CantillonConfig.toJson()
+});
+
+EndpointData networkEndpointEncointerCantillonDev = EndpointData.fromJson({
+  'info': 'nctr-cln-dev',
+  'ss58': 42,
+  'text': 'Encointer Cantillon (Hosted by Encointer Association)',
+  'value': 'ws://10.0.0.134:9979', // do not use the docker's address, use the host's
+  'worker': 'ws:/10.0.0.134:2079',
+  'mrenclave': '4SkU25tusVChcrUprW8X22QoEgamCgj3HKQeje7j8Z4E',
+  'overrideConfig': SgxBranchConfig.toJson()
 });
 
 List<EndpointData> networkEndpoints = [
   networkEndpointEncointerGesell,
   networkEndpointEncointerGesellDev,
   networkEndpointEncointerCantillon,
+  networkEndpointEncointerCantillonDev,
 ];
 
 const network_ss58_map = {
@@ -40,6 +52,7 @@ const network_ss58_map = {
   'nctr-gsl': 42,
   'nctr-cln': 42,
   'nctr-gsl-dev': 42,
+  'nctr-cln-dev': 42,
   'substrate': 42,
 };
 

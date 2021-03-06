@@ -103,6 +103,7 @@ class _AttestingPageState extends State<AttestingPage> {
       "txInfo": {
         "module": 'encointerCeremonies',
         "call": 'registerAttestations',
+        "cid": store.encointer.chosenCid,
       },
       "detail": "submitting ${attestations.length} attestations for the recent ceremony ",
       "params": [attestations],

@@ -5,6 +5,7 @@ import 'package:encointer_wallet/page/profile/index.dart';
 import 'package:encointer_wallet/service/notification.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class EncointerHomePage extends StatefulWidget {
@@ -27,12 +28,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
 
   NotificationPlugin _notificationPlugin;
 
-  final List<String> _tabList = [
-    'Wallet',
-    'Bazaar',
-    'Ceremonies',
-    'Profile',
-  ];
+  List<String> _tabList;
   int _tabIndex = 0;
 
   List<BottomNavigationBarItem> _navBarItems(int activeItem) {
@@ -48,15 +44,26 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
   }
 
   Widget _getPage(i) {
-    switch (i) {
-      case 0:
-        return Assets(store);
-      case 1:
-        return BazaarEntry(store);
-      case 2:
-        return EncointerEntry(store);
-      default:
-        return Profile(store);
+    if (store.settings.endpointIsGesell) {
+      switch (i) {
+        case 0:
+          return Assets(store);
+        case 1:
+          return BazaarEntry(store);
+        case 2:
+          return EncointerEntry(store);
+        default:
+          return Profile(store);
+      }
+    } else {
+      switch (i) {
+        case 0:
+          return Assets(store);
+        case 1:
+          return EncointerEntry(store);
+        default:
+          return Profile(store);
+      }
     }
   }
 
@@ -101,7 +108,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
           ],
         );
       }
-      // return staking page
+
       return Stack(
         fit: StackFit.expand,
         children: <Widget>[
@@ -141,6 +148,18 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    _tabList = store.settings.endpointIsGesell
+        ? [
+            'Wallet',
+            'Bazaar',
+            'Ceremonies',
+            'Profile',
+          ]
+        : [
+            'Wallet',
+            'Ceremonies',
+            'Profile',
+          ];
     return Scaffold(
       key: EncointerHomePage.encointerHomePageKey,
       body: PageView(

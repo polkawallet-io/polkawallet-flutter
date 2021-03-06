@@ -29,7 +29,11 @@ EndpointData _$EndpointDataFromJson(Map<String, dynamic> json) {
     ..ss58 = json['ss58'] as int
     ..text = json['text'] as String
     ..value = json['value'] as String
-    ..worker = json['worker'] as String;
+    ..worker = json['worker'] as String
+    ..mrenclave = json['mrenclave'] as String
+    ..overrideConfig = json['overrideConfig'] == null
+        ? null
+        : NodeConfig.fromJson(json['overrideConfig'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$EndpointDataToJson(EndpointData instance) =>
@@ -40,6 +44,8 @@ Map<String, dynamic> _$EndpointDataToJson(EndpointData instance) =>
       'text': instance.text,
       'value': instance.value,
       'worker': instance.worker,
+      'mrenclave': instance.mrenclave,
+      'overrideConfig': instance.overrideConfig?.toJson(),
     };
 
 // **************************************************************************
@@ -62,6 +68,13 @@ mixin _$SettingsStore on _SettingsStore, Store {
   bool get endpointIsGesell => (_$endpointIsGesellComputed ??= Computed<bool>(
           () => super.endpointIsGesell,
           name: '_SettingsStore.endpointIsGesell'))
+      .value;
+  Computed<bool> _$endpointIsCantillonComputed;
+
+  @override
+  bool get endpointIsCantillon => (_$endpointIsCantillonComputed ??=
+          Computed<bool>(() => super.endpointIsCantillon,
+              name: '_SettingsStore.endpointIsCantillon'))
       .value;
   Computed<List<EndpointData>> _$endpointListComputed;
 
@@ -377,6 +390,7 @@ networkConst: ${networkConst},
 contactList: ${contactList},
 endpointIsEncointer: ${endpointIsEncointer},
 endpointIsGesell: ${endpointIsGesell},
+endpointIsCantillon: ${endpointIsCantillon},
 endpointList: ${endpointList},
 contactListAll: ${contactListAll},
 existentialDeposit: ${existentialDeposit},

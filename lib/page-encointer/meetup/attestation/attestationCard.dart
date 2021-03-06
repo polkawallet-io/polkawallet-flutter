@@ -15,7 +15,6 @@ class AttestationCard extends StatefulWidget {
     this.store, {
     this.myMeetupRegistryIndex,
     this.otherMeetupRegistryIndex,
-    this.accountPassword,
   });
 
   static const String route = '/encointer/meetup/';
@@ -23,7 +22,6 @@ class AttestationCard extends StatefulWidget {
 
   final int myMeetupRegistryIndex;
   final int otherMeetupRegistryIndex;
-  final String accountPassword;
 
   @override
   _AttestationCardState createState() => _AttestationCardState(store);
@@ -48,7 +46,6 @@ class _AttestationCardState extends State<AttestationCard> {
             store,
             otherMeetupRegistryIndex: widget.otherMeetupRegistryIndex,
             myMeetupRegistryIndex: widget.myMeetupRegistryIndex,
-            accountPassword: widget.accountPassword,
           ),
         ),
       );
@@ -59,7 +56,6 @@ class _AttestationCardState extends State<AttestationCard> {
             store,
             otherMeetupRegistryIndex: widget.otherMeetupRegistryIndex,
             myMeetupRegistryIndex: widget.myMeetupRegistryIndex,
-            accountPassword: widget.accountPassword,
           ),
         ),
       );

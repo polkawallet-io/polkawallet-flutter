@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:encointer_wallet/store/app.dart';
 
+import '../mocks/data/MockAccountData.dart';
 import '../mocks/localStorage_mock.dart';
 
 void main() {

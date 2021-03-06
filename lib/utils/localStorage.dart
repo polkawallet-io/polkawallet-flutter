@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalStorage {
   final accountsKey = 'wallet_account_list';
   final currentAccountKey = 'wallet_current_account';
-  final encointerCurrencyKey = 'wallet_encointer_currency';
+  final encointerCommunityKey = 'wallet_encointer_community';
   final contactsKey = 'wallet_contact_list';
   final seedKey = 'wallet_seed';
   final customKVKey = 'wallet_kv';
@@ -34,11 +34,11 @@ class LocalStorage {
   }
 
   Future<void> setChosenCid(String cid) async {
-    return storage.setKV(encointerCurrencyKey, cid);
+    return storage.setKV(encointerCommunityKey, cid);
   }
 
   Future<String> getChosenCid() async {
-    return storage.getKV(encointerCurrencyKey);
+    return storage.getKV(encointerCommunityKey);
   }
 
   Future<void> addContact(Map<String, dynamic> con) async {

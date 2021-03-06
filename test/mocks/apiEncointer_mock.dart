@@ -37,8 +37,8 @@ MockApiEncointer getMockApiEncointer() {
   when(apiEncointer.getParticipantCount()).thenAnswer((invocation) {
     return Future.value(3);
   });
-  when(apiEncointer.getCurrencyIdentifiers()).thenAnswer((invocation) {
-    return Future.value(currencyIdentifiers);
+  when(apiEncointer.getCommunityIdentifiers()).thenAnswer((invocation) {
+    return Future.value(communityIdentifiers);
   });
   when(apiEncointer.createClaimOfAttendance(any)).thenAnswer((invocation) {
     return Future.value(claimHex);

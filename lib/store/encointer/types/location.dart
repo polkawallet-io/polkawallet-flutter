@@ -9,17 +9,14 @@ part 'location.g.dart';
 class Location {
   Location(this.lon, this.lat);
 
-  final BigInt lon;
-  final BigInt lat;
+  final int lon;
+  final int lat;
 
   @override
   String toString() {
     return jsonEncode(this);
   }
 
-
-  factory Location.fromJson(Map<String, dynamic> json) =>
-      _$LocationFromJson(json);
-  Map<String, dynamic> toJson() =>
-      _$LocationToJson(this);
+  factory Location.fromJson(Map<String, dynamic> json) => _$LocationFromJson(json);
+  Map<String, dynamic> toJson() => _$LocationToJson(this);
 }

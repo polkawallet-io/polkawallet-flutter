@@ -3,6 +3,70 @@
 part of 'attestationState.dart';
 
 // **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+AttestationState _$AttestationStateFromJson(Map<String, dynamic> json) {
+  return AttestationState(
+    json['pubKey'] as String,
+  )
+    ..done = json['done'] as bool
+    ..yourAttestation = json['yourAttestation'] as String
+    ..otherAttestation = json['otherAttestation'] as String
+    ..currentAttestationStep = _$enumDecodeNullable(
+        _$CurrentAttestationStepEnumMap, json['currentAttestationStep']);
+}
+
+Map<String, dynamic> _$AttestationStateToJson(AttestationState instance) =>
+    <String, dynamic>{
+      'pubKey': instance.pubKey,
+      'done': instance.done,
+      'yourAttestation': instance.yourAttestation,
+      'otherAttestation': instance.otherAttestation,
+      'currentAttestationStep':
+          _$CurrentAttestationStepEnumMap[instance.currentAttestationStep],
+    };
+
+T _$enumDecode<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    throw ArgumentError('A value must be provided. Supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+
+  final value = enumValues.entries
+      .singleWhere((e) => e.value == source, orElse: () => null)
+      ?.key;
+
+  if (value == null && unknownValue == null) {
+    throw ArgumentError('`$source` is not one of the supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+  return value ?? unknownValue;
+}
+
+T _$enumDecodeNullable<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+}
+
+const _$CurrentAttestationStepEnumMap = {
+  CurrentAttestationStep.STEP1: 'STEP1',
+  CurrentAttestationStep.STEP2: 'STEP2',
+  CurrentAttestationStep.STEP3: 'STEP3',
+  CurrentAttestationStep.FINISHED: 'FINISHED',
+};
+
+// **************************************************************************
 // StoreGenerator
 // **************************************************************************
 

@@ -1,4 +1,3 @@
-import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
@@ -25,63 +24,11 @@ class _MeetupPageState extends State<MeetupPage> {
 
   final AppStore store;
   var _amountAttendees;
-  String pwd;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) async {
-        await _showPasswordDialog(context);
-
-        if (pwd == null) {
-          await _showPasswordDeniedDialog(context);
-          Navigator.of(context).pop();
-        }
-      },
-    );
-  }
-
-  Future<void> _showPasswordDialog(BuildContext context) async {
-    await showCupertinoDialog(
-      context: context,
-      builder: (_) {
-        return PasswordInputDialog(
-          title: Text(I18n.of(context).home['unlock']),
-          account: store.account.currentAccount,
-          onOk: (password) {
-            setState(() {
-              pwd = password;
-            });
-          },
-        );
-      },
-    );
-  }
-
-  Future<void> _showPasswordDeniedDialog(BuildContext context) async {
-    await showCupertinoDialog(
-      context: context,
-      builder: (_) {
-        return CupertinoAlertDialog(
-          title: Text(I18n.of(context).encointer['meetup.pwd.needed']),
-          actions: <Widget>[
-            CupertinoButton(
-              child: Text(
-                I18n.of(context).home['ok'],
-                style: TextStyle(
-                    // color: Theme.of(context).unselectedWidgetColor,
-                    ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   List<Widget> _buildAttestationCardList(String claim) {
@@ -92,7 +39,6 @@ class _MeetupPageState extends State<MeetupPage> {
               store,
               myMeetupRegistryIndex: store.encointer.myMeetupRegistryIndex,
               otherMeetupRegistryIndex: i,
-              accountPassword: pwd,
             )))
         .values
         .toList();

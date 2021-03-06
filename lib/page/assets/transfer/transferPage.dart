@@ -1,14 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/AddressInputField.dart';
 import 'package:encointer_wallet/common/components/currencyWithIcon.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
-import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/page/account/scanPage.dart';
 import 'package:encointer_wallet/page/account/txConfirmPage.dart';
 import 'package:encointer_wallet/page/assets/asset/assetPage.dart';
@@ -20,6 +16,10 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class TransferPageParams {
   TransferPageParams({this.symbol, this.address, this.redirect, this.isEncointerCommunityCurrency = false});
@@ -65,10 +65,10 @@ class _TransferPageState extends State<TransferPage> {
     });
   }
 
-  Future<void> _selectCurrency() async {
+  Future<void> _selectCommunity() async {
     List<String> symbolOptions = List<String>.from(store.settings.networkConst['currencyIds']);
 
-    var currency = await Navigator.of(context).pushNamed(CurrencySelectPage.route, arguments: symbolOptions);
+    var currency = await Navigator.of(context).pushNamed(CommunitySelectPage.route, arguments: symbolOptions);
 
     if (currency != null) {
       setState(() {
@@ -106,6 +106,7 @@ class _TransferPageState extends State<TransferPage> {
         args['txInfo'] = {
           "module": 'encointerBalances',
           "call": 'transfer',
+          "cid": symbol,
         };
         args['params'] = [
           // params.to
@@ -203,6 +204,7 @@ class _TransferPageState extends State<TransferPage> {
       });
 
       webApi.assets.fetchBalance();
+      webApi.encointer.getEncointerBalance();
     });
   }
 
@@ -307,7 +309,7 @@ class _TransferPageState extends State<TransferPage> {
                                         ),
                                         !_isEncointerCommunityCurrency
                                             ? CurrencyWithIcon(_tokenSymbol ?? baseTokenSymbol)
-                                            : Text(Fmt.currencyIdentifier(_tokenSymbol, pad: 8)),
+                                            : Text(Fmt.communityIdentifier(_tokenSymbol, pad: 8)),
                                       ],
                                     ),
                                     Icon(
@@ -317,7 +319,7 @@ class _TransferPageState extends State<TransferPage> {
                                   ],
                                 ),
                               ),
-                              onTap: symbolOptions != null ? () => _selectCurrency() : null,
+                              onTap: symbolOptions != null ? () => _selectCommunity() : null,
                             ),
                             Divider(),
                             Padding(

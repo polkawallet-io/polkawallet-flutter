@@ -11,12 +11,12 @@ part 'claimOfAttendance.g.dart';
 // field rename such that the fields match the ones defined in the runtime
 @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class ClaimOfAttendance {
-  ClaimOfAttendance(this.claimantPublic, this.ceremonyIndex, this.currencyIdentifier,
+  ClaimOfAttendance(this.claimantPublic, this.ceremonyIndex, this.communityIdentifier,
       this.meetupIndex, this.location, this.timestamp, this.numberOfParticipantsConfirmed);
 
   String claimantPublic;
   int ceremonyIndex;
-  String currencyIdentifier;
+  String communityIdentifier;
   int meetupIndex;
   Location location;
   int timestamp;

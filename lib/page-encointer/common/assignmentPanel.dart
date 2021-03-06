@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:encointer_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/store/app.dart';
@@ -21,8 +23,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
   final AppStore store;
 
   Widget _meetupLocationLink() {
-    var lat = (store.encointer.meetupLocation.lat / (BigInt.from(2).pow(32)));
-    var lon = (store.encointer.meetupLocation.lon / (BigInt.from(2).pow(32)));
+    var lat = (store.encointer.meetupLocation.lat / pow(2, 32));
+    var lon = (store.encointer.meetupLocation.lon / pow(2, 32));
     return JumpToBrowserLink(
         'https://www.openstreetmap.org/?mlat=' +
             lat.toStringAsFixed(5) +
@@ -41,7 +43,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
           child: Column(children: <Widget>[
             Observer(
                 builder: (_) => store.encointer.meetupTime != null
-                    ? store.encointer.currencyIdentifiers == null
+                    ? store.encointer.communityIdentifiers == null
                         ? Text("no currencies found")
                         : Column(children: <Widget>[
                             store.encointer.meetupIndex > 0
@@ -57,7 +59,7 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
                                     "You are not registered for ceremony on " +
                                         DateFormat('yyyy-MM-dd').format(
                                             new DateTime.fromMillisecondsSinceEpoch(store.encointer.meetupTime)) +
-                                        " for the selected currency",
+                                        " for the selected community",
                                     style: TextStyle(color: Colors.red)),
                           ])
                     : CupertinoActivityIndicator())

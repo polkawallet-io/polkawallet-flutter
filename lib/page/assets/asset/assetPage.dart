@@ -1,7 +1,7 @@
 import 'package:encointer_wallet/common/components/BorderedTitle.dart';
 import 'package:encointer_wallet/common/components/TapTooltip.dart';
 import 'package:encointer_wallet/common/components/listTail.dart';
-import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/page/assets/receive/receivePage.dart';
 import 'package:encointer_wallet/page/assets/transfer/detailPage.dart';
 import 'package:encointer_wallet/page/assets/transfer/transferPage.dart';
@@ -80,6 +80,8 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
+    webApi.encointer.getEncointerBalance();
+
     _tabController = TabController(vsync: this, length: 3);
 
     _scrollController = ScrollController();
@@ -157,7 +159,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
 
     return Scaffold(
       appBar: AppBar(
-        title: isEncointerCommunityCurrency ? Text(Fmt.currencyIdentifier(token)) : Text(tokenView),
+        title: isEncointerCommunityCurrency ? Text(Fmt.communityIdentifier(token)) : Text(tokenView),
         centerTitle: true,
         elevation: 0.0,
       ),

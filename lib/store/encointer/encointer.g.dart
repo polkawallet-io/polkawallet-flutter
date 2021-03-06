@@ -9,21 +9,6 @@ part of 'encointer.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$EncointerStore on _EncointerStore, Store {
-  final _$timeStampAtom = Atom(name: '_EncointerStore.timeStamp');
-
-  @override
-  dynamic get timeStamp {
-    _$timeStampAtom.reportRead();
-    return super.timeStamp;
-  }
-
-  @override
-  set timeStamp(dynamic value) {
-    _$timeStampAtom.reportWrite(value, super.timeStamp, () {
-      super.timeStamp = value;
-    });
-  }
-
   final _$currentPhaseAtom = Atom(name: '_EncointerStore.currentPhase');
 
   @override
@@ -193,19 +178,20 @@ mixin _$EncointerStore on _EncointerStore, Store {
     });
   }
 
-  final _$currencyIdentifiersAtom =
-      Atom(name: '_EncointerStore.currencyIdentifiers');
+  final _$communityIdentifiersAtom =
+      Atom(name: '_EncointerStore.communityIdentifiers');
 
   @override
-  List<String> get currencyIdentifiers {
-    _$currencyIdentifiersAtom.reportRead();
-    return super.currencyIdentifiers;
+  List<String> get communityIdentifiers {
+    _$communityIdentifiersAtom.reportRead();
+    return super.communityIdentifiers;
   }
 
   @override
-  set currencyIdentifiers(List<String> value) {
-    _$currencyIdentifiersAtom.reportWrite(value, super.currencyIdentifiers, () {
-      super.currencyIdentifiers = value;
+  set communityIdentifiers(List<String> value) {
+    _$communityIdentifiersAtom.reportWrite(value, super.communityIdentifiers,
+        () {
+      super.communityIdentifiers = value;
     });
   }
 
@@ -269,6 +255,21 @@ mixin _$EncointerStore on _EncointerStore, Store {
     });
   }
 
+  final _$shopRegistryAtom = Atom(name: '_EncointerStore.shopRegistry');
+
+  @override
+  List<String> get shopRegistry {
+    _$shopRegistryAtom.reportRead();
+    return super.shopRegistry;
+  }
+
+  @override
+  set shopRegistry(List<String> value) {
+    _$shopRegistryAtom.reportWrite(value, super.shopRegistry, () {
+      super.shopRegistry = value;
+    });
+  }
+
   final _$setTransferTxsAsyncAction =
       AsyncAction('_EncointerStore.setTransferTxs');
 
@@ -313,6 +314,17 @@ mixin _$EncointerStore on _EncointerStore, Store {
         name: '_EncointerStore.setCurrentCeremonyIndex');
     try {
       return super.setCurrentCeremonyIndex(index);
+    } finally {
+      _$_EncointerStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateState() {
+    final _$actionInfo = _$_EncointerStoreActionController.startAction(
+        name: '_EncointerStore.updateState');
+    try {
+      return super.updateState();
     } finally {
       _$_EncointerStoreActionController.endAction(_$actionInfo);
     }
@@ -396,11 +408,11 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void setCurrencyIdentifiers(List<String> cids) {
+  void setCommunityIdentifiers(List<String> cids) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
-        name: '_EncointerStore.setCurrencyIdentifiers');
+        name: '_EncointerStore.setCommunityIdentifiers');
     try {
-      return super.setCurrencyIdentifiers(cids);
+      return super.setCommunityIdentifiers(cids);
     } finally {
       _$_EncointerStoreActionController.endAction(_$actionInfo);
     }
@@ -495,11 +507,11 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void setTimestamp(int time) {
+  void setShopRegistry(List<String> shops) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
-        name: '_EncointerStore.setTimestamp');
+        name: '_EncointerStore.setShopRegistry');
     try {
-      return super.setTimestamp(time);
+      return super.setShopRegistry(shops);
     } finally {
       _$_EncointerStoreActionController.endAction(_$actionInfo);
     }
@@ -508,7 +520,6 @@ mixin _$EncointerStore on _EncointerStore, Store {
   @override
   String toString() {
     return '''
-timeStamp: ${timeStamp},
 currentPhase: ${currentPhase},
 currentCeremonyIndex: ${currentCeremonyIndex},
 meetupIndex: ${meetupIndex},
@@ -520,11 +531,12 @@ participantIndex: ${participantIndex},
 participantCount: ${participantCount},
 myClaim: ${myClaim},
 balanceEntries: ${balanceEntries},
-currencyIdentifiers: ${currencyIdentifiers},
+communityIdentifiers: ${communityIdentifiers},
 chosenCid: ${chosenCid},
 claimHex: ${claimHex},
 attestations: ${attestations},
-txsTransfer: ${txsTransfer}
+txsTransfer: ${txsTransfer},
+shopRegistry: ${shopRegistry}
     ''';
   }
 }

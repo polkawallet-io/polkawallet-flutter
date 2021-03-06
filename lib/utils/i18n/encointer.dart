@@ -11,6 +11,7 @@ const Map<String, String> enNctr = {
   'encointer.registering': 'Registering',
   'loan.txs': 'History',
   'ceremony': 'Encointer Ceremony',
+  'ceremony.next': 'Next ceremony will happen at high sun on:',
   'claim.qr': 'Claim',
   'you.attested': 'You attested other',
   'other.attested': 'Other attested you',
@@ -24,6 +25,7 @@ const Map<String, String> enNctr = {
   'meetup.complete': 'complete meetup',
   'meetup.remaining': 'Time to meetup:',
   'meetup.pwd.needed': 'PIN is needed to start the meetup',
+  'meetup.attended': 'Attended last meetup',
   'myself': 'Myself',
   // partyA
   'attestation.partyA.step1': 'STEP 1/3: Show claimA',

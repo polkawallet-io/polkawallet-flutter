@@ -1,10 +1,17 @@
 import 'dart:convert';
 
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 
 part 'attestationState.g.dart';
 
-class AttestationState = _AttestationState with _$AttestationState;
+@JsonSerializable()
+class AttestationState extends _AttestationState with _$AttestationState {
+  AttestationState(String pubKey): super(pubKey);
+
+  factory AttestationState.fromJson(Map<String, dynamic> json) => _$AttestationStateFromJson(json);
+  Map<String, dynamic> toJson() => _$AttestationStateToJson(this);
+}
 
 abstract class _AttestationState with Store {
   _AttestationState(this.pubKey);

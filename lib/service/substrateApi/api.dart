@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/config/node.dart';
 import 'package:encointer_wallet/service/subscan.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAccount.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAssets.dart';
@@ -36,12 +36,13 @@ class Api {
   Map<String, Function> _msgHandlers = {};
   Map<String, Completer> _msgCompleters = {};
   FlutterWebviewPlugin _web;
+  StreamSubscription _subscription;
 
   int _evalJavascriptUID = 0;
 
   Function _connectFunc;
 
-  void init() async {
+  Future<void> init() async {
     jsStorage = GetStorage();
 
     account = ApiAccount(this);
@@ -86,21 +87,22 @@ class Api {
   }
 
   Future<void> launchWebview({bool customNode = false}) async {
-    _msgHandlers = {'txStatusChange': store.account.setTxStatus};
-
-    _evalJavascriptUID = 0;
+    _msgHandlers = {};
     _msgCompleters = {};
+    _evalJavascriptUID = 0;
 
     _connectFunc = customNode ? connectNode : connectNodeAll;
 
-    if (_web != null) {
-      print("reloading webview. close first");
-      _web.close();
+    final bool needLaunch = _web == null;
+    if (needLaunch) {
+      _web = FlutterWebviewPlugin();
     }
 
-    _web = FlutterWebviewPlugin();
-
-    _web.onStateChanged.listen((viewState) async {
+    if (_subscription != null) {
+      //  (should only happen in hot-restart)
+      _subscription.cancel();
+    }
+    _subscription = _web.onStateChanged.listen((viewState) async {
       if (viewState.type == WebViewState.finishLoad) {
         String network = 'encointer';
         print('webview loaded for network $network');
@@ -118,35 +120,40 @@ class Api {
       }
     });
 
-    _web.launch(
-      'about:blank',
-      javascriptChannels: [
-        JavascriptChannel(
-            name: 'PolkaWallet',
-            onMessageReceived: (JavascriptMessage message) {
-              print('received msg: ${message.message}');
-              compute(jsonDecode, message.message).then((msg) {
-                final String path = msg['path'];
-                if (_msgCompleters[path] != null) {
-                  Completer handler = _msgCompleters[path];
-                  handler.complete(msg['data']);
-                  if (path.contains('uid=')) {
-                    _msgCompleters.remove(path);
+    if (!needLaunch) {
+      _web.reload();
+      return;
+    } else {
+      _web.launch(
+        'about:blank',
+        javascriptChannels: [
+          JavascriptChannel(
+              name: 'PolkaWallet',
+              onMessageReceived: (JavascriptMessage message) {
+                print('received msg: ${message.message}');
+                compute(jsonDecode, message.message).then((msg) {
+                  final String path = msg['path'];
+                  if (_msgCompleters[path] != null) {
+                    Completer handler = _msgCompleters[path];
+                    handler.complete(msg['data']);
+                    if (path.contains('uid=')) {
+                      _msgCompleters.remove(path);
+                    }
                   }
-                }
-                if (_msgHandlers[path] != null) {
-                  Function handler = _msgHandlers[path];
-                  handler(msg['data']);
-                }
-              });
-            }),
-      ].toSet(),
-      ignoreSSLErrors: true,
+                  if (_msgHandlers[path] != null) {
+                    Function handler = _msgHandlers[path];
+                    handler(msg['data']);
+                  }
+                });
+              }),
+        ].toSet(),
+        ignoreSSLErrors: true,
 //      debuggingEnabled: true,
 //        withLocalUrl: true,
 //        localUrlScope: 'lib/polkadot_js_service/dist/',
-      hidden: true,
-    );
+        hidden: true,
+      );
+    }
   }
 
   int _getEvalJavascriptUID() {
@@ -191,18 +198,19 @@ class Api {
 
   Future<void> connectNode() async {
     String node = store.settings.endpoint.value;
+    NodeConfig config = store.settings.endpoint.overrideConfig;
     // do connect
-    String res = await evalJavascript('settings.connect("$node")');
+    String res = await evalJavascript('settings.connect("$node", "${jsonEncode(config)}")');
     if (res == null) {
-      print('connect failed');
+      print('connecting to node failed');
       store.settings.setNetworkName(null);
       return;
     }
 
-    // untested
-    if (store.settings.endpoint.info == networkEndpointEncointerCantillon.info) {
+    if (store.settings.endpointIsCantillon) {
       var worker = store.settings.endpoint.worker;
-      String res = await evalJavascript('settings.setWorkerEndpoint("$worker")');
+      var mrenclave = store.settings.endpoint.mrenclave;
+      String res = await evalJavascript('settings.setWorkerEndpoint("$worker", "$mrenclave")');
     }
 
     fetchNetworkProps();
@@ -210,8 +218,10 @@ class Api {
 
   Future<void> connectNodeAll() async {
     List<String> nodes = store.settings.endpointList.map((e) => e.value).toList();
+    List<NodeConfig> configs = store.settings.endpointList.map((e) => e.overrideConfig).toList();
+    print("configs: $configs");
     // do connect
-    String res = await evalJavascript('settings.connectAll(${jsonEncode(nodes)})');
+    String res = await evalJavascript('settings.connectAll(${jsonEncode(nodes)}, ${jsonEncode(configs)})');
     if (res == null) {
       print('connect failed');
       store.settings.setNetworkName(null);
@@ -219,9 +229,10 @@ class Api {
     }
 
     // setWorker endpoint on js side
-    if (store.settings.endpoint.info == networkEndpointEncointerCantillon.info) {
+    if (store.settings.endpointIsCantillon) {
       var worker = store.settings.endpoint.worker;
-      String res = await evalJavascript('settings.setWorkerEndpoint("$worker")');
+      var mrenclave = store.settings.endpoint.mrenclave;
+      String res = await evalJavascript('settings.setWorkerEndpoint("$worker", "$mrenclave")');
     }
 
     int index = store.settings.endpointList.indexWhere((i) => i.value == res);
@@ -244,11 +255,6 @@ class Api {
     // init subscriptions for all apis
     this.encointer.startSubscriptions();
     this.assets.startSubscriptions();
-
-    // fetch account balance
-    if (store.account.accountList.length > 0) {
-      await assets.fetchBalance();
-    }
   }
 
   Future<void> updateBlocks(List txs) async {

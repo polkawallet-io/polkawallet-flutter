@@ -5,17 +5,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-class CurrencyChooserPanel extends StatefulWidget {
-  CurrencyChooserPanel(this.store);
+class CommunityChooserPanel extends StatefulWidget {
+  CommunityChooserPanel(this.store);
 
   final AppStore store;
 
   @override
-  _CurrencyChooserPanelState createState() => _CurrencyChooserPanelState(store);
+  _CommunityChooserPanelState createState() => _CommunityChooserPanelState(store);
 }
 
-class _CurrencyChooserPanelState extends State<CurrencyChooserPanel> {
-  _CurrencyChooserPanelState(this.store);
+class _CommunityChooserPanelState extends State<CommunityChooserPanel> {
+  _CommunityChooserPanelState(this.store);
 
   final AppStore store;
 
@@ -27,16 +27,16 @@ class _CurrencyChooserPanelState extends State<CurrencyChooserPanel> {
         padding: EdgeInsets.symmetric(vertical: 8),
         child: Column(
           children: <Widget>[
-            Text("Choose currency:"),
+            Text("Choose community:"),
             Observer(
-              builder: (_) => (store.encointer.currencyIdentifiers == null)
+              builder: (_) => (store.encointer.communityIdentifiers == null)
                   ? CupertinoActivityIndicator()
-                  : (store.encointer.currencyIdentifiers.isEmpty)
+                  : (store.encointer.communityIdentifiers.isEmpty)
                       ? Text("no currencies found")
                       : DropdownButton<dynamic>(
                           value: (store.encointer.chosenCid == null ||
-                                  !store.encointer.currencyIdentifiers.contains(store.encointer.chosenCid))
-                              ? store.encointer.currencyIdentifiers[0]
+                                  !store.encointer.communityIdentifiers.contains(store.encointer.chosenCid))
+                              ? store.encointer.communityIdentifiers[0]
                               : store.encointer.chosenCid,
                           icon: Icon(Icons.arrow_downward),
                           iconSize: 32,
@@ -46,10 +46,10 @@ class _CurrencyChooserPanelState extends State<CurrencyChooserPanel> {
                               store.encointer.setChosenCid(newValue);
                             });
                           },
-                          items: store.encointer.currencyIdentifiers
+                          items: store.encointer.communityIdentifiers
                               .map<DropdownMenuItem<dynamic>>((value) => DropdownMenuItem<dynamic>(
                                     value: value,
-                                    child: Text(Fmt.currencyIdentifier(value)),
+                                    child: Text(Fmt.communityIdentifier(value)),
                                   ))
                               .toList(),
                         ),

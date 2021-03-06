@@ -17,14 +17,12 @@ class StateMachinePartyB extends StatefulWidget {
     this.otherMeetupRegistryIndex,
     this.myMeetupRegistryIndex,
     this.initialAttestationStep,
-    this.accountPassword,
   }) : super();
 
   final AppStore store;
   final int otherMeetupRegistryIndex;
   final int myMeetupRegistryIndex;
   final CurrentAttestationStep initialAttestationStep;
-  final String accountPassword;
 
   @override
   _StateMachinePartyBState createState() {
@@ -73,7 +71,7 @@ class _StateMachinePartyBState extends State<StateMachinePartyB> {
         pageBuilder: (BuildContext context, _, __) {
           return ActivityIndicator(
             title: "Attesting ClaimA",
-            future: webApi.encointer.attestClaimOfAttendance(claimAhex, widget.accountPassword),
+            future: webApi.encointer.attestClaimOfAttendance(claimAhex, store.account.cachedPin),
           );
         },
       ),

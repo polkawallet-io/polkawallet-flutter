@@ -1,4 +1,4 @@
-import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/assets/types/transferData.dart';
@@ -21,8 +21,10 @@ abstract class _EncointerStore with Store {
 
   final AppStore rootStore;
   final String cacheTxsTransferKey = 'transfer_txs';
-  final String encointerCurrencyKey = 'wallet_encointer_currency';
+  final String encointerCommunityKey = 'wallet_encointer_community';
+
   // offline meetup cache.
+  final String encointerCurrenCeremonyIndexKey = 'wallet_encointer_current_ceremony_index';
   final String encointerCurrentPhaseKey = 'wallet_encointer_current_phase';
   final String encointerMeetupIndexKey = 'wallet_encointer_meetup_index';
   final String encointerMeetupLocationKey = 'wallet_encointer_meetup_location';
@@ -34,9 +36,6 @@ abstract class _EncointerStore with Store {
   // fires a reaction. However, modifications in asynchronous code must be wrapped in
   // a @action block to fire a reaction
   // .
-  @observable
-  var timeStamp;
-
   @observable
   CeremonyPhase currentPhase;
 
@@ -71,7 +70,7 @@ abstract class _EncointerStore with Store {
   Map<String, BalanceEntry> balanceEntries = new ObservableMap();
 
   @observable
-  List<String> currencyIdentifiers;
+  List<String> communityIdentifiers;
 
   @observable
   String chosenCid;
@@ -105,7 +104,16 @@ abstract class _EncointerStore with Store {
   void setCurrentCeremonyIndex(index) {
     print("store: set currentCeremonyIndex to $index");
     currentCeremonyIndex = index;
+    cacheObject(encointerCurrenCeremonyIndexKey, index);
     // update depending values without awaiting
+    if (currentPhase == CeremonyPhase.ASSIGNING) {
+      purgeAttestations();
+    }
+    updateState();
+  }
+
+  @action
+  void updateState() {
     switch (currentPhase) {
       case CeremonyPhase.REGISTERING:
         // reset deprecated state to null
@@ -119,14 +127,13 @@ abstract class _EncointerStore with Store {
         setClaimHex();
         break;
       case CeremonyPhase.ASSIGNING:
-        purgeAttestations();
         webApi.encointer.getMeetupIndex();
         break;
       case CeremonyPhase.ATTESTING:
         webApi.encointer.getMeetupIndex();
         break;
     }
-    webApi.encointer.subscribeParticipantIndex();
+    webApi.encointer.getParticipantIndex();
   }
 
   @action
@@ -203,21 +210,24 @@ abstract class _EncointerStore with Store {
   }
 
   @action
-  void setCurrencyIdentifiers(List<String> cids) {
-    currencyIdentifiers = cids;
+  void setCommunityIdentifiers(List<String> cids) {
+    communityIdentifiers = cids;
   }
 
   @action
   void setChosenCid(String cid) {
     if (chosenCid != cid) {
       chosenCid = cid;
-      webApi.encointer.subscribeShopRegistry();
-      cacheObject(encointerCurrencyKey, cid);
+      if (rootStore.settings.endpointIsGesell) {
+        webApi.encointer.subscribeShopRegistry();
+      }
+      cacheObject(encointerCommunityKey, cid);
       // update depending values without awaiting
       if (!rootStore.settings.loading) {
         webApi.encointer.getMeetupIndex();
-        webApi.encointer.subscribeParticipantIndex();
-        webApi.encointer.subscribeEncointerBalance();
+        webApi.encointer.getParticipantIndex();
+        webApi.encointer.getParticipantCount();
+        webApi.encointer.getEncointerBalance();
       }
     }
   }
@@ -225,25 +235,25 @@ abstract class _EncointerStore with Store {
   @action
   void addYourAttestation(int idx, String att) {
     attestations[idx].setYourAttestation(att);
-    cacheObject(encointerAttestationsKey, attestations);
+    cacheAttestationStates(attestations);
   }
 
   @action
   void addOtherAttestation(int idx, String att) {
     attestations[idx].setOtherAttestation(att);
-    cacheObject(encointerAttestationsKey, attestations);
+    cacheAttestationStates(attestations);
   }
 
   @action
   void updateAttestationStep(int idx, CurrentAttestationStep step) {
     attestations[idx].setAttestationStep(step);
-    cacheObject(encointerAttestationsKey, attestations);
+    cacheAttestationStates(attestations);
   }
 
   @action
   void purgeAttestations() {
     attestations.clear();
-    cacheObject(encointerAttestationsKey, attestations);
+    cacheAttestationStates(attestations);
   }
 
   @action
@@ -259,11 +269,6 @@ abstract class _EncointerStore with Store {
   @action
   void setParticipantCount(int pCount) {
     participantCount = pCount;
-  }
-
-  @action
-  void setTimestamp(int time) {
-    timeStamp = time;
   }
 
   @action
@@ -305,7 +310,7 @@ abstract class _EncointerStore with Store {
 
   @action
   Future<void> loadCache() async {
-    var data = await loadObject(encointerCurrencyKey);
+    var data = await loadObject(encointerCommunityKey);
     if (data != null) {
       print("found cached choice of cid. will recover it: " + data.toString());
       setChosenCid(data);
@@ -317,6 +322,7 @@ abstract class _EncointerStore with Store {
       attestations = Map.castFrom<String, dynamic, int, AttestationState>(data);
     }
     currentPhase = await loadCurrentPhase();
+    currentCeremonyIndex = await loadObject(encointerCurrenCeremonyIndexKey);
     meetupIndex = await loadObject(encointerMeetupIndexKey);
 
     var loc = await loadObject(encointerMeetupLocationKey);
@@ -339,6 +345,11 @@ abstract class _EncointerStore with Store {
 
   Future<void> reloadShopRegistry() async {
     await webApi.encointer.getShopRegistry();
+  }
+
+  Future<void> cacheAttestationStates(Map<int, AttestationState> attestations) {
+    Map<String, AttestationState> att = attestations.map((key, value) => MapEntry(key.toString(), value));
+    return cacheObject(encointerAttestationsKey, att);
   }
 
   Future<void> cacheObject(String key, value) {

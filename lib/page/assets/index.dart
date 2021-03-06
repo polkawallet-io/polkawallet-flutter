@@ -4,8 +4,8 @@ import 'package:encointer_wallet/common/components/BorderedTitle.dart';
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
-import 'package:encointer_wallet/common/consts/settings.dart';
-import 'package:encointer_wallet/page-encointer/common/currencyChooserPanel.dart';
+import 'package:encointer_wallet/config/consts.dart';
+import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
 import 'package:encointer_wallet/page/account/scanPage.dart';
 import 'package:encointer_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:encointer_wallet/page/assets/asset/assetPage.dart';
@@ -20,6 +20,7 @@ import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class Assets extends StatefulWidget {
@@ -37,6 +38,7 @@ class _AssetsState extends State<Assets> {
   final AppStore store;
 
   bool _faucetSubmitting = false;
+  bool _dialogIsShown = false;
 
   Future<void> _handleScan() async {
     final Map dic = I18n.of(context).account;
@@ -283,6 +285,57 @@ class _AssetsState extends State<Assets> {
     );
   }
 
+  Future<void> _showPasswordDialog(BuildContext context) async {
+    setState(() {
+      _dialogIsShown = true;
+    });
+    await showCupertinoDialog(
+      context: context,
+      builder: (_) {
+        return WillPopScope(
+          child: PasswordInputDialog(
+            title: Text(I18n.of(context).home['unlock']),
+            account: store.account.currentAccount,
+            onOk: (password) {
+              setState(() {
+                store.account.setPin(password);
+              });
+            },
+            onCancel: () => _showPasswordNotEnteredDialog(context),
+          ),
+          onWillPop: () {
+            // handles back button press
+            return _showPasswordNotEnteredDialog(context);
+          },
+        );
+      },
+    );
+    setState(() {
+      _dialogIsShown = false;
+    });
+  }
+
+  Future<void> _showPasswordNotEnteredDialog(BuildContext context) async {
+    await showCupertinoDialog(
+      context: context,
+      builder: (_) {
+        return CupertinoAlertDialog(
+          title: Text(I18n.of(context).home['pin.needed']),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(I18n.of(context).home['cancel']),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            CupertinoButton(
+              child: Text(I18n.of(context).home['close.app']),
+              onPressed: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     // if network connected failed, reconnect
@@ -307,14 +360,23 @@ class _AssetsState extends State<Assets> {
           String networkName = store.settings.networkName ?? '';
           final String tokenView = Fmt.tokenView(symbol);
 
-          List<String> currencyIds = [];
+          List<String> communityIds = [];
           if (store.settings.endpointIsEncointer && networkName != null) {
-            if (store.settings.networkConst['currencyIds'] != null) {
-              currencyIds.addAll(List<String>.from(store.settings.networkConst['currencyIds']));
+            if (store.settings.networkConst['communityIds'] != null) {
+              communityIds.addAll(List<String>.from(store.settings.networkConst['communityIds']));
             }
-            currencyIds.retainWhere((i) => i != symbol);
+            communityIds.retainWhere((i) => i != symbol);
           }
           final BalancesInfo balancesInfo = store.assets.balances[symbol];
+
+          if (ModalRoute.of(context).isCurrent && !_dialogIsShown & store.account.cachedPin.isEmpty) {
+            _dialogIsShown = true;
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) {
+                _showPasswordDialog(context);
+              },
+            );
+          }
 
           return Column(
             children: <Widget>[
@@ -357,7 +419,7 @@ class _AssetsState extends State<Assets> {
                 ),
               ),
               Column(
-                children: currencyIds.map((i) {
+                children: communityIds.map((i) {
 //                  print(store.assets.balances[i]);
                   String token = i;
                   return RoundedCard(
@@ -403,9 +465,9 @@ class _AssetsState extends State<Assets> {
             ],
           ),
         ),
-        CurrencyChooserPanel(store),
+        CommunityChooserPanel(store),
         Observer(builder: (_) {
-          return (store.encointer.currencyIdentifiers != null) & (store.encointer.chosenCid != null)
+          return (store.encointer.communityIdentifiers != null) & (store.encointer.chosenCid != null)
               ? RoundedCard(
                   margin: EdgeInsets.only(top: 16),
                   child: ListTile(
@@ -413,7 +475,7 @@ class _AssetsState extends State<Assets> {
                       width: 36,
                       child: Image.asset('assets/images/assets/ERT.png'),
                     ),
-                    title: Text(Fmt.currencyIdentifier(store.encointer.chosenCid)),
+                    title: Text(Fmt.communityIdentifier(store.encointer.chosenCid)),
                     trailing: store.encointer.balanceEntries[store.encointer.chosenCid] != null
                         ? Text(
                             Fmt.doubleFormat(store.encointer.balanceEntries[store.encointer.chosenCid].principal),

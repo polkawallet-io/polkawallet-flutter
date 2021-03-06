@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/config/consts.dart';
 
 class ShopCard extends StatelessWidget {
   double _width;

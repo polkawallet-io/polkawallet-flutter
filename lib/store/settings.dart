@@ -1,4 +1,5 @@
-import 'package:encointer_wallet/common/consts/settings.dart';
+import 'package:encointer_wallet/config/consts.dart';
+import 'package:encointer_wallet/config/node.dart';
 import 'package:encointer_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
@@ -56,13 +57,19 @@ abstract class _SettingsStore with Store {
   bool get endpointIsEncointer {
     return endpoint.info == networkEndpointEncointerGesell.info ||
         endpoint.info == networkEndpointEncointerGesellDev.info ||
-        endpoint.info == networkEndpointEncointerCantillon.info;
+        endpoint.info == networkEndpointEncointerCantillon.info ||
+        endpoint.info == networkEndpointEncointerCantillonDev.info;
   }
 
   @computed
   bool get endpointIsGesell {
     return endpoint.info == networkEndpointEncointerGesell.info ||
         endpoint.info == networkEndpointEncointerGesellDev.info;
+  }
+
+  @computed
+  bool get endpointIsCantillon {
+    return !endpointIsGesell;
   }
 
   @computed
@@ -262,7 +269,7 @@ abstract class _NetworkState {
   String tokenSymbol = 'ERT';
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class EndpointData extends _EndpointData {
   static EndpointData fromJson(Map<String, dynamic> json) => _$EndpointDataFromJson(json);
   static Map<String, dynamic> toJson(EndpointData data) => _$EndpointDataToJson(data);
@@ -275,4 +282,6 @@ abstract class _EndpointData {
   String text = '';
   String value = '';
   String worker = ''; // only relevant for cantillon
+  String mrenclave = ''; // relevant until we fetch mrenclave from substrateeRegistry
+  NodeConfig overrideConfig;
 }

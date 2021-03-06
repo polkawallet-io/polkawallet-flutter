@@ -99,6 +99,8 @@ flutter:
     ## images - settings
     - assets/images/public/nctr-cln.png
     - assets/images/public/nctr-cln_gray.png
+    - assets/images/public/nctr-cln-dev.png
+    - assets/images/public/nctr-cln-dev_gray.png
     - assets/images/public/nctr-gsl-dev.png
     - assets/images/public/nctr-gsl-dev_gray.png
     - assets/images/public/nctr-gsl.png
