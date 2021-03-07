@@ -7,11 +7,12 @@ part of 'settings.dart';
 // **************************************************************************
 
 NetworkState _$NetworkStateFromJson(Map<String, dynamic> json) {
-  return NetworkState()
-    ..endpoint = json['endpoint'] as String
-    ..ss58Format = json['ss58Format'] as int
-    ..tokenDecimals = json['tokenDecimals'] as int
-    ..tokenSymbol = json['tokenSymbol'] as String;
+  return NetworkState(
+    json['endpoint'] as String,
+    json['ss58Format'] as int,
+    json['tokenDecimals'] as int,
+    json['tokenSymbol'] as String,
+  );
 }
 
 Map<String, dynamic> _$NetworkStateToJson(NetworkState instance) =>

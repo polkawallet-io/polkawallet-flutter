@@ -1005,27 +1005,27 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@encointer/node-api@^0.1.2-next.1":
-  version "0.1.2-next.1"
-  resolved "https://registry.yarnpkg.com/@encointer/node-api/-/node-api-0.1.2-next.1.tgz#d471f6512d234b5041bc29bbf73f095f831ac29a"
-  integrity sha512-XvhgIJD7Vy8PH+RFNX5Bo5zak2R4RQOZeCY/0GOWHPxc54lbXxwvICm+tnqmLmlgHrraDkOe4KvJ5vQToS1OOQ==
+"@encointer/node-api@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@encointer/node-api/-/node-api-0.1.2.tgz#ba9ffbcd47735f52beff43b51dd1337b8e449613"
+  integrity sha512-YOq5ydhEqRdyi9z58CdVJxzfGZADf8Fl1IZbnFpqpBgdRtteYjcMVyHOCfDwruKC0i52CH4fJzx6cMizdSLVbw==
   dependencies:
-    "@encointer/types" "^0.1.2-next.1"
+    "@encointer/types" "^0.1.2"
     "@polkadot/api" "^3.11.1"
 
-"@encointer/types@^0.1.2-next.1":
-  version "0.1.2-next.1"
-  resolved "https://registry.yarnpkg.com/@encointer/types/-/types-0.1.2-next.1.tgz#081193cba3965916da563150c94f77a174ffb980"
-  integrity sha512-uShgo6TGdEVEu0uOClUNjQWHBVd8Bv75j9Qn9Ueb6MaYn+WboD/4iCCwPPfiaWjmzbRTxeCCviLhjGdGZrCxSA==
+"@encointer/types@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@encointer/types/-/types-0.1.2.tgz#a9f74c3fc06d1dadb3847db794b9ccb6e057f76c"
+  integrity sha512-KvAFerWNRQY+lCAO793GwCI2rXAtLju6AUNj/v0R1TFiwrkNGXeiwAUE7AkYbve8y/37yapQ+ki5xY+U+6ZHxA==
   dependencies:
     "@polkadot/api" "^3.11.1"
     "@polkadot/types" "^3.11.1"
     "@polkadot/util" "^5.9.2"
 
-"@encointer/util@^0.1.2-next.1":
-  version "0.1.2-next.1"
-  resolved "https://registry.yarnpkg.com/@encointer/util/-/util-0.1.2-next.1.tgz#75bff581e68d312bc6f4b330e5089af6501e157b"
-  integrity sha512-KZ00GowbxMy65vqp9A+DQQ/9yI98Av92WfIe+NhENdFkHRG0vBHYtVf/4MMrWQYVaT2nnsrUSID6yK7jWGUugA==
+"@encointer/util@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@encointer/util/-/util-0.1.2.tgz#b9b24a8f7b56207c2d4196a0374807611e26ccc3"
+  integrity sha512-2Vidow1pvGgseCjAqN5yU1BivSRn6v9FwfBeV3PSslXmDeIW0Y8KxvTbdYhh5WqazMjUKIL5Uj0KQKdWd0iNLw==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@polkadot/util" "^5.9.2"
@@ -1033,14 +1033,14 @@
     assert "^2.0.0"
     bn.js "^4.12.0"
 
-"@encointer/worker-api@^0.1.2-next.1":
-  version "0.1.2-next.1"
-  resolved "https://registry.yarnpkg.com/@encointer/worker-api/-/worker-api-0.1.2-next.1.tgz#f12da100d49e43285938ec6b356fef110613e143"
-  integrity sha512-5ftrWuFrxuVBpO4WYLVgwrOGKAcCmtBOI6ozRb8iB6wNbkmPhng89RBCkaujL3t1hZ7iVbh4TxrrnJoNr1CMhQ==
+"@encointer/worker-api@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@encointer/worker-api/-/worker-api-0.1.2.tgz#958c3563315d4fe8190f11e8cb8ea82af7d8cc6b"
+  integrity sha512-Zp1k8ozcA2YW2Ki2v9On07yDntaLbn7xtEiEA3oEmpNVA6skMCtBXOFET48AkJKD3Ggyc0cf29X4T3EeHLhl2w==
   dependencies:
-    "@encointer/node-api" "^0.1.2-next.1"
-    "@encointer/types" "^0.1.2-next.1"
-    "@encointer/util" "^0.1.2-next.1"
+    "@encointer/node-api" "^0.1.2"
+    "@encointer/types" "^0.1.2"
+    "@encointer/util" "^0.1.2"
     "@polkadot/api" "^3.11.1"
     "@polkadot/types" "^3.11.1"
     "@polkadot/util" "^5.9.2"
@@ -5012,27 +5012,10 @@ error@^7.0.2:
   dependencies:
     string-template "~0.2.1"
 
-es-abstract@^1.17.0-next.0:
-  version "1.17.7"
-  resolved "https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.17.7.tgz#a4de61b2f66989fc7421676c1cb9787573ace54c"
-  integrity sha512-VBl/gnfcJ7OercKA9MVaegWsBHFjV492syMudcnQZvt/Dw8ezpcOHYZXa/J96O8vx+g4x65YKhxOwDUh63aS5g==
-  dependencies:
-    es-to-primitive "^1.2.1"
-    function-bind "^1.1.1"
-    has "^1.0.3"
-    has-symbols "^1.0.1"
-    is-callable "^1.2.2"
-    is-regex "^1.1.1"
-    object-inspect "^1.8.0"
-    object-keys "^1.1.1"
-    object.assign "^4.1.1"
-    string.prototype.trimend "^1.0.1"
-    string.prototype.trimstart "^1.0.1"
-
-es-abstract@^1.18.0-next.1, es-abstract@^1.18.0-next.2:
-  version "1.18.0-next.3"
-  resolved "https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.18.0-next.3.tgz#56bc8b5cc36b2cca25a13be07f3c02c2343db6b7"
-  integrity sha512-VMzHx/Bczjg59E6jZOQjHeN3DEoptdhejpARgflAViidlqSpjdq9zA6lKwlhRRs/lOw1gHJv2xkkSFRgvEwbQg==
+es-abstract@^1.17.0-next.0, es-abstract@^1.18.0-next.1, es-abstract@^1.18.0-next.2:
+  version "1.18.0"
+  resolved "https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.18.0.tgz#ab80b359eecb7ede4c298000390bc5ac3ec7b5a4"
+  integrity sha512-LJzK7MrQa8TS0ja2w3YNLzUgJCGPdPOV1yVvezjNnS89D+VR08+Szt2mz3YB2Dck/+w5tfIq/RoUAFqJJGM2yw==
   dependencies:
     call-bind "^1.0.2"
     es-to-primitive "^1.2.1"
@@ -6985,7 +6968,7 @@ is-buffer@^1.1.0, is-buffer@^1.1.5:
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
   integrity sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
 
-is-callable@^1.1.3, is-callable@^1.1.4, is-callable@^1.2.2, is-callable@^1.2.3:
+is-callable@^1.1.3, is-callable@^1.1.4, is-callable@^1.2.3:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/is-callable/-/is-callable-1.2.3.tgz#8b1e0500b73a1d76c70487636f368e519de8db8e"
   integrity sha512-J1DcMe8UYTBSrKezuIUTUwjXsho29693unXM2YhJUTR2txK/eG47bvNa/wipPFmZFgr/N6f1GA66dv0mEyTIyQ==
@@ -7225,7 +7208,7 @@ is-redirect@^1.0.0:
   resolved "https://registry.yarnpkg.com/is-redirect/-/is-redirect-1.0.0.tgz#1d03dded53bd8db0f30c26e4f95d36fc7c87dc24"
   integrity sha1-HQPd7VO9jbDzDCbk+V02/HyH3CQ=
 
-is-regex@^1.0.4, is-regex@^1.1.1, is-regex@^1.1.2:
+is-regex@^1.0.4, is-regex@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/is-regex/-/is-regex-1.1.2.tgz#81c8ebde4db142f2cf1c53fc86d6a45788266251"
   integrity sha512-axvdhb5pdhEVThqJzYXwMlVuZwC+FF2DpcOhTS+y/8jVq4trxyPgfcwIxIKiyeuLlSQYKkmUaPQJ8ZE4yNKXDg==
@@ -9444,7 +9427,7 @@ object-copy@^0.1.0:
     define-property "^0.2.5"
     kind-of "^3.0.3"
 
-object-inspect@^1.8.0, object-inspect@^1.9.0:
+object-inspect@^1.9.0:
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.9.0.tgz#c90521d74e1127b67266ded3394ad6116986533a"
   integrity sha512-i3Bp9iTqwhaLZBxGkRfo5ZbE07BQRT7MGu8+nNgwW9ItGp1TzCTw2DLEoWwjClxBjOFI/hWljTAmYGCEwmtnOw==
@@ -9469,7 +9452,7 @@ object-visit@^1.0.0:
   dependencies:
     isobject "^3.0.0"
 
-object.assign@^4.1.0, object.assign@^4.1.1, object.assign@^4.1.2:
+object.assign@^4.1.0, object.assign@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/object.assign/-/object.assign-4.1.2.tgz#0ed54a342eceb37b38ff76eb831a0e788cb63940"
   integrity sha512-ixT2L5THXsApyiUPYKmW+2EHpXXe5Ii3M+f4e+aJFAHao5amFRW6J0OO6c/LU8Be47utCx2GL89hxGB6XSmKuQ==
@@ -11723,7 +11706,7 @@ string.prototype.matchall@^4.0.2:
     regexp.prototype.flags "^1.3.1"
     side-channel "^1.0.4"
 
-string.prototype.trimend@^1.0.1, string.prototype.trimend@^1.0.4:
+string.prototype.trimend@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/string.prototype.trimend/-/string.prototype.trimend-1.0.4.tgz#e75ae90c2942c63504686c18b287b4a0b1a45f80"
   integrity sha512-y9xCjw1P23Awk8EvTpcyL2NIr1j7wJ39f+k6lvRnSMz+mz9CGz9NYPelDk42kOz6+ql8xjfK8oYzy3jAP5QU5A==
@@ -11731,7 +11714,7 @@ string.prototype.trimend@^1.0.1, string.prototype.trimend@^1.0.4:
     call-bind "^1.0.2"
     define-properties "^1.1.3"
 
-string.prototype.trimstart@^1.0.1, string.prototype.trimstart@^1.0.4:
+string.prototype.trimstart@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/string.prototype.trimstart/-/string.prototype.trimstart-1.0.4.tgz#b36399af4ab2999b4c9c648bd7a3fb2bb26feeed"
   integrity sha512-jh6e984OBfvxS50tdY2nRZnoC5/mLFKOREQfw8t5yytkoUsJRNxvI/E39qu1sD0OtWI3OC0XgKSmcWwziwYuZw==

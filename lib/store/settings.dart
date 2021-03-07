@@ -45,7 +45,7 @@ abstract class _SettingsStore with Store {
   String networkName = '';
 
   @observable
-  NetworkState networkState = NetworkState();
+  NetworkState networkState;
 
   @observable
   Map networkConst = Map();
@@ -249,8 +249,17 @@ abstract class _SettingsStore with Store {
 
 @JsonSerializable()
 class NetworkState extends _NetworkState {
+  NetworkState(String endpoint, int ss58Format, int tokenDecimals, String tokenSymbol)
+      : super(endpoint, ss58Format, tokenDecimals, tokenSymbol);
+
   static NetworkState fromJson(Map<String, dynamic> json) {
-    NetworkState ns = _$NetworkStateFromJson(json);
+    // js-api changed the return type of 'api.rpc.system.properties()', such that multiple balances are supported.
+    // Hence, tokenDecimals/-symbols are returned as a List. However, encointer currently only has one token, thus the
+    // `NetworkState` should use the first token.
+    int decimals = (json['tokenDecimals'] is List) ? json['tokenDecimals'][0] : json['tokenDecimals'];
+    String symbol = (json['tokenSymbol'] is List) ? json['tokenSymbol'][0] : json['tokenSymbol'];
+
+    NetworkState ns = NetworkState(json['endpoint'], json['ss58Format'], decimals, symbol);
     // --dev chain doesn't specify token symbol -> will break things if not specified
     if (ns.tokenSymbol == null || (ns.tokenSymbol.length < 1)) {
       ns.tokenSymbol = 'ERT';
@@ -263,6 +272,8 @@ class NetworkState extends _NetworkState {
 
 // TODO: these were empty before, but had to add defaults for development chain
 abstract class _NetworkState {
+  _NetworkState(this.endpoint, this.ss58Format, this.tokenDecimals, this.tokenSymbol);
+
   String endpoint = '';
   int ss58Format = 42;
   int tokenDecimals = 12;

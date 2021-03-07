@@ -17,21 +17,25 @@ class Ceremonies {
   final Api apiRoot;
 
   Future<int> participantCount(String cid, int cIndex) async {
-    return await apiRoot.evalJavascript('encointer.getParticipantCount("$cid", "$cIndex")');
+    return apiRoot.evalJavascript('encointer.getParticipantCount("$cid", "$cIndex")').then((value) => int.parse(value));
   }
 
   Future<int> participantIndex(String cid, int cIndex, String pubKey) async {
-    return await apiRoot.evalJavascript('encointer.getParticipantIndex("$cid", "$cIndex" ,"$pubKey")');
+    return apiRoot
+        .evalJavascript('encointer.getParticipantIndex("$cid", "$cIndex" ,"$pubKey")')
+        .then((value) => int.parse(value));
   }
 
   Future<int> meetupIndex(String cid, int cIndex, String pubKey) async {
-    return await await apiRoot.evalJavascript('encointer.getMeetupIndex("$cid", "$cIndex","$pubKey")');
+    return apiRoot
+        .evalJavascript('encointer.getMeetupIndex("$cid", "$cIndex","$pubKey")')
+        .then((value) => int.parse(value));
   }
 
   Future<List<String>> meetupRegistry(String cid, int cIndex, int mIndex) async {
-    List<dynamic> meetupRegistry =
-        await apiRoot.evalJavascript('encointer.getMeetupRegistry("$cid", "$cIndex", "$mIndex")');
-    return meetupRegistry.map((e) => e.toString()).toList();
+    return apiRoot
+        .evalJavascript('encointer.getMeetupRegistry("$cid", "$cIndex", "$mIndex")')
+        .then((value) => List<String>.from(value));
   }
 }
 
