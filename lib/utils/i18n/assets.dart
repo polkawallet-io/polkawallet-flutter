@@ -10,6 +10,7 @@ const Map<String, String> enAssets = {
   'amount.error': 'Invalid amount',
   'amount.low': 'Insufficient balance',
   'community': 'Community',
+  'currency': 'currency',
   'community.select': 'Select Community',
   'community.currency': 'Community Currency',
   'make': 'Make Transfer',
