@@ -1,16 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:encointer_wallet/config/consts.dart';
+import 'package:flutter/material.dart';
 
 class ShopCard extends StatelessWidget {
-  double _width;
-  double _height;
-  String title;
-  String description;
-  String imageHash;
+  final String title;
+  final String description;
+  final String imageHash;
   // TODO
-  String dateAdded;
-  String category;
-  String location;
+  final String dateAdded;
+  final String category;
+  final String location;
 
   ShopCard({this.title, this.dateAdded, this.category, this.description, this.imageHash, this.location});
 
@@ -20,8 +18,8 @@ class ShopCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _width = MediaQuery.of(context).size.width;
-    _height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
@@ -36,10 +34,10 @@ class ShopCard extends StatelessWidget {
               children: <Widget>[
                 Text(
                   title,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: _height / 40),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: height / 40),
                 ),
                 Container(
-                  width: _width / 3,
+                  width: width / 3,
                   padding: EdgeInsets.only(top: 5),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,11 +61,11 @@ class ShopCard extends StatelessWidget {
                 ),
                 Flexible(
                   child: Container(
-                      width: _width / 2.5,
+                      width: width / 2.5,
                       child: Text(
                         description,
                         style: TextStyle(
-                          fontSize: _height / 70,
+                          fontSize: height / 70,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -79,7 +77,7 @@ class ShopCard extends StatelessWidget {
                 ),
                 Flexible(
                   child: Container(
-                    width: _width / 2.75,
+                    width: width / 2.75,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -87,7 +85,7 @@ class ShopCard extends StatelessWidget {
                           child: GestureDetector(
                             child: Icon(
                               Icons.favorite_border,
-                              size: _height / 30,
+                              size: height / 30,
                             ),
                             onTap: () {
                               print('Fav');
@@ -99,18 +97,18 @@ class ShopCard extends StatelessWidget {
                           children: <Widget>[
                             Text(
                               dateAdded,
-                              style: TextStyle(fontSize: _height / 65),
+                              style: TextStyle(fontSize: height / 65),
                             ),
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 Icon(
                                   Icons.location_on,
-                                  size: _height / 65,
+                                  size: height / 65,
                                 ),
                                 Text(
                                   location,
-                                  style: TextStyle(fontSize: _height / 65),
+                                  style: TextStyle(fontSize: height / 65),
                                 )
                               ],
                             ),
@@ -126,7 +124,7 @@ class ShopCard extends StatelessWidget {
               width: 10,
             ),
             Container(
-              width: _width / 2.5,
+              width: width / 2.5,
               decoration: BoxDecoration(
                 shape: BoxShape.rectangle,
                 color: Colors.white,
@@ -136,8 +134,8 @@ class ShopCard extends StatelessWidget {
               child: Image.network(
                 getImageAdress(this.imageHash),
                 fit: BoxFit.cover,
-                height: _height / 4.5,
-                width: _width / 4.5,
+                height: height / 4.5,
+                width: width / 4.5,
               ),
             ),
           ],

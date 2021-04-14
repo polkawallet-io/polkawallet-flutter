@@ -34,10 +34,12 @@ class RoundedButton extends StatelessWidget {
       text ?? '',
       style: Theme.of(context).textTheme.button,
     ));
-    return RaisedButton(
-      padding: EdgeInsets.only(top: 12, bottom: 12),
-      color: color ?? Theme.of(context).primaryColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    return ElevatedButton(
+      style: TextButton.styleFrom(
+        padding: EdgeInsets.only(top: 12, bottom: 12),
+        backgroundColor: color ?? Theme.of(context).primaryColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: row,

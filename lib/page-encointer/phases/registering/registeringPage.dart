@@ -18,8 +18,6 @@ class _RegisteringPageState extends State<RegisteringPage> {
 
   final AppStore store;
 
-  String _tab = 'DOT';
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(

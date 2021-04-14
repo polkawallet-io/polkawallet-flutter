@@ -131,7 +131,7 @@ class _AccountAdvanceOption extends State<AccountAdvanceOption> {
                 padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
                 child: Form(
                   key: _formKey,
-                  autovalidate: true,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   child: TextFormField(
                     decoration: InputDecoration(
                       hintText: '//hard/soft///password',

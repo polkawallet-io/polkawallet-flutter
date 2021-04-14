@@ -7,9 +7,7 @@ import 'package:encointer_wallet/service/substrateApi/apiAccount.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAssets.dart';
 import 'package:encointer_wallet/service/substrateApi/encointer/apiEncointer.dart';
 import 'package:encointer_wallet/service/substrateApi/types/genExternalLinksParams.dart';
-import 'package:encointer_wallet/service/walletApi.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/UI.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -64,26 +62,6 @@ class Api {
     // one seems to succeed
     print("second launch of webview");
     await launchWebview();
-  }
-
-  Future<void> _checkJSCodeUpdate() async {
-    // check js code update
-    final network = store.settings.endpoint.info;
-    final jsVersion = await WalletApi.fetchPolkadotJSVersion(network);
-    final bool needUpdate = await UI.checkJSCodeUpdate(context, jsVersion, network);
-    if (needUpdate) {
-      await UI.updateJSCode(context, jsStorage, network, jsVersion);
-    }
-  }
-
-  void _startJSCode(String js) {
-    // inject js file to webview
-    _web.evalJavascript(js);
-
-    // load keyPairs from local data
-    account.initAccounts();
-    // connect remote node
-    _connectFunc();
   }
 
   Future<void> launchWebview({bool customNode = false}) async {
@@ -210,7 +188,7 @@ class Api {
     if (store.settings.endpointIsCantillon) {
       var worker = store.settings.endpoint.worker;
       var mrenclave = store.settings.endpoint.mrenclave;
-      String res = await evalJavascript('settings.setWorkerEndpoint("$worker", "$mrenclave")');
+      await evalJavascript('settings.setWorkerEndpoint("$worker", "$mrenclave")');
     }
 
     fetchNetworkProps();
@@ -232,7 +210,7 @@ class Api {
     if (store.settings.endpointIsCantillon) {
       var worker = store.settings.endpoint.worker;
       var mrenclave = store.settings.endpoint.mrenclave;
-      String res = await evalJavascript('settings.setWorkerEndpoint("$worker", "$mrenclave")');
+      await evalJavascript('settings.setWorkerEndpoint("$worker", "$mrenclave")');
     }
 
     int index = store.settings.endpointList.indexWhere((i) => i.value == res);

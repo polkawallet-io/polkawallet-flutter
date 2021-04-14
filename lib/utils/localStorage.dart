@@ -123,16 +123,8 @@ class _LocalStorage {
   }
 
   Future<void> addItemToList(String storeKey, Map<String, dynamic> acc) async {
-    var ls = new List<Map<String, dynamic>>();
-
-    String str = await getKV(storeKey);
-    if (str != null) {
-      Iterable l = jsonDecode(str);
-      ls = l.map((i) => Map<String, dynamic>.from(i)).toList();
-    }
-
+    List<Map<String, dynamic>> ls = await getList(storeKey);
     ls.add(acc);
-
     setKV(storeKey, jsonEncode(ls));
   }
 
@@ -152,7 +144,7 @@ class _LocalStorage {
   }
 
   Future<List<Map<String, dynamic>>> getList(String storeKey) async {
-    var res = new List<Map<String, dynamic>>();
+    List<Map<String, dynamic>> res = [];
 
     String str = await getKV(storeKey);
     if (str != null) {

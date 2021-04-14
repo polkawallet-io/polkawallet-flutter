@@ -110,16 +110,6 @@ class ApiAccount {
     return res;
   }
 
-  Future<dynamic> _testSendTx() async {
-    Completer c = new Completer();
-    void onComplete(res) {
-      c.complete(res);
-    }
-
-    Timer(Duration(seconds: 6), () => onComplete({'hash': '0x79867'}));
-    return c.future;
-  }
-
   Future<dynamic> sendTx(Map txInfo, List params, String pageTile, String notificationTitle, {String rawParam}) async {
     String param = rawParam != null ? rawParam : jsonEncode(params);
     String call = 'account.sendTx(${jsonEncode(txInfo)}, $param)';

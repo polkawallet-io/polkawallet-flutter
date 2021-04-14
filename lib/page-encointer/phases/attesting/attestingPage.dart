@@ -28,8 +28,6 @@ class _AttestingPageState extends State<AttestingPage> {
 
   final AppStore store;
 
-  String _tab = 'DOT';
-
   Future<void> _startMeetup(BuildContext context) async {
     var amount = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConfirmAttendeesDialog()));
     var args = {'confirmedParticipants': amount};
@@ -89,7 +87,7 @@ class _AttestingPageState extends State<AttestingPage> {
         .where((x) => x != null)
         .toList();
 
-    List<Attestation> attestations = new List();
+    List<Attestation> attestations = [];
     for (int i = 0; i < attestationsHex.length; i++) {
       attestations.add(await webApi.encointer.parseAttestation(attestationsHex[i]));
     }

@@ -13,6 +13,7 @@ import 'package:rxdart/rxdart.dart';
 /// background in the app bundle. Flutter does not yet support build configuration /-flavor dependant asset inclusion.
 ///
 void main() async {
+  // ignore: close_sinks
   final PublishSubject<ImageProvider> stream = PublishSubject();
 
   // ignore: missing_return

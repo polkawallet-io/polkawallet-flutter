@@ -155,10 +155,7 @@ class ApiEncointer {
   Future<List<String>> getMeetupRegistry() async {
     print("api: getMeetupRegistry");
     int cIndex = store.encointer.currentCeremonyIndex;
-    String cid = store.encointer.chosenCid;
-    if (cid == null) {
-      return new List(); // empty
-    }
+    String cid = store.encointer.chosenCid ?? [];
     String pubKey = store.account.currentAccountPubKey;
     int mIndex = store.encointer.meetupIndex;
     print("api: get meetup registry for cindex " + cIndex.toString() + " mindex " + mIndex.toString() + " cid " + cid);
@@ -312,11 +309,7 @@ class ApiEncointer {
   Future<List<String>> getCommunityIdentifiers() async {
     Map<String, dynamic> res = await apiRoot.evalJavascript('encointer.getCommunityIdentifiers()');
 
-    List<String> cids = new List<String>();
-    res['cids'].forEach((e) {
-      cids.add(e.toString());
-    });
-
+    List<String> cids = List<String>.from(res['cids']);
     print("CID: " + cids.toString());
     store.encointer.setCommunityIdentifiers(cids);
     return cids;

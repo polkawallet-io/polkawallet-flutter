@@ -1,18 +1,16 @@
 import 'package:encointer_wallet/common/components/BorderedTitle.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/article/articleClass.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/article/articleCard.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/common/communityChooserHandler.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/common/menuHandler.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopCard.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopClass.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopOverviewPanel.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/common/communityChooserHandler.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/common/menuHandler.dart';
 import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:encointer_wallet/utils/format.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 
@@ -56,11 +54,10 @@ class _BazaarEntryState extends State<BazaarEntry> {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).bazaar;
-    Color primaryColor = Theme.of(context).primaryColor;
     Color secondaryColor = Theme.of(context).secondaryHeaderColor;
 
     // reaction necessary because shops is not an observable list (view should not change without user doing anything)
-    final refreshPageOnCidChange = reaction((_) => store.encointer.chosenCid, (_) => refreshPage());
+    //final refreshPageOnCidChange = reaction((_) => store.encointer.chosenCid, (_) => refreshPage());
 
     final List<Widget> _widgetList = <Widget>[
       homeView(context, store),
@@ -239,16 +236,14 @@ class _BazaarEntryState extends State<BazaarEntry> {
                         children: <Widget>[
                           // TODO: how to refresh automatically?
                           !reload
-                              ? FlatButton(
+                              ? TextButton(
                                   child: Text("Refresh"),
                                   onPressed: () {
                                     refreshPage();
                                   })
                               : Container(
                                   alignment: Alignment.topCenter,
-                                  child: FlatButton(
-                                    child: Text(""),
-                                  ),
+                                  child: Text(""),
                                 ),
                           Container(
                             alignment: Alignment.center,
@@ -278,17 +273,8 @@ class _BazaarEntryState extends State<BazaarEntry> {
     );
   }
 
-  List<String> reverse(List<String> list) {
-    int end = list.length - 1;
-    var reversedList = new List(list.length);
-    for (int i = 0; i <= end; i++) {
-      reversedList[end - i] = list[i];
-    }
-    return reversedList.cast<String>();
-  }
-
   Widget _buildShopEntries(BuildContext context, int index, AppStore store) {
-    List<String> reversedList = reverse(store.encointer.shopRegistry);
+    List<String> reversedList = new List.from(store.encointer.shopRegistry.reversed);
     return GestureDetector(
       onTap: () {
         //TODO make clickable

@@ -30,6 +30,7 @@ jobs:
         yarn install
         yarn run build
         popd
+    - run: flutter analyze  --fatal-warnings
     - run: flutter pub get
     - run: flutter test
     - run: flutter build apk --flavor fdroid

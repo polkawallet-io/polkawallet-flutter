@@ -1,14 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/common/imagePickerHandler.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/shop/shopClass.dart';
+import 'package:encointer_wallet/page/account/txConfirmPage.dart';
+import 'package:encointer_wallet/service/ipfsApi/httpApi.dart';
+import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:encointer_wallet/page/account/txConfirmPage.dart';
-import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/service/ipfsApi/httpApi.dart';
-import 'dart:io';
-import 'package:encointer_wallet/page-encointer/bazaar/shop/shopClass.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/common/imagePickerHandler.dart';
 
 class CreateShopForm extends StatefulWidget {
   CreateShopForm(this.store);
@@ -24,8 +25,6 @@ class _CreateShopForm extends State<CreateShopForm> {
   _CreateShopForm(this.store);
 
   final AppStore store;
-  static final String route = '/encointer/bazaar/createShopForm';
-
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameCtrl = new TextEditingController();

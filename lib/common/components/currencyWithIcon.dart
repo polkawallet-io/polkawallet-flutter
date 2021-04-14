@@ -1,8 +1,6 @@
+import 'package:encointer_wallet/utils/format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/config/consts.dart';
-import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/format.dart';
 
 class CurrencyWithIcon extends StatelessWidget {
   CurrencyWithIcon(
@@ -19,9 +17,6 @@ class CurrencyWithIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String networkToken =
-        globalAppStore.settings.networkState.tokenSymbol;
-    final int decimals = globalAppStore.settings.networkState.tokenDecimals;
     bool hasIcon = true;
     return Row(
       mainAxisAlignment: mainAxisAlignment ?? MainAxisAlignment.start,

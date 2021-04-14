@@ -62,17 +62,13 @@ class _AttestationCardState extends State<AttestationCard> {
     }
   }
 
-  _revertAttestation() {
-    print("reverting attestation");
-  }
-
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).encointer;
 
     int otherIndex = widget.otherMeetupRegistryIndex;
     AttestationState attestation = store.encointer.attestations[otherIndex];
-    print("Attestationcard for " + attestation.pubKey);
+    print("Attestation card for " + attestation.pubKey);
 
     return RoundedCard(
       border: Border.all(color: Theme.of(context).cardColor),

@@ -90,13 +90,4 @@ class _ShopObserverState extends State<ShopObserver> with SingleTickerProviderSt
       ),
     );
   }
-
-  Widget _getShopViewOffline() {
-    return SafeArea(
-      child: Container(
-        padding: EdgeInsets.fromLTRB(16, 32, 16, 32),
-        child: ShopOverviewPanel(store),
-      ),
-    );
-  }
 }

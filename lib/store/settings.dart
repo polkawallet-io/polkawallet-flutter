@@ -247,7 +247,7 @@ abstract class _SettingsStore with Store {
   }
 }
 
-@JsonSerializable()
+@JsonSerializable(createFactory: false)
 class NetworkState extends _NetworkState {
   NetworkState(String endpoint, int ss58Format, int tokenDecimals, String tokenSymbol)
       : super(endpoint, ss58Format, tokenDecimals, tokenSymbol);

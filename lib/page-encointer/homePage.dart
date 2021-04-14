@@ -1,4 +1,3 @@
-import 'package:encointer_wallet/page-encointer/bazaar/bazaarEntry.dart';
 import 'package:encointer_wallet/page-encointer/encointerEntry.dart';
 import 'package:encointer_wallet/page/assets/index.dart';
 import 'package:encointer_wallet/page/profile/index.dart';
@@ -35,11 +34,11 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
     Map<String, String> tabs = I18n.of(context).home;
     return _tabList
         .map((i) => BottomNavigationBarItem(
-              icon: Image.asset(_tabList[activeItem] == i
-                  ? 'assets/images/public/${i}_indigo.png'
-                  : 'assets/images/public/${i}_dark.png',
-                  key: Key('tab-${i.toLowerCase()}')
-              ),
+              icon: Image.asset(
+                  _tabList[activeItem] == i
+                      ? 'assets/images/public/${i}_indigo.png'
+                      : 'assets/images/public/${i}_dark.png',
+                  key: Key('tab-${i.toLowerCase()}')),
               label: tabs[i.toLowerCase()],
             ))
         .toList();

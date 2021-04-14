@@ -31,7 +31,6 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
   ];
 
   KeySelection _keySelection = KeySelection.MNEMONIC;
-  bool _observationSubmitting = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -79,7 +78,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
             validator: (v) {
               // TODO: fix me: disable validator for polkawallet-RN exported keystore importing
               return null;
-              return v.trim().length > 0 ? null : dic['create.password.error'];
+              // return v.trim().length > 0 ? null : dic['create.password.error'];
             },
           ),
         ),
@@ -148,7 +147,6 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
 
   Future<void> _onAddObservationAccount() async {
     setState(() {
-      _observationSubmitting = true;
     });
     showCupertinoDialog(
       context: context,
@@ -175,7 +173,6 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
     int exist = widget.store.settings.contactList.indexWhere((i) => i.address == address);
     if (exist > -1) {
       setState(() {
-        _observationSubmitting = false;
       });
       Navigator.of(context).pop();
 
@@ -202,7 +199,6 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
       webApi.account.encodeAddress([pubKey]);
       webApi.account.getPubKeyIcons([pubKey]);
       setState(() {
-        _observationSubmitting = false;
       });
       // go to home page
       Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -306,8 +302,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                 ),
                 _keySelection != KeySelection.OBSERVATION
                     ? Padding(
-                    key: Key('account-source'),
-                    padding: EdgeInsets.only(left: 16, right: 16),
+                        key: Key('account-source'),
+                        padding: EdgeInsets.only(left: 16, right: 16),
                         child: TextFormField(
                           decoration: InputDecoration(
                             hintText: selected,

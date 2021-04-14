@@ -5,6 +5,7 @@ part 'txData.g.dart';
 @JsonSerializable()
 class TxData extends _TxData {
   static TxData fromJson(Map<String, dynamic> json) => _$TxDataFromJson(json);
+  Map<String, dynamic> toJson() => _$TxDataToJson(this);
 }
 
 abstract class _TxData {

@@ -8,7 +8,6 @@ import 'package:encointer_wallet/page/account/uos/qrSenderPage.dart';
 import 'package:encointer_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
-import 'package:encointer_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
@@ -86,10 +85,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     print('callback triggered, blockHash: ${res['hash']}');
     store.assets.setSubmitting(false);
     if (mounted) {
-      final ScaffoldState state = Scaffold.of(context);
-
-      state.removeCurrentSnackBar();
-      state.showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.white,
         content: ListTile(
           leading: Container(
@@ -105,7 +102,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
       ));
 
       Timer(Duration(seconds: 2), () {
-        if (state.mounted) {
+        if (Scaffold.of(context).mounted) {
           (args['onFinish'] as Function(BuildContext, Map))(context, res);
         }
       });
@@ -116,7 +113,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     final Map<String, String> dic = I18n.of(context).home;
     store.assets.setSubmitting(false);
     if (mounted) {
-      Scaffold.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
     }
     showCupertinoDialog(
       context: context,
@@ -223,7 +220,7 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   }
 
   void _showTxStatusSnackbar(BuildContext context, String status, Widget leading) {
-    Scaffold.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: Theme.of(context).cardColor,
       content: ListTile(
         leading: leading,
@@ -300,7 +297,6 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).home;
-    final Map<String, String> dicAcc = I18n.of(context).account;
     final Map<String, String> dicAsset = I18n.of(context).assets;
     final String symbol = store.settings.networkState.tokenSymbol ?? '';
     final int decimals = store.settings.networkState.tokenDecimals ?? ert_decimals;
@@ -318,7 +314,6 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
         child: Observer(builder: (BuildContext context) {
           final bool isObservation = store.account.currentAccount.observation ?? false;
           final bool isProxyObservation = _proxyAccount != null ? _proxyAccount.observation ?? false : false;
-          final AccountRecoveryInfo recoverable = store.account.recoveryInfo;
 
           return Column(
             children: <Widget>[
@@ -489,8 +484,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                   Expanded(
                     child: Container(
                       color: store.assets.submitting ? Colors.black12 : Colors.orange,
-                      child: FlatButton(
-                        padding: EdgeInsets.all(16),
+                      child: TextButton(
+                        style: TextButton.styleFrom(padding: EdgeInsets.all(16)),
                         child: Text(dic['cancel'], style: TextStyle(color: Colors.white)),
                         onPressed: () {
                           Navigator.of(context).pop();
@@ -501,8 +496,8 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
                   Expanded(
                     child: Container(
                       color: store.assets.submitting ? Theme.of(context).disabledColor : Theme.of(context).primaryColor,
-                      child: FlatButton(
-                        padding: EdgeInsets.all(16),
+                      child: TextButton(
+                        style: TextButton.styleFrom(padding: EdgeInsets.all(16)),
                         child: Text(
                           isUnsigned
                               ? dic['submit.no.sign']

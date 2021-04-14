@@ -1,6 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/page/profile/aboutPage.dart';
 import 'package:encointer_wallet/page/profile/account/accountManagePage.dart';
@@ -10,6 +7,9 @@ import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class Profile extends StatelessWidget {
   Profile(this.store);
@@ -50,10 +50,12 @@ class Profile extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        RaisedButton(
-                          padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
-                          color: primaryColor,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                        ElevatedButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
+                            backgroundColor: primaryColor,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                          ),
                           child: Text(
                             dic['account'],
                             style: Theme.of(context).textTheme.button,

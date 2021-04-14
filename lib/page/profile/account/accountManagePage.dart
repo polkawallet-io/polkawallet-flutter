@@ -94,10 +94,12 @@ class AccountManagePage extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Expanded(
-                    child: FlatButton(
-                      padding: EdgeInsets.all(16),
-                      color: Colors.white,
-                      textColor: Colors.red,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.all(16),
+                        backgroundColor: Colors.white,
+                        textStyle: TextStyle(color: Colors.red),
+                      ),
                       child: Text(dic['delete']),
                       onPressed: () => _onDeleteAccount(context),
                     ),

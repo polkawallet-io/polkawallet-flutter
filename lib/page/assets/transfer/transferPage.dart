@@ -9,7 +9,6 @@ import 'package:encointer_wallet/page/account/scanPage.dart';
 import 'package:encointer_wallet/page/account/txConfirmPage.dart';
 import 'package:encointer_wallet/page/assets/asset/assetPage.dart';
 import 'package:encointer_wallet/page/assets/transfer/currencySelectPage.dart';
-import 'package:encointer_wallet/page/assets/transfer/transferCrossChainPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
@@ -51,8 +50,6 @@ class _TransferPageState extends State<TransferPage> {
   AccountData _accountTo;
   String _tokenSymbol;
   bool _isEncointerCommunityCurrency;
-
-  bool _crossChain = false;
 
   Future<void> _onScan() async {
     final to = await Navigator.of(context).pushNamed(ScanPage.route);
@@ -136,46 +133,6 @@ class _TransferPageState extends State<TransferPage> {
     }
   }
 
-  void _onCrossChain() {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (_) => CupertinoActionSheet(
-        actions: [
-          CupertinoActionSheetAction(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 8),
-                  child: CircleAvatar(
-                    child: Image.asset(
-                      'assets/images/public/acala-mandala.png',
-                    ),
-                    radius: 16,
-                  ),
-                ),
-              ],
-            ),
-            onPressed: () {
-              final TransferPageParams args = ModalRoute.of(context).settings.arguments;
-              Navigator.of(context).popAndPushNamed(TransferCrossChainPage.route,
-                  arguments: TransferPageParams(
-                    symbol: _tokenSymbol,
-                    redirect: args?.redirect,
-                  ));
-            },
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          child: Text(I18n.of(context).home['cancel']),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
-
   @override
   void initState() {
     super.initState();
@@ -236,8 +193,6 @@ class _TransferPageState extends State<TransferPage> {
         BigInt available; // BigInt
         available = _getAvailableEncointerOrBaseToken(isBaseToken, symbol);
         print('Available: $available');
-
-        final Map pubKeyAddressMap = store.account.pubKeyAddressMap[store.settings.endpoint.ss58];
 
         return Scaffold(
           appBar: AppBar(
