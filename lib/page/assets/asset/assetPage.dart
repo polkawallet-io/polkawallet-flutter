@@ -348,6 +348,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                   children: <Widget>[
                     Expanded(
                       child: Container(
+                        key: Key('transfer'),
                         color: Colors.lightBlue,
                         child: FlatButton(
                           padding: EdgeInsets.all(16),

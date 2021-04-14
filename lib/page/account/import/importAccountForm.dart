@@ -306,7 +306,8 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                 ),
                 _keySelection != KeySelection.OBSERVATION
                     ? Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16),
+                    key: Key('account-source'),
+                    padding: EdgeInsets.only(left: 16, right: 16),
                         child: TextFormField(
                           decoration: InputDecoration(
                             hintText: selected,
@@ -336,6 +337,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
           ),
         ),
         Container(
+          key: Key('account-import-next'),
           padding: EdgeInsets.all(16),
           child: RoundedButton(
             text: I18n.of(context).home['next'],

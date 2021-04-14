@@ -31,6 +31,7 @@ class CreateAccountForm extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
               children: <Widget>[
                 TextFormField(
+                  key: Key('create-account-name'),
                   decoration: InputDecoration(
                     icon: Icon(Icons.person),
                     hintText: dic['create.hint'],
@@ -39,6 +40,7 @@ class CreateAccountForm extends StatelessWidget {
                   controller: _nameCtrl,
                 ),
                 TextFormField(
+                  key: Key('create-account-pin'),
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     icon: Icon(Icons.lock),
@@ -55,6 +57,7 @@ class CreateAccountForm extends StatelessWidget {
                   ],
                 ),
                 TextFormField(
+                  key: Key('create-account-pin2'),
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     icon: Icon(Icons.lock),
@@ -74,6 +77,7 @@ class CreateAccountForm extends StatelessWidget {
             ),
           ),
           Container(
+            key: Key('create-account-confirm'),
             padding: EdgeInsets.all(16),
             child: RoundedButton(
               text: I18n.of(context).account['create'],

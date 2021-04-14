@@ -1,25 +1,29 @@
+import 'package:encointer_wallet/mocks/api/api.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
 import 'package:encointer_wallet/store/encointer/types/location.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../mocks/apiEncointer_mock.dart';
-import '../mocks/data/mockEncointerData.dart';
-import '../mocks/localStorage_mock.dart';
+import 'package:encointer_wallet/mocks/data/mockEncointerData.dart';
+import 'package:encointer_wallet/mocks/data/mockAccountData.dart';
+import 'package:encointer_wallet/mocks/storage/localStorage.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('EncointerStore test', () {
-    final AppStore root = AppStore();
-    root.localStorage = getMockLocalStorage();
+    globalAppStore = AppStore(getMockLocalStorage());
+    final AppStore root = globalAppStore;
+    accList = [testAcc];
+    currentAccountPubKey = accList[0]['pubKey'];
 
-    webApi = Api(null, root);
-    webApi.encointer = getMockApiEncointer();
+    webApi = MockApi(null, root, withUi: false);
 
     test('encointer store cache works', () async {
       await root.init('_en');
+      await webApi.init();
+
       final store = root.encointer;
 
       var phase = CeremonyPhase.REGISTERING;

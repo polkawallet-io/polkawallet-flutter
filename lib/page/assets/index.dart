@@ -250,6 +250,7 @@ class _AssetsState extends State<Assets> {
               children: [
                 GestureDetector(
                   child: Padding(
+                    key: Key('qr-receive'),
                     padding: EdgeInsets.only(left: 2),
                     child: Image.asset(
                       'assets/images/assets/qrcode_${store.settings.endpoint.color ?? 'pink'}.png',
@@ -471,6 +472,7 @@ class _AssetsState extends State<Assets> {
               ? RoundedCard(
                   margin: EdgeInsets.only(top: 16),
                   child: ListTile(
+                    key: Key('cid-asset'),
                     leading: Container(
                       width: 36,
                       child: Image.asset('assets/images/assets/ERT.png'),

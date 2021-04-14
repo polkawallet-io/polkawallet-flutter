@@ -39,3 +39,4 @@ lib/generated_plugin_registrant.dart
 # webview lib
 **/dist
 **/node_modules/
+/android/fastlane/metadata/android/en-US/images/phoneScreenshots/

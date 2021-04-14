@@ -20,6 +20,7 @@ class CreateAccountEntryPage extends StatelessWidget {
               child: Image.asset('assets/images/public/logo_about.png'),
             ),
             Padding(
+              key: Key('create-account'),
               padding: EdgeInsets.all(16),
               child: RoundedButton(
                 text: I18n.of(context).home['create'],
@@ -29,6 +30,7 @@ class CreateAccountEntryPage extends StatelessWidget {
               ),
             ),
             Padding(
+              key: Key('import-account'),
               padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: RoundedButton(
                 text: I18n.of(context).home['import'],

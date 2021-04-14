@@ -1,17 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:encointer_wallet/store/app.dart';
 
-import '../mocks/data/MockAccountData.dart';
-import '../mocks/localStorage_mock.dart';
+import 'package:encointer_wallet/mocks/data/mockAccountData.dart';
+import 'package:encointer_wallet/mocks/storage/localStorage.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('AccountStore test', () {
-    final AppStore root = AppStore();
-    root.localStorage = getMockLocalStorage();
+    final AppStore root = AppStore(getMockLocalStorage());
 
     test('account store test', () async {
+      accList = [testAcc];
+      currentAccountPubKey = accList[0]['pubKey'];
+
       await root.init('_en');
       final store = root.account;
 
@@ -31,12 +33,12 @@ void main() {
 
       /// add account
       String testPass = 'a111111';
-      await store.addAccount(accNew, testPass);
+      await store.addAccount(endoEncointer, testPass);
       expect(store.accountList.length, 2);
-      expect(store.currentAccountPubKey, accNew['pubKey']);
+      expect(store.currentAccountPubKey, endoEncointer['pubKey']);
       expect(store.currentAccount.name, 'test');
-      expect(store.currentAccount.pubKey, accNew['pubKey']);
-      expect(store.currentAccount.address, accNew['address']);
+      expect(store.currentAccount.pubKey, endoEncointer['pubKey']);
+      expect(store.currentAccount.address, endoEncointer['address']);
       expect(store.optionalAccounts.length, 1);
       expect(store.optionalAccounts[0].pubKey, accList[0]['pubKey']);
       expect(store.optionalAccounts[0].name, accList[0]['name']);
@@ -46,14 +48,14 @@ void main() {
       /// update account
       await store.updateAccountName('test-change');
       expect(store.currentAccount.name, 'test-change');
-      expect(store.currentAccount.pubKey, accNew['pubKey']);
-      expect(store.currentAccount.address, accNew['address']);
+      expect(store.currentAccount.pubKey, endoEncointer['pubKey']);
+      expect(store.currentAccount.address, endoEncointer['address']);
 
       /// update works after reload
       await store.loadAccount();
       expect(store.currentAccount.name, 'test-change');
-      expect(store.currentAccount.pubKey, accNew['pubKey']);
-      expect(store.currentAccount.address, accNew['address']);
+      expect(store.currentAccount.pubKey, endoEncointer['pubKey']);
+      expect(store.currentAccount.address, endoEncointer['address']);
 
       /// change account
       store.setCurrentAccount(accList[0]['pubKey']);
@@ -61,16 +63,16 @@ void main() {
       expect(store.currentAccount.name, accList[0]['name']);
       expect(store.currentAccount.pubKey, accList[0]['pubKey']);
       expect(store.currentAccount.address, accList[0]['address']);
-      expect(store.optionalAccounts[0].pubKey, accNew['pubKey']);
+      expect(store.optionalAccounts[0].pubKey, endoEncointer['pubKey']);
       expect(store.optionalAccounts[0].name, 'test-change');
-      expect(store.optionalAccounts[0].pubKey, accNew['pubKey']);
-      expect(store.optionalAccounts[0].address, accNew['address']);
+      expect(store.optionalAccounts[0].pubKey, endoEncointer['pubKey']);
+      expect(store.optionalAccounts[0].address, endoEncointer['address']);
 
-      store.setCurrentAccount(accNew['pubKey']);
-      expect(store.currentAccountPubKey, accNew['pubKey']);
+      store.setCurrentAccount(endoEncointer['pubKey']);
+      expect(store.currentAccountPubKey, endoEncointer['pubKey']);
       expect(store.currentAccount.name, 'test-change');
-      expect(store.currentAccount.pubKey, accNew['pubKey']);
-      expect(store.currentAccount.address, accNew['address']);
+      expect(store.currentAccount.pubKey, endoEncointer['pubKey']);
+      expect(store.currentAccount.address, endoEncointer['address']);
 
       /// remove account
       await store.removeAccount(store.currentAccount);

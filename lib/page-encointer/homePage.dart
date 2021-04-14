@@ -12,7 +12,7 @@ class EncointerHomePage extends StatefulWidget {
   EncointerHomePage(this.store);
 
   static final GlobalKey encointerHomePageKey = GlobalKey();
-  static final String route = '/';
+  static const String route = '/';
   final AppStore store;
 
   @override
@@ -37,7 +37,9 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
         .map((i) => BottomNavigationBarItem(
               icon: Image.asset(_tabList[activeItem] == i
                   ? 'assets/images/public/${i}_indigo.png'
-                  : 'assets/images/public/${i}_dark.png'),
+                  : 'assets/images/public/${i}_dark.png',
+                  key: Key('tab-${i.toLowerCase()}')
+              ),
               label: tabs[i.toLowerCase()],
             ))
         .toList();

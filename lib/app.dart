@@ -33,20 +33,25 @@ import 'package:encointer_wallet/page/profile/contacts/contactsPage.dart';
 import 'package:encointer_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:encointer_wallet/page/profile/settings/settingsPage.dart';
 import 'package:encointer_wallet/page/profile/settings/ss58PrefixListPage.dart';
+import 'package:encointer_wallet/utils/localStorage.dart';
 import 'package:encointer_wallet/service/notification.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
-import 'package:encointer_wallet/service/walletApi.dart';
 import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'common/theme.dart';
+import 'mocks/storage/localStorage.dart';
+import 'mocks/api/api.dart';
 import 'utils/i18n/index.dart';
 
 class WalletApp extends StatefulWidget {
-  const WalletApp();
+  const WalletApp(this.config);
+
+  final Config config;
 
   @override
   _WalletAppState createState() => _WalletAppState();
@@ -86,13 +91,15 @@ class _WalletAppState extends State<WalletApp> {
 
   Future<int> _initStore(BuildContext context) async {
     if (_appStore == null) {
+      // Todo: Use provider pattern instead of globals, see: https://github.com/encointer/encointer-wallet-flutter/issues/132
+      globalAppStore = widget.config.mockLocalStorage ? AppStore(getMockLocalStorage()) : AppStore(LocalStorage());
       _appStore = globalAppStore;
-      print('initailizing app state');
+      print('initializing app state');
       print('sys locale: ${Localizations.localeOf(context)}');
       await _appStore.init(Localizations.localeOf(context).toString());
 
       // init webApi after store initiated
-      webApi = Api(context, _appStore);
+      webApi = widget.config.mockSubstrateApi ? MockApi(context, _appStore) : Api(context, _appStore);
       webApi.init();
 
       _changeLang(context, _appStore.settings.localeCode);
@@ -111,17 +118,6 @@ class _WalletAppState extends State<WalletApp> {
 
   @override
   void dispose() {
-    showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        final Map<String, String> dic = I18n.of(context).assets;
-        return CupertinoAlertDialog(
-          title: Container(),
-          content: Text('${dic['copy']} ${dic['success']}'),
-        );
-      },
-    );
-
     didReceiveLocalNotificationSubject.close();
     selectNotificationSubject.close();
     webApi.closeWebView();
@@ -141,7 +137,7 @@ class _WalletAppState extends State<WalletApp> {
       supportedLocales: [
         const Locale('en', ''),
       ],
-      initialRoute: EncointerHomePage.route,
+      initialRoute: widget.config.initialRoute,
       theme: _theme,
 //      darkTheme: darkTheme,
       routes: {

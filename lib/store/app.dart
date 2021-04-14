@@ -7,11 +7,15 @@ import 'package:encointer_wallet/utils/localStorage.dart';
 
 part 'app.g.dart';
 
-final AppStore globalAppStore = AppStore();
+AppStore globalAppStore = AppStore(LocalStorage());
 
-class AppStore extends _AppStore with _$AppStore {}
+class AppStore extends _AppStore with _$AppStore {
+  AppStore(LocalStorage localStorage): super(localStorage);
+}
 
 abstract class _AppStore with Store {
+  _AppStore(this.localStorage);
+
   @observable
   SettingsStore settings;
 
@@ -27,7 +31,7 @@ abstract class _AppStore with Store {
   @observable
   bool isReady = false;
 
-  LocalStorage localStorage = LocalStorage();
+  LocalStorage localStorage;
 
   @action
   Future<void> init(String sysLocaleCode) async {

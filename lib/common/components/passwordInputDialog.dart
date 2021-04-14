@@ -41,6 +41,7 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
             content: Text(dic['pass.error.txt']),
             actions: <Widget>[
               CupertinoButton(
+                key: Key('error-dialog-ok'),
                 child: Text(I18n.of(context).home['ok']),
                 onPressed: () => Navigator.of(context).pop(),
               ),
@@ -89,6 +90,7 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
           },
         ),
         CupertinoButton(
+          key: Key('password-ok'),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [_submitting ? CupertinoActivityIndicator() : Container(), Text(dic['ok'])],

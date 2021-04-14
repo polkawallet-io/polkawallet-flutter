@@ -34,6 +34,7 @@ class _CommunityChooserPanelState extends State<CommunityChooserPanel> {
                   : (store.encointer.communityIdentifiers.isEmpty)
                       ? Text("no currencies found")
                       : DropdownButton<dynamic>(
+                          key: Key('cid-dropdown'),
                           value: (store.encointer.chosenCid == null ||
                                   !store.encointer.communityIdentifiers.contains(store.encointer.chosenCid))
                               ? store.encointer.communityIdentifiers[0]
@@ -47,9 +48,12 @@ class _CommunityChooserPanelState extends State<CommunityChooserPanel> {
                             });
                           },
                           items: store.encointer.communityIdentifiers
-                              .map<DropdownMenuItem<dynamic>>((value) => DropdownMenuItem<dynamic>(
-                                    value: value,
-                                    child: Text(Fmt.communityIdentifier(value)),
+                              .asMap()
+                              .entries
+                              .map((entry) => DropdownMenuItem<dynamic>(
+                                    key: Key('cid-${entry.key}'),
+                                    value: entry.value,
+                                    child: Text(Fmt.communityIdentifier(entry.value)),
                                   ))
                               .toList(),
                         ),

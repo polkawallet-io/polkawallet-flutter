@@ -5,9 +5,9 @@ import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
 
-import '../../../../mocks/apiEncointer_mock.dart';
-import '../../../../mocks/data/MockAccountData.dart';
-import '../../../../mocks/data/mockEncointerData.dart';
+import 'package:encointer_wallet/mocks/api/api.dart';
+import 'package:encointer_wallet/mocks/data/mockEncointerData.dart';
+import 'package:encointer_wallet/mocks/data/mockAccountData.dart';
 import 'common.dart';
 
 void main() {
@@ -18,8 +18,8 @@ void main() {
   setUp(() async {
     root = await setupStore();
 
-    webApi = Api(null, root);
-    webApi.encointer = getMockApiEncointer();
+    webApi = MockApi(null, root, withUi: false);
+    webApi.init();
 
     stateMachineB = StateMachinePartyB(
       root,

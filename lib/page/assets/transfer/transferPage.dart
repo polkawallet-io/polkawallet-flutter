@@ -272,6 +272,7 @@ class _TransferPageState extends State<TransferPage> {
                               },
                             ),
                             TextFormField(
+                              key: Key('transfer-amount-input'),
                               decoration: InputDecoration(
                                 hintText: dic['amount'],
                                 labelText: '${dic['amount']} (${dic['balance']}: ${Fmt.priceFloorBigInt(
@@ -346,6 +347,7 @@ class _TransferPageState extends State<TransferPage> {
                       ),
                     ),
                     Container(
+                      key: Key('make-transfer'),
                       padding: EdgeInsets.all(16),
                       child: RoundedButton(
                         text: I18n.of(context).assets['make'],

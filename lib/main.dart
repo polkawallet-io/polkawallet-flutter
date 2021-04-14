@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:encointer_wallet/config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -41,6 +42,6 @@ Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
 
   runApp(
-    WalletApp(),
+    WalletApp(Config()),
   );
 }
