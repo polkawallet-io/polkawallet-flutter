@@ -51,7 +51,7 @@ void main() {
 
       // take a screenshot of the EncointerHome Screen
       await screenshot(driver, config, 'encointer-home');
-    });
+    }, timeout: Timeout(Duration(seconds: 60))); // needed for android CI with github actions
 
     test('show receive qr code', () async {
       await driver.tap(find.byValueKey('qr-receive'));

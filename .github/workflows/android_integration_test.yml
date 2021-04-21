@@ -1,0 +1,89 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-android:
+    # use macos to have hardware acceleration https://github.com/ReactiveCircus/android-emulator-runner/issues/46
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            # needs to be the `id` from the devices given by `avdmanager list device`
+            device: "pixel_3a"
+            api-level: 29 # 30 is not working
+            # disable for now. it takes ages to build and launch the app and the upper limit of
+            # recordings is 180s. The app has not even started by then.
+            record_video: false
+      fail-fast: false
+    steps:
+      # Setup Environment
+      - uses: actions/checkout@v2
+        with:
+          # 2 to compare the last two revisions to check if JS changed
+          fetch-depth: 2
+
+      - uses: monorepo-actions/config-for-actions@main
+        id: config
+        with:
+          config_files: ./.github/action-config.json
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ steps.config.outputs.java-version }}
+
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ steps.config.outputs.flutter-version }}
+
+      - name: Setup Android SDK and accept licences
+        uses: android-actions/setup-android@v2
+
+      # JS Stuff
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ steps.config.outputs.node-version }}
+
+      - name: "Check if JS code was updated"
+        uses: marceloprado/has-changed-path@v1
+        id: js-changed
+        with:
+          paths: ${{ steps.config.outputs.js-service-encointer-path }}
+
+      - name: "Setup JS Cache"
+        id: cache-js
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.config.outputs.encointer-main-js-path }}
+          # note: change cache version in config to force cache overwrite.
+          key: ${{ runner.os }}-${{ 'encointer.js' }}-{{ steps.config.outputs.cache-version }}
+
+      - name: "Build JS if needed"
+        # note: this logic is a bit flawed, as it does not realize when the second-last commit changed
+        # the JS-code. To force build and update cache, change the config's cache version
+        if: ${{ steps.js-changed.outputs.changed == 'true' || steps.cache-js.outputs.cache-hit != 'true' }}
+        working-directory: ./scripts
+        run: source ./init_env.sh && ./build_js.sh
+
+      - name: "Android Integration Tests"
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          ANDROID_DEBUG: "true"
+          RECORD: ${{ matrix.record_video }}
+          TEMP_DIR:  ${{ steps.config.outputs.temp-screenshots }}
+        with:
+          api-level: ${{ matrix.api-level }}
+          profile: ${{ matrix.device }}
+          script: ./scripts/android_integration_test.sh
+
+      - name: "Upload screenshots"
+        uses: actions/upload-artifact@v2
+        with:
+          name:  ${{ matrix.device }}
+          path:  ${{ steps.config.outputs.temp-screenshots }}

@@ -1,0 +1,101 @@
+name: IOS CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  ios_device_test:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        include:
+          - device: "iPhone 11 Pro Max"
+            record_video: true
+          - device: "iPhone 8 Plus"
+            record_video: false
+          - device: "iPad Pro (12.9-inch) (3rd generation)"
+            record_video: false
+          - device: "iPad Pro (12.9-inch) (2nd generation)"
+            record_video: false
+      fail-fast: false
+    steps:
+        # Setup Environment
+      - uses: actions/checkout@v2
+        with:
+          # 2 to compare the last two revisions to check if JS changed
+          fetch-depth: 2
+
+      - uses: monorepo-actions/config-for-actions@main
+        id: config
+        with:
+          config_files: ./.github/action-config.json
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ steps.config.outputs.java-version }}
+
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ steps.config.outputs.flutter-version }}
+
+      - name: "Prepare environment for ios"
+        working-directory: ./scripts
+        run: ./ios_init_env.sh
+
+      - name: "Create Simulator if iPad Pro 2nd gen"
+        if: ${{ matrix.device == 'iPad Pro (12.9-inch) (2nd generation)' }}
+        run: xcrun simctl create "iPad Pro (12.9-inch) (2nd generation)" "com.apple.CoreSimulator.SimDeviceType.iPad-Pro--12-9-inch---2nd-generation-" "com.apple.CoreSimulator.SimRuntime.iOS-14-4"
+
+      - name: "Create Simulator if iPad Pro 3rd gen"
+        if: ${{ matrix.device == 'iPad Pro (12.9-inch) (3rd generation)' }}
+        run: xcrun simctl create "iPad Pro (12.9-inch) (3rd generation)" "com.apple.CoreSimulator.SimDeviceType.iPad-Pro--12-9-inch---3rd-generation-" "com.apple.CoreSimulator.SimRuntime.iOS-14-4"
+
+      - name: "Start Simulator"
+        working-directory: ./scripts
+        env:
+          DEVICE_ID: ${{ matrix.device }}
+        run: source ./ios_emulator.sh
+
+        # JS Stuff
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ steps.config.outputs.node-version }}
+
+      - name: "Check if JS code was updated"
+        uses: marceloprado/has-changed-path@v1
+        id: js-changed
+        with:
+          paths: ${{ steps.config.outputs.js-service-encointer-path }}
+
+      - name: "Setup JS Cache"
+        id: cache-js
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.config.outputs.encointer-main-js-path }}
+          # note: change cache version in config to force cache overwrite.
+          key: ${{ runner.os }}-${{ 'encointer.js' }}-{{ steps.config.outputs.cache-version }}
+
+      - name: "Build JS if needed"
+        # note: this logic is a bit flawed, as it does not realize when the second-last commit changed
+        # the JS-code. To force build and update cache, change the config's cache version
+        if: ${{ steps.js-changed.outputs.changed == 'true' || steps.cache-js.outputs.cache-hit != 'true' }}
+        working-directory: ./scripts
+        run: source ./init_env.sh && ./build_js.sh
+
+        # Run Tests
+      - name: "Flutter driver test and record video"
+        working-directory: ./scripts
+        run: ./ios_integration_test.sh
+        env:
+          TEMP_DIR:  ${{ steps.config.outputs.temp-screenshots }}
+          RECORD: ${{ matrix.record_video }}
+
+      - name: "Upload screenshots and recording"
+        uses: actions/upload-artifact@v2
+        with:
+          name:  ${{ matrix.device }}
+          path:  ${{ steps.config.outputs.temp-screenshots }}

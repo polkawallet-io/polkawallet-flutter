@@ -1,0 +1,43 @@
+name: Unit Tests & Code Quality
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # Setup Environment
+      - uses: actions/checkout@v2
+
+      - uses: monorepo-actions/config-for-actions@main
+        id: config
+        with:
+          config_files: ./.github/action-config.json
+
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ steps.config.outputs.flutter-version }}
+
+      # Analyzer throws an error if an asset is missing
+      - name: "Make mock-main.js"
+        run: |
+          mkdir -p ${{ steps.config.outputs.js-service-encointer-path }}/dist
+          touch ${{ steps.config.outputs.encointer-main-js-path }}
+
+      # analyze and test
+      - name: "Analyze Code"
+        run: flutter pub get && flutter analyze  --fatal-warnings
+
+      - name: "Run unit tests"
+        run: flutter pub get && flutter test
+
+#  test-js:
+    # Todo: Currently e2e tests are mixed with unit tests (although the amount of unit tests is really small)
+
+
+

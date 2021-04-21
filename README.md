@@ -9,6 +9,12 @@ Encointer wallet and client for mobile phones
      alt="Get it on Google Play"
      height="80">](https://play.google.com/store/apps/details?id=org.encointer.wallet)
 
+
+[![Build](https://github.com/encointer/encointer-wallet-flutter/actions/workflows/android_build.yml/badge.svg)](https://github.com/encointer/encointer-wallet-flutter/actions/workflows/android_build.yml)
+[![Android](https://github.com/encointer/encointer-wallet-flutter/actions/workflows/android_integration_test.yml/badge.svg)](https://github.com/encointer/encointer-wallet-flutter/actions/workflows/android_integration_test.yml)
+[![IOS](https://github.com/encointer/encointer-wallet-flutter/actions/workflows/ios_integration_test.yaml/badge.svg)](https://github.com/encointer/encointer-wallet-flutter/actions/workflows/ios_integration_test.yaml)
+[![Tests](https://github.com/encointer/encointer-wallet-flutter/actions/workflows/unit_tests.yaml/badge.svg)](https://github.com/encointer/encointer-wallet-flutter/actions/workflows/unit_tests.yaml)
+
 ## Overview
 
 <img src="./encointer-gesell-assets.png" width=300>
@@ -77,31 +83,7 @@ Re-generate mobx g.dart files
 * run all integration tests in `test_driver` directory: `flutter drive --target=test_driver/app.dart --flavor dev`
 
 ### Automated screenshots
-The `screenshots` package is used to created automated screenshots. Setup:
-
-* Install: `flutter pub global activate screenshots`
-* Create virtual devices in android studio with `New Hardware Profile` that have the following config. The Name does matter. It must match the one defined in `screenshots.yaml`:
-
-
-| Name              | Dimension     | Resolution
-|---|---|---|
-| IPad 12.9inch     | 12.9 inch     | 2048x2732	
-| IPhone 6.5inch    | 6.5 inch      | 1242x2688
-| IPhone 5.5inch    | 5.5 inch      | 1242x2208
-| Google Pixel 3    | 5.6 inch      | 1080x2220
-
-* Run: `screenshots --flavor dev`
-
-#### Notes:
-* The following directories need to be added to the path to run the emulator from the command line. The location below is the standard installation directory of the Android sdk in ubuntu:
-```shell
- export PATH="$PATH":"$HOME/Android/Sdk"
- export PATH="$PATH":"$HOME/Android/Sdk/emulator"
- export PATH="$PATH":"$HOME/Android/Sdk/tools/bin" 
-```
-* Having 4 emulators setup will need approximately 45Gb of free space on the hard drive.
-* Bug: The test run fails if the emulator is started with a cold boot.
-* Bug: emulator can't be launched if flutter web support is enabled. See [screenshots issue](https://github.com/mmcc007/screenshots/issues/193). Turn it off with: `flutter config --no-enable-web`
+* Github actions is used to create automated screenshots for the specified devices there. However, running the integration tests locally will create screenshots for the currently running device.
 
 #### Android Studio
 To run the in Android Studio a build flavor must be specified. Go to Run/Debug configurations and add the build flavor `dev` in the appropriate field. Other available values are in the in the android/app/src/build.gradle file.
