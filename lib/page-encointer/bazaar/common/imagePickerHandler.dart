@@ -10,7 +10,7 @@ class ImagePickerHandler extends StatelessWidget {
 
   Future<void> _openCamera(BuildContext context) async {
     try {
-      var image = await ImagePicker().getImage(source: ImageSource.camera);
+      var image = await ImagePicker.pickImage(source: ImageSource.camera);
       File imageFile = File(image.path);
       // TODO: app crashes when image cropper is opened
       // File croppedImage = await _cropImage(image);
@@ -22,7 +22,7 @@ class ImagePickerHandler extends StatelessWidget {
 
   Future<void> _openGallery(BuildContext context) async {
     try {
-      var image = await ImagePicker().getImage(source: ImageSource.gallery);
+      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
       File imageFile = File(image.path);
       // TODO: app crashes when image cropper is opened
       // File croppedImage = await _cropImage(imageFile);

@@ -12,7 +12,7 @@ class WalletApi {
 
   static Future<Map> getLatestVersion() async {
     try {
-      Response res = await get('$_endpoint/versions.json');
+      Response res = await get(Uri.parse('$_endpoint/versions.json'));
       if (res == null) {
         return null;
       } else {
@@ -26,7 +26,7 @@ class WalletApi {
 
   static Future<Map> getRecommended() async {
     try {
-      Response res = await get('$_endpoint/recommended.json');
+      Response res = await get(Uri.parse('$_endpoint/recommended.json'));
       if (res == null) {
         return null;
       } else {
@@ -40,7 +40,7 @@ class WalletApi {
 
   static Future<int> fetchPolkadotJSVersion(String networkName) async {
     try {
-      Response res = await get('$_endpoint/jsCodeVersions.json');
+      Response res = await get(Uri.parse('$_endpoint/jsCodeVersions.json'));
       if (res == null) {
         return null;
       } else {
@@ -54,7 +54,7 @@ class WalletApi {
 
   static Future<String> fetchPolkadotJSCode(String networkName) async {
     try {
-      Response res = await get('$_endpoint/js_service/$networkName.js');
+      Response res = await get(Uri.parse('$_endpoint/js_service/$networkName.js'));
       if (res == null) {
         return null;
       } else {
@@ -99,7 +99,7 @@ class WalletApi {
 
   static Future<List> getAnnouncements() async {
     try {
-      Response res = await get('$_endpoint/announce.json');
+      Response res = await get(Uri.parse('$_endpoint/announce.json'));
       if (res == null) {
         return null;
       } else {

@@ -13,18 +13,8 @@ class ScanPage extends StatelessWidget {
   final GlobalKey<QrcodeReaderViewState> _qrViewKey = GlobalKey();
 
   Future<bool> canOpenCamera() async {
-    var status =
-        await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
-    if (status != PermissionStatus.granted) {
-      var future = await PermissionHandler()
-          .requestPermissions([PermissionGroup.camera]);
-      for (final item in future.entries) {
-        if (item.value != PermissionStatus.granted) {
-          return false;
-        }
-      }
-    }
-    return true;
+    // will do nothing if already granted
+    return Permission.camera.request().isGranted;
   }
 
   @override

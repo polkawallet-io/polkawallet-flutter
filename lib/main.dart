@@ -20,15 +20,14 @@ Future<void> main() async {
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
-      onDidReceiveLocalNotification:
-          (int id, String title, String body, String payload) async {
-        didReceiveLocalNotificationSubject.add(ReceivedNotification(
-            id: id, title: title, body: body, payload: payload));
+      onDidReceiveLocalNotification: (int id, String title, String body, String payload) async {
+        didReceiveLocalNotificationSubject
+            .add(ReceivedNotification(id: id, title: title, body: body, payload: payload));
       });
-  var initializationSettings = InitializationSettings(
-      initializationSettingsAndroid, initializationSettingsIOS);
-  var initialised = await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings, onSelectNotification: (String payload) async {
+  var initializationSettings =
+      InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+  var initialised = await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
     }
