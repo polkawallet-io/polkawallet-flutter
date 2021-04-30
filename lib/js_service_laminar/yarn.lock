@@ -1377,10 +1377,15 @@
     memoizee "^0.4.14"
     rxjs "^6.6.3"
 
-"@open-web3/orml-type-definitions@^0.6.0-beta.26", "@open-web3/orml-type-definitions@^0.6.0-beta.28":
+"@open-web3/orml-type-definitions@^0.6.0-beta.26":
   version "0.6.0-beta.28"
   resolved "https://registry.yarnpkg.com/@open-web3/orml-type-definitions/-/orml-type-definitions-0.6.0-beta.28.tgz#a2668dc756b3e478e2695e8eeb1af87efe895987"
   integrity sha512-zD5Pb8nWrXETB9bw/TQikh5ZUS6AFDoKWGmirc1Mq2SXsdyypYGQ4r5kSR3ugOQ57AlWBbJPH1c5ccNtMOqNOw==
+
+"@open-web3/orml-type-definitions@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@open-web3/orml-type-definitions/-/orml-type-definitions-0.6.1.tgz#eb7fadf598f24f5024f5d2a1fd39ccc97c801104"
+  integrity sha512-6asf2W/sluGQ6LNiGSdCg/Xop54mq/Q2FcV2Z9cBxys6QC4qXfo4JwUL6kJsRh/vcIIbUxoyGgKUrU/6Xdm7wA==
 
 "@open-web3/orml-types@0.6.0-beta.26":
   version "0.6.0-beta.26"
@@ -1390,11 +1395,11 @@
     "@open-web3/orml-type-definitions" "^0.6.0-beta.26"
 
 "@open-web3/orml-types@^0.6.0-beta.26":
-  version "0.6.0-beta.28"
-  resolved "https://registry.yarnpkg.com/@open-web3/orml-types/-/orml-types-0.6.0-beta.28.tgz#004f14f51a021478999d87385048960c27a91f6f"
-  integrity sha512-f3n/Sgk7p9o+DLWawYKismpvCigLsoUAwkIZtT+VX1jy6mtGZFM5CFvqaGBHjZngZ7hJYlf6Y30TXwRuIKsmlQ==
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@open-web3/orml-types/-/orml-types-0.6.1.tgz#85eca19146d32c8cef0ace07c2aaf0f13ccc0350"
+  integrity sha512-wP0pguZuIrLpjz3TWrvRHFOp62giZIettAIT6ueED6pVUqNXFersrZZis6RmgbRBZggYhD7FgM/Z+DxVsR7HUQ==
   dependencies:
-    "@open-web3/orml-type-definitions" "^0.6.0-beta.28"
+    "@open-web3/orml-type-definitions" "^0.6.1"
 
 "@polkadot/api-derive@^2.5.1":
   version "2.5.1"
@@ -4442,8 +4447,8 @@ fb-watchman@^2.0.0:
 
 figgy-pudding@^3.5.1:
   version "3.5.2"
-  resolved "https://registry.npm.taobao.org/figgy-pudding/download/figgy-pudding-3.5.2.tgz#b4eee8148abb01dcf1d1ac34367d59e12fa61d6e"
-  integrity sha1-tO7oFIq7Adzx0aw0Nn1Z4S+mHW4=
+  resolved "https://registry.yarnpkg.com/figgy-pudding/-/figgy-pudding-3.5.2.tgz#b4eee8148abb01dcf1d1ac34367d59e12fa61d6e"
+  integrity sha512-0btnI/H8f2pavGMN8w40mlSKOfTK2SVJmBfBeVIj3kNw0swwgzyRq0d5TJVOwodFmtvpPeWPN/MCcfuWF0Ezbw==
 
 figures@^2.0.0:
   version "2.0.0"
@@ -8896,9 +8901,9 @@ sshpk@^1.7.0:
     tweetnacl "~0.14.0"
 
 ssri@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.npm.taobao.org/ssri/download/ssri-6.0.1.tgz#2a3c41b28dd45b62b63676ecb74001265ae9edd8"
-  integrity sha1-KjxBso3UW2K2Nnbst0ABJlrp7dg=
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/ssri/-/ssri-6.0.2.tgz#157939134f20464e7301ddba3e90ffa8f7728ac5"
+  integrity sha512-cepbSq/neFK7xB6A50KHN0xHDotYzq58wWCa5LeWqnPrHG8GzfEjO/4O8kpmcGW+oaxkvhEJCWgbgNk4/ZV93Q==
   dependencies:
     figgy-pudding "^3.5.1"
 
