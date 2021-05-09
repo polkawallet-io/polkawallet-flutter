@@ -18,9 +18,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class AssetPageParams {
-  AssetPageParams({this.token, this.isEncointerCommunityCurrency = false});
+  AssetPageParams({
+    @required this.token,  @required this.isEncointerCommunityCurrency, this.communityName, this.communitySymbol});
+
+  /// token equals cid if `isEncointerCommunityCurrency == true`
   final String token;
   final bool isEncointerCommunityCurrency;
+  final String communityName;
+  final String communitySymbol;
 }
 
 class AssetPage extends StatefulWidget {
@@ -108,31 +113,28 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
     super.dispose();
   }
 
+  /// Note: Tx list display is currently limited to tx's that were sent on the running device, see:
+  /// https://github.com/encointer/encointer-wallet-flutter/issues/54
   List<Widget> _buildTxList() {
     List<Widget> res = [];
     final AssetPageParams params = ModalRoute.of(context).settings.arguments;
     final String token = params.token;
-    if (store.settings.endpointIsEncointer) {
-      List<TransferData> ls = store.encointer.txsTransfer.reversed.toList();
-      final String symbol = store.settings.networkState.tokenSymbol;
-      ls.retainWhere((i) =>
-          i.token.toUpperCase() == token.toUpperCase() && i.concernsCurrentAccount(store.account.currentAddress));
-      res.addAll(ls.map((i) {
-        String crossChain;
-        Map<String, dynamic> tx = TransferData.toJson(i);
-        return TransferListItem(
-          data: crossChain != null ? TransferData.fromJson(tx) : i,
-          token: token == symbol ? token : "",
-          isOut: i.from == store.account.currentAddress,
-          hasDetail: false,
-          crossChain: crossChain,
-        );
-      }));
-      res.add(ListTail(
-        isEmpty: ls.length == 0,
-        isLoading: false,
-      ));
-    }
+    List<TransferData> ls = store.encointer.txsTransfer.reversed.toList();
+    final String symbol = store.settings.networkState.tokenSymbol;
+    ls.retainWhere((i) =>
+    i.token.toUpperCase() == token.toUpperCase() && i.concernsCurrentAccount(store.account.currentAddress));
+    res.addAll(ls.map((i) {
+      return TransferListItem(
+        data: i,
+        token: token == symbol ? token : "",
+        isOut: i.from == store.account.currentAddress,
+        hasDetail: false,
+      );
+    }));
+    res.add(ListTail(
+      isEmpty: ls.length == 0,
+      isLoading: false,
+    ));
     return res;
   }
 
@@ -143,22 +145,16 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
     final String token = params.token;
 
     final dic = I18n.of(context).assets;
-    final List<Tab> _myTabs = <Tab>[
-      Tab(text: dic['all']),
-      Tab(text: dic['in']),
-      Tab(text: dic['out']),
-    ];
 
     final String symbol = store.settings.networkState.tokenSymbol;
     final String tokenView = Fmt.tokenView(token);
-    final bool isBaseToken = token == symbol;
 
     final primaryColor = Theme.of(context).primaryColor;
     final titleColor = Theme.of(context).cardColor;
 
     return Scaffold(
       appBar: AppBar(
-        title: isEncointerCommunityCurrency ? Text(Fmt.communityIdentifier(token)) : Text(tokenView),
+        title: isEncointerCommunityCurrency ? Text(params.communitySymbol) : Text(tokenView),
         centerTitle: true,
         elevation: 0.0,
       ),
@@ -201,7 +197,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                       Padding(
                         padding: EdgeInsets.only(bottom: tokenPrice != null ? 4 : 16),
                         child: Text(
-                          Fmt.token(isBaseToken ? balancesInfo.total : balance, decimals, length: 8),
+                          Fmt.token(!isEncointerCommunityCurrency ? balancesInfo.total : balance, decimals, length: 8),
                           style: TextStyle(
                             color: titleColor,
                             fontSize: 28,
@@ -220,7 +216,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                               ),
                             )
                           : Container(),
-                      isBaseToken
+                      !isEncointerCommunityCurrency
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
@@ -296,27 +292,17 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                     ],
                   ),
                 ),
-                !store.settings.endpointIsEncointer
-                    ? TabBar(
-                        labelColor: Colors.black87,
-                        labelStyle: TextStyle(fontSize: 18),
-                        controller: _tabController,
-                        tabs: _myTabs,
-                        onTap: (i) {
-                          store.assets.setTxsFilter(i);
-                        },
-                      )
-                    : Container(
-                        color: titleColor,
-                        padding: EdgeInsets.all(16),
-                        child: Row(
-                          children: <Widget>[
-                            BorderedTitle(
-                              title: I18n.of(context).encointer['loan.txs'],
-                            )
-                          ],
-                        ),
-                      ),
+                Container(
+                  color: titleColor,
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    children: <Widget>[
+                      BorderedTitle(title: I18n
+                          .of(context)
+                          .encointer['loan.txs'])
+                    ],
+                  ),
+                ),
                 store.encointer.txsTransfer.isNotEmpty
                     ? Container(
                         color: titleColor,
@@ -371,7 +357,9 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                               arguments: TransferPageParams(
                                   redirect: AssetPage.route,
                                   symbol: token,
-                                  isEncointerCommunityCurrency: isEncointerCommunityCurrency),
+                                  isEncointerCommunityCurrency: isEncointerCommunityCurrency,
+                                  communitySymbol: params.communitySymbol
+                              ),
                             );
                           },
                         ),

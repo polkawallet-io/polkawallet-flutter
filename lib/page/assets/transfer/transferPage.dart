@@ -21,11 +21,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class TransferPageParams {
-  TransferPageParams({this.symbol, this.address, this.redirect, this.isEncointerCommunityCurrency = false});
+  TransferPageParams({this.symbol, this.address, this.redirect, this.isEncointerCommunityCurrency = false, this.communitySymbol});
   final String address;
   final String redirect;
   final String symbol;
   final bool isEncointerCommunityCurrency;
+  final String communitySymbol;
 }
 
 class TransferPage extends StatefulWidget {
@@ -50,6 +51,7 @@ class _TransferPageState extends State<TransferPage> {
   AccountData _accountTo;
   String _tokenSymbol;
   bool _isEncointerCommunityCurrency;
+  String _communitySymbol;
 
   Future<void> _onScan() async {
     final to = await Navigator.of(context).pushNamed(ScanPage.route);
@@ -105,6 +107,11 @@ class _TransferPageState extends State<TransferPage> {
           "call": 'transfer',
           "cid": symbol,
         };
+        args["detail"] = jsonEncode({
+          "destination": address,
+          "currency": _communitySymbol,
+          "amount": _amountCtrl.text.trim(),
+        });
         args['params'] = [
           // params.to
           address,
@@ -184,6 +191,9 @@ class _TransferPageState extends State<TransferPage> {
 
         TransferPageParams params = ModalRoute.of(context).settings.arguments;
         _isEncointerCommunityCurrency = params.isEncointerCommunityCurrency;
+        if (_isEncointerCommunityCurrency) {
+          _communitySymbol = params.communitySymbol;
+        }
         _tokenSymbol = params.symbol;
 
         int decimals = _isEncointerCommunityCurrency
@@ -265,13 +275,13 @@ class _TransferPageState extends State<TransferPage> {
                                         ),
                                         !_isEncointerCommunityCurrency
                                             ? CurrencyWithIcon(_tokenSymbol ?? baseTokenSymbol)
-                                            : Text(Fmt.communityIdentifier(_tokenSymbol, pad: 8)),
+                                            : Text(_communitySymbol),
                                       ],
                                     ),
-                                    Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 18,
-                                    )
+                                    // Icon(
+                                    //   Icons.arrow_forward_ios,
+                                    //   size: 18,
+                                    // )
                                   ],
                                 ),
                               ),

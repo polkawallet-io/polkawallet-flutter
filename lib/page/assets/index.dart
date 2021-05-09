@@ -415,7 +415,7 @@ class _AssetsState extends State<Assets> {
                     ],
                   ),
                   onTap: () {
-                    Navigator.pushNamed(context, AssetPage.route, arguments: AssetPageParams(token: symbol));
+                    Navigator.pushNamed(context, AssetPage.route, arguments: AssetPageParams(token: symbol, isEncointerCommunityCurrency: false));
                   },
                 ),
               ),
@@ -438,7 +438,7 @@ class _AssetsState extends State<Assets> {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54),
                       ),
                       onTap: () {
-                        Navigator.pushNamed(context, AssetPage.route, arguments: AssetPageParams(token: token));
+                        Navigator.pushNamed(context, AssetPage.route, arguments: AssetPageParams(token: symbol, isEncointerCommunityCurrency: false));
                       },
                     ),
                   );
@@ -468,7 +468,7 @@ class _AssetsState extends State<Assets> {
         ),
         CommunityChooserPanel(store),
         Observer(builder: (_) {
-          return (store.encointer.communityIdentifiers != null) & (store.encointer.chosenCid != null)
+          return (store.encointer.communityName != null) & (store.encointer.chosenCid != null)
               ? RoundedCard(
                   margin: EdgeInsets.only(top: 16),
                   child: ListTile(
@@ -477,7 +477,7 @@ class _AssetsState extends State<Assets> {
                       width: 36,
                       child: Image.asset('assets/images/assets/ERT.png'),
                     ),
-                    title: Text(Fmt.communityIdentifier(store.encointer.chosenCid)),
+                    title: Text(store.encointer.communityName + " (${store.encointer.communitySymbol})"),
                     trailing: store.encointer.balanceEntries[store.encointer.chosenCid] != null
                         ? Text(
                             Fmt.doubleFormat(store.encointer.balanceEntries[store.encointer.chosenCid].principal),
@@ -486,10 +486,14 @@ class _AssetsState extends State<Assets> {
                         : CupertinoActivityIndicator(),
                     onTap: store.encointer.balanceEntries[store.encointer.chosenCid] != null
                         ? () {
-                            Navigator.pushNamed(context, AssetPage.route,
-                                arguments: AssetPageParams(
-                                    token: store.encointer.chosenCid, isEncointerCommunityCurrency: true));
-                          }
+                      Navigator.pushNamed(context, AssetPage.route,
+                        arguments: AssetPageParams(
+                            token: store.encointer.chosenCid,
+                            isEncointerCommunityCurrency: true,
+                            communityName: store.encointer.communityName,
+                            communitySymbol: store.encointer.communitySymbol
+                        ));
+                    }
                         : null,
                   ),
                 )

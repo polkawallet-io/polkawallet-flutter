@@ -6,6 +6,7 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/attestation.dart';
 import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerBalanceData.dart';
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
 import 'package:encointer_wallet/store/encointer/types/location.dart';
 import 'package:encointer_wallet/store/encointer/types/proofOfAttendance.dart';
@@ -112,7 +113,7 @@ class ApiEncointer {
     return mIndex;
   }
 
-  /// Queries the Currencies pallet: encointerCurrencies.locations(cid)
+  /// Queries the Communities pallet: encointerCommunities.locations(cid)
   ///
   /// Fixme: JS currently returns locations[0] instead of locations[mIndex -1].
   ///
@@ -122,7 +123,7 @@ class ApiEncointer {
     String address = store.account.currentAccountPubKey;
     String cid = store.encointer.chosenCid;
     if (cid == null) {
-      return; // zero means: not registered
+      return;
     }
     int mIndex = store.encointer.meetupIndex;
     Map<String, dynamic> locj =
@@ -130,6 +131,32 @@ class ApiEncointer {
     print("api: Next Meetup Location: " + locj.toString());
     Location loc = Location.fromJson(locj);
     store.encointer.setMeetupLocation(loc);
+  }
+
+  /// Queries the Communities pallet: encointerCommunities.communityMetadata(cid)
+  ///
+  /// This is on-chain in Cantillon
+  Future<void> getCommunityMetadata() async {
+    print("api: getCommunityMetadata");
+    String cid = store.encointer.chosenCid;
+    if (cid == null) {
+      return;
+    }
+
+    CommunityMetadata meta = await apiRoot.evalJavascript('encointer.getCommunityMetadata("$cid")')
+        .then((m) => CommunityMetadata.fromJson(m));
+
+    print("api: community metadata: " + meta.toString());
+    store.encointer.setCommunityMetadata(meta);
+  }
+
+  /// Calls the custom rpc: api.rpc.communities.communitiesGetAll()
+  Future<void> communitiesGetAll() async {
+    List<CidName> cn =  await apiRoot.evalJavascript('encointer.communitiesGetAll()')
+        .then((list) =>  List.from(list).map((cn) => CidName.fromJson(cn)).toList());
+
+    print("api: CidNames: " + cn.toString());
+    store.encointer.setCommunities(cn);
   }
 
   /// Queries the Scheduler pallet: encointerScheduler./-currentPhase(), -phaseDurations(phase), -nextPhaseTimestamp().
@@ -240,7 +267,11 @@ class ApiEncointer {
   /// This is on-chain in Cantillon.
   Future<void> subscribeCommunityIdentifiers() async {
     apiRoot.subscribeMessage('encointer.subscribeCommunityIdentifiers("$_communityIdentifiersChannel")',
-        _communityIdentifiersChannel, (data) => {store.encointer.setCommunityIdentifiers(data.cast<String>())});
+        _communityIdentifiersChannel, (data) async {
+        store.encointer.setCommunityIdentifiers(data.cast<String>());
+
+        await this.communitiesGetAll();
+    });
   }
 
   /// Subscribes to storage changes in the Ceremonies pallet: encointerCeremonies.participantIndex([cid, cIndex], address).

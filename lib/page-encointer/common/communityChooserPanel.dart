@@ -1,6 +1,5 @@
 import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -29,31 +28,31 @@ class _CommunityChooserPanelState extends State<CommunityChooserPanel> {
           children: <Widget>[
             Text("Choose community:"),
             Observer(
-              builder: (_) => (store.encointer.communityIdentifiers == null)
+              builder: (_) => (store.encointer.communities == null)
                   ? CupertinoActivityIndicator()
-                  : (store.encointer.communityIdentifiers.isEmpty)
+                  : (store.encointer.communities.isEmpty)
                       ? Text("no currencies found")
                       : DropdownButton<dynamic>(
                           key: Key('cid-dropdown'),
                           value: (store.encointer.chosenCid == null ||
-                                  !store.encointer.communityIdentifiers.contains(store.encointer.chosenCid))
-                              ? store.encointer.communityIdentifiers[0]
-                              : store.encointer.chosenCid,
+                                  store.encointer.communities.where((cn) => cn.cid == store.encointer.chosenCid).isEmpty)
+                              ? store.encointer.communities[0]
+                              : store.encointer.communities.where((cn) => cn.cid == store.encointer.chosenCid).first,
                           icon: Icon(Icons.arrow_downward),
                           iconSize: 32,
                           elevation: 32,
                           onChanged: (newValue) {
                             setState(() {
-                              store.encointer.setChosenCid(newValue);
+                              store.encointer.setChosenCid(newValue.cid);
                             });
                           },
-                          items: store.encointer.communityIdentifiers
+                          items: store.encointer.communities
                               .asMap()
                               .entries
                               .map((entry) => DropdownMenuItem<dynamic>(
                                     key: Key('cid-${entry.key}'),
                                     value: entry.value,
-                                    child: Text(Fmt.communityIdentifier(entry.value)),
+                                    child: Text(entry.value.name),
                                   ))
                               .toList(),
                         ),

@@ -10,7 +10,7 @@ const NodeConfig GesellConfig = const NodeConfig(TypeOverrides_V3_8, PalletOverr
 const NodeConfig CantillonConfig = const NodeConfig(TypeOverrides_V3_8, PalletOverrides_V3_8);
 /// Overrides for the master branch of the `encointer-node`, which is usually used in a local
 /// no-tee-dev-setup
-const NodeConfig MasterBranchConfig = const NodeConfig(TypeOverrides_V3_8, PalletOverrides_V3_8);
+const NodeConfig MasterBranchConfig = const NodeConfig(TypeOverridesDev, PalletOverridesDev);
 /// Overrides for the sgx-master branch of the `encointer-node`, which is usually used in a local
 /// tee-dev-setup
 const NodeConfig SgxBranchConfig = const NodeConfig(TypeOverrides_V3_8, PalletOverrides_V3_8);
@@ -53,6 +53,9 @@ class Pallet {
   factory Pallet.fromJson(Map<String, dynamic> json) => _$PalletFromJson(json);
   Map<String, dynamic> toJson() => _$PalletToJson(this);
 }
+
+const Map<String, dynamic> TypeOverridesDev = {};
+const Map<String, Pallet> PalletOverridesDev = {};
 
 /// Type overrides needed for the tag v3.8
 const TypeOverrides_V3_8 = {

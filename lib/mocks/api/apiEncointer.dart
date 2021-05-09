@@ -4,6 +4,7 @@ import 'package:encointer_wallet/service/substrateApi/encointer/apiEncointer.dar
 import 'package:encointer_wallet/store/encointer/types/attestation.dart';
 import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 
 /// The key rationale behind this mock is that all the getters do not alter the app state.
 ///
@@ -75,6 +76,16 @@ class MockApiEncointer extends ApiEncointer {
   @override
   Future<List<String>> getMeetupRegistry() async {
     return store.encointer.meetupRegistry;
+  }
+
+  @override
+  Future<CommunityMetadata> getCommunityMetadata() async {
+    return  store.encointer.communityMetadata;
+  }
+
+  @override
+  Future<List<CidName>> communitiesGetAll() async {
+    return store.encointer.communities;
   }
 
   @override

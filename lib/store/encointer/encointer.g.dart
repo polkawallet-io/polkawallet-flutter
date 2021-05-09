@@ -9,6 +9,14 @@ part of 'encointer.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$EncointerStore on _EncointerStore, Store {
+  Computed<String> _$communityNameComputed;
+
+  @override
+  String get communityName =>
+      (_$communityNameComputed ??= Computed<String>(() => super.communityName,
+              name: '_EncointerStore.communityName'))
+          .value;
+
   final _$currentPhaseAtom = Atom(name: '_EncointerStore.currentPhase');
 
   @override
@@ -195,6 +203,21 @@ mixin _$EncointerStore on _EncointerStore, Store {
     });
   }
 
+  final _$communitiesAtom = Atom(name: '_EncointerStore.communities');
+
+  @override
+  List<CidName> get communities {
+    _$communitiesAtom.reportRead();
+    return super.communities;
+  }
+
+  @override
+  set communities(List<CidName> value) {
+    _$communitiesAtom.reportWrite(value, super.communities, () {
+      super.communities = value;
+    });
+  }
+
   final _$chosenCidAtom = Atom(name: '_EncointerStore.chosenCid');
 
   @override
@@ -207,6 +230,22 @@ mixin _$EncointerStore on _EncointerStore, Store {
   set chosenCid(String value) {
     _$chosenCidAtom.reportWrite(value, super.chosenCid, () {
       super.chosenCid = value;
+    });
+  }
+
+  final _$communityMetadataAtom =
+      Atom(name: '_EncointerStore.communityMetadata');
+
+  @override
+  CommunityMetadata get communityMetadata {
+    _$communityMetadataAtom.reportRead();
+    return super.communityMetadata;
+  }
+
+  @override
+  set communityMetadata(CommunityMetadata value) {
+    _$communityMetadataAtom.reportWrite(value, super.communityMetadata, () {
+      super.communityMetadata = value;
     });
   }
 
@@ -419,6 +458,28 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
+  void setCommunityMetadata(CommunityMetadata meta) {
+    final _$actionInfo = _$_EncointerStoreActionController.startAction(
+        name: '_EncointerStore.setCommunityMetadata');
+    try {
+      return super.setCommunityMetadata(meta);
+    } finally {
+      _$_EncointerStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setCommunities(List<CidName> c) {
+    final _$actionInfo = _$_EncointerStoreActionController.startAction(
+        name: '_EncointerStore.setCommunities');
+    try {
+      return super.setCommunities(c);
+    } finally {
+      _$_EncointerStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setChosenCid(String cid) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
         name: '_EncointerStore.setChosenCid');
@@ -532,11 +593,14 @@ participantCount: ${participantCount},
 myClaim: ${myClaim},
 balanceEntries: ${balanceEntries},
 communityIdentifiers: ${communityIdentifiers},
+communities: ${communities},
 chosenCid: ${chosenCid},
+communityMetadata: ${communityMetadata},
 claimHex: ${claimHex},
 attestations: ${attestations},
 txsTransfer: ${txsTransfer},
-shopRegistry: ${shopRegistry}
+shopRegistry: ${shopRegistry},
+communityName: ${communityName}
     ''';
   }
 }

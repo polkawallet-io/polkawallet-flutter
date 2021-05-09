@@ -3,12 +3,15 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:encointer_wallet/store/encointer/types/location.dart';
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 
 abstract class PrepareStorage {
   static void init(AppStore store) {
     store.encointer.setCurrentPhase(initialPhase);
     store.encointer.setCommunityIdentifiers(communityIdentifiers);
     store.encointer.addBalanceEntry(cid, BalanceEntry.fromJson(balanceEntry));
+    store.encointer.setCommunityMetadata(CommunityMetadata.fromJson(communityMetadata));
+    store.encointer.setCommunities(communities.map((cn) => CidName.fromJson(cn)).toList());
   }
 
   static void unregisteredParticipant(AppStore store) {

@@ -7,6 +7,7 @@ import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
 import 'package:encointer_wallet/store/encointer/types/location.dart';
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:mobx/mobx.dart';
 
@@ -22,9 +23,10 @@ abstract class _EncointerStore with Store {
   final AppStore rootStore;
   final String cacheTxsTransferKey = 'transfer_txs';
   final String encointerCommunityKey = 'wallet_encointer_community';
+  final String encointerCommunityMetadataKey = 'wallet_encointer_community_metadata';
 
   // offline meetup cache.
-  final String encointerCurrenCeremonyIndexKey = 'wallet_encointer_current_ceremony_index';
+  final String encointerCurrentCeremonyIndexKey = 'wallet_encointer_current_ceremony_index';
   final String encointerCurrentPhaseKey = 'wallet_encointer_current_phase';
   final String encointerMeetupIndexKey = 'wallet_encointer_meetup_index';
   final String encointerMeetupLocationKey = 'wallet_encointer_meetup_location';
@@ -73,7 +75,13 @@ abstract class _EncointerStore with Store {
   List<String> communityIdentifiers;
 
   @observable
+  List<CidName> communities;
+
+  @observable
   String chosenCid;
+
+  @observable
+  CommunityMetadata communityMetadata;
 
   @observable
   String claimHex;
@@ -88,6 +96,12 @@ abstract class _EncointerStore with Store {
   @observable
   List<String> shopRegistry;
 
+  @computed
+  String get communityName => communityMetadata?.name;
+
+  @computed
+  String get communitySymbol => communityMetadata?.symbol;
+
   @action
   void setCurrentPhase(CeremonyPhase phase) {
     print("store: set currentPhase to $phase");
@@ -95,16 +109,16 @@ abstract class _EncointerStore with Store {
       // jsonEncode fails if we don't call toString for an enum
       cacheObject(encointerCurrentPhaseKey, phase.toString());
       currentPhase = phase;
-      // update depending values without awaiting
-      webApi.encointer.getCurrentCeremonyIndex();
     }
+    // update depending values without awaiting
+    webApi.encointer.getCurrentCeremonyIndex();
   }
 
   @action
   void setCurrentCeremonyIndex(index) {
     print("store: set currentCeremonyIndex to $index");
     currentCeremonyIndex = index;
-    cacheObject(encointerCurrenCeremonyIndexKey, index);
+    cacheObject(encointerCurrentCeremonyIndexKey, index);
     // update depending values without awaiting
     if (currentPhase == CeremonyPhase.ASSIGNING) {
       purgeAttestations();
@@ -142,11 +156,12 @@ abstract class _EncointerStore with Store {
     if (meetupIndex != index) {
       cacheObject(encointerMeetupIndexKey, index);
       meetupIndex = index;
-      if (index != null) {
-        // update depending values
-        webApi.encointer.getMeetupLocation();
-        webApi.encointer.getMeetupRegistry();
-      }
+    }
+
+    if (index != null) {
+      // update depending values
+      webApi.encointer.getMeetupLocation();
+      webApi.encointer.getMeetupRegistry();
     }
   }
 
@@ -156,10 +171,11 @@ abstract class _EncointerStore with Store {
     if (meetupLocation != location) {
       cacheObject(encointerMeetupLocationKey, location);
       meetupLocation = location;
-      if (location != null) {
-        // update depending values
-        webApi.encointer.getMeetupTime();
-      }
+    }
+
+    if (location != null) {
+      // update depending values
+      webApi.encointer.getMeetupTime();
     }
   }
 
@@ -215,20 +231,33 @@ abstract class _EncointerStore with Store {
   }
 
   @action
+  void setCommunityMetadata(CommunityMetadata meta) {
+    communityMetadata = meta;
+    cacheObject(encointerCommunityMetadataKey, meta);
+  }
+
+  @action
+  void setCommunities(List<CidName> c) {
+    communities = c;
+  }
+
+  @action
   void setChosenCid(String cid) {
     if (chosenCid != cid) {
       chosenCid = cid;
-      if (rootStore.settings.endpointIsGesell) {
-        webApi.encointer.subscribeShopRegistry();
-      }
       cacheObject(encointerCommunityKey, cid);
-      // update depending values without awaiting
-      if (!rootStore.settings.loading) {
-        webApi.encointer.getMeetupIndex();
-        webApi.encointer.getParticipantIndex();
-        webApi.encointer.getParticipantCount();
-        webApi.encointer.getEncointerBalance();
-      }
+    }
+
+    if (rootStore.settings.endpointIsGesell) {
+      webApi.encointer.subscribeShopRegistry();
+    }
+    // update depending values without awaiting
+    if (!rootStore.settings.loading) {
+      webApi.encointer.getMeetupIndex();
+      webApi.encointer.getParticipantIndex();
+      webApi.encointer.getParticipantCount();
+      webApi.encointer.getEncointerBalance();
+      webApi.encointer.getCommunityMetadata();
     }
   }
 
@@ -322,7 +351,7 @@ abstract class _EncointerStore with Store {
       attestations = Map.castFrom<String, dynamic, int, AttestationState>(data);
     }
     currentPhase = await loadCurrentPhase();
-    currentCeremonyIndex = await loadObject(encointerCurrenCeremonyIndexKey);
+    currentCeremonyIndex = await loadObject(encointerCurrentCeremonyIndexKey);
     meetupIndex = await loadObject(encointerMeetupIndexKey);
 
     var loc = await loadObject(encointerMeetupLocationKey);

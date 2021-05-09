@@ -141,7 +141,6 @@ abstract class _SettingsStore with Store {
     loading = false;
   }
 
-  //TODO: this doesn't work for Development network. Fields of rpc.system.properties() are empty
   @action
   Future<void> setNetworkState(
     Map<String, dynamic> data, {
