@@ -4,11 +4,13 @@ Encointer wallet and client for mobile phones
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
      alt="Get it on F-Droid"
-     height="80">](https://f-droid.org/packages/org.encointer.wallet/)
+     height="55">](https://f-droid.org/packages/org.encointer.wallet/)
+     
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
      alt="Get it on Google Play"
-     height="80">](https://play.google.com/store/apps/details?id=org.encointer.wallet)
-
+     height="55">](https://play.google.com/store/apps/details?id=org.encointer.wallet)
+     
+<a href="https://apps.apple.com/us/app/encointer-wallet/id1535471655?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1619049600&h=f616bcfbdbf4c04f0ca6524a2a683d4b" alt="Download on the App Store" style="border-radius: 13px; width: 250px; height: 83px;"></a>
 
 [![Build](https://github.com/encointer/encointer-wallet-flutter/actions/workflows/android_build.yml/badge.svg)](https://github.com/encointer/encointer-wallet-flutter/actions/workflows/android_build.yml)
 [![Android](https://github.com/encointer/encointer-wallet-flutter/actions/workflows/android_integration_test.yml/badge.svg)](https://github.com/encointer/encointer-wallet-flutter/actions/workflows/android_integration_test.yml)
