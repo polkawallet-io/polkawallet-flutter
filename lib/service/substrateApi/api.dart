@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:encointer_wallet/config/node.dart';
+import 'package:encointer_wallet/service/ipfsApi/httpApi.dart';
 import 'package:encointer_wallet/service/subscan.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAccount.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAssets.dart';
@@ -24,10 +25,9 @@ class Api {
   var jsStorage;
 
   ApiAccount account;
-
   ApiEncointer encointer;
-
   ApiAssets assets;
+  Ipfs ipfs;
 
   SubScanApi subScanApi = SubScanApi();
 
@@ -49,7 +49,7 @@ class Api {
 
     assets = ApiAssets(this);
 
-    //ipfs = ApiIpfs(this);
+    ipfs = Ipfs(gateway: store.settings.ipfsGateway);
 
     print("first launch of webview");
     await launchWebview();

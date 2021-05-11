@@ -13,7 +13,7 @@ class ShopCard extends StatelessWidget {
   ShopCard({this.title, this.dateAdded, this.category, this.description, this.imageHash, this.location});
 
   String getImageAdress(String imageHash) {
-    return '$ipfs_gateway_address/ipfs/$imageHash';
+    return '$ipfs_gateway_encointer/ipfs/$imageHash';
   }
 
   @override

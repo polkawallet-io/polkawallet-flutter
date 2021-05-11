@@ -9,7 +9,8 @@ EndpointData networkEndpointEncointerGesell = EndpointData.fromJson({
   'ss58': 42,
   'text': 'Encointer Gesell (Hosted by Encointer Association)',
   'value': 'wss://gesell.encointer.org',
-  'overrideConfig': GesellConfig.toJson()
+  'overrideConfig': GesellConfig.toJson(),
+  'ipfsGateway': ipfs_gateway_encointer
 });
 
 EndpointData networkEndpointEncointerGesellDev = EndpointData.fromJson({
@@ -17,7 +18,8 @@ EndpointData networkEndpointEncointerGesellDev = EndpointData.fromJson({
   'ss58': 42,
   'text': 'Encointer Gesell Local Devnet',
   'value': 'ws://192.168.1.24:9944',  // do not use the docker's address, use the host's
-  'overrideConfig': MasterBranchConfig.toJson()
+  'overrideConfig': MasterBranchConfig.toJson(),
+  'ipfsGateway': ipfs_gateway_local
 });
 
 EndpointData networkEndpointEncointerCantillon = EndpointData.fromJson({
@@ -27,7 +29,8 @@ EndpointData networkEndpointEncointerCantillon = EndpointData.fromJson({
   'value': 'wss://cantillon.encointer.org',
   'worker': 'wss://substratee03.scs.ch',
   'mrenclave': 'CbE3fPWjeYVo9LSNKgPPiCXThFBjfhP1GK6Y9S7t5WVe',
-  'overrideConfig': CantillonConfig.toJson()
+  'overrideConfig': CantillonConfig.toJson(),
+  'ipfsGateway': ipfs_gateway_encointer
 });
 
 EndpointData networkEndpointEncointerCantillonDev = EndpointData.fromJson({
@@ -37,7 +40,8 @@ EndpointData networkEndpointEncointerCantillonDev = EndpointData.fromJson({
   'value': 'ws://10.0.0.134:9979', // do not use the docker's address, use the host's
   'worker': 'ws:/10.0.0.134:2079',
   'mrenclave': '4SkU25tusVChcrUprW8X22QoEgamCgj3HKQeje7j8Z4E',
-  'overrideConfig': SgxBranchConfig.toJson()
+  'overrideConfig': SgxBranchConfig.toJson(),
+  'ipfsGateway': ipfs_gateway_encointer
 });
 
 List<EndpointData> networkEndpoints = [
@@ -56,7 +60,8 @@ const network_ss58_map = {
   'substrate': 42,
 };
 
-const String ipfs_gateway_address = "http://ipfs.encointer.org:8080"; // AVD: 10.0.2.2 = 127.0.0.1
+const String ipfs_gateway_encointer = "http://ipfs.encointer.org:8080"; // AVD: 10.0.2.2 = 127.0.0.1
+const String ipfs_gateway_local = 'http://10.0.2.2:8080';
 
 const int ert_decimals = 12;
 const int encointer_currencies_decimals = 18;

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:encointer_wallet/common/components/BorderedTitle.dart';
 import 'package:encointer_wallet/common/components/addressIcon.dart';
@@ -453,6 +454,8 @@ class _AssetsState extends State<Assets> {
 
   Widget _communityCurrencyAssets(BuildContext context, AppStore store) {
     final Map dic = I18n.of(context).assets;
+    final double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+
     return Column(
       children: [
         Padding(
@@ -475,7 +478,7 @@ class _AssetsState extends State<Assets> {
                     key: Key('cid-asset'),
                     leading: Container(
                       width: 36,
-                      child: Image.asset('assets/images/assets/ERT.png'),
+                      child: webApi.ipfs.getCommunityIcon(store.encointer.communityIconsCid, devicePixelRatio),
                     ),
                     title: Text(store.encointer.communityName + " (${store.encointer.communitySymbol})"),
                     trailing: store.encointer.balanceEntries[store.encointer.chosenCid] != null

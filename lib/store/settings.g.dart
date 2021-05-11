@@ -25,7 +25,8 @@ EndpointData _$EndpointDataFromJson(Map<String, dynamic> json) {
     ..mrenclave = json['mrenclave'] as String
     ..overrideConfig = json['overrideConfig'] == null
         ? null
-        : NodeConfig.fromJson(json['overrideConfig'] as Map<String, dynamic>);
+        : NodeConfig.fromJson(json['overrideConfig'] as Map<String, dynamic>)
+    ..ipfsGateway = json['ipfsGateway'] as String;
 }
 
 Map<String, dynamic> _$EndpointDataToJson(EndpointData instance) =>
@@ -38,6 +39,7 @@ Map<String, dynamic> _$EndpointDataToJson(EndpointData instance) =>
       'worker': instance.worker,
       'mrenclave': instance.mrenclave,
       'overrideConfig': instance.overrideConfig?.toJson(),
+      'ipfsGateway': instance.ipfsGateway,
     };
 
 // **************************************************************************
@@ -68,6 +70,13 @@ mixin _$SettingsStore on _SettingsStore, Store {
           Computed<bool>(() => super.endpointIsCantillon,
               name: '_SettingsStore.endpointIsCantillon'))
       .value;
+  Computed<String> _$ipfsGatewayComputed;
+
+  @override
+  String get ipfsGateway =>
+      (_$ipfsGatewayComputed ??= Computed<String>(() => super.ipfsGateway,
+              name: '_SettingsStore.ipfsGateway'))
+          .value;
   Computed<List<EndpointData>> _$endpointListComputed;
 
   @override
@@ -383,6 +392,7 @@ contactList: ${contactList},
 endpointIsEncointer: ${endpointIsEncointer},
 endpointIsGesell: ${endpointIsGesell},
 endpointIsCantillon: ${endpointIsCantillon},
+ipfsGateway: ${ipfsGateway},
 endpointList: ${endpointList},
 contactListAll: ${contactListAll},
 existentialDeposit: ${existentialDeposit},

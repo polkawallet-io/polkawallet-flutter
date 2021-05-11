@@ -3,6 +3,7 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAccount.dart';
 import 'package:encointer_wallet/mocks/api/apiEncointer.dart';
+import 'package:encointer_wallet/mocks/api/apiIpfs.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -22,7 +23,7 @@ class MockApi extends Api {
 
     assets = MockApiAssets(this);
 
-    //ipfs = ApiIpfs(this);
+    ipfs = MockIpfs();
 
     if (withUi) {
       print("first launch of webview");

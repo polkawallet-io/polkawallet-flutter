@@ -24,7 +24,7 @@ class _ShopOverviewPanelState extends State<ShopOverviewPanel> {
   Future<Shop> futureShop;
 
   String getImageAdress(String imageHash) {
-    return '$ipfs_gateway_address/ipfs/$imageHash';
+    return '$ipfs_gateway_encointer/ipfs/$imageHash';
   }
 
   @override
