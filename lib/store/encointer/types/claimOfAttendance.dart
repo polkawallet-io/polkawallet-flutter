@@ -21,6 +21,8 @@ class ClaimOfAttendance {
   Location location;
   int timestamp;
   int numberOfParticipantsConfirmed;
+  Map<String, String> claimantSignature;
+
 
   @override
   String toString() {

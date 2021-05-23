@@ -9,6 +9,20 @@ part of 'encointer.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$EncointerStore on _EncointerStore, Store {
+  Computed<dynamic> _$currentPhaseDurationComputed;
+
+  @override
+  dynamic get currentPhaseDuration => (_$currentPhaseDurationComputed ??=
+          Computed<dynamic>(() => super.currentPhaseDuration,
+              name: '_EncointerStore.currentPhaseDuration'))
+      .value;
+  Computed<dynamic> _$scannedClaimsCountComputed;
+
+  @override
+  dynamic get scannedClaimsCount => (_$scannedClaimsCountComputed ??=
+          Computed<dynamic>(() => super.scannedClaimsCount,
+              name: '_EncointerStore.scannedClaimsCount'))
+      .value;
   Computed<String> _$communityNameComputed;
 
   @override
@@ -57,6 +71,21 @@ mixin _$EncointerStore on _EncointerStore, Store {
   set currentPhase(CeremonyPhase value) {
     _$currentPhaseAtom.reportWrite(value, super.currentPhase, () {
       super.currentPhase = value;
+    });
+  }
+
+  final _$phaseDurationsAtom = Atom(name: '_EncointerStore.phaseDurations');
+
+  @override
+  Map<CeremonyPhase, int> get phaseDurations {
+    _$phaseDurationsAtom.reportRead();
+    return super.phaseDurations;
+  }
+
+  @override
+  set phaseDurations(Map<CeremonyPhase, int> value) {
+    _$phaseDurationsAtom.reportWrite(value, super.phaseDurations, () {
+      super.phaseDurations = value;
     });
   }
 
@@ -184,21 +213,6 @@ mixin _$EncointerStore on _EncointerStore, Store {
     });
   }
 
-  final _$myClaimAtom = Atom(name: '_EncointerStore.myClaim');
-
-  @override
-  ClaimOfAttendance get myClaim {
-    _$myClaimAtom.reportRead();
-    return super.myClaim;
-  }
-
-  @override
-  set myClaim(ClaimOfAttendance value) {
-    _$myClaimAtom.reportWrite(value, super.myClaim, () {
-      super.myClaim = value;
-    });
-  }
-
   final _$balanceEntriesAtom = Atom(name: '_EncointerStore.balanceEntries');
 
   @override
@@ -292,33 +306,19 @@ mixin _$EncointerStore on _EncointerStore, Store {
     });
   }
 
-  final _$claimHexAtom = Atom(name: '_EncointerStore.claimHex');
+  final _$participantsClaimsAtom =
+      Atom(name: '_EncointerStore.participantsClaims');
 
   @override
-  String get claimHex {
-    _$claimHexAtom.reportRead();
-    return super.claimHex;
+  ObservableMap<String, ClaimOfAttendance> get participantsClaims {
+    _$participantsClaimsAtom.reportRead();
+    return super.participantsClaims;
   }
 
   @override
-  set claimHex(String value) {
-    _$claimHexAtom.reportWrite(value, super.claimHex, () {
-      super.claimHex = value;
-    });
-  }
-
-  final _$attestationsAtom = Atom(name: '_EncointerStore.attestations');
-
-  @override
-  Map<int, AttestationState> get attestations {
-    _$attestationsAtom.reportRead();
-    return super.attestations;
-  }
-
-  @override
-  set attestations(Map<int, AttestationState> value) {
-    _$attestationsAtom.reportWrite(value, super.attestations, () {
-      super.attestations = value;
+  set participantsClaims(ObservableMap<String, ClaimOfAttendance> value) {
+    _$participantsClaimsAtom.reportWrite(value, super.participantsClaims, () {
+      super.participantsClaims = value;
     });
   }
 
@@ -340,13 +340,13 @@ mixin _$EncointerStore on _EncointerStore, Store {
   final _$shopRegistryAtom = Atom(name: '_EncointerStore.shopRegistry');
 
   @override
-  List<String> get shopRegistry {
+  ObservableList<String> get shopRegistry {
     _$shopRegistryAtom.reportRead();
     return super.shopRegistry;
   }
 
   @override
-  set shopRegistry(List<String> value) {
+  set shopRegistry(ObservableList<String> value) {
     _$shopRegistryAtom.reportWrite(value, super.shopRegistry, () {
       super.shopRegistry = value;
     });
@@ -413,6 +413,17 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
+  dynamic resetState() {
+    final _$actionInfo = _$_EncointerStoreActionController.startAction(
+        name: '_EncointerStore.resetState');
+    try {
+      return super.resetState();
+    } finally {
+      _$_EncointerStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setMeetupIndex([int index]) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
         name: '_EncointerStore.setMeetupIndex');
@@ -451,28 +462,6 @@ mixin _$EncointerStore on _EncointerStore, Store {
         name: '_EncointerStore.setMeetupRegistry');
     try {
       return super.setMeetupRegistry(reg);
-    } finally {
-      _$_EncointerStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setMyClaim([ClaimOfAttendance claim]) {
-    final _$actionInfo = _$_EncointerStoreActionController.startAction(
-        name: '_EncointerStore.setMyClaim');
-    try {
-      return super.setMyClaim(claim);
-    } finally {
-      _$_EncointerStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setClaimHex([String claimHex]) {
-    final _$actionInfo = _$_EncointerStoreActionController.startAction(
-        name: '_EncointerStore.setClaimHex');
-    try {
-      return super.setClaimHex(claimHex);
     } finally {
       _$_EncointerStoreActionController.endAction(_$actionInfo);
     }
@@ -545,44 +534,22 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void addYourAttestation(int idx, String att) {
+  void purgeParticipantsClaims() {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
-        name: '_EncointerStore.addYourAttestation');
+        name: '_EncointerStore.purgeParticipantsClaims');
     try {
-      return super.addYourAttestation(idx, att);
+      return super.purgeParticipantsClaims();
     } finally {
       _$_EncointerStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
-  void addOtherAttestation(int idx, String att) {
+  void addParticipantClaim(ClaimOfAttendance claim) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
-        name: '_EncointerStore.addOtherAttestation');
+        name: '_EncointerStore.addParticipantClaim');
     try {
-      return super.addOtherAttestation(idx, att);
-    } finally {
-      _$_EncointerStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void updateAttestationStep(int idx, CurrentAttestationStep step) {
-    final _$actionInfo = _$_EncointerStoreActionController.startAction(
-        name: '_EncointerStore.updateAttestationStep');
-    try {
-      return super.updateAttestationStep(idx, step);
-    } finally {
-      _$_EncointerStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void purgeAttestations() {
-    final _$actionInfo = _$_EncointerStoreActionController.startAction(
-        name: '_EncointerStore.purgeAttestations');
-    try {
-      return super.purgeAttestations();
+      return super.addParticipantClaim(claim);
     } finally {
       _$_EncointerStoreActionController.endAction(_$actionInfo);
     }
@@ -636,6 +603,7 @@ mixin _$EncointerStore on _EncointerStore, Store {
   String toString() {
     return '''
 currentPhase: ${currentPhase},
+phaseDurations: ${phaseDurations},
 currentCeremonyIndex: ${currentCeremonyIndex},
 meetupIndex: ${meetupIndex},
 meetupLocation: ${meetupLocation},
@@ -644,17 +612,17 @@ meetupRegistry: ${meetupRegistry},
 myMeetupRegistryIndex: ${myMeetupRegistryIndex},
 participantIndex: ${participantIndex},
 participantCount: ${participantCount},
-myClaim: ${myClaim},
 balanceEntries: ${balanceEntries},
 communityIdentifiers: ${communityIdentifiers},
 communities: ${communities},
 chosenCid: ${chosenCid},
 communityMetadata: ${communityMetadata},
 demurrage: ${demurrage},
-claimHex: ${claimHex},
-attestations: ${attestations},
+participantsClaims: ${participantsClaims},
 txsTransfer: ${txsTransfer},
 shopRegistry: ${shopRegistry},
+currentPhaseDuration: ${currentPhaseDuration},
+scannedClaimsCount: ${scannedClaimsCount},
 communityName: ${communityName},
 communitySymbol: ${communitySymbol},
 communityIconsCid: ${communityIconsCid},

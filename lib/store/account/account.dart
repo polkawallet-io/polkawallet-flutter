@@ -189,6 +189,7 @@ abstract class _AccountStore with Store {
       currentAccountPubKey = pubKey;
       rootStore.localStorage.setCurrentAccount(pubKey);
       setPin('');
+      rootStore.encointer.resetState();
     }
     if (!rootStore.settings.loading) {
       webApi.assets.subscribeBalance();

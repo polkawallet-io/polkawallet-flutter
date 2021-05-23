@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/store/encointer/types/attestation.dart';
 import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:encointer_wallet/store/encointer/types/communities.dart';
@@ -43,6 +42,7 @@ class ApiEncointer {
 
   Future<void> startSubscriptions() async {
     print("api: starting encointer subscriptions");
+    this.getPhaseDurations();
     this.subscribeCurrentPhase();
     this.subscribeCommunityIdentifiers();
     if (store.settings.endpointIsGesell) {
@@ -71,10 +71,23 @@ class ApiEncointer {
     print("api: getCurrentPhase");
     Map res = await apiRoot.evalJavascript('encointer.getCurrentPhase()');
 
-    var phase = getEnumFromString(CeremonyPhase.values, res.values.toList()[0].toString().toUpperCase());
+    var phase = ceremonyPhaseFromString(res.values.toList()[0].toString().toUpperCase());
     print("api: Phase enum: " + phase.toString());
     store.encointer.setCurrentPhase(phase);
     return phase;
+  }
+
+  /// Queries the Scheduler pallet: encointerScheduler.currentPhase().
+  ///
+  /// This should be done only once at app-startup, as this is practically const.
+  ///
+  /// This is on-chain in Cantillon.
+  Future<void> getPhaseDurations() async {
+    Map<CeremonyPhase, int> phaseDurations = await apiRoot
+        .evalJavascript('encointer.getPhaseDurations()')
+        .then((m) => Map.from(m).map((key, value) => MapEntry(ceremonyPhaseFromString(key), int.parse(value))));
+    print("Phase durations: ${phaseDurations.toString()}");
+    store.encointer.phaseDurations = phaseDurations;
   }
 
   /// Queries the Scheduler pallet: encointerScheduler.currentCeremonyIndex().
@@ -187,7 +200,9 @@ class ApiEncointer {
     }
     String cid = store.encointer.chosenCid ?? store.encointer.communityIdentifiers[0];
     String loc = jsonEncode(store.encointer.meetupLocation);
-    int time = await apiRoot.evalJavascript('encointer.getNextMeetupTime("$cid", $loc)');
+
+    int time = await apiRoot.evalJavascript(
+        'encointer.getNextMeetupTime("$cid", $loc, "${toValue(store.encointer.currentPhase)}", ${store.encointer.currentPhaseDuration})');
     print("api: Next Meetup Time: " + time.toString());
     store.encointer.setMeetupTime(time);
     return DateTime.fromMillisecondsSinceEpoch(time);
@@ -267,7 +282,7 @@ class ApiEncointer {
   Future<void> subscribeCurrentPhase() async {
     apiRoot.subscribeMessage(
         'encointer.subscribeCurrentPhase("$_currentPhaseSubscribeChannel")', _currentPhaseSubscribeChannel, (data) {
-      var phase = getEnumFromString(CeremonyPhase.values, data.toUpperCase());
+      var phase = ceremonyPhaseFromString(data.toUpperCase());
       store.encointer.setCurrentPhase(phase);
     });
   }
@@ -366,8 +381,7 @@ class ApiEncointer {
 
   // Below are functions that simply use the Scale-codec already implemented in polkadot-js/api such that we do not
   // have to implement the codec ourselves.
-  void createClaimOfAttendance(int participants) {
-    print("api: create claim with vote=$participants");
+  Future<ClaimOfAttendance> signClaimOfAttendance(int participants, String password) async {
     var claim = ClaimOfAttendance(
         store.account.currentAccountPubKey,
         store.encointer.currentCeremonyIndex,
@@ -376,40 +390,11 @@ class ApiEncointer {
         store.encointer.meetupLocation,
         store.encointer.meetupTime,
         participants);
-    store.encointer.setMyClaim(claim);
-  }
 
-  Future<String> encodeClaimOfAttendance() async {
-    print("api: encode claim to hex");
-    var claim = jsonEncode(store.encointer.myClaim);
-    print("api: $claim");
-    String claimHex = await apiRoot.evalJavascript('encointer.getClaimOfAttendance($claim)');
-    store.encointer.setClaimHex(claimHex);
-    return claimHex;
-  }
+    var claimSigned =  await apiRoot.evalJavascript('encointer.signClaimOfAttendance(${jsonEncode(claim)}, "$password")')
+        .then((c) => ClaimOfAttendance.fromJson(c));
 
-  Future<Attestation> parseAttestation(String attestationHex) async {
-    var attJson = await apiRoot.evalJavascript('encointer.parseAttestation("$attestationHex")');
-    //print("Attestation json: " + attJson.toString());
-    Attestation att = Attestation.fromJson(attJson);
-    //print("Attestation parsed: " + attJson.toString());
-    return att;
-  }
-
-  Future<ClaimOfAttendance> parseClaimOfAttendance(String claimHex) async {
-    var claimJson = await apiRoot.evalJavascript('encointer.parseClaimOfAttendance("$claimHex")');
-    //print("Attestation json: " + attJson.toString());
-    ClaimOfAttendance claim = ClaimOfAttendance.fromJson(claimJson);
-    //print("Attestation parsed: " + attJson.toString());
-    return claim;
-  }
-
-  Future<AttestationResult> attestClaimOfAttendance(String claimHex, String password) async {
-    var pubKey = store.account.currentAccountPubKey;
-    var att = await apiRoot.evalJavascript('account.attestClaimOfAttendance("$claimHex", "$pubKey", "$password")');
-    AttestationResult attestation = AttestationResult.fromJson(att);
-    print("Att: ${attestation.toString()}");
-    return attestation;
+    return claimSigned;
   }
 
   Future<ProofOfAttendance> getProofOfAttendance() async {

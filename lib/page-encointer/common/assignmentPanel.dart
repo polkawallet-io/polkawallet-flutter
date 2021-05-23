@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:encointer_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/utils/format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -23,15 +22,15 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
   final AppStore store;
 
   Widget _meetupLocationLink() {
-    var lat = (store.encointer.meetupLocation.lat / BigInt.from(pow(2, 32)));
-    var lon = (store.encointer.meetupLocation.lon / BigInt.from(pow(2, 32)));
+    var lat = store.encointer.meetupLocation.lat;
+    var lon = store.encointer.meetupLocation.lon;
     return JumpToBrowserLink(
         'https://www.openstreetmap.org/?mlat=' +
-            lat.toStringAsFixed(5) +
+            Fmt.degree(lat, fractionDisplay: 5) +
             '&mlon=' +
-            lon.toStringAsFixed(5) +
+            Fmt.degree(lon, fractionDisplay: 5) +
             '&zoom=18',
-        text: lat.toStringAsFixed(3) + " lat, " + lon.toStringAsFixed(3) + " lon");
+        text: Fmt.degree(lat) + " lat, " + Fmt.degree(lon) + " lon");
   }
 
   @override

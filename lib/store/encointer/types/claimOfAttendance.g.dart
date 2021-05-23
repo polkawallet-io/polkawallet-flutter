@@ -17,7 +17,10 @@ ClaimOfAttendance _$ClaimOfAttendanceFromJson(Map<String, dynamic> json) {
         : Location.fromJson(json['location'] as Map<String, dynamic>),
     json['timestamp'] as int,
     json['number_of_participants_confirmed'] as int,
-  );
+  )..claimantSignature =
+        (json['claimant_signature'] as Map<String, dynamic>)?.map(
+      (k, e) => MapEntry(k, e as String),
+    );
 }
 
 Map<String, dynamic> _$ClaimOfAttendanceToJson(ClaimOfAttendance instance) =>
@@ -30,4 +33,5 @@ Map<String, dynamic> _$ClaimOfAttendanceToJson(ClaimOfAttendance instance) =>
       'timestamp': instance.timestamp,
       'number_of_participants_confirmed':
           instance.numberOfParticipantsConfirmed,
+      'claimant_signature': instance.claimantSignature,
     };

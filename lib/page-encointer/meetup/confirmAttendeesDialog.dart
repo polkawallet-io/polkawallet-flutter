@@ -43,6 +43,7 @@ class ConfirmAttendeesDialog extends StatelessWidget {
                     var value = index + 3;
                     return Center(
                         child: CupertinoButton(
+                            key: Key('confirmed-participants-${value.toString()}'),
                             child: Text(value.toString()),
                             onPressed: () {
                               Navigator.of(context).pop(value);

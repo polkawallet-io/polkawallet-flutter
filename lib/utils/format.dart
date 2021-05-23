@@ -311,4 +311,9 @@ class Fmt {
   static String addressOfAccount(AccountData acc, AppStore store) {
     return store.account.pubKeyAddressMap[store.settings.endpoint.ss58][acc.pubKey] ?? acc.address ?? '';
   }
+
+  /// Formats fixed point number with the amount of fractional digits given by [fixedPointFraction].
+  static String degree(BigInt degree, {int fixedPointFraction = 64, int fractionDisplay = 3}) {
+    return (degree / BigInt.two.pow(fixedPointFraction)).toStringAsFixed(fractionDisplay);
+  }
 }

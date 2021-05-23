@@ -1,10 +1,10 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/assets/types/transferData.dart';
-import 'package:encointer_wallet/store/encointer/types/attestationState.dart';
 import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
@@ -33,15 +33,25 @@ abstract class _EncointerStore with Store {
   final String encointerMeetupIndexKey = 'wallet_encointer_meetup_index';
   final String encointerMeetupLocationKey = 'wallet_encointer_meetup_location';
   final String encointerMeetupRegistryKey = 'wallet_encointer_meetup_registry';
-  final String encointerAttestationsKey = 'wallet_encointer_attestations';
+  final String encointerParticipantsClaimsKey = 'wallet_encointer_participants_claims';
   final String encointerMeetupTimeKey = 'wallet_encointer_meetup_time';
 
-  // Note: In synchronous code, every modification of an @obervable is tracked by mobx and
+  // Note: In synchronous code, every modification of an @observable is tracked by mobx and
   // fires a reaction. However, modifications in asynchronous code must be wrapped in
-  // a @action block to fire a reaction
-  // .
+  // a `@action` block to fire a reaction.
+  //
+  // Note2: In case of Map/List: If the variable is declared as plain Map/List with `@observable` annotated, mobx
+  // tracks variable assignment but not if individual items are changed. If this is wanted, the variable must be
+  // declared as `ObservableList/-Map`.
+
   @observable
   CeremonyPhase currentPhase;
+
+  @observable
+  Map<CeremonyPhase, int> phaseDurations = new Map();
+
+  @computed
+  get currentPhaseDuration => phaseDurations[currentPhase];
 
   @observable
   int currentCeremonyIndex;
@@ -68,9 +78,6 @@ abstract class _EncointerStore with Store {
   int participantCount;
 
   @observable
-  ClaimOfAttendance myClaim;
-
-  @observable
   Map<String, BalanceEntry> balanceEntries = new ObservableMap();
 
   @observable
@@ -89,17 +96,16 @@ abstract class _EncointerStore with Store {
   double demurrage;
 
   @observable
-  String claimHex;
+  ObservableMap<String, ClaimOfAttendance> participantsClaims = new ObservableMap();
 
-  @observable
-  Map<int, AttestationState> attestations = Map<int, AttestationState>();
+  @computed
+  get scannedClaimsCount => participantsClaims.length;
 
   @observable
   ObservableList<TransferData> txsTransfer = ObservableList<TransferData>();
 
-  // not working as obsverable (no item change registered -> if necessary change to ObservableList)
   @observable
-  List<String> shopRegistry;
+  ObservableList<String> shopRegistry;
 
   @computed
   String get communityName => communityMetadata?.name;
@@ -144,12 +150,13 @@ abstract class _EncointerStore with Store {
   @action
   void setCurrentCeremonyIndex(index) {
     print("store: set currentCeremonyIndex to $index");
+    if (currentCeremonyIndex != index && currentPhase == CeremonyPhase.REGISTERING) {
+      resetState();
+    }
+
     currentCeremonyIndex = index;
     cacheObject(encointerCurrentCeremonyIndexKey, index);
     // update depending values without awaiting
-    if (currentPhase == CeremonyPhase.ASSIGNING) {
-      purgeAttestations();
-    }
     updateState();
   }
 
@@ -157,15 +164,6 @@ abstract class _EncointerStore with Store {
   void updateState() {
     switch (currentPhase) {
       case CeremonyPhase.REGISTERING:
-        // reset deprecated state to null
-        purgeAttestations();
-        setMeetupIndex();
-        setMeetupLocation();
-        setMeetupTime();
-        setMeetupRegistry();
-        setMyMeetupRegistryIndex();
-        setMyClaim();
-        setClaimHex();
         break;
       case CeremonyPhase.ASSIGNING:
         webApi.encointer.getMeetupIndex();
@@ -175,6 +173,16 @@ abstract class _EncointerStore with Store {
         break;
     }
     webApi.encointer.getParticipantIndex();
+  }
+
+  @action
+  resetState() {
+    purgeParticipantsClaims();
+    setMeetupIndex();
+    setMeetupLocation();
+    setMeetupTime();
+    setMeetupRegistry();
+    setMyMeetupRegistryIndex();
   }
 
   @action
@@ -237,17 +245,6 @@ abstract class _EncointerStore with Store {
   }
 
   @action
-  void setMyClaim([ClaimOfAttendance claim]) {
-    print("store: set myClaim to $claim");
-    myClaim = claim;
-  }
-
-  @action
-  void setClaimHex([String claimHex]) {
-    this.claimHex = claimHex;
-  }
-
-  @action
   void setMyMeetupRegistryIndex([int index]) {
     myMeetupRegistryIndex = index;
   }
@@ -295,27 +292,19 @@ abstract class _EncointerStore with Store {
   }
 
   @action
-  void addYourAttestation(int idx, String att) {
-    attestations[idx].setYourAttestation(att);
-    cacheAttestationStates(attestations);
+  void purgeParticipantsClaims() {
+    participantsClaims.clear();
+    cacheParticipantsClaims(participantsClaims);
+  }
+
+  bool containsClaim(ClaimOfAttendance claim) {
+    return participantsClaims[claim.claimantPublic] != null;
   }
 
   @action
-  void addOtherAttestation(int idx, String att) {
-    attestations[idx].setOtherAttestation(att);
-    cacheAttestationStates(attestations);
-  }
-
-  @action
-  void updateAttestationStep(int idx, CurrentAttestationStep step) {
-    attestations[idx].setAttestationStep(step);
-    cacheAttestationStates(attestations);
-  }
-
-  @action
-  void purgeAttestations() {
-    attestations.clear();
-    cacheAttestationStates(attestations);
+  void addParticipantClaim(ClaimOfAttendance claim) {
+    participantsClaims[claim.claimantPublic] = claim;
+    cacheParticipantsClaims(participantsClaims);
   }
 
   @action
@@ -378,10 +367,10 @@ abstract class _EncointerStore with Store {
       setChosenCid(data);
     }
     // get meetup related data
-    data = await loadObject(encointerAttestationsKey);
+    data = await loadObject(encointerParticipantsClaimsKey);
     if (data != null) {
-      print("found cached attestations. will recover them");
-      attestations = Map.castFrom<String, dynamic, int, AttestationState>(data);
+      print("found cached participants' claims. will recover them: $data");
+      participantsClaims = ObservableMap.of(jsonDecode(data).cast<String, ClaimOfAttendance>());
     }
     currentPhase = await loadCurrentPhase();
     currentCeremonyIndex = await loadObject(encointerCurrentCeremonyIndexKey);
@@ -402,16 +391,16 @@ abstract class _EncointerStore with Store {
 
   @action
   void setShopRegistry(List<String> shops) {
-    shopRegistry = shops;
+    shopRegistry = ObservableList.of(shops);
   }
 
   Future<void> reloadShopRegistry() async {
     await webApi.encointer.getShopRegistry();
   }
 
-  Future<void> cacheAttestationStates(Map<int, AttestationState> attestations) {
-    Map<String, AttestationState> att = attestations.map((key, value) => MapEntry(key.toString(), value));
-    return cacheObject(encointerAttestationsKey, att);
+  Future<void> cacheParticipantsClaims(Map<String, ClaimOfAttendance> claims) {
+    print("jsonEncode claims: ${jsonEncode(claims)}");
+    return cacheObject(encointerParticipantsClaimsKey, jsonEncode(claims));
   }
 
   Future<void> cacheObject(String key, value) {
@@ -424,6 +413,6 @@ abstract class _EncointerStore with Store {
 
   Future<CeremonyPhase> loadCurrentPhase() async {
     Object obj = await rootStore.loadObject(encointerCurrentPhaseKey);
-    return getEnumFromString(CeremonyPhase.values, obj);
+    return ceremonyPhaseFromString(obj);
   }
 }

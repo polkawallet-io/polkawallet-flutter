@@ -5,7 +5,6 @@ import 'package:encointer_wallet/page-encointer/bazaar/shop/myShopPage.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopOverviewPage.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopOverviewPanel.dart';
 import 'package:encointer_wallet/page-encointer/homePage.dart';
-import 'package:encointer_wallet/page-encointer/meetup/MeetupPage.dart';
 import 'package:encointer_wallet/page-encointer/phases/assigning/assigningPage.dart';
 import 'package:encointer_wallet/page-encointer/phases/attesting/attestingPage.dart';
 import 'package:encointer_wallet/page-encointer/phases/registering/registerParticipantPanel.dart';
@@ -188,7 +187,6 @@ class _WalletAppState extends State<WalletApp> {
         RegisterParticipantPanel.route: (_) => RegisterParticipantPanel(_appStore),
         AssigningPage.route: (_) => AssigningPage(_appStore),
         AttestingPage.route: (_) => AttestingPage(_appStore),
-        MeetupPage.route: (_) => MeetupPage(_appStore),
         // bazaar
         CreateShopPage.route: (_) => CreateShopPage(_appStore),
         CreateShopForm.route: (_) => CreateShopForm(_appStore),

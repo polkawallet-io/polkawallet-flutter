@@ -89,6 +89,14 @@ void main() {
       await driver.requestData(StorageSetup.READY_FOR_MEETUP);
       await screenshot(driver, config, 'attesting-page');
     });
+
+    test('meetupPage', () async {
+      log("tapping startMeetup");
+      await driver.tap(find.byValueKey('start-meetup'));
+      await driver.tap(find.byValueKey('confirmed-participants-3'));
+      await screenshot(driver, config, 'claim-qr');
+    });
+
   });
 }
 
