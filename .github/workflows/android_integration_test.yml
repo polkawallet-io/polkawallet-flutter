@@ -13,11 +13,12 @@ jobs:
     timeout-minutes: 60
     strategy:
       matrix:
+        # lower api-levels would be supported but the webView that is pre-installed on these images does not.
+        api-level: [27, 28, 29] # 30 is broken for now, probably due to low emulator performance.
         include:
           - os: macos-latest
             # needs to be the `id` from the devices given by `avdmanager list device`
             device: "pixel_3a"
-            api-level: 29 # 30 is not working
             # disable for now. it takes ages to build and launch the app and the upper limit of
             # recordings is 180s. The app has not even started by then.
             record_video: false
@@ -44,6 +45,9 @@ jobs:
 
       - name: Setup Android SDK and accept licences
         uses: android-actions/setup-android@v2
+
+      - name: List android images
+        run: sdkmanager --list | grep system-images
 
       # JS Stuff
       - uses: actions/setup-node@v2
