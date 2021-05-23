@@ -7,6 +7,7 @@ import 'package:encointer_wallet/service/subscan.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAccount.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAssets.dart';
 import 'package:encointer_wallet/service/substrateApi/encointer/apiEncointer.dart';
+import 'package:encointer_wallet/service/substrateApi/chainApi.dart';
 import 'package:encointer_wallet/service/substrateApi/types/genExternalLinksParams.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,6 +28,8 @@ class Api {
   ApiAccount account;
   ApiEncointer encointer;
   ApiAssets assets;
+  ChainApi chain;
+
   Ipfs ipfs;
 
   SubScanApi subScanApi = SubScanApi();
@@ -44,11 +47,9 @@ class Api {
     jsStorage = GetStorage();
 
     account = ApiAccount(this);
-
     encointer = ApiEncointer(this);
-
     assets = ApiAssets(this);
-
+    chain = ChainApi(this);
     ipfs = Ipfs(gateway: store.settings.ipfsGateway);
 
     print("first launch of webview");
@@ -230,9 +231,19 @@ class Api {
     store.settings.setNetworkState(info[1]);
     store.settings.setNetworkName(info[2]);
 
-    // init subscriptions for all apis
+    startSubscriptions();
+  }
+
+  void startSubscriptions() {
     this.encointer.startSubscriptions();
+    this.chain.startSubscriptions();
     this.assets.startSubscriptions();
+  }
+
+  void stopSubscriptions() {
+    this.encointer.stopSubscriptions();
+    this.chain.stopSubscriptions();
+    this.assets.stopSubscriptions();
   }
 
   Future<void> updateBlocks(List txs) async {
@@ -279,6 +290,7 @@ class Api {
   Future<void> closeWebView() async {
     print("closing webview");
     if (_web != null) {
+      stopSubscriptions();
       _web.close();
       _web = null;
     } else {

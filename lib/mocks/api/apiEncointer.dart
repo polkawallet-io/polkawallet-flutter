@@ -89,6 +89,9 @@ class MockApiEncointer extends ApiEncointer {
   }
 
   @override
+  Future<void> getDemurrage() async {}
+
+  @override
   Future<AttestationResult> attestClaimOfAttendance(String _claimHex, String _password) async {
     return AttestationResult.fromJson(attestationMap);
   }

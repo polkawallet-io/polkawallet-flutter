@@ -8,12 +8,12 @@ part of 'location.dart';
 
 Location _$LocationFromJson(Map<String, dynamic> json) {
   return Location(
-    json['lon'] as int,
-    json['lat'] as int,
+    json['lon'] == null ? null : BigInt.parse(json['lon'] as String),
+    json['lat'] == null ? null : BigInt.parse(json['lat'] as String),
   );
 }
 
 Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
-      'lon': instance.lon,
-      'lat': instance.lat,
+      'lon': instance.lon?.toString(),
+      'lat': instance.lat?.toString(),
     };

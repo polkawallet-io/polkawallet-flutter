@@ -54,6 +54,21 @@ mixin _$AppStore on _AppStore, Store {
     });
   }
 
+  final _$chainAtom = Atom(name: '_AppStore.chain');
+
+  @override
+  ChainStore get chain {
+    _$chainAtom.reportRead();
+    return super.chain;
+  }
+
+  @override
+  set chain(ChainStore value) {
+    _$chainAtom.reportWrite(value, super.chain, () {
+      super.chain = value;
+    });
+  }
+
   final _$encointerAtom = Atom(name: '_AppStore.encointer');
 
   @override
@@ -97,6 +112,7 @@ mixin _$AppStore on _AppStore, Store {
 settings: ${settings},
 account: ${account},
 assets: ${assets},
+chain: ${chain},
 encointer: ${encointer},
 isReady: ${isReady}
     ''';

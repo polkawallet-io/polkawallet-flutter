@@ -9,8 +9,8 @@ part 'location.g.dart';
 class Location {
   Location(this.lon, this.lat);
 
-  final int lon;
-  final int lat;
+  final BigInt lon;
+  final BigInt lat;
 
   @override
   String toString() {

@@ -30,6 +30,20 @@ mixin _$EncointerStore on _EncointerStore, Store {
           Computed<String>(() => super.communityIconsCid,
               name: '_EncointerStore.communityIconsCid'))
       .value;
+  Computed<BalanceEntry> _$communityBalanceEntryComputed;
+
+  @override
+  BalanceEntry get communityBalanceEntry => (_$communityBalanceEntryComputed ??=
+          Computed<BalanceEntry>(() => super.communityBalanceEntry,
+              name: '_EncointerStore.communityBalanceEntry'))
+      .value;
+  Computed<double> _$communityBalanceComputed;
+
+  @override
+  double get communityBalance => (_$communityBalanceComputed ??=
+          Computed<double>(() => super.communityBalance,
+              name: '_EncointerStore.communityBalance'))
+      .value;
 
   final _$currentPhaseAtom = Atom(name: '_EncointerStore.currentPhase');
 
@@ -260,6 +274,21 @@ mixin _$EncointerStore on _EncointerStore, Store {
   set communityMetadata(CommunityMetadata value) {
     _$communityMetadataAtom.reportWrite(value, super.communityMetadata, () {
       super.communityMetadata = value;
+    });
+  }
+
+  final _$demurrageAtom = Atom(name: '_EncointerStore.demurrage');
+
+  @override
+  double get demurrage {
+    _$demurrageAtom.reportRead();
+    return super.demurrage;
+  }
+
+  @override
+  set demurrage(double value) {
+    _$demurrageAtom.reportWrite(value, super.demurrage, () {
+      super.demurrage = value;
     });
   }
 
@@ -494,6 +523,17 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
+  void setDemurrage(double d) {
+    final _$actionInfo = _$_EncointerStoreActionController.startAction(
+        name: '_EncointerStore.setDemurrage');
+    try {
+      return super.setDemurrage(d);
+    } finally {
+      _$_EncointerStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setChosenCid(String cid) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
         name: '_EncointerStore.setChosenCid');
@@ -610,13 +650,16 @@ communityIdentifiers: ${communityIdentifiers},
 communities: ${communities},
 chosenCid: ${chosenCid},
 communityMetadata: ${communityMetadata},
+demurrage: ${demurrage},
 claimHex: ${claimHex},
 attestations: ${attestations},
 txsTransfer: ${txsTransfer},
 shopRegistry: ${shopRegistry},
 communityName: ${communityName},
 communitySymbol: ${communitySymbol},
-communityIconsCid: ${communityIconsCid}
+communityIconsCid: ${communityIconsCid},
+communityBalanceEntry: ${communityBalanceEntry},
+communityBalance: ${communityBalance}
     ''';
   }
 }

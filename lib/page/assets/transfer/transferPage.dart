@@ -340,7 +340,7 @@ class _TransferPageState extends State<TransferPage> {
   BigInt _getAvailableEncointerOrBaseToken(bool isBaseToken, String symbol) {
     if (_isEncointerCommunityCurrency) {
       return Fmt.tokenInt(
-          store.encointer.balanceEntries[_tokenSymbol].principal.toString(), encointer_currencies_decimals);
+          store.encointer.communityBalance.toString(), encointer_currencies_decimals);
     } else {
       return isBaseToken
           ? store.assets.balances[symbol.toUpperCase()].transferable

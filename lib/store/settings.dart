@@ -247,6 +247,10 @@ abstract class _SettingsStore with Store {
 
     customSS58Format = ss58 ?? default_ss58_prefix;
   }
+
+  String getCacheKey(String key) {
+    return '${endpoint.info}_$key';
+  }
 }
 
 @JsonSerializable(createFactory: false)

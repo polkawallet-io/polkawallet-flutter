@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
@@ -84,6 +86,9 @@ abstract class _EncointerStore with Store {
   CommunityMetadata communityMetadata;
 
   @observable
+  double demurrage;
+
+  @observable
   String claimHex;
 
   @observable
@@ -105,6 +110,24 @@ abstract class _EncointerStore with Store {
   @computed
   String get communityIconsCid => communityMetadata?.icons;
 
+  @computed
+  BalanceEntry get communityBalanceEntry {
+    return balanceEntries[chosenCid];
+  }
+
+  @computed
+  double get communityBalance {
+    double res;
+    if (rootStore.chain.latestHeaderNumber != null &&
+        communityBalanceEntry != null &&
+        demurrage != null
+    ) {
+      int elapsed = rootStore.chain.latestHeaderNumber - communityBalanceEntry.lastUpdate;
+      double exponent = -demurrage * elapsed;
+      res = communityBalanceEntry.principal * pow(e, exponent);
+    }
+    return res;
+  }
 
   @action
   void setCurrentPhase(CeremonyPhase phase) {
@@ -246,6 +269,11 @@ abstract class _EncointerStore with Store {
   }
 
   @action
+  void setDemurrage(double d) {
+    demurrage = d;
+  }
+
+  @action
   void setChosenCid(String cid) {
     if (chosenCid != cid) {
       chosenCid = cid;
@@ -262,6 +290,7 @@ abstract class _EncointerStore with Store {
       webApi.encointer.getParticipantCount();
       webApi.encointer.getEncointerBalance();
       webApi.encointer.getCommunityMetadata();
+      webApi.encointer.getDemurrage();
     }
   }
 
@@ -386,19 +415,15 @@ abstract class _EncointerStore with Store {
   }
 
   Future<void> cacheObject(String key, value) {
-    return rootStore.localStorage.setObject(_getCacheKey(key), value);
+    return rootStore.cacheObject(key, value);
   }
 
   Future<Object> loadObject(String key) {
-    return rootStore.localStorage.getObject(_getCacheKey(key));
-  }
-
-  String _getCacheKey(String key) {
-    return '${rootStore.settings.endpoint.info}_$key';
+    return rootStore.loadObject(key);
   }
 
   Future<CeremonyPhase> loadCurrentPhase() async {
-    Object obj = await rootStore.localStorage.getObject(_getCacheKey(encointerCurrentPhaseKey));
+    Object obj = await rootStore.loadObject(encointerCurrentPhaseKey);
     return getEnumFromString(CeremonyPhase.values, obj);
   }
 }

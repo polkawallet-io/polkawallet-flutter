@@ -32,7 +32,6 @@ class ApiEncointer {
 
   final Api apiRoot;
   final store = globalAppStore;
-  final String _timeStampSubscribeChannel = 'timestamp';
   final String _currentPhaseSubscribeChannel = 'currentPhase';
   final String _participantIndexChannel = 'participantIndex';
   final String _communityIdentifiersChannel = 'communityIdentifiers';
@@ -44,7 +43,6 @@ class ApiEncointer {
 
   Future<void> startSubscriptions() async {
     print("api: starting encointer subscriptions");
-    this.subscribeTimestamp();
     this.subscribeCurrentPhase();
     this.subscribeCommunityIdentifiers();
     if (store.settings.endpointIsGesell) {
@@ -56,7 +54,6 @@ class ApiEncointer {
   Future<void> stopSubscriptions() async {
     print("api: stopping encointer subscriptions");
     apiRoot.unsubscribeMessage(_currentPhaseSubscribeChannel);
-    apiRoot.unsubscribeMessage(_timeStampSubscribeChannel);
     apiRoot.unsubscribeMessage(_communityIdentifiersChannel);
     apiRoot.unsubscribeMessage(_shopRegistryChannel);
 
@@ -148,6 +145,26 @@ class ApiEncointer {
 
     print("api: community metadata: " + meta.toString());
     store.encointer.setCommunityMetadata(meta);
+  }
+
+  /// Queries the Communities and the Balances pallet:
+  ///   encointerCommunities.demurragePerBloc(cid)
+  ///   encointerBalances.defaultDemurragePerBlock
+  ///
+  /// Returns the community specific demurrage if defined,
+  /// otherwise the default demurrage from the balances pallet
+  /// is returned.
+  ///
+  /// This is on-chain in Cantillon
+  Future<void> getDemurrage() async {
+    String cid = store.encointer.chosenCid;
+    if (cid == null) {
+      return;
+   }
+    
+    double dem = await apiRoot.evalJavascript('encointer.getDemurrage("$cid")');
+    print("api: fetched demurrage: $dem");
+    store.encointer.setDemurrage(dem);
   }
 
   /// Calls the custom rpc: api.rpc.communities.communitiesGetAll()
@@ -245,13 +262,6 @@ class ApiEncointer {
 
     print("bEntryJson: ${bEntry.toString()}");
     store.encointer.addBalanceEntry(cid, bEntry);
-  }
-
-  /// Subscribes to the timestamp of the last block. This is only used as a debug method to see if the dart-js interface
-  /// is still communicating.
-  Future<void> subscribeTimestamp() async {
-    apiRoot.subscribeMessage('encointer.subscribeTimestamp("$_timeStampSubscribeChannel")', _timeStampSubscribeChannel,
-        (data) => {print("timestamp: $data")});
   }
 
   Future<void> subscribeCurrentPhase() async {

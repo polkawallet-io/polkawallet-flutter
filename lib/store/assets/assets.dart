@@ -25,7 +25,7 @@ abstract class _AssetsStore with Store {
   final String cacheTimeKey = 'assets_cache_time';
 
   String _getCacheKey(String key) {
-    return '${rootStore.settings.endpoint.info}_$key';
+    return rootStore.getCacheKey(key);
   }
 
   @observable

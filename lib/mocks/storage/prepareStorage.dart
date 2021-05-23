@@ -1,9 +1,11 @@
 import 'package:encointer_wallet/mocks/data/mockEncointerData.dart';
+import 'package:encointer_wallet/mocks/data/mockChainData.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:encointer_wallet/store/encointer/types/location.dart';
 import 'package:encointer_wallet/store/encointer/types/communities.dart';
+import 'package:encointer_wallet/store/chain/types/header.dart';
 
 abstract class PrepareStorage {
   static void init(AppStore store) {
@@ -12,6 +14,8 @@ abstract class PrepareStorage {
     store.encointer.addBalanceEntry(cid, BalanceEntry.fromJson(balanceEntry));
     store.encointer.setCommunityMetadata(CommunityMetadata.fromJson(communityMetadata));
     store.encointer.setCommunities(communities.map((cn) => CidName.fromJson(cn)).toList());
+    store.encointer.setDemurrage(demurrage);
+    store.chain.setLatestHeader(Header.fromJson(header));
   }
 
   static void unregisteredParticipant(AppStore store) {

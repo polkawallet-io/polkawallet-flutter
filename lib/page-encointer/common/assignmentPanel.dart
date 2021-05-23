@@ -23,8 +23,8 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
   final AppStore store;
 
   Widget _meetupLocationLink() {
-    var lat = (store.encointer.meetupLocation.lat / pow(2, 32));
-    var lon = (store.encointer.meetupLocation.lon / pow(2, 32));
+    var lat = (store.encointer.meetupLocation.lat / BigInt.from(pow(2, 32)));
+    var lon = (store.encointer.meetupLocation.lon / BigInt.from(pow(2, 32)));
     return JumpToBrowserLink(
         'https://www.openstreetmap.org/?mlat=' +
             lat.toStringAsFixed(5) +

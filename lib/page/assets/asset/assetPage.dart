@@ -166,7 +166,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                 : store.settings.networkState.tokenDecimals ?? ert_decimals;
 
             BigInt balance = isEncointerCommunityCurrency
-                ? Fmt.tokenInt(store.encointer.balanceEntries[token].principal.toString(), decimals)
+                ? Fmt.tokenInt(store.encointer.communityBalance.toString(), decimals)
                 : Fmt.balanceInt(store.assets.tokenBalances[token.toUpperCase()]);
 
             BalancesInfo balancesInfo = store.assets.balances[symbol];

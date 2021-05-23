@@ -25,12 +25,14 @@ const Map<String, dynamic> communityMetadata = {
   'url': null
 };
 
+const double demurrage = 1.1267607882072287e-7;
+
 const Map<String, dynamic> claim = {
   'claimant_public': '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
   'ceremony_index': 63,
   'community_identifier': cid,
   'meetup_index': 1,
-  'location': {'lon': 79643934720, 'lat': 152403291178},
+  'location': {'lon': '79643934720', 'lat': '152403291178'},
   'timestamp': 1592719549549,
   'number_of_participants_confirmed': 3
 };
@@ -63,4 +65,4 @@ const List<String> meetupRegistry = [
 
 const CeremonyPhase initialPhase = CeremonyPhase.REGISTERING;
 
-const Map<String, dynamic> balanceEntry = {'principal': 23.4, 'lastUpdate': 4};
+const Map<String, dynamic> balanceEntry = {'principal': 23.4, 'last_update': 4};
