@@ -1377,10 +1377,15 @@
     memoizee "^0.4.14"
     rxjs "^6.6.3"
 
-"@open-web3/orml-type-definitions@^0.6.0-beta.26", "@open-web3/orml-type-definitions@^0.6.0-beta.28":
+"@open-web3/orml-type-definitions@^0.6.0-beta.26":
   version "0.6.0-beta.28"
   resolved "https://registry.yarnpkg.com/@open-web3/orml-type-definitions/-/orml-type-definitions-0.6.0-beta.28.tgz#a2668dc756b3e478e2695e8eeb1af87efe895987"
   integrity sha512-zD5Pb8nWrXETB9bw/TQikh5ZUS6AFDoKWGmirc1Mq2SXsdyypYGQ4r5kSR3ugOQ57AlWBbJPH1c5ccNtMOqNOw==
+
+"@open-web3/orml-type-definitions@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@open-web3/orml-type-definitions/-/orml-type-definitions-0.6.1.tgz#eb7fadf598f24f5024f5d2a1fd39ccc97c801104"
+  integrity sha512-6asf2W/sluGQ6LNiGSdCg/Xop54mq/Q2FcV2Z9cBxys6QC4qXfo4JwUL6kJsRh/vcIIbUxoyGgKUrU/6Xdm7wA==
 
 "@open-web3/orml-types@0.6.0-beta.26":
   version "0.6.0-beta.26"
@@ -1390,11 +1395,11 @@
     "@open-web3/orml-type-definitions" "^0.6.0-beta.26"
 
 "@open-web3/orml-types@^0.6.0-beta.26":
-  version "0.6.0-beta.28"
-  resolved "https://registry.yarnpkg.com/@open-web3/orml-types/-/orml-types-0.6.0-beta.28.tgz#004f14f51a021478999d87385048960c27a91f6f"
-  integrity sha512-f3n/Sgk7p9o+DLWawYKismpvCigLsoUAwkIZtT+VX1jy6mtGZFM5CFvqaGBHjZngZ7hJYlf6Y30TXwRuIKsmlQ==
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@open-web3/orml-types/-/orml-types-0.6.1.tgz#85eca19146d32c8cef0ace07c2aaf0f13ccc0350"
+  integrity sha512-wP0pguZuIrLpjz3TWrvRHFOp62giZIettAIT6ueED6pVUqNXFersrZZis6RmgbRBZggYhD7FgM/Z+DxVsR7HUQ==
   dependencies:
-    "@open-web3/orml-type-definitions" "^0.6.0-beta.28"
+    "@open-web3/orml-type-definitions" "^0.6.1"
 
 "@polkadot/api-derive@^2.5.1":
   version "2.5.1"
@@ -2659,14 +2664,15 @@ browserify-zlib@^0.2.0:
     pako "~1.0.5"
 
 browserslist@^4.12.0, browserslist@^4.8.5:
-  version "4.14.0"
-  resolved "https://registry.npm.taobao.org/browserslist/download/browserslist-4.14.0.tgz?cache=0&sync_timestamp=1596754416737&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fbrowserslist%2Fdownload%2Fbrowserslist-4.14.0.tgz#2908951abfe4ec98737b72f34c3bcedc8d43b000"
-  integrity sha1-KQiVGr/k7Jhze3LzTDvO3I1DsAA=
+  version "4.16.6"
+  resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.16.6.tgz#d7901277a5a88e554ed305b183ec9b0c08f66fa2"
+  integrity sha512-Wspk/PqO+4W9qp5iUTJsa1B/QrYn1keNCcEP5OvP7WBwT4KaDly0uONYmC6Xa3Z5IqnUgS0KcgLYu1l74x0ZXQ==
   dependencies:
-    caniuse-lite "^1.0.30001111"
-    electron-to-chromium "^1.3.523"
-    escalade "^3.0.2"
-    node-releases "^1.1.60"
+    caniuse-lite "^1.0.30001219"
+    colorette "^1.2.2"
+    electron-to-chromium "^1.3.723"
+    escalade "^3.1.1"
+    node-releases "^1.1.71"
 
 bs58@^4.0.0, bs58@^4.0.1:
   version "4.0.1"
@@ -2822,10 +2828,10 @@ camelcase@^5.0.0, camelcase@^5.2.0, camelcase@^5.3.1:
   resolved "https://registry.npm.taobao.org/camelcase/download/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
   integrity sha1-48mzFWnhBoEd8kL3FXJaH0xJQyA=
 
-caniuse-lite@^1.0.30001111:
-  version "1.0.30001113"
-  resolved "https://registry.npm.taobao.org/caniuse-lite/download/caniuse-lite-1.0.30001113.tgz#22016ab55b5a8b04fa00ca342d9ee1b98df48065"
-  integrity sha1-IgFqtVtaiwT6AMo0LZ7huY30gGU=
+caniuse-lite@^1.0.30001219:
+  version "1.0.30001230"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001230.tgz#8135c57459854b2240b57a4a6786044bdc5a9f71"
+  integrity sha512-5yBd5nWCBS+jWKTcHOzXwo5xzcj4ePE/yjtkZyUV1BTUmrBaA9MRGC+e7mxnqXSA90CmCA8L3eKLaSUkt099IQ==
 
 canvas-renderer@~2.1.1:
   version "2.1.1"
@@ -3145,6 +3151,11 @@ color@^3.1.2:
   dependencies:
     color-convert "^1.9.1"
     color-string "^1.5.2"
+
+colorette@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/colorette/-/colorette-1.2.2.tgz#cbcc79d5e99caea2dbf10eb3a26fd8b3e6acfa94"
+  integrity sha512-MKGMzyfeuutC/ZJ1cba9NqcNpfeqMUcYmyF1ZFY6/Cn7CNSAKx6a+s48sqLqyAiZuaP2TcqMhoo+dlwFnVxT9w==
 
 colors@1.0.3:
   version "1.0.3"
@@ -3765,10 +3776,10 @@ ejs@^3.0.1:
   dependencies:
     jake "^10.6.1"
 
-electron-to-chromium@^1.3.523:
-  version "1.3.533"
-  resolved "https://registry.npm.taobao.org/electron-to-chromium/download/electron-to-chromium-1.3.533.tgz?cache=0&sync_timestamp=1597289723862&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Felectron-to-chromium%2Fdownload%2Felectron-to-chromium-1.3.533.tgz#d7e5ca4d57e9bc99af87efbe13e7be5dde729b0f"
-  integrity sha1-1+XKTVfpvJmvh+++E+e+Xd5ymw8=
+electron-to-chromium@^1.3.723:
+  version "1.3.739"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.739.tgz#f07756aa92cabd5a6eec6f491525a64fe62f98b9"
+  integrity sha512-+LPJVRsN7hGZ9EIUUiWCpO7l4E3qBYHNadazlucBfsXBbccDFNKUBAgzE68FnkWGJPwD/AfKhSzL+G+Iqb8A4A==
 
 elliptic@6.5.3, elliptic@^6.4.0, elliptic@^6.5.2, elliptic@^6.5.3:
   version "6.5.3"
@@ -3918,11 +3929,6 @@ es6-weak-map@^2.0.2:
     es5-ext "^0.10.46"
     es6-iterator "^2.0.3"
     es6-symbol "^3.1.1"
-
-escalade@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.npm.taobao.org/escalade/download/escalade-3.0.2.tgz?cache=0&sync_timestamp=1594742923342&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fescalade%2Fdownload%2Fescalade-3.0.2.tgz#6a580d70edb87880f22b4c91d0d56078df6962c4"
-  integrity sha1-algNcO24eIDyK0yR0NVgeN9pYsQ=
 
 escalade@^3.1.1:
   version "3.1.1"
@@ -7173,10 +7179,10 @@ node-notifier@^5.4.2:
     shellwords "^0.1.1"
     which "^1.3.0"
 
-node-releases@^1.1.60:
-  version "1.1.60"
-  resolved "https://registry.npm.taobao.org/node-releases/download/node-releases-1.1.60.tgz?cache=0&sync_timestamp=1595485372345&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fnode-releases%2Fdownload%2Fnode-releases-1.1.60.tgz#6948bdfce8286f0b5d0e5a88e8384e954dfe7084"
-  integrity sha1-aUi9/OgobwtdDlqI6DhOlU3+cIQ=
+node-releases@^1.1.71:
+  version "1.1.72"
+  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.72.tgz#14802ab6b1039a79a0c7d662b610a5bbd76eacbe"
+  integrity sha512-LLUo+PpH3dU6XizX3iVoubUNheF/owjXCZZ5yACDxNnPtgFuludV1ZL3ayK1kVep42Rmm0+R9/Y60NQbZ2bifw==
 
 normalize-package-data@^2.3.2, normalize-package-data@^2.5.0:
   version "2.5.0"
