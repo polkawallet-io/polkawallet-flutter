@@ -5,15 +5,15 @@ import 'package:json_annotation/json_annotation.dart';
 part 'node.g.dart';
 
 /// Overrides for the Gesell test network
-const NodeConfig GesellConfig = const NodeConfig(TypeOverrides_V3_8, PalletOverrides_V3_8);
+const NodeConfig GesellConfig = const NodeConfig(GesellTypeOverrides, GesellPalletOverrides);
 /// Overrides for the Cantillon test network
-const NodeConfig CantillonConfig = const NodeConfig(TypeOverrides_V3_8, PalletOverrides_V3_8);
+const NodeConfig CantillonConfig = const NodeConfig(GesellTypeOverrides, GesellPalletOverrides);
 /// Overrides for the master branch of the `encointer-node`, which is usually used in a local
 /// no-tee-dev-setup
 const NodeConfig MasterBranchConfig = const NodeConfig(TypeOverridesDev, PalletOverridesDev);
 /// Overrides for the sgx-master branch of the `encointer-node`, which is usually used in a local
 /// tee-dev-setup
-const NodeConfig SgxBranchConfig = const NodeConfig(TypeOverrides_V3_8, PalletOverrides_V3_8);
+const NodeConfig SgxBranchConfig = const NodeConfig(GesellTypeOverrides, GesellPalletOverrides);
 
 @JsonSerializable(explicitToJson: true)
 /// Config to handle different versions of our nodes by supplying type overwrites
@@ -57,51 +57,9 @@ class Pallet {
 const Map<String, dynamic> TypeOverridesDev = {};
 const Map<String, Pallet> PalletOverridesDev = {};
 
-/// Type overrides needed for the tag v3.8
-const TypeOverrides_V3_8 = {
-  'CurrencyIdentifier': 'Hash',
-  'BalanceType': 'i128',
-  'BalanceEntry': {
-    'principal': 'i128',
-    'last_update': 'BlockNumber'
-  },
-  'CurrencyCeremony': '(CurrencyIdentifier,CeremonyIndexType)',
-  'CurrencyPropertiesType': {
-    'name_utf8': 'Vec<u8>',
-    'demurrage_per_block': 'Demurrage'
-  },
-  'GetterArgs': '(AccountId, CurrencyIdentifier)',
-  'PublicGetter': {
-    '_enum': {
-      'total_issuance': 'CurrencyIdentifier',
-      'participant_count': 'CurrencyIdentifier',
-      'meetup_count': 'CurrencyIdentifier',
-      'ceremony_reward': 'CurrencyIdentifier',
-      'location_tolerance': 'CurrencyIdentifier',
-      'time_tolerance': 'CurrencyIdentifier',
-      'scheduler_state': 'CurrencyIdentifier'
-    }
-  },
-  'TrustedGetter': {
-    '_enum': {
-      'balance': '(AccountId, CurrencyIdentifier)',
-      'participant_index': '(AccountId, CurrencyIdentifier)',
-      'meetup_index': '(AccountId, CurrencyIdentifier)',
-      'attestations': '(AccountId, CurrencyIdentifier)',
-      'meetup_registry': '(AccountId, CurrencyIdentifier)'
-    }
-  },
-  'TrustedCall': {
-    '_enum': {
-      'balance_transfer': '(AccountId, AccountId, CurrencyIdentifier, BalanceType)',
-      'ceremonies_register_participant': '(AccountId, CurrencyIdentifier, Option<ProofOfAttendance<MultiSignature, AccountId>>)',
-      'ceremonies_register_attestations': '(AccountId, Vec<Attestation<MultiSignature, AccountId, u64>>)',
-      'ceremonies_grant_reputation': '(AccountId, CurrencyIdentifier, AccountId)'
-    }
-  }
-};
+/// Type overrides needed for Gesell
+const Map<String, dynamic> GesellTypeOverrides = {};
 
-/// Pallet overrides needed for the tag v3.8
-const Map<String, Pallet> PalletOverrides_V3_8 = {
-  'encointerCommunities': const Pallet('encointerCurrencies', { 'communityIdentifiers': 'currencyIdentifiers'})
+/// Pallet overrides needed for Gesell
+const Map<String, Pallet> GesellPalletOverrides = {
 };
