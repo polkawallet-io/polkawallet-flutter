@@ -8,6 +8,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "14.0.0"
+  aes_ecb_pkcs5_flutter:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: ddc0ced9cd734d0525745aa89b63961a6f907a29
+      url: "https://github.com/polkawallet-io/aes_ecb_pkcs5_flutter.git"
+    source: git
+    version: "0.1.2"
   analyzer:
     dependency: transitive
     description:
@@ -258,13 +267,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_aes_ecb_pkcs5:
-    dependency: "direct main"
-    description:
-      name: flutter_aes_ecb_pkcs5
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.1"
   flutter_driver:
     dependency: "direct dev"
     description: flutter
