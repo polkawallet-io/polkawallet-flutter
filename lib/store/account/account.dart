@@ -8,7 +8,7 @@ import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/account/types/accountRecoveryInfo.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:flutter_aes_ecb_pkcs5/flutter_aes_ecb_pkcs5.dart';
+import 'package:aes_ecb_pkcs5_flutter/aes_ecb_pkcs5_flutter.dart';
 import 'package:mobx/mobx.dart';
 
 part 'account.g.dart';
