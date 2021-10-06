@@ -32,7 +32,7 @@ const Map<String, dynamic> claim = {
   'ceremony_index': 63,
   'community_identifier': cid,
   'meetup_index': 1,
-  'location': {'lon': '79643934720', 'lat': '152403291178'},
+  'location': {'lon': '0xffffffffffffffe72ff3493858360000', 'lat': '0x000000000000001987d96638433d0000'},
   'timestamp': 1592719549549,
   'number_of_participants_confirmed': 3
 };

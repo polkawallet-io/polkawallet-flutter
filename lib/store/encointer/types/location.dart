@@ -9,8 +9,8 @@ part 'location.g.dart';
 class Location {
   Location(this.lon, this.lat);
 
-  final BigInt lon;
-  final BigInt lat;
+  final String lon;
+  final String lat;
 
   @override
   String toString() {
@@ -20,8 +20,8 @@ class Location {
   // explicitly use `toString()`, which works for the old `Degree` type `i64` and the new one `i128`
   factory Location.fromJson(Map<String, dynamic> json) =>
       Location(
-        json['lon'] == null ? null : BigInt.parse(json['lon'].toString()),
-        json['lat'] == null ? null : BigInt.parse(json['lat'].toString()),
+        json['lon'].toString(),
+        json['lat'].toString(),
       );
   Map<String, dynamic> toJson() => _$LocationToJson(this);
 }

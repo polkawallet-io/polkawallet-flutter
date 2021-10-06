@@ -26,11 +26,11 @@ class _AssignmentPanelState extends State<AssignmentPanel> {
     var lon = store.encointer.meetupLocation.lon;
     return JumpToBrowserLink(
         'https://www.openstreetmap.org/?mlat=' +
-            Fmt.degree(lat, fractionDisplay: 5) +
+            Fmt.degreeFromHex(lat, fractionDisplay: 5) +
             '&mlon=' +
-            Fmt.degree(lon, fractionDisplay: 5) +
+            Fmt.degreeFromHex(lon, fractionDisplay: 5) +
             '&zoom=18',
-        text: Fmt.degree(lat) + " lat, " + Fmt.degree(lon) + " lon");
+        text: Fmt.degreeFromHex(lat) + " lat, " + Fmt.degreeFromHex(lon) + " lon");
   }
 
   @override
