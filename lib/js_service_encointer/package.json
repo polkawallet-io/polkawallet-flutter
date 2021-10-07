@@ -39,6 +39,7 @@
     "core-js": "^3.12.1",
     "node-rsa": "^1.1.1",
     "oo7-substrate": "^0.8.0",
+    "regenerator-runtime": "^0.13.9",
     "process": "^0.11.10",
     "tslib": "^2.3.1"
   },
@@ -68,7 +69,6 @@
     "jest": "^27.2.3",
     "jest-config": "^27.2.3",
     "prettier": "^2.2.1",
-    "regenerator-runtime": "^0.13.9",
     "stream-browserify": "^3.0.0",
     "thread-loader": "^3.0.1",
     "webpack": "^5.55.1",
