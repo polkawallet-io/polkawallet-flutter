@@ -15,7 +15,6 @@ class MyShopPage extends StatefulWidget {
   _MyShopPageState createState() => _MyShopPageState(store);
 }
 
-// TODO
 class _MyShopPageState extends State<MyShopPage> {
   _MyShopPageState(this.store);
   final AppStore store;

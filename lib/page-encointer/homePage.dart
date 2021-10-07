@@ -7,6 +7,8 @@ import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'bazaar/bazaarEntry.dart';
+
 class EncointerHomePage extends StatefulWidget {
   EncointerHomePage(this.store);
 
@@ -49,9 +51,9 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
       switch (i) {
         case 0:
           return Assets(store);
-        //case 1:
-        //  return BazaarEntry(store);
         case 1:
+         return BazaarEntry(store);
+        case 2:
           return EncointerEntry(store);
         default:
           return Profile(store);
@@ -152,7 +154,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
     _tabList = store.settings.endpointIsGesell
         ? [
             'Wallet',
-            //'Bazaar',
+            'Bazaar',
             'Ceremonies',
             'Profile',
           ]

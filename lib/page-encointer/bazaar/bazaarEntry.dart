@@ -1,11 +1,18 @@
+
+/// Bazaar entry page
+///
+/// Todo: @armin: For my taste this file is way to big. Please separate it into smaller files. However, I don't know
+/// how much of this will be needed in the new design anyhow.
+
 import 'package:encointer_wallet/common/components/BorderedTitle.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
+import 'package:encointer_wallet/mocks/api/apiIpfsBazaar.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/common/communityChooserHandler.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/common/menuHandler.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopCard.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shop/shopClass.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shop/shopOverviewPanel.dart';
 import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/encointer/types/bazaar.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,14 +44,19 @@ class _BazaarEntryState extends State<BazaarEntry> {
   @observable
   bool reload = false;
 
-  @action
   Future<void> refreshPage() async {
     reload = true;
     if (store.encointer.chosenCid != null) {
-      await store.encointer.reloadShopRegistry();
+      await store.encointer.reloadbusinessRegistry();
       await resetState();
       reload = false;
     }
+  }
+
+  @override
+  void initState() {
+    refreshPage();
+    super.initState();
   }
 
   Future<void> resetState() async {
@@ -55,9 +67,6 @@ class _BazaarEntryState extends State<BazaarEntry> {
   Widget build(BuildContext context) {
     final Map<String, String> dic = I18n.of(context).bazaar;
     Color secondaryColor = Theme.of(context).secondaryHeaderColor;
-
-    // reaction necessary because shops is not an observable list (view should not change without user doing anything)
-    //final refreshPageOnCidChange = reaction((_) => store.encointer.chosenCid, (_) => refreshPage());
 
     final List<Widget> _widgetList = <Widget>[
       homeView(context, store),
@@ -91,7 +100,7 @@ class _BazaarEntryState extends State<BazaarEntry> {
                 Navigator.push(
                   context,
                   PageRouteBuilder(opaque: false, pageBuilder: (context, _, __) => MenuHandler(store)),
-                ).whenComplete(() => refreshPage());
+                );
               },
             ),
           ],
@@ -227,9 +236,9 @@ class _BazaarEntryState extends State<BazaarEntry> {
             margin: EdgeInsets.only(top: 16),
             child: Container(
               height: _height / 5,
-              // TODO: Change from shopRegistry == null to != null is not registered - how to fix?
+              // TODO: Change from businessRegistry == null to != null is not registered - how to fix?
               //  Problem only when restarting app.
-              child: (store.encointer.shopRegistry == null) || reload || (store.encointer.chosenCid == null)
+              child: (store.encointer.businessRegistry == null) || reload || (store.encointer.chosenCid == null)
                   ? Container(
                       alignment: Alignment.center,
                       child: Column(
@@ -237,6 +246,8 @@ class _BazaarEntryState extends State<BazaarEntry> {
                           // TODO: how to refresh automatically?
                           !reload
                               ? TextButton(
+                                  // todo: @armin: we never want to use direct string literals in the app.
+                                  // please use the `i18n` dictionaries for the texts.
                                   child: Text("Refresh"),
                                   onPressed: () {
                                     refreshPage();
@@ -252,7 +263,7 @@ class _BazaarEntryState extends State<BazaarEntry> {
                         ],
                       ),
                     )
-                  : (store.encointer.shopRegistry.isEmpty)
+                  : (store.encointer.businessRegistry.isEmpty)
                       ? Container(
                           alignment: Alignment.center,
                           child: Text(dic['no.items']),
@@ -260,7 +271,7 @@ class _BazaarEntryState extends State<BazaarEntry> {
                       : ListView.builder(
                           padding: EdgeInsets.all(5),
                           shrinkWrap: true,
-                          itemCount: store.encointer.shopRegistry.length,
+                          itemCount: store.encointer.businessRegistry.length,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (BuildContext context, index) {
                             return _buildShopEntries(context, index, store);
@@ -274,23 +285,28 @@ class _BazaarEntryState extends State<BazaarEntry> {
   }
 
   Widget _buildShopEntries(BuildContext context, int index, AppStore store) {
-    List<String> reversedList = new List.from(store.encointer.shopRegistry.reversed);
+    // todo: This not performant. we should create an iterable from the outside and only pass an element to it.
+    List<AccountBusinessTuple> businesses = new List.from(store.encointer.businessRegistry.reversed);
+
     return GestureDetector(
       onTap: () {
         //TODO make clickable
         // Navigator.of(context).pushNamed(DETAIL_UI);
       },
-      child: FutureBuilder<Shop>(
-        future: Shop().getShopData(reversedList[index]),
+      child: FutureBuilder<IpfsBusiness>(
+        future: BazaarIpfsApiMock.getBusiness(businesses[index].businessData.url),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            // @armin as far as I know are the two todos below not in the UI draft from the issue. If you don't find
+            // any reason to use `category` and `dateAdded` just skipp them, or consult with alain.
             return ShopCard(
               title: snapshot.data.name,
               description: snapshot.data.description,
-              imageHash: snapshot.data.imageHash,
-              // TODO add these items to shop
+              imageHash: snapshot.data.imagesCid,
+              // Todo: what kind of categories do we want?
               category: ' ',
-              location: "Zürich, Technopark",
+              location: snapshot.data.contactInfo,
+              // Todo: How do we determine this in reality. Do we rely on the shop owner's to populate that themselves?
               dateAdded: "02 December 2020",
             );
             //return Text(snapshot.data.name);

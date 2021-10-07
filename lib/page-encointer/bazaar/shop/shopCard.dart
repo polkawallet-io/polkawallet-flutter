@@ -131,8 +131,10 @@ class ShopCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               padding: EdgeInsets.all(10),
-              child: Image.network(
-                getImageAdress(this.imageHash),
+              // Todo: @armin here the image should also be fetched with the `BazaarMockApi` and will therefore be
+              // a future that shows an `CupertinoActivity` indicator until loaded.
+              child: Image.asset(
+                this.imageHash,
                 fit: BoxFit.cover,
                 height: height / 4.5,
                 width: width / 4.5,

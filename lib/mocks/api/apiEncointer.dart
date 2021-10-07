@@ -3,6 +3,7 @@ import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/service/substrateApi/encointer/apiEncointer.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
 import 'package:encointer_wallet/store/encointer/types/communities.dart';
+import 'package:encointer_wallet/store/encointer/types/bazaar.dart';
 
 /// The key rationale behind this mock is that all the getters do not alter the app state.
 ///
@@ -27,8 +28,8 @@ class MockApiEncointer extends ApiEncointer {
   }
 
   @override
-  Future<void> subscribeShopRegistry() async {
-    _log("empty subscribeShopRegistry stub");
+  Future<void> subscribeBusinessRegistry() async {
+    _log("empty subscribeBusinessRegistry stub");
   }
 
   @override
@@ -93,8 +94,10 @@ class MockApiEncointer extends ApiEncointer {
   Future<void> getMeetupLocation() async {}
 
   @override
-  getShopRegistry() async {
-    _log("warn: getShopRegistry mock is unimplemented");
+  Future<List<AccountBusinessTuple>> getBusinesses() async {
+    _log("warn: getbusinessRegistry mock is unimplemented");
+
+    return Future.value([]);
   }
 
   @override

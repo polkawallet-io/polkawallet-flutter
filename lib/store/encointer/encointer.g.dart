@@ -337,18 +337,18 @@ mixin _$EncointerStore on _EncointerStore, Store {
     });
   }
 
-  final _$shopRegistryAtom = Atom(name: '_EncointerStore.shopRegistry');
+  final _$businessRegistryAtom = Atom(name: '_EncointerStore.businessRegistry');
 
   @override
-  ObservableList<String> get shopRegistry {
-    _$shopRegistryAtom.reportRead();
-    return super.shopRegistry;
+  ObservableList<AccountBusinessTuple> get businessRegistry {
+    _$businessRegistryAtom.reportRead();
+    return super.businessRegistry;
   }
 
   @override
-  set shopRegistry(ObservableList<String> value) {
-    _$shopRegistryAtom.reportWrite(value, super.shopRegistry, () {
-      super.shopRegistry = value;
+  set businessRegistry(ObservableList<AccountBusinessTuple> value) {
+    _$businessRegistryAtom.reportWrite(value, super.businessRegistry, () {
+      super.businessRegistry = value;
     });
   }
 
@@ -589,11 +589,11 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void setShopRegistry(List<String> shops) {
+  void setbusinessRegistry(List<AccountBusinessTuple> accBusinesses) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
-        name: '_EncointerStore.setShopRegistry');
+        name: '_EncointerStore.setbusinessRegistry');
     try {
-      return super.setShopRegistry(shops);
+      return super.setbusinessRegistry(accBusinesses);
     } finally {
       _$_EncointerStoreActionController.endAction(_$actionInfo);
     }
@@ -620,7 +620,7 @@ communityMetadata: ${communityMetadata},
 demurrage: ${demurrage},
 participantsClaims: ${participantsClaims},
 txsTransfer: ${txsTransfer},
-shopRegistry: ${shopRegistry},
+businessRegistry: ${businessRegistry},
 currentPhaseDuration: ${currentPhaseDuration},
 scannedClaimsCount: ${scannedClaimsCount},
 communityName: ${communityName},

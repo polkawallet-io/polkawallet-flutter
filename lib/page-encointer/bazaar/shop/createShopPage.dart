@@ -1,3 +1,9 @@
+
+// Todo: @armin this is totally outdated and needs communication with the chain
+// to make sense at all. I suggest you neglect creating shops for now. Later you could
+// add the functionality to add them to the mock data or something like that, but I haven't
+// thought this through.
+
 import 'package:encointer_wallet/page-encointer/bazaar/shop/createShopForm.dart';
 import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
 import 'package:encointer_wallet/store/app.dart';

@@ -9,6 +9,8 @@ import 'package:encointer_wallet/store/encointer/types/communities.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
 import 'package:encointer_wallet/store/encointer/types/location.dart';
 import 'package:encointer_wallet/store/encointer/types/proofOfAttendance.dart';
+import 'package:encointer_wallet/store/encointer/types/bazaar.dart';
+import 'package:encointer_wallet/mocks/data/mockBazaarData.dart';
 import 'package:encointer_wallet/utils/format.dart';
 
 import 'apiNoTee.dart';
@@ -35,7 +37,7 @@ class ApiEncointer {
   final String _participantIndexChannel = 'participantIndex';
   final String _communityIdentifiersChannel = 'communityIdentifiers';
   final String _encointerBalanceChannel = 'encointerBalance';
-  final String _shopRegistryChannel = 'shopRegistry';
+  final String _businessRegistryChannel = 'businessRegistry';
 
   final ApiNoTee _noTee;
   final ApiTeeProxy _teeProxy;
@@ -47,7 +49,7 @@ class ApiEncointer {
     this.subscribeCommunityIdentifiers();
     if (store.settings.endpointIsGesell) {
       this.subscribeEncointerBalance();
-      this.subscribeShopRegistry();
+      this.subscribeBusinessRegistry();
     }
   }
 
@@ -55,12 +57,12 @@ class ApiEncointer {
     print("api: stopping encointer subscriptions");
     apiRoot.unsubscribeMessage(_currentPhaseSubscribeChannel);
     apiRoot.unsubscribeMessage(_communityIdentifiersChannel);
-    apiRoot.unsubscribeMessage(_shopRegistryChannel);
+    apiRoot.unsubscribeMessage(_businessRegistryChannel);
 
     if (store.settings.endpointIsGesell) {
       apiRoot.unsubscribeMessage(_participantIndexChannel);
       apiRoot.unsubscribeMessage(_encointerBalanceChannel);
-      apiRoot.unsubscribeMessage(_shopRegistryChannel);
+      apiRoot.unsubscribeMessage(_businessRegistryChannel);
     }
   }
 
@@ -174,7 +176,7 @@ class ApiEncointer {
     if (cid == null) {
       return;
    }
-    
+
     double dem = await apiRoot.evalJavascript('encointer.getDemurrage("$cid")');
     print("api: fetched demurrage: $dem");
     store.encointer.setDemurrage(dem);
@@ -344,19 +346,8 @@ class ApiEncointer {
     );
   }
 
-  Future<void> subscribeShopRegistry() async {
-    // try to unsubscribe first in case parameters have changed
-    if (store.encointer.shopRegistry != null) {
-      apiRoot.unsubscribeMessage(_shopRegistryChannel);
-    }
-    String cid = store.encointer.chosenCid;
-    if (cid == null) {
-      return; // zero means: not registered
-    }
-    apiRoot.subscribeMessage('encointer.subscribeShopRegistry("$_shopRegistryChannel", "$cid")', _shopRegistryChannel,
-        (data) {
-      store.encointer.setShopRegistry(data.cast<String>());
-    });
+  Future<void> subscribeBusinessRegistry() async {
+    // todo: implement subscribing
   }
 
   /// Queries the EncointerCurrencies pallet: encointerCurrencies.communityIdentifiers().
@@ -409,16 +400,25 @@ class ApiEncointer {
     return proof;
   }
 
-  Future<void> getShopRegistry() async {
-    String cid = store.encointer.chosenCid;
+  /// Get all the registered businesses for the current `chosenCid`
+  Future<List<AccountBusinessTuple>> getBusinesses() async {
 
-    if (cid == null) {
-      return;
-    }
-    List<dynamic> res = await apiRoot.evalJavascript('encointer.getShopRegistry("$cid")');
+      // set the store because the current bazaar data model reads the values from the store.
+      store.encointer.setbusinessRegistry(allMockBusinesses);
+      return allMockBusinesses;
+  }
 
-    List<String> shops = res.cast<String>();
+  /// Get all the registered offerings for the current `chosenCid`
+  Future<List<OfferingData>> getOfferings() async {
 
-    store.encointer.setShopRegistry(shops);
+    // Todo: @armin you'd probably extend the encointer store and also set the store here.
+    return allMockOfferings;
+  }
+
+  /// Get all the registered offerings for the business with [bid]
+  Future<List<OfferingData>> getOfferingsForBusiness(BusinessIdentifier bid) async {
+
+    // Todo: @armin you'd probably extend the encointer store and also set the store here.
+    return business1MockOfferings;
   }
 }
