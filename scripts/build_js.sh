@@ -6,6 +6,6 @@ CURRENT_DIR=$(pwd)
 cd "$ENCOINTER_JS_DIR"
 
 yarn install
-yarn run build
+yarn build
 
 cd "$CURRENT_DIR"

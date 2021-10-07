@@ -11,11 +11,9 @@ packages:
   aes_ecb_pkcs5_flutter:
     dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: ddc0ced9cd734d0525745aa89b63961a6f907a29
-      url: "https://github.com/polkawallet-io/aes_ecb_pkcs5_flutter.git"
-    source: git
+      name: aes_ecb_pkcs5_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.1.2"
   analyzer:
     dependency: transitive

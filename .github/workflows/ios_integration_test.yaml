@@ -7,6 +7,14 @@ on:
     branches: [ master ]
 
 jobs:
+  cancel_previous_runs:
+    name: Cancel Previous Runs
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: styfle/cancel-workflow-action@0.4.1
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+
   ios_device_test:
     runs-on: macos-latest
     timeout-minutes: 60
@@ -65,24 +73,10 @@ jobs:
         with:
           node-version: ${{ steps.config.outputs.node-version }}
 
-      - name: "Check if JS code was updated"
-        uses: marceloprado/has-changed-path@v1
-        id: js-changed
-        with:
-          paths: ${{ steps.config.outputs.js-service-encointer-path }}
+      - name: "Set yarn version"
+        run: yarn policies set-version ${{ steps.config.outputs.yarn-version }}
 
-      - name: "Setup JS Cache"
-        id: cache-js
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.config.outputs.encointer-main-js-path }}
-          # note: change cache version in config to force cache overwrite.
-          key: ${{ runner.os }}-${{ 'encointer.js' }}-{{ steps.config.outputs.cache-version }}
-
-      - name: "Build JS if needed"
-        # note: this logic is a bit flawed, as it does not realize when the second-last commit changed
-        # the JS-code. To force build and update cache, change the config's cache version
-        if: ${{ steps.js-changed.outputs.changed == 'true' || steps.cache-js.outputs.cache-hit != 'true' }}
+      - name: "Build JS"
         working-directory: ./scripts
         run: source ./init_env.sh && ./build_js.sh
 
