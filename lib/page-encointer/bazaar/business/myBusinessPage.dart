@@ -2,21 +2,21 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shop/createShopPage.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/business/createBusinessPage.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 
-class MyShopPage extends StatefulWidget {
-  const MyShopPage(this.store);
+class MyBusinessPage extends StatefulWidget {
+  const MyBusinessPage(this.store);
 
-  static final String route = '/encointer/bazaar/myShopPage';
+  static final String route = '/encointer/bazaar/myBusinessPage';
   final AppStore store;
 
   @override
-  _MyShopPageState createState() => _MyShopPageState(store);
+  _MyBusinessPageState createState() => _MyBusinessPageState(store);
 }
 
-class _MyShopPageState extends State<MyShopPage> {
-  _MyShopPageState(this.store);
+class _MyBusinessPageState extends State<MyBusinessPage> {
+  _MyBusinessPageState(this.store);
   final AppStore store;
 
   TextEditingController nameController = TextEditingController();
@@ -26,14 +26,14 @@ class _MyShopPageState extends State<MyShopPage> {
     final Map dic = I18n.of(context).bazaar;
 
     return Scaffold(
-      appBar: AppBar(title: Text(dic['my.shops'])),
+      appBar: AppBar(title: Text(dic['my.businesses'])),
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.only(left: 40, right: 40, top: 10, bottom: 15),
           child: RoundedButton(
-            text: dic['shop.insert'],
+            text: dic['business.insert'],
             onPressed: () {
-              Navigator.pushNamed(context, CreateShopPage.route);
+              Navigator.pushNamed(context, CreateBusinessPage.route);
             },
           ),
         ),

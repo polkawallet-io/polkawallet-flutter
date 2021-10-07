@@ -10,18 +10,18 @@ import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CreateShopForm extends StatefulWidget {
-  CreateShopForm(this.store);
+class CreateBusinessForm extends StatefulWidget {
+  CreateBusinessForm(this.store);
 
   final AppStore store;
-  static final String route = '/encointer/bazaar/createShopForm';
+  static final String route = '/encointer/bazaar/createBusinessForm';
 
   @override
-  _CreateShopForm createState() => _CreateShopForm(store);
+  _CreateBusinessForm createState() => _CreateBusinessForm(store);
 }
 
-class _CreateShopForm extends State<CreateShopForm> {
-  _CreateShopForm(this.store);
+class _CreateBusinessForm extends State<CreateBusinessForm> {
+  _CreateBusinessForm(this.store);
 
   final AppStore store;
   final _formKey = GlobalKey<FormState>();
@@ -38,15 +38,15 @@ class _CreateShopForm extends State<CreateShopForm> {
   // }
 
   // upload Json to IPFS
-  // Future<String> _uploadShop(IpfsBusiness shop) async {
-  //   var jsonToUpload = shop.toJson();
-  //   final String shopHash = await Ipfs().uploadJson(jsonToUpload);
-  //   return shopHash;
+  // Future<String> _uploadBusiness(IpfsBusiness business) async {
+  //   var jsonToUpload = business.toJson();
+  //   final String businessHash = await Ipfs().uploadJson(jsonToUpload);
+  //   return businessHash;
   // }
 
   Future<void> _submit() async {
     if (_formKey.currentState.validate()) {
-      // upload shop image to ipfs
+      // upload business image to ipfs
       // final String _imageHash = await _uploadImage();
 
       // This part is commented out because the types used here do no longer exist.
@@ -55,19 +55,19 @@ class _CreateShopForm extends State<CreateShopForm> {
       // 1. Upload an `IpfsBusiness` to ipfs. As ipfs-cid is returned as a result
       // 2. Register that business with the chain by sending a `register_business` extrinsic
 
-      // create shop with newly generated image hash
-      // Shop newShop = new Shop(
+      // create business with newly generated image hash
+      // Business newBusiness = new Business(
       //   name: _nameCtrl.text.trim(),
       //   description: _descriptionCtrl.text.trim(),
       //   imageHash: _imageHash,
       // );
-      // final String _shopHash = await _uploadShop(newShop);
+      // final String _businessHash = await _uploadBusiness(newBusiness);
       //
       // var args = {
-      //   "title": 'new_shop',
+      //   "title": 'new_business',
       //   "txInfo": {
       //     "module": 'encointerBazaar',
-      //     "call": 'newShop',
+      //     "call": 'newBusiness',
       //   },
       //   "detail": jsonEncode({
       //     "cid": store.encointer.chosenCid,
@@ -76,7 +76,7 @@ class _CreateShopForm extends State<CreateShopForm> {
       //   }),
       //   "params": [
       //     store.encointer.chosenCid,
-      //     _shopHash,
+      //     _businessHash,
       //   ],
       //   'onFinish': (BuildContext txPageContext, Map res) {
       //     Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
@@ -99,20 +99,20 @@ class _CreateShopForm extends State<CreateShopForm> {
               shrinkWrap: true,
               children: <Widget>[
                 TextFormField(
-                  // shop name
+                  // business name
                   decoration: InputDecoration(
                     icon: Icon(Icons.cake, color: Colors.blueAccent),
-                    hintText: dic['shop.name'],
-                    labelText: "${dic['shop.name']}",
+                    hintText: dic['business.name'],
+                    labelText: "${dic['business.name']}",
                   ),
                   controller: _nameCtrl,
                 ),
                 TextFormField(
-                  // shop description
+                  // business description
                   decoration: InputDecoration(
                     icon: Icon(Icons.favorite, color: Colors.pink),
-                    hintText: dic['shop.description'],
-                    labelText: "${dic['shop.description']}",
+                    hintText: dic['business.description'],
+                    labelText: "${dic['business.description']}",
                   ),
                   controller: _descriptionCtrl,
                 ),
@@ -130,7 +130,7 @@ class _CreateShopForm extends State<CreateShopForm> {
           Container(
             padding: EdgeInsets.all(16),
             child: RoundedButton(
-              text: I18n.of(context).bazaar['shop.create'],
+              text: I18n.of(context).bazaar['business.create'],
               onPressed: () {
                 _submit();
               },
