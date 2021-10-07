@@ -63,6 +63,8 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
         case 0:
           return Assets(store);
         case 1:
+          return BazaarEntry(store);
+        case 2:
           return EncointerEntry(store);
         default:
           return Profile(store);
