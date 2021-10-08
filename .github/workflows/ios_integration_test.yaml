@@ -73,9 +73,6 @@ jobs:
         with:
           node-version: ${{ steps.config.outputs.node-version }}
 
-      - name: "Set yarn version"
-        run: yarn policies set-version ${{ steps.config.outputs.yarn-version }}
-
       - name: "Build JS"
         working-directory: ./scripts
         run: source ./init_env.sh && ./build_js.sh

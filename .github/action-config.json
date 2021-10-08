@@ -3,7 +3,6 @@
   "flutter-channel": "stable",
   "java-version": "12.x",
   "node-version": "14.17.1",
-  "yarn-version": "v1.22.15",
   "temp-screenshots": "/tmp/screenshots",
   "js-service-encointer-path": "./lib/js_service_encointer",
   "encointer-main-js-path": "./lib/js_service_encointer/dist/main.js"
