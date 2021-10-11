@@ -71,13 +71,13 @@ class _BazaarEntryState extends State<BazaarEntry> {
     final List<Widget> _widgetList = <Widget>[
       homeView(context, store),
       BusinessOverviewPanel(store),
-      //articleView(context, store),d
+      //offeringView(context, store),d
     ];
 
     final List<Widget> _tabList = <Widget>[
       Row(children: [Icon(Icons.home, color: secondaryColor), SizedBox(width: 5), Text("Home")]),
       Row(children: [Icon(Icons.business, color: secondaryColor), SizedBox(width: 5), Text("Businesses")]),
-      //articleView(context, store),
+      //offeringView(context, store),
     ];
 
     return DefaultTabController(
@@ -154,10 +154,10 @@ class _BazaarEntryState extends State<BazaarEntry> {
                 shrinkWrap: true,
                 padding: EdgeInsets.all(8),
                 children: <Widget>[
-                  // TODO: implement articles
+                  // TODO: implement offerings
                   /*Container(
                     margin: EdgeInsets.only(left: 10, top: 15),
-                    child: articleSection(context, dic),
+                    child: offeringSection(context, dic),
                   ),*/
                   Container(
                     margin: EdgeInsets.only(left: 10, top: 15),

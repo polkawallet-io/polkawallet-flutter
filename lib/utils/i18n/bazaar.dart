@@ -1,8 +1,8 @@
 const Map<String, String> enBazaar = {
   'bazaar.title': 'Bazaar',
-  'article': 'Articles',
-  'article.insert': '+ Add new article',
-  'article.new': 'Featuring Newest',
+  'offerings': 'Offerings',
+  'offering.insert': '+ Add new offering',
+  'offering.new': 'Featuring Newest',
   'looking.for': 'What are you looking for?',
   'show.all': '+ Show all',
   'recently.added': 'Recently added',
