@@ -8,18 +8,18 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/mocks/api/apiIpfsBazaar.dart';
 
-class ShopOverviewPanel extends StatefulWidget {
-  ShopOverviewPanel(this.store);
+class BusinessOverviewPanel extends StatefulWidget {
+  BusinessOverviewPanel(this.store);
 
-  static const String route = '/encointer/bazaar/shopOverviewPanel';
+  static const String route = '/encointer/bazaar/businessOverviewPanel';
   final AppStore store;
 
   @override
-  _ShopOverviewPanelState createState() => _ShopOverviewPanelState(store);
+  _BusinessOverviewPanelState createState() => _BusinessOverviewPanelState(store);
 }
 
-class _ShopOverviewPanelState extends State<ShopOverviewPanel> {
-  _ShopOverviewPanelState(this.store);
+class _BusinessOverviewPanelState extends State<BusinessOverviewPanel> {
+  _BusinessOverviewPanelState(this.store);
 
   final AppStore store;
   Future<IpfsBusiness> futureBusiness;
@@ -38,7 +38,7 @@ class _ShopOverviewPanelState extends State<ShopOverviewPanel> {
             builder: (_) => (store.encointer.businessRegistry == null)
                 ? CupertinoActivityIndicator()
                 : (store.encointer.businessRegistry.isEmpty)
-                    ? Text("no shops found")
+                    ? Text("no businesses found")
                     : ListView.builder(
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,

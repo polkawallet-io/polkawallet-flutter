@@ -1,7 +1,7 @@
-// Currently obsolete - not being deleted due to the idea of "offline state" of shops. Realisable?
+// Currently obsolete - not being deleted due to the idea of "offline state" of businesses. Realisable?
 
 import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shop/shopOverviewPanel.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/business/businessOverviewPanel.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
@@ -9,10 +9,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-class ShopOverviewPage extends StatelessWidget {
-  ShopOverviewPage(this.store);
+class BusinessOverviewPage extends StatelessWidget {
+  BusinessOverviewPage(this.store);
 
-  static const String route = '/encointer/bazaar/shopOverviewPage';
+  static const String route = '/encointer/bazaar/businessOverviewPage';
 
   final AppStore store;
 
@@ -22,33 +22,33 @@ class ShopOverviewPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(dic['shops']),
+        title: Text(dic['businesses']),
         centerTitle: true,
       ),
       backgroundColor: Theme.of(context).cardColor,
       body: SafeArea(
         child: Column(children: <Widget>[
-          ShopObserver(store)
-          //ShopOverviewPanel(store),
+          BusinessObserver(store)
+          //BusinessOverviewPanel(store),
         ]),
       ),
     );
   }
 }
 
-class ShopObserver extends StatefulWidget {
-  ShopObserver(this.store);
+class BusinessObserver extends StatefulWidget {
+  BusinessObserver(this.store);
 
-  static final String route = '/encointer/bazaar/shopObserver';
+  static final String route = '/encointer/bazaar/businessObserver';
 
   final AppStore store;
 
   @override
-  _ShopObserverState createState() => _ShopObserverState(store);
+  _BusinessObserverState createState() => _BusinessObserverState(store);
 }
 
-class _ShopObserverState extends State<ShopObserver> with SingleTickerProviderStateMixin {
-  _ShopObserverState(this.store);
+class _BusinessObserverState extends State<BusinessObserver> with SingleTickerProviderStateMixin {
+  _BusinessObserverState(this.store);
 
   final AppStore store;
   bool appConnected = false;
@@ -76,17 +76,17 @@ class _ShopObserverState extends State<ShopObserver> with SingleTickerProviderSt
           child: Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
             CommunityChooserPanel(store),
             // TODO: what to show in case of offline?
-            //appConnected ? _getShopView(store.encointer.currentPhase) : _getShopViewOffline(),
-            _getShopView(),
+            //appConnected ? _getBusinessView(store.encointer.currentPhase) : _getBusinessViewOffline(),
+            _getBusinessView(),
           ])),
     );
   }
 
-  Widget _getShopView() {
+  Widget _getBusinessView() {
     return SafeArea(
       child: Container(
         padding: EdgeInsets.fromLTRB(16, 32, 16, 32),
-        child: ShopOverviewPanel(store),
+        child: BusinessOverviewPanel(store),
       ),
     );
   }

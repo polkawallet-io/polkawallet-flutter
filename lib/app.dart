@@ -1,9 +1,9 @@
 import 'package:encointer_wallet/common/components/willPopScopWrapper.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shop/createShopForm.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shop/createShopPage.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shop/myShopPage.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shop/shopOverviewPage.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shop/shopOverviewPanel.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/business/createBusinessForm.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/business/createBusinessPage.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/business/myBusinessPage.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/business/businessOverviewPage.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/business/businessOverviewPanel.dart';
 import 'package:encointer_wallet/page-encointer/homePage.dart';
 import 'package:encointer_wallet/page-encointer/phases/assigning/assigningPage.dart';
 import 'package:encointer_wallet/page-encointer/phases/attesting/attestingPage.dart';
@@ -188,11 +188,11 @@ class _WalletAppState extends State<WalletApp> {
         AssigningPage.route: (_) => AssigningPage(_appStore),
         AttestingPage.route: (_) => AttestingPage(_appStore),
         // bazaar
-        CreateShopPage.route: (_) => CreateShopPage(_appStore),
-        CreateShopForm.route: (_) => CreateShopForm(_appStore),
-        ShopOverviewPage.route: (_) => ShopOverviewPage(_appStore),
-        ShopOverviewPanel.route: (_) => ShopOverviewPanel(_appStore),
-        MyShopPage.route: (_) => MyShopPage(_appStore),
+        CreateBusinessPage.route: (_) => CreateBusinessPage(_appStore),
+        CreateBusinessForm.route: (_) => CreateBusinessForm(_appStore),
+        BusinessOverviewPage.route: (_) => BusinessOverviewPage(_appStore),
+        BusinessOverviewPanel.route: (_) => BusinessOverviewPanel(_appStore),
+        MyBusinessPage.route: (_) => MyBusinessPage(_appStore),
       },
     );
   }

@@ -9,8 +9,8 @@ import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/mocks/api/apiIpfsBazaar.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/common/communityChooserHandler.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/common/menuHandler.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shop/shopCard.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shop/shopOverviewPanel.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/business/businessCard.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/business/businessOverviewPanel.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/bazaar.dart';
 import 'package:encointer_wallet/utils/format.dart';
@@ -70,14 +70,14 @@ class _BazaarEntryState extends State<BazaarEntry> {
 
     final List<Widget> _widgetList = <Widget>[
       homeView(context, store),
-      ShopOverviewPanel(store),
-      //articleView(context, store),d
+      BusinessOverviewPanel(store),
+      //offeringView(context, store),d
     ];
 
     final List<Widget> _tabList = <Widget>[
       Row(children: [Icon(Icons.home, color: secondaryColor), SizedBox(width: 5), Text("Home")]),
-      Row(children: [Icon(Icons.shop, color: secondaryColor), SizedBox(width: 5), Text("Shops")]),
-      //articleView(context, store),
+      Row(children: [Icon(Icons.business, color: secondaryColor), SizedBox(width: 5), Text("Businesses")]),
+      //offeringView(context, store),
     ];
 
     return DefaultTabController(
@@ -154,10 +154,10 @@ class _BazaarEntryState extends State<BazaarEntry> {
                 shrinkWrap: true,
                 padding: EdgeInsets.all(8),
                 children: <Widget>[
-                  // TODO: implement articles
+                  // TODO: implement offerings
                   /*Container(
                     margin: EdgeInsets.only(left: 10, top: 15),
-                    child: articleSection(context, dic),
+                    child: offeringSection(context, dic),
                   ),*/
                   Container(
                     margin: EdgeInsets.only(left: 10, top: 15),
@@ -221,7 +221,7 @@ class _BazaarEntryState extends State<BazaarEntry> {
               margin: EdgeInsets.only(top: 40, left: 100, right: 20),
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, ShopOverviewPage.route);
+                  Navigator.pushNamed(context, BusinessOverviewPage.route);
                 },
                 child: Text(
                   dic['show.all'],
@@ -274,7 +274,7 @@ class _BazaarEntryState extends State<BazaarEntry> {
                           itemCount: store.encointer.businessRegistry.length,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (BuildContext context, index) {
-                            return _buildShopEntries(context, index, store);
+                            return _buildBusinessEntries(context, index, store);
                           },
                         ),
             ),
@@ -284,7 +284,7 @@ class _BazaarEntryState extends State<BazaarEntry> {
     );
   }
 
-  Widget _buildShopEntries(BuildContext context, int index, AppStore store) {
+  Widget _buildBusinessEntries(BuildContext context, int index, AppStore store) {
     // todo: This not performant. we should create an iterable from the outside and only pass an element to it.
     List<AccountBusinessTuple> businesses = new List.from(store.encointer.businessRegistry.reversed);
 
@@ -299,14 +299,14 @@ class _BazaarEntryState extends State<BazaarEntry> {
           if (snapshot.hasData) {
             // @armin as far as I know are the two todos below not in the UI draft from the issue. If you don't find
             // any reason to use `category` and `dateAdded` just skipp them, or consult with alain.
-            return ShopCard(
+            return BusinessCard(
               title: snapshot.data.name,
               description: snapshot.data.description,
               imageHash: snapshot.data.imagesCid,
               // Todo: what kind of categories do we want?
               category: ' ',
               location: snapshot.data.contactInfo,
-              // Todo: How do we determine this in reality. Do we rely on the shop owner's to populate that themselves?
+              // Todo: How do we determine this in reality. Do we rely on the business owner's to populate that themselves?
               dateAdded: "02 December 2020",
             );
             //return Text(snapshot.data.name);
