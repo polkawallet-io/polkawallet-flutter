@@ -45,8 +45,8 @@ class ClaimQrCode extends StatelessWidget {
                   child: Image.asset('assets/images/assets/receive_line_indigo.png'),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 40, left: 40, right: 40),
-                  padding: EdgeInsets.only(left: 10, right: 10),
+                  margin: EdgeInsets.only(top: 40, left: 0, right: 0),
+                  padding: EdgeInsets.only(left: 0, right: 0),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(const Radius.circular(4)),
                     color: Colors.white,
@@ -66,8 +66,8 @@ class ClaimQrCode extends StatelessWidget {
                       ),
                       Container(width: 8, height: 8),
                       Container(
-                        width: 280,
-                        height: 280,
+                        width: 380,
+                        height: 380,
                         decoration: BoxDecoration(
                           border: Border.all(width: 4, color: themeColor),
                           borderRadius: BorderRadius.all(const Radius.circular(8)),
@@ -77,9 +77,8 @@ class ClaimQrCode extends StatelessWidget {
                           builder: (_, AsyncSnapshot<ClaimOfAttendance> snapshot) {
                             if (snapshot.hasData) {
                               return QrImage(
-                                data: snapshot.data.toString(),
-                                size: 280,
-                                errorCorrectionLevel: QrErrorCorrectLevel.Q,
+                                data:  snapshot.data.toString(),
+                                errorCorrectionLevel: QrErrorCorrectLevel.L,
                                 //embeddedImage:
                                 //    AssetImage('assets/images/public/app.png'),
                                 //embeddedImageStyle:
