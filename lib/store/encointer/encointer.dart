@@ -179,6 +179,7 @@ abstract class _EncointerStore with Store {
   @action
   resetState() {
     purgeParticipantsClaims();
+    setParticipantIndex();
     setMeetupIndex();
     setMeetupLocation();
     setMeetupTime();
@@ -276,6 +277,7 @@ abstract class _EncointerStore with Store {
     if (chosenCid != cid) {
       chosenCid = cid;
       cacheObject(encointerCommunityKey, cid);
+      resetState();
     }
 
     if (rootStore.settings.endpointIsGesell) {
@@ -315,7 +317,7 @@ abstract class _EncointerStore with Store {
   }
 
   @action
-  void setParticipantIndex(int pIndex) {
+  void setParticipantIndex([int pIndex]) {
     participantIndex = pIndex;
   }
 

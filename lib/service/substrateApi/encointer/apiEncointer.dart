@@ -34,7 +34,7 @@ class ApiEncointer {
   final Api apiRoot;
   final store = globalAppStore;
   final String _currentPhaseSubscribeChannel = 'currentPhase';
-  final String _participantIndexChannel = 'participantIndex';
+  final String _participantIndexChannel = 'participantIndexChannel';
   final String _communityIdentifiersChannel = 'communityIdentifiers';
   final String _encointerBalanceChannel = 'encointerBalance';
   final String _businessRegistryChannel = 'businessRegistry';
@@ -48,6 +48,7 @@ class ApiEncointer {
     this.subscribeCurrentPhase();
     this.subscribeCommunityIdentifiers();
     if (store.settings.endpointIsGesell) {
+      this.subscribeParticipantIndex();
       this.subscribeEncointerBalance();
       this.subscribeBusinessRegistry();
     }
@@ -155,7 +156,8 @@ class ApiEncointer {
       return;
     }
 
-    CommunityMetadata meta = await apiRoot.evalJavascript('encointer.getCommunityMetadata("$cid")')
+    CommunityMetadata meta = await apiRoot
+        .evalJavascript('encointer.getCommunityMetadata("$cid")')
         .then((m) => CommunityMetadata.fromJson(m));
 
     print("api: community metadata: " + meta.toString());
@@ -175,7 +177,7 @@ class ApiEncointer {
     String cid = store.encointer.chosenCid;
     if (cid == null) {
       return;
-   }
+    }
 
     double dem = await apiRoot.evalJavascript('encointer.getDemurrage("$cid")');
     print("api: fetched demurrage: $dem");
@@ -184,8 +186,9 @@ class ApiEncointer {
 
   /// Calls the custom rpc: api.rpc.communities.communitiesGetAll()
   Future<void> communitiesGetAll() async {
-    List<CidName> cn =  await apiRoot.evalJavascript('encointer.communitiesGetAll()')
-        .then((list) =>  List.from(list).map((cn) => CidName.fromJson(cn)).toList());
+    List<CidName> cn = await apiRoot
+        .evalJavascript('encointer.communitiesGetAll()')
+        .then((list) => List.from(list).map((cn) => CidName.fromJson(cn)).toList());
 
     print("api: CidNames: " + cn.toString());
     store.encointer.setCommunities(cn);
@@ -293,11 +296,12 @@ class ApiEncointer {
   ///
   /// This is on-chain in Cantillon.
   Future<void> subscribeCommunityIdentifiers() async {
-    apiRoot.subscribeMessage('encointer.subscribeCommunityIdentifiers("$_communityIdentifiersChannel")',
-        _communityIdentifiersChannel, (data) async {
-        store.encointer.setCommunityIdentifiers(data.cast<String>());
+    apiRoot.subscribeMessage(
+        'encointer.subscribeCommunityIdentifiers("$_communityIdentifiersChannel")', _communityIdentifiersChannel,
+        (data) async {
+      store.encointer.setCommunityIdentifiers(data.cast<String>());
 
-        await this.communitiesGetAll();
+      await this.communitiesGetAll();
     });
   }
 
@@ -318,7 +322,7 @@ class ApiEncointer {
     apiRoot.subscribeMessage(
         'encointer.subscribeParticipantIndex("$_participantIndexChannel", "$cid", "$cIndex", "$account")',
         _participantIndexChannel, (data) {
-      store.encointer.setParticipantIndex(data);
+          store.encointer.setParticipantIndex(int.parse(data));
     });
   }
 
@@ -327,7 +331,7 @@ class ApiEncointer {
   /// This is off-chain in Cantillon. Hence, subscriptions are not supported.
   Future<void> subscribeEncointerBalance() async {
     // unsubscribe from potentially other community updates
-    print('Substribe encointer balance');
+    print('Subscribe encointer balance');
     apiRoot.unsubscribeMessage(_encointerBalanceChannel);
 
     String account = store.account.currentAccountPubKey;

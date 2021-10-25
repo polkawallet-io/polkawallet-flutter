@@ -57,6 +57,7 @@ class _RegisterParticipantPanel extends State<RegisterParticipantPanel> {
         p,
       ],
       'onFinish': (BuildContext txPageContext, Map res) {
+        webApi.encointer.getParticipantIndex();
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
       }
     };
@@ -67,10 +68,10 @@ class _RegisterParticipantPanel extends State<RegisterParticipantPanel> {
   Widget build(BuildContext context) {
     // only build dropdown after we have fetched the community identifiers
     Map dic = I18n.of(context).encointer;
+
     return Observer(
-      builder: (_) => store.encointer.participantIndex == null
-          ? CupertinoActivityIndicator()
-          : Column(
+      builder: (_) =>
+          Column(
               children: <Widget>[
                 store.encointer.meetupTime == null
                     ? Container()
@@ -93,6 +94,8 @@ class _RegisterParticipantPanel extends State<RegisterParticipantPanel> {
                   },
                   value: attendedLastMeetup,
                 ),
+                store.encointer.participantIndex == null ?
+                CupertinoActivityIndicator():
                 store.encointer.participantIndex == 0
                     ? RoundedButton(text: "Register Participant", onPressed: () => _submit())
                     : RoundedButton(

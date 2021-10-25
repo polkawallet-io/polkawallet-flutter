@@ -567,7 +567,7 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void setParticipantIndex(int pIndex) {
+  void setParticipantIndex([int pIndex]) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(
         name: '_EncointerStore.setParticipantIndex');
     try {
