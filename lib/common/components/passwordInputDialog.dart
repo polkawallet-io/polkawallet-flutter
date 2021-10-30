@@ -6,12 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 class PasswordInputDialog extends StatefulWidget {
-  PasswordInputDialog({this.account, this.title, this.onOk, this.onCancel});
+  PasswordInputDialog({this.account, this.title, this.onOk, this.onCancel, this.onReset});
 
   final AccountData account;
   final Widget title;
   final Function onOk;
   final Function onCancel;
+  final Function onReset;
 
   @override
   _PasswordInputDialog createState() => _PasswordInputDialog();
@@ -96,6 +97,14 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
             children: [_submitting ? CupertinoActivityIndicator() : Container(), Text(dic['ok'])],
           ),
           onPressed: _submitting ? null : () => _onOk(_passCtrl.text.trim()),
+        ),
+        CupertinoButton(
+          child: Text(dic['reset']),
+          onPressed: () {
+            print("onReset is:");
+            print(widget.onReset);
+            widget.onReset != null ? widget.onReset() : Navigator.of(context).pop();
+          },
         ),
       ],
     );

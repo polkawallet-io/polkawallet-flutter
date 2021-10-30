@@ -304,6 +304,7 @@ class _AssetsState extends State<Assets> {
               });
             },
             onCancel: () => _showPasswordNotEnteredDialog(context),
+            onReset: () => _purgeAccountsDialog(context)
           ),
           onWillPop: () {
             // handles back button press
@@ -336,6 +337,63 @@ class _AssetsState extends State<Assets> {
         );
       },
     );
+  }
+
+  Future<void> _purgeAccountsDialog(BuildContext context) async {
+    print("current context: $context");
+    var res = store.account.accountListAll;
+    // print("THE ACCOUNTS ARE:");
+    // print(res);
+    await showCupertinoDialog(
+      context: context,
+      builder: (_) {
+        return CupertinoAlertDialog(
+          title: Text(I18n.of(context).home['purge.accounts']),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(I18n.of(context).home['cancel']),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            CupertinoButton(
+              child: Text(I18n.of(context).home['yes']),
+              onPressed: () {
+                removeAccounts(res);
+                // Navigator.of(context).pop();
+              }
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void removeAccounts(accounts) {
+    store.account.removeAccount(store.account.currentAccount).then((_) {
+      // refresh balance
+      store.assets.loadAccountCache();
+      webApi.assets.fetchBalance();
+    });
+    Navigator.of(context).pop();
+    // var count = 0;
+    // for (var account in accounts)
+    // {
+    //   // print(account.name);
+    //   // print("count $count");
+    //   // count +=1;
+    //   store.account.removeAccount(account).then((_) {
+    //     // refresh balance
+    //     store.assets.loadAccountCache();
+    //     // print("loadAccountCache is:");
+    //     // print(store.assets.loadAccountCache());
+    //     webApi.assets.fetchBalance();
+    //     // var res = store.account.accountListAll;
+    //     // print("ammount of accounts is " + res.length.toString());
+    //     Navigator.of(context).pop();
+    //   });
+      // print("count is: $count");
+
+      // Navigator.of(context).pop();
+    // }
   }
 
   @override
