@@ -85,6 +85,14 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
       ),
       actions: <Widget>[
         CupertinoButton(
+          child: Text(dic['reset']),
+          onPressed: () {
+            print("onReset is:");
+            print(widget.onReset);
+            widget.onReset != null ? widget.onReset() : Navigator.of(context).pop();
+          },
+        ),
+        CupertinoButton(
           child: Text(dic['cancel']),
           onPressed: () {
             widget.onCancel != null ? widget.onCancel() : Navigator.of(context).pop();
@@ -97,14 +105,6 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
             children: [_submitting ? CupertinoActivityIndicator() : Container(), Text(dic['ok'])],
           ),
           onPressed: _submitting ? null : () => _onOk(_passCtrl.text.trim()),
-        ),
-        CupertinoButton(
-          child: Text(dic['reset']),
-          onPressed: () {
-            print("onReset is:");
-            print(widget.onReset);
-            widget.onReset != null ? widget.onReset() : Navigator.of(context).pop();
-          },
         ),
       ],
     );
