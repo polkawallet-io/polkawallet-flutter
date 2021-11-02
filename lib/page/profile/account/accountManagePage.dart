@@ -26,16 +26,63 @@ class AccountManagePage extends StatelessWidget {
           title: Text(I18n.of(context).profile['delete.confirm']),
           account: store.account.currentAccount,
           onOk: (_) {
-            store.account.removeAccount(store.account.currentAccount).then((_) {
+            print("the context before account deletion: ${context}");
+            store.account.removeAccount(store.account.currentAccount).then( (_) {
               // refresh balance
               store.assets.loadAccountCache();
               webApi.assets.fetchBalance();
             });
             Navigator.of(context).pop();
           },
+          onReset: () async {
+            await _purgeAccountsDialog(context);
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+          }
         );
       },
     );
+  }
+
+  Future<void> _purgeAccountsDialog(BuildContext context) async {
+    print("current context: $context");
+    var res = store.account.accountListAll;
+    await showCupertinoDialog(
+      context: context,
+      builder: (_) {
+        return CupertinoAlertDialog(
+          title: Text(I18n.of(context).home['purge.accounts']),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(I18n.of(context).home['cancel']),
+              onPressed: () {
+                Navigator.of(context).pop();
+              } ,
+            ),
+            CupertinoButton(
+                child: Text(I18n.of(context).home['yes']),
+                onPressed: () {
+                  removeAccounts(res, context);
+                  Navigator.of(context).pop();
+                }
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void removeAccounts(accounts, context) {
+    for (var account in accounts)
+    {
+      // print(account.name);
+      store.account.removeAccount(account).then((_) {
+        store.assets.loadAccountCache();
+        webApi.assets.fetchBalance();
+        // var res = store.account.accountListAll;
+        // print("ammount of accounts is " + res.length.toString());
+      });
+    }
   }
 
   @override
