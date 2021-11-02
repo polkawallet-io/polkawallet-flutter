@@ -40,6 +40,7 @@ class _AssetsState extends State<Assets> {
 
   bool _faucetSubmitting = false;
   bool _dialogIsShown = false;
+  bool _allAccountsDeleted = false;
 
   Future<void> _handleScan() async {
     final Map dic = I18n.of(context).account;
@@ -304,7 +305,10 @@ class _AssetsState extends State<Assets> {
               });
             },
             onCancel: () => _showPasswordNotEnteredDialog(context),
-            onReset: () => _purgeAccountsDialog(context)
+            onReset: () async {
+              await _purgeAccountsDialog(context);
+              Navigator.of(context).pop();
+            }
           ),
           onWillPop: () {
             // handles back button press
@@ -340,7 +344,6 @@ class _AssetsState extends State<Assets> {
   }
 
   Future<void> _purgeAccountsDialog(BuildContext context) async {
-    print("current context: $context");
     var res = store.account.accountListAll;
     // print("THE ACCOUNTS ARE:");
     // print(res);
@@ -358,7 +361,7 @@ class _AssetsState extends State<Assets> {
               child: Text(I18n.of(context).home['yes']),
               onPressed: () {
                 removeAccounts(res);
-                // Navigator.of(context).pop();
+                Navigator.of(context).pop();
               }
             ),
           ],
@@ -368,32 +371,17 @@ class _AssetsState extends State<Assets> {
   }
 
   void removeAccounts(accounts) {
-    store.account.removeAccount(store.account.currentAccount).then((_) {
-      // refresh balance
-      store.assets.loadAccountCache();
-      webApi.assets.fetchBalance();
-    });
-    Navigator.of(context).pop();
-    // var count = 0;
-    // for (var account in accounts)
-    // {
-    //   // print(account.name);
-    //   // print("count $count");
-    //   // count +=1;
-    //   store.account.removeAccount(account).then((_) {
-    //     // refresh balance
-    //     store.assets.loadAccountCache();
-    //     // print("loadAccountCache is:");
-    //     // print(store.assets.loadAccountCache());
-    //     webApi.assets.fetchBalance();
-    //     // var res = store.account.accountListAll;
-    //     // print("ammount of accounts is " + res.length.toString());
-    //     Navigator.of(context).pop();
-    //   });
-      // print("count is: $count");
-
-      // Navigator.of(context).pop();
-    // }
+    for (var account in accounts)
+    {
+      // print(account.name);
+      store.account.removeAccount(account).then((_) {
+        store.assets.loadAccountCache();
+        webApi.assets.fetchBalance();
+        // var res = store.account.accountListAll;
+        // print("ammount of accounts is " + res.length.toString());
+      });
+    }
+    _allAccountsDeleted = true;
   }
 
   @override
@@ -429,7 +417,7 @@ class _AssetsState extends State<Assets> {
           }
           final BalancesInfo balancesInfo = store.assets.balances[symbol];
 
-          if (ModalRoute.of(context).isCurrent && !_dialogIsShown & store.account.cachedPin.isEmpty) {
+          if (ModalRoute.of(context).isCurrent && !_dialogIsShown & store.account.cachedPin.isEmpty & !_allAccountsDeleted) {
             _dialogIsShown = true;
             WidgetsBinding.instance.addPostFrameCallback(
               (_) {
