@@ -81,7 +81,12 @@ abstract class _AccountStore with Store {
   AccountData get currentAccount {
     int i = accountListAll.indexWhere((i) => i.pubKey == currentAccountPubKey);
     if (i < 0) {
-      return accountListAll[0] ?? AccountData();
+      if (accountListAll.isNotEmpty) {
+        return accountListAll[0] ?? AccountData();
+      }
+      else {
+        return AccountData();
+      }
     }
     return accountListAll[i];
   }
@@ -109,9 +114,7 @@ abstract class _AccountStore with Store {
       ss58 = rootStore.settings.endpoint.ss58;
 //      print(ss58);
     }
-    return pubKeyAddressMap[ss58] != null
-        ? pubKeyAddressMap[ss58][currentAccountPubKey] ?? currentAccount.address
-        : currentAccount.address;
+    return pubKeyAddressMap[ss58] != null ? pubKeyAddressMap[ss58][currentAccountPubKey] ?? currentAccount.address : currentAccount.address;
   }
 
   @action
