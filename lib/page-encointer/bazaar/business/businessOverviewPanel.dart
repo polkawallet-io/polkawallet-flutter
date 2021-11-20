@@ -43,10 +43,11 @@ class _BusinessOverviewPanelState extends State<BusinessOverviewPanel> {
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
                         padding: EdgeInsets.fromLTRB(16, 0, 16, 100),
-                        itemCount: store.encointer.businessRegistry == null ? 0 : store.encointer.businessRegistry.length,
+                        itemCount:
+                            store.encointer.businessRegistry == null ? 0 : store.encointer.businessRegistry.length,
                         itemBuilder: (BuildContext context, int index) {
-
-                          futureBusiness = BazaarIpfsApiMock.getBusiness(store.encointer.businessRegistry[index].businessData.url);
+                          futureBusiness =
+                              BazaarIpfsApiMock.getBusiness(store.encointer.businessRegistry[index].businessData.url);
 
                           return FutureBuilder<IpfsBusiness>(
                             future: futureBusiness,

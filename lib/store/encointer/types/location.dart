@@ -18,8 +18,7 @@ class Location {
   }
 
   // explicitly use `toString()`, which works for the old `Degree` type `i64` and the new one `i128`
-  factory Location.fromJson(Map<String, dynamic> json) =>
-      Location(
+  factory Location.fromJson(Map<String, dynamic> json) => Location(
         json['lon'].toString(),
         json['lat'].toString(),
       );

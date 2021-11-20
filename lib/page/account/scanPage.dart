@@ -45,8 +45,7 @@ class ScanPage extends StatelessWidget {
         } else if (args == QrSenderPage.route && Fmt.isHexString(data)) {
           print('hex detected in Qr');
           Navigator.of(context).pop(data);
-        } else if (rawData != null &&
-            (rawData.endsWith('ec') || rawData.endsWith('ec11'))) {
+        } else if (rawData != null && (rawData.endsWith('ec') || rawData.endsWith('ec11'))) {
           print('rawBytes detected in Qr');
           Navigator.of(context).pop(rawData);
         } else {

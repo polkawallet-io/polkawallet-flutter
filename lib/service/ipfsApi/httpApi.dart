@@ -46,12 +46,10 @@ class Ipfs {
   }
 
   Image getCommunityIcon(String cid, double devicePixelRatio) {
-    return Image.network(
-        getCommunityIconsUrl(cid, devicePixelRatio),
-        errorBuilder: (_, error, __) {
-          print("Image.network error: ${error.toString()}");
-          return Image.asset('assets/images/assets/ERT.png');
-        });
+    return Image.network(getCommunityIconsUrl(cid, devicePixelRatio), errorBuilder: (_, error, __) {
+      print("Image.network error: ${error.toString()}");
+      return Image.asset('assets/images/assets/ERT.png');
+    });
   }
 
   String getCommunityIconsUrl(String cid, double devicePixelRatio) {
@@ -159,9 +157,5 @@ class Object {
     return Object(data: json['Data'], links: json['Links']);
   }
 
-  Map<String, dynamic> toJson() =>
-      <String, dynamic>{
-        'links': this.links,
-        'data': this.data
-      };
+  Map<String, dynamic> toJson() => <String, dynamic>{'links': this.links, 'data': this.data};
 }

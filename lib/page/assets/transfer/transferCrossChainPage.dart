@@ -36,8 +36,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
 
   void _handleSubmit() {
     if (_formKey.currentState.validate()) {
-      String symbol =
-          _tokenSymbol ?? widget.store.settings.networkState.tokenSymbol;
+      String symbol = _tokenSymbol ?? widget.store.settings.networkState.tokenSymbol;
       int decimals = widget.store.settings.networkState.tokenDecimals;
 
       var args = {
@@ -61,10 +60,8 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
       };
 
       args['onFinish'] = (BuildContext txPageContext, Map res) {
-        final TransferPageParams routeArgs =
-            ModalRoute.of(context).settings.arguments;
-        Navigator.popUntil(
-            txPageContext, ModalRoute.withName(routeArgs.redirect));
+        final TransferPageParams routeArgs = ModalRoute.of(context).settings.arguments;
+        Navigator.popUntil(txPageContext, ModalRoute.withName(routeArgs.redirect));
         // user may route to transfer page from asset page
         // or from home page with QRCode Scanner
         if (routeArgs.redirect == AssetPage.route) {
@@ -85,8 +82,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final TransferPageParams args = ModalRoute.of(context).settings.arguments;
       setState(() {
-        _tokenSymbol =
-            args.symbol ?? widget.store.settings.networkState.tokenSymbol;
+        _tokenSymbol = args.symbol ?? widget.store.settings.networkState.tokenSymbol;
       });
 
       webApi.assets.fetchBalance();
@@ -112,9 +108,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
 
         BigInt available = isBaseToken
             ? widget.store.assets.balances[symbol.toUpperCase()].transferable
-            : Fmt.balanceInt(
-                widget.store.assets.tokenBalances[symbol.toUpperCase()]);
-
+            : Fmt.balanceInt(widget.store.assets.tokenBalances[symbol.toUpperCase()]);
 
         return Scaffold(
           appBar: AppBar(title: Text(dic['transfer']), centerTitle: true),
@@ -135,8 +129,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                                 dic['cross.chain'],
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color:
-                                      Theme.of(context).unselectedWidgetColor,
+                                  color: Theme.of(context).unselectedWidgetColor,
                                 ),
                               ),
                             ),
@@ -145,9 +138,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                                 Padding(
                                   padding: EdgeInsets.only(right: 8),
                                   child: CircleAvatar(
-                                    child: Image.asset(
-                                      'assets/images/public/acala-mandala.png'
-                                    ),
+                                    child: Image.asset('assets/images/public/acala-mandala.png'),
                                     radius: 16,
                                   ),
                                 ),
@@ -163,26 +154,20 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                             TextFormField(
                               decoration: InputDecoration(
                                 hintText: dic['amount'],
-                                labelText:
-                                    '${dic['amount']} (${dic['balance']}: ${Fmt.priceFloorBigInt(
+                                labelText: '${dic['amount']} (${dic['balance']}: ${Fmt.priceFloorBigInt(
                                   available,
                                   decimals,
                                   lengthMax: 6,
                                 )})',
                               ),
-                              inputFormatters: [
-                                UI.decimalInputFormatter(decimals)
-                              ],
+                              inputFormatters: [UI.decimalInputFormatter(decimals)],
                               controller: _amountCtrl,
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (v) {
                                 if (v.isEmpty) {
                                   return dic['amount.error'];
                                 }
-                                if (double.parse(v.trim()) >=
-                                    available / BigInt.from(pow(10, decimals)) -
-                                        0.001) {
+                                if (double.parse(v.trim()) >= available / BigInt.from(pow(10, decimals)) - 0.001) {
                                   return dic['amount.low'];
                                 }
                                 return null;
@@ -193,21 +178,16 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                                 color: Theme.of(context).canvasColor,
                                 margin: EdgeInsets.only(top: 16, bottom: 16),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
                                           dic['currency'],
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .unselectedWidgetColor),
+                                          style: TextStyle(color: Theme.of(context).unselectedWidgetColor),
                                         ),
-                                        CurrencyWithIcon(
-                                            _tokenSymbol ?? baseTokenSymbol),
+                                        CurrencyWithIcon(_tokenSymbol ?? baseTokenSymbol),
                                       ],
                                     ),
                                     Icon(
@@ -223,8 +203,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                               padding: EdgeInsets.only(top: 16),
                               child: Text(
                                   'existentialDeposit: ${widget.store.settings.existentialDeposit} $baseTokenSymbol',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black54)),
+                                  style: TextStyle(fontSize: 16, color: Colors.black54)),
                             ),
 //                            Padding(
 //                              padding: EdgeInsets.only(top: 16),
@@ -237,8 +216,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                               padding: EdgeInsets.only(top: 16),
                               child: Text(
                                   'transactionByteFee: ${widget.store.settings.transactionByteFee} $baseTokenSymbol',
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.black54)),
+                                  style: TextStyle(fontSize: 16, color: Colors.black54)),
                             ),
                           ],
                         ),

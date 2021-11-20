@@ -79,7 +79,8 @@ class _CommunityChooserHandlerState extends State<CommunityChooserHandler> {
                                     itemCount: store.encointer.communityIdentifiers.length,
                                     itemBuilder: (BuildContext context, int index) {
                                       return ListTile(
-                                        title: Text(Fmt.communityIdentifier(store.encointer.communityIdentifiers[index])),
+                                        title:
+                                            Text(Fmt.communityIdentifier(store.encointer.communityIdentifiers[index])),
                                         onTap: () {
                                           _setStateAndReturn(store.encointer.communityIdentifiers[index]);
                                         },

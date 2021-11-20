@@ -62,8 +62,7 @@ class _ChangeName extends State<ChangeNamePage> {
                           if (name.length == 0) {
                             return dic['contact.name.error'];
                           }
-                          int exist = store.optionalAccounts
-                              .indexWhere((i) => i.name == name);
+                          int exist = store.optionalAccounts.indexWhere((i) => i.name == name);
                           if (exist > -1) {
                             return dic['contact.name.exist'];
                           }

@@ -10,14 +10,12 @@ NodeConfig _$NodeConfigFromJson(Map<String, dynamic> json) {
   return NodeConfig(
     json['types'] as Map<String, dynamic>,
     (json['pallets'] as Map<String, dynamic>)?.map(
-      (k, e) => MapEntry(
-          k, e == null ? null : Pallet.fromJson(e as Map<String, dynamic>)),
+      (k, e) => MapEntry(k, e == null ? null : Pallet.fromJson(e as Map<String, dynamic>)),
     ),
   );
 }
 
-Map<String, dynamic> _$NodeConfigToJson(NodeConfig instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$NodeConfigToJson(NodeConfig instance) => <String, dynamic>{
       'types': instance.types,
       'pallets': instance.pallets?.map((k, e) => MapEntry(k, e?.toJson())),
     };

@@ -93,8 +93,7 @@ class WalletApi {
     int version,
   ) {
     jsStorage.write('$_jsCodeStorageKey$networkName', code);
-    jsStorage.write(
-        '$_jsCodeStorageVersionKey$networkName', version.toString());
+    jsStorage.write('$_jsCodeStorageVersionKey$networkName', version.toString());
   }
 
   static Future<List> getAnnouncements() async {

@@ -11,7 +11,7 @@ part 'app.g.dart';
 AppStore globalAppStore = AppStore(LocalStorage());
 
 class AppStore extends _AppStore with _$AppStore {
-  AppStore(LocalStorage localStorage): super(localStorage);
+  AppStore(LocalStorage localStorage) : super(localStorage);
 }
 
 abstract class _AppStore with Store {

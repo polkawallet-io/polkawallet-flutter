@@ -41,8 +41,7 @@ class _DownloadDialog extends State<DownloadDialog> {
         }
         setState(() {
           _downloadStatus = status;
-          _downloadProgress =
-              event.value.isNotEmpty ? double.parse(event.value) : 0;
+          _downloadProgress = event.value.isNotEmpty ? double.parse(event.value) : 0;
         });
       },
     );
@@ -60,8 +59,7 @@ class _DownloadDialog extends State<DownloadDialog> {
     double progressWidth = 200;
     double progress = progressWidth * _downloadProgress / 100;
     return CupertinoAlertDialog(
-      title:
-          Text(_downloadStatus.isEmpty ? dic['update.start'] : _downloadStatus),
+      title: Text(_downloadStatus.isEmpty ? dic['update.start'] : _downloadStatus),
       content: Padding(
         padding: EdgeInsets.only(top: 12),
         child: Stack(

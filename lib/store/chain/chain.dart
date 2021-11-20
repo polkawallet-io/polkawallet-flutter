@@ -2,7 +2,6 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:mobx/mobx.dart';
 import 'package:encointer_wallet/store/chain/types/header.dart';
 
-
 part 'chain.g.dart';
 
 class ChainStore extends _ChainStore with _$ChainStore {
@@ -31,7 +30,7 @@ abstract class _ChainStore with Store {
   Future<void> loadCache() async {
     Map h = await rootStore.loadObject(latestHeaderKey);
     if (h != null) {
-        latestHeader = Header.fromJson(h);
+      latestHeader = Header.fromJson(h);
     }
   }
 }

@@ -8,7 +8,6 @@ enum CeremonyPhase { REGISTERING, ASSIGNING, ATTESTING }
 //   }
 // }
 
-
 /// Parses a String into an enum
 /// Recognizes patterns like: CeremonyPhase.Registering, CeremonyPhase.REGISTERING, Registering, REGISTERING,
 T getEnumFromString<T>(Iterable<T> values, String value) {

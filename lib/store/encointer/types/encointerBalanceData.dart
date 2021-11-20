@@ -19,8 +19,7 @@ class EncointerBalanceData {
     return jsonEncode(this);
   }
 
-  factory EncointerBalanceData.fromJson(Map<String, dynamic> json) =>
-      _$EncointerBalanceDataFromJson(json);
+  factory EncointerBalanceData.fromJson(Map<String, dynamic> json) => _$EncointerBalanceDataFromJson(json);
   Map<String, dynamic> toJson() => _$EncointerBalanceDataToJson(this);
 }
 
@@ -38,7 +37,6 @@ class BalanceEntry {
     return jsonEncode(this);
   }
 
-  factory BalanceEntry.fromJson(Map<String, dynamic> json) =>
-      _$BalanceEntryFromJson(json);
+  factory BalanceEntry.fromJson(Map<String, dynamic> json) => _$BalanceEntryFromJson(json);
   Map<String, dynamic> toJson() => _$BalanceEntryToJson(this);
 }

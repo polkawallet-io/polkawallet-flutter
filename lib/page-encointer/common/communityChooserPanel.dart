@@ -35,7 +35,9 @@ class _CommunityChooserPanelState extends State<CommunityChooserPanel> {
                       : DropdownButton<dynamic>(
                           key: Key('cid-dropdown'),
                           value: (store.encointer.chosenCid == null ||
-                                  store.encointer.communities.where((cn) => cn.cid == store.encointer.chosenCid).isEmpty)
+                                  store.encointer.communities
+                                      .where((cn) => cn.cid == store.encointer.chosenCid)
+                                      .isEmpty)
                               ? store.encointer.communities[0]
                               : store.encointer.communities.where((cn) => cn.cid == store.encointer.chosenCid).first,
                           icon: Icon(Icons.arrow_downward),

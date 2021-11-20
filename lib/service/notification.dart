@@ -4,15 +4,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:rxdart/rxdart.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 // Streams are created so that app can respond to notification-related events since the plugin is initialised in the `main` function
 final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
     BehaviorSubject<ReceivedNotification>();
 
-final BehaviorSubject<String> selectNotificationSubject =
-    BehaviorSubject<String>();
+final BehaviorSubject<String> selectNotificationSubject = BehaviorSubject<String>();
 
 class ReceivedNotification {
   final int id;
@@ -37,8 +35,7 @@ class NotificationPlugin {
 
   void _requestIOSPermissions() {
     flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
         ?.requestPermissions(
           alert: true,
           badge: true,
@@ -47,19 +44,14 @@ class NotificationPlugin {
   }
 
   void _configureDidReceiveLocalNotificationSubject(BuildContext context) {
-    didReceiveLocalNotificationSubject.stream
-        .listen((ReceivedNotification receivedNotification) async {
+    didReceiveLocalNotificationSubject.stream.listen((ReceivedNotification receivedNotification) async {
       print(receivedNotification.title);
       print(receivedNotification.body);
       await showDialog(
         context: context,
         builder: (BuildContext context) => CupertinoAlertDialog(
-          title: receivedNotification.title != null
-              ? Text(receivedNotification.title)
-              : null,
-          content: receivedNotification.body != null
-              ? Text(receivedNotification.body)
-              : null,
+          title: receivedNotification.title != null ? Text(receivedNotification.title) : null,
+          content: receivedNotification.body != null ? Text(receivedNotification.body) : null,
           actions: [
             CupertinoDialogAction(
               isDefaultAction: true,
@@ -86,20 +78,14 @@ class NotificationPlugin {
     });
   }
 
-  static Future<void> showNotification(int id, String title, String body,
-      {String payload}) async {
+  static Future<void> showNotification(int id, String title, String body, {String payload}) async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'transaction_submitted',
-        'Tx Submitted',
-        'transaction submitted to blockchain network',
-        importance: Importance.max,
-        priority: Priority.high,
-        ticker: 'ticker');
+        'transaction_submitted', 'Tx Submitted', 'transaction submitted to blockchain network',
+        importance: Importance.max, priority: Priority.high, ticker: 'ticker');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-       android: androidPlatformChannelSpecifics,iOS: iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0, title, body, platformChannelSpecifics,
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(0, title, body, platformChannelSpecifics,
         payload: payload ?? 'undefind');
   }
 }

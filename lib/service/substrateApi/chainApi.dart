@@ -11,7 +11,6 @@ class ChainApi {
   final String _timeStampSubscribeChannel = 'timestamp';
   final String _newHeadsSubscribeChannel = 'latestHeader';
 
-
   Future<void> startSubscriptions() async {
     print("api: starting encointer subscriptions");
     this.subscribeNewHeads();
@@ -22,19 +21,18 @@ class ChainApi {
     apiRoot.unsubscribeMessage(_newHeadsSubscribeChannel);
   }
 
-
   /// Subscribes to the timestamp of the last block. This is only used as a debug method to see if the dart-js interface
   /// is still communicating.
   Future<void> subscribeTimestamp() async {
     apiRoot.subscribeMessage('chain.subscribeTimestamp("$_timeStampSubscribeChannel")', _timeStampSubscribeChannel,
-            (data) => {print("timestamp: $data")});
+        (data) => {print("timestamp: $data")});
   }
 
   /// Subscribes to the latest headers
   Future<void> subscribeNewHeads() async {
     apiRoot.subscribeMessage('chain.subscribeNewHeads("$_newHeadsSubscribeChannel")', _newHeadsSubscribeChannel,
-            (header) {
-          store.chain.setLatestHeader(Header.fromJson(header));
-        });
+        (header) {
+      store.chain.setLatestHeader(Header.fromJson(header));
+    });
   }
 }

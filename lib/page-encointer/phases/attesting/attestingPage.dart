@@ -52,19 +52,13 @@ class _AttestingPageState extends State<AttestingPage> {
           child: Observer(
               builder: (_) => RoundedCard(
                   padding: const EdgeInsets.only(top: 16, bottom: 16),
-                  child: Column(
-                      children: <Widget>[
-                        Text(dic['claims.scanned'].replaceAll('AMOUNT_PLACEHOLDER', store.encointer.scannedClaimsCount.toString())),
-                        ElevatedButton(
-                            child: Text(dic['claims.submit']),
-                            onPressed: store.encointer.scannedClaimsCount > 0 ?
-                                () => _submit(context) :
-                            null
-                        )
-                      ]
-                  )
-              )
-          ),
+                  child: Column(children: <Widget>[
+                    Text(dic['claims.scanned']
+                        .replaceAll('AMOUNT_PLACEHOLDER', store.encointer.scannedClaimsCount.toString())),
+                    ElevatedButton(
+                        child: Text(dic['claims.submit']),
+                        onPressed: store.encointer.scannedClaimsCount > 0 ? () => _submit(context) : null)
+                  ]))),
         )
       ]),
     );

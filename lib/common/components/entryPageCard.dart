@@ -21,9 +21,8 @@ class EntryPageCard extends StatelessWidget {
             height: 110,
             decoration: BoxDecoration(
               color: color ?? Theme.of(context).primaryColor,
-              borderRadius: const BorderRadius.only(
-                  topLeft: const Radius.circular(8),
-                  bottomLeft: const Radius.circular(8)),
+              borderRadius:
+                  const BorderRadius.only(topLeft: const Radius.circular(8), bottomLeft: const Radius.circular(8)),
             ),
             child: Center(child: icon),
           ),
@@ -42,9 +41,7 @@ class EntryPageCard extends StatelessWidget {
                 width: MediaQuery.of(context).size.width / 2,
                 child: Text(
                   brief,
-                  style: TextStyle(
-                      fontSize: 13,
-                      color: Theme.of(context).unselectedWidgetColor),
+                  style: TextStyle(fontSize: 13, color: Theme.of(context).unselectedWidgetColor),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),

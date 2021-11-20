@@ -125,10 +125,7 @@ abstract class _EncointerStore with Store {
   @computed
   double get communityBalance {
     double res;
-    if (rootStore.chain.latestHeaderNumber != null &&
-        communityBalanceEntry != null &&
-        demurrage != null
-    ) {
+    if (rootStore.chain.latestHeaderNumber != null && communityBalanceEntry != null && demurrage != null) {
       int elapsed = rootStore.chain.latestHeaderNumber - communityBalanceEntry.lastUpdate;
       double exponent = -demurrage * elapsed;
       res = communityBalanceEntry.principal * pow(e, exponent);

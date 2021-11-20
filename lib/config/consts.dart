@@ -17,7 +17,7 @@ EndpointData networkEndpointEncointerGesellDev = EndpointData.fromJson({
   'info': 'nctr-gsl-dev',
   'ss58': 42,
   'text': 'Encointer Gesell Local Devnet',
-  'value': 'ws://192.168.1.24:9944',  // do not use the docker's address, use the host's
+  'value': 'ws://10.0.2.2:9944', // do not use the docker's address, use the host's
   'overrideConfig': MasterBranchConfig.toJson(),
   'ipfsGateway': ipfs_gateway_local
 });

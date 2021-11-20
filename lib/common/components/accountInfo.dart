@@ -84,9 +84,7 @@ class AccountInfo extends StatelessWidget {
             ? Container()
             : Container(
                 padding: EdgeInsets.only(left: 24, right: 24, bottom: 4),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: list),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: list),
               )
       ],
     );

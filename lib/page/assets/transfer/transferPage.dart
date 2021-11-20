@@ -21,7 +21,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class TransferPageParams {
-  TransferPageParams({this.symbol, this.address, this.redirect, this.isEncointerCommunityCurrency = false, this.communitySymbol});
+  TransferPageParams(
+      {this.symbol, this.address, this.redirect, this.isEncointerCommunityCurrency = false, this.communitySymbol});
   final String address;
   final String redirect;
   final String symbol;
@@ -339,8 +340,7 @@ class _TransferPageState extends State<TransferPage> {
 
   BigInt _getAvailableEncointerOrBaseToken(bool isBaseToken, String symbol) {
     if (_isEncointerCommunityCurrency) {
-      return Fmt.tokenInt(
-          store.encointer.communityBalance.toString(), encointer_currencies_decimals);
+      return Fmt.tokenInt(store.encointer.communityBalance.toString(), encointer_currencies_decimals);
     } else {
       return isBaseToken
           ? store.assets.balances[symbol.toUpperCase()].transferable

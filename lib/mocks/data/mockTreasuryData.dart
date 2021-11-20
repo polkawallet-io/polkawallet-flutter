@@ -82,8 +82,7 @@ final Map<String, dynamic> treasuryOverview = {
 
 const Map<String, dynamic> tip0x58 = {
   "hash": "0x58d8cf7fe32e228276c89a3abe7298c21787cf3d962f9bd3d453a51b0dd45804",
-  "reason":
-      "Translation into Russian - https://twitter.com/block_25/status/1277561502954852352",
+  "reason": "Translation into Russian - https://twitter.com/block_25/status/1277561502954852352",
   "who": "EGX4yJNtThEW9axmM3qB262Z7VVuYuXfWRKvujSxiDJmHy7",
   "finder": "EGX4yJNtThEW9axmM3qB262Z7VVuYuXfWRKvujSxiDJmHy7",
   "deposit": 303333333278,
@@ -96,8 +95,7 @@ const Map<String, dynamic> tip0x58 = {
 };
 const Map<String, dynamic> tip0xf2 = {
   "hash": "0xf202c6feae1a7a880f028c665b69b5b35ec8674fdb886282bf5cd943d74fd8aa",
-  "reason":
-      "For polkadot wiki Japanese transation, 3% and progressing: https://crowdin.com/project/polkadot-wiki/ja#",
+  "reason": "For polkadot wiki Japanese transation, 3% and progressing: https://crowdin.com/project/polkadot-wiki/ja#",
   "who": "Gf7EzU2aHeaqFX7AWU93Pb4YDz3vn7fhdYRteNunXYPe9DP",
   "finder": null,
   "closes": null,
@@ -132,8 +130,7 @@ const Map<String, dynamic> councilMotion0 = {
 const List<Map<String, dynamic>> councilMotions = [
   councilMotion0,
   {
-    "hash":
-        "0x7fb731dc431ed1c4a0d1a4aaf013c8ef534c8bdfff9e2cd876f64d35d8830fdd",
+    "hash": "0x7fb731dc431ed1c4a0d1a4aaf013c8ef534c8bdfff9e2cd876f64d35d8830fdd",
     "proposal": {
       "args": ["1"],
       "callIndex": "0x1001",
@@ -144,8 +141,7 @@ const List<Map<String, dynamic>> councilMotions = [
         "args": [
           {"name": "proposal_id", "type": "Compact<ProposalIndex>"}
         ],
-        "documentation":
-            " Reject a proposed spend. The original deposit will be slashed."
+        "documentation": " Reject a proposed spend. The original deposit will be slashed."
       }
     },
     "votes": {
@@ -180,24 +176,18 @@ const Map<String, dynamic> proposal0 = {
     },
     "proposer": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
   },
-  "imageHash":
-      "0x7343bdf358c714b172c64107029b3305396c2e55fd60ac11476032e4bc9d9676",
+  "imageHash": "0x7343bdf358c714b172c64107029b3305396c2e55fd60ac11476032e4bc9d9676",
   "index": 0,
   "proposer": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
 };
 const Map<String, dynamic> proposal1 = {
   "balance": "0x0000000000000000002386f26fc10000",
-  "seconds": [
-    "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
-    "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"
-  ],
+  "seconds": ["5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"],
   "image": {
     "at": 4414,
     "balance": 34000000000000,
     "proposal": {
-      "args": [
-        "0xb6ec618cb7aaa78ab73d6f91935cc8ab477532742d0eaa4b4e5d8a067b87b963"
-      ],
+      "args": ["0xb6ec618cb7aaa78ab73d6f91935cc8ab477532742d0eaa4b4e5d8a067b87b963"],
       "callIndex": "0x0904",
       "method": "externalPropose",
       "section": "democracy",
@@ -206,14 +196,12 @@ const Map<String, dynamic> proposal1 = {
         "args": [
           {"name": "proposal_hash", "type": "Hash"}
         ],
-        "documentation":
-            " Schedule a referendum to be tabled once it is legal to schedule an external referendum."
+        "documentation": " Schedule a referendum to be tabled once it is legal to schedule an external referendum."
       }
     },
     "proposer": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
   },
-  "imageHash":
-      "0x45565d4c6e75dc437ca69978ac88c3ede8e9d5c9293d1d8214d2aab65d6d77b6",
+  "imageHash": "0x45565d4c6e75dc437ca69978ac88c3ede8e9d5c9293d1d8214d2aab65d6d77b6",
   "index": 1,
   "proposer": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
 };

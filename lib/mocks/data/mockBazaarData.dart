@@ -21,7 +21,6 @@ final List<AccountBusinessTuple> allMockBusinesses = [
   AccountBusinessTuple(controller3, BusinessData(business_ipfs_cid3, 1)),
 ];
 
-
 const String offering_ipfs_cid1 = '0x67ebf164a5bb618ec6caad31488161b237e24d75efa3040286767b620d9183989';
 const String offering_ipfs_cid2 = '0x77ebf164a5bb618ec6caad31488161b237e24d75efa3040286767b620d9183989';
 const String offering_ipfs_cid3 = '0x87ebf164a5bb618ec6caad31488161b237e24d75efa3040286767b620d9183989';
@@ -73,7 +72,6 @@ final Map<String, IpfsBusiness> ipfsBusinesses = {
   business_ipfs_cid2: ipfsBusiness2,
   business_ipfs_cid3: ipfsBusiness3,
 };
-
 
 // Todo: @armin add some actual images to assets that look nice in the bazaar.
 // Additionally, the bazaar should support more than one image per asset/business.

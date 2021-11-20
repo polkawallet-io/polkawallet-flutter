@@ -12,7 +12,7 @@ Future<void> startMeetup(BuildContext context, AppStore store) async {
     MaterialPageRoute(
       builder: (BuildContext context) => ClaimQrCode(
         store,
-        title:  I18n.of(context).encointer['claim.qr'],
+        title: I18n.of(context).encointer['claim.qr'],
         claim: webApi.encointer.signClaimOfAttendance(amount, store.account.cachedPin),
         confirmedParticipantsCount: amount,
       ),

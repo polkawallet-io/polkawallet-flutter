@@ -52,9 +52,7 @@ class CreateAccountForm extends StatelessWidget {
                     return Fmt.checkPassword(v.trim()) ? null : dic['create.password.error'];
                   },
                   obscureText: true,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
+                  inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                 ),
                 TextFormField(
                   key: Key('create-account-pin2'),
@@ -69,9 +67,7 @@ class CreateAccountForm extends StatelessWidget {
                   validator: (v) {
                     return _passCtrl.text != v ? dic['create.password2.error'] : null;
                   },
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
+                  inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                 ),
               ],
             ),

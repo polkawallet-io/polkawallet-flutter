@@ -77,7 +77,7 @@ class ClaimQrCode extends StatelessWidget {
                           builder: (_, AsyncSnapshot<ClaimOfAttendance> snapshot) {
                             if (snapshot.hasData) {
                               return QrImage(
-                                data:  snapshot.data.toString(),
+                                data: snapshot.data.toString(),
                                 errorCorrectionLevel: QrErrorCorrectLevel.L,
                                 //embeddedImage:
                                 //    AssetImage('assets/images/public/app.png'),
@@ -114,8 +114,7 @@ class ClaimQrCode extends StatelessWidget {
                             onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      ScanClaimQrCode(store, confirmedParticipantsCount),
+                                  builder: (BuildContext context) => ScanClaimQrCode(store, confirmedParticipantsCount),
                                 ),
                               );
                             },

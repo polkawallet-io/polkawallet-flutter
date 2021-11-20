@@ -70,40 +70,39 @@ class _RegisterParticipantPanel extends State<RegisterParticipantPanel> {
     Map dic = I18n.of(context).encointer;
 
     return Observer(
-      builder: (_) =>
-          Column(
-              children: <Widget>[
-                store.encointer.meetupTime == null
-                    ? Container()
-                    : Column(
-                        children: <Widget>[
-                          Text(dic["ceremony.next"]),
-                          Text(DateFormat('yyyy-MM-dd')
-                              .format(new DateTime.fromMillisecondsSinceEpoch(store.encointer.meetupTime)))
-                        ],
-                      ),
-                CheckboxListTile(
-                  title: Text(dic["meetup.attended"]),
-                  onChanged: (bool value) {
-                    if (value && proof == null) {
-                      proof = webApi.encointer.getProofOfAttendance();
-                    }
-                    setState(() {
-                      attendedLastMeetup = value;
-                    });
-                  },
-                  value: attendedLastMeetup,
+      builder: (_) => Column(
+        children: <Widget>[
+          store.encointer.meetupTime == null
+              ? Container()
+              : Column(
+                  children: <Widget>[
+                    Text(dic["ceremony.next"]),
+                    Text(DateFormat('yyyy-MM-dd')
+                        .format(new DateTime.fromMillisecondsSinceEpoch(store.encointer.meetupTime)))
+                  ],
                 ),
-                store.encointer.participantIndex == null ?
-                CupertinoActivityIndicator():
-                store.encointer.participantIndex == 0
-                    ? RoundedButton(text: "Register Participant", onPressed: () => _submit())
-                    : RoundedButton(
-                        text: "Unregister",
-                        //for: " + Fmt.communityIdentifier(store.encointer.chosenCid).toString(),
-                        onPressed: null),
-              ],
-            ),
+          CheckboxListTile(
+            title: Text(dic["meetup.attended"]),
+            onChanged: (bool value) {
+              if (value && proof == null) {
+                proof = webApi.encointer.getProofOfAttendance();
+              }
+              setState(() {
+                attendedLastMeetup = value;
+              });
+            },
+            value: attendedLastMeetup,
+          ),
+          store.encointer.participantIndex == null
+              ? CupertinoActivityIndicator()
+              : store.encointer.participantIndex == 0
+                  ? RoundedButton(text: "Register Participant", onPressed: () => _submit())
+                  : RoundedButton(
+                      text: "Unregister",
+                      //for: " + Fmt.communityIdentifier(store.encointer.chosenCid).toString(),
+                      onPressed: null),
+        ],
+      ),
     );
   }
 }

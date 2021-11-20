@@ -26,19 +26,16 @@ class _QrSenderPageState extends State<QrSenderPage> {
     final Map args = ModalRoute.of(context).settings.arguments;
 
     Map txInfo = args['txInfo'];
-    final Map res = await webApi.account
-        .makeQrCode(txInfo, args['params'], rawParam: args['rawParam']);
+    final Map res = await webApi.account.makeQrCode(txInfo, args['params'], rawParam: args['rawParam']);
     print('make qr code');
     setState(() {
-      _qrPayload =
-          Uint8List.fromList(List<int>.from(Map.of(res['qrPayload']).values));
+      _qrPayload = Uint8List.fromList(List<int>.from(Map.of(res['qrPayload']).values));
     });
     return _qrPayload;
   }
 
   Future<void> _handleScan(BuildContext context) async {
-    final signed = await Navigator.of(context)
-        .pushNamed(ScanPage.route, arguments: QrSenderPage.route);
+    final signed = await Navigator.of(context).pushNamed(ScanPage.route, arguments: QrSenderPage.route);
     if (signed != null) {
       Navigator.of(context).pop(signed);
     }
@@ -73,8 +70,7 @@ class _QrSenderPageState extends State<QrSenderPage> {
                         ? Padding(
                             padding: EdgeInsets.all(16),
                             child: RoundedButton(
-                              icon: Image.asset(
-                                  'assets/images/assets/scanner.png'),
+                              icon: Image.asset('assets/images/assets/scanner.png'),
                               text: I18n.of(context).account['uos.scan'],
                               onPressed: () {
                                 _handleScan(context);

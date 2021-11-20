@@ -9,10 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
 class MockApi extends Api {
-  MockApi(BuildContext context, AppStore store, {this.withUi = true}): super(context, store);
+  MockApi(BuildContext context, AppStore store, {this.withUi = true}) : super(context, store);
 
   final bool withUi;
-
 
   @override
   Future<void> init() async {

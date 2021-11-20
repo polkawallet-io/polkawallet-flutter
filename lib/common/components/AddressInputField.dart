@@ -9,8 +9,7 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
 
 class AddressInputField extends StatefulWidget {
-  AddressInputField(this.store,
-      {this.label, this.initialValue, this.onChanged});
+  AddressInputField(this.store, {this.label, this.initialValue, this.onChanged});
   final AppStore store;
   final String label;
   final AccountData initialValue;
@@ -53,8 +52,7 @@ class _AddressInputFieldState extends State<AddressInputField> {
       }
     } else {
       // check if input address in local account list
-      final int addressIndex =
-          listLocal.indexWhere((e) => _itemAsString(e).contains(input));
+      final int addressIndex = listLocal.indexWhere((e) => _itemAsString(e).contains(input));
       if (addressIndex >= 0) {
         return [listLocal[addressIndex]];
       }
@@ -81,8 +79,7 @@ class _AddressInputFieldState extends State<AddressInputField> {
     return '${Fmt.accountDisplayNameString(address, accInfo)} $idx $address ${item.address}';
   }
 
-  Widget _selectedItemBuilder(
-      BuildContext context, AccountData item, String itemDesignation) {
+  Widget _selectedItemBuilder(BuildContext context, AccountData item, String itemDesignation) {
     if (item == null) {
       return Container();
     }
@@ -102,9 +99,7 @@ class _AddressInputFieldState extends State<AddressInputField> {
                   children: [
                     Text(Fmt.address(address)),
                     Text(
-                      item.name.isNotEmpty
-                          ? item.name
-                          : Fmt.accountDisplayNameString(item.address, accInfo),
+                      item.name.isNotEmpty ? item.name : Fmt.accountDisplayNameString(item.address, accInfo),
                       style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context).unselectedWidgetColor,
@@ -120,8 +115,7 @@ class _AddressInputFieldState extends State<AddressInputField> {
     );
   }
 
-  Widget _listItemBuilder(
-      BuildContext context, AccountData item, bool isSelected) {
+  Widget _listItemBuilder(BuildContext context, AccountData item, bool isSelected) {
     return Observer(
       builder: (_) {
         final Map accInfo = widget.store.account.addressIndexMap[item.pubKey];
@@ -140,9 +134,7 @@ class _AddressInputFieldState extends State<AddressInputField> {
             dense: true,
             title: Text(Fmt.address(address)),
             subtitle: Text(
-              item.name.isNotEmpty
-                  ? item.name
-                  : Fmt.accountDisplayNameString(item.address, accInfo),
+              item.name.isNotEmpty ? item.name : Fmt.accountDisplayNameString(item.address, accInfo),
             ),
             leading: CircleAvatar(
               child: AddressIcon(item.address, pubKey: item.pubKey),
@@ -165,8 +157,7 @@ class _AddressInputFieldState extends State<AddressInputField> {
       label: widget.label,
       selectedItem: widget.initialValue,
       compareFn: (AccountData i, s) => i.pubKey == s?.pubKey,
-      validator: (AccountData u) =>
-          u == null ? "user field is required " : null,
+      validator: (AccountData u) => u == null ? "user field is required " : null,
       onFind: (String filter) => _getAccountsFromInput(filter),
       itemAsString: _itemAsString,
       onChanged: (AccountData data) {

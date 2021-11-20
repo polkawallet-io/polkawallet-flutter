@@ -1,4 +1,3 @@
-
 // Todo: @armin this is totally outdated and needs communication with the chain
 // to make sense at all. I suggest you neglect creating businesses for now. Later you could
 // add the functionality to add them to the mock data or something like that, but I haven't

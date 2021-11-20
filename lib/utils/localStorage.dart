@@ -50,8 +50,7 @@ class LocalStorage {
   }
 
   Future<void> updateContact(Map<String, dynamic> con) async {
-    return storage.updateItemInList(
-        contactsKey, 'address', con['address'], con);
+    return storage.updateItemInList(contactsKey, 'address', con['address'], con);
   }
 
   Future<List<Map<String, dynamic>>> getContactList() async {
@@ -84,8 +83,7 @@ class LocalStorage {
     return null;
   }
 
-  Future<void> setAccountCache(
-      String accPubKey, String key, Object value) async {
+  Future<void> setAccountCache(String accPubKey, String key, Object value) async {
     Map data = await getObject(key);
     if (data == null) {
       data = {};
@@ -106,8 +104,7 @@ class LocalStorage {
   static const int customCacheTimeLength = 10 * 60 * 1000;
 
   static bool checkCacheTimeout(int cacheTime) {
-    return DateTime.now().millisecondsSinceEpoch - customCacheTimeLength >
-        cacheTime;
+    return DateTime.now().millisecondsSinceEpoch - customCacheTimeLength > cacheTime;
   }
 }
 
@@ -128,15 +125,13 @@ class _LocalStorage {
     setKV(storeKey, jsonEncode(ls));
   }
 
-  Future<void> removeItemFromList(
-      String storeKey, String itemKey, String itemValue) async {
+  Future<void> removeItemFromList(String storeKey, String itemKey, String itemValue) async {
     var ls = await getList(storeKey);
     ls.removeWhere((item) => item[itemKey] == itemValue);
     setKV(storeKey, jsonEncode(ls));
   }
 
-  Future<void> updateItemInList(String storeKey, String itemKey,
-      String itemValue, Map<String, dynamic> itemNew) async {
+  Future<void> updateItemInList(String storeKey, String itemKey, String itemValue, Map<String, dynamic> itemNew) async {
     var ls = await getList(storeKey);
     ls.removeWhere((item) => item[itemKey] == itemValue);
     ls.add(itemNew);

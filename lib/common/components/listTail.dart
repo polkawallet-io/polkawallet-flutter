@@ -16,11 +16,8 @@ class ListTail extends StatelessWidget {
           child: isLoading
               ? CupertinoActivityIndicator()
               : Text(
-                  isEmpty
-                      ? I18n.of(context).home['data.empty']
-                      : I18n.of(context).assets['end'],
-                  style: TextStyle(
-                      fontSize: 16, color: Theme.of(context).disabledColor),
+                  isEmpty ? I18n.of(context).home['data.empty'] : I18n.of(context).assets['end'],
+                  style: TextStyle(fontSize: 16, color: Theme.of(context).disabledColor),
                 ),
         )
       ],

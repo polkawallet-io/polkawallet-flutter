@@ -1,4 +1,4 @@
-class Offering{
+class Offering {
   int adID;
   String dateAdded;
   String title;
@@ -8,6 +8,5 @@ class Offering{
   String image;
   String location;
 
-  Offering(this.adID, this.dateAdded, this.title, this.desc, this.price,
-     this.mobileNo, this.image, this.location);
+  Offering(this.adID, this.dateAdded, this.title, this.desc, this.price, this.mobileNo, this.image, this.location);
 }

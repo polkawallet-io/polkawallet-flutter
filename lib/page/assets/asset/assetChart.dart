@@ -15,8 +15,7 @@ class AssetChart extends StatelessWidget {
     );
   }
 
-  static List<charts.Series<Map<String, dynamic>, DateTime>> _formatData(
-      List<Map<String, dynamic>> ls) {
+  static List<charts.Series<Map<String, dynamic>, DateTime>> _formatData(List<Map<String, dynamic>> ls) {
     return [
       new charts.Series<Map<String, dynamic>, DateTime>(
         id: 'asset',

@@ -79,7 +79,7 @@ class MockApiEncointer extends ApiEncointer {
 
   @override
   Future<CommunityMetadata> getCommunityMetadata() async {
-    return  store.encointer.communityMetadata;
+    return store.encointer.communityMetadata;
   }
 
   @override

@@ -4,10 +4,8 @@ part 'accountData.g.dart';
 
 @JsonSerializable()
 class AccountData extends _AccountData {
-  static AccountData fromJson(Map<String, dynamic> json) =>
-      _$AccountDataFromJson(json);
-  static Map<String, dynamic> toJson(AccountData acc) =>
-      _$AccountDataToJson(acc);
+  static AccountData fromJson(Map<String, dynamic> json) => _$AccountDataFromJson(json);
+  static Map<String, dynamic> toJson(AccountData acc) => _$AccountDataToJson(acc);
 }
 
 abstract class _AccountData {

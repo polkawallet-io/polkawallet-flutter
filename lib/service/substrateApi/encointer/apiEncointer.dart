@@ -322,7 +322,7 @@ class ApiEncointer {
     apiRoot.subscribeMessage(
         'encointer.subscribeParticipantIndex("$_participantIndexChannel", "$cid", "$cIndex", "$account")',
         _participantIndexChannel, (data) {
-          store.encointer.setParticipantIndex(int.parse(data));
+      store.encointer.setParticipantIndex(int.parse(data));
     });
   }
 
@@ -386,7 +386,8 @@ class ApiEncointer {
         store.encointer.meetupTime,
         participants);
 
-    var claimSigned =  await apiRoot.evalJavascript('encointer.signClaimOfAttendance(${jsonEncode(claim)}, "$password")')
+    var claimSigned = await apiRoot
+        .evalJavascript('encointer.signClaimOfAttendance(${jsonEncode(claim)}, "$password")')
         .then((c) => ClaimOfAttendance.fromJson(c));
 
     return claimSigned;
@@ -406,22 +407,19 @@ class ApiEncointer {
 
   /// Get all the registered businesses for the current `chosenCid`
   Future<List<AccountBusinessTuple>> getBusinesses() async {
-
-      // set the store because the current bazaar data model reads the values from the store.
-      store.encointer.setbusinessRegistry(allMockBusinesses);
-      return allMockBusinesses;
+    // set the store because the current bazaar data model reads the values from the store.
+    store.encointer.setbusinessRegistry(allMockBusinesses);
+    return allMockBusinesses;
   }
 
   /// Get all the registered offerings for the current `chosenCid`
   Future<List<OfferingData>> getOfferings() async {
-
     // Todo: @armin you'd probably extend the encointer store and also set the store here.
     return allMockOfferings;
   }
 
   /// Get all the registered offerings for the business with [bid]
   Future<List<OfferingData>> getOfferingsForBusiness(BusinessIdentifier bid) async {
-
     // Todo: @armin you'd probably extend the encointer store and also set the store here.
     return business1MockOfferings;
   }

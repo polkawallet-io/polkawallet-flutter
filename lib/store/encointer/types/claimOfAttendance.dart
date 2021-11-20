@@ -11,8 +11,8 @@ part 'claimOfAttendance.g.dart';
 // field rename such that the fields match the ones defined in the runtime
 @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class ClaimOfAttendance {
-  ClaimOfAttendance(this.claimantPublic, this.ceremonyIndex, this.communityIdentifier,
-      this.meetupIndex, this.location, this.timestamp, this.numberOfParticipantsConfirmed);
+  ClaimOfAttendance(this.claimantPublic, this.ceremonyIndex, this.communityIdentifier, this.meetupIndex, this.location,
+      this.timestamp, this.numberOfParticipantsConfirmed);
 
   String claimantPublic;
   int ceremonyIndex;
@@ -23,14 +23,11 @@ class ClaimOfAttendance {
   int numberOfParticipantsConfirmed;
   Map<String, String> claimantSignature;
 
-
   @override
   String toString() {
     return jsonEncode(this);
   }
 
-  factory ClaimOfAttendance.fromJson(Map<String, dynamic> json) =>
-      _$ClaimOfAttendanceFromJson(json);
-  Map<String, dynamic> toJson() =>
-      _$ClaimOfAttendanceToJson(this);
+  factory ClaimOfAttendance.fromJson(Map<String, dynamic> json) => _$ClaimOfAttendanceFromJson(json);
+  Map<String, dynamic> toJson() => _$ClaimOfAttendanceToJson(this);
 }

@@ -18,8 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class AssetPageParams {
-  AssetPageParams({
-    @required this.token,  @required this.isEncointerCommunityCurrency, this.communityName, this.communitySymbol});
+  AssetPageParams(
+      {@required this.token, @required this.isEncointerCommunityCurrency, this.communityName, this.communitySymbol});
 
   /// token equals cid if `isEncointerCommunityCurrency == true`
   final String token;
@@ -121,8 +121,8 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
     final String token = params.token;
     List<TransferData> ls = store.encointer.txsTransfer.reversed.toList();
     final String symbol = store.settings.networkState.tokenSymbol;
-    ls.retainWhere((i) =>
-    i.token.toUpperCase() == token.toUpperCase() && i.concernsCurrentAccount(store.account.currentAddress));
+    ls.retainWhere(
+        (i) => i.token.toUpperCase() == token.toUpperCase() && i.concernsCurrentAccount(store.account.currentAddress));
     res.addAll(ls.map((i) {
       return TransferListItem(
         data: i,
@@ -296,11 +296,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                   color: titleColor,
                   padding: EdgeInsets.all(16),
                   child: Row(
-                    children: <Widget>[
-                      BorderedTitle(title: I18n
-                          .of(context)
-                          .encointer['loan.txs'])
-                    ],
+                    children: <Widget>[BorderedTitle(title: I18n.of(context).encointer['loan.txs'])],
                   ),
                 ),
                 store.encointer.txsTransfer.isNotEmpty
@@ -358,8 +354,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                                   redirect: AssetPage.route,
                                   symbol: token,
                                   isEncointerCommunityCurrency: isEncointerCommunityCurrency,
-                                  communitySymbol: params.communitySymbol
-                              ),
+                                  communitySymbol: params.communitySymbol),
                             );
                           },
                         ),

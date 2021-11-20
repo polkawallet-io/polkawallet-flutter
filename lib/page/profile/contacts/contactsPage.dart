@@ -90,8 +90,7 @@ class ContactsPage extends StatelessWidget {
                   padding: EdgeInsets.only(right: 8),
                   child: IconButton(
                     icon: Icon(Icons.add, size: 28),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed(ContactPage.route),
+                    onPressed: () => Navigator.of(context).pushNamed(ContactPage.route),
                   ),
                 )
               ],

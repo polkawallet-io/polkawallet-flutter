@@ -44,8 +44,7 @@ class CustomTheme {
     return CustomTheme(Color(json['primary_swatch']));
   }
 
-  Map<String, dynamic> toJson() =>
-      <String, dynamic>{
+  Map<String, dynamic> toJson() => <String, dynamic>{
         'primary_swatch': primarySwatch.value,
       };
 }
@@ -66,4 +65,3 @@ class CidName {
 
   Map<String, dynamic> toJson() => _$CidNameToJson(this);
 }
-

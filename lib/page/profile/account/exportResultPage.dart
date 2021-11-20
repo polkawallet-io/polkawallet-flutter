@@ -44,9 +44,7 @@ class ExportResultPage extends StatelessWidget {
               child: ListView(
                 padding: EdgeInsets.all(16),
                 children: <Widget>[
-                  args['type'] == AccountStore.seedTypeKeystore
-                      ? Container()
-                      : Text(dic['export.warn']),
+                  args['type'] == AccountStore.seedTypeKeystore ? Container() : Text(dic['export.warn']),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
@@ -55,9 +53,7 @@ class ExportResultPage extends StatelessWidget {
                           padding: EdgeInsets.all(8),
                           child: Text(
                             I18n.of(context).home['copy'],
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context).primaryColor),
+                            style: TextStyle(fontSize: 14, color: Theme.of(context).primaryColor),
                           ),
                         ),
                         onTap: () => _showExportDialog(context, args),

@@ -96,7 +96,6 @@ void main() {
       await driver.tap(find.byValueKey('confirmed-participants-3'));
       await screenshot(driver, config, 'claim-qr');
     });
-
   });
 }
 

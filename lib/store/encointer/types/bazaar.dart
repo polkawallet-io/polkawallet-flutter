@@ -1,4 +1,3 @@
-
 /// Types used in the bazaar ecosystem.
 ///
 /// In general, there are two different categories of types:
@@ -20,12 +19,16 @@ class IpfsBusiness {
 
   /// name of the business
   final String name;
+
   /// brief description of the business
   final String description;
+
   /// contact info of the business
   final String contactInfo;
+
   /// ipfs-cid where the images live
   final String imagesCid;
+
   /// opening hours of the business
   /// Todo: change to an actual date format instead of string
   final String openingHours;
@@ -35,8 +38,7 @@ class IpfsBusiness {
     return jsonEncode(this);
   }
 
-  factory IpfsBusiness.fromJson(Map<String, dynamic> json) =>
-      _$IpfsBusinessFromJson(json);
+  factory IpfsBusiness.fromJson(Map<String, dynamic> json) => _$IpfsBusinessFromJson(json);
   Map<String, dynamic> toJson() => _$IpfsBusinessToJson(this);
 }
 
@@ -47,12 +49,16 @@ class IpfsOffering {
 
   /// name of the offering
   final String name;
+
   /// price in community currency
   final int price;
+
   /// description of the offering
   final String description;
+
   /// contact info of the business
   final String contactInfo;
+
   /// ipfs-cid where the offering's images live
   final String imagesCid;
 
@@ -61,8 +67,7 @@ class IpfsOffering {
     return jsonEncode(this);
   }
 
-  factory IpfsOffering.fromJson(Map<String, dynamic> json) =>
-      _$IpfsOfferingFromJson(json);
+  factory IpfsOffering.fromJson(Map<String, dynamic> json) => _$IpfsOfferingFromJson(json);
   Map<String, dynamic> toJson() => _$IpfsOfferingToJson(this);
 }
 
@@ -73,6 +78,7 @@ class BusinessData {
 
   /// ipfs-cid of the corresponding [IpfsBusiness]
   final String url;
+
   /// monotonic counter of registered offerings
   final int lastOid;
 
@@ -81,8 +87,7 @@ class BusinessData {
     return jsonEncode(this);
   }
 
-  factory BusinessData.fromJson(Map<String, dynamic> json) =>
-      _$BusinessDataFromJson(json);
+  factory BusinessData.fromJson(Map<String, dynamic> json) => _$BusinessDataFromJson(json);
   Map<String, dynamic> toJson() => _$BusinessDataToJson(this);
 }
 
@@ -99,8 +104,7 @@ class OfferingData {
     return jsonEncode(this);
   }
 
-  factory OfferingData.fromJson(Map<String, dynamic> json) =>
-      _$OfferingDataFromJson(json);
+  factory OfferingData.fromJson(Map<String, dynamic> json) => _$OfferingDataFromJson(json);
   Map<String, dynamic> toJson() => _$OfferingDataToJson(this);
 }
 
@@ -113,6 +117,7 @@ class AccountBusinessTuple {
 
   /// accountId of the business's controller
   final String controller;
+
   /// the business data belonging to [controller]
   final BusinessData businessData;
 
@@ -121,8 +126,7 @@ class AccountBusinessTuple {
     return jsonEncode(this);
   }
 
-  factory AccountBusinessTuple.fromJson(Map<String, dynamic> json) =>
-      _$AccountBusinessTupleFromJson(json);
+  factory AccountBusinessTuple.fromJson(Map<String, dynamic> json) => _$AccountBusinessTupleFromJson(json);
   Map<String, dynamic> toJson() => _$AccountBusinessTupleToJson(this);
 }
 
@@ -133,6 +137,7 @@ class BusinessIdentifier {
 
   /// community identifier of the community the business belongs to
   final String cid;
+
   /// controller account of the business
   final String controller;
 
@@ -141,7 +146,6 @@ class BusinessIdentifier {
     return jsonEncode(this);
   }
 
-  factory BusinessIdentifier.fromJson(Map<String, dynamic> json) =>
-      _$BusinessIdentifierFromJson(json);
+  factory BusinessIdentifier.fromJson(Map<String, dynamic> json) => _$BusinessIdentifierFromJson(json);
   Map<String, dynamic> toJson() => _$BusinessIdentifierToJson(this);
 }

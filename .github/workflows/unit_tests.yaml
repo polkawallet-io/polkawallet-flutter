@@ -30,6 +30,9 @@ jobs:
           touch ${{ steps.config.outputs.encointer-main-js-path }}
 
       # analyze and test
+      - name: "Check fmt"
+        run: flutter format . --line-length 120 --set-exit-if-changed
+
       - name: "Analyze Code"
         run: flutter pub get && flutter analyze  --fatal-warnings
 

@@ -18,9 +18,7 @@ class ContactListPage extends StatelessWidget {
     final List<AccountData> args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text(args == null
-            ? I18n.of(context).profile['contact']
-            : I18n.of(context).account['list']),
+        title: Text(args == null ? I18n.of(context).profile['contact'] : I18n.of(context).account['list']),
         centerTitle: true,
         actions: <Widget>[
           args == null
@@ -28,8 +26,7 @@ class ContactListPage extends StatelessWidget {
                   padding: EdgeInsets.only(right: 8),
                   child: IconButton(
                     icon: Icon(Icons.add, size: 28),
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed(ContactPage.route),
+                    onPressed: () => Navigator.of(context).pushNamed(ContactPage.route),
                   ),
                 )
               : Container()

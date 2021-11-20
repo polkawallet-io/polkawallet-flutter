@@ -69,8 +69,7 @@ class _Contact extends State<ContactPage> {
       });
       if (_args == null) {
         // create new contact
-        int exist =
-            store.settings.contactList.indexWhere((i) => i.address == addr);
+        int exist = store.settings.contactList.indexWhere((i) => i.address == addr);
         if (exist > -1) {
           showCupertinoDialog(
             context: context,
@@ -173,9 +172,7 @@ class _Contact extends State<ContactPage> {
                         ),
                         controller: _nameCtrl,
                         validator: (v) {
-                          return v.trim().length > 0
-                              ? null
-                              : dic['contact.name.error'];
+                          return v.trim().length > 0 ? null : dic['contact.name.error'];
                         },
                       ),
                     ),

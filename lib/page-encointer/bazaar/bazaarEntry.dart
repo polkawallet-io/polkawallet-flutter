@@ -1,4 +1,3 @@
-
 /// Bazaar entry page
 ///
 /// Todo: @armin: For my taste this file is way to big. Please separate it into smaller files. However, I don't know

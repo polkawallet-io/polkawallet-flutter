@@ -20,8 +20,7 @@ class ReceivePage extends StatelessWidget {
     Color themeColor = Theme.of(context).primaryColor;
 
     bool isEncointer = store.settings.endpointIsEncointer;
-    final accInfo =
-        store.account.accountIndexMap[store.account.currentAccount.address];
+    final accInfo = store.account.accountIndexMap[store.account.currentAccount.address];
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
@@ -37,14 +36,12 @@ class ReceivePage extends StatelessWidget {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(top: 32),
-                  child: Image.asset(
-                      'assets/images/assets/receive_line_${isEncointer ? 'indigo' : 'pink'}.png'),
+                  child: Image.asset('assets/images/assets/receive_line_${isEncointer ? 'indigo' : 'pink'}.png'),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 40),
                   decoration: BoxDecoration(
-                    borderRadius:
-                        const BorderRadius.all(const Radius.circular(4)),
+                    borderRadius: const BorderRadius.all(const Radius.circular(4)),
                     color: Colors.white,
                   ),
                   child: Column(
@@ -69,17 +66,14 @@ class ReceivePage extends StatelessWidget {
                       Container(
                         decoration: BoxDecoration(
                           border: Border.all(width: 4, color: themeColor),
-                          borderRadius:
-                              BorderRadius.all(const Radius.circular(8)),
+                          borderRadius: BorderRadius.all(const Radius.circular(8)),
                         ),
                         margin: EdgeInsets.fromLTRB(48, 16, 48, 24),
                         child: QrImage(
                           data: codeAddress,
                           size: 200,
-                          embeddedImage:
-                              AssetImage('assets/images/public/app.png'),
-                          embeddedImageStyle:
-                              QrEmbeddedImageStyle(size: Size(40, 40)),
+                          embeddedImage: AssetImage('assets/images/public/app.png'),
+                          embeddedImageStyle: QrEmbeddedImageStyle(size: Size(40, 40)),
                         ),
                       ),
                       Container(
@@ -91,8 +85,7 @@ class ReceivePage extends StatelessWidget {
                         padding: EdgeInsets.only(top: 16, bottom: 32),
                         child: RoundedButton(
                           text: I18n.of(context).assets['copy'],
-                          onPressed: () => UI.copyAndNotify(
-                              context, store.account.currentAddress),
+                          onPressed: () => UI.copyAndNotify(context, store.account.currentAddress),
                         ),
                       )
                     ],

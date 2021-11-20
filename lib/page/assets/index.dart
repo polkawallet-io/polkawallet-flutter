@@ -416,7 +416,8 @@ class _AssetsState extends State<Assets> {
                     ],
                   ),
                   onTap: () {
-                    Navigator.pushNamed(context, AssetPage.route, arguments: AssetPageParams(token: symbol, isEncointerCommunityCurrency: false));
+                    Navigator.pushNamed(context, AssetPage.route,
+                        arguments: AssetPageParams(token: symbol, isEncointerCommunityCurrency: false));
                   },
                 ),
               ),
@@ -439,7 +440,8 @@ class _AssetsState extends State<Assets> {
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54),
                       ),
                       onTap: () {
-                        Navigator.pushNamed(context, AssetPage.route, arguments: AssetPageParams(token: symbol, isEncointerCommunityCurrency: false));
+                        Navigator.pushNamed(context, AssetPage.route,
+                            arguments: AssetPageParams(token: symbol, isEncointerCommunityCurrency: false));
                       },
                     ),
                   );
@@ -489,14 +491,13 @@ class _AssetsState extends State<Assets> {
                         : CupertinoActivityIndicator(),
                     onTap: store.encointer.communityBalance != null
                         ? () {
-                      Navigator.pushNamed(context, AssetPage.route,
-                        arguments: AssetPageParams(
-                            token: store.encointer.chosenCid,
-                            isEncointerCommunityCurrency: true,
-                            communityName: store.encointer.communityName,
-                            communitySymbol: store.encointer.communitySymbol
-                        ));
-                    }
+                            Navigator.pushNamed(context, AssetPage.route,
+                                arguments: AssetPageParams(
+                                    token: store.encointer.chosenCid,
+                                    isEncointerCommunityCurrency: true,
+                                    communityName: store.encointer.communityName,
+                                    communitySymbol: store.encointer.communitySymbol));
+                          }
                         : null,
                   ),
                 )

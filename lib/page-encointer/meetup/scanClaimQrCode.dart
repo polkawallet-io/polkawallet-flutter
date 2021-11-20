@@ -24,12 +24,12 @@ class ScanClaimQrCode extends StatelessWidget {
   }
 
   void _showSnackBar(BuildContext context, String msg) {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.white,
-        content: Text(msg, style: TextStyle(color: Colors.black54)),
-        duration: Duration(milliseconds: 1000),
-      ));
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.white,
+      content: Text(msg, style: TextStyle(color: Colors.black54)),
+      duration: Duration(milliseconds: 1000),
+    ));
   }
 
   @override
@@ -55,7 +55,6 @@ class ScanClaimQrCode extends StatelessWidget {
         Future.delayed(const Duration(milliseconds: 1500), () {
           _qrViewKey.currentState.startScan();
         });
-
       } else {
         _qrViewKey.currentState.startScan();
       }
@@ -69,11 +68,9 @@ class ScanClaimQrCode extends StatelessWidget {
             return QrcodeReaderView(
               key: _qrViewKey,
               helpWidget: Observer(
-                builder: (_) => Text(dic['claims.scanned.n.of.m']
-                    .replaceAll('SCANNED_COUNT', store.encointer.scannedClaimsCount.toString())
-                    .replaceAll('TOTAL_COUNT', (confirmedParticipantsCount - 1).toString())
-                )
-              ),
+                  builder: (_) => Text(dic['claims.scanned.n.of.m']
+                      .replaceAll('SCANNED_COUNT', store.encointer.scannedClaimsCount.toString())
+                      .replaceAll('TOTAL_COUNT', (confirmedParticipantsCount - 1).toString()))),
               headerWidget: SafeArea(
                 child: IconButton(
                   icon: Icon(

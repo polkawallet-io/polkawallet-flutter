@@ -146,8 +146,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
   }
 
   Future<void> _onAddObservationAccount() async {
-    setState(() {
-    });
+    setState(() {});
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
@@ -172,8 +171,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
     // create new contact
     int exist = widget.store.settings.contactList.indexWhere((i) => i.address == address);
     if (exist > -1) {
-      setState(() {
-      });
+      setState(() {});
       Navigator.of(context).pop();
 
       showCupertinoDialog(
@@ -198,8 +196,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
       webApi.assets.fetchBalance();
       webApi.account.encodeAddress([pubKey]);
       webApi.account.getPubKeyIcons([pubKey]);
-      setState(() {
-      });
+      setState(() {});
       // go to home page
       Navigator.popUntil(context, ModalRoute.withName('/'));
     }

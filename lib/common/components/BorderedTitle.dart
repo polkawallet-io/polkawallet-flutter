@@ -9,13 +9,11 @@ class BorderedTitle extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(left: 8),
       decoration: BoxDecoration(
-        border: Border(
-            left: BorderSide(width: 3, color: Theme.of(context).primaryColor)),
+        border: Border(left: BorderSide(width: 3, color: Theme.of(context).primaryColor)),
       ),
       child: Text(
         title,
-        style: TextStyle(
-            fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54),
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54),
       ),
     );
   }

@@ -1,8 +1,7 @@
-
 import 'package:encointer_wallet/service/substrateApi/chainApi.dart';
 
 class MockChainApi extends ChainApi {
-  MockChainApi(apiRoot): super(apiRoot);
+  MockChainApi(apiRoot) : super(apiRoot);
 
   @override
   Future<void> startSubscriptions() async {

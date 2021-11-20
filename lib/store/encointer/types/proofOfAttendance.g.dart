@@ -18,8 +18,7 @@ ProofOfAttendance _$ProofOfAttendanceFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$ProofOfAttendanceToJson(ProofOfAttendance instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ProofOfAttendanceToJson(ProofOfAttendance instance) => <String, dynamic>{
       'prover_public': instance.proverPublic,
       'ceremony_index': instance.ceremonyIndex,
       'community_identifier': instance.communityIdentifier,

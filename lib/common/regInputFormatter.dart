@@ -17,8 +17,7 @@ class RegExInputFormatter implements TextInputFormatter {
   }
 
   @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     final oldValueValid = _isValid(oldValue.text);
     final newValueValid = _isValid(newValue.text);
     if (oldValueValid && !newValueValid) {

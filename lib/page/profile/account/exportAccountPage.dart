@@ -65,9 +65,7 @@ class ExportAccountPage extends StatelessWidget {
                 return Fmt.checkPassword(v.trim()) ? null : accDic['create.password.error'];
               },
               obscureText: true,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
+              inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
             ),
           ),
           actions: <Widget>[

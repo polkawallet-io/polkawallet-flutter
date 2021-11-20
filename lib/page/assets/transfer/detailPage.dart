@@ -21,17 +21,14 @@ class TransferDetailPage extends StatelessWidget {
 
     final TransferData tx = ModalRoute.of(context).settings.arguments;
 
-    final String txType = tx.from == store.account.currentAddress
-        ? dic['transfer']
-        : dic['receive'];
+    final String txType = tx.from == store.account.currentAddress ? dic['transfer'] : dic['receive'];
 
     return TxDetail(
       success: true,
       action: txType,
       eventId: tx.extrinsicIndex,
       hash: tx.hash,
-      blockTime: Fmt.dateTime(
-          DateTime.fromMillisecondsSinceEpoch(tx.blockTimestamp * 1000)),
+      blockTime: Fmt.dateTime(DateTime.fromMillisecondsSinceEpoch(tx.blockTimestamp * 1000)),
       blockNum: tx.blockNum,
       networkName: store.settings.endpoint.info,
       info: <DetailInfoItem>[
@@ -41,8 +38,7 @@ class TransferDetailPage extends StatelessWidget {
         ),
         DetailInfoItem(
           label: dic['fee'],
-          title:
-              '${Fmt.balance(tx.fee, decimals, length: decimals)} $tokenView',
+          title: '${Fmt.balance(tx.fee, decimals, length: decimals)} $tokenView',
         ),
         DetailInfoItem(
           label: dic['from'],

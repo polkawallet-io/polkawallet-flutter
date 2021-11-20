@@ -11,10 +11,7 @@ const List<String> communityIdentifiers = [
 ];
 
 const List<Map<String, dynamic>> communities = [
-  {
-    'cid': cid,
-    'name': zueriLoi
-  }
+  {'cid': cid, 'name': zueriLoi}
 ];
 
 const Map<String, dynamic> communityMetadata = {

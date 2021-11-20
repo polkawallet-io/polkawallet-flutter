@@ -7,7 +7,6 @@ import '../data/mockAccountData.dart';
 
 class MockLocalStorage extends Mock implements LocalStorage {}
 
-
 MockLocalStorage getMockLocalStorage() {
   final localStorage = MockLocalStorage();
   when(localStorage.getAccountList()).thenAnswer((_) {

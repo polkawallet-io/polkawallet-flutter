@@ -24,8 +24,7 @@ Widget makeTestableWidget({Widget child}) {
 }
 
 void main() {
-  testWidgets('account advanced option widget test',
-      (WidgetTester tester) async {
+  testWidgets('account advanced option widget test', (WidgetTester tester) async {
     AccountAdvanceOptionParams params;
     Widget myWidget = AccountAdvanceOption(
       seed: '',

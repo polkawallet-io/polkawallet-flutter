@@ -18,8 +18,7 @@ AccountData _$AccountDataFromJson(Map<String, dynamic> json) {
     ..observation = json['observation'] as bool;
 }
 
-Map<String, dynamic> _$AccountDataToJson(AccountData instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$AccountDataToJson(AccountData instance) => <String, dynamic>{
       'name': instance.name,
       'address': instance.address,
       'encoded': instance.encoded,

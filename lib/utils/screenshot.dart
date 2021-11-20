@@ -8,8 +8,8 @@ import 'package:flutter_driver/flutter_driver.dart';
 /// Called by integration test to capture images on the currently running device
 Future screenshot(final FlutterDriver driver, Config config, String name,
     {Duration timeout = const Duration(seconds: 30),
-      bool silent = false,
-      bool waitUntilNoTransientCallbacks = true}) async {
+    bool silent = false,
+    bool waitUntilNoTransientCallbacks = true}) async {
   if (waitUntilNoTransientCallbacks) {
     await driver.waitUntilNoTransientCallbacks(timeout: timeout);
   }

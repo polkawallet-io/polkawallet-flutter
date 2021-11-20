@@ -27,9 +27,7 @@ class TopTabs extends StatelessWidget {
                         title,
                         style: TextStyle(
                             fontSize: 20,
-                            color: activeTab == index
-                                ? Theme.of(context).cardColor
-                                : Colors.white70,
+                            color: activeTab == index ? Theme.of(context).cardColor : Colors.white70,
                             fontWeight: FontWeight.w500),
                       )
                     ],
@@ -39,10 +37,7 @@ class TopTabs extends StatelessWidget {
                   height: 12,
                   width: 32,
                   decoration: BoxDecoration(
-                    border: Border(
-                        bottom: BorderSide(
-                            width: activeTab == index ? 3 : 0,
-                            color: Colors.white)),
+                    border: Border(bottom: BorderSide(width: activeTab == index ? 3 : 0, color: Colors.white)),
                   ),
                 )
               ],

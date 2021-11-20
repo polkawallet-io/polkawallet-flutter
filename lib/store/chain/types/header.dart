@@ -9,9 +9,5 @@ class Header {
     return Header(json['hash'], json['number']);
   }
 
-  Map<String, dynamic> toJson() =>
-      <String, dynamic>{
-        'hash': this.hash,
-        'number': this.number
-      };
+  Map<String, dynamic> toJson() => <String, dynamic>{'hash': this.hash, 'number': this.number};
 }

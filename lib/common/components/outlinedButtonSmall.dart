@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 
 class OutlinedButtonSmall extends StatelessWidget {
-  OutlinedButtonSmall(
-      {this.content,
-      this.active = false,
-      this.color,
-      this.margin,
-      this.onPressed});
+  OutlinedButtonSmall({this.content, this.active = false, this.color, this.margin, this.onPressed});
   final String content;
   final bool active;
   final Color color;

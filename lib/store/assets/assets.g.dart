@@ -12,10 +12,9 @@ mixin _$AssetsStore on _AssetsStore, Store {
   Computed<ObservableList<TransferData>> _$txsViewComputed;
 
   @override
-  ObservableList<TransferData> get txsView => (_$txsViewComputed ??=
-          Computed<ObservableList<TransferData>>(() => super.txsView,
-              name: '_AssetsStore.txsView'))
-      .value;
+  ObservableList<TransferData> get txsView =>
+      (_$txsViewComputed ??= Computed<ObservableList<TransferData>>(() => super.txsView, name: '_AssetsStore.txsView'))
+          .value;
 
   final _$cacheTxsTimestampAtom = Atom(name: '_AssetsStore.cacheTxsTimestamp');
 
@@ -182,24 +181,19 @@ mixin _$AssetsStore on _AssetsStore, Store {
     });
   }
 
-  final _$setAccountBalancesAsyncAction =
-      AsyncAction('_AssetsStore.setAccountBalances');
+  final _$setAccountBalancesAsyncAction = AsyncAction('_AssetsStore.setAccountBalances');
 
   @override
-  Future<void> setAccountBalances(String pubKey, Map<dynamic, dynamic> amt,
-      {bool needCache = true}) {
-    return _$setAccountBalancesAsyncAction
-        .run(() => super.setAccountBalances(pubKey, amt, needCache: needCache));
+  Future<void> setAccountBalances(String pubKey, Map<dynamic, dynamic> amt, {bool needCache = true}) {
+    return _$setAccountBalancesAsyncAction.run(() => super.setAccountBalances(pubKey, amt, needCache: needCache));
   }
 
-  final _$setAccountTokenBalancesAsyncAction =
-      AsyncAction('_AssetsStore.setAccountTokenBalances');
+  final _$setAccountTokenBalancesAsyncAction = AsyncAction('_AssetsStore.setAccountTokenBalances');
 
   @override
-  Future<void> setAccountTokenBalances(String pubKey, Map<dynamic, dynamic> amt,
-      {bool needCache = true}) {
-    return _$setAccountTokenBalancesAsyncAction.run(
-        () => super.setAccountTokenBalances(pubKey, amt, needCache: needCache));
+  Future<void> setAccountTokenBalances(String pubKey, Map<dynamic, dynamic> amt, {bool needCache = true}) {
+    return _$setAccountTokenBalancesAsyncAction
+        .run(() => super.setAccountTokenBalances(pubKey, amt, needCache: needCache));
   }
 
   final _$clearTxsAsyncAction = AsyncAction('_AssetsStore.clearTxs');
@@ -212,10 +206,8 @@ mixin _$AssetsStore on _AssetsStore, Store {
   final _$addTxsAsyncAction = AsyncAction('_AssetsStore.addTxs');
 
   @override
-  Future<void> addTxs(Map<dynamic, dynamic> res, String address,
-      {bool shouldCache = false}) {
-    return _$addTxsAsyncAction
-        .run(() => super.addTxs(res, address, shouldCache: shouldCache));
+  Future<void> addTxs(Map<dynamic, dynamic> res, String address, {bool shouldCache = false}) {
+    return _$addTxsAsyncAction.run(() => super.addTxs(res, address, shouldCache: shouldCache));
   }
 
   final _$setBlockMapAsyncAction = AsyncAction('_AssetsStore.setBlockMap');
@@ -225,8 +217,7 @@ mixin _$AssetsStore on _AssetsStore, Store {
     return _$setBlockMapAsyncAction.run(() => super.setBlockMap(data));
   }
 
-  final _$loadAccountCacheAsyncAction =
-      AsyncAction('_AssetsStore.loadAccountCache');
+  final _$loadAccountCacheAsyncAction = AsyncAction('_AssetsStore.loadAccountCache');
 
   @override
   Future<void> loadAccountCache() {
@@ -244,8 +235,7 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   void setTxsLoading(bool isLoading) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction(
-        name: '_AssetsStore.setTxsLoading');
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(name: '_AssetsStore.setTxsLoading');
     try {
       return super.setTxsLoading(isLoading);
     } finally {
@@ -255,8 +245,7 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   void setTxsFilter(int filter) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction(
-        name: '_AssetsStore.setTxsFilter');
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(name: '_AssetsStore.setTxsFilter');
     try {
       return super.setTxsFilter(filter);
     } finally {
@@ -266,8 +255,7 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   void setSubmitting(bool isSubmitting) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction(
-        name: '_AssetsStore.setSubmitting');
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(name: '_AssetsStore.setSubmitting');
     try {
       return super.setSubmitting(isSubmitting);
     } finally {
@@ -277,8 +265,7 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   void setAnnouncements(List<dynamic> data) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction(
-        name: '_AssetsStore.setAnnouncements');
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(name: '_AssetsStore.setAnnouncements');
     try {
       return super.setAnnouncements(data);
     } finally {
@@ -288,8 +275,7 @@ mixin _$AssetsStore on _AssetsStore, Store {
 
   @override
   void setMarketPrices(String token, String price) {
-    final _$actionInfo = _$_AssetsStoreActionController.startAction(
-        name: '_AssetsStore.setMarketPrices');
+    final _$actionInfo = _$_AssetsStoreActionController.startAction(name: '_AssetsStore.setMarketPrices');
     try {
       return super.setMarketPrices(token, price);
     } finally {

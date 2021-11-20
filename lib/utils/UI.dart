@@ -46,8 +46,7 @@ class UI {
     }
   }
 
-  static Future<void> checkUpdate(BuildContext context, Map versions,
-      {bool autoCheck = false}) async {
+  static Future<void> checkUpdate(BuildContext context, Map versions, {bool autoCheck = false}) async {
     if (versions == null || !Platform.isAndroid && !Platform.isIOS) return;
     String platform = Platform.isAndroid ? 'android' : 'ios';
     final Map dic = I18n.of(context).home;
@@ -74,16 +73,14 @@ class UI {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        List versionInfo = versions[platform]['info']
-            [I18n.of(context).locale.toString().contains('zh') ? 'zh' : 'en'];
+        List versionInfo = versions[platform]['info'][I18n.of(context).locale.toString().contains('zh') ? 'zh' : 'en'];
         return CupertinoAlertDialog(
           title: Text('v$latestBeta'),
           content: Column(
             children: [
               Padding(
                 padding: EdgeInsets.only(top: 12, bottom: 8),
-                child:
-                    Text(needUpdate ? dic['update.up'] : dic['update.latest']),
+                child: Text(needUpdate ? dic['update.up'] : dic['update.latest']),
               ),
               needUpdate
                   ? Column(
@@ -198,8 +195,7 @@ class UI {
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: Container(),
-          content:
-              code == null ? Text(dic['update.error']) : Text(dic['success']),
+          content: code == null ? Text(dic['update.error']) : Text(dic['success']),
           actions: <Widget>[
             CupertinoButton(
               child: Text(dic['ok']),
@@ -238,8 +234,7 @@ class UI {
     );
   }
 
-  static bool checkBalanceAndAlert(
-      BuildContext context, AppStore store, BigInt amountNeeded) {
+  static bool checkBalanceAndAlert(BuildContext context, AppStore store, BigInt amountNeeded) {
     String symbol = store.settings.networkState.tokenSymbol;
     if (store.assets.balances[symbol].transferable <= amountNeeded) {
       showCupertinoDialog(
@@ -264,59 +259,41 @@ class UI {
   }
 
   static TextInputFormatter decimalInputFormatter(int decimals) {
-    return RegExInputFormatter.withRegex(
-        '^[0-9]{0,$decimals}(\\.[0-9]{0,$decimals})?\$');
+    return RegExInputFormatter.withRegex('^[0-9]{0,$decimals}(\\.[0-9]{0,$decimals})?\$');
   }
 }
 
 // access the refreshIndicator globally
 // assets index page:
-final GlobalKey<RefreshIndicatorState> globalBalanceRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalBalanceRefreshKey = new GlobalKey<RefreshIndicatorState>();
 // asset page:
-final GlobalKey<RefreshIndicatorState> globalAssetRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalAssetRefreshKey = new GlobalKey<RefreshIndicatorState>();
 // staking bond page:
-final GlobalKey<RefreshIndicatorState> globalBondingRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalBondingRefreshKey = new GlobalKey<RefreshIndicatorState>();
 // staking nominate page:
-final GlobalKey<RefreshIndicatorState> globalNominatingRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalNominatingRefreshKey = new GlobalKey<RefreshIndicatorState>();
 // council & motions page:
-final GlobalKey<RefreshIndicatorState> globalCouncilRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
-final GlobalKey<RefreshIndicatorState> globalMotionsRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalCouncilRefreshKey = new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalMotionsRefreshKey = new GlobalKey<RefreshIndicatorState>();
 // democracy page:
-final GlobalKey<RefreshIndicatorState> globalDemocracyRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalDemocracyRefreshKey = new GlobalKey<RefreshIndicatorState>();
 // treasury proposals&tips page:
-final GlobalKey<RefreshIndicatorState> globalProposalsRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
-final GlobalKey<RefreshIndicatorState> globalTipsRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalProposalsRefreshKey = new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalTipsRefreshKey = new GlobalKey<RefreshIndicatorState>();
 // recovery settings page:
-final GlobalKey<RefreshIndicatorState> globalRecoverySettingsRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalRecoverySettingsRefreshKey = new GlobalKey<RefreshIndicatorState>();
 // recovery state page:
-final GlobalKey<RefreshIndicatorState> globalRecoveryStateRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalRecoveryStateRefreshKey = new GlobalKey<RefreshIndicatorState>();
 // recovery vouch page:
-final GlobalKey<RefreshIndicatorState> globalRecoveryProofRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalRecoveryProofRefreshKey = new GlobalKey<RefreshIndicatorState>();
 
 // acala loan page:
-final GlobalKey<RefreshIndicatorState> globalLoanRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalLoanRefreshKey = new GlobalKey<RefreshIndicatorState>();
 // acala dexLiquidity page:
-final GlobalKey<RefreshIndicatorState> globalDexLiquidityRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalDexLiquidityRefreshKey = new GlobalKey<RefreshIndicatorState>();
 // acala homa page:
-final GlobalKey<RefreshIndicatorState> globalHomaRefreshKey =
-    new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalHomaRefreshKey = new GlobalKey<RefreshIndicatorState>();
 
 // encointerCeremoniesPage
-final GlobalKey<RefreshIndicatorState> globalCeremonyPhaseChangeKey =
-new GlobalKey<RefreshIndicatorState>();
-final GlobalKey<RefreshIndicatorState> globalCeremonyRegistrationRefreshKey =
-new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalCeremonyPhaseChangeKey = new GlobalKey<RefreshIndicatorState>();
+final GlobalKey<RefreshIndicatorState> globalCeremonyRegistrationRefreshKey = new GlobalKey<RefreshIndicatorState>();

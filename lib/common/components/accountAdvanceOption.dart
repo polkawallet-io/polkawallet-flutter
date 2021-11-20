@@ -30,9 +30,7 @@ class _AccountAdvanceOption extends State<AccountAdvanceOption> {
 
   String _checkDerivePath(String path) {
     if (widget.seed != "" && path != _derivePath) {
-      webApi.account
-          .checkDerivePath(widget.seed, path, _typeOptions[_typeSelection])
-          .then((res) {
+      webApi.account.checkDerivePath(widget.seed, path, _typeOptions[_typeSelection]).then((res) {
         setState(() {
           _derivePath = path;
           _pathError = res != null ? 'Invalid derive path' : null;
@@ -105,12 +103,9 @@ class _AccountAdvanceOption extends State<AccountAdvanceOption> {
                       child: CupertinoPicker(
                         backgroundColor: Colors.white,
                         itemExtent: 56,
-                        scrollController: FixedExtentScrollController(
-                            initialItem: _typeSelection),
-                        children: _typeOptions
-                            .map((i) => Padding(
-                                padding: EdgeInsets.all(16), child: Text(i)))
-                            .toList(),
+                        scrollController: FixedExtentScrollController(initialItem: _typeSelection),
+                        children:
+                            _typeOptions.map((i) => Padding(padding: EdgeInsets.all(16), child: Text(i))).toList(),
                         onSelectedItemChanged: (v) {
                           setState(() {
                             _typeSelection = v;

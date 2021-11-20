@@ -13,8 +13,7 @@ PubKeyPinPair _$PubKeyPinPairFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$PubKeyPinPairToJson(PubKeyPinPair instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$PubKeyPinPairToJson(PubKeyPinPair instance) => <String, dynamic>{
       'pubKey': instance.pubKey,
       'pin': instance.pin,
     };
