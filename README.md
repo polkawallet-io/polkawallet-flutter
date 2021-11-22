@@ -97,6 +97,35 @@ To run the in Android Studio a build flavor must be specified. Go to Run/Debug c
 
 ## Developer Remarks
 
+### Windows Local Dev-setup
+Setup to talk from emulators and/or cellphones with an encointer-node in the same local network. In windows 10/11 some
+ OS fixes are needed to get this working. I don't know if all of these steps are required.
+
+1. Make PC discoverable in local network.
+2. Enable inbound connections in windows firewall:
+    * Search: `Windows Defender Firewall with Advanced Security`.
+    * Inbound Rules > New Rule > Rule Type: Port > Tick TCP and specify the node's port, e.g. 9944.
+    * Click next until finished and give the rule a distinct name, e.g. `Substrate Node`.
+    * Double check if the rule is activated.
+3. Find your local IP in the network and enter it in the encointer-wallet's [config](https://github.com/encointer/encointer-wallet-flutter/blob/1abb8a1f54ef551f19598fb809dfd6378cf1ac43/lib/config/consts.dart#L16-L23).
+4. Restart the computer to be sure that the new configs are active.
+5. Run the node with the flags: `./target/release/encointer-node-notee --dev --enable-offchain-indexing true --rpc-methods unsafe -lencointer=debug --ws-external --rpc-external`
+
+If the node is run in WSL2 (WSL1 should be fine), some extra steps are needed:
+
+6. WSL2 does only expose ports on the local interface, which means they only listen to `127.0.0.1`, hence WSL2 can't be 
+accessed on `hostname/-ip` on other devices in the LAN. This can be fixed with a simple tool [WSLHostPatcher](https://github.com/CzBiX/WSLHostPatcher).
+    * Download the release.zip
+    * Run `WSLHostPatcher.exe`
+    * (Re-)start the service in WSL2. A firewall warning will pop-up the first time and access must be granted.
+
+7. Now you should be able to access the node with both, the emulator and a cellphone in the local network.
+
+**Note**: The `WSLHostPatcher.exe` must be run after every OS restart. You can automatically run it with the following steps:
+* Download the release.zip, unzip it and put it into the ProgramFiles folder, giving it a more suitable name.
+* Press `windows key + r` and type `shell:startup`.
+* Add a shortcut to the `WSLHostPatcher.exe` in the windows startup folder.
+
 ### Fmt
 `dartfmt` lacks config file support, which implies that customizations need to be done by users individually. The default 
 limit of 80 characters line length conflicts with the deeply nested structure of flutter's declarative code for designing 
