@@ -165,13 +165,12 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
       context: context,
       builder: (_) {
         return PasswordInputDialog(
-          title: Text(
-            I18n.of(context).home['unlock'],
-            key: Key('password-input-field'),
-          ),
-          account: _proxyAccount ?? store.account.currentAccount,
-          onOk: (password) => _onSubmit(context, password: password),
-        );
+            title: Text(
+              I18n.of(context).home['unlock'],
+              key: Key('password-input-field'),
+            ),
+            account: _proxyAccount ?? store.account.currentAccount,
+            onOk: (password) => _onSubmit(context, password: password));
       },
     );
   }

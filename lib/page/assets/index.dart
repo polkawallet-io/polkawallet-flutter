@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:encointer_wallet/common/components/BorderedTitle.dart';
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
+import 'package:encointer_wallet/common/components/passwordInputSwitchAccountDialog.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
@@ -11,6 +12,7 @@ import 'package:encointer_wallet/page/account/scanPage.dart';
 import 'package:encointer_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:encointer_wallet/page/assets/asset/assetPage.dart';
 import 'package:encointer_wallet/page/assets/receive/receivePage.dart';
+import 'package:encointer_wallet/page/networkSelectPage.dart';
 import 'package:encointer_wallet/service/notification.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
@@ -26,7 +28,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 class Assets extends StatefulWidget {
   Assets(this.store);
-
   final AppStore store;
 
   @override
@@ -288,6 +289,7 @@ class _AssetsState extends State<Assets> {
   }
 
   Future<void> _showPasswordDialog(BuildContext context) async {
+    var dic = I18n.of(context).home;
     setState(() {
       _dialogIsShown = true;
     });
@@ -295,16 +297,20 @@ class _AssetsState extends State<Assets> {
       context: context,
       builder: (_) {
         return WillPopScope(
-          child: PasswordInputDialog(
-            title: Text(I18n.of(context).home['unlock']),
-            account: store.account.currentAccount,
-            onOk: (password) {
-              setState(() {
-                store.account.setPin(password);
-              });
-            },
-            onCancel: () => _showPasswordNotEnteredDialog(context),
-          ),
+          child: PasswordInputSwitchAccountDialog(
+              title: Text(dic['unlock.account']
+                  .replaceAll('CURRENT_ACCOUNT_NAME', store.account.currentAccount.name.toString())),
+              account: store.account.currentAccount,
+              onOk: (password) {
+                setState(() {
+                  store.account.setPin(password);
+                });
+              },
+              onSwitch: () async => {
+                    Navigator.of(context).pop(),
+                    await Navigator.of(context).pushNamed(NetworkSelectPage.route),
+                    setState(() {}),
+                  }),
           onWillPop: () {
             // handles back button press
             return _showPasswordNotEnteredDialog(context);
@@ -370,7 +376,6 @@ class _AssetsState extends State<Assets> {
             communityIds.retainWhere((i) => i != symbol);
           }
           final BalancesInfo balancesInfo = store.assets.balances[symbol];
-
           if (ModalRoute.of(context).isCurrent && !_dialogIsShown & store.account.cachedPin.isEmpty) {
             _dialogIsShown = true;
             WidgetsBinding.instance.addPostFrameCallback(

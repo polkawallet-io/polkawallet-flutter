@@ -23,17 +23,16 @@ class AccountManagePage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return PasswordInputDialog(
-          title: Text(I18n.of(context).profile['delete.confirm']),
-          account: store.account.currentAccount,
-          onOk: (_) {
-            store.account.removeAccount(store.account.currentAccount).then((_) {
-              // refresh balance
-              store.assets.loadAccountCache();
-              webApi.assets.fetchBalance();
+            title: Text(I18n.of(context).profile['delete.confirm']),
+            account: store.account.currentAccount,
+            onOk: (_) {
+              store.account.removeAccount(store.account.currentAccount).then((_) {
+                // refresh balance
+                store.assets.loadAccountCache();
+                webApi.assets.fetchBalance();
+              });
+              Navigator.of(context).pop();
             });
-            Navigator.of(context).pop();
-          },
-        );
       },
     );
   }

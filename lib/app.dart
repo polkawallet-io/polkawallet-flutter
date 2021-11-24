@@ -1,9 +1,10 @@
 import 'package:encointer_wallet/common/components/willPopScopWrapper.dart';
+import 'package:encointer_wallet/config.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/business/businessOverviewPage.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/business/businessOverviewPanel.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/business/createBusinessForm.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/business/createBusinessPage.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/business/myBusinessPage.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/business/businessOverviewPage.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/business/businessOverviewPanel.dart';
 import 'package:encointer_wallet/page-encointer/homePage.dart';
 import 'package:encointer_wallet/page-encointer/phases/assigning/assigningPage.dart';
 import 'package:encointer_wallet/page-encointer/phases/attesting/attestingPage.dart';
@@ -32,19 +33,18 @@ import 'package:encointer_wallet/page/profile/contacts/contactsPage.dart';
 import 'package:encointer_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:encointer_wallet/page/profile/settings/settingsPage.dart';
 import 'package:encointer_wallet/page/profile/settings/ss58PrefixListPage.dart';
-import 'package:encointer_wallet/utils/localStorage.dart';
 import 'package:encointer_wallet/service/notification.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/config.dart';
+import 'package:encointer_wallet/utils/localStorage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'common/theme.dart';
-import 'mocks/storage/localStorage.dart';
 import 'mocks/api/api.dart';
+import 'mocks/storage/localStorage.dart';
 import 'utils/i18n/index.dart';
 
 class WalletApp extends StatefulWidget {
@@ -58,7 +58,6 @@ class WalletApp extends StatefulWidget {
 
 class _WalletAppState extends State<WalletApp> {
   AppStore _appStore;
-
   Locale _locale = const Locale('en', '');
   ThemeData _theme = appTheme;
 
