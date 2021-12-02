@@ -5,3 +5,6 @@ set -euo pipefail
 
 brew tap wix/brew
 brew install applesimutils
+
+# show available simulator runtimes
+xcrun simctl list
