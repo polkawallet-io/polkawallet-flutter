@@ -1,0 +1,76 @@
+name: JS-CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # Setup Environment
+      - uses: actions/checkout@v2
+
+      - uses: monorepo-actions/config-for-actions@main
+        id: config
+        with:
+          config_files: ./.github/action-config.json
+
+      # JS Stuff
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ steps.config.outputs.node-version }}
+
+      - name: Download encointer-node
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: build-and-test.yml
+          name: executables
+          # in fact this action should download the latest artifact, but sometimes fails. Then we need to
+          # set the `run_id` to force a download of an updated binary.
+          run_id: 1282695776
+          path: node
+          repo: encointer/encointer-node
+
+      - name: Run encointer-node
+        run: |
+          ls -alt node
+          chmod +x node/encointer-node-notee
+          ./node/encointer-node-notee --tmp --dev --enable-offchain-indexing true --rpc-methods unsafe &
+
+      - name: Test JS
+        # We don't really have unit tests in the JS part. Most tests need a local node running.
+        run: |
+          cd lib/js_service_encointer
+          yarn install
+          yarn test
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        network: [gesell] # Todo: add cantillon once we support it again.
+    steps:
+      # Setup Environment
+      - uses: actions/checkout@v2
+
+      - uses: monorepo-actions/config-for-actions@main
+        id: config
+        with:
+          config_files: ./.github/action-config.json
+
+      # JS Stuff
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ steps.config.outputs.node-version }}
+
+      - name: Run e2e tests against  ${{ matrix.network }}
+        run: |
+          cd lib/js_service_encointer
+          yarn install
+          yarn test:${{ matrix.network }}
