@@ -1,15 +1,16 @@
 import 'dart:convert';
 
+import 'package:encointer_wallet/service/substrateApi/api.dart';
+import 'package:encointer_wallet/service/substrateApi/codecApi.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_qr_scan/qrcode_reader_view.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 
-// TODO: scan image failed
 class ScanClaimQrCode extends StatelessWidget {
   ScanClaimQrCode(this.store, this.confirmedParticipantsCount);
 
@@ -28,25 +29,44 @@ class ScanClaimQrCode extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: Colors.white,
       content: Text(msg, style: TextStyle(color: Colors.black54)),
-      duration: Duration(milliseconds: 1000),
+      duration: Duration(milliseconds: 1500),
     ));
+  }
+
+  void validateAndStoreClaim(BuildContext context, ClaimOfAttendance claim, Map dic) {
+    if (!store.encointer.meetupRegistry.contains(claim.claimantPublic)) {
+      // this is important because the runtime checks if there are too many claims trying to be registered.
+      _showSnackBar(context, dic['meetup.claimant.invalid']);
+    } else {
+      String msg = store.encointer.containsClaim(claim) ? dic['claims.scanned.already'] : dic['claims.scanned.new'];
+      store.encointer.addParticipantClaim(claim);
+      _showSnackBar(context, msg);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final Map dic = I18n.of(context).encointer;
 
-    Future _onScan(String data, String _rawData) async {
-      if (data != null) {
-        var claim = ClaimOfAttendance.fromJson(json.decode(data));
+    Future _onScan(String base64Data, String _rawData) async {
+      if (base64Data != null) {
+        var data = base64.decode(base64Data);
 
-        if (!store.encointer.meetupRegistry.contains(claim.claimantPublic)) {
-          // this is important because the runtime checks if there are too many claims trying to be registered.
-          _showSnackBar(context, dic['meetup.claimant.invalid']);
-        } else {
-          String msg = store.encointer.containsClaim(claim) ? dic['claims.scanned.already'] : dic['claims.scanned.new'];
-          store.encointer.addParticipantClaim(claim);
-          _showSnackBar(context, msg);
+        // Todo: Not good to use the global webApi here, but I wanted to prevent big changes into the code for now.
+        // Fix this when #132 is tackled.
+        var claim = await webApi.codec
+            .decodeBytes(ClaimOfAttendanceJSRegistryName, data)
+            .then((c) => ClaimOfAttendance.fromJson(c))
+            .timeout(
+          const Duration(seconds: 3),
+          onTimeout: () {
+            _showSnackBar(context, dic['claims.scanned.decode.failed']);
+            return null;
+          },
+        );
+
+        if (claim != null) {
+          validateAndStoreClaim(context, claim, dic);
         }
 
         // If we don't wait, scans  of the same qr code are spammed.

@@ -17,6 +17,7 @@ const Map<String, String> enNctr = {
   'claims.scanned.n.of.m': "Scanned SCANNED_COUNT / TOTAL_COUNT Claims",
   'claims.submit': 'Submit claims',
   'claims.submit.detail': 'Submitting AMOUNT claims for the recent ceremony',
+  'claims.scanned.decode.failed': 'Could not decode scanned claim.',
   'claims.scanned.new': 'Scanned new claim',
   'claims.scanned.already': 'Updated previously scanned claim',
   'meetup.not.assigned': 'You are not assigned to a meetup',

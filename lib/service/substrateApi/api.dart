@@ -6,6 +6,7 @@ import 'package:encointer_wallet/service/ipfsApi/httpApi.dart';
 import 'package:encointer_wallet/service/subscan.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAccount.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAssets.dart';
+import 'package:encointer_wallet/service/substrateApi/codecApi.dart';
 import 'package:encointer_wallet/service/substrateApi/encointer/apiEncointer.dart';
 import 'package:encointer_wallet/service/substrateApi/chainApi.dart';
 import 'package:encointer_wallet/service/substrateApi/types/genExternalLinksParams.dart';
@@ -26,10 +27,10 @@ class Api {
   var jsStorage;
 
   ApiAccount account;
-  ApiEncointer encointer;
   ApiAssets assets;
   ChainApi chain;
-
+  CodecApi codec;
+  ApiEncointer encointer;
   Ipfs ipfs;
 
   SubScanApi subScanApi = SubScanApi();
@@ -47,9 +48,10 @@ class Api {
     jsStorage = GetStorage();
 
     account = ApiAccount(this);
-    encointer = ApiEncointer(this);
     assets = ApiAssets(this);
     chain = ChainApi(this);
+    codec = CodecApi(this);
+    encointer = ApiEncointer(this);
     ipfs = Ipfs(gateway: store.settings.ipfsGateway);
 
     print("first launch of webview");

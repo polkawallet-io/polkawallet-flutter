@@ -2,6 +2,7 @@ import 'package:encointer_wallet/mocks/api/apiAssets.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAccount.dart';
+import 'package:encointer_wallet/service/substrateApi/codecApi.dart';
 import 'package:encointer_wallet/mocks/api/apiEncointer.dart';
 import 'package:encointer_wallet/mocks/api/chain.dart';
 import 'package:encointer_wallet/mocks/api/apiIpfs.dart';
@@ -18,9 +19,10 @@ class MockApi extends Api {
     jsStorage = GetStorage();
 
     account = ApiAccount(this);
-    encointer = MockApiEncointer(this);
     assets = MockApiAssets(this);
     chain = MockChainApi(this);
+    codec = CodecApi(this);
+    encointer = MockApiEncointer(this);
     ipfs = MockIpfs();
 
     if (withUi) {

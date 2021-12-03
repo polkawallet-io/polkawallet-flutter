@@ -1,9 +1,11 @@
-import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'scanClaimQrCode.dart';
@@ -19,7 +21,9 @@ class ClaimQrCode extends StatelessWidget {
   final AppStore store;
 
   final String title;
-  final Future<ClaimOfAttendance> claim;
+
+  /// future of a scale-encoded `ClaimOfAttendance`
+  final Future<Uint8List> claim;
   final int confirmedParticipantsCount;
 
   @override
@@ -66,23 +70,19 @@ class ClaimQrCode extends StatelessWidget {
                       ),
                       Container(width: 8, height: 8),
                       Container(
-                        width: 380,
-                        height: 380,
+                        width: 395,
+                        height: 395,
                         decoration: BoxDecoration(
                           border: Border.all(width: 4, color: themeColor),
                           borderRadius: BorderRadius.all(const Radius.circular(8)),
                         ),
-                        child: FutureBuilder<ClaimOfAttendance>(
+                        child: FutureBuilder<Uint8List>(
                           future: claim,
-                          builder: (_, AsyncSnapshot<ClaimOfAttendance> snapshot) {
+                          builder: (_, AsyncSnapshot<Uint8List> snapshot) {
                             if (snapshot.hasData) {
                               return QrImage(
-                                data: snapshot.data.toString(),
+                                data: base64.encode(snapshot.data),
                                 errorCorrectionLevel: QrErrorCorrectLevel.L,
-                                //embeddedImage:
-                                //    AssetImage('assets/images/public/app.png'),
-                                //embeddedImageStyle:
-                                //    QrEmbeddedImageStyle(size: Size(40, 40)),
                               );
                             } else {
                               return CupertinoActivityIndicator();
