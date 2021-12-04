@@ -163,7 +163,7 @@ VersionCode should monotonically increase by 1 for every tagged build
 ```shell 
   git checkout master
   git tag v0.9.0
-  git push
+  git push origin v0.9.0
   git checkout beta
   git merge v0.9.0
   git push
