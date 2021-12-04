@@ -7,7 +7,7 @@ import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'bazaar/bazaarEntry.dart';
+import 'bazaar/0_main/bazaarMain.dart';
 
 class EncointerHomePage extends StatefulWidget {
   EncointerHomePage(this.store);
@@ -52,7 +52,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
         case 0:
           return Assets(store);
         case 1:
-          return BazaarEntry(store);
+          return BazaarMain(); // TODO provider pattern everywhere https://mobx.netlify.app/examples/todos
         case 2:
           return EncointerEntry(store);
         default:
@@ -63,7 +63,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
         case 0:
           return Assets(store);
         case 1:
-          return BazaarEntry(store);
+          return BazaarMain();
         case 2:
           return EncointerEntry(store);
         default:

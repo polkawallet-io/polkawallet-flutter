@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 
-class WillPopScopWrapper extends StatelessWidget {
-  WillPopScopWrapper({this.child});
+class WillPopScopeWrapper extends StatelessWidget {
+  WillPopScopeWrapper({this.child});
 
   final Widget child;
 
