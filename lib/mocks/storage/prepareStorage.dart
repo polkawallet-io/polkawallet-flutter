@@ -12,10 +12,14 @@ abstract class PrepareStorage {
     store.encointer.setCurrentPhase(initialPhase);
     store.encointer.setCommunityIdentifiers(communityIdentifiers);
     store.encointer.addBalanceEntry(cid, BalanceEntry.fromJson(balanceEntry));
-    store.encointer.setCommunityMetadata(CommunityMetadata.fromJson(communityMetadata));
     store.encointer.setCommunities(communities.map((cn) => CidName.fromJson(cn)).toList());
     store.encointer.setDemurrage(demurrage);
     store.chain.setLatestHeader(Header.fromJson(header));
+    store.encointer.setCommunityMetadata(CommunityMetadata.fromJson(communityMetadata));
+  }
+
+  static void getMetadata(AppStore store) {
+    store.encointer.setCommunityMetadata(CommunityMetadata.fromJson(communityMetadata));
   }
 
   static void unregisteredParticipant(AppStore store) {

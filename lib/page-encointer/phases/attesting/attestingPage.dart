@@ -56,7 +56,7 @@ class _AttestingPageState extends State<AttestingPage> {
                     Text(dic['claims.scanned']
                         .replaceAll('AMOUNT_PLACEHOLDER', store.encointer.scannedClaimsCount.toString())),
                     ElevatedButton(
-                        child: Text(dic['claims.submit']),
+                        child: Text(dic['attestations.submit']),
                         onPressed: store.encointer.scannedClaimsCount > 0 ? () => _submit(context) : null)
                   ]))),
         )

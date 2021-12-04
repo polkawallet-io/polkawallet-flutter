@@ -19,6 +19,11 @@ void main() {
           PrepareStorage.init(globalAppStore);
         }
         break;
+      case StorageSetup.GET_METADATA:
+        {
+          PrepareStorage.getMetadata(globalAppStore);
+        }
+        break;
       case StorageSetup.UNREGISTERED_PARTICIPANT:
         {
           PrepareStorage.unregisteredParticipant(globalAppStore);

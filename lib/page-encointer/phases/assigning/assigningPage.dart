@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/page-encointer/common/assignmentPanel.dart';
 import 'package:encointer_wallet/page-encointer/meetup/startMeetup.dart';
 import 'package:encointer_wallet/store/app.dart';
@@ -74,12 +75,29 @@ class _AssigningPageState extends State<AssigningPage> {
         store.encointer.meetupIndex != null && store.encointer.meetupIndex > 0
             ? Container(
                 key: Key('start-meetup'),
-                child: RoundedButton(
-                  text: timeToMeetup > 60
-                      ? "${dic['meetup.remaining']} ${Fmt.hhmmss(timeToMeetup)}"
-                      : dic['meetup.start'],
-                  onPressed: timeToMeetup > 60 ? null : () => startMeetup(context, store),
-                ))
+                child: Column(
+                  children: <Widget>[
+                    RoundedCard(
+                      padding: EdgeInsets.all(8),
+                      child: Container(
+                        width: double.infinity,
+                        child: Text(
+                          "${dic['meetup.remaining']} ${Fmt.hhmmss(timeToMeetup)}",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    timeToMeetup < 60
+                        ? RoundedButton(
+                            text: dic['meetup.start'],
+                            onPressed: () => startMeetup(context, store),
+                          )
+                        : Container(),
+                  ],
+                ),
+              )
             : Container(),
       ]),
     );

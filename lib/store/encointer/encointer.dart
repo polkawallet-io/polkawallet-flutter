@@ -7,10 +7,10 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/assets/types/transferData.dart';
 import 'package:encointer_wallet/store/encointer/types/bazaar.dart';
 import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
 import 'package:encointer_wallet/store/encointer/types/location.dart';
-import 'package:encointer_wallet/store/encointer/types/communities.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:mobx/mobx.dart';
 
@@ -27,6 +27,7 @@ abstract class _EncointerStore with Store {
   final String cacheTxsTransferKey = 'transfer_txs';
   final String encointerCommunityKey = 'wallet_encointer_community';
   final String encointerCommunityMetadataKey = 'wallet_encointer_community_metadata';
+  final String encointerCommunitiesKey = 'wallet_encointer_communities';
 
   // offline meetup cache.
   final String encointerCurrentCeremonyIndexKey = 'wallet_encointer_current_ceremony_index';
@@ -36,7 +37,6 @@ abstract class _EncointerStore with Store {
   final String encointerMeetupRegistryKey = 'wallet_encointer_meetup_registry';
   final String encointerParticipantsClaimsKey = 'wallet_encointer_participants_claims';
   final String encointerMeetupTimeKey = 'wallet_encointer_meetup_time';
-
   // Note: In synchronous code, every modification of an @observable is tracked by mobx and
   // fires a reaction. However, modifications in asynchronous code must be wrapped in
   // a `@action` block to fire a reaction.
@@ -250,18 +250,22 @@ abstract class _EncointerStore with Store {
 
   @action
   void setCommunityIdentifiers(List<String> cids) {
+    print("store: set communityIdentifiers to $cids");
     communityIdentifiers = cids;
   }
 
   @action
-  void setCommunityMetadata(CommunityMetadata meta) {
+  void setCommunityMetadata([CommunityMetadata meta]) {
+    print("store: set communityMetadata to $meta");
     communityMetadata = meta;
     cacheObject(encointerCommunityMetadataKey, meta);
   }
 
   @action
   void setCommunities(List<CidName> c) {
+    print("store: set communities to $c");
     communities = c;
+    cacheObject(encointerCommunitiesKey, c);
   }
 
   @action
@@ -270,10 +274,11 @@ abstract class _EncointerStore with Store {
   }
 
   @action
-  void setChosenCid(String cid) {
+  void setChosenCid([String cid]) {
     if (chosenCid != cid) {
       chosenCid = cid;
       cacheObject(encointerCommunityKey, cid);
+      setCommunityMetadata();
       resetState();
     }
 
@@ -362,13 +367,25 @@ abstract class _EncointerStore with Store {
 
   @action
   Future<void> loadCache() async {
-    var data = await loadObject(encointerCommunityKey);
-    if (data != null) {
-      print("found cached choice of cid. will recover it: " + data.toString());
-      setChosenCid(data);
+    var cachedCid = await loadObject(encointerCommunityKey);
+    if (cachedCid != null) {
+      print("found cached choice of cid. will recover it: " + cachedCid.toString());
+      chosenCid = cachedCid;
+    }
+    var cachedCommunityMetadata = await loadObject(encointerCommunityMetadataKey);
+    if (cachedCommunityMetadata != null) {
+      communityMetadata = CommunityMetadata.fromJson(cachedCommunityMetadata);
+      print("found cached community metadata. will recover it: " + cachedCommunityMetadata.toString());
+    }
+    List<dynamic> cachedCommunitiesInternalList = await loadObject(encointerCommunitiesKey);
+    if (cachedCommunitiesInternalList != null) {
+      List<CidName> cachedCommunities =
+          cachedCommunitiesInternalList.map((s) => new CidName(s['cid'], s['name'])).toList();
+      print("found cached communities. will recover it: " + cachedCommunities.toString());
+      communities = cachedCommunities;
     }
     // get meetup related data
-    data = await loadObject(encointerParticipantsClaimsKey);
+    var data = await loadObject(encointerParticipantsClaimsKey);
     if (data != null) {
       print("found cached participants' claims. will recover them: $data");
       participantsClaims = ObservableMap.of(jsonDecode(data).cast<String, ClaimOfAttendance>());

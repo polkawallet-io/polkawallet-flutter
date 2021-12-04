@@ -462,7 +462,7 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void setCommunityMetadata(CommunityMetadata meta) {
+  void setCommunityMetadata([CommunityMetadata meta]) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(name: '_EncointerStore.setCommunityMetadata');
     try {
       return super.setCommunityMetadata(meta);
@@ -492,7 +492,7 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void setChosenCid(String cid) {
+  void setChosenCid([String cid]) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(name: '_EncointerStore.setChosenCid');
     try {
       return super.setChosenCid(cid);

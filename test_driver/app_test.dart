@@ -49,6 +49,8 @@ void main() {
       await driver.tap(find.byValueKey('cid-dropdown'));
       await driver.tap(find.byValueKey('cid-0'));
 
+      // Here we get the metadata because it is reset to null in the setChosenCid() method which is called, when a community is chosen
+      await driver.requestData(StorageSetup.GET_METADATA);
       // take a screenshot of the EncointerHome Screen
       await screenshot(driver, config, 'encointer-home');
     }, timeout: Timeout(Duration(seconds: 120))); // needed for android CI with github actions

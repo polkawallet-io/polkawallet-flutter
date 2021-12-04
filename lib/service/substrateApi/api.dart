@@ -6,9 +6,9 @@ import 'package:encointer_wallet/service/ipfsApi/httpApi.dart';
 import 'package:encointer_wallet/service/subscan.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAccount.dart';
 import 'package:encointer_wallet/service/substrateApi/apiAssets.dart';
+import 'package:encointer_wallet/service/substrateApi/chainApi.dart';
 import 'package:encointer_wallet/service/substrateApi/codecApi.dart';
 import 'package:encointer_wallet/service/substrateApi/encointer/apiEncointer.dart';
-import 'package:encointer_wallet/service/substrateApi/chainApi.dart';
 import 'package:encointer_wallet/service/substrateApi/types/genExternalLinksParams.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:flutter/cupertino.dart';
@@ -219,7 +219,18 @@ class Api {
     int index = store.settings.endpointList.indexWhere((i) => i.value == res);
     if (index < 0) return;
     store.settings.setEndpoint(store.settings.endpointList[index]);
-    fetchNetworkProps();
+    await fetchNetworkProps();
+    fetchEncointerCommunityData();
+  }
+
+  void fetchEncointerCommunityData() {
+    webApi.encointer.getBusinesses();
+    webApi.encointer.getMeetupIndex();
+    webApi.encointer.getParticipantIndex();
+    webApi.encointer.getParticipantCount();
+    webApi.encointer.getEncointerBalance();
+    webApi.encointer.getCommunityMetadata();
+    webApi.encointer.getDemurrage();
   }
 
   Future<void> fetchNetworkProps() async {

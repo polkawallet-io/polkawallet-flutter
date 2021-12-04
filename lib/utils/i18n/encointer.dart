@@ -15,7 +15,7 @@ const Map<String, String> enNctr = {
   'claim.qr': 'My Claim of Attendance',
   'claims.scanned': 'You have scanned AMOUNT_PLACEHOLDER claims',
   'claims.scanned.n.of.m': "Scanned SCANNED_COUNT / TOTAL_COUNT Claims",
-  'claims.submit': 'Submit claims',
+  'attestations.submit': 'Submit attestations',
   'claims.submit.detail': 'Submitting AMOUNT claims for the recent ceremony',
   'claims.scanned.decode.failed': 'Could not decode scanned claim.',
   'claims.scanned.new': 'Scanned new claim',
@@ -27,5 +27,7 @@ const Map<String, String> enNctr = {
   'meetup.attended': 'Attended last meetup',
   'done': 'Done',
   'finish': 'Finish',
+  "register.participant": 'Register Participant',
+  'registered': 'Already Registered',
   'scan': 'Scan',
 };

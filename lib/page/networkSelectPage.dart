@@ -95,6 +95,9 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
         webApi.assets.fetchBalance();
       } else {
         /// set new network and reload web view
+        // todo  remove the two options here, and fix the caching issue, explained in #219
+        store.encointer.setChosenCid();
+        store.encointer.communities = null;
         await _reloadNetwork();
       }
     }
