@@ -29,11 +29,12 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   final AppStore store;
   final Function changeTheme;
 
+  // Here we commented out the two not-active networks of Cantillon. When they will be relevant, they can be uncommented #232
   final List<EndpointData> networks = [
     networkEndpointEncointerGesell,
     networkEndpointEncointerGesellDev,
-    networkEndpointEncointerCantillon,
-    networkEndpointEncointerCantillonDev
+    // networkEndpointEncointerCantillon,
+    // networkEndpointEncointerCantillonDev
   ];
 
   EndpointData _selectedNetwork;

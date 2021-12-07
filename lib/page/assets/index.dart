@@ -376,7 +376,8 @@ class _AssetsState extends State<Assets> {
             communityIds.retainWhere((i) => i != symbol);
           }
           final BalancesInfo balancesInfo = store.assets.balances[symbol];
-          if (ModalRoute.of(context).isCurrent && !_dialogIsShown & store.account.cachedPin.isEmpty) {
+          if (ModalRoute.of(context).isCurrent &&
+              !_dialogIsShown & store.account.cachedPin.isEmpty & !store.settings.endpointIsGesell) {
             _dialogIsShown = true;
             WidgetsBinding.instance.addPostFrameCallback(
               (_) {
