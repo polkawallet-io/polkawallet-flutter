@@ -1,6 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/page/profile/account/changeNamePage.dart';
@@ -10,6 +7,9 @@ import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class AccountManagePage extends StatelessWidget {
   AccountManagePage(this.store);
@@ -22,17 +22,15 @@ class AccountManagePage extends StatelessWidget {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return PasswordInputDialog(
-            title: Text(I18n.of(context).profile['delete.confirm']),
-            account: store.account.currentAccount,
-            onOk: (_) {
-              store.account.removeAccount(store.account.currentAccount).then((_) {
-                // refresh balance
-                store.assets.loadAccountCache();
-                webApi.assets.fetchBalance();
-              });
-              Navigator.of(context).pop();
-            });
+        return showPasswordInputDialog(
+            context, store.account.currentAccount, Text(I18n.of(context).profile['delete.confirm']), (_) {
+          store.account.removeAccount(store.account.currentAccount).then((_) {
+            // refresh balance
+            store.assets.loadAccountCache();
+            webApi.assets.fetchBalance();
+          });
+          Navigator.of(context).pop();
+        });
       },
     );
   }

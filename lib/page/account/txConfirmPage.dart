@@ -164,13 +164,14 @@ class _TxConfirmPageState extends State<TxConfirmPage> {
     showCupertinoDialog(
       context: context,
       builder: (_) {
-        return PasswordInputDialog(
-            title: Text(
+        return showPasswordInputDialog(
+            context,
+            _proxyAccount ?? store.account.currentAccount,
+            Text(
               I18n.of(context).home['unlock'],
               key: Key('password-input-field'),
             ),
-            account: _proxyAccount ?? store.account.currentAccount,
-            onOk: (password) => _onSubmit(context, password: password));
+            (password) => _onSubmit(context, password: password));
       },
     );
   }

@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:encointer_wallet/common/components/BorderedTitle.dart';
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
-import 'package:encointer_wallet/common/components/passwordInputSwitchAccountDialog.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
@@ -94,10 +93,11 @@ class _AssetsState extends State<Assets> {
         showCupertinoDialog(
           context: context,
           builder: (_) {
-            return PasswordInputDialog(
-              account: store.account.currentAccount,
-              title: Text(dic['uos.title']),
-              onOk: (password) {
+            return showPasswordInputDialog(
+              context,
+              store.account.currentAccount,
+              Text(dic['uos.title']),
+              (password) {
                 print('pass ok: $password');
                 _signAsync(password);
               },
@@ -289,7 +289,6 @@ class _AssetsState extends State<Assets> {
   }
 
   Future<void> _showPasswordDialog(BuildContext context) async {
-    var dic = I18n.of(context).home;
     setState(() {
       _dialogIsShown = true;
     });
@@ -297,16 +296,12 @@ class _AssetsState extends State<Assets> {
       context: context,
       builder: (_) {
         return WillPopScope(
-          child: PasswordInputSwitchAccountDialog(
-              title: Text(dic['unlock.account']
-                  .replaceAll('CURRENT_ACCOUNT_NAME', store.account.currentAccount.name.toString())),
-              account: store.account.currentAccount,
-              onOk: (password) {
-                setState(() {
-                  store.account.setPin(password);
-                });
-              },
-              onSwitch: () async => {
+          child: showPasswordDialogWithAccountSwitch(context, store.account.currentAccount, (password) {
+            setState(() {
+              store.account.setPin(password);
+            });
+          },
+              () async => {
                     Navigator.of(context).pop(),
                     await Navigator.of(context).pushNamed(NetworkSelectPage.route),
                     setState(() {}),

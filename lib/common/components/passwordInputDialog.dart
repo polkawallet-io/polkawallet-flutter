@@ -5,19 +5,39 @@ import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
+showPasswordInputDialog(context, account, title, onOk) {
+  return PasswordInputDialog(
+    account: account,
+    title: title,
+    onCancel: () => Navigator.of(context).pop(),
+    onOk: onOk,
+  );
+}
+
+showPasswordDialogWithAccountSwitch(context, currentAccount, onOk, onAccountSwitch) {
+  return PasswordInputDialog(
+    account: currentAccount,
+    title: Text(
+        I18n.of(context).home['unlock.account'].replaceAll('CURRENT_ACCOUNT_NAME', currentAccount.name.toString())),
+    onOk: onOk,
+    onAccountSwitch: onAccountSwitch,
+  );
+}
+
 class PasswordInputDialog extends StatefulWidget {
-  PasswordInputDialog({this.account, this.title, this.onOk, this.onCancel});
+  PasswordInputDialog({this.account, this.title, this.onOk, this.onCancel, this.onAccountSwitch});
 
   final AccountData account;
   final Widget title;
   final Function onOk;
   final Function onCancel;
+  final Function onAccountSwitch;
 
   @override
-  _PasswordInputDialog createState() => _PasswordInputDialog();
+  _PasswordInputDialogState createState() => _PasswordInputDialogState();
 }
 
-class _PasswordInputDialog extends State<PasswordInputDialog> {
+class _PasswordInputDialogState extends State<PasswordInputDialog> {
   final TextEditingController _passCtrl = new TextEditingController();
   bool _submitting = false;
 
@@ -83,12 +103,22 @@ class _PasswordInputDialog extends State<PasswordInputDialog> {
         ),
       ),
       actions: <Widget>[
-        CupertinoButton(
-          child: Text(dic['cancel']),
-          onPressed: () {
-            widget.onCancel != null ? widget.onCancel() : Navigator.of(context).pop();
-          },
-        ),
+        widget.onAccountSwitch != null
+            ? CupertinoButton(
+                child: Text(dic['switch']),
+                onPressed: () {
+                  widget.onAccountSwitch();
+                },
+              )
+            : Container(),
+        widget.onCancel != null
+            ? CupertinoButton(
+                child: Text(dic['cancel']),
+                onPressed: () {
+                  widget.onCancel();
+                },
+              )
+            : Container(),
         CupertinoButton(
           key: Key('password-ok'),
           child: Row(
