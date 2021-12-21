@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/menu/1_my_offerings/offeringForm.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shared/bazaarItemVertical.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shared/toggleButtonsWithTitle.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shared/data_model/demo_data/demoData.dart';
-import 'package:flutter/material.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/shared/toggleButtonsWithTitle.dart';
 
 class MyOfferings extends StatelessWidget {
   final data = myOfferings;

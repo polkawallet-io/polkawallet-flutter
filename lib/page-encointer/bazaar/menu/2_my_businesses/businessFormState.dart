@@ -1,5 +1,5 @@
-import 'package:encointer_wallet/page-encointer/bazaar/menu/camera/imagePickerState.dart';
 import 'package:mobx/mobx.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/menu/camera/imagePickerState.dart';
 
 import 'openingHoursState.dart';
 

@@ -1,8 +1,8 @@
 import 'package:encointer_wallet/page-encointer/bazaar/menu/2_my_businesses/businessFormState.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/menu/camera/imagePickerScaffold.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/shared/data_model/demo_data/demoData.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shared/photoTiles.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shared/toggleButtonsWithTitle.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shared/data_model/demo_data/demoData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';

@@ -1,5 +1,5 @@
-import 'package:encointer_wallet/page-encointer/bazaar/shared/toggleButtonsWithTitle.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shared/data_model/demo_data/demoData.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/shared/toggleButtonsWithTitle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

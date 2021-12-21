@@ -1,7 +1,8 @@
-import 'package:encointer_wallet/page-encointer/bazaar/1_home/BazaarSearch/searchResults.dart';
 import 'package:flutter/material.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/1_home/BazaarSearch/searchResults.dart';
 
+/// TODO integrate functionality from class BazaarSearchAndFilter
 class BazaarSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

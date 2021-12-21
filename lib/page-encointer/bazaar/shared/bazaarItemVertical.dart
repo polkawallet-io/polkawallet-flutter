@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/2_offerings/offeringDetail.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/3_businesses/businessDetail.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shared/bazaarItemVerticalState.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'data_model/model/bazaarItemData.dart';
 

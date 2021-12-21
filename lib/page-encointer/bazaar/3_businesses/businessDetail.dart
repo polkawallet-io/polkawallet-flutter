@@ -1,9 +1,9 @@
-import 'package:encointer_wallet/page-encointer/bazaar/menu/2_my_businesses/businessesOnMap.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shared/bazaarItemHorizontal.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/shared/data_model/model/bazaarItemData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import "package:latlong2/latlong.dart";
+import 'package:encointer_wallet/page-encointer/bazaar/menu/2_my_businesses/businessesOnMap.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/shared/bazaarItemHorizontal.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/shared/data_model/model/bazaarItemData.dart';
 
 class BusinessDetail extends StatelessWidget {
   final BazaarBusinessData business;

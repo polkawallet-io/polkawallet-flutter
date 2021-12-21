@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/1_home/home.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/2_offerings/offerings.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/3_businesses/businesses.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/4_favorites/favorites.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'bazaarMainState.dart';
 import 'bazaarMenu.dart';

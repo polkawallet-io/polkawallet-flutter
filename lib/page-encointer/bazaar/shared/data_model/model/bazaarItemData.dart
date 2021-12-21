@@ -4,10 +4,11 @@ import "package:latlong2/latlong.dart";
 /// A BazaarItem can either be an offering or a business.
 /// info contains the price in case of an offering and the distance in case of a business
 abstract class BazaarItemData {
-  BazaarItemData(this.title, this.description, this.image);
+  BazaarItemData(this.title, this.description, this.keywords, this.image);
 
   final String title;
   final String description;
+  final List<Keyword> keywords;
   final Image image;
 
   Color get cardColor;
@@ -19,8 +20,12 @@ abstract class BazaarItemData {
 
 class BazaarOfferingData extends BazaarItemData {
   final double price;
+  final List<DeliveryOption> availableDeliveryOptions;
+  final List<UsageState> availableUsageStates;
 
-  BazaarOfferingData(title, description, this.price, image) : super(title, description, image);
+  BazaarOfferingData(
+      title, description, keywords, image, this.price, this.availableDeliveryOptions, this.availableUsageStates)
+      : super(title, description, keywords, image);
 
   @override
   String get info => price.toString();
@@ -32,6 +37,13 @@ class BazaarOfferingData extends BazaarItemData {
   Icon get icon => Icon(Icons.local_offer);
 }
 
+enum DeliveryOption {
+  mailOrder,
+  pickUp,
+}
+
+enum UsageState { brandNew, used }
+
 class BazaarBusinessData extends BazaarItemData {
   final LatLng coordinates;
   final OpeningHours openingHours;
@@ -40,8 +52,8 @@ class BazaarBusinessData extends BazaarItemData {
   // for now:
   final LatLng turbinenplatz = LatLng(47.389712, 8.517076); // TODO use coordinates of the respective community
 
-  BazaarBusinessData(title, description, this.coordinates, image, this.openingHours, this.offerings)
-      : super(title, description, image);
+  BazaarBusinessData(title, description, keywords, image, this.coordinates, this.openingHours, this.offerings)
+      : super(title, description, keywords, image);
 
   @override
   String get info {
@@ -55,6 +67,44 @@ class BazaarBusinessData extends BazaarItemData {
 
   @override
   Icon get icon => Icon(Icons.business);
+}
+
+/// associated keywords (rather than a single category) cf. discussion https://github.com/encointer/encointer-wallet-flutter/issues/233
+enum Keyword {
+  food,
+  cloths,
+  furniture,
+  tool,
+  device,
+  vehicle,
+  electronics,
+  software,
+  service,
+  finance,
+  commodity,
+  outdoors,
+  livingRoom,
+  kitchen,
+  workshop,
+  garage,
+  bedroom,
+  bathroom,
+  cooking,
+  cleaning,
+  grooming,
+  playing,
+  learning,
+  gaming,
+  sport,
+  leisure,
+  spring,
+  summer,
+  autumn,
+  winter,
+  forWomen,
+  forMen,
+  forChildren,
+  forAnimals,
 }
 
 class OpeningHours {
