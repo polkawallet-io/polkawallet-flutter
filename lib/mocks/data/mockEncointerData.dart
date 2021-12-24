@@ -1,18 +1,19 @@
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
 
 const String zueriLoi = 'Züri Loi';
 const String zul = 'ZUL';
-const String cid = '0x22c51e6a656b19dd1e34c6126a75b8af02b38eedbeec51865063f142c83d40d3';
+CommunityIdentifier cid = CommunityIdentifier.fromFmtString('gbsuv7YXq9G');
+CommunityIdentifier cid2 = CommunityIdentifier.fromFmtString('hbsuv7YXq9G');
+CommunityIdentifier cid3 = CommunityIdentifier.fromFmtString('ibsuv7YXq9G');
 
-const List<String> communityIdentifiers = [
+List<CommunityIdentifier> communityIdentifiers = [
   cid,
-  '0x2ebf164a5bb618ec6caad31488161b237e24d75efa3040286767b620d9183989',
-  '0xc792bf36f892404a27603ffd14cd5a12e794ed3c740bab0929ba55b8c747c615',
+  cid2,
+  cid3,
 ];
 
-const List<Map<String, dynamic>> communities = [
-  {'cid': cid, 'name': zueriLoi}
-];
+List<CidName> communities = [new CidName(cid, zueriLoi)];
 
 const Map<String, dynamic> communityMetadata = {
   'name': 'Züri Loi',
@@ -24,12 +25,12 @@ const Map<String, dynamic> communityMetadata = {
 
 const double demurrage = 1.1267607882072287e-7;
 
-const Map<String, dynamic> claim = {
+Map<String, dynamic> claim = {
   'claimant_public': '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
   'ceremony_index': 63,
   'community_identifier': cid,
   'meetup_index': 1,
-  'location': {'lon': '0xffffffffffffffe72ff3493858360000', 'lat': '0x000000000000001987d96638433d0000'},
+  'location': {'lat': '18.2341235412345', 'lon': '35.18324513451'},
   'timestamp': 1592719549549,
   'number_of_participants_confirmed': 3
 };
@@ -42,4 +43,4 @@ const List<String> meetupRegistry = [
 
 const CeremonyPhase initialPhase = CeremonyPhase.REGISTERING;
 
-const Map<String, dynamic> balanceEntry = {'principal': 23.4, 'last_update': 4};
+const Map<String, dynamic> balanceEntry = {'principal': 23.4, 'lastUpdate': 4};

@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         # lower api-levels would be supported but the webView that is pre-installed on these images does not.
-        api-level: [28] # 30 is broken for now, 29 is way too flaky
+        api-level: [29] # 30 is broken for now, 29 is way too flaky
         include:
           - os: macos-latest
             # needs to be the `id` from the devices given by `avdmanager list device`
@@ -66,6 +66,34 @@ jobs:
         working-directory: ./scripts
         run: source ./init_env.sh && ./build_js.sh
 
+      - name: Gradle cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
+
+      - name: AVD cache
+        uses: actions/cache@v2
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}-${{ matrix.device }}
+
+      - name: "Create AVD and generate a clean snapshot for caching"
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          profile: ${{ matrix.device }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+
       - name: "Android Integration Tests"
         uses: reactivecircus/android-emulator-runner@v2
         env:
@@ -75,6 +103,10 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           profile: ${{ matrix.device }}
+          force-avd-creation: false
+          # as we use the cleanly cached emulator, we need to define `-no-snapshot-save` here.
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
           script: ./scripts/android_integration_test.sh
 
       - name: "Upload screenshots"

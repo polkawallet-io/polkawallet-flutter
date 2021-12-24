@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 
@@ -10,7 +11,7 @@ class EncointerBalanceData {
   EncointerBalanceData(this.cid, this.balanceEntry);
 
   @observable
-  final String cid;
+  final CommunityIdentifier cid;
   @observable
   final BalanceEntry balanceEntry;
 
@@ -23,7 +24,7 @@ class EncointerBalanceData {
   Map<String, dynamic> toJson() => _$EncointerBalanceDataToJson(this);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable()
 class BalanceEntry {
   BalanceEntry(this.principal, this.lastUpdate);
 

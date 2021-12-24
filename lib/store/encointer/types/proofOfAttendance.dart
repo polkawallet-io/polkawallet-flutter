@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 // Run: `flutter pub run build_runner build` in order to create/update the *.g.dart
@@ -20,7 +21,7 @@ class ProofOfAttendance {
 
   String proverPublic;
   int ceremonyIndex;
-  String communityIdentifier;
+  CommunityIdentifier communityIdentifier;
   String attendeePublic;
   Map<String, String> attendeeSignature;
 

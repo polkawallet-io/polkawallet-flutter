@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,7 +34,7 @@ class LocalStorage {
     return storage.getKV(currentAccountKey);
   }
 
-  Future<void> setChosenCid(String cid) async {
+  Future<void> setChosenCid(CommunityIdentifier cid) async {
     return storage.setKV(encointerCommunityKey, cid);
   }
 

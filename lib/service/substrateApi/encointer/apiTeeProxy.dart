@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:encointer_wallet/service/substrateApi/api.dart';
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:encointer_wallet/store/encointer/types/workerApi.dart';
 
@@ -19,26 +20,26 @@ class Ceremonies {
 
   final Api apiRoot;
 
-  Future<int> participantCount(String cid) async {
+  Future<int> participantCount(CommunityIdentifier cid) async {
     // count does not need an explicit parse as the worker returns a js-native `number`
-    return await apiRoot.evalJavascript('worker.getParticipantCount("$cid")');
+    return await apiRoot.evalJavascript('worker.getParticipantCount(${jsonEncode(cid)})');
   }
 
-  Future<int> participantIndex(String cid, String pubKey, String pin) async {
+  Future<int> participantIndex(CommunityIdentifier cid, String pubKey, String pin) async {
     return apiRoot
-        .evalJavascript('worker.getParticipantIndex(${jsonEncode(PubKeyPinPair(pubKey, pin))}, "$cid")')
+        .evalJavascript('worker.getParticipantIndex(${jsonEncode(PubKeyPinPair(pubKey, pin))}, ${jsonEncode(cid)})')
         .then((value) => int.parse(value));
   }
 
-  Future<int> meetupIndex(String cid, String pubKey, String pin) async {
+  Future<int> meetupIndex(CommunityIdentifier cid, String pubKey, String pin) async {
     return apiRoot
-        .evalJavascript('worker.getMeetupIndex(${jsonEncode(PubKeyPinPair(pubKey, pin))}, "$cid")')
+        .evalJavascript('worker.getMeetupIndex(${jsonEncode(PubKeyPinPair(pubKey, pin))}, ${jsonEncode(cid)})')
         .then((value) => int.parse(value));
   }
 
-  Future<List<String>> meetupRegistry(String cid, String pubKey, String pin) async {
+  Future<List<String>> meetupRegistry(CommunityIdentifier cid, String pubKey, String pin) async {
     return apiRoot
-        .evalJavascript('worker.getMeetupRegistry(${jsonEncode(PubKeyPinPair(pubKey, pin))}, "$cid")')
+        .evalJavascript('worker.getMeetupRegistry(${jsonEncode(PubKeyPinPair(pubKey, pin))}, ${jsonEncode(cid)})')
         .then((value) => List<String>.from(value));
   }
 }
@@ -48,9 +49,9 @@ class Balances {
 
   final Api apiRoot;
 
-  Future<BalanceEntry> balance(String cid, String pubKey, String pin) async {
+  Future<BalanceEntry> balance(CommunityIdentifier cid, String pubKey, String pin) async {
     return apiRoot
-        .evalJavascript('worker.getBalance(${jsonEncode(PubKeyPinPair(pubKey, pin))}, "$cid")')
+        .evalJavascript('worker.getBalance(${jsonEncode(PubKeyPinPair(pubKey, pin))}, ${jsonEncode(cid)})')
         .then((balance) => BalanceEntry.fromJson(balance));
   }
 }

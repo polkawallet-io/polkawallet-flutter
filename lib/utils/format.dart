@@ -3,8 +3,6 @@ import 'dart:core';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:base58check/base58.dart';
-import 'package:base58check/base58check.dart';
 import 'package:convert/convert.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
@@ -26,13 +24,6 @@ class Fmt {
       return addr;
     }
     return addr.substring(0, pad) + '...' + addr.substring(addr.length - pad);
-  }
-
-  static String communityIdentifier(String cid, {int pad = 8}) {
-    List<int> cidBytes = hexToBytes(cid);
-    Base58Codec codec = Base58Codec(Base58CheckCodec.BITCOIN_ALPHABET);
-    var cidBase58 = codec.encode(cidBytes);
-    return address(cidBase58, pad: pad);
   }
 
   static String dateTime(DateTime time) {
@@ -270,6 +261,10 @@ class Fmt {
     return result;
   }
 
+  static String bytesToHex(List<int> bytes) {
+    return "0x" + hex.encode(bytes);
+  }
+
   static String accountDisplayNameString(String address, Map accInfo) {
     String display = Fmt.address(address, pad: 6);
     if (accInfo != null) {
@@ -313,12 +308,7 @@ class Fmt {
   }
 
   /// Formats fixed point number with the amount of fractional digits given by [fixedPointFraction].
-  static String degree(BigInt degree, {int fixedPointFraction = 64, int fractionDisplay = 3}) {
-    return (degree / BigInt.two.pow(fixedPointFraction)).toStringAsFixed(fractionDisplay);
-  }
-
-  /// Formats fixed point number with the amount of fractional digits given by [fixedPointFraction].
-  static String degreeFromHex(String degree, {int fixedPointFraction = 64, int fractionDisplay = 3}) {
-    return Fmt.degree(BigInt.parse(degree));
+  static String degree(String degree, {int fixedPointFraction = 64, int fractionDisplay = 3}) {
+    return (double.tryParse(degree) ?? 0.0).toStringAsFixed(fractionDisplay);
   }
 }

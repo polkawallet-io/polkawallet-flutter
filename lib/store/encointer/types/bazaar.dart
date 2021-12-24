@@ -9,6 +9,8 @@ import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
 
+import 'communities.dart';
+
 // Run: `flutter pub run build_runner build --delete-conflicting-outputs` in order to create/update the *.g.dart
 part 'bazaar.g.dart';
 
@@ -136,7 +138,7 @@ class BusinessIdentifier {
   BusinessIdentifier(this.cid, this.controller);
 
   /// community identifier of the community the business belongs to
-  final String cid;
+  final CommunityIdentifier cid;
 
   /// controller account of the business
   final String controller;

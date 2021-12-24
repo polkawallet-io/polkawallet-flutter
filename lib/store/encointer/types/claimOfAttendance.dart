@@ -1,7 +1,9 @@
 import 'dart:convert';
 
-import 'package:json_annotation/json_annotation.dart';
 import 'package:encointer_wallet/store/encointer/types/location.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+import 'communities.dart';
 
 // Run: `flutter pub run build_runner build` in order to create/update the *.g.dart
 
@@ -11,13 +13,13 @@ part 'claimOfAttendance.g.dart';
 // field rename such that the fields match the ones defined in the runtime
 @JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class ClaimOfAttendance {
-  ClaimOfAttendance(this.claimantPublic, this.ceremonyIndex, this.communityIdentifier, this.meetupIndex, this.location,
-      this.timestamp, this.numberOfParticipantsConfirmed);
+  ClaimOfAttendance(this.claimantPublic, this.ceremonyIndex, this.communityIdentifier, this.meetupLocationIndex,
+      this.location, this.timestamp, this.numberOfParticipantsConfirmed);
 
   String claimantPublic;
   int ceremonyIndex;
-  String communityIdentifier;
-  int meetupIndex;
+  CommunityIdentifier communityIdentifier;
+  int meetupLocationIndex;
   Location location;
   int timestamp;
   int numberOfParticipantsConfirmed;

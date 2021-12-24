@@ -1,4 +1,5 @@
 import 'package:encointer_wallet/store/encointer/types/bazaar.dart';
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 
 const String controller1 = '0x1cc4e46bbd2bb547d93d952c5de12ea7e3a3f3b638551a8eaf35ad086700c00c';
 const String controller2 = '0x2cc4e46bbd2bb547d93d952c5de12ea7e3a3f3b638551a8eaf35ad086700c00c';
@@ -8,8 +9,8 @@ const String business_ipfs_cid1 = '0x1ebf164a5bb618ec6caad31488161b237e24d75efa3
 const String business_ipfs_cid2 = '0x2ebf164a5bb618ec6caad31488161b237e24d75efa3040286767b620d9183989';
 const String business_ipfs_cid3 = '0x3ebf164a5bb618ec6caad31488161b237e24d75efa3040286767b620d9183989';
 
-const String cid1 = '0x5ebf164a5bb618ec6caad31488161b237e24d75efa3040286767b620d9183989';
-const String cid2 = '0x6ebf164a5bb618ec6caad31488161b237e24d75efa3040286767b620d9183989';
+final CommunityIdentifier cid1 = CommunityIdentifier.fromFmtString("gbsuv7YXq9G");
+final CommunityIdentifier cid2 = CommunityIdentifier.fromFmtString("fbsuv7YXq9G");
 
 final BusinessIdentifier bid1 = BusinessIdentifier(cid1, controller1);
 final BusinessIdentifier bid2 = BusinessIdentifier(cid1, controller2);

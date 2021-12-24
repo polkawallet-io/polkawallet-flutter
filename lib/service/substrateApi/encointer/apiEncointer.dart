@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:encointer_wallet/config/consts.dart';
+import 'package:encointer_wallet/mocks/data/mockBazaarData.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/encointer/types/bazaar.dart';
 import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
-import 'package:encointer_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:encointer_wallet/store/encointer/types/communities.dart';
+import 'package:encointer_wallet/store/encointer/types/encointerBalanceData.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
 import 'package:encointer_wallet/store/encointer/types/location.dart';
 import 'package:encointer_wallet/store/encointer/types/proofOfAttendance.dart';
-import 'package:encointer_wallet/store/encointer/types/bazaar.dart';
-import 'package:encointer_wallet/mocks/data/mockBazaarData.dart';
 import 'package:encointer_wallet/utils/format.dart';
 
 import 'apiNoTee.dart';
@@ -109,7 +109,7 @@ class ApiEncointer {
   /// This is off-chain and trusted in Cantillon.
   Future<int> getMeetupIndex() async {
     print("api: getMeetupIndex");
-    String cid = store.encointer.chosenCid;
+    CommunityIdentifier cid = store.encointer.chosenCid;
     String pubKey = store.account.currentAccountPubKey;
 
     if (pubKey == null) return 0;
@@ -128,22 +128,23 @@ class ApiEncointer {
 
   /// Queries the Communities pallet: encointerCommunities.locations(cid)
   ///
-  /// Fixme: JS currently returns locations[0] instead of locations[mIndex -1].
-  ///
   /// This is on-chain in Cantillon
   Future<void> getMeetupLocation() async {
     print("api: getMeetupLocation");
     String address = store.account.currentAccountPubKey;
-    String cid = store.encointer.chosenCid;
+    CommunityIdentifier cid = store.encointer.chosenCid;
     if (cid == null) {
       return;
     }
     int mIndex = store.encointer.meetupIndex;
     Map<String, dynamic> locj =
-        await apiRoot.evalJavascript('encointer.getNextMeetupLocation("$cid", "$mIndex","$address")');
+        await apiRoot.evalJavascript('encointer.getNextMeetupLocation(${jsonEncode(cid)}, "$mIndex","$address")');
     print("api: Next Meetup Location: " + locj.toString());
-    Location loc = Location.fromJson(locj);
-    store.encointer.setMeetupLocation(loc);
+
+    if (locj != null) {
+      Location loc = Location.fromJson(locj);
+      store.encointer.setMeetupLocation(loc);
+    }
   }
 
   /// Queries the Communities pallet: encointerCommunities.communityMetadata(cid)
@@ -151,13 +152,13 @@ class ApiEncointer {
   /// This is on-chain in Cantillon
   Future<void> getCommunityMetadata() async {
     print("api: getCommunityMetadata");
-    String cid = store.encointer.chosenCid;
+    CommunityIdentifier cid = store.encointer.chosenCid;
     if (cid == null) {
       return;
     }
 
     CommunityMetadata meta = await apiRoot
-        .evalJavascript('encointer.getCommunityMetadata("$cid")')
+        .evalJavascript('encointer.getCommunityMetadata(${jsonEncode(cid)})')
         .then((m) => CommunityMetadata.fromJson(m));
 
     print("api: community metadata: " + meta.toString());
@@ -174,12 +175,12 @@ class ApiEncointer {
   ///
   /// This is on-chain in Cantillon
   Future<void> getDemurrage() async {
-    String cid = store.encointer.chosenCid;
+    CommunityIdentifier cid = store.encointer.chosenCid;
     if (cid == null) {
       return;
     }
 
-    double dem = await apiRoot.evalJavascript('encointer.getDemurrage("$cid")');
+    double dem = await apiRoot.evalJavascript('encointer.getDemurrage(${jsonEncode(cid)})');
     print("api: fetched demurrage: $dem");
     store.encointer.setDemurrage(dem);
   }
@@ -200,14 +201,14 @@ class ApiEncointer {
   /// We could fetch the phaseDurations at application startup, cache them and supply them in the call here.
   Future<DateTime> getMeetupTime() async {
     print("api: getMeetupTime");
-    if (store.encointer.communityIdentifiers == null) {
+    if (store.encointer.meetupLocation == null) {
+      print("No meetup location set. Can't get meetup time");
       return null;
     }
-    String cid = store.encointer.chosenCid ?? store.encointer.communityIdentifiers[0];
     String loc = jsonEncode(store.encointer.meetupLocation);
 
     int time = await apiRoot.evalJavascript(
-        'encointer.getNextMeetupTime("$cid", $loc, "${toValue(store.encointer.currentPhase)}", ${store.encointer.currentPhaseDuration})');
+        'encointer.getNextMeetupTime($loc, "${toValue(store.encointer.currentPhase)}", ${store.encointer.currentPhaseDuration})');
     print("api: Next Meetup Time: " + time.toString());
     store.encointer.setMeetupTime(time);
     return DateTime.fromMillisecondsSinceEpoch(time);
@@ -219,10 +220,15 @@ class ApiEncointer {
   Future<List<String>> getMeetupRegistry() async {
     print("api: getMeetupRegistry");
     int cIndex = store.encointer.currentCeremonyIndex;
-    String cid = store.encointer.chosenCid ?? [];
+    CommunityIdentifier cid = store.encointer.chosenCid;
     String pubKey = store.account.currentAccountPubKey;
     int mIndex = store.encointer.meetupIndex;
-    print("api: get meetup registry for cindex " + cIndex.toString() + " mindex " + mIndex.toString() + " cid " + cid);
+    print("api: get meetup registry for cindex " +
+        cIndex.toString() +
+        " mindex " +
+        mIndex.toString() +
+        " cid " +
+        cid.toString());
 
     List<String> registry = store.settings.endpointIsGesell
         ? await _noTee.ceremonies.meetupRegistry(cid, cIndex, mIndex)
@@ -236,7 +242,7 @@ class ApiEncointer {
   ///
   /// This is off-chain and trusted in Cantillon.
   Future<int> getParticipantIndex() async {
-    String cid = store.encointer.chosenCid;
+    CommunityIdentifier cid = store.encointer.chosenCid;
     if (cid == null) {
       return 0; // zero means: not registered
     }
@@ -269,12 +275,12 @@ class ApiEncointer {
   /// This is off-chain and trusted in Cantillon, accessible with TrustedGetter::balance(cid, accountId).
   Future<void> getEncointerBalance() async {
     String pubKey = store.account.currentAccountPubKey;
-    String cid = store.encointer.chosenCid;
+    CommunityIdentifier cid = store.encointer.chosenCid;
     if (cid == null) {
       return;
     }
 
-    print("Getting encointer balance for ${Fmt.communityIdentifier(cid)}");
+    print("Getting encointer balance for ${cid.toFmtString()}");
 
     BalanceEntry bEntry = store.settings.endpointIsGesell
         ? await _noTee.balances.balance(cid, pubKey)
@@ -299,7 +305,8 @@ class ApiEncointer {
     apiRoot.subscribeMessage(
         'encointer.subscribeCommunityIdentifiers("$_communityIdentifiersChannel")', _communityIdentifiersChannel,
         (data) async {
-      store.encointer.setCommunityIdentifiers(data.cast<String>());
+      List<CommunityIdentifier> cids = List.from(data).map((cn) => CommunityIdentifier.fromJson(cn)).toList();
+      store.encointer.setCommunityIdentifiers(cids);
 
       await this.communitiesGetAll();
     });
@@ -314,13 +321,13 @@ class ApiEncointer {
       apiRoot.unsubscribeMessage(_participantIndexChannel);
     }
     String account = store.account.currentAccountPubKey;
-    String cid = store.encointer.chosenCid;
+    CommunityIdentifier cid = store.encointer.chosenCid;
     if (cid == null) {
       return 0; // zero means: not registered
     }
     int cIndex = store.encointer.currentCeremonyIndex;
     apiRoot.subscribeMessage(
-        'encointer.subscribeParticipantIndex("$_participantIndexChannel", "$cid", "$cIndex", "$account")',
+        'encointer.subscribeParticipantIndex("$_participantIndexChannel", ${jsonEncode(cid)}, "$cIndex", "$account")',
         _participantIndexChannel, (data) {
       store.encointer.setParticipantIndex(int.parse(data));
     });
@@ -335,13 +342,13 @@ class ApiEncointer {
     apiRoot.unsubscribeMessage(_encointerBalanceChannel);
 
     String account = store.account.currentAccountPubKey;
-    String cid = store.encointer.chosenCid;
+    CommunityIdentifier cid = store.encointer.chosenCid;
     if (cid == null) {
       return;
     }
 
     apiRoot.subscribeMessage(
-      'encointer.subscribeBalance("$_encointerBalanceChannel", "$cid", "$account")',
+      'encointer.subscribeBalance("$_encointerBalanceChannel", ${jsonEncode(cid)}, "$account")',
       _encointerBalanceChannel,
       (data) {
         BalanceEntry balance = BalanceEntry.fromJson(data);
@@ -357,10 +364,11 @@ class ApiEncointer {
   /// Queries the EncointerCurrencies pallet: encointerCurrencies.communityIdentifiers().
   ///
   /// This is on-chain in Cantillon.
-  Future<List<String>> getCommunityIdentifiers() async {
-    Map<String, dynamic> res = await apiRoot.evalJavascript('encointer.getCommunityIdentifiers()');
+  Future<List<CommunityIdentifier>> getCommunityIdentifiers() async {
+    List<CommunityIdentifier> cids = await apiRoot
+        .evalJavascript('encointer.getCommunityIdentifiers()')
+        .then((res) => List.from(res['cids']).map((cn) => CommunityIdentifier.fromJson(cn)).toList());
 
-    List<String> cids = List<String>.from(res['cids']);
     print("CID: " + cids.toString());
     store.encointer.setCommunityIdentifiers(cids);
     return cids;
@@ -398,8 +406,8 @@ class ApiEncointer {
     var cid = store.encointer.chosenCid;
     var cIndex = store.encointer.currentCeremonyIndex;
     var pin = store.account.cachedPin;
-    var proofJs =
-        await apiRoot.evalJavascript('encointer.getProofOfAttendance("$pubKey", "$cid", "${cIndex - 1}", "$pin")');
+    var proofJs = await apiRoot
+        .evalJavascript('encointer.getProofOfAttendance("$pubKey", ${jsonEncode(cid)}, "${cIndex - 1}", "$pin")');
     ProofOfAttendance proof = ProofOfAttendance.fromJson(proofJs);
     print("Proof: ${proof.toString()}");
     return proof;

@@ -71,7 +71,6 @@ class _PasswordInputDialogState extends State<PasswordInputDialog> {
       );
     } else {
       widget.onOk(password);
-      Navigator.of(context).pop();
     }
   }
 
@@ -125,7 +124,12 @@ class _PasswordInputDialogState extends State<PasswordInputDialog> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [_submitting ? CupertinoActivityIndicator() : Container(), Text(dic['ok'])],
           ),
-          onPressed: _submitting ? null : () => _onOk(_passCtrl.text.trim()),
+          onPressed: _submitting
+              ? null
+              : () {
+                  _onOk(_passCtrl.text.trim());
+                  Navigator.of(context).pop();
+                },
         ),
       ],
     );

@@ -7,10 +7,10 @@ part 'location.g.dart';
 
 @JsonSerializable(createFactory: false)
 class Location {
-  Location(this.lon, this.lat);
+  Location(this.lat, this.lon);
 
-  final String lon;
   final String lat;
+  final String lon;
 
   @override
   String toString() {
@@ -19,8 +19,8 @@ class Location {
 
   // explicitly use `toString()`, which works for the old `Degree` type `i64` and the new one `i128`
   factory Location.fromJson(Map<String, dynamic> json) => Location(
-        json['lon'].toString(),
         json['lat'].toString(),
+        json['lon'].toString(),
       );
   Map<String, dynamic> toJson() => _$LocationToJson(this);
 }

@@ -10,7 +10,9 @@ ProofOfAttendance _$ProofOfAttendanceFromJson(Map<String, dynamic> json) {
   return ProofOfAttendance(
     json['prover_public'] as String,
     json['ceremony_index'] as int,
-    json['community_identifier'] as String,
+    json['community_identifier'] == null
+        ? null
+        : CommunityIdentifier.fromJson(json['community_identifier'] as Map<String, dynamic>),
     json['attendee_public'] as String,
     (json['attendee_signature'] as Map<String, dynamic>)?.map(
       (k, e) => MapEntry(k, e as String),
@@ -21,7 +23,7 @@ ProofOfAttendance _$ProofOfAttendanceFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$ProofOfAttendanceToJson(ProofOfAttendance instance) => <String, dynamic>{
       'prover_public': instance.proverPublic,
       'ceremony_index': instance.ceremonyIndex,
-      'community_identifier': instance.communityIdentifier,
+      'community_identifier': instance.communityIdentifier?.toJson(),
       'attendee_public': instance.attendeePublic,
       'attendee_signature': instance.attendeeSignature,
     };

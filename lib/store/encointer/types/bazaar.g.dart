@@ -78,7 +78,7 @@ Map<String, dynamic> _$AccountBusinessTupleToJson(AccountBusinessTuple instance)
 
 BusinessIdentifier _$BusinessIdentifierFromJson(Map<String, dynamic> json) {
   return BusinessIdentifier(
-    json['cid'] as String,
+    json['cid'] == null ? null : CommunityIdentifier.fromJson(json['cid'] as Map<String, dynamic>),
     json['controller'] as String,
   );
 }

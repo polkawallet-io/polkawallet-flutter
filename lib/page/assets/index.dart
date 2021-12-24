@@ -27,6 +27,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 class Assets extends StatefulWidget {
   Assets(this.store);
+
   final AppStore store;
 
   @override
@@ -39,7 +40,7 @@ class _AssetsState extends State<Assets> {
   final AppStore store;
 
   bool _faucetSubmitting = false;
-  bool _dialogIsShown = false;
+  bool _enteredPin = false;
 
   Future<void> _handleScan() async {
     final Map dic = I18n.of(context).account;
@@ -289,9 +290,6 @@ class _AssetsState extends State<Assets> {
   }
 
   Future<void> _showPasswordDialog(BuildContext context) async {
-    setState(() {
-      _dialogIsShown = true;
-    });
     await showCupertinoDialog(
       context: context,
       builder: (_) {
@@ -314,7 +312,7 @@ class _AssetsState extends State<Assets> {
       },
     );
     setState(() {
-      _dialogIsShown = false;
+      _enteredPin = true;
     });
   }
 
@@ -372,8 +370,9 @@ class _AssetsState extends State<Assets> {
           }
           final BalancesInfo balancesInfo = store.assets.balances[symbol];
           if (ModalRoute.of(context).isCurrent &&
-              !_dialogIsShown & store.account.cachedPin.isEmpty & !store.settings.endpointIsGesell) {
-            _dialogIsShown = true;
+              !_enteredPin & store.account.cachedPin.isEmpty & !store.settings.endpointIsGesell) {
+            // The pin is not immeditally propagated to the store, hence we track if the pin has been entered to prevent
+            // showing the dialog multiple times.
             WidgetsBinding.instance.addPostFrameCallback(
               (_) {
                 _showPasswordDialog(context);
@@ -495,7 +494,7 @@ class _AssetsState extends State<Assets> {
                           ? () {
                               Navigator.pushNamed(context, AssetPage.route,
                                   arguments: AssetPageParams(
-                                      token: store.encointer.chosenCid,
+                                      token: store.encointer.chosenCid.toFmtString(),
                                       isEncointerCommunityCurrency: true,
                                       communityName: store.encointer.communityName,
                                       communitySymbol: store.encointer.communitySymbol));

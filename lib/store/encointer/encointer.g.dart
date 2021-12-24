@@ -205,13 +205,13 @@ mixin _$EncointerStore on _EncointerStore, Store {
   final _$balanceEntriesAtom = Atom(name: '_EncointerStore.balanceEntries');
 
   @override
-  Map<String, BalanceEntry> get balanceEntries {
+  Map<CommunityIdentifier, BalanceEntry> get balanceEntries {
     _$balanceEntriesAtom.reportRead();
     return super.balanceEntries;
   }
 
   @override
-  set balanceEntries(Map<String, BalanceEntry> value) {
+  set balanceEntries(Map<CommunityIdentifier, BalanceEntry> value) {
     _$balanceEntriesAtom.reportWrite(value, super.balanceEntries, () {
       super.balanceEntries = value;
     });
@@ -220,13 +220,13 @@ mixin _$EncointerStore on _EncointerStore, Store {
   final _$communityIdentifiersAtom = Atom(name: '_EncointerStore.communityIdentifiers');
 
   @override
-  List<String> get communityIdentifiers {
+  List<CommunityIdentifier> get communityIdentifiers {
     _$communityIdentifiersAtom.reportRead();
     return super.communityIdentifiers;
   }
 
   @override
-  set communityIdentifiers(List<String> value) {
+  set communityIdentifiers(List<CommunityIdentifier> value) {
     _$communityIdentifiersAtom.reportWrite(value, super.communityIdentifiers, () {
       super.communityIdentifiers = value;
     });
@@ -250,13 +250,13 @@ mixin _$EncointerStore on _EncointerStore, Store {
   final _$chosenCidAtom = Atom(name: '_EncointerStore.chosenCid');
 
   @override
-  String get chosenCid {
+  CommunityIdentifier get chosenCid {
     _$chosenCidAtom.reportRead();
     return super.chosenCid;
   }
 
   @override
-  set chosenCid(String value) {
+  set chosenCid(CommunityIdentifier value) {
     _$chosenCidAtom.reportWrite(value, super.chosenCid, () {
       super.chosenCid = value;
     });
@@ -452,7 +452,7 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void setCommunityIdentifiers(List<String> cids) {
+  void setCommunityIdentifiers(List<CommunityIdentifier> cids) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(name: '_EncointerStore.setCommunityIdentifiers');
     try {
       return super.setCommunityIdentifiers(cids);
@@ -492,7 +492,7 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void setChosenCid([String cid]) {
+  void setChosenCid([CommunityIdentifier cid]) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(name: '_EncointerStore.setChosenCid');
     try {
       return super.setChosenCid(cid);
@@ -522,7 +522,7 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void addBalanceEntry(String cid, BalanceEntry balanceEntry) {
+  void addBalanceEntry(CommunityIdentifier cid, BalanceEntry balanceEntry) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(name: '_EncointerStore.addBalanceEntry');
     try {
       return super.addBalanceEntry(cid, balanceEntry);

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/page/account/txConfirmPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
@@ -83,9 +84,29 @@ class _RegisterParticipantPanel extends State<RegisterParticipantPanel> {
                 ),
           CheckboxListTile(
             title: Text(dic["meetup.attended"]),
-            onChanged: (bool value) {
-              if (value && proof == null) {
-                proof = webApi.encointer.getProofOfAttendance();
+            onChanged: (bool value) async {
+              if (value) {
+                if (store.account.cachedPin.isNotEmpty) {
+                  proof = webApi.encointer.getProofOfAttendance();
+                } else {
+                  showCupertinoDialog(
+                    context: context,
+                    builder: (context) {
+                      return showPasswordInputDialog(
+                          context,
+                          store.account.currentAccount,
+                          Text(I18n.of(context).home['unlock.account'].replaceAll(
+                              'CURRENT_ACCOUNT_NAME', store.account.currentAccount.name.toString())), (password) {
+                        store.account.setPin(password);
+
+                        // If we don't wait, the pin has not propagated to the state and we will get a password check error
+                        Future.delayed(const Duration(milliseconds: 1000), () {
+                          proof = webApi.encointer.getProofOfAttendance();
+                        });
+                      });
+                    },
+                  );
+                }
               }
               setState(() {
                 attendedLastMeetup = value;
