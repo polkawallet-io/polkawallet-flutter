@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/page/profile/settings/remoteNodeListPage.dart';
 import 'package:encointer_wallet/page/profile/settings/ss58PrefixListPage.dart';
 import 'package:encointer_wallet/store/settings.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class SettingsPage extends StatefulWidget {
   SettingsPage(this.store, this.changeLang);
@@ -21,10 +21,7 @@ class _Settings extends State<SettingsPage> {
   final SettingsStore store;
   final Function changeLang;
 
-  final _langOptions = [
-    null,
-    'en',
-  ];
+  final _langOptions = [null, 'en', 'de'];
 
   int _selected = 0;
 
@@ -36,6 +33,8 @@ class _Settings extends State<SettingsPage> {
       switch (code) {
         case 'en':
           return 'English';
+        case 'de':
+          return 'Deutsch';
         default:
           return dic['setting.lang.auto'];
       }

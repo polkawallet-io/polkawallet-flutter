@@ -28,7 +28,7 @@ class _CommunityChooserPanelState extends State<CommunityChooserPanel> {
         padding: EdgeInsets.symmetric(vertical: 8),
         child: Column(
           children: <Widget>[
-            Text("Choose community:"),
+            Text(dic['community.choose']),
             Observer(
               builder: (_) => (store.encointer.communities == null)
                   ? CupertinoActivityIndicator()

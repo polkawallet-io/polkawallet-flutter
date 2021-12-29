@@ -17,7 +17,7 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<I18n> {
   final Locale overriddenLocale;
 
   @override
-  bool isSupported(Locale locale) => ['en', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => ['en', 'de', 'zh'].contains(locale.languageCode);
 
   @override
   Future<I18n> load(Locale locale) {
@@ -46,6 +46,14 @@ class I18n {
       'encointer': enNctr,
       'bazaar': enBazaar,
     },
+    'de': {
+      'home': deHome,
+      'account': deAccount,
+      'assets': deAssets,
+      'profile': deProfile,
+      'encointer': deNctr,
+      'bazaar': deBazaar,
+    }
   };
 
   Map<String, String> get home {

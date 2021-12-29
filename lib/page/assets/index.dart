@@ -507,7 +507,8 @@ class _AssetsState extends State<Assets> {
                     padding: EdgeInsets.symmetric(vertical: 8),
                     child: (store.encointer.chosenCid == null)
                         ? Container(
-                            width: double.infinity, child: Text('No community selected', textAlign: TextAlign.center))
+                            width: double.infinity,
+                            child: Text(dic['community.not.selected'], textAlign: TextAlign.center))
                         : Container(
                             width: double.infinity,
                             child: CupertinoActivityIndicator(),
