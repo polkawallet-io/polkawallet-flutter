@@ -1,4 +1,5 @@
 import 'package:encointer_wallet/page-encointer/bazaar/menu/2_my_businesses/businessFormState.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -156,8 +157,8 @@ class AddOpeningIntervalForDay extends StatelessWidget {
         // ],
         autofocus: true,
         decoration: InputDecoration(
-            labelText: 'Add a time interval',
-            hintText: 'e.g. 8:15-14:45 or 9-5pm',
+            labelText: I18n.of(context).bazaar['time.interval.add'],
+            hintText: I18n.of(context).bazaar['openning.hours.input.hint'],
             contentPadding: EdgeInsets.all(8),
             errorText: openingHoursForDay.timeFormatError),
         controller: _textController,

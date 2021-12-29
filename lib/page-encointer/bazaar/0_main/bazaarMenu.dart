@@ -1,5 +1,6 @@
 import 'package:encointer_wallet/page-encointer/bazaar/menu/1_my_offerings/myOfferings.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/menu/2_my_businesses/myBusinesses.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/material.dart';
 
 class BazaarMenu extends StatelessWidget {
@@ -9,6 +10,7 @@ class BazaarMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var dic = I18n.of(context).bazaar;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -23,7 +25,7 @@ class BazaarMenu extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('My Offerings'),
+            title: Text(dic['offerings.my']),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
@@ -35,7 +37,7 @@ class BazaarMenu extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('My Businesses'),
+            title: Text(dic['businesses.my']),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
@@ -50,7 +52,7 @@ class BazaarMenu extends StatelessWidget {
             height: 50,
           ),
           ListTile(
-            title: const Text('Notifications'),
+            title: Text(dic['notifications']),
             onTap: () {
               // Update the state of the app
               // ...

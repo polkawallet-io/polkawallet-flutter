@@ -1,5 +1,6 @@
-import 'package:encointer_wallet/page-encointer/bazaar/shared/toggleButtonsWithTitle.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shared/data_model/demo_data/demoData.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/shared/toggleButtonsWithTitle.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -17,15 +18,15 @@ class SearchResultsOfferingFiltered extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var titleStyle = TextStyle(fontWeight: FontWeight.bold, height: 2.5);
-
+    var dic = I18n.of(context).bazaar;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Filter found offerings"),
+        title: Text("Filter ${dic['found']} ${dic['offerings']}"),
       ),
       body: ListView(children: [
-        ToggleButtonsWithTitle("Categories", categories, null), // TODO state management
+        ToggleButtonsWithTitle(dic['categories'], categories, null), // TODO state management
         Text(
-          "Price",
+          dic['price'],
           style: titleStyle,
         ),
         RangeSlider(
@@ -42,13 +43,13 @@ class SearchResultsOfferingFiltered extends StatelessWidget {
           },
         ),
         Text(
-          "Delivery",
+          dic['delivery'],
           style: titleStyle,
         ),
         ToggleButtons(
             children: deliveryOptions.map((option) => Text(option)).toList(), isSelected: selectedDeliveryOptions),
         Text(
-          "Product Newness",
+          dic['product.newness'],
           style: titleStyle,
         ),
         ToggleButtons(
@@ -59,10 +60,10 @@ class SearchResultsOfferingFiltered extends StatelessWidget {
         children: [
           ElevatedButton(
               onPressed: () => null, // TODO state management
-              child: Text("Reset")),
+              child: Text(dic['reset'])),
           ElevatedButton(
               onPressed: () => null, //TODO state management
-              child: Text("Apply")),
+              child: Text(dic['apply'])),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:encointer_wallet/page-encointer/bazaar/1_home/home.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/2_offerings/offerings.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/3_businesses/businesses.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/4_favorites/favorites.dart';
+import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,12 +18,17 @@ class BazaarMain extends StatelessWidget {
           length: bazaarTabBar.length,
           child: Scaffold(
             appBar: AppBar(
-              title: Text("The Bazaar"),
+              title: Text(I18n.of(context).bazaar['bazaar.title']),
               centerTitle: true,
               // leading: IconButton(icon: Image.asset('assets/images/assets/ERT.png'), onPressed: () => _chooseCommunity()), // TODO
               leading: IconButton(icon: Image.asset('assets/images/assets/ERT.png'), onPressed: () => null),
               bottom: TabBar(
-                tabs: bazaarTabBar,
+                tabs: <Widget>[
+                  Tab(icon: Icon(Icons.home), text: "Home"),
+                  Tab(icon: Icon(Icons.local_offer), text: I18n.of(context).bazaar['offerings']),
+                  Tab(icon: Icon(Icons.business), text: I18n.of(context).bazaar['businesses']),
+                  Tab(icon: Icon(Icons.favorite, color: Colors.pink), text: I18n.of(context).bazaar['favorites']),
+                ],
               ),
             ),
             endDrawer: BazaarMenu(),
