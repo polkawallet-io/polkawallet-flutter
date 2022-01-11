@@ -5,12 +5,19 @@ import 'package:encointer_wallet/page-encointer/bazaar/4_favorites/favorites.dar
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:encointer_wallet/store/app.dart';
 
 import 'bazaarMainState.dart';
 import 'bazaarMenu.dart';
 import 'bazaarTabBar.dart';
 
 class BazaarMain extends StatelessWidget {
+  static final String route = '/bazaar';
+
+  final AppStore store;
+
+  BazaarMain(this.store);
+
   @override
   Widget build(BuildContext context) => Provider<BazaarMainState>(
         create: (_) => BazaarMainState(),

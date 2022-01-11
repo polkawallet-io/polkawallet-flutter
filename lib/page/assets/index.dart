@@ -1,23 +1,18 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:encointer_wallet/common/components/BorderedTitle.dart';
-import 'package:encointer_wallet/common/components/addressIcon.dart';
+import 'package:encointer_wallet/common/components/iconTextButton.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/0_main/bazaarMain.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
-import 'package:encointer_wallet/common/components/roundedCard.dart';
-import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
-import 'package:encointer_wallet/page/account/scanPage.dart';
-import 'package:encointer_wallet/page/account/uos/qrSignerPage.dart';
 import 'package:encointer_wallet/page/assets/asset/assetPage.dart';
 import 'package:encointer_wallet/page/assets/receive/receivePage.dart';
+import 'package:encointer_wallet/page/assets/transfer/transferPage.dart';
 import 'package:encointer_wallet/page/networkSelectPage.dart';
-import 'package:encointer_wallet/service/notification.dart';
+import 'package:encointer_wallet/page/profile/account/accountManagePage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/store/assets/types/balancesInfo.dart';
-import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,251 +34,165 @@ class _AssetsState extends State<Assets> {
 
   final AppStore store;
 
-  bool _faucetSubmitting = false;
   bool _enteredPin = false;
 
-  Future<void> _handleScan() async {
-    final Map dic = I18n.of(context).account;
-    final data = await Navigator.pushNamed(
-      context,
-      ScanPage.route,
-      arguments: 'tx',
-    );
-    if (data != null) {
-      if (store.account.currentAccount.observation ?? false) {
-        showCupertinoDialog(
-          context: context,
-          builder: (_) {
-            return CupertinoAlertDialog(
-              title: Text(dic['uos.title']),
-              content: Text(dic['uos.acc.invalid']),
-              actions: <Widget>[
-                CupertinoButton(
-                  child: Text(I18n.of(context).home['ok']),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            );
-          },
-        );
-        return;
-      }
-
-      final Map sender = await webApi.account.parseQrCode(data.toString().trim());
-      if (sender['signer'] != store.account.currentAddress) {
-        showCupertinoDialog(
-          context: context,
-          builder: (_) {
-            return CupertinoAlertDialog(
-              title: Text(dic['uos.title']),
-              content: sender['error'] != null
-                  ? Text(sender['error'])
-                  : sender['signer'] == null
-                      ? Text(dic['uos.qr.invalid'])
-                      : Text(dic['uos.acc.mismatch']),
-              actions: <Widget>[
-                CupertinoButton(
-                  child: Text(I18n.of(context).home['ok']),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        showCupertinoDialog(
-          context: context,
-          builder: (_) {
-            return showPasswordInputDialog(
-              context,
-              store.account.currentAccount,
-              Text(dic['uos.title']),
-              (password) {
-                print('pass ok: $password');
-                _signAsync(password);
-              },
-            );
-          },
-        );
-      }
+  @override
+  void initState() {
+    // if network connected failed, reconnect
+    if (!store.settings.loading && store.settings.networkName == null) {
+      store.settings.setNetworkLoading(true);
+      webApi.connectNodeAll();
     }
+
+    super.initState();
   }
 
-  Future<void> _signAsync(String password) async {
-    final Map dic = I18n.of(context).account;
-    final Map signed = await webApi.account.signAsync(password);
-    print('signed: $signed');
-    if (signed['error'] != null) {
-      showCupertinoDialog(
-        context: context,
-        builder: (_) {
-          return CupertinoAlertDialog(
-            title: Text(dic['uos.title']),
-            content: Text(signed['error']),
-            actions: <Widget>[
-              CupertinoButton(
-                child: Text(I18n.of(context).home['ok']),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    }
-    Navigator.of(context).pushNamed(
-      QrSignerPage.route,
-      arguments: signed['signature'].toString().substring(2),
-    );
-  }
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+        children: [
+          Observer(builder: (_) {
+            String symbol = store.settings.networkState.tokenSymbol ?? '';
 
-  Future<void> _getTokensFromFaucet() async {
-    String symbol = store.settings.networkState.tokenSymbol;
-    BalancesInfo balancesInfo = store.assets.balances[symbol];
-    bool aboveLimit = false;
-    setState(() {
-      _faucetSubmitting = true;
-    });
+            String networkName = store.settings.networkName ?? '';
 
-    var res;
-    if (balancesInfo.freeBalance - Fmt.tokenInt(faucetAmount.toString(), ert_decimals) > BigInt.zero) {
-      aboveLimit = true;
-    } else {
-      res = await webApi.encointer.sendFaucetTx();
-    }
+            List<String> communityIds = [];
+            if (store.settings.endpointIsEncointer && networkName != null) {
+              if (store.settings.networkConst['communityIds'] != null) {
+                communityIds.addAll(List<String>.from(store.settings.networkConst['communityIds']));
+              }
+              communityIds.retainWhere((i) => i != symbol);
+            }
 
-    Timer(Duration(seconds: 3), () {
-      String dialogContent = I18n.of(context).encointer['faucet.ok'];
-      bool isOK = false;
-      if (aboveLimit) {
-        dialogContent = I18n.of(context).encointer['faucet.limit'];
-      } else if (res == null || res["error"] != null) {
-        dialogContent = I18n.of(context).encointer['faucet.error'];
-
-        if (res["error"] == "balances.InsufficientBalance") {
-          dialogContent += "\nError: ${I18n.of(context).encointer['faucet.insufficientBalance']}";
-        } else {
-          dialogContent += "\nError: ${res["error"]}";
-        }
-      } else {
-        isOK = true;
-      }
-      setState(() {
-        _faucetSubmitting = false;
-      });
-
-      showCupertinoDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: Container(),
-            content: Text(dialogContent),
-            actions: <Widget>[
-              CupertinoButton(
-                child: Text(I18n.of(context).home['ok']),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  if (isOK) {
-                    globalBalanceRefreshKey.currentState.show();
-                    print("Faucet Error" + res["error"].toString());
-                    NotificationPlugin.showNotification(
-                      int.parse(res['params']
-                          [1]), // todo: Id is used to group notifications. This is probably not a good idea
-                      I18n.of(context).assets['notify.receive'],
-                      'ERT ' + Fmt.balance(res['params'][1], ert_decimals).toString(),
-                    );
-                  }
+            if (ModalRoute.of(context).isCurrent &&
+                !_enteredPin & store.account.cachedPin.isEmpty & !store.settings.endpointIsGesell) {
+              // The pin is not immeditally propagated to the store, hence we track if the pin has been entered to prevent
+              // showing the dialog multiple times.
+              WidgetsBinding.instance.addPostFrameCallback(
+                (_) {
+                  _showPasswordDialog(context);
                 },
-              ),
-            ],
-          );
-        },
-      );
-    });
-  }
+              );
+            }
+            var dic = I18n.of(context).assets;
+            AccountData acc = store.account.currentAccount;
 
-  Widget _buildTopCard(BuildContext context) {
-    var dic = I18n.of(context).assets;
-    String network = store.settings.loading ? dic['node.connecting'] : store.settings.networkName ?? dic['node.failed'];
-
-    AccountData acc = store.account.currentAccount;
-
-    final accInfo = store.account.accountIndexMap[acc.address];
-    final String accIndex = accInfo != null && accInfo['accountIndex'] != null ? '${accInfo['accountIndex']}\n' : '';
-    return RoundedCard(
-      padding: EdgeInsets.all(8),
-      child: Column(
-        children: <Widget>[
-          ListTile(
-              leading: AddressIcon('', pubKey: acc.pubKey),
-              title: Text(Fmt.accountName(context, acc)),
-              subtitle: Text(network),
-              trailing: !store.settings.loading
-                  ? GestureDetector(
-                      child: Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Column(
-                          children: <Widget>[
-                            _faucetSubmitting
-                                ? CupertinoActivityIndicator()
-                                : Icon(
-                                    Icons.card_giftcard,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 20,
-                                  ),
-                            Text(
-                              I18n.of(context).encointer['faucet.title'],
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            )
-                          ],
+            var developerMode = true;
+            return Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconTextButton(
+                      iconData: Icons.person_add_alt,
+                      text: I18n.of(context).assets['invite'],
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          TransferPage.route,
+                          arguments: TransferPageParams(
+                              redirect: AssetPage.route,
+                              symbol: store.encointer.chosenCid.toFmtString(),
+                              isEncointerCommunityCurrency: true,
+                              communitySymbol: store.encointer.communitySymbol),
+                        );
+                      },
+                    ),
+                    if (developerMode == true)
+                      IconButton(
+                        // TODO design decision where to put this functionality
+                        key: Key('choose-network'),
+                        icon: Icon(Icons.menu, color: Colors.orange),
+                        onPressed: () => Navigator.of(context).pushNamed('/network'),
+                      ),
+                    // qr-receive text:
+                    // Text(
+                    //   '$accIndex${Fmt.address(store.account.currentAddress)}',
+                    //   style: TextStyle(fontSize: 14),
+                    // ),
+                    IconTextButton(
+                      iconData: Icons.person,
+                      text: Fmt.accountName(context, acc),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => AccountManagePage(store),
                         ),
                       ),
-                      onTap: () {
-                        if (acc.address != '') {
-                          _getTokensFromFaucet();
-                        }
-                      },
-                    )
-                  : Container(width: 8)),
-          ListTile(
-            title: Row(
-              children: [
-                GestureDetector(
-                  child: Padding(
-                    key: Key('qr-receive'),
-                    padding: EdgeInsets.only(left: 2),
-                    child: Image.asset(
-                      'assets/images/assets/qrcode_${store.settings.endpoint.color ?? 'pink'}.png',
-                      width: 24,
                     ),
-                  ),
-                  onTap: () {
-                    if (acc.address != '') {
-                      Navigator.pushNamed(context, ReceivePage.route);
-                    }
+                  ],
+                ),
+                CommunityWithCommunityChooser(store),
+                Observer(
+                  builder: (_) {
+                    return (store.encointer.communityName != null) & (store.encointer.chosenCid != null)
+                        ? Container(
+                            margin: EdgeInsets.only(bottom: 32),
+                            child: Text(
+                                '${Fmt.doubleFormat(store.encointer.communityBalance)} ${store.encointer.communitySymbol}',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54)),
+                          )
+                        : Container(
+                            margin: EdgeInsets.only(top: 16),
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: (store.encointer.chosenCid == null)
+                                ? Container(
+                                    width: double.infinity,
+                                    child: Text(dic['community.not.selected'], textAlign: TextAlign.center))
+                                : Container(
+                                    width: double.infinity,
+                                    child: CupertinoActivityIndicator(),
+                                  ),
+                          );
                   },
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 8),
-                  child: Text(
-                    '$accIndex${Fmt.address(store.account.currentAddress)}',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                )
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconTextButton(
+                      text: I18n.of(context).assets['receive'],
+                      iconData: Icons.download_sharp,
+                      key: Key('qr-receive'),
+                      onTap: () {
+                        if (acc.address != '') {
+                          Navigator.pushNamed(context, ReceivePage.route);
+                        }
+                      },
+                    ),
+                    IconTextButton(
+                      text: I18n.of(context).assets['bazaar'],
+                      iconData: Icons.shopping_bag_sharp,
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          BazaarMain.route,
+                        );
+                      },
+                    ),
+                    IconTextButton(
+                      key: Key('transfer'),
+                      text: I18n.of(context).assets['transfer'],
+                      iconData: Icons.upload_sharp,
+                      onTap: store.encointer.communityBalance != null
+                          ? () {
+                              Navigator.pushNamed(
+                                context,
+                                TransferPage.route,
+                                arguments: TransferPageParams(
+                                    redirect: AssetPage.route,
+                                    symbol: store.encointer.chosenCid.toFmtString(),
+                                    isEncointerCommunityCurrency: true,
+                                    communitySymbol: store.encointer.communitySymbol),
+                              );
+                            }
+                          : null,
+                    ),
+                  ],
+                ),
               ],
-            ),
-            trailing: IconButton(
-              icon: Image.asset('assets/images/assets/qrcode_indigo.png'),
-              onPressed: () {
-                if (acc.address != '') {
-                  _handleScan();
-                }
-              },
-            ),
-          ),
+            );
+          }),
         ],
       ),
     );
@@ -334,192 +243,6 @@ class _AssetsState extends State<Assets> {
           ],
         );
       },
-    );
-  }
-
-  @override
-  void initState() {
-    // if network connected failed, reconnect
-    if (!store.settings.loading && store.settings.networkName == null) {
-      store.settings.setNetworkLoading(true);
-      webApi.connectNodeAll();
-    }
-
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).assets;
-    return ListView(
-      padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
-      children: [
-        Observer(builder: (_) {
-          String symbol = store.settings.networkState.tokenSymbol ?? '';
-
-          int decimals = store.settings.networkState.tokenDecimals ?? ert_decimals;
-          String networkName = store.settings.networkName ?? '';
-          final String tokenView = Fmt.tokenView(symbol);
-
-          List<String> communityIds = [];
-          if (store.settings.endpointIsEncointer && networkName != null) {
-            if (store.settings.networkConst['communityIds'] != null) {
-              communityIds.addAll(List<String>.from(store.settings.networkConst['communityIds']));
-            }
-            communityIds.retainWhere((i) => i != symbol);
-          }
-          final BalancesInfo balancesInfo = store.assets.balances[symbol];
-          if (ModalRoute.of(context).isCurrent &&
-              !_enteredPin & store.account.cachedPin.isEmpty & !store.settings.endpointIsGesell) {
-            // The pin is not immeditally propagated to the store, hence we track if the pin has been entered to prevent
-            // showing the dialog multiple times.
-            WidgetsBinding.instance.addPostFrameCallback(
-              (_) {
-                _showPasswordDialog(context);
-              },
-            );
-          }
-
-          return Column(
-            children: <Widget>[
-              _buildTopCard(context),
-              _communityCurrencyAssets(context, store),
-              Padding(
-                padding: EdgeInsets.only(top: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    BorderedTitle(
-                      title: dic['gas.token'],
-                    ),
-                  ],
-                ),
-              ),
-              RoundedCard(
-                margin: EdgeInsets.only(top: 16),
-                child: ListTile(
-                  leading: Container(
-                    width: 36,
-                    child: Image.asset('assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
-                  ),
-                  title: Text(tokenView),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        Fmt.priceFloorBigInt(balancesInfo != null ? balancesInfo.total : BigInt.zero, decimals,
-                            lengthFixed: 3),
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54),
-                      ),
-                      Container(width: 16),
-                    ],
-                  ),
-                  onTap: () {
-                    Navigator.pushNamed(context, AssetPage.route,
-                        arguments: AssetPageParams(token: symbol, isEncointerCommunityCurrency: false));
-                  },
-                ),
-              ),
-              Column(
-                children: communityIds.map((i) {
-//                  print(store.assets.balances[i]);
-                  String token = i;
-                  return RoundedCard(
-                    margin: EdgeInsets.only(top: 16),
-                    child: ListTile(
-                      leading: Container(
-                        width: 36,
-                        child: CircleAvatar(
-                          child: Text(token.substring(0, 2)),
-                        ),
-                      ),
-                      title: Text(token),
-                      trailing: Text(
-                        Fmt.priceFloorBigInt(Fmt.balanceInt(store.assets.tokenBalances[i]), decimals, lengthFixed: 3),
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54),
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(context, AssetPage.route,
-                            arguments: AssetPageParams(token: symbol, isEncointerCommunityCurrency: false));
-                      },
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          );
-        }),
-      ],
-    );
-  }
-
-  Widget _communityCurrencyAssets(BuildContext context, AppStore store) {
-    final Map dic = I18n.of(context).assets;
-    final double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
-
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              BorderedTitle(
-                title: dic['community.currency'],
-              ),
-            ],
-          ),
-        ),
-        CommunityChooserPanel(store),
-        Observer(
-          builder: (_) {
-            return (store.encointer.communityName != null) & (store.encointer.chosenCid != null)
-                ? RoundedCard(
-                    margin: EdgeInsets.only(top: 16),
-                    child: ListTile(
-                      key: Key('cid-asset'),
-                      leading: Container(
-                        width: 36,
-                        child: webApi.ipfs.getCommunityIcon(store.encointer.communityIconsCid, devicePixelRatio),
-                      ),
-                      title: Text(store.encointer.communityName + " (${store.encointer.communitySymbol})"),
-                      trailing: store.encointer.communityBalance != null
-                          ? Text(
-                              Fmt.doubleFormat(store.encointer.communityBalance),
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54),
-                            )
-                          : CupertinoActivityIndicator(),
-                      onTap: store.encointer.communityBalance != null
-                          ? () {
-                              Navigator.pushNamed(context, AssetPage.route,
-                                  arguments: AssetPageParams(
-                                      token: store.encointer.chosenCid.toFmtString(),
-                                      isEncointerCommunityCurrency: true,
-                                      communityName: store.encointer.communityName,
-                                      communitySymbol: store.encointer.communitySymbol));
-                            }
-                          : null,
-                    ),
-                  )
-                : RoundedCard(
-                    margin: EdgeInsets.only(top: 16),
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: (store.encointer.chosenCid == null)
-                        ? Container(
-                            width: double.infinity,
-                            child: Text(dic['community.not.selected'], textAlign: TextAlign.center))
-                        : Container(
-                            width: double.infinity,
-                            child: CupertinoActivityIndicator(),
-                          ),
-                  );
-          },
-        ),
-        Container(
-          padding: EdgeInsets.only(bottom: 32),
-        ),
-      ],
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:encointer_wallet/common/components/roundedCard.dart';
+import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
@@ -66,6 +67,49 @@ class _CommunityChooserPanelState extends State<CommunityChooserPanel> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CommunityWithCommunityChooser extends StatefulWidget {
+  const CommunityWithCommunityChooser(this.store, {Key key}) : super(key: key);
+
+  final AppStore store;
+
+  @override
+  _CommunityWithCommunityChooserState createState() => _CommunityWithCommunityChooserState(store);
+}
+
+class _CommunityWithCommunityChooserState extends State<CommunityWithCommunityChooser> {
+  bool communityChooserPanelVisible = false;
+  final AppStore store;
+
+  _CommunityWithCommunityChooserState(this.store);
+
+  @override
+  Widget build(BuildContext context) {
+    final double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
+          child: InkWell(
+              key: Key('cid-avatar'),
+              child: CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 48,
+                child: webApi.ipfs.getCommunityIcon(store.encointer.communityIconsCid, devicePixelRatio),
+              ),
+              onTap: () {
+                setState(() {
+                  communityChooserPanelVisible = !communityChooserPanelVisible;
+                });
+              }),
+        ),
+        if (communityChooserPanelVisible) CommunityChooserPanel(store),
+      ],
     );
   }
 }

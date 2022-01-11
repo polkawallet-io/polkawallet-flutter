@@ -46,6 +46,7 @@ void main() {
 
     // Note: The seconds test continues where the first one ended
     test('choosing cid', () async {
+      await driver.tap(find.byValueKey('cid-avatar'));
       await driver.tap(find.byValueKey('cid-dropdown'));
       await driver.tap(find.byValueKey('cid-0'));
 
@@ -65,7 +66,7 @@ void main() {
 
     test('transfer-page', () async {
       // go to transfer page
-      await driver.tap(find.byValueKey('cid-asset'));
+      // await driver.tap(find.byValueKey('cid-asset'));
 
       await driver.tap(find.byValueKey('transfer'));
 
@@ -75,7 +76,6 @@ void main() {
       await screenshot(driver, config, 'transfer-page');
 
       // go back to homepage
-      await driver.tap(find.pageBack());
       await driver.tap(find.pageBack());
     });
 

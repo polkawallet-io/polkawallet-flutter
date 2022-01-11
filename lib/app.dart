@@ -5,6 +5,7 @@ import 'package:encointer_wallet/page-encointer/phases/assigning/assigningPage.d
 import 'package:encointer_wallet/page-encointer/phases/attesting/attestingPage.dart';
 import 'package:encointer_wallet/page-encointer/phases/registering/registerParticipantPanel.dart';
 import 'package:encointer_wallet/page-encointer/phases/registering/registeringPage.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/0_main/bazaarMain.dart';
 import 'package:encointer_wallet/page/account/create/createAccountPage.dart';
 import 'package:encointer_wallet/page/account/createAccountEntryPage.dart';
 import 'package:encointer_wallet/page/account/import/importAccountPage.dart';
@@ -186,6 +187,7 @@ class _WalletAppState extends State<WalletApp> {
         AssigningPage.route: (_) => AssigningPage(_appStore),
         AttestingPage.route: (_) => AttestingPage(_appStore),
         // bazaar
+        BazaarMain.route: (_) => BazaarMain(_appStore),
         // TODO add routes for bazaar
       },
     );
