@@ -8,22 +8,22 @@ part of 'proofOfAttendance.dart';
 
 ProofOfAttendance _$ProofOfAttendanceFromJson(Map<String, dynamic> json) {
   return ProofOfAttendance(
-    json['prover_public'] as String,
-    json['ceremony_index'] as int,
-    json['community_identifier'] == null
+    json['proverPublic'] as String,
+    json['ceremonyIndex'] as int,
+    json['communityIdentifier'] == null
         ? null
-        : CommunityIdentifier.fromJson(json['community_identifier'] as Map<String, dynamic>),
-    json['attendee_public'] as String,
-    (json['attendee_signature'] as Map<String, dynamic>)?.map(
+        : CommunityIdentifier.fromJson(json['communityIdentifier'] as Map<String, dynamic>),
+    json['attendeePublic'] as String,
+    (json['attendeeSignature'] as Map<String, dynamic>)?.map(
       (k, e) => MapEntry(k, e as String),
     ),
   );
 }
 
 Map<String, dynamic> _$ProofOfAttendanceToJson(ProofOfAttendance instance) => <String, dynamic>{
-      'prover_public': instance.proverPublic,
-      'ceremony_index': instance.ceremonyIndex,
-      'community_identifier': instance.communityIdentifier?.toJson(),
-      'attendee_public': instance.attendeePublic,
-      'attendee_signature': instance.attendeeSignature,
+      'proverPublic': instance.proverPublic,
+      'ceremonyIndex': instance.ceremonyIndex,
+      'communityIdentifier': instance.communityIdentifier?.toJson(),
+      'attendeePublic': instance.attendeePublic,
+      'attendeeSignature': instance.attendeeSignature,
     };

@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:encointer_wallet/common/components/iconTextButton.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/0_main/bazaarMain.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
+import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/page-encointer/bazaar/0_main/bazaarMain.dart';
 import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
+import 'package:encointer_wallet/page/account/txConfirmPage.dart';
 import 'package:encointer_wallet/page/assets/asset/assetPage.dart';
 import 'package:encointer_wallet/page/assets/receive/receivePage.dart';
 import 'package:encointer_wallet/page/assets/transfer/transferPage.dart';
@@ -49,6 +51,23 @@ class _AssetsState extends State<Assets> {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> _submitClaimRewards(BuildContext context) async {
+      var args = {
+        "title": 'claim_rewards',
+        "txInfo": {
+          "module": 'encointerCeremonies',
+          "call": 'claimRewards',
+          "cid": store.encointer.chosenCid,
+        },
+        "detail": "cid: ${store.encointer.chosenCid.toFmtString()}",
+        "params": [store.encointer.chosenCid],
+        'onFinish': (BuildContext txPageContext, Map res) {
+          Navigator.popUntil(txPageContext, ModalRoute.withName('/'));
+        }
+      };
+      Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
+    }
+
     return SafeArea(
       child: ListView(
         padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
@@ -87,7 +106,7 @@ class _AssetsState extends State<Assets> {
                   children: [
                     IconTextButton(
                       iconData: Icons.person_add_alt,
-                      text: I18n.of(context).assets['invite'],
+                      text: dic['invite'],
                       onTap: () {
                         Navigator.pushNamed(
                           context,
@@ -151,7 +170,7 @@ class _AssetsState extends State<Assets> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconTextButton(
-                      text: I18n.of(context).assets['receive'],
+                      text: dic['receive'],
                       iconData: Icons.download_sharp,
                       key: Key('qr-receive'),
                       onTap: () {
@@ -161,7 +180,7 @@ class _AssetsState extends State<Assets> {
                       },
                     ),
                     IconTextButton(
-                      text: I18n.of(context).assets['bazaar'],
+                      text: dic['bazaar'],
                       iconData: Icons.shopping_bag_sharp,
                       onTap: () {
                         Navigator.pushNamed(
@@ -172,7 +191,7 @@ class _AssetsState extends State<Assets> {
                     ),
                     IconTextButton(
                       key: Key('transfer'),
-                      text: I18n.of(context).assets['transfer'],
+                      text: dic['transfer'],
                       iconData: Icons.upload_sharp,
                       onTap: store.encointer.communityBalance != null
                           ? () {
@@ -180,7 +199,7 @@ class _AssetsState extends State<Assets> {
                                 context,
                                 TransferPage.route,
                                 arguments: TransferPageParams(
-                                    redirect: AssetPage.route,
+                                    redirect: '/',
                                     symbol: store.encointer.chosenCid.toFmtString(),
                                     isEncointerCommunityCurrency: true,
                                     communitySymbol: store.encointer.communitySymbol),
@@ -192,6 +211,38 @@ class _AssetsState extends State<Assets> {
                 ),
               ],
             );
+          }),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+          ),
+          Observer(builder: (_) {
+            var dic = I18n.of(context).assets;
+
+            return store.settings.isConnected
+                ? FutureBuilder<bool>(
+                    future: webApi.encointer.hasPendingIssuance(),
+                    builder: (_, AsyncSnapshot<bool> snapshot) {
+                      if (snapshot.hasData) {
+                        var hasPendingIssuance = snapshot.data;
+
+                        if (hasPendingIssuance) {
+                          return RoundedButton(
+                            text: dic['issuance.pending'],
+                            onPressed: () => _submitClaimRewards(context),
+                          );
+                        } else {
+                          return RoundedButton(
+                            text: dic['issuance.claimed'],
+                            onPressed: null,
+                            color: Theme.of(context).disabledColor,
+                          );
+                        }
+                      } else {
+                        return CupertinoActivityIndicator();
+                      }
+                    },
+                  )
+                : Container();
           }),
         ],
       ),

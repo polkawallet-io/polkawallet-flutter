@@ -75,6 +75,20 @@ class Fmt {
     return f.format(value);
   }
 
+  /// number transform 3a:
+  /// from <String> to <String> in token format of ",##0.000"
+  static String numberFormat(
+    String value, {
+    int length = 3,
+    int round = 0,
+  }) {
+    if (value == null) {
+      return '~';
+    }
+
+    return doubleFormat(double.parse(value), length: length);
+  }
+
   /// combined number transform 1-3:
   /// from raw <String> to <String> in token format of ",##0.000"
   static String balance(

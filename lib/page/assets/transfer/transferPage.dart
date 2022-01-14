@@ -8,7 +8,6 @@ import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
 import 'package:encointer_wallet/page/account/scanPage.dart';
 import 'package:encointer_wallet/page/account/txConfirmPage.dart';
-import 'package:encointer_wallet/page/assets/asset/assetPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
@@ -61,7 +60,6 @@ class _TransferPageState extends State<TransferPage> {
       builder: (_) {
         final Map<String, String> dic = I18n.of(context).assets;
         final String baseTokenSymbol = store.settings.networkState.tokenSymbol;
-        final String baseTokenSymbolView = Fmt.tokenView(baseTokenSymbol);
         String symbol = _tokenSymbol ?? baseTokenSymbol;
         final bool isBaseToken = _tokenSymbol == baseTokenSymbol;
 
@@ -166,13 +164,6 @@ class _TransferPageState extends State<TransferPage> {
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(8.0, 16, 8, 72),
-                          child: Center(
-                            child: Text('transactionByteFee: ${store.settings.transactionByteFee} $baseTokenSymbolView',
-                                style: TextStyle(fontSize: 16, color: Colors.black54)),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -254,11 +245,6 @@ class _TransferPageState extends State<TransferPage> {
           store.encointer.setTransferTxs([res]);
         }
         Navigator.popUntil(txPageContext, ModalRoute.withName(routeArgs.redirect));
-        // user may route to transfer page from asset page
-        // or from home page with QRCode Scanner
-        if (routeArgs.redirect == AssetPage.route) {
-          globalAssetRefreshKey.currentState.show();
-        }
         if (routeArgs.redirect == '/') {
           globalBalanceRefreshKey.currentState.show();
         }

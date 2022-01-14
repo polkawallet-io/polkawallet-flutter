@@ -72,9 +72,6 @@ and find the output in `build/app/outputs/bundle/release/app-release.aab`
 #### Dev hints
 
 Currently supports flutter: 2.02
-
-Re-generate mobx g.dart files
-  flutter packages pub run build_runner build --delete-conflicting-outputs
   
 ### Run tests
 

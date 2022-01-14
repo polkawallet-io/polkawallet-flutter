@@ -10,16 +10,15 @@ import 'communities.dart';
 part 'claimOfAttendance.g.dart';
 
 // explicit = true as we have nested Json with location
-// field rename such that the fields match the ones defined in the runtime
-@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
+@JsonSerializable(explicitToJson: true)
 class ClaimOfAttendance {
-  ClaimOfAttendance(this.claimantPublic, this.ceremonyIndex, this.communityIdentifier, this.meetupLocationIndex,
-      this.location, this.timestamp, this.numberOfParticipantsConfirmed);
+  ClaimOfAttendance(this.claimantPublic, this.ceremonyIndex, this.communityIdentifier, this.meetupIndex, this.location,
+      this.timestamp, this.numberOfParticipantsConfirmed);
 
   String claimantPublic;
   int ceremonyIndex;
   CommunityIdentifier communityIdentifier;
-  int meetupLocationIndex;
+  int meetupIndex;
   Location location;
   int timestamp;
   int numberOfParticipantsConfirmed;

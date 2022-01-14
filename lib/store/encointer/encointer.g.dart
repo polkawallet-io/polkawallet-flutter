@@ -187,21 +187,6 @@ mixin _$EncointerStore on _EncointerStore, Store {
     });
   }
 
-  final _$participantCountAtom = Atom(name: '_EncointerStore.participantCount');
-
-  @override
-  int get participantCount {
-    _$participantCountAtom.reportRead();
-    return super.participantCount;
-  }
-
-  @override
-  set participantCount(int value) {
-    _$participantCountAtom.reportWrite(value, super.participantCount, () {
-      super.participantCount = value;
-    });
-  }
-
   final _$balanceEntriesAtom = Atom(name: '_EncointerStore.balanceEntries');
 
   @override
@@ -542,16 +527,6 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
-  void setParticipantCount(int pCount) {
-    final _$actionInfo = _$_EncointerStoreActionController.startAction(name: '_EncointerStore.setParticipantCount');
-    try {
-      return super.setParticipantCount(pCount);
-    } finally {
-      _$_EncointerStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   void setbusinessRegistry(List<AccountBusinessTuple> accBusinesses) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(name: '_EncointerStore.setbusinessRegistry');
     try {
@@ -573,7 +548,6 @@ meetupTime: ${meetupTime},
 meetupRegistry: ${meetupRegistry},
 myMeetupRegistryIndex: ${myMeetupRegistryIndex},
 participantIndex: ${participantIndex},
-participantCount: ${participantCount},
 balanceEntries: ${balanceEntries},
 communityIdentifiers: ${communityIdentifiers},
 communities: ${communities},

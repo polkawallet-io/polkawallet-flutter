@@ -19,12 +19,6 @@ class Ceremonies {
 
   final Api apiRoot;
 
-  Future<int> participantCount(CommunityIdentifier cid, int cIndex) async {
-    return apiRoot
-        .evalJavascript('encointer.getParticipantCount(${jsonEncode(cid)}, "$cIndex")')
-        .then((value) => int.parse(value));
-  }
-
   Future<int> participantIndex(CommunityIdentifier cid, int cIndex, String pubKey) async {
     return apiRoot
         .evalJavascript('encointer.getParticipantIndex(${jsonEncode(cid)}, "$cIndex" ,"$pubKey")')

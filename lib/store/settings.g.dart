@@ -99,6 +99,11 @@ mixin _$SettingsStore on _SettingsStore, Store {
   String get transactionByteFee => (_$transactionByteFeeComputed ??=
           Computed<String>(() => super.transactionByteFee, name: '_SettingsStore.transactionByteFee'))
       .value;
+  Computed<bool> _$isConnectedComputed;
+
+  @override
+  bool get isConnected =>
+      (_$isConnectedComputed ??= Computed<bool>(() => super.isConnected, name: '_SettingsStore.isConnected')).value;
 
   final _$loadingAtom = Atom(name: '_SettingsStore.loading');
 
@@ -365,7 +370,8 @@ endpointList: ${endpointList},
 contactListAll: ${contactListAll},
 existentialDeposit: ${existentialDeposit},
 transactionBaseFee: ${transactionBaseFee},
-transactionByteFee: ${transactionByteFee}
+transactionByteFee: ${transactionByteFee},
+isConnected: ${isConnected}
     ''';
   }
 }

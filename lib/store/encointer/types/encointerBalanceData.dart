@@ -6,7 +6,7 @@ import 'package:mobx/mobx.dart';
 
 part 'encointerBalanceData.g.dart';
 
-@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
+@JsonSerializable(explicitToJson: true)
 class EncointerBalanceData {
   EncointerBalanceData(this.cid, this.balanceEntry);
 

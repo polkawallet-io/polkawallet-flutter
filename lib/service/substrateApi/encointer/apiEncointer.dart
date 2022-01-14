@@ -34,7 +34,6 @@ class ApiEncointer {
   final Api apiRoot;
   final store = globalAppStore;
   final String _currentPhaseSubscribeChannel = 'currentPhase';
-  final String _participantIndexChannel = 'participantIndexChannel';
   final String _communityIdentifiersChannel = 'communityIdentifiers';
   final String _encointerBalanceChannel = 'encointerBalance';
   final String _businessRegistryChannel = 'businessRegistry';
@@ -48,7 +47,6 @@ class ApiEncointer {
     this.subscribeCurrentPhase();
     this.subscribeCommunityIdentifiers();
     if (store.settings.endpointIsGesell) {
-      this.subscribeParticipantIndex();
       this.subscribeEncointerBalance();
       this.subscribeBusinessRegistry();
     }
@@ -61,7 +59,6 @@ class ApiEncointer {
     apiRoot.unsubscribeMessage(_businessRegistryChannel);
 
     if (store.settings.endpointIsGesell) {
-      apiRoot.unsubscribeMessage(_participantIndexChannel);
       apiRoot.unsubscribeMessage(_encointerBalanceChannel);
       apiRoot.unsubscribeMessage(_businessRegistryChannel);
     }
@@ -136,9 +133,10 @@ class ApiEncointer {
     if (cid == null) {
       return;
     }
+    int cIndex = store.encointer.currentCeremonyIndex;
     int mIndex = store.encointer.meetupIndex;
-    Map<String, dynamic> locj =
-        await apiRoot.evalJavascript('encointer.getNextMeetupLocation(${jsonEncode(cid)}, "$mIndex","$address")');
+    Map<String, dynamic> locj = await apiRoot
+        .evalJavascript('encointer.getNextMeetupLocation(${jsonEncode(cid)}, "$cIndex", "$mIndex","$address")');
     print("api: Next Meetup Location: " + locj.toString());
 
     if (locj != null) {
@@ -207,9 +205,13 @@ class ApiEncointer {
     }
     String loc = jsonEncode(store.encointer.meetupLocation);
 
-    int time = await apiRoot.evalJavascript(
-        'encointer.getNextMeetupTime($loc, "${toValue(store.encointer.currentPhase)}", ${store.encointer.currentPhaseDuration})');
-    print("api: Next Meetup Time: " + time.toString());
+    int time = await apiRoot
+        .evalJavascript(
+            'encointer.getNextMeetupTime($loc, "${toValue(store.encointer.currentPhase)}", ${store.encointer.currentPhaseDuration})')
+        .then((value) => int.parse(value));
+
+    print("api: Next Meetup Time: $time");
+
     store.encointer.setMeetupTime(time);
     return DateTime.fromMillisecondsSinceEpoch(time);
   }
@@ -223,12 +225,7 @@ class ApiEncointer {
     CommunityIdentifier cid = store.encointer.chosenCid;
     String pubKey = store.account.currentAccountPubKey;
     int mIndex = store.encointer.meetupIndex;
-    print("api: get meetup registry for cindex " +
-        cIndex.toString() +
-        " mindex " +
-        mIndex.toString() +
-        " cid " +
-        cid.toString());
+    print("api: get meetup registry for cindex $cIndex, mindex $mIndex, cid $cid");
 
     List<String> registry = store.settings.endpointIsGesell
         ? await _noTee.ceremonies.meetupRegistry(cid, cIndex, mIndex)
@@ -258,16 +255,23 @@ class ApiEncointer {
     return pIndex;
   }
 
-  /// Queries the Ceremonies pallet: encointer.Ceremonies.participantCount([cid, cIndex]).
-  ///
-  /// This is off-chain but public in Cantillon, accessible with PublicGetter::participantCount(cid).
-  Future<void> getParticipantCount() async {
-    int pCount = store.settings.endpointIsGesell
-        ? await _noTee.ceremonies.participantCount(store.encointer.chosenCid, store.encointer.currentCeremonyIndex)
-        : await _teeProxy.ceremonies.participantCount(store.encointer.chosenCid);
+  Future<bool> hasPendingIssuance() async {
+    CommunityIdentifier cid = store.encointer.chosenCid;
+    if (cid == null) {
+      return false;
+    }
 
-    print("api: Participant Count: " + pCount.toString());
-    return pCount;
+    // -1 as we get the pending issuance for the last ceremony
+    int cIndex = store.encointer.currentCeremonyIndex - 1;
+    String pubKey = store.account.currentAccountPubKey;
+    print("api: Getting pendingIssuance for $pubKey");
+
+    bool hasPendingIssuance =
+        await apiRoot.evalJavascript('encointer.hasPendingIssuance(${jsonEncode(cid)}, "$cIndex","$pubKey")');
+
+    print("api:has pending issuance $hasPendingIssuance");
+
+    return hasPendingIssuance;
   }
 
   /// Queries the EncointerBalances pallet: encointer.encointerBalances.balance(cid, address).
@@ -309,27 +313,6 @@ class ApiEncointer {
       store.encointer.setCommunityIdentifiers(cids);
 
       await this.communitiesGetAll();
-    });
-  }
-
-  /// Subscribes to storage changes in the Ceremonies pallet: encointerCeremonies.participantIndex([cid, cIndex], address).
-  ///
-  /// This if off-chain in Cantillon. Hence, subscriptions are not supported.
-  Future<void> subscribeParticipantIndex() async {
-    // try to unsubscribe first in case parameters have changed
-    if (store.encointer.participantIndex != null) {
-      apiRoot.unsubscribeMessage(_participantIndexChannel);
-    }
-    String account = store.account.currentAccountPubKey;
-    CommunityIdentifier cid = store.encointer.chosenCid;
-    if (cid == null) {
-      return 0; // zero means: not registered
-    }
-    int cIndex = store.encointer.currentCeremonyIndex;
-    apiRoot.subscribeMessage(
-        'encointer.subscribeParticipantIndex("$_participantIndexChannel", ${jsonEncode(cid)}, "$cIndex", "$account")',
-        _participantIndexChannel, (data) {
-      store.encointer.setParticipantIndex(int.parse(data));
     });
   }
 

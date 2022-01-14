@@ -227,7 +227,6 @@ class Api {
     webApi.encointer.getBusinesses();
     webApi.encointer.getMeetupIndex();
     webApi.encointer.getParticipantIndex();
-    webApi.encointer.getParticipantCount();
     webApi.encointer.getEncointerBalance();
     webApi.encointer.getCommunityMetadata();
     webApi.encointer.getDemurrage();

@@ -20,11 +20,6 @@ class Ceremonies {
 
   final Api apiRoot;
 
-  Future<int> participantCount(CommunityIdentifier cid) async {
-    // count does not need an explicit parse as the worker returns a js-native `number`
-    return await apiRoot.evalJavascript('worker.getParticipantCount(${jsonEncode(cid)})');
-  }
-
   Future<int> participantIndex(CommunityIdentifier cid, String pubKey, String pin) async {
     return apiRoot
         .evalJavascript('worker.getParticipantIndex(${jsonEncode(PubKeyPinPair(pubKey, pin))}, ${jsonEncode(cid)})')

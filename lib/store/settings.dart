@@ -144,6 +144,11 @@ abstract class _SettingsStore with Store {
     loading = false;
   }
 
+  @computed
+  bool get isConnected {
+    return !loading && networkName.isNotEmpty;
+  }
+
   @action
   Future<void> setNetworkState(
     Map<String, dynamic> data, {
@@ -231,8 +236,6 @@ abstract class _SettingsStore with Store {
     } else {
       endpoint = EndpointData.fromJson(value);
     }
-    //TODO: remove this. it will force Kusama for safe start
-    //endpoint = networkEndpointKusama;
   }
 
   @action

@@ -76,9 +76,6 @@ abstract class _EncointerStore with Store {
   int participantIndex;
 
   @observable
-  int participantCount;
-
-  @observable
   Map<CommunityIdentifier, BalanceEntry> balanceEntries = new ObservableMap();
 
   @observable
@@ -291,7 +288,6 @@ abstract class _EncointerStore with Store {
       webApi.encointer.getBusinesses();
       webApi.encointer.getMeetupIndex();
       webApi.encointer.getParticipantIndex();
-      webApi.encointer.getParticipantCount();
       webApi.encointer.getEncointerBalance();
       webApi.encointer.getCommunityMetadata();
       webApi.encointer.getDemurrage();
@@ -325,11 +321,6 @@ abstract class _EncointerStore with Store {
   }
 
   @action
-  void setParticipantCount(int pCount) {
-    participantCount = pCount;
-  }
-
-  @action
   Future<void> setTransferTxs(List list, {bool reset = false, needCache = true}) async {
     List transfers = list.map((i) {
       bool isCommunityCurrency = i['params'].length == 3;
@@ -339,8 +330,10 @@ abstract class _EncointerStore with Store {
         "success": true,
         "from": rootStore.account.currentAddress,
         "to": i['params'][0],
-        "token": isCommunityCurrency ? i['params'][1] : rootStore.settings.networkState.tokenSymbol,
-        "amount": isCommunityCurrency ? Fmt.doubleFormat(i['params'][2]) : Fmt.balance(i['params'][1], ert_decimals),
+        "token": isCommunityCurrency
+            ? CommunityIdentifier.fromJson(i['params'][1]).toFmtString()
+            : rootStore.settings.networkState.tokenSymbol,
+        "amount": isCommunityCurrency ? Fmt.numberFormat(i['params'][2]) : Fmt.balance(i['params'][1], ert_decimals),
       };
     }).toList();
     if (reset) {

@@ -9,7 +9,7 @@ part 'proofOfAttendance.g.dart';
 
 // explicit = true as we have nested Json with location
 // field rename such that the fields match the ones defined in the runtime
-@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
+@JsonSerializable(explicitToJson: true)
 class ProofOfAttendance {
   ProofOfAttendance(
     this.proverPublic,
