@@ -1,5 +1,7 @@
 import 'package:encointer_wallet/page-encointer/encointerEntry.dart';
+import 'package:encointer_wallet/page/account/scanPage.dart';
 import 'package:encointer_wallet/page/assets/index.dart';
+import 'package:encointer_wallet/page/profile/contacts/contactListPage.dart';
 import 'package:encointer_wallet/page/profile/index.dart';
 import 'package:encointer_wallet/service/notification.dart';
 import 'package:encointer_wallet/store/app.dart';
@@ -35,45 +37,33 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
   List<BottomNavigationBarItem> _navBarItems(int activeItem) {
     Map<String, String> tabs = I18n.of(context).home;
     return _tabList
-        .map((i) => BottomNavigationBarItem(
-              icon: Image.asset(
-                  _tabList[activeItem] == i
-                      ? 'assets/images/public/${i}_indigo.png'
-                      : 'assets/images/public/${i}_dark.png',
-                  key: Key('tab-${i.toLowerCase()}')),
-              label: tabs[i.toLowerCase()],
-            ))
+        .map(
+          (i) => BottomNavigationBarItem(
+            icon: Image.asset(
+              _tabList[activeItem] == i ? 'assets/images/public/${i}_indigo.png' : 'assets/images/public/${i}_dark.png',
+              key: Key('tab-${i.toLowerCase()}'),
+            ),
+            label: tabs[i.toLowerCase()],
+          ),
+        )
         .toList();
   }
 
   Widget _getPage(i) {
-    if (store.settings.endpointIsGesell) {
-      switch (i) {
-        case 0:
-          return Assets(store);
-        case 1:
-          return BazaarMain(store); // TODO provider pattern everywhere https://mobx.netlify.app/examples/todos
-        case 2:
-          return EncointerEntry(store);
-        default:
-          return Profile(store);
-      }
-    } else {
-      switch (i) {
-        case 0:
-          return Assets(store);
-        case 1:
-          return BazaarMain(store);
-        case 2:
-          return EncointerEntry(store);
-        default:
-          return Profile(store);
-      }
-    }
+    final List<Function> tabBarClasses = [
+      () => Assets(store),
+      if (store.settings.endpointIsGesell) () => BazaarMain(store), // dart collection if
+      () => EncointerEntry(store), // #272 we leave it in for now until we have a replacement
+      () => ScanPage(),
+      () => ContactListPage(store),
+      () => Profile(store),
+    ];
+
+    return i < tabBarClasses.length ? tabBarClasses[i]() : tabBarClasses.last();
   }
 
   List<Widget> _buildPages() {
-    return [0, 1, 2, 3].map((i) {
+    return [0, 1, 2, 3, 4, 5].map((i) {
       if (i == 0) {
         return Assets(store);
       }
@@ -117,18 +107,14 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    _tabList = store.settings.endpointIsGesell
-        ? [
-            'Wallet',
-            'Bazaar',
-            'Ceremonies',
-            'Profile',
-          ]
-        : [
-            'Wallet',
-            'Ceremonies',
-            'Profile',
-          ];
+    _tabList = [
+      'Wallet',
+      if (store.settings.endpointIsGesell) 'Bazaar', // dart collection if
+      'Ceremonies',
+      'Scan',
+      'Contacts',
+      'Profile',
+    ];
     return Scaffold(
       key: EncointerHomePage.encointerHomePageKey,
       body: PageView(

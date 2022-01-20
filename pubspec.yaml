@@ -130,6 +130,10 @@ flutter:
     - assets/images/public/Profile_indigo.png
     - assets/images/public/Ceremonies_indigo.png
     - assets/images/public/Ceremonies_dark.png
+    - assets/images/public/Contacts_indigo.png
+    - assets/images/public/Contacts_dark.png
+    - assets/images/public/Scan_indigo.png
+    - assets/images/public/Scan_dark.png
     - assets/images/public/Bazaar_indigo.png
     ## images - laminar
     - assets/images/assets/scanner_purple.png
