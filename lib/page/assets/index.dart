@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/common/components/iconTextButton.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
@@ -120,20 +121,40 @@ class _AssetsState extends State<Assets> {
                       },
                     ),
                     if (developerMode == true)
-                      IconButton(
-                        // TODO design decision where to put this functionality
-                        key: Key('choose-network'),
-                        icon: Icon(Icons.menu, color: Colors.orange),
-                        onPressed: () => Navigator.of(context).pushNamed('/network'),
+                      Column(
+                        children: [
+                          InkWell(
+                            // TODO design decision where to put this functionality
+                            key: Key('choose-network'),
+                            child: Observer(
+                              builder: (_) => Text(
+                                "net: ${store.settings.endpoint.info}",
+                                style: TextStyle(color: Colors.orange),
+                              ),
+                            ),
+                            onTap: () => Navigator.of(context).pushNamed('/network'),
+                          ),
+                          store.settings.isConnected ? Icon(Icons.check) : CupertinoActivityIndicator(),
+                        ],
                       ),
                     // qr-receive text:
                     // Text(
                     //   '$accIndex${Fmt.address(store.account.currentAddress)}',
                     //   style: TextStyle(fontSize: 14),
                     // ),
-                    IconTextButton(
-                      iconData: Icons.person,
-                      text: Fmt.accountName(context, acc),
+                    InkWell(
+                      child: Column(
+                        children: [
+                          AddressIcon(
+                            '',
+                            pubKey: store.account.currentAccount.pubKey,
+                            tapToCopy: false,
+                          ),
+                          Text(
+                            Fmt.accountName(context, acc),
+                          ),
+                        ],
+                      ),
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (BuildContext context) => AccountManagePage(store),
