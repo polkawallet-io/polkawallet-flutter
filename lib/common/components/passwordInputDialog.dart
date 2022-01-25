@@ -71,6 +71,7 @@ class _PasswordInputDialogState extends State<PasswordInputDialog> {
       );
     } else {
       widget.onOk(password);
+      Navigator.of(context).pop();
     }
   }
 
@@ -128,7 +129,6 @@ class _PasswordInputDialogState extends State<PasswordInputDialog> {
               ? null
               : () {
                   _onOk(_passCtrl.text.trim());
-                  Navigator.of(context).pop();
                 },
         ),
       ],
