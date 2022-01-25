@@ -218,6 +218,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  dart_geohash:
+    dependency: "direct main"
+    description:
+      name: dart_geohash
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   dart_style:
     dependency: transitive
     description:

@@ -1,4 +1,5 @@
 import 'package:encointer_wallet/common/components/roundedCard.dart';
+import 'package:encointer_wallet/page-encointer/common/communityChooserOnMap.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
@@ -81,7 +82,6 @@ class CommunityWithCommunityChooser extends StatefulWidget {
 }
 
 class _CommunityWithCommunityChooserState extends State<CommunityWithCommunityChooser> {
-  bool communityChooserPanelVisible = false;
   final AppStore store;
 
   _CommunityWithCommunityChooserState(this.store);
@@ -103,12 +103,14 @@ class _CommunityWithCommunityChooserState extends State<CommunityWithCommunityCh
                 child: webApi.ipfs.getCommunityIcon(store.encointer.communityIconsCid, devicePixelRatio),
               ),
               onTap: () {
-                setState(() {
-                  communityChooserPanelVisible = !communityChooserPanelVisible;
-                });
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CommunityChooserOnMap(store),
+                  ),
+                );
               }),
         ),
-        if (communityChooserPanelVisible) CommunityChooserPanel(store),
       ],
     );
   }

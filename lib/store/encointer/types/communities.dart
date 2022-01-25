@@ -101,6 +101,7 @@ class CommunityIdentifier {
       };
 }
 
+/// TODO shouldn't this be named CidAndName
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class CidName {
   CidName(this.cid, this.name);
