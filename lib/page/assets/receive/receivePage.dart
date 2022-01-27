@@ -1,20 +1,24 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share/share.dart';
 
 class ReceivePage extends StatelessWidget {
   ReceivePage(this.store);
-
   static final String route = '/assets/receive';
   final AppStore store;
-
   @override
   Widget build(BuildContext context) {
+    bool isShare = false;
+    final Map args = ModalRoute.of(context).settings.arguments;
+    if (args != null) {
+      isShare = args['isShare'];
+    }
+
     String codeAddress =
         'substrate:${store.account.currentAddress}:${store.account.currentAccount.pubKey}:${store.account.currentAccount.name}';
     Color themeColor = Theme.of(context).primaryColor;
@@ -25,7 +29,7 @@ class ReceivePage extends StatelessWidget {
       backgroundColor: Colors.grey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: Text(I18n.of(context).assets['receive']),
+        title: isShare ? Text(I18n.of(context).profile['share']) : Text(I18n.of(context).assets['receive']),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -46,16 +50,10 @@ class ReceivePage extends StatelessWidget {
                   ),
                   child: Column(
                     children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: AddressIcon(
-                          '',
-                          pubKey: store.account.currentAccount.pubKey,
-                        ),
-                      ),
                       Text(
-                        store.account.currentAccount.name,
-                        style: Theme.of(context).textTheme.headline4,
+                        I18n.of(context).profile['qr.scan.hint'],
+                        style: Theme.of(context).textTheme.headline3,
+                        textAlign: TextAlign.center,
                       ),
                       accInfo != null && accInfo['accountIndex'] != null
                           ? Padding(
@@ -83,10 +81,13 @@ class ReceivePage extends StatelessWidget {
                       Container(
                         width: MediaQuery.of(context).size.width / 2,
                         padding: EdgeInsets.only(top: 16, bottom: 32),
-                        child: RoundedButton(
-                          text: I18n.of(context).assets['copy'],
-                          onPressed: () => UI.copyAndNotify(context, store.account.currentAddress),
-                        ),
+                        child: isShare
+                            ? RoundedButton(
+                                text: I18n.of(context).profile['share'], onPressed: () => Share.share(codeAddress))
+                            : RoundedButton(
+                                text: I18n.of(context).assets['copy'],
+                                onPressed: () => UI.copyAndNotify(context, store.account.currentAddress),
+                              ),
                       )
                     ],
                   ),

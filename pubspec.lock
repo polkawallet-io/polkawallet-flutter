@@ -162,6 +162,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.0"
+  clipboard:
+    dependency: "direct main"
+    description:
+      name: clipboard
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.3"
   clock:
     dependency: transitive
     description:
@@ -370,7 +377,7 @@ packages:
       name: flutter_webview_plugin
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.11"
+    version: "0.4.0"
   fuchsia_remote_debug_protocol:
     dependency: transitive
     description: flutter
@@ -536,7 +543,7 @@ packages:
       name: mime
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "0.9.7"
   mobx:
     dependency: "direct main"
     description:
@@ -770,6 +777,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.26.0"
+  share:
+    dependency: "direct main"
+    description:
+      name: share
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.5+4"
   shared_preferences:
     dependency: "direct main"
     description:

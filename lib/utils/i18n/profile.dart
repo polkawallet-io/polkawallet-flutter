@@ -3,6 +3,7 @@ const Map<String, String> enProfile = {
   'about.brif': 'Mobile Wallet for Encointer',
   'about.version': 'Version',
   'account': 'Manage Account',
+  'account.share': 'Share Account',
   'contact': 'Address Book',
   'contact.address': 'Address',
   'contact.address.error': 'Invalid address',
@@ -32,6 +33,7 @@ const Map<String, String> enProfile = {
   'pass.old': 'Current PIN',
   'pass.success': 'Success',
   'pass.success.txt': 'PIN changed successfully',
+  'qr.scan.hint': 'Ask the recipient to scan this QR-code in the encointer app',
   'setting': 'Settings',
   'setting.lang': 'Language',
   'setting.lang.auto': 'Auto Detect',
@@ -39,6 +41,7 @@ const Map<String, String> enProfile = {
   'setting.node.list': 'Available Nodes',
   'setting.prefix': 'Address Prefix',
   'setting.prefix.list': 'Available Prefixes',
+  'share': 'Share',
   'title': 'Profile',
 };
 const Map<String, String> deProfile = {
@@ -46,6 +49,7 @@ const Map<String, String> deProfile = {
   'about.brif': 'Mobiles Wallet für Encointer',
   'about.version': 'Version',
   'account': 'Konto',
+  'account.share': 'Konto teilen',
   'contact': 'Adressbuch',
   'contact.address': 'Addresse',
   'contact.address.error': 'Ungültige Adresse',
@@ -75,6 +79,7 @@ const Map<String, String> deProfile = {
   'pass.old': 'Aktuelle PIN',
   'pass.success': 'Erfolgreich',
   'pass.success.txt': 'PIN wurde erfolgreich geändert',
+  'qr.scan.hint': 'Lass den Empfänger diesen QR-Code in der Encointer App scannen',
   'setting': 'Einstellungen',
   'setting.lang': 'Sprache',
   'setting.lang.auto': 'Automatisch',
@@ -82,6 +87,7 @@ const Map<String, String> deProfile = {
   'setting.node.list': 'Verfügbare Nodes',
   'setting.prefix': 'Adressenprefix',
   'setting.prefix.list': 'Verfügbare Prefix',
+  'share': 'Teilen',
   'title': 'Profil',
 };
 const Map<String, String> zhProfile = {

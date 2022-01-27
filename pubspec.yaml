@@ -29,8 +29,9 @@ dependencies:
   shared_preferences: ^2.0.5
   get_storage: ^2.0.2
   convert: ^2.1.1
+  clipboard: ^0.1.2+8
   http: ^0.13.1
-  flutter_webview_plugin: ^0.3.11
+  flutter_webview_plugin: ^0.4.0
   rxdart: ^0.26.0
   flutter_local_notifications: ^5.0.0+1
   flutter:
@@ -42,6 +43,7 @@ dependencies:
   base58check: ^1.0.1
   package_info: ^2.0.0
   quiver: ^3.0.1
+  share: ^0.6.5+4
   dio: ^4.0.0
 #  image_cropper: ^1.4.0
   image_picker: ^0.7.5+2
