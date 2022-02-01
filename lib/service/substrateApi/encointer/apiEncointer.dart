@@ -116,7 +116,7 @@ class ApiEncointer {
 
     int mIndex = store.settings.endpointIsGesell
         ? await _noTee.ceremonies.meetupIndex(cid, store.encointer.currentCeremonyIndex, pubKey)
-        : await _teeProxy.ceremonies.meetupIndex(cid, pubKey, store.account.cachedPin);
+        : await _teeProxy.ceremonies.meetupIndex(cid, pubKey, store.settings.cachedPin);
 
     print("api: Next Meetup Index: " + mIndex.toString());
     store.encointer.setMeetupIndex(mIndex);
@@ -229,7 +229,7 @@ class ApiEncointer {
 
     List<String> registry = store.settings.endpointIsGesell
         ? await _noTee.ceremonies.meetupRegistry(cid, cIndex, mIndex)
-        : await _teeProxy.ceremonies.meetupRegistry(cid, pubKey, store.account.cachedPin);
+        : await _teeProxy.ceremonies.meetupRegistry(cid, pubKey, store.settings.cachedPin);
     print("api: Participants: " + registry.toString());
     store.encointer.setMeetupRegistry(registry);
     return registry;
@@ -248,7 +248,7 @@ class ApiEncointer {
     print("api: Getting participant index for " + pubKey);
     int pIndex = store.settings.endpointIsGesell
         ? await _noTee.ceremonies.participantIndex(cid, store.encointer.currentCeremonyIndex, pubKey)
-        : await _teeProxy.ceremonies.participantIndex(cid, pubKey, store.account.cachedPin);
+        : await _teeProxy.ceremonies.participantIndex(cid, pubKey, store.settings.cachedPin);
 
     print("api: Participant Index: " + pIndex.toString());
     store.encointer.setParticipantIndex(pIndex);
@@ -288,7 +288,7 @@ class ApiEncointer {
 
     BalanceEntry bEntry = store.settings.endpointIsGesell
         ? await _noTee.balances.balance(cid, pubKey)
-        : await _teeProxy.balances.balance(cid, pubKey, store.account.cachedPin);
+        : await _teeProxy.balances.balance(cid, pubKey, store.settings.cachedPin);
 
     print("bEntryJson: ${bEntry.toString()}");
     store.encointer.addBalanceEntry(cid, bEntry);
@@ -388,7 +388,7 @@ class ApiEncointer {
     var pubKey = store.account.currentAccountPubKey;
     var cid = store.encointer.chosenCid;
     var cIndex = store.encointer.currentCeremonyIndex;
-    var pin = store.account.cachedPin;
+    var pin = store.settings.cachedPin;
     var proofJs = await apiRoot
         .evalJavascript('encointer.getProofOfAttendance("$pubKey", ${jsonEncode(cid)}, "${cIndex - 1}", "$pin")');
     ProofOfAttendance proof = ProofOfAttendance.fromJson(proofJs);

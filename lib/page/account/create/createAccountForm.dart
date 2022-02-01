@@ -1,4 +1,5 @@
 import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,11 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CreateAccountForm extends StatelessWidget {
-  CreateAccountForm({this.setNewAccount, this.submitting, this.onSubmit});
-
+  CreateAccountForm({this.setNewAccount, this.submitting, this.onSubmit, this.store});
+//todo get rid of the setNewAccount method where password is stored
   final Function setNewAccount;
   final Function onSubmit;
   final bool submitting;
+  final AppStore store;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -39,36 +41,41 @@ class CreateAccountForm extends StatelessWidget {
                   ),
                   controller: _nameCtrl,
                 ),
-                TextFormField(
-                  key: Key('create-account-pin'),
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    icon: Icon(Icons.lock),
-                    hintText: dic['create.password'],
-                    labelText: dic['create.password'],
-                  ),
-                  controller: _passCtrl,
-                  validator: (v) {
-                    return Fmt.checkPassword(v.trim()) ? null : dic['create.password.error'];
-                  },
-                  obscureText: true,
-                  inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                ),
-                TextFormField(
-                  key: Key('create-account-pin2'),
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    icon: Icon(Icons.lock),
-                    hintText: dic['create.password2'],
-                    labelText: dic['create.password2'],
-                  ),
-                  controller: _pass2Ctrl,
-                  obscureText: true,
-                  validator: (v) {
-                    return _passCtrl.text != v ? dic['create.password2.error'] : null;
-                  },
-                  inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                ),
+                // todo: couldnt wrap this ternary in a single one, had to do two ternaries (for each pin)... clang: how to?
+                (store.account.accountListAll.isEmpty)
+                    ? TextFormField(
+                        key: Key('create-account-pin'),
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          icon: Icon(Icons.lock),
+                          hintText: dic['create.password'],
+                          labelText: dic['create.password'],
+                        ),
+                        controller: _passCtrl,
+                        validator: (v) {
+                          return Fmt.checkPassword(v.trim()) ? null : dic['create.password.error'];
+                        },
+                        obscureText: true,
+                        inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                      )
+                    : Container(),
+                (store.account.accountListAll.isEmpty)
+                    ? TextFormField(
+                        key: Key('create-account-pin2'),
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          icon: Icon(Icons.lock),
+                          hintText: dic['create.password2'],
+                          labelText: dic['create.password2'],
+                        ),
+                        controller: _pass2Ctrl,
+                        obscureText: true,
+                        validator: (v) {
+                          return _passCtrl.text != v ? dic['create.password2.error'] : null;
+                        },
+                        inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                      )
+                    : Container(),
               ],
             ),
           ),
@@ -79,7 +86,13 @@ class CreateAccountForm extends StatelessWidget {
               text: I18n.of(context).account['create'],
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  setNewAccount(_nameCtrl.text.isNotEmpty ? _nameCtrl.text : dic['create.default'], _passCtrl.text);
+                  if (store.account.accountListAll.isEmpty) {
+                    setNewAccount(_nameCtrl.text.isNotEmpty ? _nameCtrl.text : dic['create.default'], _passCtrl.text);
+                  } else {
+                    // cachedPin won't be empty, because cachedPin is verified not to be empty before user adds an account in profile/index.dart
+                    setNewAccount(
+                        _nameCtrl.text.isNotEmpty ? _nameCtrl.text : dic['create.default'], store.settings.cachedPin);
+                  }
                   onSubmit();
                 }
               },

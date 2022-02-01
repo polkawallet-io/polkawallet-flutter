@@ -86,7 +86,7 @@ class _RegisterParticipantPanel extends State<RegisterParticipantPanel> {
             title: Text(dic["meetup.attended"]),
             onChanged: (bool value) async {
               if (value) {
-                if (store.account.cachedPin.isNotEmpty) {
+                if (store.settings.cachedPin.isNotEmpty) {
                   proof = webApi.encointer.getProofOfAttendance();
                 } else {
                   showCupertinoDialog(
@@ -97,7 +97,7 @@ class _RegisterParticipantPanel extends State<RegisterParticipantPanel> {
                           store.account.currentAccount,
                           Text(I18n.of(context).home['unlock.account'].replaceAll(
                               'CURRENT_ACCOUNT_NAME', store.account.currentAccount.name.toString())), (password) {
-                        store.account.setPin(password);
+                        store.settings.setPin(password);
 
                         // If we don't wait, the pin has not propagated to the state and we will get a password check error
                         Future.delayed(const Duration(milliseconds: 1000), () {

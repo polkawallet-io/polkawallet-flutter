@@ -118,6 +118,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     _createAndImportAccount();
                   });
                 },
+                store: store,
               )
             : Center(child: CupertinoActivityIndicator()),
       ),

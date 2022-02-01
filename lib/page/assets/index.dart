@@ -11,7 +11,6 @@ import 'package:encointer_wallet/page/account/txConfirmPage.dart';
 import 'package:encointer_wallet/page/assets/asset/assetPage.dart';
 import 'package:encointer_wallet/page/assets/receive/receivePage.dart';
 import 'package:encointer_wallet/page/assets/transfer/transferPage.dart';
-import 'package:encointer_wallet/page/networkSelectPage.dart';
 import 'package:encointer_wallet/page/profile/account/accountManagePage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
@@ -87,7 +86,7 @@ class _AssetsState extends State<Assets> {
             }
 
             if (ModalRoute.of(context).isCurrent &&
-                !_enteredPin & store.account.cachedPin.isEmpty & !store.settings.endpointIsGesell) {
+                !_enteredPin & store.settings.cachedPin.isEmpty & !store.settings.endpointIsGesell) {
               // The pin is not immeditally propagated to the store, hence we track if the pin has been entered to prevent
               // showing the dialog multiple times.
               WidgetsBinding.instance.addPostFrameCallback(
@@ -99,7 +98,6 @@ class _AssetsState extends State<Assets> {
             var dic = I18n.of(context).assets;
             AccountData acc = store.account.currentAccount;
 
-            var developerMode = true;
             return Column(
               children: <Widget>[
                 Row(
@@ -120,23 +118,6 @@ class _AssetsState extends State<Assets> {
                         );
                       },
                     ),
-                    if (developerMode == true)
-                      Column(
-                        children: [
-                          InkWell(
-                            // TODO design decision where to put this functionality
-                            key: Key('choose-network'),
-                            child: Observer(
-                              builder: (_) => Text(
-                                "net: ${store.settings.endpoint.info}",
-                                style: TextStyle(color: Colors.orange),
-                              ),
-                            ),
-                            onTap: () => Navigator.of(context).pushNamed('/network'),
-                          ),
-                          store.settings.isConnected ? Icon(Icons.check) : CupertinoActivityIndicator(),
-                        ],
-                      ),
                     // qr-receive text:
                     // Text(
                     //   '$accIndex${Fmt.address(store.account.currentAddress)}',
@@ -275,16 +256,16 @@ class _AssetsState extends State<Assets> {
       context: context,
       builder: (_) {
         return WillPopScope(
-          child: showPasswordDialogWithAccountSwitch(context, store.account.currentAccount, (password) {
-            setState(() {
-              store.account.setPin(password);
-            });
-          },
-              () async => {
-                    Navigator.of(context).pop(),
-                    await Navigator.of(context).pushNamed(NetworkSelectPage.route),
-                    setState(() {}),
-                  }),
+          child: showPasswordInputDialog(
+            context,
+            store.account.currentAccount,
+            Text(I18n.of(context).home['unlock']),
+            (password) {
+              setState(() {
+                store.settings.setPin(password);
+              });
+            },
+          ),
           onWillPop: () {
             // handles back button press
             return _showPasswordNotEnteredDialog(context);

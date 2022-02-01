@@ -193,7 +193,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
                   setNewAccount: store.account.setNewAccount,
                   submitting: _submitting,
                   onSubmit: _importAccount,
-                )
+                  store: store)
               : Center(child: CupertinoActivityIndicator()),
         ),
       );

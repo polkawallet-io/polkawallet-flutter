@@ -14,16 +14,6 @@ showPasswordInputDialog(context, account, title, onOk) {
   );
 }
 
-showPasswordDialogWithAccountSwitch(context, currentAccount, onOk, onAccountSwitch) {
-  return PasswordInputDialog(
-    account: currentAccount,
-    title: Text(
-        I18n.of(context).home['unlock.account'].replaceAll('CURRENT_ACCOUNT_NAME', currentAccount.name.toString())),
-    onOk: onOk,
-    onAccountSwitch: onAccountSwitch,
-  );
-}
-
 class PasswordInputDialog extends StatefulWidget {
   PasswordInputDialog({this.account, this.title, this.onOk, this.onCancel, this.onAccountSwitch});
 

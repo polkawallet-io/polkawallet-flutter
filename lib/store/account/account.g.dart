@@ -64,21 +64,6 @@ mixin _$AccountStore on _AccountStore, Store {
     });
   }
 
-  final _$cachedPinAtom = Atom(name: '_AccountStore.cachedPin');
-
-  @override
-  String get cachedPin {
-    _$cachedPinAtom.reportRead();
-    return super.cachedPin;
-  }
-
-  @override
-  set cachedPin(String value) {
-    _$cachedPinAtom.reportWrite(value, super.cachedPin, () {
-      super.cachedPin = value;
-    });
-  }
-
   final _$newAccountAtom = Atom(name: '_AccountStore.newAccount');
 
   @override
@@ -334,16 +319,6 @@ mixin _$AccountStore on _AccountStore, Store {
   }
 
   @override
-  void setPin(String pin) {
-    final _$actionInfo = _$_AccountStoreActionController.startAction(name: '_AccountStore.setPin');
-    try {
-      return super.setPin(pin);
-    } finally {
-      _$_AccountStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   void setNewAccount(String name, String password) {
     final _$actionInfo = _$_AccountStoreActionController.startAction(name: '_AccountStore.setNewAccount');
     try {
@@ -458,7 +433,6 @@ mixin _$AccountStore on _AccountStore, Store {
     return '''
 loading: ${loading},
 txStatus: ${txStatus},
-cachedPin: ${cachedPin},
 newAccount: ${newAccount},
 currentAccountPubKey: ${currentAccountPubKey},
 accountList: ${accountList},

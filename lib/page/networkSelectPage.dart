@@ -1,4 +1,5 @@
 import 'package:encointer_wallet/common/components/addressIcon.dart';
+import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/page/account/createAccountEntryPage.dart';
@@ -113,6 +114,26 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     Navigator.of(context).pushNamed(CreateAccountEntryPage.route);
   }
 
+  Future<void> _showPasswordDialog(BuildContext context) async {
+    await showCupertinoDialog(
+      context: context,
+      builder: (_) {
+        return Container(
+          child: showPasswordInputDialog(
+            context,
+            store.account.currentAccount,
+            Text(I18n.of(context).profile['unlock']),
+            (password) {
+              setState(() {
+                store.settings.setPin(password);
+              });
+            },
+          ),
+        );
+      },
+    );
+  }
+
   List<Widget> _buildAccountList() {
     Color primaryColor = Theme.of(context).primaryColor;
     List<Widget> res = [
@@ -124,10 +145,18 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
             style: Theme.of(context).textTheme.headline4,
           ),
           IconButton(
-            icon: Image.asset('assets/images/assets/plus_indigo.png'),
-            color: primaryColor,
-            onPressed: () => _onCreateAccount(),
-          )
+              icon: Image.asset('assets/images/assets/plus_indigo.png'),
+              color: primaryColor,
+              onPressed: () async => {
+                    if (store.settings.cachedPin.isEmpty)
+                      {
+                        await _showPasswordDialog(context),
+                      }
+                    else
+                      {
+                        _onCreateAccount(),
+                      }
+                  })
         ],
       ),
     ];
@@ -235,7 +264,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
                   padding: EdgeInsets.all(16),
                   children: _buildAccountList(),
                 ),
-              )
+              ),
             ],
           );
         },

@@ -1,8 +1,8 @@
 import 'package:encointer_wallet/common/components/roundedButton.dart';
-import 'package:encointer_wallet/page/profile/account/accountManagePage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/account.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
+import 'package:encointer_wallet/store/settings.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,21 +10,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  ChangePasswordPage(this.store);
+  ChangePasswordPage(this.store, this.settingsStore);
 
   static final String route = '/profile/password';
   final AccountStore store;
-
+  final SettingsStore settingsStore;
   @override
-  _ChangePassword createState() => _ChangePassword(store);
+  _ChangePassword createState() => _ChangePassword(store, settingsStore);
 }
 
 class _ChangePassword extends State<ChangePasswordPage> {
-  _ChangePassword(this.store);
+  _ChangePassword(this.store, this.settingsStore);
 
   final Api api = webApi;
   final AccountStore store;
-
+  final SettingsStore settingsStore;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passOldCtrl = new TextEditingController();
   final TextEditingController _passCtrl = new TextEditingController();
@@ -65,17 +65,22 @@ class _ChangePassword extends State<ChangePasswordPage> {
           },
         );
       } else {
-        final Map acc = await api
-            .evalJavascript('account.changePassword("${store.currentAccount.pubKey}", "$passOld", "$passNew")');
-        // use local name, not webApi returned name
-        Map<String, dynamic> localAcc = AccountData.toJson(store.currentAccount);
+        // we need to iterate over all active accounts and update there password
+        settingsStore.setPin(passNew);
+        store.accountListAll.forEach((account) async {
+          final Map acc =
+              await api.evalJavascript('account.changePassword("${account.pubKey}", "$passOld", "$passNew")');
+          // use local name, not webApi returned name
+          Map<String, dynamic> localAcc = AccountData.toJson(store.currentAccount);
 
-        // make metadata the same as the polkadot-js/api's
-        acc['meta']['name'] = localAcc['name'];
-        store.updateAccount(acc);
-        // update encrypted seed after password updated
-        store.updateSeed(store.currentAccount.pubKey, _passOldCtrl.text, _passCtrl.text);
-        store.setPin(passNew);
+          // make metadata the same as the polkadot-js/api's
+          acc['meta']['name'] = localAcc['name'];
+          store.updateAccount(acc);
+          // update encrypted seed after password updated
+          store.accountListAll.map((accountData) {
+            store.updateSeed(accountData.pubKey, _passOldCtrl.text, _passCtrl.text);
+          });
+        });
         showCupertinoDialog(
           context: context,
           builder: (BuildContext context) {
@@ -84,9 +89,11 @@ class _ChangePassword extends State<ChangePasswordPage> {
               content: Text(dic['pass.success.txt']),
               actions: <Widget>[
                 CupertinoButton(
-                  child: Text(I18n.of(context).home['ok']),
-                  onPressed: () => Navigator.popUntil(context, ModalRoute.withName(AccountManagePage.route)),
-                ),
+                    child: Text(I18n.of(context).home['ok']),
+                    onPressed: () => {
+                          // moving back to profile page after changing password
+                          Navigator.popUntil(context, ModalRoute.withName('/')),
+                        }),
               ],
             );
           },

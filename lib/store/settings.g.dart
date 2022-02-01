@@ -105,6 +105,21 @@ mixin _$SettingsStore on _SettingsStore, Store {
   bool get isConnected =>
       (_$isConnectedComputed ??= Computed<bool>(() => super.isConnected, name: '_SettingsStore.isConnected')).value;
 
+  final _$cachedPinAtom = Atom(name: '_SettingsStore.cachedPin');
+
+  @override
+  String get cachedPin {
+    _$cachedPinAtom.reportRead();
+    return super.cachedPin;
+  }
+
+  @override
+  set cachedPin(String value) {
+    _$cachedPinAtom.reportWrite(value, super.cachedPin, () {
+      super.cachedPin = value;
+    });
+  }
+
   final _$loadingAtom = Atom(name: '_SettingsStore.loading');
 
   @override
@@ -332,6 +347,16 @@ mixin _$SettingsStore on _SettingsStore, Store {
   }
 
   @override
+  void setPin(String pin) {
+    final _$actionInfo = _$_SettingsStoreActionController.startAction(name: '_SettingsStore.setPin');
+    try {
+      return super.setPin(pin);
+    } finally {
+      _$_SettingsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setEndpoint(EndpointData value) {
     final _$actionInfo = _$_SettingsStoreActionController.startAction(name: '_SettingsStore.setEndpoint');
     try {
@@ -354,6 +379,7 @@ mixin _$SettingsStore on _SettingsStore, Store {
   @override
   String toString() {
     return '''
+cachedPin: ${cachedPin},
 loading: ${loading},
 localeCode: ${localeCode},
 endpoint: ${endpoint},
