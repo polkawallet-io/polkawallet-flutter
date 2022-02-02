@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/common/components/gradientElements.dart';
 import 'package:encointer_wallet/page/account/create/createAccountPage.dart';
 import 'package:encointer_wallet/page/account/import/importAccountPage.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
@@ -22,8 +22,8 @@ class CreateAccountEntryPage extends StatelessWidget {
             Padding(
               key: Key('create-account'),
               padding: EdgeInsets.all(16),
-              child: RoundedButton(
-                text: I18n.of(context).home['create'],
+              child: PrimaryButton(
+                child: Text(I18n.of(context).home['create']),
                 onPressed: () {
                   Navigator.pushNamed(context, CreateAccountPage.route);
                 },
@@ -32,8 +32,8 @@ class CreateAccountEntryPage extends StatelessWidget {
             Padding(
               key: Key('import-account'),
               padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: RoundedButton(
-                text: I18n.of(context).home['import'],
+              child: PrimaryButton(
+                child: Text(I18n.of(context).home['import']),
                 onPressed: () {
                   Navigator.pushNamed(context, ImportAccountPage.route);
                 },

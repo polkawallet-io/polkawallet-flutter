@@ -1,4 +1,4 @@
-import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/common/components/gradientElements.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
@@ -82,8 +82,8 @@ class CreateAccountForm extends StatelessWidget {
           Container(
             key: Key('create-account-confirm'),
             padding: EdgeInsets.all(16),
-            child: RoundedButton(
-              text: I18n.of(context).account['create'],
+            child: PrimaryButton(
+              child: Text(I18n.of(context).account['create']),
               onPressed: () {
                 if (_formKey.currentState.validate()) {
                   if (store.account.accountListAll.isEmpty) {

@@ -2,13 +2,10 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:encointer_wallet/common/components/addressIcon.dart';
-import 'package:encointer_wallet/common/components/iconTextButton.dart';
+import 'package:encointer_wallet/common/components/gradientElements.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
-import 'package:encointer_wallet/common/components/roundedButton.dart';
-import 'package:encointer_wallet/page-encointer/bazaar/0_main/bazaarMain.dart';
 import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
 import 'package:encointer_wallet/page/account/txConfirmPage.dart';
-import 'package:encointer_wallet/page/assets/asset/assetPage.dart';
 import 'package:encointer_wallet/page/assets/receive/receivePage.dart';
 import 'package:encointer_wallet/page/assets/transfer/transferPage.dart';
 import 'package:encointer_wallet/page/profile/account/accountManagePage.dart';
@@ -21,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:iconsax/iconsax.dart';
 
 class Assets extends StatefulWidget {
   Assets(this.store);
@@ -100,29 +98,19 @@ class _AssetsState extends State<Assets> {
 
             return Column(
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconTextButton(
-                      iconData: Icons.person_add_alt,
-                      text: dic['invite'],
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          TransferPage.route,
-                          arguments: TransferPageParams(
-                              redirect: AssetPage.route,
-                              symbol: store.encointer.chosenCid.toFmtString(),
-                              isEncointerCommunityCurrency: true,
-                              communitySymbol: store.encointer.communitySymbol),
-                        );
-                      },
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      "Home",
+                      style: Theme.of(context).textTheme.headline3,
                     ),
-                    // qr-receive text:
-                    // Text(
-                    //   '$accIndex${Fmt.address(store.account.currentAddress)}',
-                    //   style: TextStyle(fontSize: 14),
-                    // ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    CommunityWithCommunityChooser(store),
                     InkWell(
                       child: Column(
                         children: [
@@ -131,8 +119,10 @@ class _AssetsState extends State<Assets> {
                             pubKey: store.account.currentAccount.pubKey,
                             tapToCopy: false,
                           ),
+                          SizedBox(height: 6),
                           Text(
                             Fmt.accountName(context, acc),
+                            style: Theme.of(context).textTheme.headline4,
                           ),
                         ],
                       ),
@@ -144,15 +134,19 @@ class _AssetsState extends State<Assets> {
                     ),
                   ],
                 ),
-                CommunityWithCommunityChooser(store),
                 Observer(
                   builder: (_) {
                     return (store.encointer.communityName != null) & (store.encointer.chosenCid != null)
-                        ? Container(
-                            margin: EdgeInsets.only(bottom: 32),
-                            child: Text(
-                                '${Fmt.doubleFormat(store.encointer.communityBalance)} ${store.encointer.communitySymbol}',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54)),
+                        ? Column(
+                            children: [
+                              TextGradient(text: '${Fmt.doubleFormat(store.encointer.communityBalance)} ⵐ'),
+                              Text(
+                                "Balance, ${store.encointer.communitySymbol}",
+                                style: Theme.of(context).textTheme.headline4.copyWith(
+                                      color: Color(0xff666666),
+                                    ),
+                              ),
+                            ],
                           )
                         : Container(
                             margin: EdgeInsets.only(top: 16),
@@ -168,46 +162,74 @@ class _AssetsState extends State<Assets> {
                           );
                   },
                 ),
+                SizedBox(
+                  height: 42,
+                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    IconTextButton(
-                      text: dic['receive'],
-                      iconData: Icons.download_sharp,
-                      key: Key('qr-receive'),
-                      onTap: () {
-                        if (acc.address != '') {
-                          Navigator.pushNamed(context, ReceivePage.route);
-                        }
-                      },
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            // don't redefine the entire style just the border radii
+                            borderRadius: BorderRadius.horizontal(left: Radius.circular(15), right: Radius.zero),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Iconsax.receive_square_2),
+                              SizedBox(width: 12),
+                              Text(dic['receive']),
+                            ],
+                          ),
+                        ),
+                        key: Key('qr-receive'),
+                        onPressed: () {
+                          if (acc.address != '') {
+                            Navigator.pushNamed(context, ReceivePage.route);
+                          }
+                        },
+                      ),
                     ),
-                    IconTextButton(
-                      text: dic['bazaar'],
-                      iconData: Icons.shopping_bag_sharp,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          BazaarMain.route,
-                        );
-                      },
-                    ),
-                    IconTextButton(
-                      key: Key('transfer'),
-                      text: dic['transfer'],
-                      iconData: Icons.upload_sharp,
-                      onTap: store.encointer.communityBalance != null
-                          ? () {
-                              Navigator.pushNamed(
-                                context,
-                                TransferPage.route,
-                                arguments: TransferPageParams(
-                                    redirect: '/',
-                                    symbol: store.encointer.chosenCid.toFmtString(),
-                                    isEncointerCommunityCurrency: true,
-                                    communitySymbol: store.encointer.communitySymbol),
-                              );
-                            }
-                          : null,
+                    SizedBox(width: 2),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            // don't redefine the entire style just the border radii
+                            borderRadius: BorderRadius.horizontal(left: Radius.zero, right: Radius.circular(15)),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(dic['transfer']),
+                              SizedBox(width: 12),
+                              Icon(Iconsax.send_sqaure_2),
+                            ],
+                          ),
+                        ),
+                        key: Key('transfer'),
+                        onPressed: store.encointer.communityBalance != null
+                            ? () {
+                                Navigator.pushNamed(
+                                  context,
+                                  TransferPage.route,
+                                  arguments: TransferPageParams(
+                                      redirect: '/',
+                                      symbol: store.encointer.chosenCid.toFmtString(),
+                                      isEncointerCommunityCurrency: true,
+                                      communitySymbol: store.encointer.communitySymbol),
+                                );
+                              }
+                            : null,
+                      ),
                     ),
                   ],
                 ),
@@ -228,15 +250,14 @@ class _AssetsState extends State<Assets> {
                         var hasPendingIssuance = snapshot.data;
 
                         if (hasPendingIssuance) {
-                          return RoundedButton(
-                            text: dic['issuance.pending'],
+                          return ElevatedButton(
+                            child: Text(dic['issuance.pending']),
                             onPressed: () => _submitClaimRewards(context),
                           );
                         } else {
-                          return RoundedButton(
-                            text: dic['issuance.claimed'],
+                          return ElevatedButton(
+                            child: Text(dic['issuance.claimed']),
                             onPressed: null,
-                            color: Theme.of(context).disabledColor,
                           );
                         }
                       } else {
@@ -246,6 +267,34 @@ class _AssetsState extends State<Assets> {
                   )
                 : Container();
           }),
+          Container(
+            decoration: BoxDecoration(
+              color: Color(0xffF4F8F9),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            height: 150,
+            width: double.infinity,
+            child: Center(
+              child: Text(
+                "Placeholder TODO add ceremony guide",
+                style: TextStyle(color: Colors.orange),
+              ),
+            ),
+          ),
+          SizedBox(height: 12),
+          PrimaryButton(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Iconsax.login_1),
+                SizedBox(width: 12),
+                Text("Register now"),
+              ],
+            ),
+            onPressed: () {
+              print("TODO register");
+            },
+          ),
         ],
       ),
     );

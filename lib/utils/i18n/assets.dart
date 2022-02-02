@@ -43,7 +43,7 @@ const Map<String, String> enAssets = {
   'tip': 'Tip',
   'tip.tip': '\nAdding a tip to this Tx, paying\nthe block author for greater priority.\n',
   'to': 'To',
-  'transfer': 'Transfer',
+  'transfer': 'Send', // as Alain requested 2022-01-21
   'value': 'Value',
   'invite': 'Invite someone',
   'bazaar': 'Bazaar',

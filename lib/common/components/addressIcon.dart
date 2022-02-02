@@ -33,8 +33,8 @@ class AddressIcon extends StatelessWidget {
         }
         return GestureDetector(
           child: Container(
-            width: size ?? 40,
-            height: size ?? 40,
+            width: size ?? 96,
+            height: size ?? 96,
             child: rawSvg == null ? Image.asset('assets/images/assets/Assets_nav_0.png') : SvgPicture.string(rawSvg),
           ),
           onTap: tapToCopy ? () => UI.copyAndNotify(context, addressToCopy ?? addressView) : null,
