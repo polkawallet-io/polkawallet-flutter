@@ -1,7 +1,7 @@
 import 'package:encointer_wallet/page-encointer/encointerEntry.dart';
 import 'package:encointer_wallet/page/account/scanPage.dart';
 import 'package:encointer_wallet/page/assets/index.dart';
-import 'package:encointer_wallet/page/profile/contacts/contactListPage.dart';
+import 'package:encointer_wallet/page/profile/contacts/contactsPage.dart';
 import 'package:encointer_wallet/page/profile/index.dart';
 import 'package:encointer_wallet/service/notification.dart';
 import 'package:encointer_wallet/store/app.dart';
@@ -55,7 +55,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
       if (store.settings.endpointIsGesell) () => BazaarMain(store), // dart collection if
       () => EncointerEntry(store), // #272 we leave it in for now until we have a replacement
       () => ScanPage(),
-      () => ContactListPage(store),
+      () => ContactsPage(store),
       () => Profile(store),
     ];
 
