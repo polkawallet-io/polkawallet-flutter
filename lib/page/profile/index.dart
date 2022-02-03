@@ -122,14 +122,6 @@ class _ProfileState extends State<Profile> {
                 color: primaryColor,
                 onPressed: () =>
                     {store.settings.cachedPin.isEmpty ? _showPasswordDialog(context) : _onCreateAccount()}),
-            developerMode
-                ? IconButton(
-                    // TODO design decision where to put this functionality
-                    key: Key('choose-network'),
-                    icon: Icon(Icons.menu, color: Colors.orange),
-                    onPressed: () => Navigator.of(context).pushNamed('/network'),
-                  )
-                : Container(),
           ])
         ],
       ),
@@ -194,6 +186,25 @@ class _ProfileState extends State<Profile> {
                       ),
                     ],
                   ),
+                  if (developerMode == true)
+                    Row(
+                      children: [
+                        InkWell(
+                          key: Key('choose-network'),
+                          child: Observer(
+                            builder: (_) => Text(
+                              "change network (current: ${store.settings.endpoint.info})",
+                              style: TextStyle(color: Colors.orange),
+                            ),
+                          ),
+                          onTap: () => Navigator.of(context).pushNamed('/network'),
+                        ),
+                        SizedBox(width: 8),
+                        store.settings.isConnected
+                            ? Icon(Icons.check, color: Colors.green)
+                            : CupertinoActivityIndicator(),
+                      ],
+                    ),
                 ],
               );
             },
