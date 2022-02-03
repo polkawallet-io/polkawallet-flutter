@@ -118,9 +118,10 @@ const MaterialColor ZurichLion = const MaterialColor(
     600: const Color(0xFF3969AC), // <--- end color of gradient
     700: const Color(0xFF3969AC),
     800: const Color(0xFF3969AC),
-    900: const Color(0xFF3969AC),
+    900: const Color(0xFF000022), // <--- dark blue for the scan bottomButtonBar icon
   },
 );
+const Color encointerGrey = Color(0xff666666);
 
 final appThemeLaminar = ThemeData(
   primarySwatch: Colors.deepPurple,

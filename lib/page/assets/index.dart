@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/common/components/gradientElements.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
@@ -143,7 +144,7 @@ class _AssetsState extends State<Assets> {
                               Text(
                                 "Balance, ${store.encointer.communitySymbol}",
                                 style: Theme.of(context).textTheme.headline4.copyWith(
-                                      color: Color(0xff666666),
+                                      color: encointerGrey,
                                     ),
                               ),
                             ],

@@ -45,7 +45,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
                     shaderCallback: (bounds) => primaryGradient.createShader(
                       Rect.fromLTWH(0, 0, bounds.width, bounds.height),
                     ),
-                    child: Column(children: [
+                    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Icon(
                         i.iconData,
                         key: Key('tab-${i.key.toLowerCase()}'),
@@ -64,6 +64,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
                 : Icon(
                     i.iconData,
                     key: Key('tab-${i.key.toLowerCase()}'),
+                    color: i.key == 'Scan' ? ZurichLion.shade900 : encointerGrey,
                   ),
             label: '',
           ),
