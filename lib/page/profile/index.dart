@@ -86,22 +86,22 @@ class _ProfileState extends State<Profile> {
         address = store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
       }
       return InkWell(
-          child: Column(
-            children: [
-              AddressIcon(
-                '',
-                size: 70,
-                pubKey: i.pubKey,
-                // addressToCopy: address,
-                tapToCopy: false,
-              ),
-              SizedBox(height: 6),
-              Text(
-                Fmt.accountName(context, i),
-                style: Theme.of(context).textTheme.headline4,
-              ),
-            ],
-          ),
+        child: Column(
+          children: [
+            AddressIcon(
+              '',
+              size: 70,
+              pubKey: i.pubKey,
+              // addressToCopy: address,
+              tapToCopy: false,
+            ),
+            SizedBox(height: 6),
+            Text(
+              Fmt.accountName(context, i),
+              style: Theme.of(context).textTheme.headline4,
+            ),
+          ],
+        ),
         onTap: () => _onSelect(i, address),
       );
       // return RoundedCard(
@@ -123,29 +123,37 @@ class _ProfileState extends State<Profile> {
     return res;
   }
 
-  List<Widget> _buildAddAccount(Map<String, String> dic) {
-    Color primaryColor = Theme.of(context).primaryColor;
-    List<Widget> res = [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            '${dic['accounts']}',
-            style: Theme.of(context).textTheme.headline4,
-          ),
-          Row(children: <Widget>[
-            // Text(dic['add']),
-            IconButton(
-                icon: Icon(Iconsax.add_square),
-                color: primaryColor,
-                onPressed: () =>
-                    {store.settings.cachedPin.isEmpty ? _showPasswordDialog(context) : _onCreateAccount()}),
-          ])
-        ],
-      ),
-    ];
-    return res;
-  }
+  // List<Widget> _buildAddAccount(Map<String, String> dic) {
+  //   Color primaryColor = Theme.of(context).primaryColor;
+  //   List<Widget> res = [
+  //     Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: <Widget>[
+  //         Text(
+  //           '${dic['accounts']}',
+  //           style: Theme.of(context).textTheme.headline4,
+  //         ),
+  //         Row(children: <Widget>[
+  //           // Text(dic['add']),
+  //           IconButton(
+  //               icon: Icon(Iconsax.add_square),
+  //               color: primaryColor,
+  //               onPressed: () =>
+  //                   {store.settings.cachedPin.isEmpty ? _showPasswordDialog(context) : _onCreateAccount()}),
+  //           developerMode
+  //               ? IconButton(
+  //                   // TODO design decision where to put this functionality
+  //                   key: Key('choose-network'),
+  //                   icon: Icon(Icons.menu, color: Colors.orange),
+  //                   onPressed: () => Navigator.of(context).pushNamed('/network'),
+  //                 )
+  //               : Container(),
+  //         ])
+  //       ],
+  //     ),
+  //   ];
+  //   return res;
+  // }
 
   @override
   void initState() {
@@ -169,7 +177,8 @@ class _ProfileState extends State<Profile> {
       builder: (_) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(dic['title'],
+            title: Text(
+              dic['title'],
               style: Theme.of(context).textTheme.headline3,
             ),
             iconTheme: IconThemeData(
@@ -182,31 +191,32 @@ class _ProfileState extends State<Profile> {
           body: Observer(
             builder: (_) {
               if (_selectedNetwork == null) return Container();
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              return ListView(
+                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    child:       Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
                           '${dic['accounts']}',
-                          style: Theme.of(context).textTheme.headline4,
+                          style: Theme.of(context).textTheme.headline2.copyWith(color: Colors.black),
                         ),
                         Row(children: <Widget>[
                           // Text(dic['add']),
                           IconButton(
                               icon: Icon(Iconsax.add_square),
                               color: primaryColor,
-                              onPressed: () =>
-                              {store.settings.cachedPin.isEmpty ? _showPasswordDialog(context) : _onCreateAccount()}),
+                              onPressed: () => {
+                                    store.settings.cachedPin.isEmpty ? _showPasswordDialog(context) : _onCreateAccount()
+                                  }),
                           developerMode
                               ? IconButton(
-                            // TODO design decision where to put this functionality
-                            key: Key('choose-network'),
-                            icon: Icon(Icons.menu, color: Colors.orange),
-                            onPressed: () => Navigator.of(context).pushNamed('/network'),
-                          )
+                                  // TODO design decision where to put this functionality
+                                  key: Key('choose-network'),
+                                  icon: Icon(Icons.menu, color: Colors.orange),
+                                  onPressed: () => Navigator.of(context).pushNamed('/network'),
+                                )
                               : Container(),
                         ])
                       ],
