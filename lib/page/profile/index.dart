@@ -89,7 +89,7 @@ class _ProfileState extends State<Profile> {
       return InkWell(
         child: Column(
           children: [
-            Wrap(
+            Stack(
               children: [
                 AddressIcon(
                   '',
@@ -98,6 +98,7 @@ class _ProfileState extends State<Profile> {
                   // addressToCopy: address,
                   tapToCopy: false,
                 ),
+
                 EditIcon(i, address, 40, store),
               ],
             ),
