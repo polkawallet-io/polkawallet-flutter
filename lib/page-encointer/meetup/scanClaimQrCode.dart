@@ -92,14 +92,16 @@ class ScanClaimQrCode extends StatelessWidget {
                       .replaceAll('SCANNED_COUNT', store.encointer.scannedClaimsCount.toString())
                       .replaceAll('TOTAL_COUNT', (confirmedParticipantsCount - 1).toString()))),
               headerWidget: SafeArea(
+                  child: Align(
+                alignment: Alignment.topRight,
                 child: IconButton(
                   icon: Icon(
-                    Icons.arrow_back_ios,
+                    Icons.close,
                     color: Theme.of(context).cardColor,
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-              ),
+              )),
               onScan: _onScan,
             );
           } else {

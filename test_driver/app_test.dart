@@ -81,7 +81,8 @@ void main() {
 
     test('encointerEntryPage', () async {
       log("tapping encointerEntry tap");
-      await driver.tap(find.byValueKey('tab-ceremonies'));
+      // key is directly derived by `TabKey` enum to string
+      await driver.tap(find.byValueKey('TabKey.Ceremonies'));
 
       // communicate to the app isolate how to setup the store
       await driver.requestData(StorageSetup.UNREGISTERED_PARTICIPANT);

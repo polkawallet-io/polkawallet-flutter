@@ -48,7 +48,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
                     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Icon(
                         i.iconData,
-                        key: Key('tab-${i.key.toLowerCase()}'),
+                        key: Key('${i.key.toString()}'),
                       ),
                       Container(
                         height: 4,
@@ -63,8 +63,8 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
                   )
                 : Icon(
                     i.iconData,
-                    key: Key('tab-${i.key.toLowerCase()}'),
-                    color: i.key == 'Scan' ? ZurichLion.shade900 : encointerGrey,
+                    key: Key('${i.key.toString()}'),
+                    color: i.key == TabKey.Scan ? ZurichLion.shade900 : encointerGrey,
                   ),
             label: '',
           ),
@@ -86,41 +86,37 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
   Widget build(BuildContext context) {
     _tabList = <TabData>[
       TabData(
-        'Wallet',
+        TabKey.Wallet,
         Iconsax.home_2,
       ),
       if (store.settings.endpointIsGesell)
         TabData(
-          'Bazaar',
+          TabKey.Bazaar,
           Iconsax.shop,
         ), // dart collection if
       TabData(
-        'Ceremonies',
+        TabKey.Ceremonies,
         Iconsax.calendar,
       ),
       TabData(
-        'Scan',
+        TabKey.Scan,
         Iconsax.scan_barcode,
       ),
       TabData(
-        'Contacts',
+        TabKey.Contacts,
         Iconsax.profile_2user,
       ),
       TabData(
-        'Profile',
+        TabKey.Profile,
         Iconsax.profile_circle,
       ),
     ];
+
     return Scaffold(
       key: EncointerHomePage.encointerHomePageKey,
       backgroundColor: Colors.white,
       body: PageView(
         controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _tabIndex = index;
-          });
-        },
         children: [
           Assets(store),
           if (store.settings.endpointIsGesell) BazaarMain(store), // dart collection if
@@ -133,11 +129,16 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _tabIndex,
         iconSize: 22.0,
-        onTap: (index) {
-          setState(() {
-            _tabIndex = index;
-          });
-          _pageController.jumpToPage(index);
+        onTap: (index) async {
+          if (_tabList[index].key == TabKey.Scan) {
+            // Push `ScanPage.Route`instead of changing the Page.
+            Navigator.of(context).pushNamed(ScanPage.route);
+          } else {
+            setState(() {
+              _tabIndex = index;
+              _pageController.jumpToPage(index);
+            });
+          }
         },
         type: BottomNavigationBarType.fixed,
         items: _navBarItems(_tabIndex),
@@ -150,10 +151,19 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
 
 class TabData {
   /// used for our integration tests to click on a UI element
-  final String key;
+  final TabKey key;
 
   /// used for our integration tests to click on a UI element
   final IconData iconData;
 
   TabData(this.key, this.iconData);
+}
+
+enum TabKey {
+  Wallet,
+  Bazaar,
+  Ceremonies,
+  Scan,
+  Contacts,
+  Profile,
 }
