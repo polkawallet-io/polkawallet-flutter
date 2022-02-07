@@ -13,6 +13,7 @@ import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:iconsax/iconsax.dart';
 
 class Profile extends StatefulWidget {
   Profile(this.store);
@@ -116,9 +117,9 @@ class _ProfileState extends State<Profile> {
             style: Theme.of(context).textTheme.headline4,
           ),
           Row(children: <Widget>[
-            Text(dic['add']),
+            // Text(dic['add']),
             IconButton(
-                icon: Image.asset('assets/images/assets/plus_indigo.png'),
+                icon: Icon(Iconsax.add_square),
                 color: primaryColor,
                 onPressed: () =>
                     {store.settings.cachedPin.isEmpty ? _showPasswordDialog(context) : _onCreateAccount()}),
