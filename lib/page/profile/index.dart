@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:encointer_wallet/common/components/editIcon.dart';
 
 class Profile extends StatefulWidget {
   Profile(this.store);
@@ -88,12 +89,17 @@ class _ProfileState extends State<Profile> {
       return InkWell(
         child: Column(
           children: [
-            AddressIcon(
-              '',
-              size: 70,
-              pubKey: i.pubKey,
-              // addressToCopy: address,
-              tapToCopy: false,
+            Wrap(
+              children: [
+                AddressIcon(
+                  '',
+                  size: 70,
+                  pubKey: i.pubKey,
+                  // addressToCopy: address,
+                  tapToCopy: false,
+                ),
+                EditIcon(i, address, 40, store),
+              ],
             ),
             SizedBox(height: 6),
             Text(
