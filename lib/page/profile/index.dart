@@ -213,7 +213,7 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   Container(
-                    height: 350,
+                    height: 130,
                     child: ListView(
                       padding: EdgeInsets.all(16),
                       children: _buildAccountList(),
