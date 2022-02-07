@@ -87,21 +87,40 @@ class _ProfileState extends State<Profile> {
       if (store.account.pubKeyAddressMap[_selectedNetwork.ss58] != null) {
         address = store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
       }
-      return RoundedCard(
-        border: address == store.account.currentAddress
-            ? Border.all(color: Colors.amber)
-            : Border.all(color: Theme.of(context).cardColor),
-        margin: EdgeInsets.only(bottom: 16),
-        padding: EdgeInsets.only(top: 7, bottom: 7),
-        child: ListTile(
-          leading: AddressIcon('', pubKey: i.pubKey, addressToCopy: address),
-          title: Text(Fmt.accountName(context, i)),
-          subtitle: Text('${Fmt.address(address)}', maxLines: 2),
-          onTap: () => _onSelect(i, address),
-          selected: address == store.account.currentAddress,
-          trailing: EditIcon(i, address, 40, store),
-        ),
+      return InkWell(
+          child: Column(
+            children: [
+              AddressIcon(
+                '',
+                size: 70,
+                pubKey: i.pubKey,
+                // addressToCopy: address,
+                tapToCopy: false,
+              ),
+              SizedBox(height: 6),
+              Text(
+                Fmt.accountName(context, i),
+                style: Theme.of(context).textTheme.headline4,
+              ),
+            ],
+          ),
+        onTap: () => _onSelect(i, address),
       );
+      // return RoundedCard(
+      //   border: address == store.account.currentAddress
+      //       ? Border.all(color: Colors.amber)
+      //       : Border.all(color: Theme.of(context).cardColor),
+      //   margin: EdgeInsets.only(bottom: 16),
+      //   padding: EdgeInsets.only(top: 7, bottom: 7),
+      //   child: ListTile(
+      //     leading: AddressIcon('', pubKey: i.pubKey, addressToCopy: address),
+      //     title: Text(Fmt.accountName(context, i)),
+      //     subtitle: Text('${Fmt.address(address)}', maxLines: 2),
+      //     onTap: () => _onSelect(i, address),
+      //     selected: address == store.account.currentAddress,
+      //     trailing: EditIcon(i, address, 40, store),
+      //   ),
+      // );
     }).toList());
     return res;
   }
@@ -151,9 +170,15 @@ class _ProfileState extends State<Profile> {
       builder: (_) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(dic['title']),
+            title: Text(dic['title'],
+              style: Theme.of(context).textTheme.headline3,
+            ),
+            iconTheme: IconThemeData(
+              color: Color(0xff666666), //change your color here
+            ),
             centerTitle: true,
-            elevation: 0.0,
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
           ),
           body: Observer(
             builder: (_) {
@@ -166,7 +191,7 @@ class _ProfileState extends State<Profile> {
                     child: ListView(
                       padding: EdgeInsets.all(16),
                       children: _buildAccountList(),
-                      // scrollDirection: Axis.horizontal,
+                      scrollDirection: Axis.horizontal,
                     ),
                   ),
                   ListTile(
