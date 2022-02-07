@@ -1,9 +1,9 @@
 import 'package:encointer_wallet/common/components/BorderedTitle.dart';
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
+import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/page/assets/receive/receivePage.dart';
-import 'package:encointer_wallet/page/profile/account/changeNamePage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/communities.dart';
@@ -14,12 +14,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-class AccountManagePage extends StatelessWidget {
+class AccountManagePage extends StatefulWidget {
   AccountManagePage(this.store);
 
   static final String route = '/profile/account';
-  final Api api = webApi;
   final AppStore store;
+
+  @override
+  _AccountManagePageState createState() => _AccountManagePageState(store);
+}
+
+class _AccountManagePageState extends State<AccountManagePage> {
+  _AccountManagePageState(this.store);
+  final AppStore store;
+  final Api api = webApi;
+  TextEditingController _nameCtrl;
+  bool _isEditingText = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    super.dispose();
+  }
 
   void _onDeleteAccount(BuildContext context) {
     showCupertinoDialog(
@@ -74,21 +95,54 @@ class AccountManagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _nameCtrl = TextEditingController(text: store.account.currentAccount.name);
+    _nameCtrl.selection = TextSelection.fromPosition(TextPosition(offset: _nameCtrl.text.length));
+
     final Map<String, String> dic = I18n.of(context).profile;
     Color primaryColor = Theme.of(context).primaryColor;
+
     var args = {
       "isShare": true,
     };
     return Observer(
       builder: (_) => Scaffold(
         appBar: AppBar(
-          title: Text(store.account.currentAccount.name),
-          centerTitle: true,
-          elevation: 0.0,
+          title: TextFormField(
+            controller: _nameCtrl,
+            onTap: () {
+              setState(() {
+                _isEditingText = true;
+              });
+            },
+            validator: (v) {
+              String name = v.trim();
+              if (name.length == 0) {
+                return dic['contact.name.error'];
+              }
+              int exist = store.account.optionalAccounts.indexWhere((i) => i.name == name);
+              if (exist > -1) {
+                return dic['contact.name.exist'];
+              }
+              return null;
+            },
+          ),
         ),
         body: SafeArea(
           child: Column(
             children: <Widget>[
+              Container(
+                margin: EdgeInsets.all(16),
+                child: _isEditingText
+                    ? RoundedButton(
+                        text: dic['contact.name.save'],
+                        onPressed: () {
+                          store.account.updateAccountName(_nameCtrl.text.trim());
+                          setState(() {
+                            _isEditingText = false;
+                          });
+                        })
+                    : Container(),
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
@@ -116,11 +170,6 @@ class AccountManagePage extends StatelessWidget {
                   Text(Fmt.address(store.account.currentAddress) ?? '',
                       style: TextStyle(fontSize: 16, color: Colors.white)),
                   Container(padding: EdgeInsets.only(top: 16)),
-                  ListTile(
-                    title: Text(dic['name.change']),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 18),
-                    onTap: () => Navigator.pushNamed(context, ChangeNamePage.route),
-                  ),
                   Padding(
                     padding: EdgeInsets.only(top: 4),
                     child: Row(

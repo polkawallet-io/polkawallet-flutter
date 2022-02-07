@@ -19,7 +19,6 @@ import 'package:encointer_wallet/page/assets/transfer/transferPage.dart';
 import 'package:encointer_wallet/page/networkSelectPage.dart';
 import 'package:encointer_wallet/page/profile/aboutPage.dart';
 import 'package:encointer_wallet/page/profile/account/accountManagePage.dart';
-import 'package:encointer_wallet/page/profile/account/changeNamePage.dart';
 import 'package:encointer_wallet/page/profile/account/changePasswordPage.dart';
 import 'package:encointer_wallet/page/profile/account/exportAccountPage.dart';
 import 'package:encointer_wallet/page/profile/account/exportResultPage.dart';
@@ -173,7 +172,6 @@ class _WalletAppState extends State<WalletApp> {
         ContactsPage.route: (_) => ContactsPage(_appStore),
         ContactListPage.route: (_) => ContactListPage(_appStore),
         ContactPage.route: (_) => ContactPage(_appStore),
-        ChangeNamePage.route: (_) => ChangeNamePage(_appStore.account),
         ChangePasswordPage.route: (_) => ChangePasswordPage(_appStore.account, _appStore.settings),
         SettingsPage.route: (_) => SettingsPage(_appStore.settings, _changeLang),
         ExportAccountPage.route: (_) => ExportAccountPage(_appStore.account),
