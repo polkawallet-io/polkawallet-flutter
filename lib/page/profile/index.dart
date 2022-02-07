@@ -1,7 +1,5 @@
 import 'package:encointer_wallet/common/components/addressIcon.dart';
-import 'package:encointer_wallet/common/components/editIcon.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
-import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/page/account/createAccountEntryPage.dart';
 import 'package:encointer_wallet/page/profile/account/changePasswordPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
@@ -74,7 +72,7 @@ class _ProfileState extends State<Profile> {
 
   List<Widget> _buildAccountList() {
     final Map<String, String> dic = I18n.of(context).profile;
-    List<Widget> res = _buildAddAccount(dic);
+    List<Widget> res = new List<Widget>();
 
     /// first item is current account
     List<AccountData> accounts = [store.account.currentAccount];
@@ -132,7 +130,7 @@ class _ProfileState extends State<Profile> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
-            '${dic['accounts']} in ${_selectedNetwork.info.toUpperCase()}',
+            '${dic['accounts']}',
             style: Theme.of(context).textTheme.headline4,
           ),
           Row(children: <Widget>[
@@ -156,6 +154,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    Color primaryColor = Theme.of(context).primaryColor;
     _selectedNetwork = store.settings.endpoint;
     // if all accounts are deleted, go to createAccountPage
     if (store.account.accountListAll.isEmpty) {
@@ -186,6 +185,33 @@ class _ProfileState extends State<Profile> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  Container(
+                    child:       Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          '${dic['accounts']}',
+                          style: Theme.of(context).textTheme.headline4,
+                        ),
+                        Row(children: <Widget>[
+                          // Text(dic['add']),
+                          IconButton(
+                              icon: Icon(Iconsax.add_square),
+                              color: primaryColor,
+                              onPressed: () =>
+                              {store.settings.cachedPin.isEmpty ? _showPasswordDialog(context) : _onCreateAccount()}),
+                          developerMode
+                              ? IconButton(
+                            // TODO design decision where to put this functionality
+                            key: Key('choose-network'),
+                            icon: Icon(Icons.menu, color: Colors.orange),
+                            onPressed: () => Navigator.of(context).pushNamed('/network'),
+                          )
+                              : Container(),
+                        ])
+                      ],
+                    ),
+                  ),
                   Container(
                     height: 350,
                     child: ListView(
