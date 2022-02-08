@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/common/components/gradientElements.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
+import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
 import 'package:encointer_wallet/page/account/txConfirmPage.dart';
 import 'package:encointer_wallet/page/assets/receive/receivePage.dart';
@@ -67,236 +67,232 @@ class _AssetsState extends State<Assets> {
       Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
     }
 
-    return SafeArea(
-      child: ListView(
-        padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
-        children: [
-          Observer(builder: (_) {
-            String symbol = store.settings.networkState.tokenSymbol ?? '';
+    var dic = I18n.of(context).assets;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(dic['home']),
+      ),
+      body: SafeArea(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+          children: [
+            Observer(builder: (_) {
+              String symbol = store.settings.networkState.tokenSymbol ?? '';
 
-            String networkName = store.settings.networkName ?? '';
+              String networkName = store.settings.networkName ?? '';
 
-            List<String> communityIds = [];
-            if (store.settings.endpointIsEncointer && networkName != null) {
-              if (store.settings.networkConst['communityIds'] != null) {
-                communityIds.addAll(List<String>.from(store.settings.networkConst['communityIds']));
+              List<String> communityIds = [];
+              if (store.settings.endpointIsEncointer && networkName != null) {
+                if (store.settings.networkConst['communityIds'] != null) {
+                  communityIds.addAll(List<String>.from(store.settings.networkConst['communityIds']));
+                }
+                communityIds.retainWhere((i) => i != symbol);
               }
-              communityIds.retainWhere((i) => i != symbol);
-            }
 
-            if (ModalRoute.of(context).isCurrent &&
-                !_enteredPin & store.settings.cachedPin.isEmpty & !store.settings.endpointIsGesell) {
-              // The pin is not immeditally propagated to the store, hence we track if the pin has been entered to prevent
-              // showing the dialog multiple times.
-              WidgetsBinding.instance.addPostFrameCallback(
-                (_) {
-                  _showPasswordDialog(context);
-                },
-              );
-            }
-            var dic = I18n.of(context).assets;
-            AccountData acc = store.account.currentAccount;
-
-            return Column(
-              children: <Widget>[
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      "Home",
-                      style: Theme.of(context).textTheme.headline3,
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    CommunityWithCommunityChooser(store),
-                    InkWell(
-                      child: Column(
-                        children: [
-                          AddressIcon(
-                            '',
-                            pubKey: store.account.currentAccount.pubKey,
-                            tapToCopy: false,
-                          ),
-                          SizedBox(height: 6),
-                          Text(
-                            Fmt.accountName(context, acc),
-                            style: Theme.of(context).textTheme.headline4,
-                          ),
-                        ],
-                      ),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => AccountManagePage(store),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Observer(
-                  builder: (_) {
-                    return (store.encointer.communityName != null) & (store.encointer.chosenCid != null)
-                        ? Column(
-                            children: [
-                              TextGradient(text: '${Fmt.doubleFormat(store.encointer.communityBalance)} ⵐ'),
-                              Text(
-                                "Balance, ${store.encointer.communitySymbol}",
-                                style: Theme.of(context).textTheme.headline4.copyWith(
-                                      color: encointerGrey,
-                                    ),
-                              ),
-                            ],
-                          )
-                        : Container(
-                            margin: EdgeInsets.only(top: 16),
-                            padding: EdgeInsets.symmetric(vertical: 8),
-                            child: (store.encointer.chosenCid == null)
-                                ? Container(
-                                    width: double.infinity,
-                                    child: Text(dic['community.not.selected'], textAlign: TextAlign.center))
-                                : Container(
-                                    width: double.infinity,
-                                    child: CupertinoActivityIndicator(),
-                                  ),
-                          );
+              if (ModalRoute.of(context).isCurrent &&
+                  !_enteredPin & store.settings.cachedPin.isEmpty & !store.settings.endpointIsGesell) {
+                // The pin is not immeditally propagated to the store, hence we track if the pin has been entered to prevent
+                // showing the dialog multiple times.
+                WidgetsBinding.instance.addPostFrameCallback(
+                  (_) {
+                    _showPasswordDialog(context);
                   },
-                ),
-                SizedBox(
-                  height: 42,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            // don't redefine the entire style just the border radii
-                            borderRadius: BorderRadius.horizontal(left: Radius.circular(15), right: Radius.zero),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Iconsax.receive_square_2),
-                              SizedBox(width: 12),
-                              Text(dic['receive']),
-                            ],
-                          ),
-                        ),
-                        key: Key('qr-receive'),
-                        onPressed: () {
-                          if (acc.address != '') {
-                            Navigator.pushNamed(context, ReceivePage.route);
-                          }
-                        },
-                      ),
-                    ),
-                    SizedBox(width: 2),
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            // don't redefine the entire style just the border radii
-                            borderRadius: BorderRadius.horizontal(left: Radius.zero, right: Radius.circular(15)),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(dic['transfer']),
-                              SizedBox(width: 12),
-                              Icon(Iconsax.send_sqaure_2),
-                            ],
-                          ),
-                        ),
-                        key: Key('transfer'),
-                        onPressed: store.encointer.communityBalance != null
-                            ? () {
-                                Navigator.pushNamed(
-                                  context,
-                                  TransferPage.route,
-                                  arguments: TransferPageParams(
-                                      redirect: '/',
-                                      symbol: store.encointer.chosenCid.toFmtString(),
-                                      isEncointerCommunityCurrency: true,
-                                      communitySymbol: store.encointer.communitySymbol),
-                                );
-                              }
-                            : null,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          }),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 0),
-          ),
-          Observer(builder: (_) {
-            var dic = I18n.of(context).assets;
+                );
+              }
+              AccountData acc = store.account.currentAccount;
 
-            return store.settings.isConnected
-                ? FutureBuilder<bool>(
-                    future: webApi.encointer.hasPendingIssuance(),
-                    builder: (_, AsyncSnapshot<bool> snapshot) {
-                      if (snapshot.hasData) {
-                        var hasPendingIssuance = snapshot.data;
-
-                        if (hasPendingIssuance) {
-                          return ElevatedButton(
-                            child: Text(dic['issuance.pending']),
-                            onPressed: () => _submitClaimRewards(context),
-                          );
-                        } else {
-                          return ElevatedButton(
-                            child: Text(dic['issuance.claimed']),
-                            onPressed: null,
-                          );
-                        }
-                      } else {
-                        return CupertinoActivityIndicator();
-                      }
+              return Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CommunityWithCommunityChooser(store),
+                      InkWell(
+                        child: Column(
+                          children: [
+                            AddressIcon(
+                              '',
+                              pubKey: store.account.currentAccount.pubKey,
+                              tapToCopy: false,
+                            ),
+                            SizedBox(height: 6),
+                            Text(
+                              Fmt.accountName(context, acc),
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
+                          ],
+                        ),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => AccountManagePage(store),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Observer(
+                    builder: (_) {
+                      return (store.encointer.communityName != null) & (store.encointer.chosenCid != null)
+                          ? Column(
+                              children: [
+                                TextGradient(text: '${Fmt.doubleFormat(store.encointer.communityBalance)} ⵐ'),
+                                Text(
+                                  "Balance, ${store.encointer.communitySymbol}",
+                                  style: Theme.of(context).textTheme.headline4.copyWith(
+                                        color: encointerGrey,
+                                      ),
+                                ),
+                              ],
+                            )
+                          : Container(
+                              margin: EdgeInsets.only(top: 16),
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: (store.encointer.chosenCid == null)
+                                  ? Container(
+                                      width: double.infinity,
+                                      child: Text(dic['community.not.selected'], textAlign: TextAlign.center))
+                                  : Container(
+                                      width: double.infinity,
+                                      child: CupertinoActivityIndicator(),
+                                    ),
+                            );
                     },
-                  )
-                : Container();
-          }),
-          Container(
-            decoration: BoxDecoration(
-              color: Color(0xffF4F8F9),
-              borderRadius: BorderRadius.circular(15),
+                  ),
+                  SizedBox(
+                    height: 42,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              // don't redefine the entire style just the border radii
+                              borderRadius: BorderRadius.horizontal(left: Radius.circular(15), right: Radius.zero),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Iconsax.receive_square_2),
+                                SizedBox(width: 12),
+                                Text(dic['receive']),
+                              ],
+                            ),
+                          ),
+                          key: Key('qr-receive'),
+                          onPressed: () {
+                            if (acc.address != '') {
+                              Navigator.pushNamed(context, ReceivePage.route);
+                            }
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 2),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              // don't redefine the entire style just the border radii
+                              borderRadius: BorderRadius.horizontal(left: Radius.zero, right: Radius.circular(15)),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(dic['transfer']),
+                                SizedBox(width: 12),
+                                Icon(Iconsax.send_sqaure_2),
+                              ],
+                            ),
+                          ),
+                          key: Key('transfer'),
+                          onPressed: store.encointer.communityBalance != null
+                              ? () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    TransferPage.route,
+                                    arguments: TransferPageParams(
+                                        redirect: '/',
+                                        symbol: store.encointer.chosenCid.toFmtString(),
+                                        isEncointerCommunityCurrency: true,
+                                        communitySymbol: store.encointer.communitySymbol),
+                                  );
+                                }
+                              : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            }),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 6, horizontal: 0),
             ),
-            height: 150,
-            width: double.infinity,
-            child: Center(
-              child: Text(
-                "Placeholder TODO add ceremony guide",
-                style: TextStyle(color: Colors.orange),
+            Observer(builder: (_) {
+              var dic = I18n.of(context).assets;
+
+              return store.settings.isConnected
+                  ? FutureBuilder<bool>(
+                      future: webApi.encointer.hasPendingIssuance(),
+                      builder: (_, AsyncSnapshot<bool> snapshot) {
+                        if (snapshot.hasData) {
+                          var hasPendingIssuance = snapshot.data;
+
+                          if (hasPendingIssuance) {
+                            return ElevatedButton(
+                              child: Text(dic['issuance.pending']),
+                              onPressed: () => _submitClaimRewards(context),
+                            );
+                          } else {
+                            return ElevatedButton(
+                              child: Text(dic['issuance.claimed']),
+                              onPressed: null,
+                            );
+                          }
+                        } else {
+                          return CupertinoActivityIndicator();
+                        }
+                      },
+                    )
+                  : Container();
+            }),
+            Container(
+              decoration: BoxDecoration(
+                color: Color(0xffF4F8F9),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              height: 150,
+              width: double.infinity,
+              child: Center(
+                child: Text(
+                  "Placeholder TODO add ceremony guide",
+                  style: TextStyle(color: Colors.orange),
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 12),
-          PrimaryButton(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Iconsax.login_1),
-                SizedBox(width: 12),
-                Text("Register now"),
-              ],
+            SizedBox(height: 12),
+            PrimaryButton(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Iconsax.login_1),
+                  SizedBox(width: 12),
+                  Text("Register now"),
+                ],
+              ),
+              onPressed: () {
+                print("TODO register");
+              },
             ),
-            onPressed: () {
-              print("TODO register");
-            },
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

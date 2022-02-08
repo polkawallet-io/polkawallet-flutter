@@ -1,5 +1,6 @@
 const Map<String, String> enAssets = {
   'address': 'Send to Address',
+  'home': 'Home',
   'address.error': 'Invalid Address',
   'all': 'All',
   'amount': 'Amount',
@@ -51,6 +52,7 @@ const Map<String, String> enAssets = {
 
 const Map<String, String> deAssets = {
   'address': 'Sende zu Adresse',
+  'home': 'Startbildschirm',
   'address.error': 'Ungültige Adresse',
   'all': 'Alle',
   'amount': 'Betrag',

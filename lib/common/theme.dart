@@ -104,6 +104,23 @@ final appThemeEncointer = ThemeData(
       ),
     ),
   ),
+  appBarTheme: AppBarTheme(
+    // foregroundColor: Colors.orange, // this gets for some reason ignored and we have to define iconTheme and textTheme
+    backgroundColor: Colors.white,
+    iconTheme: IconThemeData(
+      color: ZurichLion.shade500,
+    ),
+    shadowColor: Colors.transparent,
+    textTheme: TextTheme(
+      headline6: TextStyle(
+        // it's not obvious but appBar uses headline6
+        fontSize: 19,
+        color: ZurichLion.shade500,
+      ),
+    ),
+    centerTitle: true,
+  ),
+  scaffoldBackgroundColor: Colors.white,
 );
 
 const MaterialColor ZurichLion = const MaterialColor(
