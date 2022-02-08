@@ -72,6 +72,7 @@ class _ProfileState extends State<Profile> {
   }
 
   List<Widget> _buildAccountList() {
+    Color primaryColor = Theme.of(context).primaryColor;
     final Map<String, String> dic = I18n.of(context).profile;
     List<Widget> res = new List<Widget>();
 
@@ -100,7 +101,7 @@ class _ProfileState extends State<Profile> {
                 ),
                 Positioned(
                   bottom: 0, right: 0, //give the values according to your requirement
-                  child: Icon(Iconsax.edit),
+                  child: Icon(Iconsax.edit, color: primaryColor),
                 ),
               ],
             ),
@@ -109,6 +110,7 @@ class _ProfileState extends State<Profile> {
               Fmt.accountName(context, i),
               style: Theme.of(context).textTheme.headline4,
             ),
+            SizedBox(width: 80),
           ],
         ),
         onTap: () => {
@@ -160,6 +162,7 @@ class _ProfileState extends State<Profile> {
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
+                    padding: EdgeInsets.all(16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
