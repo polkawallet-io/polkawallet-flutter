@@ -1,6 +1,7 @@
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/page/account/createAccountEntryPage.dart';
+import 'package:encointer_wallet/page/profile/account/accountManagePage.dart';
 import 'package:encointer_wallet/page/profile/account/changePasswordPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:encointer_wallet/common/components/editIcon.dart';
 
 class Profile extends StatefulWidget {
   Profile(this.store);
@@ -98,8 +98,10 @@ class _ProfileState extends State<Profile> {
                   // addressToCopy: address,
                   tapToCopy: false,
                 ),
-
-                EditIcon(i, address, 40, store),
+                Positioned(
+                  bottom: 0, right: 0, //give the values according to your requirement
+                  child: Icon(Iconsax.edit),
+                ),
               ],
             ),
             SizedBox(height: 6),
@@ -109,58 +111,14 @@ class _ProfileState extends State<Profile> {
             ),
           ],
         ),
-        onTap: () => _onSelect(i, address),
+        onTap: () => {
+          _onSelect(i, address),
+          Navigator.pushNamed(context, AccountManagePage.route),
+        },
       );
-      // return RoundedCard(
-      //   border: address == store.account.currentAddress
-      //       ? Border.all(color: Colors.amber)
-      //       : Border.all(color: Theme.of(context).cardColor),
-      //   margin: EdgeInsets.only(bottom: 16),
-      //   padding: EdgeInsets.only(top: 7, bottom: 7),
-      //   child: ListTile(
-      //     leading: AddressIcon('', pubKey: i.pubKey, addressToCopy: address),
-      //     title: Text(Fmt.accountName(context, i)),
-      //     subtitle: Text('${Fmt.address(address)}', maxLines: 2),
-      //     onTap: () => _onSelect(i, address),
-      //     selected: address == store.account.currentAddress,
-      //     trailing: EditIcon(i, address, 40, store),
-      //   ),
-      // );
     }).toList());
     return res;
   }
-
-  // List<Widget> _buildAddAccount(Map<String, String> dic) {
-  //   Color primaryColor = Theme.of(context).primaryColor;
-  //   List<Widget> res = [
-  //     Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: <Widget>[
-  //         Text(
-  //           '${dic['accounts']}',
-  //           style: Theme.of(context).textTheme.headline4,
-  //         ),
-  //         Row(children: <Widget>[
-  //           // Text(dic['add']),
-  //           IconButton(
-  //               icon: Icon(Iconsax.add_square),
-  //               color: primaryColor,
-  //               onPressed: () =>
-  //                   {store.settings.cachedPin.isEmpty ? _showPasswordDialog(context) : _onCreateAccount()}),
-  //           developerMode
-  //               ? IconButton(
-  //                   // TODO design decision where to put this functionality
-  //                   key: Key('choose-network'),
-  //                   icon: Icon(Icons.menu, color: Colors.orange),
-  //                   onPressed: () => Navigator.of(context).pushNamed('/network'),
-  //                 )
-  //               : Container(),
-  //         ])
-  //       ],
-  //     ),
-  //   ];
-  //   return res;
-  // }
 
   @override
   void initState() {
