@@ -3,6 +3,7 @@ import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/page/account/createAccountEntryPage.dart';
 import 'package:encointer_wallet/page/profile/account/accountManagePage.dart';
 import 'package:encointer_wallet/page/profile/account/changePasswordPage.dart';
+import 'package:encointer_wallet/page/profile/settings/settingsPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
@@ -73,7 +74,7 @@ class _ProfileState extends State<Profile> {
 
   List<Widget> _buildAccountList() {
     Color primaryColor = Theme.of(context).primaryColor;
-    final Map<String, String> dic = I18n.of(context).profile;
+
     List<Widget> res = new List<Widget>();
 
     /// first item is current account
@@ -129,6 +130,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    final Color grey = Theme.of(context).unselectedWidgetColor;
     Color primaryColor = Theme.of(context).primaryColor;
     _selectedNetwork = store.settings.endpoint;
     // if all accounts are deleted, go to createAccountPage
@@ -171,7 +173,6 @@ class _ProfileState extends State<Profile> {
                           style: Theme.of(context).textTheme.headline2.copyWith(color: Colors.black),
                         ),
                         Row(children: <Widget>[
-                          // Text(dic['add']),
                           IconButton(
                               icon: Icon(Iconsax.add_square),
                               color: primaryColor,
@@ -202,6 +203,21 @@ class _ProfileState extends State<Profile> {
                     title: Text(dic['pass.change']),
                     trailing: Icon(Icons.arrow_forward_ios, size: 18),
                     onTap: () => Navigator.pushNamed(context, ChangePasswordPage.route),
+                  ),
+                  ListTile(
+                    title: Text(dic['reputation']),
+                  ),
+                  ListTile(
+                    title: Text(dic['ceremonies.overall']),
+                  ),
+                  ListTile(
+                    leading: Container(
+                      width: 32,
+                      child: Icon(Icons.settings, color: grey, size: 22),
+                    ),
+                    title: Text(dic['setting']),
+                    trailing: Icon(Icons.arrow_forward_ios, size: 18),
+                    onTap: () => Navigator.of(context).pushNamed(SettingsPage.route),
                   ),
                   Row(
                     children: <Widget>[
