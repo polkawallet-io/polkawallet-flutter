@@ -1,6 +1,5 @@
 import 'package:encointer_wallet/common/components/BorderedTitle.dart';
 import 'package:encointer_wallet/common/components/addressIcon.dart';
-import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/page/assets/receive/receivePage.dart';
@@ -46,15 +45,28 @@ class _AccountManagePageState extends State<AccountManagePage> {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return showPasswordInputDialog(
-            context, store.account.currentAccount, Text(I18n.of(context).profile['delete.confirm']), (_) {
-          store.account.removeAccount(store.account.currentAccount).then((_) {
-            // refresh balance
-            store.assets.loadAccountCache();
-            webApi.assets.fetchBalance();
-          });
-          Navigator.of(context).pop();
-        });
+        return CupertinoAlertDialog(
+          title: Text(I18n.of(context).profile['account.delete']),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(I18n.of(context).home['cancel']),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            CupertinoButton(
+              child: Text(I18n.of(context).home['ok']),
+              onPressed: () => {
+                store.account.removeAccount(store.account.currentAccount).then(
+                  (_) {
+                    // refresh balance
+                    store.assets.loadAccountCache();
+                    webApi.assets.fetchBalance();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              },
+            ),
+          ],
+        );
       },
     );
   }
@@ -100,7 +112,6 @@ class _AccountManagePageState extends State<AccountManagePage> {
 
     final Map<String, String> dic = I18n.of(context).profile;
     Color primaryColor = Theme.of(context).primaryColor;
-
     var args = {
       "isShare": true,
     };
