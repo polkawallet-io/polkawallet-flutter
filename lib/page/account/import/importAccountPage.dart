@@ -1,3 +1,4 @@
+import 'package:encointer_wallet/page/account/create/addAccountForm.dart';
 import 'package:encointer_wallet/page/account/create/createAccountForm.dart';
 import 'package:encointer_wallet/page/account/import/importAccountForm.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
@@ -177,7 +178,13 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     if (_step == 1) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(I18n.of(context).home['import']),
+          title: Text(
+            I18n.of(context).home['account.import'],
+            style: Theme.of(context).textTheme.headline3,
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
             onPressed: () {
@@ -188,18 +195,22 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
           ),
         ),
         body: SafeArea(
-          child: !_submitting
-              ? CreateAccountForm(
-                  setNewAccount: store.account.setNewAccount,
-                  submitting: _submitting,
-                  onSubmit: _importAccount,
-                  store: store)
-              : Center(child: CupertinoActivityIndicator()),
+          child: !_submitting && store.account.accountListAll.isEmpty
+              ? CreateAccountForm(store: store)
+              : (!_submitting && store.account.accountListAll.isNotEmpty)
+                  ? AddAccountForm(
+                      isImporting: true,
+                      setNewAccount: store.account.setNewAccount,
+                      submitting: _submitting,
+                      onSubmit: _importAccount,
+                      store: store)
+                  : Center(child: CupertinoActivityIndicator()),
         ),
       );
     }
+    // todo what are the different steps 1 and 0? do i need here to add also the AddAccountForm?
     return Scaffold(
-      appBar: AppBar(title: Text(I18n.of(context).home['import'])),
+      appBar: AppBar(title: Text(I18n.of(context).home['account.import'])),
       body: SafeArea(
         child: !_submitting
             ? ImportAccountForm(store, (Map<String, dynamic> data) {

@@ -1,5 +1,6 @@
 const Map<String, String> enHome = {
   'account': 'Account',
+  'account.import': 'Import account',
   'announce': 'Announcement',
   'assets': 'Assets',
   'bazaar': 'Bazaar',
@@ -17,7 +18,7 @@ const Map<String, String> enHome = {
   'encointer': 'Encointer',
   'exchange': 'Exchange',
   'exit.confirm': 'Do you want to exit the App?',
-  'import': 'Import Account',
+  'import': 'Already have an account? Import',
   'input.invalid': 'Invalid input',
   'loading': 'Loading...',
   'menu': 'Menu',
@@ -67,6 +68,7 @@ const Map<String, String> enHome = {
 };
 const Map<String, String> deHome = {
   'account': 'Konto',
+  'account.import': 'Konto importieren',
   'announce': 'Mitteilung',
   'assets': 'Vermögen',
   'bazaar': 'Bazaar',
@@ -84,7 +86,7 @@ const Map<String, String> deHome = {
   'encointer': 'Encointer',
   'exchange': 'Exchange',
   'exit.confirm': 'Möchtest du die App verlassen?',
-  'import': 'Konto importieren',
+  'import': 'Hast du bereits ein Konto? Importieren',
   'input.invalid': 'Ungültige Eingabe',
   'loading': 'Lädt...',
   'menu': 'Menu',

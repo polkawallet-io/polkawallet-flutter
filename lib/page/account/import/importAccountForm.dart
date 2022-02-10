@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:encointer_wallet/common/components/accountAdvanceOption.dart';
+import 'package:encointer_wallet/common/components/gradientElements.dart';
 import 'package:encointer_wallet/page/account/scanPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/account.dart';
@@ -9,7 +10,6 @@ import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/common/components/gradientElements.dart';
 
 class ImportAccountForm extends StatefulWidget {
   const ImportAccountForm(this.store, this.onSubmit);
@@ -190,6 +190,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
         },
       );
     } else {
+      // should this also be done in addAccountForm & createPinForm? probably..
       await widget.store.settings.addContact(acc);
 
       webApi.account.changeCurrentAccount(pubKey: pubKey);
@@ -271,7 +272,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
             child: ListView(
               children: <Widget>[
                 ListTile(
-                  title: Text(I18n.of(context).account['import.type']),
+                  title: Text(I18n.of(context).home['account.import']),
                   subtitle: Text(selected),
                   trailing: Icon(Icons.arrow_forward_ios, size: 18),
                   onTap: () {

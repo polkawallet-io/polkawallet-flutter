@@ -110,6 +110,9 @@ flutter:
     # js service
     - lib/js_service_encointer/dist/main.js
 
+    #svg
+    - assets/nctr_logo.svg
+    - assets/nctr_mosaic_background.svg
     # images
     ## images - settings
     - assets/images/public/nctr-cln.png

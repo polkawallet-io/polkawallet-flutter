@@ -2,7 +2,7 @@ import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/common/components/editIcon.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
 import 'package:encointer_wallet/common/components/roundedCard.dart';
-import 'package:encointer_wallet/page/account/createAccountEntryPage.dart';
+import 'package:encointer_wallet/page/account/create/addAccountPage.dart';
 import 'package:encointer_wallet/page/profile/account/changePasswordPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
@@ -47,8 +47,9 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  Future<void> _onCreateAccount() async {
-    Navigator.of(context).pushNamed(CreateAccountEntryPage.route);
+  Future<void> _onAddAccount() async {
+    var arg = {'isImporting': false};
+    Navigator.of(context).pushNamed(AddAccountPage.route, arguments: arg);
   }
 
   Future<void> _showPasswordDialog(BuildContext context) async {
@@ -120,8 +121,15 @@ class _ProfileState extends State<Profile> {
             IconButton(
                 icon: Image.asset('assets/images/assets/plus_indigo.png'),
                 color: primaryColor,
-                onPressed: () =>
-                    {store.settings.cachedPin.isEmpty ? _showPasswordDialog(context) : _onCreateAccount()}),
+                onPressed: () => {store.settings.cachedPin.isEmpty ? _showPasswordDialog(context) : _onAddAccount()}),
+            developerMode
+                ? IconButton(
+                    // TODO design decision where to put this functionality
+                    key: Key('choose-network'),
+                    icon: Icon(Icons.menu, color: Colors.orange),
+                    onPressed: () => Navigator.of(context).pushNamed('/network'),
+                  )
+                : Container(),
           ])
         ],
       ),
@@ -172,6 +180,34 @@ class _ProfileState extends State<Profile> {
                     title: Text(dic['pass.change']),
                     trailing: Icon(Icons.arrow_forward_ios, size: 18),
                     onTap: () => Navigator.pushNamed(context, ChangePasswordPage.route),
+                  ),
+                  ListTile(
+                    // Todo: Remove all accounts is buggy: #318
+                    title: Text("Remove all Accounts"),
+                    onTap: () => showCupertinoDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return CupertinoAlertDialog(title: Text("Are you sure you want to remove all accounts?"),
+                              // content: Text(dic['pass.error.txt']),
+                              actions: <Widget>[
+                                CupertinoButton(
+                                  // key: Key('error-dialog-ok'),
+                                  child: Text(I18n.of(context).home['cancel']),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                ),
+                                CupertinoButton(
+                                    // key: Key('error-dialog-ok'),
+                                    child: Text(I18n.of(context).home['ok']),
+                                    onPressed: () => {
+                                          print("remove ${store.account.accountListAll}"),
+                                          store.account.accountListAll.forEach((acc) {
+                                            print("removing the account: $acc");
+                                            store.account.removeAccount(acc);
+                                          }),
+                                          Navigator.popUntil(context, ModalRoute.withName('/')),
+                                        }),
+                              ]);
+                        }),
                   ),
                   Row(
                     children: <Widget>[

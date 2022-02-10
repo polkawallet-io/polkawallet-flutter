@@ -33,6 +33,7 @@ const Map<String, String> enAccount = {
   'keystore': 'Keystore (json)',
   'list': 'Account Select',
   'mnemonic': 'Mnemonic',
+  'next': 'Weiter',
   'observe': 'Observation',
   'observe.brief':
       '\nMark this address as observation,\nthen you can select this address\nin account select page, to watch\nit\'s assets and actions\n',
@@ -90,6 +91,7 @@ const Map<String, String> deAccount = {
   'keystore': 'Keystore (json)',
   'list': 'Kontoauswahl',
   'mnemonic': 'Mnemonic',
+  'next': 'Next',
   'observe': 'Observation',
   'observe.brief':
       '\nMarkiere diese Adresse als Observation,\ndann kann diese Adresse in der Kontoauswahlseite ausgewählt werden,\n um dessen Vermögen und Aktionen zu beobachten.\n',
