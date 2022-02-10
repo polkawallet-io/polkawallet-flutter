@@ -258,7 +258,7 @@ class UI {
     }
   }
 
-  static TextInputFormatter decimalInputFormatter(int decimals) {
+  static TextInputFormatter decimalInputFormatter({int decimals = encointer_currencies_decimals}) {
     return RegExInputFormatter.withRegex('^[0-9]{0,$decimals}(\\.[0-9]{0,$decimals})?\$');
   }
 }

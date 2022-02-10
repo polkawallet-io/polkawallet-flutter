@@ -62,7 +62,7 @@ void main() {
       await screenshot(driver, config, 'receive-funds');
 
       // go back to homepage
-      await driver.tap(find.pageBack());
+      await driver.tap(find.byValueKey('close-receive-page'));
     });
 
     test('transfer-page', () async {
@@ -77,7 +77,7 @@ void main() {
       await screenshot(driver, config, 'transfer-page');
 
       // go back to homepage
-      await driver.tap(find.pageBack());
+      await driver.tap(find.byValueKey('close-transfer-page'));
     });
 
     test('encointerEntryPage', () async {

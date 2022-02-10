@@ -32,7 +32,7 @@ const Map<String, String> enAssets = {
   'issuance.pending': 'Claim pending community income',
   'issuance.claimed': 'No pending community income',
   'locked': 'Locked',
-  'make': 'Make Transfer',
+  'amount.to.be.transferred': 'Send amount',
   'node.connecting': 'Connecting remote node...',
   'node.failed': 'Remote node connection failed',
   'notify.receive': 'Token Received',
@@ -45,9 +45,14 @@ const Map<String, String> enAssets = {
   'tip.tip': '\nAdding a tip to this Tx, paying\nthe block author for greater priority.\n',
   'to': 'To',
   'transfer': 'Send', // as Alain requested 2022-01-21
+  'invoice.amount': 'Invoice amount',
   'value': 'Value',
   'invite': 'Invite someone',
   'bazaar': 'Bazaar',
+  'share.qr.code': 'Share QR code',
+  'please.enter.some.text': 'Please enter some text',
+  'your.balance.for': 'Your balance for',
+  'amount.to.transfer': 'amount to send',
 };
 
 const Map<String, String> deAssets = {
@@ -84,7 +89,7 @@ const Map<String, String> deAssets = {
   'issuance.pending': 'Ausstehendes Community-Einkommen einfordern',
   'issuance.claimed': 'Kein ausstehendes Community-Einkommen',
   'locked': 'Locked',
-  'make': 'Transferieren',
+  'amount.to.be.transferred': 'Rechnungsbetrag',
   'node.connecting': 'Verbinde mit remote node...',
   'node.failed': 'Verbindung zur remote node fehlgeschlagen',
   'notify.receive': 'Token erhalten',
@@ -97,9 +102,14 @@ const Map<String, String> deAssets = {
   'tip.tip': '\nTrinkgeld für diese Tx hinzufügen, bezahle\ndem Block Author für höhere Priorität.\n',
   'to': 'Nach',
   'transfer': 'Transfer',
+  'invoice.amount': 'Rechnungsbetrag',
   'value': 'Wert',
   'invite': 'Jemanden einladen',
   'bazaar': 'Bazaar',
+  'share.qr.code': 'Teile den QR Code',
+  'please.enter.some.text': 'Bitte geben Sie einen Text ein',
+  'your.balance.for': 'Ihr Guthaben auf',
+  'amount.to.transfer': 'Rechnungsbetrag',
 };
 
 const Map<String, String> zhAssets = {
@@ -115,7 +125,7 @@ const Map<String, String> zhAssets = {
   'amount.low': '余额不足',
   'community': '币种',
   'community.select': '选择币种',
-  'make': '添加转账',
+  'amount.to.be.transferred': '发票金额',
   'balance': '余额',
   'locked': '锁定',
   'available': '可用',
@@ -142,4 +152,9 @@ const Map<String, String> zhAssets = {
   'lock.vesting': '投资锁定',
   'cross.chain': '跨链转账',
   'assets.test': '测试 Token',
+  'invoice.amount': '发票金额',
+  'share.qr.code': '分享二维码',
+  'please.enter.some.text': '请输入一些文字',
+  'your.balance.for': '你的余额',
+  'amount.to.transfer': '要转账的金额',
 };

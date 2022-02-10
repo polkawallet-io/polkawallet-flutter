@@ -160,7 +160,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                                   lengthMax: 6,
                                 )})',
                               ),
-                              inputFormatters: [UI.decimalInputFormatter(decimals)],
+                              inputFormatters: [UI.decimalInputFormatter(decimals: decimals)],
                               controller: _amountCtrl,
                               keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (v) {

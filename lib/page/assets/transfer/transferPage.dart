@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:encointer_wallet/common/components/AddressInputField.dart';
-import 'package:encointer_wallet/common/components/iconTextButton.dart';
-import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/common/components/encointerTextFormField.dart';
+import 'package:encointer_wallet/common/components/gradientElements.dart';
+import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
-import 'package:encointer_wallet/page/account/scanPage.dart';
 import 'package:encointer_wallet/page/account/txConfirmPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
@@ -16,8 +16,8 @@ import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:iconsax/iconsax.dart';
 
 class TransferPageParams {
   TransferPageParams(
@@ -78,14 +78,21 @@ class _TransferPageState extends State<TransferPage> {
         available = _getAvailableEncointerOrBaseToken(isBaseToken, symbol);
         print('Available: $available');
 
-        double iconSizeBig = 48;
-
         return Form(
           key: _formKey,
           child: Scaffold(
             appBar: AppBar(
               title: Text(dic['transfer']),
-              centerTitle: true,
+              leading: Container(),
+              actions: [
+                IconButton(
+                  key: Key('close-transfer-page'),
+                  icon: Icon(Icons.close),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                )
+              ],
             ),
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -95,59 +102,39 @@ class _TransferPageState extends State<TransferPage> {
                     child: ListView(
                       children: [
                         CommunityWithCommunityChooser(store),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                          child: Text(
-                            "available",
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
                         store.encointer.communityBalance != null
                             ? AccountBalanceWithMoreDigits(store: store, available: available, decimals: decimals)
                             : CupertinoActivityIndicator(),
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: IconTextButton(
-                            text: "Scan",
-                            iconData: Icons.qr_code_scanner,
-                            onTap: _onScan, // TODO
-                            iconSize: iconSizeBig,
-                          ),
-                        ),
-                        // Padding(
-                        //   padding: const EdgeInsets.all(8.0),
-                        //   child: Text(
-                        //     "amount to send",
-                        //     textAlign: TextAlign.center,
-                        //   ),
-                        // ),
-                        TextFormField(
-                          key: Key('transfer-amount-input'),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: "amount to send",
-                          ),
-                          inputFormatters: [UI.decimalInputFormatter(decimals)],
-                          controller: _amountCtrl,
+                        Text(
+                          "${I18n.of(context).assets['your.balance.for']} ${Fmt.accountName(context, store.account.currentAccount)}",
+                          style: Theme.of(context).textTheme.headline4.copyWith(color: encointerGrey),
                           textAlign: TextAlign.center,
-                          keyboardType: TextInputType.numberWithOptions(decimal: true),
-                          validator: (v) {
-                            if (v.isEmpty) {
+                        ),
+                        SizedBox(height: 48),
+                        EncointerTextFormField(
+                          labelText: dic['amount.to.be.transferred'],
+                          textStyle: Theme.of(context).textTheme.headline1.copyWith(color: encointerBlack),
+                          inputFormatters: [UI.decimalInputFormatter(decimals: decimals)],
+                          controller: _amountCtrl,
+                          textFormFieldKey: Key('transfer-amount-input'),
+                          validator: (String value) {
+                            if (value.isEmpty) {
                               return dic['amount.error'];
                             }
-                            if (balanceTooLow(v, available, decimals)) {
+                            if (balanceTooLow(value, available, decimals)) {
                               return dic['amount.low'];
                             }
                             return null;
                           },
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "to",
-                            textAlign: TextAlign.center,
+                          suffixIcon: Text(
+                            "ⵐ",
+                            style: TextStyle(
+                              color: encointerGrey,
+                              fontSize: 44,
+                            ),
                           ),
                         ),
+                        SizedBox(height: 24),
                         Row(
                           children: [
                             Expanded(
@@ -160,6 +147,7 @@ class _TransferPageState extends State<TransferPage> {
                                     _accountTo = acc;
                                   });
                                 },
+                                hideIdenticon: true,
                               ),
                             ),
                           ],
@@ -167,13 +155,29 @@ class _TransferPageState extends State<TransferPage> {
                       ],
                     ),
                   ),
+                  SizedBox(height: 48),
+                  Center(
+                    child: Text(
+                      "Fee: TODO compute Fee",
+                      style: Theme.of(context).textTheme.headline4.copyWith(color: encointerGrey),
+                    ),
+                  ),
+                  SizedBox(height: 8),
                   Container(
                     key: Key('make-transfer'),
-                    child: RoundedButton(
-                      text: I18n.of(context).assets['make'],
+                    child: PrimaryButton(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Iconsax.send_sqaure_2),
+                          SizedBox(width: 12),
+                          Text(dic['amount.to.be.transferred']),
+                        ],
+                      ),
                       onPressed: _handleSubmit,
                     ),
-                  )
+                  ),
+                  SizedBox(height: 8),
                 ],
               ),
             ),
@@ -181,17 +185,6 @@ class _TransferPageState extends State<TransferPage> {
         );
       },
     );
-  }
-
-  Future<void> _onScan() async {
-    final to = await Navigator.of(context).pushNamed(ScanPage.route);
-    if (to == null) return;
-    AccountData acc = AccountData();
-    acc.address = (to as QRCodeAddressResult).address;
-    acc.name = (to as QRCodeAddressResult).name;
-    setState(() {
-      _accountTo = acc;
-    });
   }
 
   void _handleSubmit() {
@@ -325,16 +318,21 @@ class AccountBalanceWithMoreDigits extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(
-        "${Fmt.priceFloorBigInt(
-          available,
-          decimals,
-          lengthMax: 6,
-        )} ${store.encointer.communitySymbol}",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 28,
-          color: Colors.black54,
+      child: RichText(
+        // need text base line aligment
+        text: TextSpan(
+          text: '${Fmt.priceFloorBigInt(
+            available,
+            decimals,
+            lengthMax: 6,
+          )} ',
+          style: Theme.of(context).textTheme.headline2.copyWith(color: encointerBlack),
+          children: const <TextSpan>[
+            TextSpan(
+              text: 'ⵐ',
+              style: TextStyle(color: encointerGrey),
+            ),
+          ],
         ),
       ),
     );

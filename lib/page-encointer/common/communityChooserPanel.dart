@@ -93,44 +93,41 @@ class _CommunityWithCommunityChooserState extends State<CommunityWithCommunityCh
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
-          child: InkWell(
-              key: Key('cid-avatar'),
-              child: Column(
-                children: [
-                  Card(
-                    elevation: 10,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(96),
-                    ),
-                    child: SizedBox(
-                      width: 96,
-                      height: 96,
-                      child: webApi.ipfs.getCommunityIcon(store.encointer.communityIconsCid, devicePixelRatio),
-                    ),
+        InkWell(
+            key: Key('cid-avatar'),
+            child: Column(
+              children: [
+                Card(
+                  elevation: 10,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(96),
                   ),
-                  SizedBox(height: 6),
-                  Text(
-                    store.encointer.communities != null && store.encointer.chosenCid != null
-                        ? store.encointer.communities
-                            .firstWhere((c) => c.cid == store.encointer.chosenCid)
-                            .name
-                            .toString()
-                        : '...',
-                    style: Theme.of(context).textTheme.headline4,
+                  child: SizedBox(
+                    width: 96,
+                    height: 96,
+                    child: webApi.ipfs.getCommunityIcon(store.encointer.communityIconsCid, devicePixelRatio),
                   ),
-                ],
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CommunityChooserOnMap(store),
-                  ),
-                );
-              }),
-        ),
+                ),
+                SizedBox(height: 6),
+                Text(
+                  store.encointer.communities != null && store.encointer.chosenCid != null
+                      ? store.encointer.communities
+                          .firstWhere((c) => c.cid == store.encointer.chosenCid)
+                          .name
+                          .toString()
+                      : '...',
+                  style: Theme.of(context).textTheme.headline4,
+                ),
+              ],
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CommunityChooserOnMap(store),
+                ),
+              );
+            }),
       ],
     );
   }

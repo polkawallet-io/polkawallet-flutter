@@ -1,19 +1,22 @@
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+
+import '../theme.dart';
 
 class AddressInputField extends StatefulWidget {
-  AddressInputField(this.store, {this.label, this.initialValue, this.onChanged});
+  AddressInputField(this.store, {this.label, this.initialValue, this.onChanged, this.hideIdenticon = false});
   final AppStore store;
   final String label;
   final AccountData initialValue;
   final Function(AccountData) onChanged;
+  final bool hideIdenticon;
   @override
   _AddressInputFieldState createState() => _AddressInputFieldState();
 }
@@ -91,22 +94,25 @@ class _AddressInputFieldState extends State<AddressInputField> {
           padding: EdgeInsets.only(top: 8),
           child: Row(
             children: [
-              AddressIcon(item.address, pubKey: item.pubKey, tapToCopy: false),
-              Padding(
-                padding: EdgeInsets.only(left: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(Fmt.address(address)),
-                    Text(
-                      item.name.isNotEmpty ? item.name : Fmt.accountDisplayNameString(item.address, accInfo),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).unselectedWidgetColor,
-                      ),
-                    ),
-                  ],
+              if (!widget.hideIdenticon)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: AddressIcon(item.address, pubKey: item.pubKey, tapToCopy: false, size: 36),
                 ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name.isNotEmpty ? item.name : Fmt.accountDisplayNameString(item.address, accInfo),
+                  ),
+                  Text(
+                    Fmt.address(address),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).unselectedWidgetColor,
+                    ),
+                  ),
+                ],
               )
             ],
           ),
@@ -147,26 +153,42 @@ class _AddressInputFieldState extends State<AddressInputField> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownSearch<AccountData>(
-      mode: Mode.BOTTOM_SHEET,
-      isFilteredOnline: true,
-      showSearchBox: true,
-      showSelectedItem: true,
-      autoFocusSearchBox: true,
-      searchBoxDecoration: InputDecoration(hintText: widget.label),
-      label: widget.label,
-      selectedItem: widget.initialValue,
-      compareFn: (AccountData i, s) => i.pubKey == s?.pubKey,
-      validator: (AccountData u) => u == null ? "user field is required " : null,
-      onFind: (String filter) => _getAccountsFromInput(filter),
-      itemAsString: _itemAsString,
-      onChanged: (AccountData data) {
-        if (widget.onChanged != null) {
-          widget.onChanged(data);
-        }
-      },
-      dropdownBuilder: _selectedItemBuilder,
-      popupItemBuilder: _listItemBuilder,
+    return Container(
+      decoration: BoxDecoration(
+        color: ZurichLion.shade50,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: DropdownSearch<AccountData>(
+        mode: Mode.BOTTOM_SHEET,
+        isFilteredOnline: true,
+        showSearchBox: true,
+        showSelectedItem: true,
+        autoFocusSearchBox: true,
+        dropdownSearchDecoration: InputDecoration(
+          labelText: widget.label,
+          labelStyle: Theme.of(context).textTheme.headline4,
+          contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 25),
+          border: UnderlineInputBorder(
+            borderSide: BorderSide(
+              width: 0,
+              style: BorderStyle.none,
+            ),
+          ),
+        ),
+        label: widget.label,
+        selectedItem: widget.initialValue,
+        compareFn: (AccountData i, s) => i.pubKey == s?.pubKey,
+        validator: (AccountData u) => u == null ? "user field is required " : null,
+        onFind: (String filter) => _getAccountsFromInput(filter),
+        itemAsString: _itemAsString,
+        onChanged: (AccountData data) {
+          if (widget.onChanged != null) {
+            widget.onChanged(data);
+          }
+        },
+        dropdownBuilder: _selectedItemBuilder,
+        popupItemBuilder: _listItemBuilder,
+      ),
     );
   }
 }

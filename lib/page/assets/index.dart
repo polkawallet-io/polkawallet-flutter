@@ -99,6 +99,7 @@ class _AssetsState extends State<Assets> {
                   },
                 );
               }
+
               AccountData acc = store.account.currentAccount;
 
               return Column(

@@ -1,16 +1,21 @@
-import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/common/components/encointerTextFormField.dart';
+import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:share/share.dart';
 
-class ReceivePage extends StatelessWidget {
+class ReceivePage extends StatefulWidget {
   ReceivePage(this.store);
   static final String route = '/assets/receive';
   final AppStore store;
+  @override
+  _ReceivePageState createState() => _ReceivePageState();
+}
+
+class _ReceivePageState extends State<ReceivePage> {
   @override
   Widget build(BuildContext context) {
     bool isShare = false;
@@ -20,81 +25,99 @@ class ReceivePage extends StatelessWidget {
     }
 
     String codeAddress =
-        'substrate:${store.account.currentAddress}:${store.account.currentAccount.pubKey}:${store.account.currentAccount.name}';
-    Color themeColor = Theme.of(context).primaryColor;
+        'substrate:${widget.store.account.currentAddress}:${widget.store.account.currentAccount.pubKey}:${widget.store.account.currentAccount.name}';
 
-    bool isEncointer = store.settings.endpointIsEncointer;
-    final accInfo = store.account.accountIndexMap[store.account.currentAccount.address];
-    return Scaffold(
-      backgroundColor: Colors.grey,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: isShare ? Text(I18n.of(context).profile['share']) : Text(I18n.of(context).assets['receive']),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: ListView(
-          children: <Widget>[
-            Stack(
-              alignment: AlignmentDirectional.topCenter,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(top: 32),
-                  child: Image.asset('assets/images/assets/receive_line_${isEncointer ? 'indigo' : 'pink'}.png'),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 40),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(const Radius.circular(4)),
-                    color: Colors.white,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        I18n.of(context).profile['qr.scan.hint'],
-                        style: Theme.of(context).textTheme.headline3,
-                        textAlign: TextAlign.center,
-                      ),
-                      accInfo != null && accInfo['accountIndex'] != null
-                          ? Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Text(accInfo['accountIndex']),
-                            )
-                          : Container(width: 8, height: 8),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 4, color: themeColor),
-                          borderRadius: BorderRadius.all(const Radius.circular(8)),
-                        ),
-                        margin: EdgeInsets.fromLTRB(48, 16, 48, 24),
-                        child: QrImage(
-                          data: codeAddress,
-                          size: 200,
-                          embeddedImage: AssetImage('assets/images/public/app.png'),
-                          embeddedImageStyle: QrEmbeddedImageStyle(size: Size(40, 40)),
-                        ),
-                      ),
-                      Container(
-                        width: 160,
-                        child: Text(store.account.currentAddress),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2,
-                        padding: EdgeInsets.only(top: 16, bottom: 32),
-                        child: isShare
-                            ? RoundedButton(
-                                text: I18n.of(context).profile['share'], onPressed: () => Share.share(codeAddress))
-                            : RoundedButton(
-                                text: I18n.of(context).assets['copy'],
-                                onPressed: () => UI.copyAndNotify(context, store.account.currentAddress),
-                              ),
-                      )
-                    ],
-                  ),
-                )
-              ],
+    final TextEditingController _amountController = new TextEditingController();
+    final _formKey = GlobalKey<FormState>();
+
+    return Form(
+      key: _formKey,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: isShare ? Text(I18n.of(context).profile['share']) : Text(I18n.of(context).assets['receive']),
+          leading: Container(),
+          actions: [
+            IconButton(
+              key: Key('close-receive-page'),
+              icon: Icon(Icons.close),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             )
           ],
+        ),
+        body: SafeArea(
+          child: ListView(
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 48),
+                    child: Text(
+                      I18n.of(context).profile['qr.scan.hint'],
+                      style: Theme.of(context).textTheme.headline3.copyWith(color: encointerBlack),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.all(30),
+                    child: EncointerTextFormField(
+                      labelText: I18n.of(context).assets['invoice.amount'],
+                      textStyle: Theme.of(context).textTheme.headline2.copyWith(color: encointerBlack),
+                      inputFormatters: [UI.decimalInputFormatter()],
+                      controller: _amountController,
+                      textFormFieldKey: Key('invoice-amount-input'),
+                      validator: (String value) {
+                        if (value == null || value.isEmpty) {
+                          return I18n.of(context).assets['amount.error'];
+                        }
+                        return null;
+                      },
+                      suffixIcon: Text(
+                        "ⵐ",
+                        style: TextStyle(
+                          color: encointerGrey,
+                          fontSize: 26,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8),
+              Column(children: [
+                Container(
+                  child: QrImage(
+                    data: codeAddress,
+                    embeddedImage: AssetImage('assets/images/public/app.png'),
+                    embeddedImageStyle: QrEmbeddedImageStyle(size: Size(40, 40)),
+                  ),
+                ),
+                InkWell(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Icons.share, color: ZurichLion.shade500),
+                          SizedBox(width: 8),
+                          Text(
+                            I18n.of(context).assets['share.qr.code'],
+                            style: Theme.of(context).textTheme.headline3,
+                          ),
+                        ]),
+                  ),
+                  onTap: () => {
+                    _formKey.currentState.validate()
+                    // TODO add functionality to share the QR code
+                  },
+                ),
+              ])
+            ],
+          ),
         ),
       ),
     );
