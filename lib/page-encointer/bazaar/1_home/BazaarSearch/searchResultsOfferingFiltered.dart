@@ -1,6 +1,7 @@
 import 'package:encointer_wallet/page-encointer/bazaar/shared/data_model/demo_data/demoData.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shared/toggleButtonsWithTitle.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -18,15 +19,15 @@ class SearchResultsOfferingFiltered extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var titleStyle = TextStyle(fontWeight: FontWeight.bold, height: 2.5);
-    var dic = I18n.of(context).bazaar;
+    final Translations dic = I18n.of(context).translationsForLocale();
     return Scaffold(
       appBar: AppBar(
-        title: Text("Filter ${dic['found']} ${dic['offerings']}"),
+        title: Text("Filter ${dic.bazaar.found} ${dic.bazaar.offerings}"),
       ),
       body: ListView(children: [
-        ToggleButtonsWithTitle(dic['categories'], categories, null), // TODO state management
+        ToggleButtonsWithTitle(dic.bazaar.categories, categories, null),
         Text(
-          dic['price'],
+          dic.bazaar.price,
           style: titleStyle,
         ),
         RangeSlider(
@@ -43,13 +44,13 @@ class SearchResultsOfferingFiltered extends StatelessWidget {
           },
         ),
         Text(
-          dic['delivery'],
+          dic.bazaar.delivery,
           style: titleStyle,
         ),
         ToggleButtons(
             children: deliveryOptions.map((option) => Text(option)).toList(), isSelected: selectedDeliveryOptions),
         Text(
-          dic['product.newness'],
+          dic.bazaar.productNewness,
           style: titleStyle,
         ),
         ToggleButtons(
@@ -60,10 +61,10 @@ class SearchResultsOfferingFiltered extends StatelessWidget {
         children: [
           ElevatedButton(
               onPressed: () => null, // TODO state management
-              child: Text(dic['reset'])),
+              child: Text(dic.bazaar.reset)),
           ElevatedButton(
               onPressed: () => null, //TODO state management
-              child: Text(dic['apply'])),
+              child: Text(dic.bazaar.apply)),
         ],
       ),
     );

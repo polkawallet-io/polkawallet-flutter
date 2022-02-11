@@ -1,13 +1,14 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:encointer_wallet/common/components/TapTooltip.dart';
+import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/page/account/scanPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
-import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class ContactPage extends StatefulWidget {
   ContactPage(this.store);
@@ -53,7 +54,7 @@ class _Contact extends State<ContactPage> {
       setState(() {
         _submitting = true;
       });
-      var dic = I18n.of(context).profile;
+      final Translations dic = I18n.of(context).translationsForLocale();
       String addr = _addressCtrl.text.trim();
       Map pubKeyAddress = await webApi.account.decodeAddress([addr]);
       String pubKey = pubKeyAddress.keys.toList()[0];
@@ -76,10 +77,10 @@ class _Contact extends State<ContactPage> {
             builder: (BuildContext context) {
               return CupertinoAlertDialog(
                 title: Container(),
-                content: Text(dic['contact.exist']),
+                content: Text(dic.profile.contactExist),
                 actions: <Widget>[
                   CupertinoButton(
-                    child: Text(I18n.of(context).home['ok']),
+                    child: Text(I18n.of(context).translationsForLocale().home.ok),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -121,7 +122,7 @@ class _Contact extends State<ContactPage> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, String> dic = I18n.of(context).profile;
+    final Translations dic = I18n.of(context).translationsForLocale();
     List<Widget> action = <Widget>[
       IconButton(
         icon: Image.asset('assets/images/assets/Menu_scan.png'),
@@ -133,7 +134,7 @@ class _Contact extends State<ContactPage> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: Text(dic['contact']),
+        title: Text(dic.profile.contact),
         centerTitle: true,
         actions: _args == null ? action : null,
       ),
@@ -150,13 +151,13 @@ class _Contact extends State<ContactPage> {
                       padding: EdgeInsets.only(left: 16, right: 16),
                       child: TextFormField(
                         decoration: InputDecoration(
-                          hintText: dic['contact.address'],
-                          labelText: dic['contact.address'],
+                          hintText: dic.profile.contactAddress,
+                          labelText: dic.profile.contactAddress,
                         ),
                         controller: _addressCtrl,
                         validator: (v) {
                           if (!Fmt.isAddress(v.trim())) {
-                            return dic['contact.address.error'];
+                            return dic.profile.contactAddressError;
                           }
                           return null;
                         },
@@ -167,12 +168,12 @@ class _Contact extends State<ContactPage> {
                       padding: EdgeInsets.only(left: 16, right: 16),
                       child: TextFormField(
                         decoration: InputDecoration(
-                          hintText: dic['contact.name'],
-                          labelText: dic['contact.name'],
+                          hintText: dic.profile.contactName,
+                          labelText: dic.profile.contactName,
                         ),
                         controller: _nameCtrl,
                         validator: (v) {
-                          return v.trim().length > 0 ? null : dic['contact.name.error'];
+                          return v.trim().length > 0 ? null : dic.profile.contactNameError;
                         },
                       ),
                     ),
@@ -180,8 +181,8 @@ class _Contact extends State<ContactPage> {
                       padding: EdgeInsets.only(left: 16, right: 16),
                       child: TextFormField(
                         decoration: InputDecoration(
-                          hintText: dic['contact.memo'],
-                          labelText: dic['contact.memo'],
+                          hintText: dic.profile.contactMemo,
+                          labelText: dic.profile.contactMemo,
                         ),
                         controller: _memoCtrl,
                       ),
@@ -197,7 +198,7 @@ class _Contact extends State<ContactPage> {
                           },
                         ),
                         GestureDetector(
-                          child: Text(I18n.of(context).account['observe']),
+                          child: Text(I18n.of(context).translationsForLocale().account.observe),
                           onTap: () {
                             setState(() {
                               _isObservation = !_isObservation;
@@ -209,7 +210,7 @@ class _Contact extends State<ContactPage> {
                             padding: EdgeInsets.only(left: 8),
                             child: Icon(Icons.info_outline, size: 16),
                           ),
-                          message: I18n.of(context).account['observe.brief'],
+                          message: I18n.of(context).translationsForLocale().account.observeBrief,
                         ),
                       ],
                     )
@@ -221,7 +222,7 @@ class _Contact extends State<ContactPage> {
               margin: EdgeInsets.all(16),
               child: RoundedButton(
                 submitting: _submitting,
-                text: dic['contact.save'],
+                text: dic.profile.contactSave,
                 onPressed: () => _onSave(),
               ),
             ),

@@ -6,9 +6,9 @@ import 'package:encointer_wallet/page-encointer/phases/assigning/assigningPage.d
 import 'package:encointer_wallet/page-encointer/phases/attesting/attestingPage.dart';
 import 'package:encointer_wallet/page-encointer/phases/registering/registerParticipantPanel.dart';
 import 'package:encointer_wallet/page-encointer/phases/registering/registeringPage.dart';
+import 'package:encointer_wallet/page/account/create/addAccountPage.dart';
 import 'package:encointer_wallet/page/account/create/createAccountPage.dart';
 import 'package:encointer_wallet/page/account/create/createPinPage.dart';
-import 'package:encointer_wallet/page/account/create/addAccountPage.dart';
 import 'package:encointer_wallet/page/account/createAccountEntryPage.dart';
 import 'package:encointer_wallet/page/account/import/importAccountPage.dart';
 import 'package:encointer_wallet/page/account/scanPage.dart';
@@ -42,7 +42,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'common/theme.dart';
 import 'mocks/api/api.dart';
 import 'mocks/storage/localStorage.dart';
-import 'utils/i18n/index.dart';
+import 'utils/translations/index.dart';
 
 class WalletApp extends StatefulWidget {
   const WalletApp(this.config);

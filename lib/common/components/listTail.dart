@@ -1,6 +1,6 @@
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class ListTail extends StatelessWidget {
   ListTail({this.isEmpty, this.isLoading});
@@ -16,7 +16,9 @@ class ListTail extends StatelessWidget {
           child: isLoading
               ? CupertinoActivityIndicator()
               : Text(
-                  isEmpty ? I18n.of(context).home['data.empty'] : I18n.of(context).assets['end'],
+                  isEmpty
+                      ? I18n.of(context).translationsForLocale().home.dataEmpty
+                      : I18n.of(context).translationsForLocale().assets.end,
                   style: TextStyle(fontSize: 16, color: Theme.of(context).disabledColor),
                 ),
         )

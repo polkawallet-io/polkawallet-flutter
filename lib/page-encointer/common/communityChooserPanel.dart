@@ -2,10 +2,11 @@ import 'package:encointer_wallet/common/components/roundedCard.dart';
 import 'package:encointer_wallet/page-encointer/common/communityChooserOnMap.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class CommunityChooserPanel extends StatefulWidget {
   CommunityChooserPanel(this.store);
@@ -23,23 +24,23 @@ class _CommunityChooserPanelState extends State<CommunityChooserPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).assets;
+    final Translations dic = I18n.of(context).translationsForLocale();
     return Container(
       width: double.infinity,
       child: RoundedCard(
         padding: EdgeInsets.symmetric(vertical: 8),
         child: Column(
           children: <Widget>[
-            Text(dic['community.choose']),
+            Text(dic.assets.communityChoose),
             Observer(
               builder: (_) => (store.encointer.communities == null)
                   ? CupertinoActivityIndicator()
                   : (store.encointer.communities.isEmpty)
-                      ? Text(dic['communities.not.found'])
+                      ? Text(dic.assets.communitiesNotFound)
                       : DropdownButton<dynamic>(
                           key: Key('cid-dropdown'),
                           // todo find out, why adding the hint breaks the integration test walkthrough when choosing community #225
-                          // hint: Text(dic['community.choose']),
+                          // hint: Text(dic.assets.communityChoose),
                           value: (store.encointer.chosenCid == null ||
                                   store.encointer.communities
                                       .where((cn) => cn.cid == store.encointer.chosenCid)

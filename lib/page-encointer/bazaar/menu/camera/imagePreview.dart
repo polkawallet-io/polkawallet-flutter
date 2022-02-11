@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:encointer_wallet/page-encointer/bazaar/menu/2_my_businesses/businessFormState.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -24,10 +24,10 @@ class ImagePreview extends StatelessWidget {
             ),
           if (imagePickerState.images.isEmpty)
             Text(
-              I18n.of(context).bazaar['image.not.picked'],
+              I18n.of(context).translationsForLocale().bazaar.imageNotPicked,
               textAlign: TextAlign.center,
             ),
-          Text("${imagePickerState.images.length} ${I18n.of(context).bazaar['images.added']}"),
+          Text("${imagePickerState.images.length} ${I18n.of(context).translationsForLocale().bazaar.imagesAdded}"),
           Column(
             children: imagePickerState.images
                 .map(

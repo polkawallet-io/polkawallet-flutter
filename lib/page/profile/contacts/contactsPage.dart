@@ -1,13 +1,14 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/page/profile/contacts/contactPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class ContactsPage extends StatelessWidget {
   ContactsPage(this.store);
@@ -22,7 +23,7 @@ class ContactsPage extends StatelessWidget {
         actions: <Widget>[
           CupertinoActionSheetAction(
             child: Text(
-              I18n.of(context).home['edit'],
+              I18n.of(context).translationsForLocale().home.edit,
             ),
             onPressed: () {
               Navigator.of(context).pop();
@@ -31,7 +32,7 @@ class ContactsPage extends StatelessWidget {
           ),
           CupertinoActionSheetAction(
             child: Text(
-              I18n.of(context).home['delete'],
+              I18n.of(context).translationsForLocale().home.delete,
             ),
             onPressed: () {
               Navigator.of(context).pop();
@@ -40,7 +41,7 @@ class ContactsPage extends StatelessWidget {
           )
         ],
         cancelButton: CupertinoActionSheetAction(
-          child: Text(I18n.of(context).home['cancel']),
+          child: Text(I18n.of(context).translationsForLocale().home.cancel),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -50,20 +51,20 @@ class ContactsPage extends StatelessWidget {
   }
 
   void _removeItem(BuildContext context, AccountData i) {
-    var dic = I18n.of(context).profile;
+    final Translations dic = I18n.of(context).translationsForLocale();
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text(dic['contact.delete.warn']),
+          title: Text(dic.profile.contactDeleteWarn),
           content: Text(Fmt.accountName(context, i)),
           actions: <Widget>[
             CupertinoButton(
-              child: Text(I18n.of(context).home['cancel']),
+              child: Text(I18n.of(context).translationsForLocale().home.cancel),
               onPressed: () => Navigator.of(context).pop(),
             ),
             CupertinoButton(
-              child: Text(I18n.of(context).home['ok']),
+              child: Text(I18n.of(context).translationsForLocale().home.ok),
               onPressed: () {
                 Navigator.of(context).pop();
                 store.settings.removeContact(i);
@@ -83,7 +84,7 @@ class ContactsPage extends StatelessWidget {
         builder: (_) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(I18n.of(context).profile['contact']),
+              title: Text(I18n.of(context).translationsForLocale().profile.contact),
               centerTitle: true,
               actions: <Widget>[
                 Padding(

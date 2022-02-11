@@ -1,7 +1,7 @@
+import 'package:encointer_wallet/common/components/currencyWithIcon.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/common/components/currencyWithIcon.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
 
 class CommunitySelectPage extends StatelessWidget {
   static const String route = '/assets/community';
@@ -11,7 +11,7 @@ class CommunitySelectPage extends StatelessWidget {
     final List communityIds = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text(I18n.of(context).assets['community.select']),
+        title: Text(I18n.of(context).translationsForLocale().assets.communitySelect),
         centerTitle: true,
       ),
       body: SafeArea(

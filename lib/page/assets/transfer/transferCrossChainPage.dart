@@ -1,10 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/addressFormItem.dart';
 import 'package:encointer_wallet/common/components/currencyWithIcon.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
@@ -15,7 +11,12 @@ import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class TransferCrossChainPage extends StatefulWidget {
   const TransferCrossChainPage(this.store);
@@ -40,7 +41,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
       int decimals = widget.store.settings.networkState.tokenDecimals;
 
       var args = {
-        "title": I18n.of(context).assets['transfer'] + ' $symbol',
+        "title": I18n.of(context).translationsForLocale().assets.transfer + ' $symbol',
         "txInfo": {
           "module": 'currencies',
           "call": 'transfer',
@@ -99,7 +100,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        final Map<String, String> dic = I18n.of(context).assets;
+        final Translations dic = I18n.of(context).translationsForLocale();
         String baseTokenSymbol = widget.store.settings.networkState.tokenSymbol;
         String symbol = _tokenSymbol ?? baseTokenSymbol;
         final bool isBaseToken = _tokenSymbol == baseTokenSymbol;
@@ -111,7 +112,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
             : Fmt.balanceInt(widget.store.assets.tokenBalances[symbol.toUpperCase()]);
 
         return Scaffold(
-          appBar: AppBar(title: Text(dic['transfer']), centerTitle: true),
+          appBar: AppBar(title: Text(dic.assets.transfer), centerTitle: true),
           body: SafeArea(
             child: Builder(
               builder: (BuildContext context) {
@@ -126,7 +127,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                             Padding(
                               padding: EdgeInsets.only(top: 16),
                               child: Text(
-                                dic['cross.chain'],
+                                dic.assets.crossChain,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Theme.of(context).unselectedWidgetColor,
@@ -148,13 +149,13 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                               padding: EdgeInsets.only(top: 8),
                               child: AddressFormItem(
                                 widget.store.account.currentAccount,
-                                label: dic['address'],
+                                label: dic.assets.address,
                               ),
                             ),
                             TextFormField(
                               decoration: InputDecoration(
-                                hintText: dic['amount'],
-                                labelText: '${dic['amount']} (${dic['balance']}: ${Fmt.priceFloorBigInt(
+                                hintText: dic.assets.amount,
+                                labelText: '${dic.assets.amount} (${dic.assets.balance}: ${Fmt.priceFloorBigInt(
                                   available,
                                   decimals,
                                   lengthMax: 6,
@@ -165,10 +166,10 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                               keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (v) {
                                 if (v.isEmpty) {
-                                  return dic['amount.error'];
+                                  return dic.assets.amountError;
                                 }
                                 if (double.parse(v.trim()) >= available / BigInt.from(pow(10, decimals)) - 0.001) {
-                                  return dic['amount.low'];
+                                  return dic.assets.amountLow;
                                 }
                                 return null;
                               },
@@ -184,7 +185,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          dic['currency'],
+                                          dic.assets.currency,
                                           style: TextStyle(color: Theme.of(context).unselectedWidgetColor),
                                         ),
                                         CurrencyWithIcon(_tokenSymbol ?? baseTokenSymbol),
@@ -225,7 +226,7 @@ class _TransferCrossChainPageState extends State<TransferCrossChainPage> {
                     Container(
                       padding: EdgeInsets.all(16),
                       child: RoundedButton(
-                        text: I18n.of(context).assets['make'],
+                        text: I18n.of(context).translationsForLocale().assets.make,
                         onPressed: _handleSubmit,
                       ),
                     )

@@ -1,9 +1,9 @@
+import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/page/account/create/createAccountForm.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/common/theme.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage(this.store);
@@ -25,7 +25,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          I18n.of(context).home['create'],
+          I18n.of(context).translationsForLocale().home.create,
         ),
         leading: Container(),
         actions: <Widget>[

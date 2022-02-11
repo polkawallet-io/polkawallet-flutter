@@ -5,10 +5,11 @@ import 'package:encointer_wallet/page-encointer/phases/registering/registeringPa
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/encointerTypes.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 /// ceremonies, ceremony
 class EncointerEntry extends StatelessWidget {
@@ -18,7 +19,7 @@ class EncointerEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).encointer;
+    final Translations dic = I18n.of(context).translationsForLocale();
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
@@ -30,7 +31,7 @@ class EncointerEntry extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    dic['encointer'],
+                    dic.encointer.encointer,
                     style: TextStyle(
                       fontSize: 20,
                       color: Theme.of(context).cardColor,

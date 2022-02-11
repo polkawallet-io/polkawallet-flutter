@@ -1,14 +1,15 @@
 import 'package:encointer_wallet/store/account/account.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class ExportResultPage extends StatelessWidget {
   static final String route = '/account/key';
 
   void _showExportDialog(BuildContext context, Map args) {
-    var dic = I18n.of(context).profile;
+    final Translations dic = I18n.of(context).translationsForLocale();
     Clipboard.setData(ClipboardData(
       text: args['key'],
     ));
@@ -16,11 +17,11 @@ class ExportResultPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text(dic['export']),
-          content: Text(dic['export.${args['type']}.ok']),
+          title: Text(dic.profile.export),
+          content: Text("dic['export.${args['type']}Ok']"), // TODO armin
           actions: <Widget>[
             CupertinoButton(
-              child: Text(I18n.of(context).home['ok']),
+              child: Text(I18n.of(context).translationsForLocale().home.ok),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -31,11 +32,11 @@ class ExportResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> dic = I18n.of(context).profile;
+    final Translations dic = I18n.of(context).translationsForLocale();
     final Map args = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
-      appBar: AppBar(title: Text(dic['export'])),
+      appBar: AppBar(title: Text(dic.profile.export)),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -44,7 +45,7 @@ class ExportResultPage extends StatelessWidget {
               child: ListView(
                 padding: EdgeInsets.all(16),
                 children: <Widget>[
-                  args['type'] == AccountStore.seedTypeKeystore ? Container() : Text(dic['export.warn']),
+                  args['type'] == AccountStore.seedTypeKeystore ? Container() : Text(dic.profile.exportWarn),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
@@ -52,7 +53,7 @@ class ExportResultPage extends StatelessWidget {
                         child: Container(
                           padding: EdgeInsets.all(8),
                           child: Text(
-                            I18n.of(context).home['copy'],
+                            I18n.of(context).translationsForLocale().home.copy,
                             style: TextStyle(fontSize: 14, color: Theme.of(context).primaryColor),
                           ),
                         ),

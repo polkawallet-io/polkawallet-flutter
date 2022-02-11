@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:encointer_wallet/common/regInputFormatter.dart';
+import 'package:encointer_wallet/config/consts.dart';
+import 'package:encointer_wallet/service/substrateApi/api.dart';
+import 'package:encointer_wallet/service/walletApi.dart';
+import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:encointer_wallet/config/consts.dart';
-import 'package:encointer_wallet/common/regInputFormatter.dart';
-import 'package:encointer_wallet/service/substrateApi/api.dart';
-import 'package:encointer_wallet/service/walletApi.dart';
-import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
 import 'package:update_app/update_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,10 +22,10 @@ class UI {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        final Map<String, String> dic = I18n.of(context).assets;
+        final Translations dic = I18n.of(context).translationsForLocale();
         return CupertinoAlertDialog(
           title: Container(),
-          content: Text('${dic['copy']} ${dic['success']}'),
+          content: Text('${dic.assets.copy} ${dic.assets.success}'),
         );
       },
     );
@@ -49,7 +50,7 @@ class UI {
   static Future<void> checkUpdate(BuildContext context, Map versions, {bool autoCheck = false}) async {
     if (versions == null || !Platform.isAndroid && !Platform.isIOS) return;
     String platform = Platform.isAndroid ? 'android' : 'ios';
-    final Map dic = I18n.of(context).home;
+    final Translations dic = I18n.of(context).translationsForLocale();
 
     int latestCode = versions[platform]['version-code'];
     String latestBeta = versions[platform]['version-beta'];
@@ -80,7 +81,7 @@ class UI {
             children: [
               Padding(
                 padding: EdgeInsets.only(top: 12, bottom: 8),
-                child: Text(needUpdate ? dic['update.up'] : dic['update.latest']),
+                child: Text(needUpdate ? dic.home.updateUp : dic.home.updateLatest),
               ),
               needUpdate
                   ? Column(
@@ -97,13 +98,13 @@ class UI {
           ),
           actions: <Widget>[
             CupertinoButton(
-              child: Text(dic['cancel']),
+              child: Text(dic.home.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             CupertinoButton(
-              child: Text(dic['ok']),
+              child: Text(dic.home.ok),
               onPressed: () async {
                 Navigator.of(context).pop();
                 if (!needUpdate) {
@@ -141,23 +142,23 @@ class UI {
         network,
       );
       if (jsVersion > currentVersion) {
-        final Map dic = I18n.of(context).home;
+        final Translations dic = I18n.of(context).translationsForLocale();
         final bool isOk = await showCupertinoDialog(
           context: context,
           builder: (BuildContext context) {
             return CupertinoAlertDialog(
               title: Text('metadata v$jsVersion'),
-              content: Text(dic['update.js.up']),
+              content: Text(dic.home.updateJsUp),
               actions: <Widget>[
                 CupertinoButton(
-                  child: Text(dic['cancel']),
+                  child: Text(dic.home.cancel),
                   onPressed: () {
                     Navigator.of(context).pop(false);
                     exit(0);
                   },
                 ),
                 CupertinoButton(
-                  child: Text(dic['ok']),
+                  child: Text(dic.home.ok),
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
@@ -178,12 +179,12 @@ class UI {
     String network,
     int version,
   ) async {
-    final Map dic = I18n.of(context).home;
+    final Translations dic = I18n.of(context).translationsForLocale();
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text(dic['update.download']),
+          title: Text(dic.home.updateDownload),
           content: CupertinoActivityIndicator(),
         );
       },
@@ -195,10 +196,10 @@ class UI {
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: Container(),
-          content: code == null ? Text(dic['update.error']) : Text(dic['success']),
+          content: code == null ? Text(dic.home.updateError) : Text(dic.home.success),
           actions: <Widget>[
             CupertinoButton(
-              child: Text(dic['ok']),
+              child: Text(dic.home.ok),
               onPressed: () {
                 WalletApi.setPolkadotJSCode(jsStorage, network, code, version);
                 Navigator.of(context).pop();
@@ -219,10 +220,10 @@ class UI {
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: Container(),
-          content: Text(I18n.of(context).account['backup.error']),
+          content: Text(I18n.of(context).translationsForLocale().account.backupError),
           actions: <Widget>[
             CupertinoButton(
-              child: Text(I18n.of(context).home['ok']),
+              child: Text(I18n.of(context).translationsForLocale().home.ok),
               onPressed: () {
                 Navigator.of(context).pop();
                 onCancel();
@@ -241,11 +242,11 @@ class UI {
         context: context,
         builder: (BuildContext context) {
           return CupertinoAlertDialog(
-            title: Text(I18n.of(context).assets['amount.low']),
+            title: Text(I18n.of(context).translationsForLocale().assets.amountLow),
             content: Container(),
             actions: <Widget>[
               CupertinoButton(
-                child: Text(I18n.of(context).home['ok']),
+                child: Text(I18n.of(context).translationsForLocale().home.ok),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ],

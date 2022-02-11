@@ -12,10 +12,11 @@ import 'package:encointer_wallet/store/assets/types/balancesInfo.dart';
 import 'package:encointer_wallet/store/assets/types/transferData.dart';
 import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class AssetPageParams {
   AssetPageParams(
@@ -144,7 +145,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
     final bool isEncointerCommunityCurrency = params.isEncointerCommunityCurrency;
     final String token = params.token;
 
-    final dic = I18n.of(context).assets;
+    final Translations dic = I18n.of(context).translationsForLocale();
 
     final String symbol = store.settings.networkState.tokenSymbol;
     final String tokenView = Fmt.tokenView(token);
@@ -178,7 +179,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                     i.amount,
                     decimals,
                     lengthMax: 3,
-                  )} $tokenView ${dic['lock.${i.use}']}\n';
+                  )} $tokenView "{dic[lock.dollar i.use ]}"\n'; // TODO armin
                 }
               });
             }
@@ -223,7 +224,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                                 Column(
                                   children: [
                                     Text(
-                                      dic['locked'],
+                                      dic.assets.locked,
                                       style: TextStyle(color: titleColor, fontSize: 12),
                                     ),
                                     Row(
@@ -257,7 +258,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                                 Column(
                                   children: [
                                     Text(
-                                      dic['available'],
+                                      dic.assets.available,
                                       style: TextStyle(color: titleColor, fontSize: 12),
                                     ),
                                     Text(
@@ -273,7 +274,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                                 Column(
                                   children: [
                                     Text(
-                                      dic['reserved'],
+                                      dic.assets.reserved,
                                       style: TextStyle(color: titleColor, fontSize: 12),
                                     ),
                                     Text(
@@ -296,7 +297,9 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                   color: titleColor,
                   padding: EdgeInsets.all(16),
                   child: Row(
-                    children: <Widget>[BorderedTitle(title: I18n.of(context).encointer['loan.txs'])],
+                    children: <Widget>[
+                      BorderedTitle(title: I18n.of(context).translationsForLocale().encointer.loanTxs)
+                    ],
                   ),
                 ),
                 store.encointer.txsTransfer.isNotEmpty
@@ -341,7 +344,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                                 child: Image.asset('assets/images/assets/assets_send.png'),
                               ),
                               Text(
-                                I18n.of(context).assets['transfer'],
+                                I18n.of(context).translationsForLocale().assets.transfer,
                                 style: TextStyle(color: Colors.white),
                               )
                             ],
@@ -373,7 +376,7 @@ class _AssetPageState extends State<AssetPage> with SingleTickerProviderStateMix
                                 child: Image.asset('assets/images/assets/assets_receive.png'),
                               ),
                               Text(
-                                I18n.of(context).assets['receive'],
+                                I18n.of(context).translationsForLocale().assets.receive,
                                 style: TextStyle(color: Colors.white),
                               ),
                             ],

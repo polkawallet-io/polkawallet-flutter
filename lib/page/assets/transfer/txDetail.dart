@@ -1,10 +1,11 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:encointer_wallet/common/components/JumpToBrowserLink.dart';
 import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class TxDetail extends StatelessWidget {
   TxDetail({
@@ -28,7 +29,7 @@ class TxDetail extends StatelessWidget {
   final List<DetailInfoItem> info;
 
   List<Widget> _buildListView(BuildContext context) {
-    final Map<String, String> dic = I18n.of(context).assets;
+    final Translations dic = I18n.of(context).translationsForLocale();
     Widget buildLabel(String name) {
       return Container(
           padding: EdgeInsets.only(left: 8),
@@ -51,7 +52,7 @@ class TxDetail extends StatelessWidget {
                 : Image.asset('assets/images/staking/error.png'),
           ),
           Text(
-            '$action ${success ? dic['success'] : dic['fail']}',
+            '$action ${success ? dic.assets.success : dic.assets.fail}',
             style: Theme.of(context).textTheme.headline4,
           ),
           Padding(
@@ -86,15 +87,15 @@ class TxDetail extends StatelessWidget {
     }
     list.addAll(<Widget>[
       ListTile(
-        leading: buildLabel(dic['event']),
+        leading: buildLabel(dic.assets.event),
         title: Text(eventId),
       ),
       ListTile(
-        leading: buildLabel(dic['block']),
+        leading: buildLabel(dic.assets.block),
         title: Text('#$blockNum'),
       ),
       ListTile(
-        leading: buildLabel(dic['hash']),
+        leading: buildLabel(dic.assets.hash),
         title: Text(Fmt.address(hash)),
         trailing: Container(
           width: 140,
@@ -123,7 +124,7 @@ class TxDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${I18n.of(context).assets['detail']}'),
+        title: Text('${I18n.of(context).translationsForLocale().assets.detail}'),
         centerTitle: true,
       ),
       body: SafeArea(

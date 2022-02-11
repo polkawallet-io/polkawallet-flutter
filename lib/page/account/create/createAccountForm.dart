@@ -2,10 +2,11 @@ import 'package:encointer_wallet/common/components/gradientElements.dart';
 import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/page/account/create/createPinPage.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class CreateAccountForm extends StatelessWidget {
   CreateAccountForm({this.store});
@@ -18,7 +19,7 @@ class CreateAccountForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> dic = I18n.of(context).account;
+    final Translations dic = I18n.of(context).translationsForLocale();
 
     return Form(
       key: _formKey,
@@ -30,7 +31,7 @@ class CreateAccountForm extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
               children: <Widget>[
                 Center(
-                  child: Text(I18n.of(context).profile['account.name.choose'],
+                  child: Text(I18n.of(context).translationsForLocale().profile.accountNameChoose,
                       style: Theme.of(context).textTheme.headline2),
                 ),
                 SizedBox(height: 10),
@@ -38,7 +39,7 @@ class CreateAccountForm extends StatelessWidget {
                   child: Container(
                     width: 300,
                     child: Text(
-                      I18n.of(context).profile['account.name.choose.hint'],
+                      I18n.of(context).translationsForLocale().profile.accountNameChooseHint,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headline2.copyWith(
                             color: encointerBlack,
@@ -59,8 +60,8 @@ class CreateAccountForm extends StatelessWidget {
                         ),
                         filled: true,
                         fillColor: encointerLightBlue,
-                        hintText: dic['create.hint'],
-                        labelText: I18n.of(context).profile['account.name'],
+                        hintText: dic.account.createHint,
+                        labelText: I18n.of(context).translationsForLocale().profile.accountName,
                       ),
                       controller: _nameCtrl,
                     ),
@@ -79,7 +80,7 @@ class CreateAccountForm extends StatelessWidget {
                   Icon(Iconsax.login_1),
                   SizedBox(width: 12),
                   Text(
-                    dic['next'],
+                    dic.account.next,
                     style: Theme.of(context).textTheme.headline3.copyWith(
                           color: encointerLightBlue,
                         ),

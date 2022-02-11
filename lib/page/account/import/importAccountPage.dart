@@ -5,9 +5,10 @@ import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class ImportAccountPage extends StatefulWidget {
   const ImportAccountPage(this.store);
@@ -38,7 +39,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text(I18n.of(context).home['loading']),
+          title: Text(I18n.of(context).translationsForLocale().home.loading),
           content: Container(height: 64, child: CupertinoActivityIndicator()),
         );
       },
@@ -60,13 +61,14 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
           showCupertinoDialog(
             context: context,
             builder: (BuildContext context) {
-              final Map<String, String> accDic = I18n.of(context).account;
+              final Translations dic = I18n.of(context).translationsForLocale();
               return CupertinoAlertDialog(
                 title: Container(),
-                content: Text('${accDic['import.invalid']} ${accDic[_keyType]}'),
+                // content: Text('${accDic['importInvalid']} ${accDic[_keyType]}'),
+                content: Text('${dic.account.importInvalid} accDic[_keyType]'), // TODO what is this?
                 actions: <Widget>[
                   CupertinoButton(
-                    child: Text(I18n.of(context).home['ok']),
+                    child: Text(I18n.of(context).translationsForLocale().home.ok),
                     onPressed: () {
                       setState(() {
                         _step = 0;
@@ -97,13 +99,13 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        final Map<String, String> accDic = I18n.of(context).account;
+        final Translations dic = I18n.of(context).translationsForLocale();
         return CupertinoAlertDialog(
           title: Container(),
-          content: Text('${accDic['import.invalid']} ${accDic['create.password']}'),
+          content: Text('${dic.account.importInvalid} ${dic.account.createPassword}'),
           actions: <Widget>[
             CupertinoButton(
-              child: Text(I18n.of(context).home['cancel']),
+              child: Text(I18n.of(context).translationsForLocale().home.cancel),
               onPressed: () {
                 setState(() {
                   _submitting = false;
@@ -128,10 +130,10 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
           builder: (BuildContext context) {
             return CupertinoAlertDialog(
               title: Text(Fmt.address(address)),
-              content: Text(I18n.of(context).account['import.duplicate']),
+              content: Text(I18n.of(context).translationsForLocale().account.importDuplicate),
               actions: <Widget>[
                 CupertinoButton(
-                  child: Text(I18n.of(context).home['cancel']),
+                  child: Text(I18n.of(context).translationsForLocale().home.cancel),
                   onPressed: () {
                     setState(() {
                       _submitting = false;
@@ -140,7 +142,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
                   },
                 ),
                 CupertinoButton(
-                  child: Text(I18n.of(context).home['ok']),
+                  child: Text(I18n.of(context).translationsForLocale().home.ok),
                   onPressed: () {
                     _saveAccount(acc);
                     Navigator.of(context).pop();
@@ -179,7 +181,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
       return Scaffold(
         appBar: AppBar(
           title: Text(
-            I18n.of(context).home['account.import'],
+            I18n.of(context).translationsForLocale().home.accountImport,
             style: Theme.of(context).textTheme.headline3,
           ),
           centerTitle: true,
@@ -210,7 +212,7 @@ class _ImportAccountPageState extends State<ImportAccountPage> {
     }
     // todo what are the different steps 1 and 0? do i need here to add also the AddAccountForm?
     return Scaffold(
-      appBar: AppBar(title: Text(I18n.of(context).home['account.import'])),
+      appBar: AppBar(title: Text(I18n.of(context).translationsForLocale().home.accountImport)),
       body: SafeArea(
         child: !_submitting
             ? ImportAccountForm(store, (Map<String, dynamic> data) {

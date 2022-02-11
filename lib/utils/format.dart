@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:convert/convert.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
@@ -255,7 +255,7 @@ class Fmt {
   }
 
   static String accountName(BuildContext context, AccountData acc) {
-    return '${acc.name ?? ''}${(acc.observation ?? false) ? ' (${I18n.of(context).account['observe']})' : ''}';
+    return '${acc.name ?? ''}${(acc.observation ?? false) ? ' (${I18n.of(context).translationsForLocale().account.observe})' : ''}';
   }
 
   static List<int> hexToBytes(String hex) {

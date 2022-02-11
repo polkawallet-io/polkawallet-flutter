@@ -9,10 +9,11 @@ import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/settings.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class Profile extends StatefulWidget {
   Profile(this.store);
@@ -60,7 +61,7 @@ class _ProfileState extends State<Profile> {
           child: showPasswordInputDialog(
             context,
             store.account.currentAccount,
-            Text(I18n.of(context).profile['unlock']),
+            Text(I18n.of(context).translationsForLocale().profile.unlock),
             (password) {
               setState(() {
                 store.settings.setPin(password);
@@ -73,7 +74,7 @@ class _ProfileState extends State<Profile> {
   }
 
   List<Widget> _buildAccountList() {
-    final Map<String, String> dic = I18n.of(context).profile;
+    final Translations dic = I18n.of(context).translationsForLocale();
     List<Widget> res = _buildAddAccount(dic);
 
     /// first item is current account
@@ -106,18 +107,18 @@ class _ProfileState extends State<Profile> {
     return res;
   }
 
-  List<Widget> _buildAddAccount(Map<String, String> dic) {
+  List<Widget> _buildAddAccount(Translations dic) {
     Color primaryColor = Theme.of(context).primaryColor;
     List<Widget> res = [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
-            '${dic['accounts']} in ${_selectedNetwork.info.toUpperCase()}',
+            '${dic.profile.accounts} in ${_selectedNetwork.info.toUpperCase()}',
             style: Theme.of(context).textTheme.headline4,
           ),
           Row(children: <Widget>[
-            Text(dic['add']),
+            Text(dic.profile.add),
             IconButton(
                 icon: Image.asset('assets/images/assets/plus_indigo.png'),
                 color: primaryColor,
@@ -152,13 +153,13 @@ class _ProfileState extends State<Profile> {
         Navigator.popUntil(context, ModalRoute.withName('/'));
       });
     }
-    final Map<String, String> dic = I18n.of(context).profile;
+    final Translations dic = I18n.of(context).translationsForLocale();
 
     return Observer(
       builder: (_) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(dic['title']),
+            title: Text(dic.profile.title),
             centerTitle: true,
             elevation: 0.0,
           ),
@@ -177,7 +178,7 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   ListTile(
-                    title: Text(dic['pass.change']),
+                    title: Text(dic.profile.passChange),
                     trailing: Icon(Icons.arrow_forward_ios, size: 18),
                     onTap: () => Navigator.pushNamed(context, ChangePasswordPage.route),
                   ),
@@ -188,16 +189,16 @@ class _ProfileState extends State<Profile> {
                         context: context,
                         builder: (BuildContext context) {
                           return CupertinoAlertDialog(title: Text("Are you sure you want to remove all accounts?"),
-                              // content: Text(dic['pass.error.txt']),
+                              // content: Text(dic.profile.passErrorTxt),
                               actions: <Widget>[
                                 CupertinoButton(
                                   // key: Key('error-dialog-ok'),
-                                  child: Text(I18n.of(context).home['cancel']),
+                                  child: Text(I18n.of(context).translationsForLocale().home.cancel),
                                   onPressed: () => Navigator.of(context).pop(),
                                 ),
                                 CupertinoButton(
                                     // key: Key('error-dialog-ok'),
-                                    child: Text(I18n.of(context).home['ok']),
+                                    child: Text(I18n.of(context).translationsForLocale().home.ok),
                                     onPressed: () => {
                                           print("remove ${store.account.accountListAll}"),
                                           store.account.accountListAll.forEach((acc) {
@@ -211,7 +212,7 @@ class _ProfileState extends State<Profile> {
                   ),
                   Row(
                     children: <Widget>[
-                      Text(dic['developer']),
+                      Text(dic.profile.developer),
                       Checkbox(
                         value: developerMode,
                         onChanged: (bool value) {

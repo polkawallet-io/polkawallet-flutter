@@ -4,10 +4,11 @@ import 'package:encointer_wallet/page-encointer/common/assignmentPanel.dart';
 import 'package:encointer_wallet/page-encointer/meetup/startMeetup.dart';
 import 'package:encointer_wallet/page/account/txConfirmPage.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class AttestingPage extends StatefulWidget {
   AttestingPage(this.store);
@@ -26,7 +27,7 @@ class _AttestingPageState extends State<AttestingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).encointer;
+    final Translations dic = I18n.of(context).translationsForLocale();
     return SafeArea(
       child: Column(children: <Widget>[
         AssignmentPanel(store),
@@ -38,10 +39,11 @@ class _AttestingPageState extends State<AttestingPage> {
             child: Column(children: <Widget>[
               Observer(
                 builder: (_) => ((store.encointer.meetupIndex == null) | (store.encointer.meetupIndex == 0))
-                    ? Text(dic['meetup.not.assigned'])
+                    ? Text(dic.encointer.meetupNotAssigned)
                     : Container(
                         key: Key('start-meetup'),
-                        child: RoundedButton(text: dic['meetup.start'], onPressed: () => startMeetup(context, store))),
+                        child: RoundedButton(
+                            text: dic.encointer.meetupStart, onPressed: () => startMeetup(context, store))),
               ),
             ]),
           ),
@@ -53,10 +55,10 @@ class _AttestingPageState extends State<AttestingPage> {
               builder: (_) => RoundedCard(
                   padding: const EdgeInsets.only(top: 16, bottom: 16),
                   child: Column(children: <Widget>[
-                    Text(dic['claims.scanned']
+                    Text(dic.encointer.claimsScanned
                         .replaceAll('AMOUNT_PLACEHOLDER', store.encointer.scannedClaimsCount.toString())),
                     ElevatedButton(
-                        child: Text(dic['attestations.submit']),
+                        child: Text(dic.encointer.attestationsSubmit),
                         onPressed: store.encointer.scannedClaimsCount > 0 ? () => _submit(context) : null)
                   ]))),
         )
@@ -65,7 +67,7 @@ class _AttestingPageState extends State<AttestingPage> {
   }
 
   Future<void> _submit(BuildContext context) async {
-    final dic = I18n.of(context).encointer;
+    final Translations dic = I18n.of(context).translationsForLocale();
     var args = {
       "title": 'attest_claims',
       "txInfo": {
@@ -73,7 +75,7 @@ class _AttestingPageState extends State<AttestingPage> {
         "call": 'attestClaims',
         "cid": store.encointer.chosenCid,
       },
-      "detail": dic['claims.submit.detail'].replaceAll('AMOUNT', store.encointer.scannedClaimsCount.toString()),
+      "detail": dic.encointer.claimsSubmitDetail.replaceAll('AMOUNT', store.encointer.scannedClaimsCount.toString()),
       "params": [store.encointer.participantsClaims.values.toList()],
       'onFinish': (BuildContext txPageContext, Map res) {
         Navigator.popUntil(txPageContext, ModalRoute.withName('/'));

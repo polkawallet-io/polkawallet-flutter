@@ -1,16 +1,17 @@
 import 'package:encointer_wallet/common/components/roundedCard.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class ConfirmAttendeesDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).encointer;
+    final Translations dic = I18n.of(context).translationsForLocale();
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(dic['ceremony']),
+          title: Text(dic.encointer.ceremony),
           centerTitle: true,
         ),
         backgroundColor: Theme.of(context).canvasColor,

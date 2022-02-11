@@ -1,8 +1,9 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/settings.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 const default_ss58_prefix = {
   'info': 'default',
@@ -25,7 +26,7 @@ class SS58PrefixListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var dic = I18n.of(context).profile;
+    final Translations dic = I18n.of(context).translationsForLocale();
     List<Widget> list = prefixList
         .map((i) => ListTile(
               leading: Container(
@@ -53,7 +54,7 @@ class SS58PrefixListPage extends StatelessWidget {
         .toList();
     return Scaffold(
       appBar: AppBar(
-        title: Text(dic['setting.prefix.list']),
+        title: Text(dic.profile.settingPrefixList),
         centerTitle: true,
       ),
       body: SafeArea(

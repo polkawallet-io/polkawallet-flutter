@@ -5,7 +5,8 @@ import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/account.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,8 +19,7 @@ class ExportAccountPage extends StatelessWidget {
   final TextEditingController _passCtrl = new TextEditingController();
 
   void _showPasswordDialog(BuildContext context, String seedType) {
-    final Map<String, String> dic = I18n.of(context).profile;
-    final Map<String, String> accDic = I18n.of(context).account;
+    final Translations dic = I18n.of(context).translationsForLocale();
 
     Future<void> onOk() async {
       var res = await webApi.account.checkAccountPassword(store.currentAccount, _passCtrl.text);
@@ -28,11 +28,11 @@ class ExportAccountPage extends StatelessWidget {
           context: context,
           builder: (BuildContext context) {
             return CupertinoAlertDialog(
-              title: Text(dic['pass.error']),
-              content: Text(dic['pass.error.txt']),
+              title: Text(dic.profile.passError),
+              content: Text(dic.profile.passErrorTxt),
               actions: <Widget>[
                 CupertinoButton(
-                  child: Text(I18n.of(context).home['ok']),
+                  child: Text(I18n.of(context).translationsForLocale().home.ok),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -53,16 +53,16 @@ class ExportAccountPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text(dic['delete.confirm']),
+          title: Text(dic.profile.deleteConfirm),
           content: Padding(
             padding: EdgeInsets.only(top: 16),
             child: CupertinoTextField(
               keyboardType: TextInputType.number,
-              placeholder: dic['pass.old'],
+              placeholder: dic.profile.passOld,
               controller: _passCtrl,
               clearButtonMode: OverlayVisibilityMode.editing,
               onChanged: (v) {
-                return Fmt.checkPassword(v.trim()) ? null : accDic['create.password.error'];
+                return Fmt.checkPassword(v.trim()) ? null : dic.account.createPasswordError;
               },
               obscureText: true,
               inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
@@ -70,14 +70,14 @@ class ExportAccountPage extends StatelessWidget {
           ),
           actions: <Widget>[
             CupertinoButton(
-              child: Text(I18n.of(context).home['cancel']),
+              child: Text(I18n.of(context).translationsForLocale().home.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
                 _passCtrl.clear();
               },
             ),
             CupertinoButton(
-              child: Text(I18n.of(context).home['ok']),
+              child: Text(I18n.of(context).translationsForLocale().home.ok),
               onPressed: onOk,
             ),
           ],
@@ -88,16 +88,15 @@ class ExportAccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dic = I18n.of(context).profile;
-    final dicAcc = I18n.of(context).account;
+    final Translations dic = I18n.of(context).translationsForLocale();
     return Scaffold(
       appBar: AppBar(
-        title: Text(dic['export']),
+        title: Text(dic.profile.export),
       ),
       body: ListView(
         children: <Widget>[
           ListTile(
-            title: Text(dicAcc[AccountStore.seedTypeKeystore]),
+            title: Text(dic.account.keystore),
             trailing: Icon(Icons.arrow_forward_ios, size: 18),
             onTap: () {
               Map json = AccountData.toJson(store.currentAccount);
@@ -114,7 +113,7 @@ class ExportAccountPage extends StatelessWidget {
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.hasData && snapshot.data == true) {
                 return ListTile(
-                  title: Text(dicAcc[AccountStore.seedTypeMnemonic]),
+                  title: Text(dic.account.mnemonic),
                   trailing: Icon(Icons.arrow_forward_ios, size: 18),
                   onTap: () => _showPasswordDialog(context, AccountStore.seedTypeMnemonic),
                 );
@@ -128,7 +127,7 @@ class ExportAccountPage extends StatelessWidget {
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.hasData && snapshot.data == true) {
                 return ListTile(
-                  title: Text(dicAcc[AccountStore.seedTypeRawSeed]),
+                  title: Text(dic.account.rawSeed),
                   trailing: Icon(Icons.arrow_forward_ios, size: 18),
                   onTap: () => _showPasswordDialog(context, AccountStore.seedTypeRawSeed),
                 );

@@ -1,11 +1,11 @@
 import 'package:encointer_wallet/common/components/accountAdvanceOption.dart';
+import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/page/account/create/createPinForm.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/common/theme.dart';
 
 class CreatePinPage extends StatefulWidget {
   const CreatePinPage(this.store);
@@ -67,10 +67,10 @@ class _CreatePinPageState extends State<CreatePinPage> {
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: Container(),
-          content: Text(I18n.of(context).account['create.error']),
+          content: Text(I18n.of(context).translationsForLocale().account.createError),
           actions: <Widget>[
             CupertinoButton(
-              child: Text(I18n.of(context).home['ok']),
+              child: Text(I18n.of(context).translationsForLocale().home.ok),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -87,7 +87,7 @@ class _CreatePinPageState extends State<CreatePinPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          I18n.of(context).home['create'],
+          I18n.of(context).translationsForLocale().home.create,
         ),
         iconTheme: IconThemeData(
           color: encointerGrey, //change your color here

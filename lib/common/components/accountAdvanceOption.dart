@@ -1,7 +1,8 @@
+import 'package:encointer_wallet/service/substrateApi/api.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/service/substrateApi/api.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class AccountAdvanceOption extends StatefulWidget {
   AccountAdvanceOption({this.seed, this.onChange});
@@ -53,7 +54,7 @@ class _AccountAdvanceOption extends State<AccountAdvanceOption> {
 
   @override
   Widget build(BuildContext context) {
-    final dic = I18n.of(context).account;
+    final Translations dic = I18n.of(context).translationsForLocale();
     return Column(
       children: <Widget>[
         Padding(
@@ -68,7 +69,7 @@ class _AccountAdvanceOption extends State<AccountAdvanceOption> {
                     size: 30,
                     color: Theme.of(context).unselectedWidgetColor,
                   ),
-                  Text(dic['advanced'])
+                  Text(dic.account.advanced)
                 ],
               ),
             ),
@@ -92,7 +93,7 @@ class _AccountAdvanceOption extends State<AccountAdvanceOption> {
         ),
         _expanded
             ? ListTile(
-                title: Text(I18n.of(context).account['import.encrypt']),
+                title: Text(I18n.of(context).translationsForLocale().account.importEncrypt),
                 subtitle: Text(_typeOptions[_typeSelection]),
                 trailing: Icon(Icons.arrow_forward_ios, size: 18),
                 onTap: () {
@@ -130,7 +131,7 @@ class _AccountAdvanceOption extends State<AccountAdvanceOption> {
                   child: TextFormField(
                     decoration: InputDecoration(
                       hintText: '//hard/soft///password',
-                      labelText: dic['path'],
+                      labelText: dic.account.path,
                     ),
                     controller: _pathCtrl,
                     validator: _checkDerivePath,

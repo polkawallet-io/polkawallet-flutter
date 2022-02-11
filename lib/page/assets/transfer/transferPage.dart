@@ -13,11 +13,12 @@ import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class TransferPageParams {
   TransferPageParams(
@@ -58,7 +59,7 @@ class _TransferPageState extends State<TransferPage> {
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        final Map<String, String> dic = I18n.of(context).assets;
+        final Translations dic = I18n.of(context).translationsForLocale();
         final String baseTokenSymbol = store.settings.networkState.tokenSymbol;
         String symbol = _tokenSymbol ?? baseTokenSymbol;
         final bool isBaseToken = _tokenSymbol == baseTokenSymbol;
@@ -82,7 +83,7 @@ class _TransferPageState extends State<TransferPage> {
           key: _formKey,
           child: Scaffold(
             appBar: AppBar(
-              title: Text(dic['transfer']),
+              title: Text(dic.assets.transfer),
               leading: Container(),
               actions: [
                 IconButton(
@@ -106,23 +107,23 @@ class _TransferPageState extends State<TransferPage> {
                             ? AccountBalanceWithMoreDigits(store: store, available: available, decimals: decimals)
                             : CupertinoActivityIndicator(),
                         Text(
-                          "${I18n.of(context).assets['your.balance.for']} ${Fmt.accountName(context, store.account.currentAccount)}",
+                          "${I18n.of(context).translationsForLocale().assets.yourBalanceFor} ${Fmt.accountName(context, store.account.currentAccount)}",
                           style: Theme.of(context).textTheme.headline4.copyWith(color: encointerGrey),
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 48),
                         EncointerTextFormField(
-                          labelText: dic['amount.to.be.transferred'],
+                          labelText: dic.assets.amountToBeTransferred,
                           textStyle: Theme.of(context).textTheme.headline1.copyWith(color: encointerBlack),
                           inputFormatters: [UI.decimalInputFormatter(decimals: decimals)],
                           controller: _amountCtrl,
                           textFormFieldKey: Key('transfer-amount-input'),
                           validator: (String value) {
                             if (value.isEmpty) {
-                              return dic['amount.error'];
+                              return dic.assets.amountError;
                             }
                             if (balanceTooLow(value, available, decimals)) {
-                              return dic['amount.low'];
+                              return dic.assets.amountLow;
                             }
                             return null;
                           },
@@ -140,7 +141,7 @@ class _TransferPageState extends State<TransferPage> {
                             Expanded(
                               child: AddressInputField(
                                 widget.store,
-                                label: dic['address'],
+                                label: dic.assets.address,
                                 initialValue: _accountTo,
                                 onChanged: (AccountData acc) {
                                   setState(() {
@@ -171,7 +172,7 @@ class _TransferPageState extends State<TransferPage> {
                         children: [
                           Icon(Iconsax.send_sqaure_2),
                           SizedBox(width: 12),
-                          Text(dic['amount.to.be.transferred']),
+                          Text(dic.assets.amountToBeTransferred),
                         ],
                       ),
                       onPressed: _handleSubmit,
@@ -194,7 +195,7 @@ class _TransferPageState extends State<TransferPage> {
       final String tokenView = Fmt.tokenView(symbol);
       final address = Fmt.addressOfAccount(_accountTo, store);
       var args = {
-        "title": I18n.of(context).assets['transfer'] + ' $tokenView',
+        "title": I18n.of(context).translationsForLocale().assets.transfer + ' $tokenView',
         "txInfo": {
           "module": 'balances',
           "call": 'transfer',

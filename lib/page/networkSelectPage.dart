@@ -8,7 +8,8 @@ import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/settings.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -56,7 +57,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text(I18n.of(context).home['loading']),
+          title: Text(I18n.of(context).translationsForLocale().home.loading),
           content: Container(height: 64, child: CupertinoActivityIndicator()),
         );
       },
@@ -122,7 +123,7 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
           child: showPasswordInputDialog(
             context,
             store.account.currentAccount,
-            Text(I18n.of(context).profile['unlock']),
+            Text(I18n.of(context).translationsForLocale().profile.unlock),
             (password) {
               setState(() {
                 store.settings.setPin(password);
@@ -207,10 +208,10 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Map doc = I18n.of(context).home;
+    final Translations dic = I18n.of(context).translationsForLocale();
     return Scaffold(
       appBar: AppBar(
-        title: Text(doc['setting.network']),
+        title: Text(dic.home.settingNetwork),
         centerTitle: true,
       ),
       body: Observer(

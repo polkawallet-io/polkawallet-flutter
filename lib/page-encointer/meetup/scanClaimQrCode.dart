@@ -4,12 +4,13 @@ import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/service/substrateApi/codecApi.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/claimOfAttendance.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_qr_scan/qrcode_reader_view.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class ScanClaimQrCode extends StatelessWidget {
   ScanClaimQrCode(this.store, this.confirmedParticipantsCount);
@@ -33,12 +34,13 @@ class ScanClaimQrCode extends StatelessWidget {
     ));
   }
 
-  void validateAndStoreClaim(BuildContext context, ClaimOfAttendance claim, Map dic) {
+  void validateAndStoreClaim(BuildContext context, ClaimOfAttendance claim, Translations dic) {
     if (!store.encointer.meetupRegistry.contains(claim.claimantPublic)) {
       // this is important because the runtime checks if there are too many claims trying to be registered.
-      _showSnackBar(context, dic['meetup.claimant.invalid']);
+      _showSnackBar(context, dic.encointer.meetupClaimantInvalid);
     } else {
-      String msg = store.encointer.containsClaim(claim) ? dic['claims.scanned.already'] : dic['claims.scanned.new'];
+      String msg =
+          store.encointer.containsClaim(claim) ? dic.encointer.claimsScannedAlready : dic.encointer.claimsScannedNew;
       store.encointer.addParticipantClaim(claim);
       _showSnackBar(context, msg);
     }
@@ -46,7 +48,7 @@ class ScanClaimQrCode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).encointer;
+    final Translations dic = I18n.of(context).translationsForLocale();
 
     Future _onScan(String base64Data, String _rawData) async {
       if (base64Data != null) {
@@ -60,7 +62,7 @@ class ScanClaimQrCode extends StatelessWidget {
             .timeout(
           const Duration(seconds: 3),
           onTimeout: () {
-            _showSnackBar(context, dic['claims.scanned.decode.failed']);
+            _showSnackBar(context, dic.encointer.claimsScannedDecodeFailed);
             return null;
           },
         );
@@ -88,7 +90,7 @@ class ScanClaimQrCode extends StatelessWidget {
             return QrcodeReaderView(
               key: _qrViewKey,
               helpWidget: Observer(
-                  builder: (_) => Text(dic['claims.scanned.n.of.m']
+                  builder: (_) => Text(dic.encointer.claimsScannedNOfM
                       .replaceAll('SCANNED_COUNT', store.encointer.scannedClaimsCount.toString())
                       .replaceAll('TOTAL_COUNT', (confirmedParticipantsCount - 1).toString()))),
               headerWidget: SafeArea(

@@ -1,7 +1,7 @@
 import 'package:encointer_wallet/page-encointer/bazaar/shared/bazaarItemVertical.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shared/data_model/demo_data/demoData.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
 
 import 'businessForm.dart';
 
@@ -12,7 +12,7 @@ class MyBusinesses extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(I18n.of(context).bazaar['businesses.my']),
+        title: Text(I18n.of(context).translationsForLocale().bazaar.businessesMy),
       ),
       body: Column(children: [
         Expanded(

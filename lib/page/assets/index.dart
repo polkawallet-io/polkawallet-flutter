@@ -14,12 +14,13 @@ import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class Assets extends StatefulWidget {
   Assets(this.store);
@@ -67,10 +68,10 @@ class _AssetsState extends State<Assets> {
       Navigator.of(context).pushNamed(TxConfirmPage.route, arguments: args);
     }
 
-    var dic = I18n.of(context).assets;
+    final Translations dic = I18n.of(context).translationsForLocale();
     return Scaffold(
       appBar: AppBar(
-        title: Text(dic['home']),
+        title: Text(dic.assets.home),
       ),
       body: SafeArea(
         child: ListView(
@@ -151,7 +152,7 @@ class _AssetsState extends State<Assets> {
                               child: (store.encointer.chosenCid == null)
                                   ? Container(
                                       width: double.infinity,
-                                      child: Text(dic['community.not.selected'], textAlign: TextAlign.center))
+                                      child: Text(dic.assets.communityNotSelected, textAlign: TextAlign.center))
                                   : Container(
                                       width: double.infinity,
                                       child: CupertinoActivityIndicator(),
@@ -180,7 +181,7 @@ class _AssetsState extends State<Assets> {
                               children: [
                                 Icon(Iconsax.receive_square_2),
                                 SizedBox(width: 12),
-                                Text(dic['receive']),
+                                Text(dic.assets.receive),
                               ],
                             ),
                           ),
@@ -206,7 +207,7 @@ class _AssetsState extends State<Assets> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(dic['transfer']),
+                                Text(dic.assets.transfer),
                                 SizedBox(width: 12),
                                 Icon(Iconsax.send_sqaure_2),
                               ],
@@ -237,7 +238,7 @@ class _AssetsState extends State<Assets> {
               padding: EdgeInsets.symmetric(vertical: 6, horizontal: 0),
             ),
             Observer(builder: (_) {
-              var dic = I18n.of(context).assets;
+              final Translations dic = I18n.of(context).translationsForLocale();
 
               return store.settings.isConnected
                   ? FutureBuilder<bool>(
@@ -248,12 +249,12 @@ class _AssetsState extends State<Assets> {
 
                           if (hasPendingIssuance) {
                             return ElevatedButton(
-                              child: Text(dic['issuance.pending']),
+                              child: Text(dic.assets.issuancePending),
                               onPressed: () => _submitClaimRewards(context),
                             );
                           } else {
                             return ElevatedButton(
-                              child: Text(dic['issuance.claimed']),
+                              child: Text(dic.assets.issuanceClaimed),
                               onPressed: null,
                             );
                           }
@@ -306,7 +307,7 @@ class _AssetsState extends State<Assets> {
           child: showPasswordInputDialog(
             context,
             store.account.currentAccount,
-            Text(I18n.of(context).home['unlock']),
+            Text(I18n.of(context).translationsForLocale().home.unlock),
             (password) {
               setState(() {
                 store.settings.setPin(password);
@@ -330,14 +331,14 @@ class _AssetsState extends State<Assets> {
       context: context,
       builder: (_) {
         return CupertinoAlertDialog(
-          title: Text(I18n.of(context).home['pin.needed']),
+          title: Text(I18n.of(context).translationsForLocale().home.pinNeeded),
           actions: <Widget>[
             CupertinoButton(
-              child: Text(I18n.of(context).home['cancel']),
+              child: Text(I18n.of(context).translationsForLocale().home.cancel),
               onPressed: () => Navigator.of(context).pop(),
             ),
             CupertinoButton(
-              child: Text(I18n.of(context).home['close.app']),
+              child: Text(I18n.of(context).translationsForLocale().home.closeApp),
               onPressed: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
             ),
           ],

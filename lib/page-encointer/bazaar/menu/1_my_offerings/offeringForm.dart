@@ -1,7 +1,8 @@
 import 'package:encointer_wallet/page-encointer/bazaar/shared/data_model/demo_data/demoData.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shared/toggleButtonsWithTitle.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class OfferingForm extends StatefulWidget {
   const OfferingForm();
@@ -18,10 +19,10 @@ class _OfferingFormState extends State<OfferingForm> {
 
   @override
   Widget build(BuildContext context) {
-    var dic = I18n.of(context).bazaar;
+    final Translations dic = I18n.of(context).translationsForLocale();
     return Scaffold(
       appBar: AppBar(
-        title: Text(dic['offering.add']),
+        title: Text(dic.bazaar.offeringAdd),
       ),
       body: Form(
         child: Padding(
@@ -39,36 +40,37 @@ class _OfferingFormState extends State<OfferingForm> {
                     width: 16,
                   ),
                   Container(
-                      height: 150,
-                      width: 150,
-                      color: Colors.grey,
-                      child: ListTile(
-                        leading: Icon(Icons.add_a_photo),
-                        title: Text(dic['photo.add']),
-                      )),
+                    height: 150,
+                    width: 150,
+                    color: Colors.grey,
+                    child: ListTile(
+                      leading: Icon(Icons.add_a_photo),
+                      title: Text(dic.bazaar.photoAdd),
+                    ),
+                  ),
                 ],
               ),
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Name',
-                  hintText: dic['use.descriptive.name'],
+                  hintText: dic.bazaar.useDescriptiveName,
                 ),
               ),
               TextField(
                 keyboardType: TextInputType.multiline,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  labelText: dic['description'],
+                  labelText: dic.bazaar.description,
                 ),
               ),
-              ToggleButtonsWithTitle(dic['categories'], categories, null),
+              ToggleButtonsWithTitle(dic.bazaar.categories, categories, null),
               // TODO state mananagement
               ToggleButtonsWithTitle(
-                  dic['businesses.offered'], businesses.map((business) => business.title).toList(), null),
+                  dic.bazaar.businessesOffered, businesses.map((business) => business.title).toList(), null),
               // TODO state mananagement, TODO has to be an business.id not just the title
-              ToggleButtonsWithTitle(dic['state'], productNewness, null),
+              ToggleButtonsWithTitle(dic.bazaar.state, productNewness, null),
               // TODO state mananagement, TODO has to be an business.id not just the title
-              ToggleButtonsWithTitle(dic['delivery.options'], deliveryOptions, null),
+              ToggleButtonsWithTitle(dic.bazaar.deliveryOptions, deliveryOptions, null),
               // TODO state mananagement, TODO has to be an business.id not just the title
             ],
           ),
@@ -77,14 +79,14 @@ class _OfferingFormState extends State<OfferingForm> {
       floatingActionButton: ButtonBar(
         children: <Widget>[
           ElevatedButton(
-            child: Row(children: [Icon(Icons.delete), Text(dic['delete'])]),
+            child: Row(children: [Icon(Icons.delete), Text(dic.bazaar.delete)]),
             onPressed: () {
               // TODO modify state
               Navigator.pop(context);
             },
           ),
           ElevatedButton(
-            child: Row(children: [Icon(Icons.check), Text(dic['save'])]),
+            child: Row(children: [Icon(Icons.check), Text(dic.bazaar.save)]),
             onPressed: () {
               // TODO modify state
               Navigator.pop(context);

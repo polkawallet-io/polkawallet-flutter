@@ -4,11 +4,12 @@ import 'package:dart_geohash/dart_geohash.dart';
 import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/encointer/types/communities.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import "package:latlong2/latlong.dart";
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class CommunityChooserOnMap extends StatelessWidget {
   final AppStore store;
@@ -26,10 +27,10 @@ class CommunityChooserOnMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map dic = I18n.of(context).assets;
+    final Translations dic = I18n.of(context).translationsForLocale();
     return Scaffold(
       appBar: AppBar(
-        title: Text(dic['community.choose']),
+        title: Text(dic.assets.communityChoose),
         leading: Container(),
         actions: <Widget>[
           IconButton(

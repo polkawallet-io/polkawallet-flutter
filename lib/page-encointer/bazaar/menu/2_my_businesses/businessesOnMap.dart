@@ -1,7 +1,7 @@
 import 'package:encointer_wallet/page-encointer/bazaar/3_businesses/businessDetail.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shared/data_model/demo_data/demoData.dart';
 import 'package:encointer_wallet/page-encointer/bazaar/shared/data_model/model/bazaarItemData.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
@@ -14,7 +14,7 @@ class BusinessesOnMap extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(I18n.of(context).bazaar['businesses']),
+        title: Text(I18n.of(context).translationsForLocale().bazaar.businesses),
       ),
       body: BMap(data),
     );

@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
 import 'package:encointer_wallet/page/account/scanPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QrSenderPage extends StatefulWidget {
@@ -46,7 +46,7 @@ class _QrSenderPageState extends State<QrSenderPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text(I18n.of(context).home['submit.qr']),
+        title: Text(I18n.of(context).translationsForLocale().home.submitQr),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -71,7 +71,7 @@ class _QrSenderPageState extends State<QrSenderPage> {
                             padding: EdgeInsets.all(16),
                             child: RoundedButton(
                               icon: Image.asset('assets/images/assets/scanner.png'),
-                              text: I18n.of(context).account['uos.scan'],
+                              text: I18n.of(context).translationsForLocale().account.uosScan,
                               onPressed: () {
                                 _handleScan(context);
                               },

@@ -1,11 +1,12 @@
 import 'package:encointer_wallet/common/components/gradientElements.dart';
+import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/page/account/import/importAccountPage.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:encointer_wallet/common/theme.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class AddAccountForm extends StatelessWidget {
   AddAccountForm({this.isImporting, this.setNewAccount, this.submitting, this.onSubmit, this.store});
@@ -21,7 +22,7 @@ class AddAccountForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> dic = I18n.of(context).account;
+    final Translations dic = I18n.of(context).translationsForLocale();
 
     return Form(
       key: _formKey,
@@ -33,7 +34,7 @@ class AddAccountForm extends StatelessWidget {
               children: <Widget>[
                 SizedBox(height: 80),
                 Center(
-                  child: Text(I18n.of(context).profile['account.name.choose'],
+                  child: Text(I18n.of(context).translationsForLocale().profile.accountNameChoose,
                       style: Theme.of(context).textTheme.headline2),
                 ),
                 SizedBox(height: 10),
@@ -41,7 +42,7 @@ class AddAccountForm extends StatelessWidget {
                   child: Container(
                     width: 300,
                     child: Text(
-                      I18n.of(context).profile['account.name.choose.hint'],
+                      I18n.of(context).translationsForLocale().profile.accountNameChooseHint,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headline2.copyWith(
                             color: Colors.black,
@@ -62,8 +63,8 @@ class AddAccountForm extends StatelessWidget {
                         ),
                         filled: true,
                         fillColor: encointerLightBlue,
-                        hintText: dic['create.hint'],
-                        labelText: I18n.of(context).profile['account.name'],
+                        hintText: dic.account.createHint,
+                        labelText: I18n.of(context).translationsForLocale().profile.accountName,
                       ),
                       controller: _nameCtrl,
                     ),
@@ -87,7 +88,7 @@ class AddAccountForm extends StatelessWidget {
                             children: [
                               Icon(Iconsax.import_2),
                               SizedBox(width: 10),
-                              Text(I18n.of(context).home['account.import'],
+                              Text(I18n.of(context).translationsForLocale().home.accountImport,
                                   style: Theme.of(context).textTheme.headline3),
                             ],
                           ),
@@ -110,7 +111,7 @@ class AddAccountForm extends StatelessWidget {
                   Icon(Iconsax.add_square),
                   SizedBox(width: 12),
                   Text(
-                    I18n.of(context).profile['account.create'],
+                    I18n.of(context).translationsForLocale().profile.accountCreate,
                     style: Theme.of(context).textTheme.headline3.copyWith(
                           color: encointerLightBlue,
                         ),
@@ -120,7 +121,7 @@ class AddAccountForm extends StatelessWidget {
               onPressed: () {
                 if (_formKey.currentState.validate()) {
                   setNewAccount(
-                      _nameCtrl.text.isNotEmpty ? _nameCtrl.text : dic['create.default'], store.settings.cachedPin);
+                      _nameCtrl.text.isNotEmpty ? _nameCtrl.text : dic.account.createDefault, store.settings.cachedPin);
                   onSubmit();
                 } else {
                   print("formKey.currentState.validate failed");

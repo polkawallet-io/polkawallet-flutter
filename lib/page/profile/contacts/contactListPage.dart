@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:encointer_wallet/common/components/accountSelectList.dart';
 import 'package:encointer_wallet/page/profile/contacts/contactPage.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class ContactListPage extends StatelessWidget {
   ContactListPage(this.store);
@@ -18,7 +18,9 @@ class ContactListPage extends StatelessWidget {
     final List<AccountData> args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text(args == null ? I18n.of(context).profile['contact'] : I18n.of(context).account['list']),
+        title: Text(args == null
+            ? I18n.of(context).translationsForLocale().profile.contact
+            : I18n.of(context).translationsForLocale().account.list),
         centerTitle: true,
         actions: <Widget>[
           args == null

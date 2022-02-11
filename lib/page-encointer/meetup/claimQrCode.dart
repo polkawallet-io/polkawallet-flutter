@@ -3,10 +3,11 @@ import 'dart:typed_data';
 
 import 'package:encointer_wallet/common/components/addressIcon.dart';
 import 'package:encointer_wallet/store/app.dart';
-import 'package:encointer_wallet/utils/i18n/index.dart';
+import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 
 import 'scanClaimQrCode.dart';
 
@@ -28,7 +29,7 @@ class ClaimQrCode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dic = I18n.of(context).encointer;
+    final Translations dic = I18n.of(context).translationsForLocale();
     final Color themeColor = Theme.of(context).primaryColor;
 
     return Scaffold(
@@ -94,7 +95,7 @@ class ClaimQrCode extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.only(top: 16, bottom: 16),
                           child: ElevatedButton(
-                            child: Text(dic['done']),
+                            child: Text(dic.assets.done),
                             onPressed: () => Navigator.pop(context),
                           ),
                         ),
@@ -103,7 +104,7 @@ class ClaimQrCode extends StatelessWidget {
                           child: TextButton(
                             child: Row(
                               children: [
-                                Text(dic['scan']),
+                                Text(dic.assets.scan),
                                 SizedBox(width: 4),
                                 Image.asset(
                                   'assets/images/assets/qrcode_indigo.png',
