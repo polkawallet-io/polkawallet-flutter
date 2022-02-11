@@ -231,9 +231,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
       case KeySelection.OBSERVATION:
         break;
     }
-    return passed
-        ? null
-        : '${dic.account.importInvalid} ${translationsByKeySelection[_keySelection.index]}'; // TODO armin
+    return passed ? null : '${dic.account.importInvalid} ${translationsByKeySelection[_keySelection]}'; // TODO armin
   }
 
   void _onKeyChange(String v) {
@@ -271,6 +269,12 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
       KeySelection.KEYSTORE_JSON: dic.account.keystore,
       KeySelection.OBSERVATION: dic.account.observe,
     };
+    final Map<String, String> translationsByKeyOption = {
+      _keyOptions[0]: dic.account.mnemonic,
+      _keyOptions[1]: dic.account.rawSeed,
+      _keyOptions[2]: dic.account.keystore,
+      _keyOptions[3]: dic.account.observe,
+    };
     String selected = translationsByKeySelection[_keySelection];
     return Column(
       children: <Widget>[
@@ -295,8 +299,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
                           scrollController: FixedExtentScrollController(initialItem: _keySelection.index),
                           children: _keyOptions
                               .map((i) => Padding(
-                                  padding: EdgeInsets.all(12),
-                                  child: Text(translationsByKeySelection[i]))) // TODO armin
+                                  padding: EdgeInsets.all(12), child: Text(translationsByKeyOption[i]))) // TODO armin
                               .toList(),
                           onSelectedItemChanged: (v) {
                             setState(() {
