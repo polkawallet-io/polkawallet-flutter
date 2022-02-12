@@ -61,6 +61,9 @@ abstract class TranslationsProfile {
   String get pinInfo;
   String get pinSecure;
   String get recoveryProxy;
+  String get ceremonies;
+  String get tokenSend;
+  String get reputation;
 }
 
 class TranslationsEnProfile implements TranslationsProfile {
@@ -125,7 +128,10 @@ class TranslationsEnProfile implements TranslationsProfile {
   get pinInfo =>
       'PIN should consist of at least 4 digits. If the PIN is lost, there is no option to restore the account unless you made a backup via the profile page.';
   get pinSecure => 'Secure your account with a PIN.';
-  get recoveryProxy => 'recovery proxy'; // TODO no idea what this is
+  get recoveryProxy => 'recovery proxy';
+  get ceremonies => 'Ceremonies';
+  get reputation => 'Reputation';
+  get tokenSend => 'Send Tokens';
 }
 
 class TranslationsDeProfile implements TranslationsProfile {
@@ -190,7 +196,10 @@ class TranslationsDeProfile implements TranslationsProfile {
   get pinInfo =>
       'PIN muss mindestens 4 Ziffern enthalten. Bei PIN-Verlust ist der Account nicht wiederherstellbar, ausser man hat ein Backup auf der Profilseite gemacht.';
   get pinSecure => 'Sichere dein Konto mit einem PIN.';
-  get recoveryProxy => 'recovery proxy'; // TODO no idea what this is
+  get recoveryProxy => 'recovery proxy';
+  get ceremonies => 'Zeremonien';
+  get reputation => 'Reputation';
+  get tokenSend => 'Sende Tokens';
 }
 
 class TranslationsZhProfile implements TranslationsProfile {
@@ -253,5 +262,8 @@ class TranslationsZhProfile implements TranslationsProfile {
   get pinInfo => 'PIN 应至少包含 4 位数字。 如果 PIN 码丢失，则无法恢复帐户，除非您通过个人资料页面进行了备份。';
   get pinSecure => '使用 PIN 保护您的帐户。';
   get accountAdd => '添加帐户';
-  get recoveryProxy => 'recovery proxy'; // TODO no idea what this is
+  get recoveryProxy => 'recovery proxy';
+  get ceremonies => throw UnimplementedError();
+  get reputation => throw UnimplementedError();
+  get tokenSend => throw UnimplementedError();
 }
