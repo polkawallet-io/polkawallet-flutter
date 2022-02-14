@@ -1,4 +1,6 @@
-import 'package:encointer_wallet/common/components/roundedButton.dart';
+import 'package:encointer_wallet/common/components/encointerTextFormField.dart';
+import 'package:encointer_wallet/common/components/gradientElements.dart';
+import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/account.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
@@ -16,6 +18,7 @@ class ChangePasswordPage extends StatefulWidget {
   static final String route = '/profile/password';
   final AccountStore store;
   final SettingsStore settingsStore;
+
   @override
   _ChangePassword createState() => _ChangePassword(store, settingsStore);
 }
@@ -72,14 +75,14 @@ class _ChangePassword extends State<ChangePasswordPage> {
         store.accountListAll.forEach((account) async {
           final Map acc =
               await api.evalJavascript('account.changePassword("${account.pubKey}", "$passOld", "$passNew")');
-          // use local name, not webApi returned name
-          Map<String, dynamic> localAcc = AccountData.toJson(store.currentAccount);
 
-          // make metadata the same as the polkadot-js/api's
-          acc['meta']['name'] = localAcc['name'];
-          store.updateAccount(acc);
           // update encrypted seed after password updated
           store.accountListAll.map((accountData) {
+            // use local name, not webApi returned name
+            Map<String, dynamic> localAcc = AccountData.toJson(accountData);
+            // make metadata the same as the polkadot-js/api's
+            acc['meta']['name'] = localAcc['name'];
+            store.updateAccount(acc);
             store.updateSeed(accountData.pubKey, _passOldCtrl.text, _passCtrl.text);
           });
         });
@@ -113,81 +116,78 @@ class _ChangePassword extends State<ChangePasswordPage> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                  children: <Widget>[
-                    TextFormField(
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.lock),
-                        hintText: dic.profile.passOld,
-                        labelText: dic.profile.passOld,
-                        suffixIcon: IconButton(
-                          iconSize: 18,
-                          icon: Icon(
-                            CupertinoIcons.clear_thick_circled,
-                            color: Theme.of(context).unselectedWidgetColor,
-                          ),
-                          onPressed: () {
-                            WidgetsBinding.instance.addPostFrameCallback((_) => _passOldCtrl.clear());
-                          },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Center(
+                  child: Form(
+                    key: _formKey,
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        Text(
+                          dic.profile.passHint1,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headline2,
                         ),
-                      ),
-                      controller: _passOldCtrl,
-                      validator: (v) {
-                        // TODO: fix me: disable validator for polkawallet-RN exported keystore importing
-                        return null;
-                        // return Fmt.checkPassword(v.trim()) ? null : accdic.profile.createPasswordError;
-                      },
-                      obscureText: true,
-                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                        SizedBox(height: 16),
+                        Text(
+                          dic.profile.passHint2,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headline2.copyWith(color: Colors.black),
+                        ),
+                        SizedBox(height: 30),
+                        EncointerTextFormField(
+                          labelText: dic.profile.passOld,
+                          controller: _passOldCtrl,
+                          validator: (v) {
+                            return Fmt.checkPassword(v.trim()) ? null : dic.account.createPasswordError;
+                          },
+                          obscureText: true,
+                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                        ),
+                        SizedBox(height: 20),
+                        EncointerTextFormField(
+                          labelText: dic.profile.passNew,
+                          controller: _passCtrl,
+                          validator: (v) {
+                            return Fmt.checkPassword(v.trim()) ? null : dic.account.createPasswordError;
+                          },
+                          obscureText: true,
+                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                        ),
+                        SizedBox(height: 20),
+                        EncointerTextFormField(
+                          labelText: dic.profile.passNew2,
+                          controller: _pass2Ctrl,
+                          validator: (v) {
+                            return v.trim() != _passCtrl.text ? dic.account.createPassword2Error : null;
+                          },
+                          obscureText: true,
+                          inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                        ),
+                      ],
                     ),
-                    TextFormField(
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.lock),
-                        hintText: dic.profile.passNew,
-                        labelText: dic.profile.passNew,
-                      ),
-                      controller: _passCtrl,
-                      validator: (v) {
-                        return Fmt.checkPassword(v.trim()) ? null : dic.profile.passError;
-                      },
-                      obscureText: true,
-                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                    ),
-                    TextFormField(
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.lock),
-                        hintText: dic.profile.passNew2,
-                        labelText: dic.profile.passNew2,
-                      ),
-                      controller: _pass2Ctrl,
-                      validator: (v) {
-                        return v.trim() != _passCtrl.text ? dic.profile.passError : null;
-                      },
-                      obscureText: true,
-                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                  ),
+                ),
+              ),
+              PrimaryButton(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _submitting ? CupertinoActivityIndicator() : Container(),
+                    Text(
+                      dic.profile.contactSave,
+                      style: Theme.of(context).textTheme.headline3.copyWith(color: encointerLightBlue),
                     ),
                   ],
                 ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.all(16),
-              child: RoundedButton(
-                text: dic.profile.contactSave,
-                icon: _submitting ? CupertinoActivityIndicator() : null,
                 onPressed: _submitting ? null : _onSave,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -232,6 +232,21 @@ mixin _$EncointerStore on _EncointerStore, Store {
     });
   }
 
+  final _$reputationsAtom = Atom(name: '_EncointerStore.reputations');
+
+  @override
+  List<String> get reputations {
+    _$reputationsAtom.reportRead();
+    return super.reputations;
+  }
+
+  @override
+  set reputations(List<String> value) {
+    _$reputationsAtom.reportWrite(value, super.reputations, () {
+      super.reputations = value;
+    });
+  }
+
   final _$chosenCidAtom = Atom(name: '_EncointerStore.chosenCid');
 
   @override
@@ -467,6 +482,16 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
+  void setReputations(List<String> rep) {
+    final _$actionInfo = _$_EncointerStoreActionController.startAction(name: '_EncointerStore.setReputations');
+    try {
+      return super.setReputations(rep);
+    } finally {
+      _$_EncointerStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setDemurrage(double d) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(name: '_EncointerStore.setDemurrage');
     try {
@@ -551,6 +576,7 @@ participantIndex: ${participantIndex},
 balanceEntries: ${balanceEntries},
 communityIdentifiers: ${communityIdentifiers},
 communities: ${communities},
+reputations: ${reputations},
 chosenCid: ${chosenCid},
 communityMetadata: ${communityMetadata},
 demurrage: ${demurrage},

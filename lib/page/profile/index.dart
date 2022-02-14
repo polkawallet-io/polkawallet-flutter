@@ -1,8 +1,8 @@
 import 'package:encointer_wallet/common/components/addressIcon.dart';
-import 'package:encointer_wallet/common/components/editIcon.dart';
 import 'package:encointer_wallet/common/components/passwordInputDialog.dart';
-import 'package:encointer_wallet/common/components/roundedCard.dart';
+import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/page/account/create/addAccountPage.dart';
+import 'package:encointer_wallet/page/profile/account/accountManagePage.dart';
 import 'package:encointer_wallet/page/profile/account/changePasswordPage.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
@@ -10,23 +10,27 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/store/settings.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:encointer_wallet/utils/translations/translations.dart';
+import 'package:iconsax/iconsax.dart';
 
 class Profile extends StatefulWidget {
   Profile(this.store);
+
   final AppStore store;
+
   @override
   _ProfileState createState() => _ProfileState(store);
 }
 
 class _ProfileState extends State<Profile> {
   _ProfileState(this.store);
+
   final AppStore store;
+  final Api api = webApi;
   EndpointData _selectedNetwork;
-  bool developerMode = false;
 
   void _loadAccountCache() {
     // refresh balance
@@ -37,7 +41,7 @@ class _ProfileState extends State<Profile> {
 
   Future<void> _onSelect(AccountData i, String address) async {
     if (address != store.account.currentAddress) {
-      print("we are here changing from addres ${store.account.currentAddress} to $address");
+      print("changing from addres ${store.account.currentAddress} to $address");
 
       /// set current account
       store.account.setCurrentAccount(i.pubKey);
@@ -52,6 +56,11 @@ class _ProfileState extends State<Profile> {
     var arg = {'isImporting': false};
     Navigator.of(context).pushNamed(AddAccountPage.route, arguments: arg);
   }
+
+  // What type is a reputations? is it a string?
+  // Future<void> _getReputations() async {
+  //   await webApi.encointer.getReputations();
+  // }
 
   Future<void> _showPasswordDialog(BuildContext context) async {
     await showCupertinoDialog(
@@ -74,67 +83,48 @@ class _ProfileState extends State<Profile> {
   }
 
   List<Widget> _buildAccountList() {
-    final Translations dic = I18n.of(context).translationsForLocale();
-    List<Widget> res = _buildAddAccount(dic);
+    List<Widget> res = [];
 
-    /// first item is current account
-    List<AccountData> accounts = [store.account.currentAccount];
-
-    /// add optional accounts
-    accounts.addAll(store.account.optionalAccounts);
+    List<AccountData> accounts = store.account.accountListAll;
 
     res.addAll(accounts.map((i) {
       String address = i.address;
       if (store.account.pubKeyAddressMap[_selectedNetwork.ss58] != null) {
         address = store.account.pubKeyAddressMap[_selectedNetwork.ss58][i.pubKey];
       }
-      return RoundedCard(
-        border: address == store.account.currentAddress
-            ? Border.all(color: Colors.amber)
-            : Border.all(color: Theme.of(context).cardColor),
-        margin: EdgeInsets.only(bottom: 16),
-        padding: EdgeInsets.only(top: 7, bottom: 7),
-        child: ListTile(
-          leading: AddressIcon('', pubKey: i.pubKey, addressToCopy: address),
-          title: Text(Fmt.accountName(context, i)),
-          subtitle: Text('${Fmt.address(address)}', maxLines: 2),
-          onTap: () => _onSelect(i, address),
-          selected: address == store.account.currentAddress,
-          trailing: EditIcon(i, address, 40, store),
+      return InkWell(
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                AddressIcon(
+                  '',
+                  size: 70,
+                  pubKey: i.pubKey,
+                  // addressToCopy: address,
+                  tapToCopy: false,
+                ),
+                Positioned(
+                  bottom: 0, right: 0, //give the values according to your requirement
+                  child: Icon(Iconsax.edit, color: encointerBlue),
+                ),
+              ],
+            ),
+            SizedBox(height: 6),
+            Text(
+              Fmt.accountName(context, i),
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            // This sizedBox is here to define a distance between the accounts
+            SizedBox(width: 100),
+          ],
         ),
+        onTap: () => {
+          _onSelect(i, address),
+          Navigator.pushNamed(context, AccountManagePage.route),
+        },
       );
     }).toList());
-    return res;
-  }
-
-  List<Widget> _buildAddAccount(Translations dic) {
-    Color primaryColor = Theme.of(context).primaryColor;
-    List<Widget> res = [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            '${dic.profile.accounts} in ${_selectedNetwork.info.toUpperCase()}',
-            style: Theme.of(context).textTheme.headline4,
-          ),
-          Row(children: <Widget>[
-            Text(dic.profile.add),
-            IconButton(
-                icon: Image.asset('assets/images/assets/plus_indigo.png'),
-                color: primaryColor,
-                onPressed: () => {store.settings.cachedPin.isEmpty ? _showPasswordDialog(context) : _onAddAccount()}),
-            developerMode
-                ? IconButton(
-                    // TODO design decision where to put this functionality
-                    key: Key('choose-network'),
-                    icon: Icon(Icons.menu, color: Colors.orange),
-                    onPressed: () => Navigator.of(context).pushNamed('/network'),
-                  )
-                : Container(),
-          ])
-        ],
-      ),
-    ];
     return res;
   }
 
@@ -145,7 +135,9 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    var h3Grey = Theme.of(context).textTheme.headline3.copyWith(color: encointerGrey);
     _selectedNetwork = store.settings.endpoint;
+
     // if all accounts are deleted, go to createAccountPage
     if (store.account.accountListAll.isEmpty) {
       store.settings.setPin('');
@@ -160,25 +152,62 @@ class _ProfileState extends State<Profile> {
         return Scaffold(
           appBar: AppBar(
             title: Text(dic.profile.title),
+            iconTheme: IconThemeData(color: encointerGrey), //change your color here,
             centerTitle: true,
-            elevation: 0.0,
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
           ),
           body: Observer(
             builder: (_) {
               if (_selectedNetwork == null) return Container();
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              return ListView(
                 children: <Widget>[
                   Container(
-                    height: 350,
-                    child: ListView(
-                      padding: EdgeInsets.all(16),
-                      children: _buildAccountList(),
-                      // scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.all(16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          '${dic.profile.accounts}',
+                          style: Theme.of(context).textTheme.headline2.copyWith(color: encointerBlack),
+                        ),
+                        IconButton(
+                            icon: Icon(Iconsax.add_square),
+                            color: encointerBlue,
+                            onPressed: () {
+                              store.settings.cachedPin.isEmpty ? _showPasswordDialog(context) : _onAddAccount();
+                            }),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 130,
+                    child: ShaderMask(
+                      shaderCallback: (Rect bounds) {
+                        return LinearGradient(
+                          begin: Alignment.centerRight,
+                          end: Alignment.centerLeft,
+                          colors: [
+                            Theme.of(context).scaffoldBackgroundColor.withOpacity(0.0),
+                            Theme.of(context).scaffoldBackgroundColor,
+                            Theme.of(context).scaffoldBackgroundColor,
+                            Theme.of(context).scaffoldBackgroundColor.withOpacity(0.0),
+                          ],
+                          stops: [0.0, 0.1, 0.9, 1.0],
+                        ).createShader(bounds);
+                      },
+                      child: ListView(
+                        children: _buildAccountList(),
+                        scrollDirection: Axis.horizontal,
+                      ),
+                      // blendMode: BlendMode.dstATop,
                     ),
                   ),
                   ListTile(
-                    title: Text(dic.profile.passChange),
+                    title: Text(
+                      dic.profile.passChange,
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
                     trailing: Icon(Icons.arrow_forward_ios, size: 18),
                     onTap: () => Navigator.pushNamed(context, ChangePasswordPage.route),
                   ),
@@ -210,36 +239,41 @@ class _ProfileState extends State<Profile> {
                               ]);
                         }),
                   ),
-                  Row(
-                    children: <Widget>[
-                      Text(dic.profile.developer),
-                      Checkbox(
-                        value: developerMode,
-                        onChanged: (bool value) {
-                          setState(() {
-                            developerMode = !developerMode;
-                          });
-                        },
-                      ),
-                    ],
+                  ListTile(
+                    title: Text(dic.profile.reputationOverall, style: h3Grey),
                   ),
-                  if (developerMode == true)
-                    Row(
-                      children: [
-                        InkWell(
-                          key: Key('choose-network'),
-                          child: Observer(
-                            builder: (_) => Text(
-                              "change network (current: ${store.settings.endpoint.info})",
-                              style: TextStyle(color: Colors.orange),
+                  ListTile(
+                    title: Text(dic.profile.reputationHistory, style: h3Grey),
+                  ),
+                  ListTile(
+                    title: Text(dic.profile.developer, style: h3Grey),
+                    trailing: Checkbox(
+                      value: store.settings.developerMode,
+                      onChanged: (_) => store.settings.toggleDeveloperMode(),
+                    ),
+                  ),
+                  if (store.settings.developerMode)
+                    // Column in case we add more developer options
+                    Column(
+                      children: <Widget>[
+                        ListTile(
+                          title: InkWell(
+                            key: Key('choose-network'),
+                            child: Observer(
+                              builder: (_) => Text(
+                                "Change network (current: ${store.settings.endpoint.info})",
+                                style: Theme.of(context).textTheme.headline4,
+                              ),
                             ),
+                            onTap: () => Navigator.of(context).pushNamed('/network'),
                           ),
-                          onTap: () => Navigator.of(context).pushNamed('/network'),
+                          trailing: Padding(
+                            padding: EdgeInsets.only(right: 13), // align with developer checkbox above
+                            child: store.settings.isConnected
+                                ? Icon(Icons.check, color: Colors.green)
+                                : CupertinoActivityIndicator(),
+                          ),
                         ),
-                        SizedBox(width: 8),
-                        store.settings.isConnected
-                            ? Icon(Icons.check, color: Colors.green)
-                            : CupertinoActivityIndicator(),
                       ],
                     ),
                 ],

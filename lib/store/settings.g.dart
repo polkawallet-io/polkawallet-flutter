@@ -240,6 +240,21 @@ mixin _$SettingsStore on _SettingsStore, Store {
     });
   }
 
+  final _$developerModeAtom = Atom(name: '_SettingsStore.developerMode');
+
+  @override
+  bool get developerMode {
+    _$developerModeAtom.reportRead();
+    return super.developerMode;
+  }
+
+  @override
+  set developerMode(bool value) {
+    _$developerModeAtom.reportWrite(value, super.developerMode, () {
+      super.developerMode = value;
+    });
+  }
+
   final _$initAsyncAction = AsyncAction('_SettingsStore.init');
 
   @override
@@ -327,6 +342,16 @@ mixin _$SettingsStore on _SettingsStore, Store {
   final _$_SettingsStoreActionController = ActionController(name: '_SettingsStore');
 
   @override
+  void toggleDeveloperMode() {
+    final _$actionInfo = _$_SettingsStoreActionController.startAction(name: '_SettingsStore.toggleDeveloperMode');
+    try {
+      return super.toggleDeveloperMode();
+    } finally {
+      _$_SettingsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setNetworkLoading(bool isLoading) {
     final _$actionInfo = _$_SettingsStoreActionController.startAction(name: '_SettingsStore.setNetworkLoading');
     try {
@@ -388,6 +413,7 @@ networkName: ${networkName},
 networkState: ${networkState},
 networkConst: ${networkConst},
 contactList: ${contactList},
+developerMode: ${developerMode},
 endpointIsEncointer: ${endpointIsEncointer},
 endpointIsGesell: ${endpointIsGesell},
 endpointIsCantillon: ${endpointIsCantillon},

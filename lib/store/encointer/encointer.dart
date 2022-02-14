@@ -85,6 +85,9 @@ abstract class _EncointerStore with Store {
   List<CidName> communities;
 
   @observable
+  List<String> reputations;
+
+  @observable
   CommunityIdentifier chosenCid;
 
   @observable
@@ -264,6 +267,13 @@ abstract class _EncointerStore with Store {
     print("store: set communities to $c");
     communities = c;
     cacheObject(encointerCommunitiesKey, c);
+  }
+
+  @action
+  void setReputations(List<String> rep) {
+    print("store: set communities to $rep");
+    reputations = rep;
+    // cacheObject(encointerCommunitiesKey, c);
   }
 
   @action

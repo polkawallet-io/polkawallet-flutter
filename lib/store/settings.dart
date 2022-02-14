@@ -57,6 +57,9 @@ abstract class _SettingsStore with Store {
   @observable
   ObservableList<AccountData> contactList = ObservableList<AccountData>();
 
+  @observable
+  bool developerMode = false;
+
   @computed
   bool get endpointIsEncointer {
     return endpoint.info == networkEndpointEncointerGesell.info ||
@@ -127,6 +130,11 @@ abstract class _SettingsStore with Store {
   Future<void> setLocalCode(String code) async {
     await rootStore.localStorage.setObject(localStorageLocaleKey, code);
     localeCode = code;
+  }
+
+  @action
+  void toggleDeveloperMode() {
+    developerMode = !developerMode;
   }
 
   @action
