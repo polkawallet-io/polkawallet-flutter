@@ -6,6 +6,7 @@ import 'package:encointer_wallet/utils/translations/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share/share.dart';
 
 class ReceivePage extends StatefulWidget {
   ReceivePage(this.store);
@@ -16,28 +17,46 @@ class ReceivePage extends StatefulWidget {
 }
 
 class _ReceivePageState extends State<ReceivePage> {
+  final TextEditingController _amountController = new TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool generateQR = false;
+  var invoice = [];
+
+  Widget generateQRWithInvoiceData() {
+    invoice = [
+      'encointer-invoice',
+      'V1.0',
+      widget.store.account.currentAddress,
+      widget.store.encointer.chosenCid != null ? (widget.store.encointer.chosenCid).toFmtString() : '',
+      _amountController.text,
+      widget.store.account.currentAccount.name
+    ];
+    return Container(
+      child: QrImage(
+        size: MediaQuery.of(context).copyWith().size.height / 2,
+        data: invoice.join('\n'),
+        embeddedImage: AssetImage('assets/images/public/app.png'),
+        embeddedImageStyle: QrEmbeddedImageStyle(size: Size(40, 40)),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+    _amountController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    bool isShare = false;
-    final Map args = ModalRoute.of(context).settings.arguments;
-    if (args != null) {
-      isShare = args['isShare'];
-    }
-
-    String codeAddress =
-        'substrate:${widget.store.account.currentAddress}:${widget.store.account.currentAccount.pubKey}:${widget.store.account.currentAccount.name}';
-
-    final TextEditingController _amountController = new TextEditingController();
-    final _formKey = GlobalKey<FormState>();
-
     return Form(
       key: _formKey,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: isShare
-              ? Text(I18n.of(context).translationsForLocale().profile.share)
-              : Text(I18n.of(context).translationsForLocale().assets.receive),
+          title: Text(I18n.of(context).translationsForLocale().assets.receive),
           leading: Container(),
           actions: [
             IconButton(
@@ -72,10 +91,24 @@ class _ReceivePageState extends State<ReceivePage> {
                       controller: _amountController,
                       textFormFieldKey: Key('invoice-amount-input'),
                       validator: (String value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.isEmpty || double.parse(value) == 0.0) {
                           return I18n.of(context).translationsForLocale().assets.amountError;
                         }
                         return null;
+                      },
+                      onChanged: (value) {
+                        setState(() {
+                          invoice = [
+                            'encointer-invoice',
+                            'V1.0',
+                            widget.store.account.currentAddress,
+                            widget.store.encointer.chosenCid != null
+                                ? (widget.store.encointer.chosenCid).toFmtString()
+                                : '',
+                            _amountController.text,
+                            widget.store.account.currentAccount.name
+                          ];
+                        });
                       },
                       suffixIcon: Text(
                         "ⵐ",
@@ -88,15 +121,13 @@ class _ReceivePageState extends State<ReceivePage> {
                   ),
                 ],
               ),
+              Text(
+                  '${I18n.of(context).translationsForLocale().profile.receiverAccount} ${widget.store.account.currentAccount.name}',
+                  style: Theme.of(context).textTheme.headline3.copyWith(color: encointerGrey),
+                  textAlign: TextAlign.center),
               SizedBox(height: 8),
               Column(children: [
-                Container(
-                  child: QrImage(
-                    data: codeAddress,
-                    embeddedImage: AssetImage('assets/images/public/app.png'),
-                    embeddedImageStyle: QrEmbeddedImageStyle(size: Size(40, 40)),
-                  ),
-                ),
+                generateQRWithInvoiceData(),
                 InkWell(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 24),
@@ -107,14 +138,16 @@ class _ReceivePageState extends State<ReceivePage> {
                           Icon(Icons.share, color: ZurichLion.shade500),
                           SizedBox(width: 8),
                           Text(
-                            I18n.of(context).translationsForLocale().assets.shareQrCode,
+                            I18n.of(context).translationsForLocale().assets.shareInvoice,
                             style: Theme.of(context).textTheme.headline3,
                           ),
                         ]),
                   ),
                   onTap: () => {
-                    _formKey.currentState.validate()
-                    // TODO add functionality to share the QR code
+                    if (_formKey.currentState.validate())
+                      {
+                        Share.share(invoice.join('\n')),
+                      }
                   },
                 ),
               ])

@@ -52,7 +52,7 @@ abstract class TranslationsAssets {
   String get value;
   String get amountToBeTransferred;
   String get invoiceAmount;
-  String get shareQrCode;
+  String get shareInvoice;
   String get pleaseEnterSomeText;
   String get yourBalanceFor;
   String get amountToTransfer;
@@ -110,7 +110,7 @@ class TranslationsEnAssets implements TranslationsAssets {
   get value => 'Value';
   get amountToBeTransferred => 'Send amount';
   get invoiceAmount => 'Invoice amount';
-  get shareQrCode => 'Share QR code';
+  get shareInvoice => 'Share Invoice';
   get pleaseEnterSomeText => 'Please enter some text';
   get yourBalanceFor => 'Your balance for';
   get amountToTransfer => 'amount to send';
@@ -168,7 +168,7 @@ class TranslationsDeAssets implements TranslationsAssets {
   get value => 'Wert';
   get amountToBeTransferred => 'Rechnungsbetrag';
   get invoiceAmount => 'Rechnungsbetrag';
-  get shareQrCode => 'Teile den QR Code';
+  get shareInvoice => 'Teile als Rechnung';
   get pleaseEnterSomeText => 'Bitte geben Sie einen Text ein';
   get yourBalanceFor => 'Ihr Guthaben auf';
   get amountToTransfer => 'Rechnungsbetrag';
@@ -226,7 +226,7 @@ class TranslationsZhAssets implements TranslationsAssets {
   get value => '金额';
   get amountToBeTransferred => '发票金额';
   get invoiceAmount => '发票金额';
-  get shareQrCode => '分享二维码';
+  get shareInvoice => '分享二维码';
   get pleaseEnterSomeText => '请输入一些文字';
   get yourBalanceFor => '你的余额';
   get amountToTransfer => '要转账的金额';
