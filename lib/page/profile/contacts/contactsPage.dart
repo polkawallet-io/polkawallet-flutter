@@ -20,7 +20,7 @@ class ContactsPage extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: Text(
-                I18n.of(context).translationsForLocale().profile.contact,
+                I18n.of(context).translationsForLocale().profile.addressBook,
                 style: Theme.of(context).textTheme.headline3,
               ),
               iconTheme: IconThemeData(

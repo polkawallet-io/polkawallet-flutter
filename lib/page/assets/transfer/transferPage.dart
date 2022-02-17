@@ -8,6 +8,7 @@ import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
 import 'package:encointer_wallet/page/account/txConfirmPage.dart';
+import 'package:encointer_wallet/service/qrScanService.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
@@ -22,9 +23,9 @@ import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class TransferPageParams {
   TransferPageParams(
-      {this.symbol, this.address, this.redirect, this.isEncointerCommunityCurrency = false, this.communitySymbol});
+      {this.symbol, this.qrScanData, this.redirect, this.isEncointerCommunityCurrency = false, this.communitySymbol});
 
-  final String address;
+  final QrScanData qrScanData;
   final String redirect;
   final String symbol;
   final bool isEncointerCommunityCurrency;
@@ -253,9 +254,11 @@ class _TransferPageState extends State<TransferPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final TransferPageParams args = ModalRoute.of(context).settings.arguments;
-      if (args.address != null) {
+      if (args.qrScanData != null) {
+        _amountCtrl.text = '${args.qrScanData.amount}';
+
         final AccountData acc = AccountData();
-        acc.address = args.address;
+        acc.address = args.qrScanData.account;
         setState(() {
           _accountTo = acc;
         });

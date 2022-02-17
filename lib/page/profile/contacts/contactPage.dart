@@ -1,14 +1,13 @@
 import 'package:encointer_wallet/common/components/TapTooltip.dart';
 import 'package:encointer_wallet/common/components/roundedButton.dart';
-import 'package:encointer_wallet/page/account/scanPage.dart';
+import 'package:encointer_wallet/service/qrScanService.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
-import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class ContactPage extends StatefulWidget {
   ContactPage(this.store);
@@ -32,22 +31,9 @@ class _Contact extends State<ContactPage> {
 
   bool _isObservation = false;
 
-  AccountData _args;
+  QrScanData qrScanData;
 
   bool _submitting = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _args = ModalRoute.of(context).settings.arguments;
-    if (_args != null) {
-      _addressCtrl.text = _args.address;
-      _nameCtrl.text = _args.name;
-      _memoCtrl.text = _args.memo;
-      _isObservation = _args.observation;
-    }
-  }
 
   Future<void> _onSave() async {
     if (_formKey.currentState.validate()) {
@@ -68,7 +54,7 @@ class _Contact extends State<ContactPage> {
       setState(() {
         _submitting = false;
       });
-      if (_args == null) {
+      if (qrScanData == null) {
         // create new contact
         int exist = store.settings.contactList.indexWhere((i) => i.address == addr);
         if (exist > -1) {
@@ -77,7 +63,7 @@ class _Contact extends State<ContactPage> {
             builder: (BuildContext context) {
               return CupertinoAlertDialog(
                 title: Container(),
-                content: Text(dic.profile.contactExist),
+                content: Text(dic.profile.contactAlreadyExists),
                 actions: <Widget>[
                   CupertinoButton(
                     child: Text(I18n.of(context).translationsForLocale().home.ok),
@@ -122,21 +108,16 @@ class _Contact extends State<ContactPage> {
 
   @override
   Widget build(BuildContext context) {
+    QrScanData qrScanData = ModalRoute.of(context).settings.arguments;
     final Translations dic = I18n.of(context).translationsForLocale();
-    List<Widget> action = <Widget>[
-      IconButton(
-        icon: Image.asset('assets/images/assets/Menu_scan.png'),
-        onPressed: () async {
-          final to = await Navigator.of(context).pushNamed(ScanPage.route);
-          _addressCtrl.text = (to as QRCodeAddressResult).address;
-        },
-      )
-    ];
+    if (qrScanData != null) {
+      _addressCtrl.text = qrScanData.account;
+      _nameCtrl.text = qrScanData.label;
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(dic.profile.contact),
-        centerTitle: true,
-        actions: _args == null ? action : null,
+        title: Text(dic.profile.addressBook),
       ),
       body: SafeArea(
         child: Column(
@@ -161,7 +142,7 @@ class _Contact extends State<ContactPage> {
                           }
                           return null;
                         },
-                        readOnly: _args != null,
+                        readOnly: qrScanData != null,
                       ),
                     ),
                     Padding(

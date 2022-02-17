@@ -19,7 +19,7 @@ class ContactListPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(args == null
-            ? I18n.of(context).translationsForLocale().profile.contact
+            ? I18n.of(context).translationsForLocale().profile.addressBook
             : I18n.of(context).translationsForLocale().account.list),
         centerTitle: true,
         actions: <Widget>[

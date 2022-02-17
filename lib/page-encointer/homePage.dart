@@ -121,7 +121,7 @@ class _EncointerHomePageState extends State<EncointerHomePage> {
           Assets(store),
           if (store.settings.endpointIsGesell) BazaarMain(store), // dart collection if
           EncointerEntry(store), // #272 we leave it in for now until we have a replacement
-          ScanPage(),
+          ScanPage(store),
           ContactsPage(store),
           Profile(store),
         ],

@@ -69,14 +69,21 @@ void main() {
       // go to transfer page
       // await driver.tap(find.byValueKey('cid-asset'));
 
+      print('---find transfer');
       await driver.tap(find.byValueKey('transfer'));
 
+      print('---find transfer-amount-input');
       await driver.tap(find.byValueKey('transfer-amount-input'));
+
+      print('---enter 3.4');
       await driver.enterText('3.4');
 
+      print('---screenshot transfer-page');
       await screenshot(driver, config, 'transfer-page');
 
       // go back to homepage
+
+      print('---close-transfer-page');
       await driver.tap(find.byValueKey('close-transfer-page'));
     });
 
