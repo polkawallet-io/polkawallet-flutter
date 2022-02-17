@@ -71,25 +71,29 @@ class CommunityChooserOnMap extends StatelessWidget {
   }
 
   List<Marker> get _markers {
-    int cnt = 0;
-    return store.encointer.communities == null
-        ? []
-        : store.encointer.communities
-            .map((community) => Marker(
-                // marker is not a widget, hence test_driver cannot find it (it can find it in the Icon inside, though).
-                // But we need the key to derive the popup key
-                key: Key('cid-$cnt-marker'),
-                point: coordinatesOf(community),
-                width: 40,
-                height: 40,
-                builder: (_) => Icon(
-                      Icons.location_on,
-                      size: 40,
-                      color: Colors.blueAccent,
-                      key: Key('cid-${cnt++}-marker-icon'), // used for test_driver
-                    ),
-                anchorPos: AnchorPos.align(AnchorAlign.top)))
-            .toList();
+    List<Marker> markers = [];
+    if (store.encointer.communities != null) {
+      for (num index = 0; index < store.encointer.communities.length; index++) {
+        CidName community = store.encointer.communities[index];
+        markers.add(Marker(
+          // marker is not a widget, hence test_driver cannot find it (it can find it in the Icon inside, though).
+          // But we need the key to derive the popup key
+          key: Key('cid-$index-marker'),
+          point: coordinatesOf(community),
+          width: 40,
+          height: 40,
+          builder: (_) => Icon(
+            Icons.location_on,
+            size: 40,
+            color: Colors.blueAccent,
+            key: Key('cid-$index-marker-icon'), // used for test_driver
+          ),
+          anchorPos: AnchorPos.align(AnchorAlign.top),
+        ));
+      }
+    }
+
+    return markers;
   }
 
   LatLng coordinatesOf(CidName community) {
