@@ -49,28 +49,28 @@ jobs:
           yarn install
           yarn test
 
-#  e2e-tests:
-#    runs-on: ubuntu-latest
-#    timeout-minutes: 30
-#    strategy:
-#      matrix:
-#        network: [gesell] # Todo: add cantillon once we support it again.
-#    steps:
-#      # Setup Environment
-#      - uses: actions/checkout@v2
-#
-#      - uses: monorepo-actions/config-for-actions@main
-#        id: config
-#        with:
-#          config_files: ./.github/action-config.json
-#
-#      # JS Stuff
-#      - uses: actions/setup-node@v2
-#        with:
-#          node-version: ${{ steps.config.outputs.node-version }}
-#
-#      - name: Run e2e tests against  ${{ matrix.network }}
-#        run: |
-#          cd lib/js_service_encointer
-#          yarn install
-#          yarn test:${{ matrix.network }}
+  e2e-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        network: [gesell] # Todo: add cantillon once we support it again.
+    steps:
+      # Setup Environment
+      - uses: actions/checkout@v2
+
+      - uses: monorepo-actions/config-for-actions@main
+        id: config
+        with:
+          config_files: ./.github/action-config.json
+
+      # JS Stuff
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ steps.config.outputs.node-version }}
+
+      - name: Run e2e tests against  ${{ matrix.network }}
+        run: |
+          cd lib/js_service_encointer
+          yarn install
+          yarn test:${{ matrix.network }}
