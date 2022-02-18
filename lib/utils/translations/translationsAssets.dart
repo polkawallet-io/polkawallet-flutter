@@ -20,7 +20,6 @@ abstract class TranslationsAssets {
   String get communityNotSelected;
   String get communitySelect;
   String get copy;
-  String get crossChain;
   String get currency;
   String get detail;
   String get done;
@@ -78,7 +77,6 @@ class TranslationsEnAssets implements TranslationsAssets {
   get communityNotSelected => 'No community selected, hit the icon to select one';
   get communitySelect => 'Select Community';
   get copy => 'Copy';
-  get crossChain => 'Cross chain';
   get currency => 'currency';
   get detail => 'Detail';
   get done => 'done';
@@ -136,7 +134,6 @@ class TranslationsDeAssets implements TranslationsAssets {
   get communityNotSelected => 'Keine Community ausgewählt, klicke auf das Icon';
   get communitySelect => 'Wähle eine Community';
   get copy => 'Kopiere';
-  get crossChain => 'Cross chain';
   get currency => 'Währung';
   get detail => 'Detail';
   get done => 'Erledigt';
@@ -194,7 +191,6 @@ class TranslationsZhAssets implements TranslationsAssets {
   get communityNotSelected => '未选择社区，点击图标选择一个';
   get communitySelect => '选择社区';
   get copy => '复制';
-  get crossChain => '跨链转账';
   get currency => '货币';
   get detail => '详情';
   get done => '完成';

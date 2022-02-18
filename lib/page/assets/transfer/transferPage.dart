@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:encointer_wallet/common/components/AddressInputField.dart';
 import 'package:encointer_wallet/common/components/encointerTextFormField.dart';
@@ -15,21 +14,20 @@ import 'package:encointer_wallet/store/app.dart';
 import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/translations/index.dart';
+import 'package:encointer_wallet/utils/translations/translations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:encointer_wallet/utils/translations/translations.dart';
 
 class TransferPageParams {
-  TransferPageParams(
-      {this.symbol, this.qrScanData, this.redirect, this.isEncointerCommunityCurrency = false, this.communitySymbol});
+  TransferPageParams({this.cid, this.communitySymbol, this.address, this.qrScanData, this.redirect});
 
+  final String cid;
+  final String communitySymbol;
+  final String address;
   final QrScanData qrScanData;
   final String redirect;
-  final String symbol;
-  final bool isEncointerCommunityCurrency;
-  final String communitySymbol;
 }
 
 class TransferPage extends StatefulWidget {
@@ -52,34 +50,23 @@ class _TransferPageState extends State<TransferPage> {
   final TextEditingController _amountCtrl = new TextEditingController();
 
   AccountData _accountTo;
-  String _tokenSymbol;
-  bool _isEncointerCommunityCurrency;
+  String _cid;
   String _communitySymbol;
 
   @override
   Widget build(BuildContext context) {
+    final Translations dic = I18n.of(context).translationsForLocale();
+    TransferPageParams params = ModalRoute.of(context).settings.arguments;
+
+    _communitySymbol = params.communitySymbol;
+    _cid = params.cid;
+
+    int decimals = ert_decimals;
+
+    double available = store.encointer.communityBalance;
+
     return Observer(
       builder: (_) {
-        final Translations dic = I18n.of(context).translationsForLocale();
-        final String baseTokenSymbol = store.settings.networkState.tokenSymbol;
-        String symbol = _tokenSymbol ?? baseTokenSymbol;
-        final bool isBaseToken = _tokenSymbol == baseTokenSymbol;
-
-        TransferPageParams params = ModalRoute.of(context).settings.arguments;
-        _isEncointerCommunityCurrency = params.isEncointerCommunityCurrency;
-        if (_isEncointerCommunityCurrency) {
-          _communitySymbol = params.communitySymbol;
-        }
-        _tokenSymbol = params.symbol;
-
-        int decimals = _isEncointerCommunityCurrency
-            ? encointer_currencies_decimals
-            : store.settings.networkState.tokenDecimals ?? ert_decimals;
-
-        BigInt available; // BigInt
-        available = _getAvailableEncointerOrBaseToken(isBaseToken, symbol);
-        print('Available: $available');
-
         return Form(
           key: _formKey,
           child: Scaffold(
@@ -128,13 +115,7 @@ class _TransferPageState extends State<TransferPage> {
                             }
                             return null;
                           },
-                          suffixIcon: Text(
-                            "ⵐ",
-                            style: TextStyle(
-                              color: encointerGrey,
-                              fontSize: 44,
-                            ),
-                          ),
+                          suffixIcon: Text("ⵐ", style: TextStyle(color: encointerGrey, fontSize: 44)),
                         ),
                         SizedBox(height: 24),
                         Row(
@@ -165,19 +146,17 @@ class _TransferPageState extends State<TransferPage> {
                     ),
                   ),
                   SizedBox(height: 8),
-                  Container(
+                  PrimaryButton(
                     key: Key('make-transfer'),
-                    child: PrimaryButton(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Iconsax.send_sqaure_2),
-                          SizedBox(width: 12),
-                          Text(dic.assets.amountToBeTransferred),
-                        ],
-                      ),
-                      onPressed: _handleSubmit,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Iconsax.send_sqaure_2),
+                        SizedBox(width: 12),
+                        Text(dic.assets.amountToBeTransferred),
+                      ],
                     ),
+                    onPressed: _handleSubmit,
                   ),
                   SizedBox(height: 8),
                 ],
@@ -191,49 +170,31 @@ class _TransferPageState extends State<TransferPage> {
 
   void _handleSubmit() {
     if (_formKey.currentState.validate()) {
-      String symbol = _tokenSymbol ?? store.settings.networkState.tokenSymbol;
-      int decimals = store.settings.networkState.tokenDecimals;
-      final String tokenView = Fmt.tokenView(symbol);
+      String cid = _cid ?? store.encointer.chosenCid;
       final address = Fmt.addressOfAccount(_accountTo, store);
+
       var args = {
-        "title": I18n.of(context).translationsForLocale().assets.transfer + ' $tokenView',
+        "title": I18n.of(context).translationsForLocale().assets.transfer, // Todo: Cleanup
         "txInfo": {
-          "module": 'balances',
+          "module": 'encointerBalances',
           "call": 'transfer',
+          "cid": cid,
         },
         "detail": jsonEncode({
           "destination": address,
-          "currency": tokenView,
+          "currency": _communitySymbol,
           "amount": _amountCtrl.text.trim(),
         }),
         "params": [
           // params.to
           address,
-          // params.amount
-          Fmt.tokenInt(_amountCtrl.text.trim(), decimals).toString(),
-        ],
-      };
-      // Todo: why was it here depending on the endpoint? Do we not want to facilitate ERT transfers?
-      if (_isEncointerCommunityCurrency) {
-        args['txInfo'] = {
-          "module": 'encointerBalances',
-          "call": 'transfer',
-          "cid": symbol,
-        };
-        args["detail"] = jsonEncode({
-          "destination": address,
-          "currency": _communitySymbol,
-          "amount": _amountCtrl.text.trim(),
-        });
-        args['params'] = [
-          // params.to
-          address,
-          // params.currencyId
-          symbol,
+          // params.communityId
+          cid,
           // params.amount
           _amountCtrl.text.trim(),
-        ];
-      }
+        ],
+      };
+
       args['onFinish'] = (BuildContext txPageContext, Map res) {
         final TransferPageParams routeArgs = ModalRoute.of(context).settings.arguments;
         if (store.settings.endpointIsEncointer) {
@@ -274,7 +235,7 @@ class _TransferPageState extends State<TransferPage> {
         }
       }
       setState(() {
-        _tokenSymbol = args.symbol ?? store.settings.networkState.tokenSymbol;
+        _cid = args.cid;
       });
 
       webApi.assets.fetchBalance();
@@ -288,22 +249,8 @@ class _TransferPageState extends State<TransferPage> {
     super.dispose();
   }
 
-  bool balanceTooLow(String v, BigInt available, int decimals) {
-    if (_isEncointerCommunityCurrency) {
-      return double.parse(v.trim()) >= available.toDouble() - 0.0001;
-    } else {
-      return double.parse(v.trim()) >= available / BigInt.from(pow(10, decimals)) - 0.0001;
-    }
-  }
-
-  BigInt _getAvailableEncointerOrBaseToken(bool isBaseToken, String symbol) {
-    if (_isEncointerCommunityCurrency) {
-      return Fmt.tokenInt(store.encointer.communityBalance.toString(), encointer_currencies_decimals);
-    } else {
-      return isBaseToken
-          ? store.assets.balances[symbol.toUpperCase()].transferable
-          : Fmt.balanceInt(store.assets.tokenBalances[symbol.toUpperCase()]);
-    }
+  bool balanceTooLow(String v, double available, int decimals) {
+    return double.parse(v.trim()) >= available;
   }
 }
 
@@ -316,19 +263,18 @@ class AccountBalanceWithMoreDigits extends StatelessWidget {
   }) : super(key: key);
 
   final AppStore store;
-  final BigInt available;
+  final double available;
   final int decimals;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: RichText(
-        // need text base line aligment
+        // need text base line alignment
         text: TextSpan(
-          text: '${Fmt.priceFloorBigInt(
+          text: '${Fmt.doubleFormat(
             available,
-            decimals,
-            lengthMax: 6,
+            length: 6,
           )} ',
           style: Theme.of(context).textTheme.headline2.copyWith(color: encointerBlack),
           children: const <TextSpan>[

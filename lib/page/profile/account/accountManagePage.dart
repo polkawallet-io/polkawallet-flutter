@@ -84,7 +84,9 @@ class _AccountManagePageState extends State<AccountManagePage> {
           child: ListTile(
             leading: Container(
               width: 36,
-              child: Image.asset('assets/images/assets/${symbol.isNotEmpty ? symbol : 'DOT'}.png'),
+              // child: Image.asset('assets/images/assets/${symbol.isNotEmpty ? symbol : 'ERT'}.png'),
+              // Todo: #365
+              child: Image.asset('assets/images/assets/ERT.png'),
             ),
             title: Text(name),
             subtitle: Text(tokenView),
