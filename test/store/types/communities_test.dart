@@ -20,12 +20,25 @@ void main() {
     });
 
     test('Object equality works', () {
-      // test that we correctly overwrite `==` and `hashCode`
+      // test that we correctly overwrite `==`.
 
       var cid = CommunityIdentifier([103, 98, 115, 117, 118], [255, 255, 255, 255]);
       var cid2 = CommunityIdentifier([103, 98, 115, 117, 118], [255, 255, 255, 255]);
 
       expect(cid, cid2);
+    });
+
+    test('Object hashCode equality works', () {
+      // test that we correctly overwrite `==` and `hashCode` in compatible manner
+      // Failed before: #384
+
+      var cid = CommunityIdentifier([103, 98, 115, 117, 118], [255, 255, 255, 255]);
+      var cid2 = CommunityIdentifier([103, 98, 115, 117, 118], [255, 255, 255, 255]);
+
+      Map<CommunityIdentifier, String> cidMap = new Map();
+      cidMap[cid] = "Hello";
+
+      expect(cidMap[cid2], "Hello");
     });
 
     test('Json encode returns same value as received by JS', () {

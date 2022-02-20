@@ -190,13 +190,13 @@ mixin _$EncointerStore on _EncointerStore, Store {
   final _$balanceEntriesAtom = Atom(name: '_EncointerStore.balanceEntries');
 
   @override
-  Map<CommunityIdentifier, BalanceEntry> get balanceEntries {
+  ObservableMap<CommunityIdentifier, BalanceEntry> get balanceEntries {
     _$balanceEntriesAtom.reportRead();
     return super.balanceEntries;
   }
 
   @override
-  set balanceEntries(Map<CommunityIdentifier, BalanceEntry> value) {
+  set balanceEntries(ObservableMap<CommunityIdentifier, BalanceEntry> value) {
     _$balanceEntriesAtom.reportWrite(value, super.balanceEntries, () {
       super.balanceEntries = value;
     });

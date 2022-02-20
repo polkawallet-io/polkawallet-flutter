@@ -76,7 +76,7 @@ abstract class _EncointerStore with Store {
   int participantIndex;
 
   @observable
-  Map<CommunityIdentifier, BalanceEntry> balanceEntries = new ObservableMap();
+  ObservableMap<CommunityIdentifier, BalanceEntry> balanceEntries = new ObservableMap();
 
   @observable
   List<CommunityIdentifier> communityIdentifiers;

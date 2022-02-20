@@ -89,7 +89,7 @@ class CommunityIdentifier {
           listEquals(digest, other.digest);
 
   @override
-  int get hashCode => geohash.hashCode ^ digest.hashCode;
+  int get hashCode => this.toFmtString().hashCode;
 
   // JS-passes these values as hex-strings, but this would be more complicated to handle in dart.
   factory CommunityIdentifier.fromJson(Map<String, dynamic> json) =>
