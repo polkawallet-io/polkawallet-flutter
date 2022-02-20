@@ -141,10 +141,18 @@ class Api {
     return _evalJavascriptUID++;
   }
 
+  /// Evaluate javascript [code] in the webView.
+  ///
+  /// If [wrapPromise] is true, evaluation of [code] will directly be awaited and the result is returned.
+  /// Otherwise, a future is created and put into the list of pending JS-calls.
+  /// If [allowRepeat] is true, a call to the same JS-method can be made repeatedly. Otherwise, subsequent calls will
+  /// not have any effect.
   Future<dynamic> evalJavascript(
     String code, {
     bool wrapPromise = true,
-    bool allowRepeat = false,
+    // True is the safe approach; otherwise a crashing (and therefore not returning) JS-call, will prevent subsequent
+    // calls to the same method.
+    bool allowRepeat = true,
   }) async {
     // check if there's a same request loading
     if (!allowRepeat) {
@@ -170,8 +178,9 @@ class Api {
     String script = '$code.then(function(res) {'
         '  PolkaWallet.postMessage(JSON.stringify({ path: "$method", data: res }));'
         '}).catch(function(err) {'
-        '  PolkaWallet.postMessage(JSON.stringify({ path: "log", data: err.message }));'
+        '  PolkaWallet.postMessage(JSON.stringify({ path: "$method:error", data: err.message }));'
         '})';
+
     _web.evalJavascript(script);
 
     return c.future;

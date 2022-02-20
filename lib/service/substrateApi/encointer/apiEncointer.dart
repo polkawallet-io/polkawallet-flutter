@@ -109,8 +109,7 @@ class ApiEncointer {
     CommunityIdentifier cid = store.encointer.chosenCid;
     String pubKey = store.account.currentAccountPubKey;
 
-    if (pubKey == null) return 0;
-    if ((pubKey.isEmpty) | (cid == null)) {
+    if (pubKey == null || pubKey.isEmpty || (cid == null)) {
       return 0;
     }
 
@@ -130,11 +129,13 @@ class ApiEncointer {
     print("api: getMeetupLocation");
     String address = store.account.currentAccountPubKey;
     CommunityIdentifier cid = store.encointer.chosenCid;
-    if (cid == null) {
-      return;
-    }
     int cIndex = store.encointer.currentCeremonyIndex;
     int mIndex = store.encointer.meetupIndex;
+
+    if (cid == null || mIndex == null || mIndex == 0) {
+      return;
+    }
+
     Map<String, dynamic> locj = await apiRoot
         .evalJavascript('encointer.getNextMeetupLocation(${jsonEncode(cid)}, "$cIndex", "$mIndex","$address")');
     print("api: Next Meetup Location: " + locj.toString());
@@ -212,15 +213,16 @@ class ApiEncointer {
   /// We could fetch the phaseDurations at application startup, cache them and supply them in the call here.
   Future<DateTime> getMeetupTime() async {
     print("api: getMeetupTime");
-    if (store.encointer.meetupLocation == null) {
+    var mLocation = store.encointer.meetupLocation;
+
+    if (mLocation == null) {
       print("No meetup location set. Can't get meetup time");
       return null;
     }
-    String loc = jsonEncode(store.encointer.meetupLocation);
 
     int time = await apiRoot
         .evalJavascript(
-            'encointer.getNextMeetupTime($loc, "${toValue(store.encointer.currentPhase)}", ${store.encointer.currentPhaseDuration})')
+            'encointer.getNextMeetupTime(${jsonEncode(mLocation)}, "${toValue(store.encointer.currentPhase)}", ${store.encointer.currentPhaseDuration})')
         .then((value) => int.parse(value));
 
     print("api: Next Meetup Time: $time");
@@ -238,11 +240,16 @@ class ApiEncointer {
     CommunityIdentifier cid = store.encointer.chosenCid;
     String pubKey = store.account.currentAccountPubKey;
     int mIndex = store.encointer.meetupIndex;
-    print("api: get meetup registry for cindex $cIndex, mindex $mIndex, cid $cid");
+    print("api: get meetup registry for cIndex: $cIndex, mIndex: $mIndex, cid: $cid");
+
+    if (pubKey == null || pubKey.isEmpty || cid == null || cIndex == null || mIndex == null || mIndex == 0) {
+      return [];
+    }
 
     List<String> registry = store.settings.endpointIsGesell
         ? await _noTee.ceremonies.meetupRegistry(cid, cIndex, mIndex)
         : await _teeProxy.ceremonies.meetupRegistry(cid, pubKey, store.settings.cachedPin);
+
     print("api: Participants: " + registry.toString());
     store.encointer.setMeetupRegistry(registry);
     return registry;
@@ -253,11 +260,13 @@ class ApiEncointer {
   /// This is off-chain and trusted in Cantillon.
   Future<int> getParticipantIndex() async {
     CommunityIdentifier cid = store.encointer.chosenCid;
-    if (cid == null) {
+
+    String pubKey = store.account.currentAccountPubKey;
+
+    if (cid == null || pubKey == null || pubKey.isEmpty) {
       return 0; // zero means: not registered
     }
 
-    String pubKey = store.account.currentAccountPubKey;
     print("api: Getting participant index for " + pubKey);
     int pIndex = store.settings.endpointIsGesell
         ? await _noTee.ceremonies.participantIndex(cid, store.encointer.currentCeremonyIndex, pubKey)
@@ -270,17 +279,21 @@ class ApiEncointer {
 
   Future<bool> hasPendingIssuance() async {
     CommunityIdentifier cid = store.encointer.chosenCid;
-    if (cid == null) {
+
+    // -1 as we get the pending issuance for the last ceremony
+    int cIndex = store.encointer.currentCeremonyIndex;
+    String pubKey = store.account.currentAccountPubKey;
+    print("api: Getting pendingIssuance for $pubKey");
+
+    if (pubKey == null || pubKey.isEmpty || cid == null || cIndex == null || cIndex <= 1) {
       return false;
     }
 
     // -1 as we get the pending issuance for the last ceremony
-    int cIndex = store.encointer.currentCeremonyIndex - 1;
-    String pubKey = store.account.currentAccountPubKey;
-    print("api: Getting pendingIssuance for $pubKey");
+    int lastCIndex = cIndex - 1;
 
     bool hasPendingIssuance =
-        await apiRoot.evalJavascript('encointer.hasPendingIssuance(${jsonEncode(cid)}, "$cIndex","$pubKey")');
+        await apiRoot.evalJavascript('encointer.hasPendingIssuance(${jsonEncode(cid)}, "$lastCIndex","$pubKey")');
 
     print("api:has pending issuance $hasPendingIssuance");
 

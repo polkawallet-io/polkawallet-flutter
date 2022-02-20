@@ -70,7 +70,7 @@ class TranslationsEnEncointer implements TranslationsEncointer {
 
 class TranslationsDeEncointer implements TranslationsEncointer {
   get registerParticipant => 'Registeriere Teilnehmer';
-  get attestationsSubmit => 'Anwesenheit einreichen';
+  get attestationsSubmit => 'Attestierungen einreichen';
   get ceremony => 'Encointer Zeremonie';
   get ceremonyNext => 'Nächste Zeremonie findet statt am Mittag am:';
   get claimQr => 'Meine Behauptung der Anwesenheit';
