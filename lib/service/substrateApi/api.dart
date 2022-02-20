@@ -176,7 +176,7 @@ class Api {
     _msgCompleters[method] = c;
 
     String script = '$code.then(function(res) {'
-        '  PolkaWallet.postMessage(JSON.stringify({ path: "$method:result", data: res }));'
+        '  PolkaWallet.postMessage(JSON.stringify({ path: "$method", data: res }));'
         '}).catch(function(err) {'
         '  PolkaWallet.postMessage(JSON.stringify({ path: "$method:error", data: err.message }));'
         '})';
