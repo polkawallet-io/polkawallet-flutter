@@ -145,8 +145,8 @@ class Api {
   ///
   /// If [wrapPromise] is true, evaluation of [code] will directly be awaited and the result is returned.
   /// Otherwise, a future is created and put into the list of pending JS-calls.
-  /// If [allowRepeat] is true call to the same JS-method can be made repeatedly. Otherwise, subsequent calls will not
-  /// have any effect.
+  /// If [allowRepeat] is true, a call to the same JS-method can be made repeatedly. Otherwise, subsequent calls will
+  /// not have any effect.
   Future<dynamic> evalJavascript(
     String code, {
     bool wrapPromise = true,
