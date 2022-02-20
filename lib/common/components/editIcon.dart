@@ -13,23 +13,14 @@ class EditIcon extends StatelessWidget {
   final double size;
   final AppStore store;
 
-  void _loadAccountCache() {
-    // refresh balance
-    store.assets.clearTxs();
-    store.assets.loadAccountCache();
-    store.encointer.loadCache();
-  }
-
   Future<void> _onSelect(AccountData i, String address) async {
     if (address != store.account.currentAddress) {
-      print("we are here changing from addres ${store.account.currentAddress} to $address");
+      print("[editIcon] changing from address ${store.account.currentAddress} to $address");
 
-      /// set current account
       store.account.setCurrentAccount(i.pubKey);
-      _loadAccountCache();
+      await store.loadAccountCache();
 
-      /// reload account info
-      webApi.assets.fetchBalance();
+      webApi.fetchAccountData();
     }
   }
 

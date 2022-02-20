@@ -47,11 +47,11 @@ class _CreatePinPageState extends State<CreatePinPage> {
     await store.account.addAccount(acc, store.account.newAccount.password);
     webApi.account.encodeAddress([acc['pubKey']]);
 
-    store.assets.loadAccountCache();
+    await store.loadAccountCache();
 
     // fetch info for the imported account
     String pubKey = acc['pubKey'];
-    webApi.assets.fetchBalance();
+    webApi.fetchAccountData();
     webApi.account.fetchAccountsBonded([pubKey]);
     webApi.account.getPubKeyIcons([pubKey]);
     store.account.setCurrentAccount(pubKey);

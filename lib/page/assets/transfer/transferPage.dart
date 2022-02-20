@@ -238,8 +238,7 @@ class _TransferPageState extends State<TransferPage> {
         _cid = args.cid;
       });
 
-      webApi.assets.fetchBalance();
-      webApi.encointer.getEncointerBalance();
+      webApi.fetchAccountData();
     });
   }
 

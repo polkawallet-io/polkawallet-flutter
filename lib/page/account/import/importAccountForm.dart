@@ -89,7 +89,7 @@ class _ImportAccountFormState extends State<ImportAccountForm> {
       await widget.store.settings.addContact(acc);
 
       webApi.account.changeCurrentAccount(pubKey: pubKey);
-      webApi.assets.fetchBalance();
+      webApi.fetchAccountData();
       webApi.account.encodeAddress([pubKey]);
       webApi.account.getPubKeyIcons([pubKey]);
       setState(() {});

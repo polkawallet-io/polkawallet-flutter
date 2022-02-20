@@ -223,13 +223,18 @@ class Api {
     fetchEncointerCommunityData();
   }
 
+  void fetchAccountData() {
+    assets.fetchBalance();
+    fetchEncointerCommunityData();
+  }
+
   void fetchEncointerCommunityData() {
-    webApi.encointer.getBusinesses();
-    webApi.encointer.getMeetupIndex();
-    webApi.encointer.getParticipantIndex();
-    webApi.encointer.getEncointerBalance();
-    webApi.encointer.getCommunityMetadata();
-    webApi.encointer.getDemurrage();
+    encointer.getBusinesses();
+    encointer.getMeetupIndex();
+    encointer.getParticipantIndex();
+    encointer.getEncointerBalance();
+    encointer.getCommunityMetadata();
+    encointer.getDemurrage();
   }
 
   Future<void> fetchNetworkProps() async {

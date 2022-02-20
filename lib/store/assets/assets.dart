@@ -254,7 +254,7 @@ abstract class _AssetsStore with Store {
       });
     }
 
-    loadAccountCache();
+    return loadAccountCache();
   }
 }
 

@@ -42,13 +42,6 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
   EndpointData _selectedNetwork;
   bool _networkChanging = false;
 
-  void _loadAccountCache() {
-    // refresh balance
-    store.assets.clearTxs();
-    store.assets.loadAccountCache();
-    store.encointer.loadCache();
-  }
-
   Future<void> _reloadNetwork() async {
     setState(() {
       _networkChanging = true;
@@ -67,13 +60,12 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
     await store.settings.setNetworkConst({}, needCache: false);
     store.settings.setEndpoint(_selectedNetwork);
 
-    _loadAccountCache();
-    //webApi.closeWebView();
-
-    await store.settings.loadNetworkStateCache();
-
-    store.assets.loadCache();
-    store.encointer.loadCache();
+    await Future.wait([
+      store.loadAccountCache(),
+      store.settings.loadNetworkStateCache(),
+      store.assets.loadCache(),
+      store.encointer.loadCache()
+    ]);
 
     webApi.launchWebview();
     changeTheme();
@@ -92,10 +84,9 @@ class _NetworkSelectPageState extends State<NetworkSelectPage> {
       store.account.setCurrentAccount(i.pubKey);
 
       if (isCurrentNetwork) {
-        _loadAccountCache();
+        await store.loadAccountCache();
 
-        /// reload account info
-        webApi.assets.fetchBalance();
+        webApi.fetchAccountData();
       } else {
         /// set new network and reload web view
         // todo  remove the two options here, and fix the caching issue, explained in #219
