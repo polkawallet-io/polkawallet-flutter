@@ -23,10 +23,10 @@
     "tslib": "^2.3.1"
   },
   "dependencies": {
-    "@encointer/node-api": "^0.6.2",
-    "@encointer/types": "^0.6.2",
-    "@encointer/util": "^0.6.2",
-    "@encointer/worker-api": "^0.6.2",
+    "@encointer/node-api": "^0.6.3",
+    "@encointer/types": "^0.6.3",
+    "@encointer/util": "^0.6.3",
+    "@encointer/worker-api": "^0.6.3",
     "@polkadot/api": "^7.2.1",
     "@polkadot/keyring": "^8.2.2",
     "@polkadot/networks": "^8.2.2",
