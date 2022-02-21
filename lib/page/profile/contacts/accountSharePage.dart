@@ -22,6 +22,7 @@ class _AccountSharePageState extends State<AccountSharePage> {
       'V1.0',
       widget.store.account.currentAddress,
       widget.store.encointer.chosenCid != null ? (widget.store.encointer.chosenCid).toFmtString() : '',
+      '', // empty amount field. Hotfix for # #399. To be properly solved in #354.
       widget.store.account.currentAccount.name
     ];
 
