@@ -1,3 +1,5 @@
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
+
 /// provides functionality and business logic for scanning QR codes in the encointer app
 class QrScanService {
   static final String separator = '\n';
@@ -20,7 +22,7 @@ class QrScanService {
         ),
         version: data[1].toLowerCase(),
         account: data[2],
-        cid: data[3],
+        cid: data[3].isNotEmpty ? CommunityIdentifier.fromFmtString(data[3]) : null,
         amount: data[4].trim().isNotEmpty ? double.parse(data[4]) : null,
         label: data[5],
       );
@@ -51,8 +53,8 @@ class QrScanData {
   /// contact: account to add to contacts;
   final String account;
 
-  /// id of the community as hexadecimal String
-  final String cid;
+  /// community identifier
+  final CommunityIdentifier cid;
 
   /// Optional payment amount for the invoice. Will be emp
   final num amount;

@@ -1,4 +1,5 @@
 import 'package:encointer_wallet/service/qrScanService.dart';
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class QrScanParseTestCase {
@@ -19,7 +20,7 @@ void main() {
         context: QrScanContext.invoice,
         version: 'v1.0',
         account: 'HgTtJusFEn2gmMmB5wmJDnMRXKD6dzqCpNR7a99kkQ7BNvX',
-        cid: 'sqm1v79dF6b',
+        cid: CommunityIdentifier.fromFmtString('sqm1v79dF6b'),
         label: 'Aubrey',
         amount: .2343,
       ),
@@ -31,7 +32,7 @@ void main() {
         context: QrScanContext.contact,
         version: 'v1.0',
         account: 'HgTtJusFEn2gmMmB5wmJDnMRXKD6dzqCpNR7a99kkQ7BNvX',
-        cid: 'sqm1v79dF6b',
+        cid: CommunityIdentifier.fromFmtString('sqm1v79dF6b'),
         label: 'Alice',
         amount: null,
       ),

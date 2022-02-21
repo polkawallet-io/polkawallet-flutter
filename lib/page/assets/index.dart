@@ -221,7 +221,7 @@ class _AssetsState extends State<Assets> {
                                     TransferPage.route,
                                     arguments: TransferPageParams(
                                         redirect: '/',
-                                        cid: store.encointer.chosenCid.toFmtString(),
+                                        cid: store.encointer.chosenCid,
                                         communitySymbol: store.encointer.communitySymbol),
                                   );
                                 }

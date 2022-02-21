@@ -7,10 +7,10 @@ import 'package:encointer_wallet/common/theme.dart';
 import 'package:encointer_wallet/config/consts.dart';
 import 'package:encointer_wallet/page-encointer/common/communityChooserPanel.dart';
 import 'package:encointer_wallet/page/account/txConfirmPage.dart';
-import 'package:encointer_wallet/service/qrScanService.dart';
 import 'package:encointer_wallet/service/substrateApi/api.dart';
 import 'package:encointer_wallet/store/account/types/accountData.dart';
 import 'package:encointer_wallet/store/app.dart';
+import 'package:encointer_wallet/store/encointer/types/communities.dart';
 import 'package:encointer_wallet/utils/UI.dart';
 import 'package:encointer_wallet/utils/format.dart';
 import 'package:encointer_wallet/utils/translations/index.dart';
@@ -21,12 +21,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:iconsax/iconsax.dart';
 
 class TransferPageParams {
-  TransferPageParams({this.cid, this.communitySymbol, this.address, this.qrScanData, this.redirect});
+  TransferPageParams({this.cid, this.communitySymbol, this.recipient, this.amount, this.redirect});
 
-  final String cid;
+  final CommunityIdentifier cid;
   final String communitySymbol;
-  final String address;
-  final QrScanData qrScanData;
+  final String recipient;
+  final double amount;
   final String redirect;
 }
 
@@ -50,7 +50,7 @@ class _TransferPageState extends State<TransferPage> {
   final TextEditingController _amountCtrl = new TextEditingController();
 
   AccountData _accountTo;
-  String _cid;
+  CommunityIdentifier _cid;
   String _communitySymbol;
 
   @override
@@ -59,11 +59,13 @@ class _TransferPageState extends State<TransferPage> {
     TransferPageParams params = ModalRoute.of(context).settings.arguments;
 
     _communitySymbol = params.communitySymbol;
-    _cid = params.cid;
+    _cid = params.cid ?? store.encointer.chosenCid;
 
-    int decimals = ert_decimals;
+    int decimals = encointer_currencies_decimals;
 
-    double available = store.encointer.communityBalance;
+    double available = store.encointer.applyDemurrage(store.encointer.balanceEntries[_cid]);
+
+    print("[transferPage]: available: $available");
 
     return Observer(
       builder: (_) {
@@ -170,7 +172,7 @@ class _TransferPageState extends State<TransferPage> {
 
   void _handleSubmit() {
     if (_formKey.currentState.validate()) {
-      String cid = _cid ?? store.encointer.chosenCid;
+      String cid = _cid.toFmtString();
       final address = Fmt.addressOfAccount(_accountTo, store);
 
       var args = {
@@ -215,11 +217,13 @@ class _TransferPageState extends State<TransferPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final TransferPageParams args = ModalRoute.of(context).settings.arguments;
-      if (args.qrScanData != null) {
-        _amountCtrl.text = '${args.qrScanData.amount}';
+      if (args.amount != null) {
+        _amountCtrl.text = '${args.amount}';
+      }
 
+      if (args.recipient != null) {
         final AccountData acc = AccountData();
-        acc.address = args.qrScanData.account;
+        acc.address = args.recipient;
         setState(() {
           _accountTo = acc;
         });
@@ -234,9 +238,6 @@ class _TransferPageState extends State<TransferPage> {
           });
         }
       }
-      setState(() {
-        _cid = args.cid;
-      });
 
       webApi.fetchAccountData();
     });
