@@ -30,6 +30,10 @@ abstract class _SettingsStore with Store {
     return '${endpoint.info}_$key';
   }
 
+  /// The bazaar is not active currently. This variable can only be set under profile -> developer options.
+  @observable
+  bool enableBazaar = false;
+
   @observable
   String cachedPin = '';
 
@@ -135,6 +139,11 @@ abstract class _SettingsStore with Store {
   @action
   void toggleDeveloperMode() {
     developerMode = !developerMode;
+  }
+
+  @action
+  void toggleEnableBazaar() {
+    enableBazaar = !enableBazaar;
   }
 
   @action

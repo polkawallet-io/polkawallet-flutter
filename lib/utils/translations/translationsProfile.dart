@@ -25,6 +25,7 @@ abstract class TranslationsProfile {
   String get delete;
   String get deleteConfirm;
   String get developer;
+  String get enableBazaar;
   String get export;
   String get exportKeystoreOk;
   String get exportMnemonicOk;
@@ -102,6 +103,7 @@ class TranslationsEnProfile implements TranslationsProfile {
   get delete => 'Delete Account';
   get deleteConfirm => 'Input your PIN to confirm';
   get developer => 'Developer mode';
+  get enableBazaar => 'Enable Bazaar';
   get export => 'Export Account';
   get exportKeystoreOk => 'Keystore was copied to clipboard.';
   get exportMnemonicOk => 'Mnemonic was copied to clipboard.';
@@ -182,6 +184,7 @@ class TranslationsDeProfile implements TranslationsProfile {
   get delete => 'Konto löschen';
   get deleteConfirm => 'Gebe die PIN ein um zu bestätigen';
   get developer => 'Entwickler-Modus';
+  get enableBazaar => 'Bazaar aktivieren';
   get export => 'Konto exportieren';
   get exportKeystoreOk => 'Keystore wurde in die Zwischenablage kopiert.';
   get exportMnemonicOk => 'Mnemonic wurde in die Zwischenablage kopiert.';
@@ -312,4 +315,5 @@ class TranslationsZhProfile implements TranslationsProfile {
   get passSecure => throw UnimplementedError();
   get reputationHistory => throw UnimplementedError();
   get reputationOverall => throw UnimplementedError();
+  get enableBazaar => throw UnimplementedError();
 }

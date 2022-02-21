@@ -105,6 +105,21 @@ mixin _$SettingsStore on _SettingsStore, Store {
   bool get isConnected =>
       (_$isConnectedComputed ??= Computed<bool>(() => super.isConnected, name: '_SettingsStore.isConnected')).value;
 
+  final _$enableBazaarAtom = Atom(name: '_SettingsStore.enableBazaar');
+
+  @override
+  bool get enableBazaar {
+    _$enableBazaarAtom.reportRead();
+    return super.enableBazaar;
+  }
+
+  @override
+  set enableBazaar(bool value) {
+    _$enableBazaarAtom.reportWrite(value, super.enableBazaar, () {
+      super.enableBazaar = value;
+    });
+  }
+
   final _$cachedPinAtom = Atom(name: '_SettingsStore.cachedPin');
 
   @override
@@ -404,6 +419,7 @@ mixin _$SettingsStore on _SettingsStore, Store {
   @override
   String toString() {
     return '''
+enableBazaar: ${enableBazaar},
 cachedPin: ${cachedPin},
 loading: ${loading},
 localeCode: ${localeCode},
