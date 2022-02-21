@@ -46,8 +46,13 @@ class Ipfs {
   }
 
   Image getCommunityIcon(String cid, double devicePixelRatio) {
+    if (cid == null || cid.isEmpty) {
+      print("[IPFS] return default encointer icon because ipfs-cid is not set");
+      return Image.asset('assets/images/assets/ERT.png');
+    }
+
     return Image.network(getCommunityIconsUrl(cid, devicePixelRatio), errorBuilder: (_, error, __) {
-      print("Image.network error: ${error.toString()}");
+      print("[IPFS]: Failed to retrieve community icon with ipfs-cid: $cid: ${error.toString()}");
       return Image.asset('assets/images/assets/ERT.png');
     });
   }
