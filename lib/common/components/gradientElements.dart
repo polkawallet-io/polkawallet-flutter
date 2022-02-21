@@ -8,10 +8,12 @@ import 'package:flutter/material.dart';
 class PrimaryButton extends StatelessWidget {
   final Function onPressed;
   final Widget child;
+  final BorderRadiusGeometry borderRadius;
 
   const PrimaryButton({
     this.child,
     this.onPressed,
+    this.borderRadius = const BorderRadius.all(Radius.circular(20)),
     Key key,
   }) : super(key: key);
 
@@ -21,7 +23,7 @@ class PrimaryButton extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: primaryGradient,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: borderRadius,
       ),
       child: ElevatedButton(
         onPressed: onPressed,

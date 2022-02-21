@@ -12,6 +12,7 @@ abstract class TranslationsEncointer {
   String get claimsScannedNew;
   String get claimsScannedNOfM;
   String get claimsSubmitDetail;
+  String get communities;
   String get done;
   String get encointer;
   String get encointerRegistering;
@@ -46,6 +47,7 @@ class TranslationsEnEncointer implements TranslationsEncointer {
   get claimsScannedNew => 'Scanned new claim';
   get claimsScannedNOfM => "Scanned SCANNED_COUNT / TOTAL_COUNT Claims";
   get claimsSubmitDetail => 'Submitting AMOUNT claims for the recent ceremony';
+  get communities => 'Communities';
   get done => 'Done';
   get encointer => 'Encointer Ceremony';
   get encointerRegistering => 'Registering';
@@ -80,6 +82,7 @@ class TranslationsDeEncointer implements TranslationsEncointer {
   get claimsScannedNew => 'Neue Behauptung gescannt';
   get claimsScannedNOfM => "SCANNED_COUNT / TOTAL_COUNT gescannte Behauptungen";
   get claimsSubmitDetail => 'Reiche AMOUNT Behauptungen für die letzte Zeremonie ein';
+  get communities => 'Communities';
   get done => 'Fertig';
   get encointer => 'Encointer Zeremonie';
   get encointerRegistering => 'Registriert...';
@@ -134,4 +137,5 @@ class TranslationsZhEncointer implements TranslationsEncointer {
   get registered => '已经注册';
   get scan => '扫描';
   get txsAction => '动作';
+  get communities => throw UnimplementedError();
 }

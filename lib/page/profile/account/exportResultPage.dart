@@ -18,7 +18,7 @@ class ExportResultPage extends StatelessWidget {
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: Text(dic.profile.export),
-          content: Text("dic['export.${args['type']}Ok']"), // TODO armin
+          content: Text(dic.profile.exportMnemonicOk),
           actions: <Widget>[
             CupertinoButton(
               child: Text(I18n.of(context).translationsForLocale().home.ok),

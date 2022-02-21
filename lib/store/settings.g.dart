@@ -367,6 +367,16 @@ mixin _$SettingsStore on _SettingsStore, Store {
   }
 
   @override
+  void toggleEnableBazaar() {
+    final _$actionInfo = _$_SettingsStoreActionController.startAction(name: '_SettingsStore.toggleEnableBazaar');
+    try {
+      return super.toggleEnableBazaar();
+    } finally {
+      _$_SettingsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setNetworkLoading(bool isLoading) {
     final _$actionInfo = _$_SettingsStoreActionController.startAction(name: '_SettingsStore.setNetworkLoading');
     try {

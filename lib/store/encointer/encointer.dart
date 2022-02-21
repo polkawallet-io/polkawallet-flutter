@@ -82,6 +82,9 @@ abstract class _EncointerStore with Store {
   List<CommunityIdentifier> communityIdentifiers;
 
   @observable
+  List<String> bootstrappers;
+
+  @observable
   List<CidName> communities;
 
   @observable
@@ -260,6 +263,12 @@ abstract class _EncointerStore with Store {
   }
 
   @action
+  void setBootstrappers(List<String> bs) {
+    print("store: set communityIdentifiers to $bs");
+    bootstrappers = bs;
+  }
+
+  @action
   void setCommunityMetadata([CommunityMetadata meta]) {
     print("store: set communityMetadata to $meta");
     communityMetadata = meta;
@@ -326,6 +335,7 @@ abstract class _EncointerStore with Store {
 
   @action
   void addBalanceEntry(CommunityIdentifier cid, BalanceEntry balanceEntry) {
+    print("balanceEntry $balanceEntry added to cid $cid added");
     balanceEntries[cid] = balanceEntry;
   }
 

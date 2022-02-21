@@ -217,6 +217,21 @@ mixin _$EncointerStore on _EncointerStore, Store {
     });
   }
 
+  final _$bootstrappersAtom = Atom(name: '_EncointerStore.bootstrappers');
+
+  @override
+  List<String> get bootstrappers {
+    _$bootstrappersAtom.reportRead();
+    return super.bootstrappers;
+  }
+
+  @override
+  set bootstrappers(List<String> value) {
+    _$bootstrappersAtom.reportWrite(value, super.bootstrappers, () {
+      super.bootstrappers = value;
+    });
+  }
+
   final _$communitiesAtom = Atom(name: '_EncointerStore.communities');
 
   @override
@@ -462,6 +477,16 @@ mixin _$EncointerStore on _EncointerStore, Store {
   }
 
   @override
+  void setBootstrappers(List<String> bs) {
+    final _$actionInfo = _$_EncointerStoreActionController.startAction(name: '_EncointerStore.setBootstrappers');
+    try {
+      return super.setBootstrappers(bs);
+    } finally {
+      _$_EncointerStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setCommunityMetadata([CommunityMetadata meta]) {
     final _$actionInfo = _$_EncointerStoreActionController.startAction(name: '_EncointerStore.setCommunityMetadata');
     try {
@@ -575,6 +600,7 @@ myMeetupRegistryIndex: ${myMeetupRegistryIndex},
 participantIndex: ${participantIndex},
 balanceEntries: ${balanceEntries},
 communityIdentifiers: ${communityIdentifiers},
+bootstrappers: ${bootstrappers},
 communities: ${communities},
 reputations: ${reputations},
 chosenCid: ${chosenCid},

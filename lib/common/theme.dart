@@ -140,8 +140,7 @@ const MaterialColor ZurichLion = const MaterialColor(
 );
 const Color encointerGrey = Color(0xff666666);
 const Color encointerBlack = Color(0xff353535);
-const Color encointerLightBlue = Color(0xffF4F8F9); // ZurichLion.shade(50)
-const Color encointerBlue = Color(0xff4374A3); // ZurichLion.shade(500)
+const Color encointerLightBlue = Color(0xffF4F8F9); // TODO issue #334
 
 final appThemeLaminar = ThemeData(
   primarySwatch: Colors.deepPurple,
