@@ -89,7 +89,7 @@ class TranslationsEnAccount implements TranslationsAccount {
   get keystore => 'Keystore (json)';
   get list => 'Account Select';
   get mnemonic => 'Mnemonic';
-  get next => 'Weiter';
+  get next => 'Next';
   get observe => 'Observation';
   get observeBrief =>
       '\nMark this address as observation,\nthen you can select this address\nin account select page, to watch\nit\'s assets and actions\n';
