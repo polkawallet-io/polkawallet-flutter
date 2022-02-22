@@ -218,7 +218,7 @@ class TranslationsDeProfile implements TranslationsProfile {
   get passInfo =>
       'PIN muss mindestens 4 Ziffern enthalten. Bei PIN-Verlust ist der Account nicht wiederherstellbar, ausser man hat ein Backup auf der Profilseite gemacht.';
   get passSecure => 'Sichere dein Konto mit einem PIN.';
-  get reputationHistory => 'Reputation History';
+  get reputationHistory => 'Letzte Reputationen';
   get reputationOverall => 'Allgemeine Reputation';
   get passOld => 'Aktuelle PIN';
   get passSuccess => 'Erfolgreich';

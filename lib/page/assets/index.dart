@@ -285,7 +285,7 @@ class _AssetsState extends State<Assets> {
                 children: [
                   Icon(Iconsax.login_1),
                   SizedBox(width: 12),
-                  Text("Register now"),
+                  Text(dic.assets.registerNow),
                 ],
               ),
               onPressed: () {

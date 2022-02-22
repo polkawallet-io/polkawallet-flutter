@@ -42,6 +42,7 @@ abstract class TranslationsAssets {
   String get polkascan;
   String get receive;
   String get reserved;
+  String get registerNow;
   String get scan;
   String get success;
   String get tip;
@@ -99,6 +100,7 @@ class TranslationsEnAssets implements TranslationsAssets {
   get polkascan => 'Open in Browser';
   get receive => 'Receive';
   get reserved => 'Reserved';
+  get registerNow => 'Register now';
   get scan => 'Scan';
   get success => 'Success';
   get tip => 'Tip';
@@ -156,6 +158,7 @@ class TranslationsDeAssets implements TranslationsAssets {
   get polkascan => 'Öffne im Browser';
   get receive => 'Erhalte';
   get reserved => 'Reserviert';
+  get registerNow => 'Registerieren';
   get scan => 'Scannen';
   get success => 'Erfolgreich';
   get tip => 'Trinkgeld';
@@ -226,4 +229,5 @@ class TranslationsZhAssets implements TranslationsAssets {
   get pleaseEnterSomeText => '请输入一些文字';
   get yourBalanceFor => '你的余额';
   get amountToTransfer => '要转账的金额';
+  get registerNow => throw UnimplementedError();
 }
