@@ -1377,10 +1377,15 @@
     memoizee "^0.4.14"
     rxjs "^6.6.3"
 
-"@open-web3/orml-type-definitions@^0.6.0-beta.26", "@open-web3/orml-type-definitions@^0.6.0-beta.28":
+"@open-web3/orml-type-definitions@^0.6.0-beta.26":
   version "0.6.0-beta.28"
   resolved "https://registry.yarnpkg.com/@open-web3/orml-type-definitions/-/orml-type-definitions-0.6.0-beta.28.tgz#a2668dc756b3e478e2695e8eeb1af87efe895987"
   integrity sha512-zD5Pb8nWrXETB9bw/TQikh5ZUS6AFDoKWGmirc1Mq2SXsdyypYGQ4r5kSR3ugOQ57AlWBbJPH1c5ccNtMOqNOw==
+
+"@open-web3/orml-type-definitions@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@open-web3/orml-type-definitions/-/orml-type-definitions-0.6.1.tgz#eb7fadf598f24f5024f5d2a1fd39ccc97c801104"
+  integrity sha512-6asf2W/sluGQ6LNiGSdCg/Xop54mq/Q2FcV2Z9cBxys6QC4qXfo4JwUL6kJsRh/vcIIbUxoyGgKUrU/6Xdm7wA==
 
 "@open-web3/orml-types@0.6.0-beta.26":
   version "0.6.0-beta.26"
@@ -1390,11 +1395,11 @@
     "@open-web3/orml-type-definitions" "^0.6.0-beta.26"
 
 "@open-web3/orml-types@^0.6.0-beta.26":
-  version "0.6.0-beta.28"
-  resolved "https://registry.yarnpkg.com/@open-web3/orml-types/-/orml-types-0.6.0-beta.28.tgz#004f14f51a021478999d87385048960c27a91f6f"
-  integrity sha512-f3n/Sgk7p9o+DLWawYKismpvCigLsoUAwkIZtT+VX1jy6mtGZFM5CFvqaGBHjZngZ7hJYlf6Y30TXwRuIKsmlQ==
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@open-web3/orml-types/-/orml-types-0.6.1.tgz#85eca19146d32c8cef0ace07c2aaf0f13ccc0350"
+  integrity sha512-wP0pguZuIrLpjz3TWrvRHFOp62giZIettAIT6ueED6pVUqNXFersrZZis6RmgbRBZggYhD7FgM/Z+DxVsR7HUQ==
   dependencies:
-    "@open-web3/orml-type-definitions" "^0.6.0-beta.28"
+    "@open-web3/orml-type-definitions" "^0.6.1"
 
 "@polkadot/api-derive@^2.5.1":
   version "2.5.1"
@@ -6919,9 +6924,9 @@ mock-fs@^4.1.0:
   integrity sha1-pdULEtLXXlvsnaw7Z//jxB0xreQ=
 
 moment@^2.15.1, moment@^2.24.0:
-  version "2.27.0"
-  resolved "https://registry.npm.taobao.org/moment/download/moment-2.27.0.tgz#8bff4e3e26a236220dfe3e36de756b6ebaa0105d"
-  integrity sha1-i/9OPiaiNiIN/j423nVrbrqgEF0=
+  version "2.29.4"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
+  integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
 
 move-concurrently@^1.0.1:
   version "1.0.1"
